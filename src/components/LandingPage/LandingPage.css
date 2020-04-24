@@ -1,0 +1,84 @@
+.Background {
+  color: white;
+  left: 0;
+  right: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #040730;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cpolygon fill='%2372223f' points='957 450 539 900 1396 900'/%3E%3Cpolygon fill='%232a3972' points='957 450 872.9 900 1396 900'/%3E%3Cpolygon fill='%23872745' points='-60 900 398 662 816 900'/%3E%3Cpolygon fill='%23293978' points='337 900 398 662 816 900'/%3E%3Cpolygon fill='%239d2d49' points='1203 546 1552 900 876 900'/%3E%3Cpolygon fill='%2329397e' points='1203 546 1552 900 1162 900'/%3E%3Cpolygon fill='%23b2344b' points='641 695 886 900 367 900'/%3E%3Cpolygon fill='%23293984' points='587 900 641 695 886 900'/%3E%3Cpolygon fill='%23c73c4c' points='1710 900 1401 632 1096 900'/%3E%3Cpolygon fill='%2329388a' points='1710 900 1401 632 1365 900'/%3E%3Cpolygon fill='%23dc454c' points='1210 900 971 687 725 900'/%3E%3Cpolygon fill='%232a3890' points='943 900 1210 900 971 687'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+  background-size: cover;
+  overflow: hidden;
+}
+.contentContainer{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+}
+
+.HeaderContainer {
+    
+}
+.HeaderText {
+    font-family: 'Roboto Slab';
+    font-style: normal;
+    font-weight: bold;
+    font-size: 48px;
+    line-height: 63px;
+    margin: 0 auto;
+    color: #FFFFFF;
+}
+.logo {
+    margin-bottom: 40px;
+}
+.LeftSideContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 500px;
+    margin-right: 60px;
+}
+.text{
+    margin: 0px;
+}
+.textContainer{
+   
+}
+.RightSideContainer{
+
+}
+
+.chessboard{
+    width: 280px;
+    height: 278px;
+    box-shadow: 0px 4px 9px rgba(0, 0, 0, 0.58);
+    border-radius: 47px;
+    background: linear-gradient(143.71deg, #040730 2.29%, rgba(4, 7, 48, 0.12) 93.32%), url(../../assets/chessboard22.jpg);;
+}
+.chessboardContainer{
+
+}
+.playButtonContainer{
+    position: relative;
+    right: 20%;
+    top: 50%;
+}
+.videoButtonContainer{
+    position: relative;
+    left: 90%;
+    bottom: 20%;
+}
+.chatButtonContainer{
+    position: relative;
+    bottom: 0%;
+    left: 80%;
+}
+.leftMargin {
+    width: 100%;
+}
+.rightMargin {
+    width: 100%;
+}
