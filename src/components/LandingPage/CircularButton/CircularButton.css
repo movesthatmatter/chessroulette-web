@@ -4,3 +4,9 @@
     padding: 20px 25px;
     display: inline-flex;
 }
+.mouseOver {
+    -webkit-filter: brightness(120%);
+    filter: brightness(120%);
+    cursor: pointer;
+    transform: scale(1.1);
+}
