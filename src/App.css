@@ -1,3 +1,53 @@
 .App {
   font-family: 'Open Sans', sans-serif;
 }
+.fade{
+  position: absolute;
+  top:100px;
+}
+.fade2{
+  position: absolute;
+  top:100px;
+}
+
+.fade-enter {
+  transform: translate(300%);
+}
+
+.fade-enter-active {
+
+  transform: translate(0%);
+  transition:  transform 1200ms ease-in-out;
+}
+
+.fade-exit {
+ 
+  transform: translate(0%);
+}
+
+.fade-exit-active {
+
+  transform: translate(-300%);
+  transition: transform 1200ms ease-in-out;
+}
+
+.fade2-enter {
+  transform: translate(300%);
+}
+
+.fade2-enter-active {
+
+  transform: translate(0%);
+  transition:  transform 300ms ease-in-out;
+}
+
+.fade2-exit {
+ 
+  transform: translate(0%);
+}
+
+.fade2-exit-active {
+
+  transform: translate(-300%);
+  transition: transform 300ms ease-in-out;
+}
