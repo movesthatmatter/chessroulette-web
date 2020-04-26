@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import './CircularButton.css';
 
-
 export default function CircularButton (props : {
     imageURL : string , 
-    color : string, 
+    color : string,
+    onClickFunction : () => void;
     }) {
     const [mouseOver, setMouseOver] = useState<boolean | undefined>(false);
     let btnStyle : Array<string> = ["button"];
@@ -18,7 +18,8 @@ export default function CircularButton (props : {
                 }}
                 onMouseOut={()=> {
                     setMouseOver(false);
-                }}>
-        <img src ={props.imageURL} alt="buttonLabel"/>
+                }}
+                onClick={props.onClickFunction}>
+        <img src ={require(`../../../assets/${props.imageURL}.svg`)} alt="buttonLabel"/>
     </div>
 }

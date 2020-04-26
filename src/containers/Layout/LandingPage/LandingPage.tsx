@@ -66,13 +66,13 @@ export default function LandingPage() {
                                 <div className="chessboardContainer">
                                 <div className="chessboard">
                                     <div className="playButtonContainer">
-                                    <CircularButton imageURL={playSVG} color="#D64349" />
+                                    <CircularButton imageURL={playSVG} color="#D64349" onClickFunction={()=> console.log("clicked")} />
                                     </div>
                                     <div className="videoButtonContainer">
-                                    <CircularButton imageURL={videoSVG} color="#983A7E" />
+                                    <CircularButton imageURL={videoSVG} color="#983A7E" onClickFunction={()=> console.log("clicked")}/>
                                     </div>
                                     <div className="chatButtonContainer">
-                                    <CircularButton imageURL={chatSVG} color="#1C2C84" />
+                                    <CircularButton imageURL={chatSVG} color="#1C2C84" onClickFunction={()=> console.log("clicked")}/>
                                     </div>
                                 </div>
                                 </div>
