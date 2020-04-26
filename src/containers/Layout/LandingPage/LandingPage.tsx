@@ -1,13 +1,13 @@
-import React, { useRef } from "react";
+import React from "react";
 import "./LandingPage.css";
 import logo from "../../assets/logo.svg";
 import playSVG from "../../assets/play-circle.svg";
 import videoSVG from "../../assets/video.svg";
 import chatSVG from "../../assets/message-circle.svg";
-import CircularButton from "./CircularButton/CircularButton";
+import CircularButton from "../../../components/ui/CircularButton/CircularButton";
 import {Switch, Route, NavLink, useLocation } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import {GamePage} from '../../containers/GamePage/GamePage';
+import {GamePage} from '../Game/GamePage';
 
 
 export default function LandingPage() {
