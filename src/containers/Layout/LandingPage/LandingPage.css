@@ -64,46 +64,4 @@
     margin-right: 70px;
 }
 
-.contentContainer-enter {
-    opacity: 0;
-    transform: scale(1.1);
-  }
-  
-.contentContainer-enter-active {
-    opacity: 1;
-    transform: scale(1);
-    transition: opacity 600ms, transform 600ms;
-  }
-  
-  .contentContainer-exit {
-    opacity: 1;
-    transform: scale(1);
-  }
-  
-  .contentContainer-exit-active {
-    opacity: 0;
-    transform: scale(1.2);
-    transition: opacity 600ms, transform 600ms;
-  }
 
-  .gameComponent-enter {
-    opacity: 0;
-    transform: scale(1.1);
-  }
-  
-.gameComponent-enter-active {
-    opacity: 1;
-    transform: scale(1);
-    transition: opacity 600ms, transform 600ms;
-  }
-  
-  .gameComponent-exit {
-    opacity: 1;
-    transform: scale(1);
-  }
-  
-  .gameComponent-exit-active {
-    opacity: 0;
-    transform: scale(1.2);
-    transition: opacity 600ms, transform 600ms;
-  }

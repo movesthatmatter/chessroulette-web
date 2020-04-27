@@ -4,7 +4,7 @@ import StoryRouter from 'storybook-react-router';
 
 export default {
     component : LandingPage,
-    title : 'Landing Page ',
+    title : 'UI Components/Landing Page/Landing Page ',
     decorators : [StoryRouter()]
 }
 

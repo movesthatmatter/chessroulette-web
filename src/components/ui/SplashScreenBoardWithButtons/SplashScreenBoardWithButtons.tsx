@@ -9,21 +9,21 @@ const SplashScreenBoardWithButtons = () => (
       <div className="playButtonContainer">
         <CircularButton
           imageURL="play-circle"
-          color="#D64349"
+          color="#54C4F2"
           onClickFunction={() => console.log("clicked")}
         />
       </div>
       <div className="videoButtonContainer">
         <CircularButton
           imageURL="video"
-          color="#983A7E"
+          color="#E66162"
           onClickFunction={() => console.log("clicked")}
         />
       </div>
       <div className="chatButtonContainer">
         <CircularButton
           imageURL="message-circle"
-          color="#1C2C84"
+          color="#08D183"
           onClickFunction={() => console.log("clicked")}
         />
       </div>
