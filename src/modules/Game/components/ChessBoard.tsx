@@ -1,5 +1,10 @@
+import Chessboard from 'chessboardjsx';
 import React from 'react';
 
-export default function Chessboard () { 
-    return (<div></div>);
+type Props = Chessboard['props'];
+
+export const Board : React.FC<Props> = (props : Props = { }) => {
+    return (
+        <Chessboard {...props}/>
+    )
 }

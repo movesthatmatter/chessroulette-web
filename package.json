@@ -13,6 +13,7 @@
     "@types/react-router-dom": "^5.1.4",
     "@types/react-transition-group": "^4.2.4",
     "@types/webfontloader": "^1.6.29",
+    "chess.js": "^0.10.3",
     "chessboardjsx": "^2.4.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
