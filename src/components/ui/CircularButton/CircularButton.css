@@ -5,8 +5,8 @@
     display: inline-flex;
 }
 .mouseOver {
-    -webkit-filter: brightness(120%);
-    filter: brightness(120%);
+    -webkit-filter: brightness(110%);
+    filter: brightness(110%);
     cursor: pointer;
-    transform: scale(1.1);
+    transform: scale(1.05);
 }

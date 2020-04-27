@@ -1,10 +1,7 @@
 import React from "react";
 import "./LandingPage.css";
-import logo from "../../assets/logo.svg";
-import playSVG from "../../assets/play-circle.svg";
-import videoSVG from "../../assets/video.svg";
-import chatSVG from "../../assets/message-circle.svg";
-import CircularButton from "../../../components/ui/CircularButton/CircularButton";
+import logo from "../../../assets/logo_black.svg";
+import SplashScreenBoardWithButtons from '../../../components/ui/SplashScreenBoardWithButtons/SplashScreenBoardWithButtons';
 import {Switch, Route, NavLink, useLocation } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import {GamePage} from '../Game/GamePage';
@@ -37,11 +34,7 @@ export default function LandingPage() {
                      key={location.key}
                      classNames="contentContainer" 
                      timeout={600}
-                     unmountOnExit
-                     onEnter={() => console.log( "ENTER ")}
-                     onEntering={()=> console.log("ENTERIIING")}
-                     onExit ={()=> console.log("EXITT")}
-                     onExited ={()=> console.log("EXITEEED")}>
+                     unmountOnExit >
                     <div className="contentContainer">
                     <div className="leftMargin" />
                             <div className="LeftSideContainer">
@@ -63,19 +56,7 @@ export default function LandingPage() {
                                 </div>
                             </div>
                             <div className="RightSideContainer">
-                                <div className="chessboardContainer">
-                                <div className="chessboard">
-                                    <div className="playButtonContainer">
-                                    <CircularButton imageURL={playSVG} color="#D64349" onClickFunction={()=> console.log("clicked")} />
-                                    </div>
-                                    <div className="videoButtonContainer">
-                                    <CircularButton imageURL={videoSVG} color="#983A7E" onClickFunction={()=> console.log("clicked")}/>
-                                    </div>
-                                    <div className="chatButtonContainer">
-                                    <CircularButton imageURL={chatSVG} color="#1C2C84" onClickFunction={()=> console.log("clicked")}/>
-                                    </div>
-                                </div>
-                                </div>
+                                <SplashScreenBoardWithButtons/>
                             </div>
                         <div className="rightMargin" />
                     </div>
