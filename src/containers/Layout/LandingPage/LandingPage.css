@@ -24,6 +24,9 @@
     margin-bottom: 40px;
     
 }
+.text{
+    font-family: 'Open Sans';
+}
 .link{
     margin: 0px;
     max-width: 100px;

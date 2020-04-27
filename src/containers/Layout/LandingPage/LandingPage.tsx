@@ -8,7 +8,7 @@ import {GamePage} from '../Game/GamePage';
 
 
 export default function LandingPage() {
-    const location = useLocation();
+    let location = useLocation();
     return (
         <div className="Background">
         <Switch location={location}>

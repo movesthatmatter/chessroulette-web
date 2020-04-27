@@ -4,8 +4,7 @@ import { action } from '@storybook/addon-actions';
 
 export default {
     component : CircularButton,
-    title : "Circular Button",
-
+    title : "UI Components/Landing Page/Circular Button",
 }
 
 export const videoButton = () => <CircularButton 
