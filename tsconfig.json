@@ -20,7 +20,10 @@
     "noErrorTruncation": false,
     "noEmit": true,
     "jsx": "react",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "paths": {
+      "src/*": ["src/*"],
+    },
   },
   "include": [
     "src"
