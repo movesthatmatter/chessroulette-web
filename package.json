@@ -26,7 +26,7 @@
     "react-scripts": "3.4.1",
     "react-transition-group": "^4.3.0",
     "storybook-react-router": "^1.0.8",
-    "typescript": "~3.7.2",
+    "typescript": "^3.8.3",
     "webfontloader": "^1.6.28"
   },
   "scripts": {
