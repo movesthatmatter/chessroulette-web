@@ -12,6 +12,7 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.4",
     "@types/react-transition-group": "^4.2.4",
+    "@types/storybook-react-router": "^1.0.1",
     "@types/webfontloader": "^1.6.29",
     "chess.js": "^0.10.3",
     "chessboardjsx": "^2.4.2",

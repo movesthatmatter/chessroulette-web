@@ -1,5 +1,5 @@
 import React from 'react';
-import LandingPage from '../containers/Layout/LandingPage/LandingPage';
+import LandingPage from './LandingPage';
 import StoryRouter from 'storybook-react-router';
 
 export default {
