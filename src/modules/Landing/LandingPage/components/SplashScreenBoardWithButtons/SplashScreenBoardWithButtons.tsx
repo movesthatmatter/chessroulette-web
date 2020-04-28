@@ -1,34 +1,33 @@
-import React from "react";
-import CircularButton from '../CircularButton/CircularButton';
+import React from 'react';
+import { CircularButton } from 'src/components/CircularButton';
 import './SplashScreenBoardWithButtons.css';
 
+type Props = {}
 
-const SplashScreenBoardWithButtons = () => (
+export const SplashScreenBoardWithButtons: React.FC<Props> = () => (
   <div className="chessboardContainer">
     <div className="chessboard">
       <div className="playButtonContainer">
         <CircularButton
-          imageURL="play-circle"
+          type="play"
           color="#54C4F2"
-          onClickFunction={() => console.log("clicked")}
+          onClick={() => console.log('clicked')}
         />
       </div>
       <div className="videoButtonContainer">
         <CircularButton
-          imageURL="video"
+          type="video"
           color="#E66162"
-          onClickFunction={() => console.log("clicked")}
+          onClick={() => console.log('clicked')}
         />
       </div>
       <div className="chatButtonContainer">
         <CircularButton
-          imageURL="message-circle"
+          type="chat"
           color="#08D183"
-          onClickFunction={() => console.log("clicked")}
+          onClick={() => console.log('clicked')}
         />
       </div>
     </div>
   </div>
 );
-
-export default SplashScreenBoardWithButtons;

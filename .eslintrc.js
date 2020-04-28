@@ -33,6 +33,26 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',  
 
     "react-hooks/rules-of-hooks": 'error',
-    // "react-hooks/exhaustive-deps": 'warn'
+    // "react-hooks/exhaustive-deps": 'warn',
+
+    "import/extensions": [
+      "error",
+      "never",
+      {
+        ignorePackages: true,
+        pattern: {
+          "js": "always",
+        }
+      }
+    ],
+
+    // ACCESSIBILTY
+    // TODO: Re-enable All of these when bringing in accessibilty
+    "jsx-a11y/aria-role": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "jsx-a11y/click-events-have-key-events": "off"
   },
+  env: {
+    "browser": true
+  }
 };
