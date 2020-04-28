@@ -1,0 +1,20 @@
+.VideoScreen{
+    transition: all .5s ease-in-out;
+}
+.default {
+    width: 30px;
+    height: 34px;
+}
+.loaded {
+    width: 236px;
+    height: 262px;  
+}
+.light{
+    background-color: #D4F1F5;;
+}
+.dark{
+    background-color: #94E2E4;
+}
+.none {
+    background-color: #272729;
+}
