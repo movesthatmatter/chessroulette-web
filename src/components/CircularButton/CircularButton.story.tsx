@@ -6,7 +6,7 @@ import { CircularButton } from './CircularButton';
 
 export default {
   component: CircularButton,
-  title: 'UI Components/Landing Page/Circular Button',
+  title: 'Components/Circular Button',
 };
 
 export const videoButton = () => (

@@ -4,7 +4,7 @@ import { LandingPage } from './LandingPage';
 
 export default {
   component: LandingPage,
-  title: 'UI Components/Landing Page/Landing Page ',
+  title: 'Modules/Landing/Landing Page',
   decorators: [StoryRouter()],
 };
 
