@@ -1,43 +1,14 @@
 import React from 'react';
 import { CircularButton } from 'src/components/CircularButton';
-import { createStyles, StyledProps } from 'src/lib/jss';
-import chessBackground from './assets/chessboard22.jpg';
+import { createStyles } from 'src/lib/jss';
+import chessBackground from './assets/chessboard.jpg';
 
-type Props = StyledProps<typeof styles> & {};
+type Props = {};
 
-export const SplashScreen: React.FC<Props> = ({ classes }) =>
-  (
-    <div className={classes.container}>
-      <div className={classes.chessboard}>
-        <div className={classes.playButtonContainer}>
-          <CircularButton
-            type="play"
-            color="#54C4F2"
-            onClick={() => console.log('clicked')}
-          />
-        </div>
-        <div className={classes.videoButtonContainer}>
-          <CircularButton
-            type="video"
-            color="#E66162"
-            onClick={() => console.log('clicked')}
-          />
-        </div>
-        <div className={classes.videoButtonContainer}>
-          <CircularButton
-            type="chat"
-            color="#08D183"
-            onClick={() => console.log('clicked')}
-          />
-        </div>
-      </div>
-    </div>
-  );
-
-const [styles, withStyle] = createStyles({
+const styled = createStyles({
   container: {
     position: 'relative',
-    bottom: '0%',
+    bottom: '2',
     left: '80%',
   },
   chessboard: {
@@ -51,7 +22,6 @@ const [styles, withStyle] = createStyles({
     position: 'relative',
     right: '20%',
     top: '50%',
-    // back
   },
   videoButtonContainer: {
     position: 'relative',
@@ -60,4 +30,30 @@ const [styles, withStyle] = createStyles({
   },
 });
 
-export const SplashScreenBoardWithButtons = withStyle(SplashScreen);
+export const SplashScreenBoardWithButtons = styled<Props>(({ classes }) => (
+  <div className={classes.container}>
+    <div className={classes.chessboard}>
+      <div className={classes.playButtonContainer}>
+        <CircularButton
+          type="play"
+          color="#54C4F2"
+          onClick={() => console.log('clicked')}
+        />
+      </div>
+      <div className={classes.videoButtonContainer}>
+        <CircularButton
+          type="video"
+          color="#E66162"
+          onClick={() => console.log('clicked')}
+        />
+      </div>
+      <div className={classes.videoButtonContainer}>
+        <CircularButton
+          type="chat"
+          color="#08D183"
+          onClick={() => console.log('clicked')}
+        />
+      </div>
+    </div>
+  </div>
+));
