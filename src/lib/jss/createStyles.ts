@@ -2,31 +2,22 @@ import withStyles, {
   WithStylesProps as WithStylesPropsJSS,
   Styles,
 } from 'react-jss';
-import { Classes } from 'jss';
-import * as css from 'csstype';
+import { CSSProperties } from './types';
 
 export function createStyles<
-  ClassNames extends string | number | symbol,
-  S extends Record<string, css.Properties>|((theme: unknown) => Styles<ClassNames>)
+  TProps extends { [prop in keyof CSSProperties]: CSSProperties[prop] },
+  TStyle extends { [cls: string]: TProps },
+  TClasses extends { [k in keyof TStyle]: string }
 >(
-  styles: S): [
-    S,
-    <
-      Props extends {
-        classes: S extends (theme: unknown) => Styles<ClassNames>
-          ? Classes<keyof ReturnType<S>>
-          : Classes<ClassNames>;
-      }
-    >(
-      comp: React.ComponentType<Props>
-    ) => React.ComponentType<
-    Omit<Props, 'classes'> & { classes?: Partial<Props['classes']> }
-    >
-  ] {
+  // Not sure how and why this works but fuck it!
+  // It only works with Partial not without
+  styles: Partial<TStyle>,
+): <Props extends {}>(
+    comp: React.ComponentType<Props & { classes: TClasses }>
+  ) => React.ComponentType<Props> {
+  // TODO: Maybe fix these any sometime
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return [styles, withStyles(styles as any)];
+  return withStyles(styles as any) as any;
 }
 
-export type StyledProps<
-  S extends Styles | ((theme: unknown) => Styles)
-> = WithStylesPropsJSS<S>;
+export type StyledProps<S extends Styles> = WithStylesPropsJSS<S>;
