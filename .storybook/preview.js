@@ -20,8 +20,7 @@ addDecorator(
 
 configure(
     [
-        require.context('../src/components/ui', true, /\.stories\.js$/),
-        require.context('../src/stories/', true, /\.stories\.js$/),
+        require.context('../src', true, /\.story\.tsx$/),
     ] , module );
 
 addDecorator(storyFn => <div style={style}>{storyFn()}</div>);
