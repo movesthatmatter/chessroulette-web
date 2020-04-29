@@ -46,6 +46,8 @@ module.exports = {
       }
     ],
 
+    "linebreak-style": [2, "unix"],
+
     // ACCESSIBILTY
     // TODO: Re-enable All of these when bringing in accessibilty
     "jsx-a11y/aria-role": "off",
