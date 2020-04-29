@@ -27,7 +27,7 @@ export const LandingPage: React.FC<Props> = () => {
           <div style={{ marginBottom: '30px' }} />
           <div className={cls.link}>
             <div className={cls.linkContent}>
-              <NavLink to="/game">
+              <NavLink to="/game" className={cls.linkStyle}>
                 Play NOW!
               </NavLink>
             </div>
@@ -78,6 +78,7 @@ const useStyles = createUseStyles({
     backgroundColor: '#e9685a',
     textAlign: 'center',
     color: 'white',
+    textDecoration: 'none',
 
     '&:hover': {
       transform: 'scale(1.05)',
@@ -89,7 +90,7 @@ const useStyles = createUseStyles({
   linkContent: {
     padding: '10px',
   },
-  a: {
+  linkStyle: {
     textDecoration: 'none',
     fontWeight: 400,
     color: 'white',

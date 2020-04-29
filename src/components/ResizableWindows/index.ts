@@ -1,0 +1,1 @@
+export { ResizableWindows } from './ResizableWindows';

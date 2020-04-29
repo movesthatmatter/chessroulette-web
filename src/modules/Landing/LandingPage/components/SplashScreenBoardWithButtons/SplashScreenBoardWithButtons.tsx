@@ -8,8 +8,6 @@ type Props = {};
 const styled = createStyles({
   container: {
     position: 'relative',
-    bottom: '2',
-    left: '80%',
   },
   chessboard: {
     width: '280px',
@@ -27,6 +25,11 @@ const styled = createStyles({
     position: 'relative',
     left: '90%',
     bottom: '20%',
+  },
+  chatButtonContainer: {
+    position: 'relative',
+    left: '75%',
+    top: '10%',
   },
 });
 
@@ -47,7 +50,7 @@ export const SplashScreenBoardWithButtons = styled<Props>(({ classes }) => (
           onClick={() => console.log('clicked')}
         />
       </div>
-      <div className={classes.videoButtonContainer}>
+      <div className={classes.chatButtonContainer}>
         <CircularButton
           type="chat"
           color="#08D183"

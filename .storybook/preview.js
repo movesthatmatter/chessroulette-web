@@ -26,5 +26,6 @@ configure(
 addDecorator(storyFn => <div style={style}>{storyFn()}</div>);
 
 const style = {
-    fontFamily: 'Open Sans'
+    fontFamily: 'Open Sans',
+    display : 'flex'
 }

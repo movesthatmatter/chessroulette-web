@@ -8,4 +8,8 @@ export default {
   decorators: [StoryRouter()],
 };
 
-export const defaultLandingPage = () => <SplashScreenBoardWithButtons />;
+export const defaultLandingPage = () => (
+  <div style={{ marginLeft: '100px' }}>
+    <SplashScreenBoardWithButtons />
+  </div>
+);

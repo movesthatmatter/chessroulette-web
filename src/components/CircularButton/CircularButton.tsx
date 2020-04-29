@@ -44,7 +44,7 @@ const useStyle = createUseStyles({
     boxShadow:
       '0px 4px 4px rgba(0, 0, 0, 0.25), inset: 0px 0px 7px rgba(0, 0, 0, 0.42)',
     borderRadius: '36px',
-    padding: '20px 25px',
+    padding: '14px 16px;',
     display: 'inline-flex',
   },
   buttonWithMouseOver: {
