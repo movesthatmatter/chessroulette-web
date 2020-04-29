@@ -1,9 +1,9 @@
 import React from 'react';
-import { createUseStyles } from 'src/lib/react-jss';
+import { createUseStyles } from 'src/lib/jss';
 
 type Props = {};
 
-export const Video: React.FC<Props> = (props) => {
+export const Video: React.FC<Props> = () => {
   const classes = useStyle();
 
   return (
