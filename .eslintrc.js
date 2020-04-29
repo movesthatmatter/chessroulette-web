@@ -50,7 +50,9 @@ module.exports = {
     // TODO: Re-enable All of these when bringing in accessibilty
     "jsx-a11y/aria-role": "off",
     "jsx-a11y/no-static-element-interactions": "off",
-    "jsx-a11y/click-events-have-key-events": "off"
+    "jsx-a11y/click-events-have-key-events": "off",
+
+    "class-methods-use-this": "off"
   },
   env: {
     "browser": true
