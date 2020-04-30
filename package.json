@@ -15,6 +15,7 @@
     "@types/react-jss": "^10.0.0",
     "@types/react-router-dom": "^5.1.4",
     "@types/react-transition-group": "^4.2.4",
+    "@types/recompose": "^0.30.7",
     "@types/storybook-react-router": "^1.0.1",
     "@types/webfontloader": "^1.6.29",
     "axios": "^0.19.2",
@@ -33,6 +34,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "react-transition-group": "^4.3.0",
+    "recompose": "^0.30.0",
     "storybook-react-router": "^1.0.8",
     "typescript": "^3.8.3",
     "webfontloader": "^1.6.28"

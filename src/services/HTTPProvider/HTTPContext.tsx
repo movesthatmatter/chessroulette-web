@@ -2,7 +2,7 @@ import React, { ComponentType } from 'react';
 
 const HTTPContext = React.createContext(null);
 
-export function withHTTPPRovider<T>(Component: ComponentType<T>) {
+export function withHTTPProvider<T>(Component: ComponentType<T>) {
   return (props: T) => (
     <HTTPContext.Consumer>
       {(httpProvider) => <Component {...props} httpProvider={httpProvider} />}

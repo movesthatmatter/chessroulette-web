@@ -4,7 +4,7 @@ import WebFont from 'webfontloader';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-
+import HTTPProvider, { HTTPContext } from './services/HTTPProvider';
 
 WebFont.load({
   google: {
@@ -20,7 +20,9 @@ WebFont.load({
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <HTTPContext.Provider value={new HTTPProvider()}>
+        <App />
+      </HTTPContext.Provider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root'),

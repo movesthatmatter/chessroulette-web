@@ -26,6 +26,9 @@ export const CircularButton: React.FC<Props> = (props) => {
     <div
       className={cx(cls.button, {
         [cls.buttonWithMouseOver]: mouseOver,
+        [cls.video]: props.type === 'video',
+        [cls.play]: props.type === 'play',
+        [cls.chat]: props.type === 'chat',
       })}
       style={{ background: props.color }}
       onMouseOver={() => setMouseOver(true)}
@@ -41,11 +44,18 @@ export const CircularButton: React.FC<Props> = (props) => {
 
 const useStyle = createUseStyles({
   button: {
-    boxShadow:
-      '0px 4px 4px rgba(0, 0, 0, 0.25), inset: 0px 0px 7px rgba(0, 0, 0, 0.42)',
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
     borderRadius: '36px',
-    padding: '14px 16px;',
     display: 'inline-flex',
+  },
+  video: {
+    padding: '22px',
+  },
+  chat: {
+    padding: '18px',
+  },
+  play: {
+    padding: '25px',
   },
   buttonWithMouseOver: {
     filter: 'brightness(110%)',

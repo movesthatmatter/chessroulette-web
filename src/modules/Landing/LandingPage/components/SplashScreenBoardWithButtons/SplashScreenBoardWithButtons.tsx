@@ -1,7 +1,7 @@
 import React from 'react';
 import { CircularButton } from 'src/components/CircularButton';
 import { createStyles } from 'src/lib/jss';
-import chessBackground from './assets/chessboard.jpg';
+import chessBackground from './assets/chessboard.png';
 
 type Props = {};
 
@@ -12,24 +12,24 @@ const styled = createStyles({
   chessboard: {
     width: '280px',
     height: '278px',
-    boxShadow: ' 0px 4px 9px rgba(0, 0, 0, 0.58)',
+    boxShadow: ' 0px 4px 20px rgba(0, 0, 0, 0.15)',
     borderRadius: ' 47px',
-    backgroundImage: `url(${chessBackground})`,
+    background: ` url(${chessBackground})`,
   },
   playButtonContainer: {
     position: 'relative',
     right: '20%',
-    top: '50%',
+    top: '25%',
   },
   videoButtonContainer: {
     position: 'relative',
-    left: '90%',
-    bottom: '20%',
+    left: '80%',
+    bottom: '47%',
   },
   chatButtonContainer: {
     position: 'relative',
-    left: '75%',
-    top: '10%',
+    left: '60%',
+    bottom: '20%',
   },
 });
 

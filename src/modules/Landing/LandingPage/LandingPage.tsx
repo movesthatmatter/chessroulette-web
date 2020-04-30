@@ -3,12 +3,14 @@ import logo from 'src/assets/logo_black.svg';
 import { createUseStyles } from 'src/lib/jss';
 import { NavLink } from 'react-router-dom';
 import { SplashScreenBoardWithButtons } from './components/SplashScreenBoardWithButtons';
+import { LobbyJoinCreatePop } from '../../LobbyJoinCreatePop/LobbyJoinCreatePop';
+import { withHTTPProvider } from '../../../services/HTTPProvider';
+
 
 type Props = {};
 
-export const LandingPage: React.FC<Props> = () => {
+export const LandingPage: React.FC<Props> = withHTTPProvider(() => {
   const cls = useStyles();
-
   return (
     <div className={cls.container}>
       <div className={cls.leftMargin} />
@@ -19,28 +21,19 @@ export const LandingPage: React.FC<Props> = () => {
             P2P Chess Games with Video Chat
           </p>
         </div>
-        <div>
-          <p className={cls.text}>
-            No account needed. Free P2P Chess Game hosting and video chat. Just
-            share the generated code with a friend and start playing.
-          </p>
-          <div style={{ marginBottom: '30px' }} />
-          <div className={cls.link}>
-            <div className={cls.linkContent}>
-              <NavLink to="/game" className={cls.linkStyle}>
-                Play NOW!
-              </NavLink>
-            </div>
-          </div>
+        <div style={{ marginTop: '5px', marginBottom: '10px' }} className={cls.text}>
+          No account needed. Free P2P Chess Game hosting and video chat. Just
+          share the generated code with a friend and start playing.
+        </div>
+        <div className={cls.buttonsContainer}>
+          <LobbyJoinCreatePop />
         </div>
       </div>
-      <div>
-        <SplashScreenBoardWithButtons />
-      </div>
+      <SplashScreenBoardWithButtons />
       <div className={cls.rightMargin} />
     </div>
   );
-};
+});
 
 const useStyles = createUseStyles({
   container: {
@@ -58,12 +51,15 @@ const useStyles = createUseStyles({
   },
   headerText: {
     fontFamily: 'Roboto Slab',
-    fontStyle: 'normal',
     fontWeight: 'bold',
     fontSize: '48px',
     lineHeight: '63px',
     margin: '0 auto',
     color: '#262626',
+  },
+  buttonsContainer: {
+    marginTop: '20px',
+    marginLeft: '40px',
   },
   logo: {
     marginBottom: '40px',
@@ -89,11 +85,6 @@ const useStyles = createUseStyles({
   },
   linkContent: {
     padding: '10px',
-  },
-  linkStyle: {
-    textDecoration: 'none',
-    fontWeight: 400,
-    color: 'white',
   },
   leftMargin: {
     width: '100%',
