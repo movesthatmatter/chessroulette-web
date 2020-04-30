@@ -16,6 +16,10 @@ export const withWebcam = () => React.createElement(() => {
     (async () => {
       setStream(await streamClient.start());
     })();
+
+    return () => {
+      streamClient.stop();
+    };
   }, []);
 
   if (!stream) {
