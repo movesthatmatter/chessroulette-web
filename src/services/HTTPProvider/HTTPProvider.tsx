@@ -7,17 +7,12 @@ type prop = {
 
 class HTTPProvider {
   constructor() {
-    this.initializeAxios(){
-        //setup axios
-    };
+    this.initializeAxios(){};
+  }  
+  requestNewGameToken() {
+    axios.post(prop.baseURL, prop.data)
+    .then((response: AxiosResponse) => console.log('YES WE GOT DATA', response.data))
+    .catch((err: AxiosError) => console.log('DAMN, WE GOT ERROR', err));
   }
-
-  // test method
-  getGameToken() {
-    console.log('GAME TOKEN');
-  }
-//   axios.post(prop.baseURL, prop.data)
-//     .then((response: AxiosResponse) => console.log('YES WE GOT DATA', response.data))
-//     .catch((err: AxiosError) => console.log('DAMN, WE GOT ERROR', err));
 }
 export default HTTPProvider;
