@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { LandingPage } from './modules/Landing/LandingPage';
+import { LandingPage } from './modules/Landing/LandingPage/LandingPage';
 import { GamePage } from './modules/Game/GamePage';
 import { createUseStyles } from './lib/jss/createUseStyles';
 

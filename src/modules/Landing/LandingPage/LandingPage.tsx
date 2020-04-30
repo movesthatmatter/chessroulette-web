@@ -1,15 +1,15 @@
 import React from 'react';
 import logo from 'src/assets/logo_black.svg';
 import { createUseStyles } from 'src/lib/jss';
-import { NavLink } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
+import { compose } from 'recompose';
 import { SplashScreenBoardWithButtons } from './components/SplashScreenBoardWithButtons';
 import { LobbyJoinCreatePop } from '../../LobbyJoinCreatePop/LobbyJoinCreatePop';
 import { withHTTPProvider } from '../../../services/HTTPProvider';
 
-
 type Props = {};
 
-export const LandingPage: React.FC<Props> = withHTTPProvider(() => {
+export const LandingPage: React.FC<Props> = compose(withRouter, withHTTPProvider)(() => {
   const cls = useStyles();
   return (
     <div className={cls.container}>
