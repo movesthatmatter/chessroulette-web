@@ -1,4 +1,5 @@
-import PubSub from 'pubsub-js';
+import { isLeft } from 'fp-ts/lib/Either';
+import { Pubsy } from 'src/lib/Pubsy';
 import {
   SignalingChannel,
   SignalingMessage,
@@ -6,14 +7,18 @@ import {
   SignalingMessageWithCandidate,
 } from './SignalingChannel';
 import { LocalStreamClient } from './LocalStreamClient';
-
-enum PubSubChannels {
-  onLocalStream = 'ON_LOCAL_STREAM',
-  onRemoteStream = 'ON_REMOTE_STREAM',
-}
+import { PeerMessage, peerMessage } from './records/MessagingPayload';
+import { PeerStream } from './types';
 
 export class WebRTCRemoteConnection {
+  private pubsy = new Pubsy<{
+    onRemoteStream: { peerId: string; stream: MediaStream };
+    onData: PeerMessage;
+  }>();
+
   private connection: RTCPeerConnection;
+
+  private dataChannel?: RTCDataChannel;
 
   constructor(
     private iceServers: RTCIceServer[],
@@ -26,6 +31,7 @@ export class WebRTCRemoteConnection {
     this.connection.onicecandidate = (event) => this.onicecandidate(event);
     this.connection.onnegotiationneeded = () => this.onnegotiationneeded();
     this.connection.ontrack = (event) => this.ontrack(event);
+    this.connection.ondatachannel = (event) => this.prepareDataChannel(event.channel);
     this.signalingChannel.onmessage = (msg) => this.onmessage(msg);
   }
 
@@ -49,8 +55,7 @@ export class WebRTCRemoteConnection {
   }
 
   private ontrack(event: RTCTrackEvent) {
-    console.log('on track gets called', event);
-    PubSub.publish(PubSubChannels.onRemoteStream, {
+    this.pubsy.publish('onRemoteStream', {
       peerId: this.peerId,
       stream: event.streams[0],
     });
@@ -66,7 +71,7 @@ export class WebRTCRemoteConnection {
         } else if (msg.desc.type === 'answer') {
           this.onSignalingAnswer(msg);
         } else {
-          console.log('Unsupported SDP type.', msg.desc);
+          console.warn('Unsupported SDP type.', msg.desc);
         }
       } else if (msg.candidate) {
         this.onSignalingCandidate(msg);
@@ -77,14 +82,12 @@ export class WebRTCRemoteConnection {
   }
 
   private async onSignallingOffer(msg: SignalingMessageWithDescription) {
-    console.log('WebRTC.onSignalingOffer', msg);
     await this.connection.setRemoteDescription(msg.desc);
 
     const localStream = await this.localStream.start();
 
     localStream.getTracks().forEach((track) => {
       // Send the Stream to the given Peer
-      console.log('Sending local stream - peer:', this.peerId, track);
       this.connection.addTrack(track, localStream);
     });
 
@@ -98,16 +101,14 @@ export class WebRTCRemoteConnection {
   }
 
   private async onSignalingAnswer(msg: SignalingMessageWithDescription) {
-    console.log('WebRTC.onSignalingAnswer', msg);
     await this.connection.setRemoteDescription(msg.desc);
   }
 
   private async onSignalingCandidate(msg: SignalingMessageWithCandidate) {
-    console.log('WebRTC.onSignalingCandidate', msg);
     await this.connection.addIceCandidate(msg.candidate);
   }
 
-  async start() {
+  async startAVChannel() {
     const localStream = await this.localStream.start();
 
     localStream.getTracks().forEach((track) => {
@@ -115,26 +116,62 @@ export class WebRTCRemoteConnection {
     });
   }
 
+  async startDataChannel() {
+    const dataChannel = this.connection.createDataChannel('dataChannel');
+
+    this.prepareDataChannel(dataChannel);
+  }
+
+  private prepareDataChannel(channel: RTCDataChannel) {
+    // channel.onopen = () => {};
+    // channel.onclose = () => {};
+
+    channel.onmessage = (event) => {
+      try {
+        const result = peerMessage.decode(JSON.parse(event.data));
+
+        if (isLeft(result)) {
+          console.error(
+            'WebRTCRemoteConnection: message received but cant be decoded',
+            event.data,
+          );
+
+          return;
+        }
+
+        this.pubsy.publish('onData', result.right);
+      } catch (e) {
+        console.error('WebRTCRemoteConnection: message received error', e, event.data);
+      }
+    };
+
+    this.dataChannel = channel;
+  }
+
   close() {
     this.connection.close();
   }
 
-  onRemoteStream = (fn: (peerId: string, stream: MediaStream) => void) => {
-    const token = PubSub.subscribe(
-      PubSubChannels.onRemoteStream,
-      (
-        _: string,
-        { peerId, stream }: { peerId: string; stream: MediaStream },
-      ) => fn(peerId, stream),
+  onRemoteStream = (
+    fn: (p: PeerStream) => void,
+  ) => this.pubsy.subscribe('onRemoteStream', fn);
+
+  onData = (
+    fn: (msg: PeerMessage) => void,
+  ) => this.pubsy.subscribe('onData', fn);
+
+  sendData(msg: Omit<PeerMessage, 'timestamp' | 'toPeerId'>) {
+    if (!this.dataChannel) {
+      console.warn('WebRTCRemoteConnection this.dataChannel not setup');
+      return;
+    }
+
+    this.dataChannel.send(
+      JSON.stringify({
+        ...msg,
+        timestamp: String(new Date().getTime()),
+        toPeerId: this.peerId,
+      }),
     );
-
-    // unsubscriber
-    return () => {
-      PubSub.unsubscribe(token);
-    };
-  }
-
-  onData = (fn: () => void) => {
-    // TODO
   }
 }

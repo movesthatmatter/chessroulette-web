@@ -1,12 +1,12 @@
-import PubSub from 'pubsub-js';
+import { Pubsy } from 'src/lib/Pubsy';
 
-
-enum PubSubChannels {
-  onStart = 'ON_START',
-  onStop = 'ON_STOP',
-}
 
 export class LocalStreamClient {
+  private pubsy = new Pubsy<{
+    onStart: MediaStream;
+    onStop: void;
+  }>();
+
   private stream?: MediaStream;
 
   hasStarted() {
@@ -23,7 +23,7 @@ export class LocalStreamClient {
       video: true,
     });
 
-    PubSub.publish(PubSubChannels.onStart, this.stream);
+    this.pubsy.publish('onStart', this.stream);
 
     return this.stream;
   }
@@ -35,28 +35,14 @@ export class LocalStreamClient {
 
     this.stream = undefined;
 
-    PubSub.publish(PubSubChannels.onStop, null);
+    this.pubsy.publish('onStop', undefined);
   }
 
   onStart(fn: (stream: MediaStream) => void) {
-    const token = PubSub.subscribe(
-      PubSubChannels.onStart,
-      (_: string, stream: MediaStream) => fn(stream),
-    );
-
-    return () => {
-      PubSub.unsubscribe(token);
-    };
+    return this.pubsy.subscribe('onStart', fn);
   }
 
   onStop(fn: () => void) {
-    const token = PubSub.subscribe(
-      PubSubChannels.onStop,
-      () => fn(),
-    );
-
-    return () => {
-      PubSub.unsubscribe(token);
-    };
+    return this.pubsy.subscribe('onStop', fn);
   }
 }

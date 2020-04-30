@@ -1,25 +1,30 @@
-import PubSub from 'pubsub-js';
 import { isLeft } from 'fp-ts/lib/Either';
+import { forward } from 'src/lib/forward';
+import { Pubsy } from 'src/lib/Pubsy';
 import { WssSignalingChannel } from './WssSignalingChannel';
 import {
   PeerNetworkRefreshPayload,
-  PeerJoinedRoomPayload,
   RoomRecord,
   socketMessagePayload,
   JoinRoomPayload,
   WebrtcInvitationPayload,
+  SocketMessagePayload,
 } from './records/SignalingPayload';
 import { WebRTCRemoteConnection } from './WebRTCRemoteConnection';
 import { LocalStreamClient } from './LocalStreamClient';
+import { PeerMessage } from './records/MessagingPayload';
+import { PeerStream } from './types';
 
-enum PubSubChannels {
-  onReadyStateChange = 'ON_READY_STATE_CHANGE',
-  onPeerStatusUpdate = 'ON_PEER_STATUS_UPDATE',
-  onRemoteStreamingStart = 'ON_REMOTE_STARTING_START',
-  onRemoteStreamingStop = 'ON_REMOTE_STARTING_STOP',
-}
 
 export class Peer2Peer {
+  private pubsy = new Pubsy<{
+    onReadyStateChange: boolean;
+    onPeerStatusUpdate: PeerNetworkRefreshPayload['content'];
+    onRemoteStreamingStart: { peerId: string; stream: MediaStream };
+    onRemoteStreamingStop: { peerId: string };
+    onPeerMessage: PeerMessage;
+  }>();
+
   private socket: WebSocket;
 
   private localStreamClient: LocalStreamClient;
@@ -29,7 +34,6 @@ export class Peer2Peer {
   onLocalStreamStart: (fn: (stream: MediaStream) => void) => () => void;
 
   onLocalStreamStop: (fn: () => void) => () => void;
-  // onData: typeof WebRTCClient.prototype.onData;
 
   constructor(
     private config: {
@@ -37,12 +41,8 @@ export class Peer2Peer {
       iceServers: RTCIceServer[];
     },
   ) {
-    console.log('Peer 2 peer constructor', config);
-    console.log('WebSocket', WebSocket);
-
     this.socket = new WebSocket(config.socketUrl);
 
-    console.log('socket', this.socket);
     this.localStreamClient = new LocalStreamClient();
 
     this.onLocalStreamStart = this.localStreamClient.onStart.bind(
@@ -53,30 +53,36 @@ export class Peer2Peer {
     );
 
     this.socket.onopen = () => {
-      PubSub.publish(PubSubChannels.onReadyStateChange, true);
+      this.pubsy.publish('onReadyStateChange', true);
     };
 
     this.socket.onclose = () => {
-      PubSub.publish(PubSubChannels.onReadyStateChange, false);
+      this.pubsy.publish('onReadyStateChange', false);
     };
 
-    this.socket.addEventListener('message', (event) => {
-      const decoded = socketMessagePayload.decode(JSON.parse(event.data));
+    forward<SocketMessagePayload>((fn) => {
+      const handler = (event: MessageEvent) => {
+        const decoded = socketMessagePayload.decode(JSON.parse(event.data));
 
-      if (isLeft(decoded)) {
-        console.warn(
-          'Peer2Peer:message received a non standard payload',
-          event.data,
-        );
-        return;
-      }
+        if (isLeft(decoded)) {
+          console.warn(
+            'Peer2Peer:message received a non standard payload',
+            event.data,
+          );
+          return;
+        }
 
-      const msg = decoded.right;
+        fn(decoded.right);
+      };
 
+      this.socket.addEventListener('message', handler);
+
+      return () => {
+        this.socket.removeEventListener('message', handler);
+      };
+    })((msg) => {
       if (msg.msg_type === 'peer_network_refresh') {
-        this.onPeerNetworkRefresh(msg.content);
-      } else if (msg.msg_type === 'peer_joined_room') {
-        this.onPeerJoinedRoom(msg.content);
+        this.pubsy.publish('onPeerStatusUpdate', msg.content);
       } else if (msg.msg_type === 'webrtc_invitation') {
         // When receiving a webrtc invitation only proceed if the localStreaming is started
         if (this.localStreamClient.hasStarted()) {
@@ -85,24 +91,12 @@ export class Peer2Peer {
           (async () => {
             const rtc = await this.prepareRTCConnection(msg.content.peer_id);
 
-            rtc.start();
-
-            console.log(
-              'STEP - webrtc_invitation received from',
-              msg.content.peer_id,
-              this.peerConnections,
-            );
-            // connection.start();
+            rtc.startAVChannel();
+            rtc.startDataChannel();
           })();
         }
       }
     });
-  }
-
-  private onPeerNetworkRefresh(status: PeerNetworkRefreshPayload['content']) {
-    console.log('Peer2Peer.onPeerNetworkRefresh', status);
-
-    PubSub.publish(PubSubChannels.onPeerStatusUpdate, status);
   }
 
   async joinRoom(p: { me: string; roomId: string }) {
@@ -114,33 +108,25 @@ export class Peer2Peer {
     };
 
     this.socket.send(JSON.stringify(payload));
-
-    console.log('STEP - joinRoom', this.peerConnections);
-
-    // this.startRoomStreaming(me, room);
   }
 
-  // TBD - deprecate as not needed anymore?
-  private async onPeerJoinedRoom(msg: PeerJoinedRoomPayload['content']) {
-    // This will be replaced by a peer_call message, which is more specific
-    //  and can be made at joining the room, at start time or at any other moment
-    console.log('Peer2Peer.onPeerJoinedRoom', msg);
-  }
+  // TODO: This should be called send data to peers
+  //  Or, hold the peers and me in here, which I don't agree with
+  async sendDataToRoom(me: string, room: RoomRecord, msg: string) {
+    const { [me]: removed, ...otherPeers } = room.peers;
 
-  private onPeerLeftRoom() {
-    // TBD
+    // Invite the all peers to connect
+    Object.keys(otherPeers).forEach((peerId) => {
+      this.peerConnections[peerId].sendData({
+        fromPeerId: me,
+        content: msg,
+      });
+    });
   }
 
   // Starts sending and receving streams with EVERY PEER in the room!
   async startRoomStreaming(me: string, room: RoomRecord) {
-    console.log('Peer2Peer.startRoomStreaming', room);
-
     await this.localStreamClient.start();
-
-    console.log(
-      'STEP - Start Room Streaming (local stream)',
-      this.peerConnections,
-    );
 
     const { [me]: removed, ...otherPeers } = room.peers;
 
@@ -153,8 +139,6 @@ export class Peer2Peer {
 
   stop() {
     this.localStreamClient.stop();
-
-    // TODO: Add remote stoppers
   }
 
   private async prepareRTCConnection(peerId: string) {
@@ -176,13 +160,13 @@ export class Peer2Peer {
 
     this.peerConnections[peerId] = rtc;
 
-    rtc.onRemoteStream((_, stream) => {
-      console.log('received remote stream', peerId, stream);
-
-      PubSub.publish(PubSubChannels.onRemoteStreamingStart, { peerId, stream });
+    rtc.onRemoteStream((s) => {
+      this.pubsy.publish('onRemoteStreamingStart', s);
     });
 
-    console.log('STEP - Prepare TRC Connection', peerId, this.peerConnections);
+    rtc.onData((msg) => {
+      this.pubsy.publish('onPeerMessage', msg);
+    });
 
     return this.peerConnections[peerId];
 
@@ -199,51 +183,30 @@ export class Peer2Peer {
       },
     };
 
-    console.log('STEP - Invite Peer', peerId, this.peerConnections);
-
     this.socket.send(JSON.stringify(payload));
   }
 
   close() {
-    // TBD - closing all of them or just 1
+    this.socket.close();
+
+    Object.values(this.peerConnections).forEach((connection) => {
+      connection.close();
+    });
   }
 
-  onReadyStateChange(fn: (ready: boolean) => void) {
-    const token = PubSub.subscribe(
-      PubSubChannels.onReadyStateChange,
-      (_: string, value: boolean) => fn(value),
-    );
+  onReadyStateChange = (
+    fn: (ready: boolean) => void,
+  ) => this.pubsy.subscribe('onReadyStateChange', fn);
 
-    // unsubscribe
-    return () => {
-      PubSub.unsubscribe(token);
-    };
-  }
-
-  onPeerStatusUpdate(
+  onPeerStatusUpdate = (
     fn: (status: PeerNetworkRefreshPayload['content']) => void,
-  ) {
-    const token = PubSub.subscribe(
-      PubSubChannels.onPeerStatusUpdate,
-      (_: string, value: PeerNetworkRefreshPayload['content']) => fn(value),
-    );
+  ) => this.pubsy.subscribe('onPeerStatusUpdate', fn);
 
-    return () => {
-      PubSub.unsubscribe(token);
-    };
-  }
+  onRemoteStreamingStart = (
+    fn: (p: PeerStream) => void,
+  ) => this.pubsy.subscribe('onRemoteStreamingStart', fn)
 
-  onRemoteStreamingStart(fn: (peerId: string, stream: MediaStream) => void) {
-    const token = PubSub.subscribe(
-      PubSubChannels.onRemoteStreamingStart,
-      (
-        _: string,
-        { peerId, stream }: { peerId: string; stream: MediaStream },
-      ) => fn(peerId, stream),
-    );
-
-    return () => {
-      PubSub.unsubscribe(token);
-    };
-  }
+  onData = (
+    fn: (msg: PeerMessage) => void,
+  ) => this.pubsy.subscribe('onPeerMessage', fn)
 }
