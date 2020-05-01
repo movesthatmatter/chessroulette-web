@@ -96,7 +96,7 @@ export const GameRoom: React.FC<Props> = ({
               <AVStream
                 stream={stream}
                 autoPlay
-                muted
+                muted={false}
                 // muted={false}
                 className={cls.avStream}
               />
