@@ -22,10 +22,12 @@ export const ChatBox: React.FC<Props> = ({
   return (
     <div className={cls.container}>
       <div className={cls.messageHistory}>
-        {messages.map((msg) => (
-          <div className={cx(cls.message, {
-            [cls.myMessage]: msg.fromPeerId === me,
-          })}
+        {messages.map((msg, i) => (
+          <div
+            key={`${msg.timestamp + i}`}
+            className={cx(cls.message, {
+              [cls.myMessage]: msg.fromPeerId === me,
+            })}
           >
             <div>{msg.fromPeerId}</div>
             <div className={cx(cls.messageContent, {

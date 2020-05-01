@@ -4,6 +4,7 @@ import { PeerStream } from 'src/services/peer2peer/types';
 import { AVStream } from 'src/components/AVStream';
 import { ChatBox } from 'src/components/ChatBox';
 import { noop } from 'src/lib/util';
+import { PeerMessage } from 'src/services/peer2peer/records/MessagingPayload';
 import { ChessGame, ChessPlayers, ChessGameFen } from '../Games/Chess';
 
 type Props = {
@@ -13,6 +14,8 @@ type Props = {
     players: ChessPlayers; // generalize it
     fen?: ChessGameFen;
   };
+  chatHistory?: PeerMessage[];
+  onNewChatMessage?: (msg: string) => void;
   onGameStateUpdate?: (nextState: ChessGameFen) => void;
   localStream?: MediaStream;
   remoteStreams?: PeerStream[];
@@ -33,7 +36,9 @@ const fakePlayers: ChessPlayers = {
 export const GameRoom: React.FC<Props> = ({
   me,
   onNewGame = noop,
+  onNewChatMessage = noop,
   onGameStateUpdate = noop,
+  chatHistory = [],
   ...props
 }) => {
   const cls = useStyles();
@@ -44,13 +49,14 @@ export const GameRoom: React.FC<Props> = ({
         <div>{`Me: ${me}`}</div>
         {props.peers.filter((p) => p !== me).map((peer) => (
           <div key={peer}>
+            {peer}
             {/* {props.currentGame} */}
-            <button
+            {/* <button
               onClick={() => onNewGame([me, peer])}
               type="button"
             >
-              {`Play ${peer}`}
-            </button>
+              {`Play ${peer}`} */}
+            {/* </button> */}
           </div>
         ))}
       </div>
@@ -64,6 +70,7 @@ export const GameRoom: React.FC<Props> = ({
                 stream={stream}
                 autoPlay
                 muted
+                // muted={false}
                 className={cls.avStream}
               />
               <button
@@ -92,8 +99,9 @@ export const GameRoom: React.FC<Props> = ({
       </div>
       <div className={cls.chatBox}>
         <ChatBox
-          messages={[]}
+          messages={chatHistory}
           me={me}
+          onSend={onNewChatMessage}
         />
       </div>
     </div>

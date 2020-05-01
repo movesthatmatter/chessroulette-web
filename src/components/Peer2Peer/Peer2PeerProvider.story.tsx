@@ -18,8 +18,7 @@ export const defaultStory = () =>
         wssUrl="ws://127.0.0.1:7777"
         // wssUrl="wss://dstnd-server.herokuapp.com"
         iceServersURLs={['stun:stun.ideasip.com']}
-        onData={(msg) => {
-          // console.log('Peer Msg received [at story]', msg);
+        onPeerMsgReceived={(msg) => {
           setMsgHistory([...msgHistory, msg]);
         }}
         render={({
@@ -29,7 +28,7 @@ export const defaultStory = () =>
           peerStatus,
           localStream,
           remoteStreams,
-          sendData,
+          sendPeerData,
         }) => (
           <>
             {peerStatus.joined_room ? (
@@ -111,7 +110,10 @@ export const defaultStory = () =>
                           type="button"
                           disabled={currentMessage.length === 0}
                           onClick={() => {
-                            sendData(currentMessage);
+                            sendPeerData({
+                              msgType: 'chatMessage',
+                              content: currentMessage,
+                            });
 
                             const myMsg: PeerMessage = {
                               fromPeerId: peerStatus.me,
@@ -208,7 +210,7 @@ const PeerWindow: React.FunctionComponent<PeerWindowProps> = (props) => {
       wssUrl="ws://127.0.0.1:7777"
       // wssUrl="wss://dstnd-server.herokuapp.com"
       iceServersURLs={['stun:stun.ideasip.com']}
-      onData={(msg) => {
+      onPeerMsgSent={(msg) => {
         // console.log('Peer Msg received [at story]', msg);
         setMsgHistory([...msgHistory, msg]);
       }}
@@ -218,7 +220,7 @@ const PeerWindow: React.FunctionComponent<PeerWindowProps> = (props) => {
         peerStatus,
         joinRoom,
         localStream,
-        sendData,
+        sendPeerData,
       }) => (
         <>
           {peerStatus.joined_room ? (
@@ -260,7 +262,10 @@ const PeerWindow: React.FunctionComponent<PeerWindowProps> = (props) => {
                       type="button"
                       disabled={currentMessage.length === 0}
                       onClick={() => {
-                        sendData(currentMessage);
+                        sendPeerData({
+                          msgType: 'chatMessage',
+                          content: currentMessage,
+                        });
 
                         const myMsg: PeerMessage = {
                           fromPeerId: peerStatus.me,

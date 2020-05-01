@@ -5,10 +5,11 @@ import { Peer2PeerProvider } from 'src/components/Peer2Peer';
 import { shuffle } from 'src/lib/util';
 import { isLeft } from 'fp-ts/lib/Either';
 import { PeerMessage } from 'src/services/peer2peer/records/MessagingPayload';
+import { Result, Err, Ok } from 'ts-results';
 import { GameRoom } from './GameRoom';
 import { ChessGameFen, ChessGameState } from '../Games/Chess';
 import {
-  peerDataRecord, GameUpdateRecord, GameInvitationRecord, GameStartedRecord,
+  peerDataRecord, GameStartedRecord, ChatMessageRecord, PeerDataRecord,
 } from './peerDataRecord';
 
 export default {
@@ -74,6 +75,21 @@ export const mockedPeers = () => React.createElement(() => {
   );
 });
 
+const decodePeerData = (payload: string): Result<PeerDataRecord, 'BadFormat' | 'BadType'> => {
+  try {
+    const decoded = peerDataRecord.decode(JSON.parse(payload));
+
+    if (isLeft(decoded)) {
+      console.warn('GameRoom could decode data', payload);
+      return new Err('BadType');
+    }
+
+    return new Ok(decoded.right);
+  } catch (e) {
+    return new Err('BadFormat');
+  }
+};
+
 export const realDeal = () => React.createElement(() => {
   const [chatHistory, setChatHistory] = useState<PeerMessage[]>([]);
   const [currentGame, setCurrentGame] = useState<ChessGameState | undefined>();
@@ -108,24 +124,35 @@ export const realDeal = () => React.createElement(() => {
     <>
       <Peer2PeerProvider
         ref={p2pProviderRef}
-        wssUrl="ws://127.0.0.1:7777"
-        // wssUrl="wss://dstnd-server.herokuapp.com"
+        // wssUrl="ws://127.0.0.1:7777"
+        wssUrl="wss://dstnd-server.herokuapp.com"
         iceServersURLs={['stun:stun.ideasip.com']}
         renderLoading={() => (
           <p>Loading Connection...</p>
         )}
-        onData={(payload, { sendData, peerStatus }) => {
-          try {
-            console.log('on peer data', payload);
-            const decoded = peerDataRecord.decode(JSON.parse(payload.content));
-
-            if (isLeft(decoded)) {
-              console.warn('GameRoom could decode data', payload);
-              return;
-            }
-
-            const msg = decoded.right;
-
+        onPeerMsgSent={(payload) => {
+          decodePeerData(payload.content).map(
+            (msg) => {
+              if (msg.msgType === 'chatMessage') {
+                setChatHistory((prev) => [
+                  ...prev,
+                  {
+                    // This is a hack to unwrap the content only
+                    ...payload,
+                    content: msg.content,
+                  },
+                ]);
+              } else if (msg.msgType === 'gameStarted') {
+                setCurrentGame(msg.content);
+              } else if (msg.msgType === 'gameUpdate') {
+                // Not sure this is good here as the result should be instant
+                updateGameStateFen(msg.content.fen);
+              }
+            },
+          );
+        }}
+        onPeerMsgReceived={(payload, { sendPeerData, peerStatus }) => {
+          decodePeerData(payload.content).map((msg) => {
             if (msg.msgType === 'chatMessage') {
               setChatHistory((prev) => [
                 ...prev,
@@ -136,7 +163,7 @@ export const realDeal = () => React.createElement(() => {
                 },
               ]);
             } else if (msg.msgType === 'gameInvitation') {
-              console.log('game invitation', msg, msg.content.to !== peerStatus.me);
+              // console.log('game invitation', msg, msg.content.to !== peerStatus.me);
               // If the invitation is not to me return early
               if (msg.content.to !== peerStatus.me) {
                 return;
@@ -146,7 +173,6 @@ export const realDeal = () => React.createElement(() => {
 
               const whitePlayer = newGame.players.white;
               const blackPlayer = newGame.players.black;
-
 
               // Oterwise Accept it right awaiy for now
               const returnMsgPayload: GameStartedRecord = {
@@ -162,24 +188,18 @@ export const realDeal = () => React.createElement(() => {
               };
 
               // Send the game to the peers
-              sendData(JSON.stringify(returnMsgPayload));
-
-              // add update locally too
-              setCurrentGame(newGame);
-              // send
+              sendPeerData(returnMsgPayload);
             } else if (msg.msgType === 'gameStarted') {
               setCurrentGame(msg.content);
             } else if (msg.msgType === 'gameUpdate') {
               updateGameStateFen(msg.content.fen);
             }
-          } catch (e) {
-            console.warn('GameRoom could NOT parse data', payload);
-          }
+          });
         }}
         render={({
           remoteStreams,
           peerStatus,
-          sendData,
+          sendPeerData,
           joinRoom,
           start,
           localStream,
@@ -191,30 +211,32 @@ export const realDeal = () => React.createElement(() => {
                 currentGame={currentGame}
                 remoteStreams={Object.values(remoteStreams || {})}
                 me={peerStatus.me}
+                chatHistory={chatHistory}
+                onNewChatMessage={(content) => {
+                  const chatMsgPayload: ChatMessageRecord = {
+                    msgType: 'chatMessage',
+                    content,
+                  };
+
+                  sendPeerData(chatMsgPayload);
+                }}
                 peers={Object.keys(peerStatus.joined_room.peers)}
                 onNewGame={async (peers) => {
-                  const msgPayload: GameInvitationRecord = {
+                  sendPeerData({
                     msgType: 'gameInvitation',
                     gameType: 'chess',
                     content: {
                       from: peers[0],
                       to: peers[1],
                     },
-                  };
-
-                  sendData(JSON.stringify(msgPayload));
+                  });
                 }}
                 onGameStateUpdate={(fen) => {
-                  const msgPayload: GameUpdateRecord = {
+                  sendPeerData({
                     msgType: 'gameUpdate',
                     gameType: 'chess',
                     content: { fen },
-                  };
-
-                  sendData(JSON.stringify(msgPayload));
-
-                  // This should be updated somehow from the state but it's fine for now
-                  updateGameStateFen(fen);
+                  });
                 }}
               />
             ) : (
@@ -246,13 +268,11 @@ export const realDeal = () => React.createElement(() => {
                     ))}
                   </div>
                 )}
-
               </>
             )}
           </>
         )}
       />
     </>
-
   );
 });
