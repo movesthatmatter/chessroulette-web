@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import { ChessBoard } from '../ChessBoard';
@@ -22,34 +22,14 @@ type GameState = {
 
 export const ChessGame: React.FunctionComponent<Props> = ({
   onMove = noop,
-  fen,
+  fen = getNewChessGame().fen(),
   allowSinglePlayerPlay = false,
   playable = true,
   ...props
 }) => {
   const cls = useStyles();
-  const [gameState, setGameState] = useState<GameState>({
-    fen: fen || 'start',
-  });
-  const game = useRef(getNewChessGame()).current;
 
   const awayColor = props.homeColor === 'white' ? 'black' : 'white';
-
-  // Update the state from the prop
-  // In the future, the state could only be set from outside - thinking of a case where
-  //  the "fen" comes from a server like lichess.org
-  useEffect(() => {
-    if (fen) {
-      setGameState((prevState) => ({
-        ...prevState,
-        fen,
-      }));
-    }
-  }, [fen]);
-
-  useEffect(() => {
-    onMove(gameState.fen);
-  }, [gameState]);
 
   return (
     <div className={cls.container}>
@@ -58,7 +38,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
       </div>
       <ChessBoard
         orientation={props.homeColor}
-        position={gameState.fen}
+        position={fen}
         allowDrag={(p) => {
           if (!playable) {
             return false;
@@ -66,20 +46,19 @@ export const ChessGame: React.FunctionComponent<Props> = ({
           return allowSinglePlayerPlay || p.piece.slice(0, 1) === props.homeColor.slice(0, 1);
         }}
         onDrop={({ sourceSquare, targetSquare }) => {
+          const game = getNewChessGame(fen);
+
           // see if the move is legal
           const validMove = game.move({
             from: sourceSquare,
             to: targetSquare,
           });
 
-          if (validMove === null) {
-            return;
-          }
+          if (validMove !== null) {
+            const nextFen = game.fen();
 
-          setGameState((prevState) => ({
-            ...prevState,
-            fen: game.fen(),
-          }));
+            onMove(nextFen);
+          }
         }}
       />
       <div className={cls.playerInfo}>

@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState, useEffect } from 'react';
-import { action } from '@storybook/addon-actions';
 import { noop } from 'src/lib/util';
 import { ChessGame } from './ChessGame';
 import { getNewChessGame, ChessInstance } from '../../lib/sdk';
@@ -43,13 +42,23 @@ export const asWhite = () => (
 export const asBlack = () => (
   <ChessGame homeColor="black" players={mockPlayers} />
 );
-export const withLoggingOnMove = () => (
-  <ChessGame
-    homeColor="black"
-    onMove={action('onMove')}
-    players={mockPlayers}
-  />
-);
+export const withLoggingOnMove = () => React.createElement(() => {
+  const [fen, setFen] = useState<string | undefined>();
+
+  return (
+    <ChessGame
+      homeColor="white"
+      onMove={(newFen) => {
+        setFen(newFen);
+        // action('onMove', newFen)();
+      }}
+      players={mockPlayers}
+      allowSinglePlayerPlay
+      fen={fen}
+    />
+  );
+});
+
 export const withStartedGame = () => (
   <ChessGame
     homeColor="black"
