@@ -15,8 +15,8 @@ export const defaultStory = () =>
 
     return (
       <Peer2PeerProvider
-        // wssUrl="ws://127.0.0.1:7777"
-        wssUrl="wss://dstnd-server.herokuapp.com"
+        wssUrl="ws://127.0.0.1:7777"
+        // wssUrl="wss://dstnd-server.herokuapp.com"
         iceServersURLs={['stun:stun.ideasip.com']}
         onData={(msg) => {
           // console.log('Peer Msg received [at story]', msg);
@@ -205,7 +205,6 @@ const PeerWindow: React.FunctionComponent<PeerWindowProps> = (props) => {
 
   return (
     <Peer2PeerProvider
-      id={props.windowId}
       wssUrl="ws://127.0.0.1:7777"
       // wssUrl="wss://dstnd-server.herokuapp.com"
       iceServersURLs={['stun:stun.ideasip.com']}
@@ -222,14 +221,8 @@ const PeerWindow: React.FunctionComponent<PeerWindowProps> = (props) => {
         sendData,
       }) => (
         <>
-          {/* {console.log('Peer Status for window', props.windowId, peerStatus)} */}
           {peerStatus.joined_room ? (
             <div>
-              {/* Start the room automatically */}
-              {/* {!started && (() => {
-                start();
-                setStarted(true);
-              })()} */}
               <div>
                 <p>{`Me: ${peerStatus.me}`}</p>
                 {started ? (
