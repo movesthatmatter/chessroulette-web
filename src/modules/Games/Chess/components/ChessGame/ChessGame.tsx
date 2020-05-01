@@ -23,7 +23,7 @@ type GameState = {
 export const ChessGame: React.FunctionComponent<Props> = ({
   onMove = noop,
   fen,
-  allowSinglePlayerPlay = true,
+  allowSinglePlayerPlay = false,
   playable = true,
   ...props
 }) => {
@@ -59,8 +59,12 @@ export const ChessGame: React.FunctionComponent<Props> = ({
       <ChessBoard
         orientation={props.homeColor}
         position={gameState.fen}
-        allowDrag={(p) =>
-          (playable && allowSinglePlayerPlay) || p.piece.slice(0, 1) === props.homeColor.slice(0, 1)}
+        allowDrag={(p) => {
+          if (!playable) {
+            return false;
+          }
+          return allowSinglePlayerPlay || p.piece.slice(0, 1) === props.homeColor.slice(0, 1);
+        }}
         onDrop={({ sourceSquare, targetSquare }) => {
           // see if the move is legal
           const validMove = game.move({

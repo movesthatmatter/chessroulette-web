@@ -48,54 +48,56 @@ export const GameRoomContainer: React.FC = () => {
     } as const;
   };
 
+  const updateChatHistory = (msg: ChatMessageRecord, envelope: PeerMessage) => {
+    setChatHistory((prev) => [
+      ...prev,
+      {
+        // This is a hack to unwrap the content only
+        ...envelope,
+        content: msg.content,
+      },
+    ]);
+  };
+
   const updateGameStateFen = (fen?: ChessGameFen) => {
     setCurrentGame((prev) => prev && ({
       ...prev,
       fen,
     }));
+
+    console.log('Game updated to', fen);
   };
 
   return (
     <>
       <Peer2PeerProvider
-        // wssUrl="ws://127.0.0.1:7777"
-        wssUrl="wss://dstnd-server.herokuapp.com"
+        wssUrl="ws://127.0.0.1:7777"
+        // wssUrl="wss://dstnd-server.herokuapp.com"
         iceServersURLs={['stun:stun.ideasip.com']}
         renderLoading={() => (
           <p>Loading Connection...</p>
         )}
-        onPeerMsgSent={(payload) => {
-          decodePeerData(payload.content).map(
+        onPeerMsgSent={(envelope) => {
+          console.log('- peer msg envelope sent', envelope);
+          decodePeerData(envelope.content).map(
             (msg) => {
               if (msg.msgType === 'chatMessage') {
-                setChatHistory((prev) => [
-                  ...prev,
-                  {
-                    // This is a hack to unwrap the content only
-                    ...payload,
-                    content: msg.content,
-                  },
-                ]);
+                updateChatHistory(msg, envelope);
               } else if (msg.msgType === 'gameStarted') {
                 setCurrentGame(msg.content);
               } else if (msg.msgType === 'gameUpdate') {
                 // Not sure this is good here as the result should be instant
                 updateGameStateFen(msg.content.fen);
+                console.log('sent game update', msg);
               }
             },
           );
         }}
-        onPeerMsgReceived={(payload, { sendPeerData, peerStatus }) => {
-          decodePeerData(payload.content).map((msg) => {
+        onPeerMsgReceived={(envelope, { sendPeerData, peerStatus }) => {
+          decodePeerData(envelope.content).map((msg) => {
+            console.log('+ peer msg envelope received', envelope);
             if (msg.msgType === 'chatMessage') {
-              setChatHistory((prev) => [
-                ...prev,
-                {
-                  // This is a hack to unwrap the content only
-                  ...payload,
-                  content: msg.content,
-                },
-              ]);
+              updateChatHistory(msg, envelope);
             } else if (msg.msgType === 'gameInvitation') {
               // console.log('game invitation', msg, msg.content.to !== peerStatus.me);
               // If the invitation is not to me return early
@@ -126,6 +128,7 @@ export const GameRoomContainer: React.FC = () => {
             } else if (msg.msgType === 'gameStarted') {
               setCurrentGame(msg.content);
             } else if (msg.msgType === 'gameUpdate') {
+              console.log('received game update', msg);
               updateGameStateFen(msg.content.fen);
             }
           });
@@ -141,28 +144,25 @@ export const GameRoomContainer: React.FC = () => {
           <>
             {peerStatus.joined_room && localStream ? (
               <GameRoom
-              // players={currentGame?.players}
-                currentGame={currentGame}
-                remoteStreams={Object.values(remoteStreams || {})}
                 me={peerStatus.me}
+                peers={Object.keys(peerStatus.joined_room.peers)}
+                remoteStreams={Object.values(remoteStreams || {})}
+                localStream={localStream}
+
                 chatHistory={chatHistory}
                 onNewChatMessage={(content) => {
-                  const chatMsgPayload: ChatMessageRecord = {
+                  sendPeerData({
                     msgType: 'chatMessage',
                     content,
-                  };
-
-                  sendPeerData(chatMsgPayload);
+                  });
                 }}
-                peers={Object.keys(peerStatus.joined_room.peers)}
-                onNewGame={async (peers) => {
+
+                currentGame={currentGame}
+                onNewGame={(peers) => {
                   sendPeerData({
                     msgType: 'gameInvitation',
                     gameType: 'chess',
-                    content: {
-                      from: peers[0],
-                      to: peers[1],
-                    },
+                    content: peers,
                   });
                 }}
                 onGameStateUpdate={(fen) => {
