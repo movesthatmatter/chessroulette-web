@@ -16,7 +16,6 @@ export const decodePeerData = (payload: string): Result<PeerDataRecord, 'BadForm
     const decoded = peerDataRecord.decode(JSON.parse(payload));
 
     if (isLeft(decoded)) {
-      console.warn('GameRoom could decode data', payload);
       return new Err('BadType');
     }
 
@@ -64,8 +63,6 @@ export const GameRoomContainer: React.FC = () => {
       ...prev,
       fen,
     }));
-
-    console.log('Game updated to', fen);
   };
 
   return (
@@ -78,7 +75,6 @@ export const GameRoomContainer: React.FC = () => {
           <p>Loading Connection...</p>
         )}
         onPeerMsgSent={(envelope) => {
-          console.log('- peer msg envelope sent', envelope);
           decodePeerData(envelope.content).map(
             (msg) => {
               if (msg.msgType === 'chatMessage') {
@@ -88,14 +84,12 @@ export const GameRoomContainer: React.FC = () => {
               } else if (msg.msgType === 'gameUpdate') {
                 // Not sure this is good here as the result should be instant
                 updateGameStateFen(msg.content.fen);
-                console.log('sent game update', msg);
               }
             },
           );
         }}
         onPeerMsgReceived={(envelope, { sendPeerData, peerStatus }) => {
           decodePeerData(envelope.content).map((msg) => {
-            console.log('+ peer msg envelope received', envelope);
             if (msg.msgType === 'chatMessage') {
               updateChatHistory(msg, envelope);
             } else if (msg.msgType === 'gameInvitation') {
@@ -128,7 +122,6 @@ export const GameRoomContainer: React.FC = () => {
             } else if (msg.msgType === 'gameStarted') {
               setCurrentGame(msg.content);
             } else if (msg.msgType === 'gameUpdate') {
-              console.log('received game update', msg);
               updateGameStateFen(msg.content.fen);
             }
           });

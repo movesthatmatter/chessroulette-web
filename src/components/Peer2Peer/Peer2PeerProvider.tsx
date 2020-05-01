@@ -84,7 +84,6 @@ export class Peer2PeerProvider extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    // console.log('P2P instantiating');
     this.p2p = new Peer2Peer({
       socketUrl: this.props.wssUrl,
       iceServers: [
@@ -129,7 +128,6 @@ export class Peer2PeerProvider extends React.Component<Props, State> {
 
     this.unsubscribeFromRemoteStreamStart = this.p2p.onRemoteStreamingStart(
       ({ peerId, stream }) => {
-        // console.log('received stream in provider', peerId, remoteStream.id);
         this.setState(
           (prevState) => ({
             ...prevState,
