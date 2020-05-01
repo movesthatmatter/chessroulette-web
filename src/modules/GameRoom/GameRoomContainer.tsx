@@ -66,140 +66,139 @@ export const GameRoomContainer: React.FC = () => {
   };
 
   return (
-    <>
-      <Peer2PeerProvider
-        wssUrl="ws://127.0.0.1:7777"
-        // wssUrl="wss://dstnd-server.herokuapp.com"
-        iceServersURLs={['stun:stun.ideasip.com']}
-        renderLoading={() => (
-          <p>Loading Connection...</p>
-        )}
-        onPeerMsgSent={(envelope) => {
-          decodePeerData(envelope.content).map(
-            (msg) => {
-              if (msg.msgType === 'chatMessage') {
-                updateChatHistory(msg, envelope);
-              } else if (msg.msgType === 'gameStarted') {
-                setCurrentGame(msg.content);
-              } else if (msg.msgType === 'gameUpdate') {
-                // Not sure this is good here as the result should be instant
-                updateGameStateFen(msg.content.fen);
-              }
-            },
-          );
-        }}
-        onPeerMsgReceived={(envelope, { sendPeerData, peerStatus }) => {
-          decodePeerData(envelope.content).map((msg) => {
+    <Peer2PeerProvider
+      // wssUrl="ws://127.0.0.1:7777"
+      wssUrl="wss://dstnd-server.herokuapp.com"
+      iceServersURLs={['stun:stun.ideasip.com']}
+      renderLoading={() => (
+        <p>Loading Connection...</p>
+      )}
+      onPeerMsgSent={(envelope) => {
+        decodePeerData(envelope.content).map(
+          (msg) => {
             if (msg.msgType === 'chatMessage') {
               updateChatHistory(msg, envelope);
-            } else if (msg.msgType === 'gameInvitation') {
-              // console.log('game invitation', msg, msg.content.to !== peerStatus.me);
-              // If the invitation is not to me return early
-              if (msg.content.to !== peerStatus.me) {
-                return;
-              }
-
-              const newGame = getNewChessGame([msg.content.from, msg.content.to]);
-
-              const whitePlayer = newGame.players.white;
-              const blackPlayer = newGame.players.black;
-
-              // Oterwise Accept it right awaiy for now
-              const returnMsgPayload: GameStartedRecord = {
-                msgType: 'gameStarted',
-                gameType: 'chess',
-                content: {
-                  players: {
-                    white: whitePlayer,
-                    black: blackPlayer,
-                  },
-                  fen: newGame.fen,
-                },
-              };
-
-              // Send the game to the peers
-              sendPeerData(returnMsgPayload);
             } else if (msg.msgType === 'gameStarted') {
               setCurrentGame(msg.content);
             } else if (msg.msgType === 'gameUpdate') {
+              // Not sure this is good here as the result should be instant
               updateGameStateFen(msg.content.fen);
             }
-          });
-        }}
-        render={({
-          remoteStreams,
-          peerStatus,
-          sendPeerData,
-          joinRoom,
-          start,
-          localStream,
-        }) => (
-          <>
-            {peerStatus.joined_room && localStream ? (
-              <GameRoom
-                me={peerStatus.me}
-                peers={Object.keys(peerStatus.joined_room.peers)}
-                remoteStreams={Object.values(remoteStreams || {})}
-                localStream={localStream}
+          },
+        );
+      }}
+      onPeerMsgReceived={(envelope, { sendPeerData, peerStatus }) => {
+        decodePeerData(envelope.content).map((msg) => {
+          if (msg.msgType === 'chatMessage') {
+            updateChatHistory(msg, envelope);
+          } else if (msg.msgType === 'gameInvitation') {
+            // console.log('game invitation', msg, msg.content.to !== peerStatus.me);
+            // If the invitation is not to me return early
+            if (msg.content.to !== peerStatus.me) {
+              return;
+            }
 
-                chatHistory={chatHistory}
-                onNewChatMessage={(content) => {
-                  sendPeerData({
-                    msgType: 'chatMessage',
-                    content,
-                  });
-                }}
+            const newGame = getNewChessGame([msg.content.from, msg.content.to]);
 
-                currentGame={currentGame}
-                onNewGame={(peers) => {
-                  sendPeerData({
-                    msgType: 'gameInvitation',
-                    gameType: 'chess',
-                    content: peers,
-                  });
-                }}
-                onGameStateUpdate={(fen) => {
-                  sendPeerData({
-                    msgType: 'gameUpdate',
-                    gameType: 'chess',
-                    content: { fen },
-                  });
-                }}
-              />
-            ) : (
-              <>
-                {peerStatus.joined_room ? (
-                  <div style={{ display: 'flex' }}>
-                    <button type="button" onClick={() => start()}>
-                      Start RTC
-                    </button>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex' }}>
-                    <p>Rooms:</p>
-                    {Object.keys(peerStatus.all_rooms).map((room) => (
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                        }}
-                        key={room}
-                      >
-                        <button type="button" onClick={() => joinRoom(room)}>
-                          Join $
-                          {room}
-                          {' '}
-                          Room
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </>
-        )}
-      />
-    </>
+            const whitePlayer = newGame.players.white;
+            const blackPlayer = newGame.players.black;
+
+            // Oterwise Accept it right awaiy for now
+            const returnMsgPayload: GameStartedRecord = {
+              msgType: 'gameStarted',
+              gameType: 'chess',
+              content: {
+                players: {
+                  white: whitePlayer,
+                  black: blackPlayer,
+                },
+                fen: newGame.fen,
+              },
+            };
+
+            // Send the game to the peers
+            sendPeerData(returnMsgPayload);
+          } else if (msg.msgType === 'gameStarted') {
+            setCurrentGame(msg.content);
+          } else if (msg.msgType === 'gameUpdate') {
+            updateGameStateFen(msg.content.fen);
+          }
+        });
+      }}
+      render={({
+        remoteStreams,
+        peerStatus,
+        sendPeerData,
+        joinRoom,
+        start,
+        localStream,
+      }) => (
+        <>
+          {peerStatus.joined_room && localStream ? (
+            <GameRoom
+              me={peerStatus.me}
+              peers={Object.keys(peerStatus.joined_room.peers)}
+              remoteStreams={Object.values(remoteStreams || {})}
+              localStream={localStream}
+
+              chatHistory={chatHistory}
+              onNewChatMessage={(content) => {
+                sendPeerData({
+                  msgType: 'chatMessage',
+                  content,
+                });
+              }}
+
+              currentGame={currentGame}
+              onNewGame={(peers) => {
+                sendPeerData({
+                  msgType: 'gameInvitation',
+                  gameType: 'chess',
+                  content: peers,
+                });
+              }}
+              onGameStateUpdate={(fen) => {
+                sendPeerData({
+                  msgType: 'gameUpdate',
+                  gameType: 'chess',
+                  content: { fen },
+                });
+              }}
+            />
+          ) : (
+            <>
+              {peerStatus.joined_room ? (
+                <div style={{ display: 'flex' }}>
+                  <button type="button" onClick={() => start()}>
+                    Start RTC
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'flex' }}>
+                  <p>Rooms:</p>
+                  {Object.keys(peerStatus.all_rooms).map((room) => (
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                      }}
+                      key={room}
+                    >
+                      <button type="button" onClick={() => joinRoom(room)}>
+                        Join $
+                        {room}
+                        {' '}
+                        Room
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </>
+      )}
+    />
+
   );
 };
