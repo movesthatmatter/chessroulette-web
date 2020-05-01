@@ -1,5 +1,5 @@
 import * as io from 'io-ts';
-import { chessGameState, chessGameStateFen } from '../Games/Chess';
+import { chessGameState, chessGameStateFen } from '../../Games/Chess';
 
 const availableGames = io.type({
   chess: io.null,
@@ -44,27 +44,21 @@ export const gameFinishedRecord = io.type({
   content: chessGameState,
 });
 
-export const chatMessageRecord = io.type({
-  msgType: io.literal('chatMessage'),
-  content: io.string,
-});
-
-export const peerDataRecord = io.union([
+export const gameDataRecord = io.union([
   gameUpdateRecord,
   gameInvitationRecord,
   gameInvitationRefusalRecord,
   gameStartedRecord,
   gameFinishedRecord,
-  chatMessageRecord,
 ]);
 
 
 export type GameUpdateRecord = io.TypeOf<typeof gameUpdateRecord>;
-export type ChatMessageRecord = io.TypeOf<typeof chatMessageRecord>;
+
 export type GameInvitationRecord = io.TypeOf<typeof gameInvitationRecord>;
 export type GameInvitationRefusalRecord = io.TypeOf<typeof gameInvitationRefusalRecord>;
 export type GameStartedRecord = io.TypeOf<typeof gameStartedRecord>;
 export type GameFinishedRecord = io.TypeOf<typeof gameFinishedRecord>;
 
 
-export type PeerDataRecord = io.TypeOf<typeof peerDataRecord>;
+export type GameDataRecord = io.TypeOf<typeof gameDataRecord>;

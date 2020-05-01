@@ -4,8 +4,9 @@ import {
   PeerNetworkRefreshPayload,
   RoomRecord,
 } from 'src/services/peer2peer/records/SignalingPayload';
-import { PeerMessage } from 'src/services/peer2peer/records/MessagingPayload';
-import { PeerDataRecord } from 'src/modules/GameRoom/peerDataRecord';
+import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
+import { PeerDataRecord } from 'src/modules/GameRoom/records/PeerDataRecord';
+// import { PeerDataRecord } from 'src/modules/Game/records/GameDataRecord';
 
 type RenderProps = {
   joinRoom: (roomId: string) => void;

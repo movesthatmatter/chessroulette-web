@@ -4,7 +4,7 @@ import { PeerStream } from 'src/services/peer2peer/types';
 import { AVStream } from 'src/components/AVStream';
 import { ChatBox } from 'src/components/ChatBox';
 import { noop } from 'src/lib/util';
-import { PeerMessage } from 'src/services/peer2peer/records/MessagingPayload';
+import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
 import { ChessGame, ChessPlayers, ChessGameFen } from '../Games/Chess';
 
 type Props = {

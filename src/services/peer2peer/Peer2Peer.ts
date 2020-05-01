@@ -12,7 +12,7 @@ import {
 } from './records/SignalingPayload';
 import { WebRTCRemoteConnection } from './WebRTCRemoteConnection';
 import { LocalStreamClient } from './LocalStreamClient';
-import { PeerMessage } from './records/MessagingPayload';
+import { PeerMessage } from './records/PeerMessagingPayload';
 import { PeerStream } from './types';
 
 

@@ -8,7 +8,7 @@ import {
   SignalingMessageWithCandidate,
 } from './SignalingChannel';
 import { LocalStreamClient } from './LocalStreamClient';
-import { PeerMessage, peerMessage } from './records/MessagingPayload';
+import { PeerMessage, peerMessage } from './records/PeerMessagingPayload';
 import { PeerStream } from './types';
 
 export class WebRTCRemoteConnection {

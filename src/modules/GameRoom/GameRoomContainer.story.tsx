@@ -1,79 +1,74 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { PeerStream } from 'src/services/peer2peer/types';
-import { LocalStreamClient } from 'src/services/peer2peer/LocalStreamClient';
-// import { Peer2PeerProvider } from 'src/components/Peer2Peer';
-// import { shuffle } from 'src/lib/util';
-// import { isLeft } from 'fp-ts/lib/Either';
-// import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
-// import { Result, Err, Ok } from 'ts-results';
+import React from 'react';
 import { GameRoom } from './GameRoom';
-// import { ChessGameFen, ChessGameState } from '../Games/Chess';
-// import {
-//   peerDataRecord, GameStartedRecord, ChatMessageRecord, PeerDataRecord,
-// } from '../Game/records/GameDataRecord';
+import { GameRoomContainer } from './GameRoomContainer';
 
 export default {
   component: GameRoom,
-  title: 'Modules/GameRoom',
+  title: 'Modules/GameRoomContainer',
 };
 
-const localStreamClient = new LocalStreamClient();
+export const defaultStory = () => (
+  <GameRoomContainer />
+);
 
-export const mockedPeers = () => React.createElement(() => {
-  const [remoteStreams, setRemoteStreams] = useState<PeerStream[]>([]);
+// const localStreamClient = new LocalStreamClient();
 
-  const FakePeers = {
-    Kasparov: 'Kasparov',
-    Spectator1: 'Spectator1',
-  };
+// export const mockedPeers = () => React.createElement(() => {
+//   const [remoteStreams, setRemoteStreams] = useState<PeerStream[]>([]);
 
-  useEffect(() => {
-    setTimeout(async () => {
-      const stream = await localStreamClient.start();
+//   const FakePeers = {
+//     Kasparov: 'Kasparov',
+//     Spectator1: 'Spectator1',
+//   };
 
-      setRemoteStreams((prevRemoteStreams) => [
-        ...prevRemoteStreams,
-        {
-          peerId: FakePeers.Kasparov,
-          stream,
-        },
-      ]);
-    });
+//   useEffect(() => {
+//     setTimeout(async () => {
+//       const stream = await localStreamClient.start();
 
-    setTimeout(async () => {
-      const stream = await localStreamClient.start();
+//       setRemoteStreams((prevRemoteStreams) => [
+//         ...prevRemoteStreams,
+//         {
+//           peerId: FakePeers.Kasparov,
+//           stream,
+//         },
+//       ]);
+//     });
 
-      setRemoteStreams((prevRemoteStreams) => [
-        ...prevRemoteStreams,
-        {
-          peerId: FakePeers.Spectator1,
-          stream,
-        },
-      ]);
-    }, 100);
-  }, []);
+//     setTimeout(async () => {
+//       const stream = await localStreamClient.start();
 
-  return (
-    <GameRoom
-      currentGame={{
-        players: {
-          white: {
-            name: 'Gabe',
-            color: 'white',
-          },
-          black: {
-            name: FakePeers.Kasparov,
-            color: 'black',
-          },
-        },
-        fen: undefined,
-      }}
-      remoteStreams={remoteStreams}
-      me="Gabe"
-      peers={Object.keys(FakePeers)}
-    />
-  );
-});
+//       setRemoteStreams((prevRemoteStreams) => [
+//         ...prevRemoteStreams,
+//         {
+//           peerId: FakePeers.Spectator1,
+//           stream,
+//         },
+//       ]);
+//     }, 100);
+//   }, []);
+
+//   return (
+//     <GameRoom
+//       currentGame={{
+//         players: {
+//           white: {
+//             name: 'Gabe',
+//             color: 'white',
+//           },
+//           black: {
+//             name: FakePeers.Kasparov,
+//             color: 'black',
+//           },
+//         },
+//         fen: undefined,
+//       }}
+//       remoteStreams={remoteStreams}
+//       me="Gabe"
+//       peers={Object.keys(FakePeers)}
+//     />
+//   );
+// });
+
 
 // export const realDeal = () => React.createElement(() => {
 //   const [chatHistory, setChatHistory] = useState<PeerMessage[]>([]);

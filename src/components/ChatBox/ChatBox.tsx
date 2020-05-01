@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { PeerMessage } from 'src/services/peer2peer/records/MessagingPayload';
+import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
 import { noop } from 'src/lib/util';
 import cx from 'classnames';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PeerMessage } from 'src/services/peer2peer/records/MessagingPayload';
+import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
 import { Peer2PeerProvider } from './Peer2PeerProvider';
 import { AVStream } from '../AVStream';
 
