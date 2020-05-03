@@ -5,26 +5,44 @@ const logUnimportantStyle = 'color: grey;';
 const logImportantStyle = 'font-weight: bold;';
 const logIncomingStyle = 'color: #4CAF50; font-weight: bold;';
 const logOutgoingStyle = 'color: #1EA7FD; font-weight: bold;';
+const logOpenConnectionStyle = 'color: #EF5FA0; font-weight: bold';
+const logClosedConnectionStyle = 'color: #DF9D04; font-weight: bold';
 const logErrorStyle = 'color: red; font-weight: bold;';
 
 
 export const addLoggingInterceptors = (namespace: string, channel: WebDataEventChannel) => {
   channel.addEventListener('open', (event) => {
-    console.log(
+    console.group(
       `%c${namespace} %cConnection Opened`,
       logUnimportantStyle,
-      logIncomingStyle,
+      logOpenConnectionStyle,
     );
+    console.log('Event', event);
+    console.groupEnd();
 
     return event;
   });
 
   channel.addEventListener('close', (event) => {
-    console.log(
+    console.group(
       `%c${namespace} %cConnection Closed`,
+      logUnimportantStyle,
+      logClosedConnectionStyle,
+    );
+    console.log('Event', event);
+    console.groupEnd();
+
+    return event;
+  });
+
+  channel.addEventListener('error', (event) => {
+    console.group(
+      `%c${namespace} %cError`,
       logUnimportantStyle,
       logErrorStyle,
     );
+    console.log('Event', event);
+    console.groupEnd();
 
     return event;
   });

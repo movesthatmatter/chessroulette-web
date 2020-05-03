@@ -1,6 +1,7 @@
 import { isLeft } from 'fp-ts/lib/Either';
 import { forward } from 'src/lib/forward';
 import { Pubsy } from 'src/lib/Pubsy';
+import { getSocketXConnection, SocketX } from 'src/lib/SocketX';
 import { WssSignalingChannel } from './WssSignalingChannel';
 import {
   PeerNetworkRefreshPayload,
@@ -26,7 +27,7 @@ export class Peer2Peer {
     onPeerMessageSent: PeerMessage;
   }>();
 
-  private socket: WebSocket;
+  private socket: SocketX;
 
   private localStreamClient: LocalStreamClient;
 
@@ -42,7 +43,7 @@ export class Peer2Peer {
       iceServers: RTCIceServer[];
     },
   ) {
-    this.socket = new WebSocket(config.socketUrl);
+    this.socket = getSocketXConnection(config.socketUrl);
 
     this.localStreamClient = new LocalStreamClient();
 
@@ -207,9 +208,12 @@ export class Peer2Peer {
   close() {
     this.socket.close();
 
+
     Object.values(this.peerConnections).forEach((connection) => {
       connection.close();
     });
+
+    console.log('closed connections ', this.peerConnections);
   }
 
   onReadyStateChange = (

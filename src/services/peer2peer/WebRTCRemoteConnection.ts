@@ -1,6 +1,7 @@
 import { isLeft } from 'fp-ts/lib/Either';
 import { Pubsy } from 'src/lib/Pubsy';
 import { Result, Err, Ok } from 'ts-results';
+import { getRTCDataXConnection } from 'src/lib/RTCDataX';
 import {
   SignalingChannel,
   SignalingMessage,
@@ -34,6 +35,8 @@ export class WebRTCRemoteConnection {
     this.connection.onnegotiationneeded = () => this.onnegotiationneeded();
     this.connection.ontrack = (event) => this.ontrack(event);
     this.connection.ondatachannel = (event) => this.prepareDataChannel(event.channel);
+
+    // TODO: Make sure this works with the new SocketX
     this.signalingChannel.onmessage = (msg) => this.onmessage(msg);
   }
 
@@ -124,11 +127,11 @@ export class WebRTCRemoteConnection {
     this.prepareDataChannel(dataChannel);
   }
 
-  private prepareDataChannel(channel: RTCDataChannel) {
-    // channel.onopen = () => {};
-    // channel.onclose = () => {};
+  private prepareDataChannel(baseChannel: RTCDataChannel) {
+    const channel = getRTCDataXConnection(baseChannel);
 
-    channel.onmessage = (event) => {
+    // TODO hold this for unsubscription
+    channel.addEventListener('message', (event) => {
       try {
         const result = peerMessage.decode(JSON.parse(event.data));
 
@@ -145,7 +148,7 @@ export class WebRTCRemoteConnection {
       } catch (e) {
         console.error('WebRTCRemoteConnection: message received error', e, event.data);
       }
-    };
+    });
 
     this.dataChannel = channel;
   }

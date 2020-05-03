@@ -1,4 +1,5 @@
 import { isLeft } from 'fp-ts/lib/Either';
+import { SocketX } from 'src/lib/SocketX';
 import {
   webrtcNegotationPayload,
   WebrtcNegotationPayload,
@@ -12,7 +13,7 @@ export class WssSignalingChannel implements SignalingChannel {
 
   isOpen = false;
 
-  constructor(public connection: WebSocket, peerId: string) {
+  constructor(public connection: SocketX, peerId: string) {
     this.connection.addEventListener('message', (event) => {
       if (typeof event.data !== 'string') {
         // TODO: Do something if not string
