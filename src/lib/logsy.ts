@@ -1,39 +1,48 @@
 import Logger from 'js-logger';
+import * as Sentry from '@sentry/browser';
+import config from 'src/config';
+import { ILogHandler } from 'js-logger/src/types';
+
+Sentry.init({ dsn: config.SENTRY_DSN });
 
 Logger.useDefaults();
 
 export const logsy = Logger;
 
-// // import * as Sentry from 'sentry-expo';
-// import config from 'src/config';
+const logsyToSentrySeverityMap = {
+  error: 'error',
+  warn: 'warning',
+  log: 'info',
+  info: 'info',
+  debug: 'debug',
 
-// export const logger = {
-//   log: console.log,
-//   info: console.info,
-//   debug: console.debug,
-//   warn: console.warn,
-//   error: (...args: any[]) => {
-//     // Sentry.captureException({
-//     //   level: 'error',
-//     //   meta: args,
-//     // });
+  // Unhandled
+  fatal: 'fatal',
+  critical: 'critical',
+};
 
-//     if (config.DEBUG) {
-//       console.warn(...args);
-//     }
-//   },
+logsy.createDefaultHandler({
+  formatter(messages) {
+    // prefix each log message with a timestamp.
+    messages.unshift(new Date().toUTCString());
+  },
+});
 
-//   // This is a case that shouldn't really happen if the application works correctly
-//   exception: (title: string, description?: string, meta?: {[k: string]: any}) => {
-//     Sentry.captureException({
-//       title,
-//       level: 'exception',
-//       description,
-//       meta,
-//     });
+const consoleHandler = Logger.createDefaultHandler();
+const sentryHandler = (...[messages, context]: Parameters<ILogHandler>) => {
+  const msgsAsArray = Array.prototype.slice.call(messages);
 
-//     if (config.DEBUG) {
-//       console.warn(`Exception: ${title}`, description, meta);
-//     }
-//   },
-// };
+  const level = String(context.level.name).toLowerCase();
+  Sentry.captureMessage(
+    msgsAsArray.join(' '),
+    (logsyToSentrySeverityMap as any)[level] || 'critical',
+  );
+};
+
+logsy.setHandler((messages, context) => {
+  if (config.DEBUG) {
+    consoleHandler(messages, context);
+  } else {
+    sentryHandler(messages, context);
+  }
+});
