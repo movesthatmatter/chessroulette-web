@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState, useEffect } from 'react';
 import { noop } from 'src/lib/util';
+import { action } from '@storybook/addon-actions';
 import { ChessGame } from './ChessGame';
 import { getNewChessGame, ChessInstance } from '../../lib/sdk';
 
@@ -37,10 +38,18 @@ const mockPlayers = {
 } as const;
 
 export const asWhite = () => (
-  <ChessGame homeColor="white" players={mockPlayers} />
+  <ChessGame
+    homeColor="white"
+    players={mockPlayers}
+    allowSinglePlayerPlay
+  />
 );
 export const asBlack = () => (
-  <ChessGame homeColor="black" players={mockPlayers} />
+  <ChessGame
+    homeColor="black"
+    players={mockPlayers}
+    allowSinglePlayerPlay
+  />
 );
 export const withLoggingOnMove = () => React.createElement(() => {
   const [fen, setFen] = useState<string | undefined>();
@@ -50,7 +59,7 @@ export const withLoggingOnMove = () => React.createElement(() => {
       homeColor="white"
       onMove={(newFen) => {
         setFen(newFen);
-        // action('onMove', newFen)();
+        action('onMove')(newFen);
       }}
       players={mockPlayers}
       allowSinglePlayerPlay

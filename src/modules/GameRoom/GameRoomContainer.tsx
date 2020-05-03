@@ -4,6 +4,7 @@ import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload
 import { Peer2PeerProvider } from 'src/components/Peer2Peer';
 import { isLeft } from 'fp-ts/lib/Either';
 import { Err, Ok, Result } from 'ts-results';
+import config from 'src/config';
 import { ChessGameState, ChessGameFen } from '../Games/Chess';
 import { PeerDataRecord, peerDataRecord } from './records/PeerDataRecord';
 import { GameStartedRecord } from '../Game/records/GameDataRecord';
@@ -67,8 +68,7 @@ export const GameRoomContainer: React.FC = () => {
 
   return (
     <Peer2PeerProvider
-      // wssUrl="ws://127.0.0.1:7777"
-      wssUrl="wss://dstnd-server.herokuapp.com"
+      wssUrl={config.WSS_ENDPOINT}
       iceServersURLs={['stun:stun.ideasip.com']}
       renderLoading={() => (
         <p>Loading Connection...</p>
