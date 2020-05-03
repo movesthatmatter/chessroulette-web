@@ -9,6 +9,26 @@ const logErrorStyle = 'color: red; font-weight: bold;';
 
 
 export const addLoggingInterceptors = (namespace: string, channel: WebDataEventChannel) => {
+  channel.addEventListener('open', (event) => {
+    console.log(
+      `%c${namespace} %cConnection Opened`,
+      logUnimportantStyle,
+      logIncomingStyle,
+    );
+
+    return event;
+  });
+
+  channel.addEventListener('close', (event) => {
+    console.log(
+      `%c${namespace} %cConnection Closed`,
+      logUnimportantStyle,
+      logErrorStyle,
+    );
+
+    return event;
+  });
+
   channel.addEventInterceptors('message', [
     (event) => ({
       ...event,
@@ -31,33 +51,6 @@ export const addLoggingInterceptors = (namespace: string, channel: WebDataEventC
       ...event,
       data: JSON.stringify(event.data),
     }),
-  ]);
-
-  channel.addEventInterceptors('open', [
-    (event) => {
-      console.log(
-        `%c${namespace} %cConnection Opened:`,
-        logUnimportantStyle,
-        logErrorStyle,
-      );
-      // console.groupEnd();
-
-      return event;
-    },
-  ]);
-
-  channel.addEventInterceptors('close', [
-    (event) => {
-      console.group(
-        `%c${namespace} %cConnection Closed:`,
-        logUnimportantStyle,
-        logErrorStyle,
-      );
-      console.log('Reason:', event.reason);
-      console.groupEnd();
-
-      return event;
-    },
   ]);
 
   channel.addSendInterceptors([

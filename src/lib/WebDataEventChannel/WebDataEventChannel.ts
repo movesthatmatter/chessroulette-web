@@ -1,3 +1,6 @@
+/* eslint-disable no-param-reassign */
+import { noop } from '../util';
+
 /* eslint-disable max-classes-per-file */
 interface EventMap {
   close: CloseEvent;
@@ -14,6 +17,11 @@ export interface EventChannel {
     listener: (this: EventChannel, ev: EventMap[K]) => any,
     options?: boolean | AddEventListenerOptions
   ): void;
+
+  // onclose: ((ev: CloseEvent) => any) | null;
+  // onerror: ((ev: Event) => any) | null;
+  // onmessage: ((ev: MessageEvent) => any) | null;
+  // onopen: ((ev: Event) => any) | null;
 }
 
 export function getWebDataEventChannel(channel: EventChannel) {
@@ -26,6 +34,15 @@ export function getWebDataEventChannel(channel: EventChannel) {
 
   const sendInterceptors: Function[] = [];
 
+  const eventListenerTransformer = <K extends keyof EventMap>(type: K, event: EventMap[K]) => {
+    const transformedEvent = eventInterceptors[type].reduce(
+      (res, nextTransformer) => nextTransformer(res),
+      event,
+    );
+
+    return transformedEvent;
+  };
+
   const oldEventListener = channel.addEventListener.bind(channel);
   const addEventListener = <K extends keyof EventMap>(
     type: K,
@@ -34,14 +51,7 @@ export function getWebDataEventChannel(channel: EventChannel) {
   ): ReturnType<EventChannel['addEventListener']> =>
     oldEventListener(
       type,
-      (event) => {
-        const transformedEvent = eventInterceptors[type].reduce(
-          (res, nextTransformer) => nextTransformer(res),
-          event,
-        );
-
-        return listener(transformedEvent);
-      },
+      (event) => listener(eventListenerTransformer(type, event)),
       options,
     );
 
@@ -88,7 +98,19 @@ export function getWebDataEventChannel(channel: EventChannel) {
     transformers.forEach((t) => addSendInterceptor(t));
   };
 
-  return Object.assign(channel, {
+  // // const oldOpen = channel.onopen || noop;
+  // // // const oldOpen = channel.onopen;
+  // // // const oldOpen = channel.onopen;
+  // // // const oldOpen = channel.onopen;
+  // // const onopen: EventChannel['onopen'] =
+  // // listener((e) => eventListenerTransformer('open', e))
+  // channel.onopen = (e) => {
+  //   if (typeof instance.onopen === 'function') {
+  //     instance.onopen(eventListenerTransformer('open', e));
+  //   }
+  // };
+
+  const instance = Object.assign(channel, {
     send,
     sendJSON,
     addEventListener,
@@ -97,6 +119,8 @@ export function getWebDataEventChannel(channel: EventChannel) {
     addSendInterceptor,
     addSendInterceptors,
   });
+
+  return instance;
 }
 
 export type WebDataEventChannel = ReturnType<typeof getWebDataEventChannel>;
