@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState, useEffect } from 'react';
-import { action } from '@storybook/addon-actions';
 import { noop } from 'src/lib/util';
 import { ChessGame } from './ChessGame';
 import { getNewChessGame, ChessInstance } from '../../lib/sdk';
@@ -26,15 +25,45 @@ export default {
   title: 'Modules/Games/Chess/components/Chess Game',
 };
 
-export const asWhite = () => <ChessGame myColor="white" />;
-export const asBlack = () => <ChessGame myColor="black" />;
-export const withLoggingOnMove = () => (
-  <ChessGame myColor="black" onMove={action('onMove')} />
+const mockPlayers = {
+  white: {
+    name: 'kasparov',
+    color: 'white',
+  },
+  black: {
+    name: 'Ficher',
+    color: 'black',
+  },
+} as const;
+
+export const asWhite = () => (
+  <ChessGame homeColor="white" players={mockPlayers} />
 );
+export const asBlack = () => (
+  <ChessGame homeColor="black" players={mockPlayers} />
+);
+export const withLoggingOnMove = () => React.createElement(() => {
+  const [fen, setFen] = useState<string | undefined>();
+
+  return (
+    <ChessGame
+      homeColor="white"
+      onMove={(newFen) => {
+        setFen(newFen);
+        // action('onMove', newFen)();
+      }}
+      players={mockPlayers}
+      allowSinglePlayerPlay
+      fen={fen}
+    />
+  );
+});
+
 export const withStartedGame = () => (
   <ChessGame
-    myColor="black"
+    homeColor="black"
     fen="rnb1kbnr/ppp1pppp/3q4/3p4/4PP2/2N5/PPPP2PP/R1BQKBNR b KQkq - 2 3"
+    players={mockPlayers}
   />
 );
 
@@ -57,5 +86,7 @@ export const demoRandomGame = () =>
       );
     }, []);
 
-    return <ChessGame myColor="white" fen={gameState.fen} />;
+    return (
+      <ChessGame homeColor="white" fen={gameState.fen} players={mockPlayers} />
+    );
   });

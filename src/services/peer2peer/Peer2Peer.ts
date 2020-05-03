@@ -12,7 +12,7 @@ import {
 } from './records/SignalingPayload';
 import { WebRTCRemoteConnection } from './WebRTCRemoteConnection';
 import { LocalStreamClient } from './LocalStreamClient';
-import { PeerMessage } from './records/MessagingPayload';
+import { PeerMessage } from './records/PeerMessagingPayload';
 import { PeerStream } from './types';
 
 
@@ -23,6 +23,7 @@ export class Peer2Peer {
     onRemoteStreamingStart: { peerId: string; stream: MediaStream };
     onRemoteStreamingStop: { peerId: string };
     onPeerMessage: PeerMessage;
+    onPeerMessageSent: PeerMessage;
   }>();
 
   private socket: WebSocket;
@@ -116,12 +117,29 @@ export class Peer2Peer {
     const { [me]: removed, ...otherPeers } = room.peers;
 
     // Invite the all peers to connect
-    Object.keys(otherPeers).forEach((peerId) => {
-      this.peerConnections[peerId].sendData({
-        fromPeerId: me,
-        content: msg,
+    const results = Object.keys(otherPeers).map((peerId) => this.peerConnections[peerId].sendData({
+      fromPeerId: me,
+      content: msg,
+    }));
+
+    const okSends = results.filter((r) => r.ok);
+    const badSends = results.filter((r) => !r.ok);
+
+    if (okSends.length > 0) {
+      okSends[0].map((m) => {
+        this.pubsy.publish('onPeerMessageSent', m);
+
+        return undefined;
       });
-    });
+    }
+
+    if (badSends.length > 0) {
+      badSends[0].mapErr((e) => {
+        // TODO: Do something with these bad sends, like retry or smtg!
+        //  It depends on the strategy, but we're not there yet.
+        console.log('Peer2Peer.sendDataToRoom BadResults', e);
+      });
+    }
   }
 
   // Starts sending and receving streams with EVERY PEER in the room!
@@ -204,9 +222,13 @@ export class Peer2Peer {
 
   onRemoteStreamingStart = (
     fn: (p: PeerStream) => void,
-  ) => this.pubsy.subscribe('onRemoteStreamingStart', fn)
+  ) => this.pubsy.subscribe('onRemoteStreamingStart', fn);
 
   onData = (
     fn: (msg: PeerMessage) => void,
-  ) => this.pubsy.subscribe('onPeerMessage', fn)
+  ) => this.pubsy.subscribe('onPeerMessage', fn);
+
+  onDataSent = (
+    fn: (msg: PeerMessage) => void,
+  ) => this.pubsy.subscribe('onPeerMessageSent', fn);
 }

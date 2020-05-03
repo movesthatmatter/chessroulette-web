@@ -1,5 +1,6 @@
 import { isLeft } from 'fp-ts/lib/Either';
 import { Pubsy } from 'src/lib/Pubsy';
+import { Result, Err, Ok } from 'ts-results';
 import {
   SignalingChannel,
   SignalingMessage,
@@ -7,13 +8,14 @@ import {
   SignalingMessageWithCandidate,
 } from './SignalingChannel';
 import { LocalStreamClient } from './LocalStreamClient';
-import { PeerMessage, peerMessage } from './records/MessagingPayload';
+import { PeerMessage, peerMessage } from './records/PeerMessagingPayload';
 import { PeerStream } from './types';
 
 export class WebRTCRemoteConnection {
   private pubsy = new Pubsy<{
     onRemoteStream: { peerId: string; stream: MediaStream };
     onData: PeerMessage;
+    // onDataSent: PeerMessage;
   }>();
 
   private connection: RTCPeerConnection;
@@ -160,18 +162,29 @@ export class WebRTCRemoteConnection {
     fn: (msg: PeerMessage) => void,
   ) => this.pubsy.subscribe('onData', fn);
 
-  sendData(msg: Omit<PeerMessage, 'timestamp' | 'toPeerId'>) {
+  sendData(
+    msg: Omit<PeerMessage, 'timestamp' | 'toPeerId'>,
+  ): Result<
+    PeerMessage,
+    {type: 'DataChannelNotReady'; peerId: string}
+    > {
     if (!this.dataChannel) {
-      console.warn('WebRTCRemoteConnection this.dataChannel not setup');
-      return;
+      return new Err({
+        type: 'DataChannelNotReady',
+        peerId: this.peerId,
+      });
     }
 
+    const msgPayload: PeerMessage = {
+      ...msg,
+      timestamp: String(new Date().getTime()),
+      toPeerId: this.peerId,
+    };
+
     this.dataChannel.send(
-      JSON.stringify({
-        ...msg,
-        timestamp: String(new Date().getTime()),
-        toPeerId: this.peerId,
-      }),
+      JSON.stringify(msgPayload),
     );
+
+    return new Ok(msgPayload);
   }
 }

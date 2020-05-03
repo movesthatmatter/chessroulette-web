@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PeerMessage } from 'src/services/peer2peer/records/MessagingPayload';
+import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
 import { Peer2PeerProvider } from './Peer2PeerProvider';
 import { AVStream } from '../AVStream';
 
@@ -15,11 +15,10 @@ export const defaultStory = () =>
 
     return (
       <Peer2PeerProvider
-        // wssUrl="ws://127.0.0.1:7777"
-        wssUrl="wss://dstnd-server.herokuapp.com"
+        wssUrl="ws://127.0.0.1:7777"
+        // wssUrl="wss://dstnd-server.herokuapp.com"
         iceServersURLs={['stun:stun.ideasip.com']}
-        onData={(msg) => {
-          // console.log('Peer Msg received [at story]', msg);
+        onPeerMsgReceived={(msg) => {
           setMsgHistory([...msgHistory, msg]);
         }}
         render={({
@@ -29,7 +28,7 @@ export const defaultStory = () =>
           peerStatus,
           localStream,
           remoteStreams,
-          sendData,
+          sendPeerData,
         }) => (
           <>
             {peerStatus.joined_room ? (
@@ -111,7 +110,10 @@ export const defaultStory = () =>
                           type="button"
                           disabled={currentMessage.length === 0}
                           onClick={() => {
-                            sendData(currentMessage);
+                            sendPeerData({
+                              msgType: 'chatMessage',
+                              content: currentMessage,
+                            });
 
                             const myMsg: PeerMessage = {
                               fromPeerId: peerStatus.me,
@@ -205,11 +207,10 @@ const PeerWindow: React.FunctionComponent<PeerWindowProps> = (props) => {
 
   return (
     <Peer2PeerProvider
-      id={props.windowId}
       wssUrl="ws://127.0.0.1:7777"
       // wssUrl="wss://dstnd-server.herokuapp.com"
       iceServersURLs={['stun:stun.ideasip.com']}
-      onData={(msg) => {
+      onPeerMsgSent={(msg) => {
         // console.log('Peer Msg received [at story]', msg);
         setMsgHistory([...msgHistory, msg]);
       }}
@@ -219,17 +220,11 @@ const PeerWindow: React.FunctionComponent<PeerWindowProps> = (props) => {
         peerStatus,
         joinRoom,
         localStream,
-        sendData,
+        sendPeerData,
       }) => (
         <>
-          {/* {console.log('Peer Status for window', props.windowId, peerStatus)} */}
           {peerStatus.joined_room ? (
             <div>
-              {/* Start the room automatically */}
-              {/* {!started && (() => {
-                start();
-                setStarted(true);
-              })()} */}
               <div>
                 <p>{`Me: ${peerStatus.me}`}</p>
                 {started ? (
@@ -267,7 +262,10 @@ const PeerWindow: React.FunctionComponent<PeerWindowProps> = (props) => {
                       type="button"
                       disabled={currentMessage.length === 0}
                       onClick={() => {
-                        sendData(currentMessage);
+                        sendPeerData({
+                          msgType: 'chatMessage',
+                          content: currentMessage,
+                        });
 
                         const myMsg: PeerMessage = {
                           fromPeerId: peerStatus.me,
