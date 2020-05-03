@@ -2,6 +2,7 @@ import { isLeft } from 'fp-ts/lib/Either';
 import { Pubsy } from 'src/lib/Pubsy';
 import { Result, Err, Ok } from 'ts-results';
 import { getRTCDataXConnection } from 'src/lib/RTCDataX';
+import { logsy } from 'src/lib/logsy';
 import {
   SignalingChannel,
   SignalingMessage,
@@ -16,12 +17,13 @@ export class WebRTCRemoteConnection {
   private pubsy = new Pubsy<{
     onRemoteStream: { peerId: string; stream: MediaStream };
     onData: PeerMessage;
-    // onDataSent: PeerMessage;
   }>();
 
   private connection: RTCPeerConnection;
 
   private dataChannel?: RTCDataChannel;
+
+  private unsubscribeFromDataChannelOnMessageListener?: () => void;
 
   constructor(
     private iceServers: RTCIceServer[],
@@ -34,7 +36,8 @@ export class WebRTCRemoteConnection {
     this.connection.onicecandidate = (event) => this.onicecandidate(event);
     this.connection.onnegotiationneeded = () => this.onnegotiationneeded();
     this.connection.ontrack = (event) => this.ontrack(event);
-    this.connection.ondatachannel = (event) => this.prepareDataChannel(event.channel);
+    this.connection.ondatachannel = (event) =>
+      this.prepareDataChannel(event.channel);
 
     // TODO: Make sure this works with the new SocketX
     this.signalingChannel.onmessage = (msg) => this.onmessage(msg);
@@ -53,9 +56,12 @@ export class WebRTCRemoteConnection {
       this.signalingChannel.send(this.peerId, {
         desc: this.connection.localDescription,
       });
-    } catch (err) {
+    } catch (error) {
       // TODO: Does this need to be part of logic?
-      console.error('WebRTCClient Negotiation Error', err);
+      logsy.error(
+        '[WebRTCRemoteConnection] Negotiation Uncaught Error',
+        error,
+      );
     }
   }
 
@@ -76,13 +82,20 @@ export class WebRTCRemoteConnection {
         } else if (msg.desc.type === 'answer') {
           this.onSignalingAnswer(msg);
         } else {
-          console.warn('Unsupported SDP type.', msg.desc);
+          logsy.warn(
+            '[WebRTCRemoteConnection] Signaling Message Error: Unsupported SDP type.',
+            msg.desc,
+            msg,
+          );
         }
       } else if (msg.candidate) {
         this.onSignalingCandidate(msg);
       }
     } catch (err) {
-      console.error('Signaling onmessage Error', err);
+      logsy.error(
+        '[WebRTCRemoteConnection] Signaling Message Uncaught Error:',
+        err,
+      );
     }
   }
 
@@ -130,14 +143,13 @@ export class WebRTCRemoteConnection {
   private prepareDataChannel(baseChannel: RTCDataChannel) {
     const channel = getRTCDataXConnection(baseChannel);
 
-    // TODO hold this for unsubscription
-    channel.addEventListener('message', (event) => {
+    const onMessageHandler = (event: MessageEvent) => {
       try {
         const result = peerMessage.decode(JSON.parse(event.data));
 
         if (isLeft(result)) {
-          console.error(
-            'WebRTCRemoteConnection: message received but cant be decoded',
+          logsy.error(
+            '[WebRTCRemoteConnection][DataChannelMessageHandler] Message Decoding Error',
             event.data,
           );
 
@@ -146,31 +158,38 @@ export class WebRTCRemoteConnection {
 
         this.pubsy.publish('onData', result.right);
       } catch (e) {
-        console.error('WebRTCRemoteConnection: message received error', e, event.data);
+        logsy.error(
+          '[WebRTCRemoteConnection] DataChannelMessageHandler: Message JSON Parsing Error',
+          event.data,
+          e,
+        );
       }
-    });
+    };
+
+    channel.addEventListener('message', onMessageHandler);
+
+    this.unsubscribeFromDataChannelOnMessageListener = () => {
+      channel.removeEventListener('message', onMessageHandler);
+    };
 
     this.dataChannel = channel;
   }
 
   close() {
     this.connection.close();
+
+    this.unsubscribeFromDataChannelOnMessageListener?.();
   }
 
-  onRemoteStream = (
-    fn: (p: PeerStream) => void,
-  ) => this.pubsy.subscribe('onRemoteStream', fn);
+  onRemoteStream = (fn: (p: PeerStream) => void) =>
+    this.pubsy.subscribe('onRemoteStream', fn);
 
-  onData = (
-    fn: (msg: PeerMessage) => void,
-  ) => this.pubsy.subscribe('onData', fn);
+  onData = (fn: (msg: PeerMessage) => void) =>
+    this.pubsy.subscribe('onData', fn);
 
   sendData(
     msg: Omit<PeerMessage, 'timestamp' | 'toPeerId'>,
-  ): Result<
-    PeerMessage,
-    {type: 'DataChannelNotReady'; peerId: string}
-    > {
+  ): Result<PeerMessage, { type: 'DataChannelNotReady'; peerId: string }> {
     if (!this.dataChannel) {
       return new Err({
         type: 'DataChannelNotReady',
@@ -184,9 +203,7 @@ export class WebRTCRemoteConnection {
       toPeerId: this.peerId,
     };
 
-    this.dataChannel.send(
-      JSON.stringify(msgPayload),
-    );
+    this.dataChannel.send(JSON.stringify(msgPayload));
 
     return new Ok(msgPayload);
   }

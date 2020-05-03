@@ -7,9 +7,7 @@ import {
 import { SignalingChannel, SignalingMessage } from './SignalingChannel';
 
 export class WssSignalingChannel implements SignalingChannel {
-  onmessage = (_: SignalingMessage) => {
-    // does nothing
-  };
+  onmessage?: ((msg: SignalingMessage) => void);
 
   isOpen = false;
 
@@ -29,7 +27,7 @@ export class WssSignalingChannel implements SignalingChannel {
 
       const msg = result.right;
 
-      // If the msg is not for the given peer id stop!
+      // If the msg is not for the given peer id stop here!
       // TODO: This can be done better from outside somehow, polimorphically!
       // Like calling the onmessage only on the right peer, but that's a bit more advanced
       //  and impractical for now
@@ -38,7 +36,7 @@ export class WssSignalingChannel implements SignalingChannel {
       }
 
       if (msg.msg_type === 'webrtc_negotiation') {
-        this.onmessage(JSON.parse(result.right.content.forward));
+        this.onmessage?.(JSON.parse(result.right.content.forward));
       }
     });
   }

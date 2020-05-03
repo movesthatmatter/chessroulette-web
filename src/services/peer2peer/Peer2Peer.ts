@@ -2,6 +2,7 @@ import { isLeft } from 'fp-ts/lib/Either';
 import { forward } from 'src/lib/forward';
 import { Pubsy } from 'src/lib/Pubsy';
 import { getSocketXConnection, SocketX } from 'src/lib/SocketX';
+import { logsy } from 'src/lib/logsy';
 import { WssSignalingChannel } from './WssSignalingChannel';
 import {
   PeerNetworkRefreshPayload,
@@ -15,7 +16,6 @@ import { WebRTCRemoteConnection } from './WebRTCRemoteConnection';
 import { LocalStreamClient } from './LocalStreamClient';
 import { PeerMessage } from './records/PeerMessagingPayload';
 import { PeerStream } from './types';
-
 
 export class Peer2Peer {
   private pubsy = new Pubsy<{
@@ -47,6 +47,14 @@ export class Peer2Peer {
 
     this.localStreamClient = new LocalStreamClient();
 
+    this.localStreamClient.onStart(() => {
+      logsy.info('LocalStreamClient Started');
+    });
+
+    this.localStreamClient.onStop(() => {
+      logsy.info('LocalStreamClient Stoped');
+    });
+
     this.onLocalStreamStart = this.localStreamClient.onStart.bind(
       this.localStreamClient,
     );
@@ -67,8 +75,8 @@ export class Peer2Peer {
         const decoded = socketMessagePayload.decode(JSON.parse(event.data));
 
         if (isLeft(decoded)) {
-          console.warn(
-            'Peer2Peer:message received a non standard payload',
+          logsy.error(
+            '[Peer2Peer]: Socket Message Decoding Error',
             event.data,
           );
           return;
@@ -118,10 +126,11 @@ export class Peer2Peer {
     const { [me]: removed, ...otherPeers } = room.peers;
 
     // Invite the all peers to connect
-    const results = Object.keys(otherPeers).map((peerId) => this.peerConnections[peerId].sendData({
-      fromPeerId: me,
-      content: msg,
-    }));
+    const results = Object.keys(otherPeers).map((peerId) =>
+      this.peerConnections[peerId].sendData({
+        fromPeerId: me,
+        content: msg,
+      }));
 
     const okSends = results.filter((r) => r.ok);
     const badSends = results.filter((r) => !r.ok);
@@ -138,7 +147,15 @@ export class Peer2Peer {
       badSends[0].mapErr((e) => {
         // TODO: Do something with these bad sends, like retry or smtg!
         //  It depends on the strategy, but we're not there yet.
-        console.log('Peer2Peer.sendDataToRoom BadResults', e);
+        logsy.warn(
+          '[Peer2Peer] Received BadResults while Attempting to send Data to Room',
+          room,
+          `Me: ${me}`,
+          `BadResults Count: ${badSends.length} out of ${results.length}`,
+          badSends,
+          results,
+          e,
+        );
       });
     }
   }
@@ -162,8 +179,8 @@ export class Peer2Peer {
 
   private async prepareRTCConnection(peerId: string) {
     if (this.peerConnections[peerId]) {
-      console.warn(
-        'Peer2Peer.prepareRTCConnection: A connection already exists for peer',
+      logsy.info(
+        '[Peer2Peer]prepareRTCConnection: A connection already exists for peer',
         peerId,
       );
       return this.peerConnections[peerId];
@@ -206,33 +223,27 @@ export class Peer2Peer {
   }
 
   close() {
+    this.localStreamClient.stop();
     this.socket.close();
-
 
     Object.values(this.peerConnections).forEach((connection) => {
       connection.close();
     });
-
-    console.log('closed connections ', this.peerConnections);
   }
 
-  onReadyStateChange = (
-    fn: (ready: boolean) => void,
-  ) => this.pubsy.subscribe('onReadyStateChange', fn);
+  onReadyStateChange = (fn: (ready: boolean) => void) =>
+    this.pubsy.subscribe('onReadyStateChange', fn);
 
   onPeerStatusUpdate = (
     fn: (status: PeerNetworkRefreshPayload['content']) => void,
   ) => this.pubsy.subscribe('onPeerStatusUpdate', fn);
 
-  onRemoteStreamingStart = (
-    fn: (p: PeerStream) => void,
-  ) => this.pubsy.subscribe('onRemoteStreamingStart', fn);
+  onRemoteStreamingStart = (fn: (p: PeerStream) => void) =>
+    this.pubsy.subscribe('onRemoteStreamingStart', fn);
 
-  onData = (
-    fn: (msg: PeerMessage) => void,
-  ) => this.pubsy.subscribe('onPeerMessage', fn);
+  onData = (fn: (msg: PeerMessage) => void) =>
+    this.pubsy.subscribe('onPeerMessage', fn);
 
-  onDataSent = (
-    fn: (msg: PeerMessage) => void,
-  ) => this.pubsy.subscribe('onPeerMessageSent', fn);
+  onDataSent = (fn: (msg: PeerMessage) => void) =>
+    this.pubsy.subscribe('onPeerMessageSent', fn);
 }

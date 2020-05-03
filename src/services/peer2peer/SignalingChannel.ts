@@ -18,5 +18,5 @@ export type SignalingMessageWithCandidate = {
 export interface SignalingChannel {
   send(peerId: string, forward: {[k: string]: unknown}): void;
 
-  onmessage: ((msg: SignalingMessage) => void) | null;
+  onmessage?: ((msg: SignalingMessage) => void) | undefined;
 }

@@ -6,7 +6,6 @@ import {
 } from 'src/services/peer2peer/records/SignalingPayload';
 import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
 import { PeerDataRecord } from 'src/modules/GameRoom/records/PeerDataRecord';
-// import { PeerDataRecord } from 'src/modules/Game/records/GameDataRecord';
 
 type RenderProps = {
   joinRoom: (roomId: string) => void;
@@ -38,10 +37,6 @@ type Props = {
     msg: PeerMessage,
     p: Pick<RenderProps, 'sendPeerData' | 'peerStatus'>
   ) => void;
-
-  // @deprecate in favor of the more explicit above
-  // onData?: (msg: PeerMessage, p: Pick<RenderProps, 'sendPeerData' | 'peerStatus'>) => void;
-  // onDataSent?: (msg: PeerMessage, p: Pick<RenderProps, 'sendPeerData' | 'peerStatus'>) => void;
 };
 
 type State = {
@@ -140,9 +135,6 @@ export class Peer2PeerProvider extends React.Component<Props, State> {
               },
             },
           }),
-          () => {
-            // console.log('state after stream', this.state);
-          },
         );
       },
     );
@@ -167,6 +159,7 @@ export class Peer2PeerProvider extends React.Component<Props, State> {
   // TODO: Test this
   componentWillUnmount() {
     this.p2p?.close();
+
     this.unsubscribFromOnReadyStateChange?.();
     this.unsubscribeFromOnPeerStatusUpdate?.();
     this.unsubscribeFromLocalStreamStart?.();
