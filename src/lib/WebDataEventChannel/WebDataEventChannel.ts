@@ -1,7 +1,3 @@
-/* eslint-disable no-param-reassign */
-import { noop } from '../util';
-
-/* eslint-disable max-classes-per-file */
 interface EventMap {
   close: CloseEvent;
   error: Event;
@@ -17,11 +13,6 @@ export interface EventChannel {
     listener: (this: EventChannel, ev: EventMap[K]) => any,
     options?: boolean | AddEventListenerOptions
   ): void;
-
-  // onclose: ((ev: CloseEvent) => any) | null;
-  // onerror: ((ev: Event) => any) | null;
-  // onmessage: ((ev: MessageEvent) => any) | null;
-  // onopen: ((ev: Event) => any) | null;
 }
 
 export function getWebDataEventChannel(channel: EventChannel) {
@@ -97,18 +88,6 @@ export function getWebDataEventChannel(channel: EventChannel) {
   const addSendInterceptors = (transformers: ((msg: unknown) => unknown)[]) => {
     transformers.forEach((t) => addSendInterceptor(t));
   };
-
-  // // const oldOpen = channel.onopen || noop;
-  // // // const oldOpen = channel.onopen;
-  // // // const oldOpen = channel.onopen;
-  // // // const oldOpen = channel.onopen;
-  // // const onopen: EventChannel['onopen'] =
-  // // listener((e) => eventListenerTransformer('open', e))
-  // channel.onopen = (e) => {
-  //   if (typeof instance.onopen === 'function') {
-  //     instance.onopen(eventListenerTransformer('open', e));
-  //   }
-  // };
 
   const instance = Object.assign(channel, {
     send,
