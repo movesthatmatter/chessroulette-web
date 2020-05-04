@@ -1,11 +1,8 @@
 import React, { ReactNode } from 'react';
 import { Peer2Peer } from 'src/services/peer2peer';
-import {
-  PeerNetworkRefreshPayload,
-  RoomRecord,
-} from 'src/services/peer2peer/records/SignalingPayload';
 import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
 import { PeerDataRecord } from 'src/modules/GameRoom/records/PeerDataRecord';
+import { PeerNetworkRefreshPayload, RoomRecord } from 'dstnd-io';
 
 type RenderProps = {
   joinRoom: (roomId: string) => void;

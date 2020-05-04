@@ -3,7 +3,6 @@ import { forward } from 'src/lib/forward';
 import { Pubsy } from 'src/lib/Pubsy';
 import { getSocketXConnection, SocketX } from 'src/lib/SocketX';
 import { logsy } from 'src/lib/logsy';
-import { WssSignalingChannel } from './WssSignalingChannel';
 import {
   PeerNetworkRefreshPayload,
   RoomRecord,
@@ -11,7 +10,8 @@ import {
   JoinRoomPayload,
   WebrtcInvitationPayload,
   SocketMessagePayload,
-} from './records/SignalingPayload';
+} from 'dstnd-io';
+import { WssSignalingChannel } from './WssSignalingChannel';
 import { WebRTCRemoteConnection } from './WebRTCRemoteConnection';
 import { LocalStreamClient } from './LocalStreamClient';
 import { PeerMessage } from './records/PeerMessagingPayload';

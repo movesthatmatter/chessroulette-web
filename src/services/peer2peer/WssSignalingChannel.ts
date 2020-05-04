@@ -1,9 +1,6 @@
 import { isLeft } from 'fp-ts/lib/Either';
 import { SocketX } from 'src/lib/SocketX';
-import {
-  webrtcNegotationPayload,
-  WebrtcNegotationPayload,
-} from './records/SignalingPayload';
+import { webrtcNegotationPayload, WebrtcNegotationPayload } from 'dstnd-io';
 import { SignalingChannel, SignalingMessage } from './SignalingChannel';
 
 export class WssSignalingChannel implements SignalingChannel {

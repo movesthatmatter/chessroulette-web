@@ -5918,6 +5918,12 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
+"dstnd-io@https://github.com/dstnd/dstnd-io.git":
+  version "0.0.1"
+  resolved "https://github.com/dstnd/dstnd-io.git#0a6f4ea82b0881d4b6167bdaffed4e454e4fb714"
+  dependencies:
+    io-ts "^2.2.1"
+
 duplexer@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/duplexer/-/duplexer-0.1.1.tgz#ace6ff808c1ce66b57d1ebf97977acb02334cfc1"
