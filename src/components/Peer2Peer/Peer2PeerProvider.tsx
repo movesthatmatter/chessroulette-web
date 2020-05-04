@@ -5,7 +5,6 @@ import { PeerDataRecord } from 'src/modules/GameRoom/records/PeerDataRecord';
 import { PeerNetworkRefreshPayload, RoomRecord } from 'dstnd-io';
 
 type RenderProps = {
-  joinRoom: (roomId: string) => void;
   start: () => Promise<void>;
   stop: () => void;
   sendPeerData: (msg: PeerDataRecord) => void;
@@ -18,13 +17,18 @@ type RenderProps = {
       stream: MediaStream;
     };
   };
+
+  // @depreacte in faavor of SRP
+  joinRoom: (roomId: string) => void;
 };
 
 type Props = {
-  wssUrl: string;
-  iceServersURLs: string[];
+
+  // room: RoomRecord;
+
   renderLoading?: () => ReactNode;
   render: (p: RenderProps) => ReactNode;
+
 
   onPeerMsgReceived?: (
     msg: PeerMessage,
@@ -76,14 +80,7 @@ export class Peer2PeerProvider extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.p2p = new Peer2Peer({
-      socketUrl: this.props.wssUrl,
-      iceServers: [
-        {
-          urls: this.props.iceServersURLs,
-        },
-      ],
-    });
+    this.p2p = new Peer2Peer();
 
     this.unsubscribFromOnReadyStateChange = this.p2p.onReadyStateChange(
       (isConnectionReady) => {
@@ -116,7 +113,6 @@ export class Peer2PeerProvider extends React.Component<Props, State> {
       }));
     });
 
-    // Add local stop
 
     this.unsubscribeFromRemoteStreamStart = this.p2p.onRemoteStreamingStart(
       ({ peerId, stream }) => {
@@ -150,10 +146,11 @@ export class Peer2PeerProvider extends React.Component<Props, State> {
       });
     });
 
-    // Add remote stop
+    // TODO Add local stop
+    // TODO Add remote stop
   }
 
-  // TODO: Test this
+  // TODO: Test the unsubscribes are actually working
   componentWillUnmount() {
     this.p2p?.close();
 

@@ -1,3 +1,4 @@
+import config from 'src/config';
 import {
   getWebDataEventChannel, WebDataEventChannelFrom,
 } from './WebDataEventChannel/WebDataEventChannel';
@@ -8,7 +9,7 @@ import {
 
 export type SocketX = WebDataEventChannelFrom<WebSocket>;
 
-export const getSocketXConnection = (url: string) => {
+export const getSocketXConnection = (url = config.WSS_ENDPOINT) => {
   const instance = getWebDataEventChannel(new WebSocket(url)) as SocketX;
 
   // addJsonParseInterceptors(instance);

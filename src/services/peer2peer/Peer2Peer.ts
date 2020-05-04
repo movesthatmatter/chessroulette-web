@@ -37,13 +37,8 @@ export class Peer2Peer {
 
   onLocalStreamStop: (fn: () => void) => () => void;
 
-  constructor(
-    private config: {
-      socketUrl: string;
-      iceServers: RTCIceServer[];
-    },
-  ) {
-    this.socket = getSocketXConnection(config.socketUrl);
+  constructor() {
+    this.socket = getSocketXConnection();
 
     this.localStreamClient = new LocalStreamClient();
 
@@ -188,7 +183,6 @@ export class Peer2Peer {
 
     const signal = new WssSignalingChannel(this.socket, peerId);
     const rtc = new WebRTCRemoteConnection(
-      this.config.iceServers,
       signal,
       this.localStreamClient,
       peerId,

@@ -15,9 +15,6 @@ export const defaultStory = () =>
 
     return (
       <Peer2PeerProvider
-        wssUrl="ws://127.0.0.1:7777"
-        // wssUrl="wss://dstnd-server.herokuapp.com"
-        iceServersURLs={['stun:stun.ideasip.com']}
         onPeerMsgReceived={(msg) => {
           setMsgHistory([...msgHistory, msg]);
         }}

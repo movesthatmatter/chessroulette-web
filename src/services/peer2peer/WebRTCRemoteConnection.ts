@@ -1,8 +1,9 @@
 import { isLeft } from 'fp-ts/lib/Either';
 import { Pubsy } from 'src/lib/Pubsy';
 import { Result, Err, Ok } from 'ts-results';
-import { getRTCDataXConnection } from 'src/lib/RTCDataX';
+import { getRTCDataXConnection, RTCDataX } from 'src/lib/RTCDataX';
 import { logsy } from 'src/lib/logsy';
+import config from 'src/config';
 import {
   SignalingChannel,
   SignalingMessage,
@@ -26,18 +27,21 @@ export class WebRTCRemoteConnection {
   private unsubscribeFromDataChannelOnMessageListener?: () => void;
 
   constructor(
-    private iceServers: RTCIceServer[],
     private signalingChannel: SignalingChannel,
     private localStream: LocalStreamClient,
     private peerId: string,
   ) {
-    this.connection = new RTCPeerConnection({ iceServers: this.iceServers });
+    this.connection = new RTCPeerConnection({
+      iceServers: [{
+        urls: config.REACT_APP_ICE_SERVERS,
+      }],
+    });
 
     this.connection.onicecandidate = (event) => this.onicecandidate(event);
     this.connection.onnegotiationneeded = () => this.onnegotiationneeded();
     this.connection.ontrack = (event) => this.ontrack(event);
     this.connection.ondatachannel = (event) =>
-      this.prepareDataChannel(event.channel);
+      this.prepareDataChannel(getRTCDataXConnection(event.channel));
 
     // TODO: Make sure this works with the new SocketX
     this.signalingChannel.onmessage = (msg) => this.onmessage(msg);
@@ -137,12 +141,10 @@ export class WebRTCRemoteConnection {
   async startDataChannel() {
     const dataChannel = this.connection.createDataChannel('dataChannel');
 
-    this.prepareDataChannel(dataChannel);
+    this.prepareDataChannel(getRTCDataXConnection(dataChannel));
   }
 
-  private prepareDataChannel(baseChannel: RTCDataChannel) {
-    const channel = getRTCDataXConnection(baseChannel);
-
+  private prepareDataChannel(channel: RTCDataX) {
     const onMessageHandler = (event: MessageEvent) => {
       try {
         const result = peerMessage.decode(JSON.parse(event.data));
