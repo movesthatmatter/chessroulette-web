@@ -9,9 +9,9 @@ import * as serviceWorker from './serviceWorker';
 WebFont.load({
   google: {
     families: [
-      'Open Sans:300,400,700',
-      'Roboto:300,400,700',
-      'Roboto Slab:300,400,700',
+      'Open Sans:300', 'Open Sans:400', 'Open Sans:700',
+      'Roboto:300', 'Roboto:400', 'Roboto:700',
+      'Roboto Slab:300', 'Roboto Slab:400', 'Roboto Slab:700',
       'sans-serif',
     ],
   },
