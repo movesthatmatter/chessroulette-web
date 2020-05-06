@@ -57,14 +57,14 @@ export class Peer2Peer {
     );
 
     this.unsubscribeFromSignalingChannelOnMessage = signalingChannel.onMessage((msg) => {
-      if (msg.msg_type === 'webrtc_invitation') {
-        // This should be better at this – don't need to recheck the local stram has started
+      if (msg.kind === 'webrtcInvitation') {
+        // This should be better at this: don't need to recheck the local stram has started
         //  I could in theory just start it now as well preemptively
         if (this.localStreamClient.hasStarted()) {
           // Accepting the invitation is the default, which means that upon being invited,
           //  The RTC Connection starts the negotation and the streaming
           (async () => {
-            const rtc = await this.preparePeerConnection(msg.content.peer_id);
+            const rtc = await this.preparePeerConnection(msg.content.peerId);
 
             rtc.startAVChannel();
             rtc.startDataChannel();
@@ -273,10 +273,8 @@ export class Peer2Peer {
   //  could be encapsulated in the Signaling Class
   private async invitePeer(peerId: string) {
     this.signalingChannel.send({
-      msg_type: 'webrtc_invitation',
-      content: {
-        peer_id: peerId,
-      },
+      kind: 'webrtcInvitation',
+      content: { peerId },
     });
     // this.socket.send(JSON.stringify(payload));
   }

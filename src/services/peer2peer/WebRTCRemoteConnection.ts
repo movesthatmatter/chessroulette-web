@@ -4,16 +4,14 @@ import { Result, Err, Ok } from 'ts-results';
 import { getRTCDataXConnection, RTCDataX } from 'src/lib/RTCDataX';
 import { logsy } from 'src/lib/logsy';
 import config from 'src/config';
-// import {
-//   SignalingMessageWithDescription,
-//   SignalingMessageWithCandidate,
-//   SignalingNegotiationMessage,
-// } from './SignalingChannel';
 import { LocalStreamClient } from './LocalStreamClient';
 import { PeerMessage, peerMessage } from './records/PeerMessagingPayload';
 import { PeerStream } from './types';
 import {
-  RTCSignalingChannel, SignalingNegotiationMessage, SignalingMessageWithDescription, SignalingMessageWithCandidate,
+  RTCSignalingChannel,
+  SignalingNegotiationMessage,
+  SignalingMessageWithDescription,
+  SignalingMessageWithCandidate,
 } from '../socket/RTCSignalingChannel';
 
 export class WebRTCRemoteConnection {
@@ -29,7 +27,6 @@ export class WebRTCRemoteConnection {
   private unsubscribeFromDataChannelOnMessageListener?: () => void;
 
   constructor(
-    // private signalingChannel: SignalingChannel,
     private signalingChannel: RTCSignalingChannel,
     private localStream: LocalStreamClient,
     private peerId: string,
@@ -46,9 +43,8 @@ export class WebRTCRemoteConnection {
     this.connection.ondatachannel = (event) =>
       this.prepareDataChannel(getRTCDataXConnection(event.channel));
 
-    // TODO: Make sure this works with the new SocketX
     this.signalingChannel.onMessageType('negotiation', (msg) => {
-      if (msg.content.peer_id === this.peerId) {
+      if (msg.content.peerId === this.peerId) {
         this.onmessage(msg.content.forward as SignalingNegotiationMessage);
       }
     });
@@ -67,7 +63,9 @@ export class WebRTCRemoteConnection {
       );
 
       if (!this.connection.localDescription) {
-        logsy.error('[WebRTCRemoteConnection] onnegotiationneeded - No connection.LocalDescription');
+        logsy.error(
+          '[WebRTCRemoteConnection] onnegotiationneeded - No connection.LocalDescription',
+        );
 
         return;
       }
@@ -142,7 +140,10 @@ export class WebRTCRemoteConnection {
       return;
     }
 
-    this.signalingChannel.negotiateConnection(this.peerId, { desc: this.connection.localDescription });
+    this.signalingChannel.negotiateConnection(
+      this.peerId,
+      { desc: this.connection.localDescription },
+    );
   }
 
   private async onSignalingAnswer(msg: SignalingMessageWithDescription) {

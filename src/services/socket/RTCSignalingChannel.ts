@@ -41,14 +41,14 @@ export class RTCSignalingChannel {
   constructor(public connection: SocketX) {
     this.connection.addEventListener('message', ({ data }) => {
       io.deserialize(signalingPayload, JSON.parse(data)).map((msg) => {
-        switch (msg.msg_type) {
-          case 'webrtc_invitation':
+        switch (msg.kind) {
+          case 'webrtcInvitation':
             this.pubsy.publish('invitation', msg);
             break;
-          case 'webrtc_negotiation':
+          case 'webrtcNegotiation':
             this.pubsy.publish('negotiation', msg);
             break;
-          case 'webrtc_refusal':
+          case 'webrtcRefusal':
             this.pubsy.publish('onMessage', msg);
             break;
           default:
@@ -66,9 +66,9 @@ export class RTCSignalingChannel {
 
   negotiateConnection(peerId: string, forwardMessage: SignalingNegotiationMessage) {
     this.send({
-      msg_type: 'webrtc_negotiation',
+      kind: 'webrtcNegotiation',
       content: {
-        peer_id: peerId,
+        peerId,
         forward: forwardMessage,
       },
     });

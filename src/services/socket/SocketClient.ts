@@ -22,7 +22,7 @@ type ReceivableMessagesMap = {
 }
 
 type SendableMessagesMap = {
-  joinRoom: JoinRoomRequestPayload;
+  joinRoomRequest: JoinRoomRequestPayload;
 }
 
 export class SocketClient {
@@ -39,28 +39,25 @@ export class SocketClient {
     this.connection.addEventListener('message', ({ data }) => {
       io
         .deserialize(socketPayload, JSON.parse(data))
-        // .mapErr((e) => {
-        //   console.log('SocketClient Deserialize error', e);
-        // })
         .map((msg) => {
         // I don't like this at all but there's no way to map
         //  the types to the message in a clean way in typescript
         //  as it doesn't (yet) support mapping by tagged union kinds
         // See: https://github.com/microsoft/TypeScript/issues/30581
-          switch (msg.msg_type) {
-            case 'connection_opened':
+          switch (msg.kind) {
+            case 'connectionOpened':
               this.pubsy.publish('connectionOpened', msg);
               break;
-            case 'peer_joined_room':
+            case 'peerJoinedRoom':
               this.pubsy.publish('peerJoinedRoom', msg);
               break;
-            case 'room_stats':
+            case 'roomStats':
               this.pubsy.publish('roomStats', msg);
               break;
-            case 'my_stats':
+            case 'myStats':
               this.pubsy.publish('myStats', msg);
               break;
-            case 'join_room_success':
+            case 'joinRoomSuccess':
               this.pubsy.publish('joinRoomSuccess', msg);
               break;
             default:
@@ -76,18 +73,8 @@ export class SocketClient {
     this.connection.close();
   }
 
-  send<
-    TType extends keyof SendableMessagesMap,
-  >(type: TType, content: SendableMessagesMap[TType]['content']) {
-    // TODO: make this simpler
-    if (type === 'joinRoom') {
-      const payload: JoinRoomRequestPayload = {
-        msg_type: 'join_room_request',
-        content,
-      };
-
-      this.connection.send(JSON.stringify(payload));
-    }
+  send<K extends keyof SendableMessagesMap>(payload: SendableMessagesMap[K]) {
+    this.connection.send(JSON.stringify(payload));
   }
 
   onMessageType<

@@ -58,7 +58,7 @@ export const addLoggingInterceptors = (namespace: string, channel: WebDataEventC
         logUnimportantStyle,
         logIncomingStyle,
       );
-      console.log('Type   :', event.data.msg_type);
+      console.log('Kind   :', event.data.kind);
       console.log('Content:', event.data.content);
       // console.log(event.data);
       console.groupEnd();
@@ -80,7 +80,7 @@ export const addLoggingInterceptors = (namespace: string, channel: WebDataEventC
         logOutgoingStyle,
       );
       // console.log(data);
-      console.log('Type   :', data.msg_type);
+      console.log('Kind   :', data.kind);
       console.log('Content:', data.content);
       console.groupEnd();
 
