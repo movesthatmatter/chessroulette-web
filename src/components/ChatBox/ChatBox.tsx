@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
 import { noop } from 'src/lib/util';
 import cx from 'classnames';
+import { PeerMessageEnvelope } from 'src/services/peers';
+import { ChatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRecord';
 
 
 type Props = {
   me: string;
-  messages: PeerMessage[];
+  messages: PeerMessageEnvelope<ChatMessageRecord>[];
   onSend?: (text: string) => void;
 };
 
@@ -34,7 +35,7 @@ export const ChatBox: React.FC<Props> = ({
               [cls.myMessageContent]: msg.fromPeerId === me,
             })}
             >
-              {msg.content}
+              {msg.message.content}
             </div>
           </div>
         ))}

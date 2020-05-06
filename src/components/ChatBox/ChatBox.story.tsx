@@ -1,8 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
 import { now } from 'src/lib/date';
+import { PeerMessageEnvelope } from 'src/services/peers';
 import { ChatBox } from './ChatBox';
-
+import { ChatMessageRecord } from './records/ChatMessageRecord';
 
 export default {
   component: ChatBox,
@@ -15,20 +16,25 @@ const peers = {
   'Michael Tal': 'Michael Tal',
 };
 
-
 export const defaultStory = () => React.createElement(() => {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<PeerMessageEnvelope<ChatMessageRecord>[]>([
     {
-      content: 'Hello folks',
       fromPeerId: me,
       toPeerId: me,
       timestamp: String(now().getTime()),
+      message: {
+        msgType: 'chatMessage',
+        content: 'Hello folks',
+      },
     },
     {
-      content: 'Hello there',
       fromPeerId: peers.Kasparov,
       toPeerId: me,
       timestamp: String(now().getTime() + 1234),
+      message: {
+        msgType: 'chatMessage',
+        content: 'Hello there',
+      },
     },
   ]);
 
@@ -40,10 +46,13 @@ export const defaultStory = () => React.createElement(() => {
         setMessages((prevMessages) => [
           ...prevMessages,
           {
-            content,
             fromPeerId: me,
             toPeerId: '*',
             timestamp: String(now().getTime()),
+            message: {
+              msgType: 'chatMessage',
+              content,
+            },
           },
         ]);
       }}
