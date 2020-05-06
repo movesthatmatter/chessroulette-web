@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
 
 type Props = {
@@ -25,57 +25,60 @@ export const SocketProvider: React.FC<Props> = (props) => {
       const consumerId = String(Math.random()).slice(2);
 
       const onRelease = () => {
-        const { [consumerId]: removed, ...rest } = contextState.consumers;
-
         // If no other subscribers
-        if (Object.keys(rest).length === 0) {
-          setContextState((prev) => {
-            prev.socket?.close();
+        setContextState((prev) => {
+          const { [consumerId]: removed, ...rest } = prev.consumers;
 
-            return {
-              ...prev,
-              consumers: rest,
+          if (Object.keys(rest).length === 0) {
+              prev.socket?.close();
 
-              // remove the socket after closing
-              socket: undefined,
-            };
-          });
+              return {
+                ...prev,
+                consumers: rest,
 
-          return;
-        }
+                // remove the socket after closing
+                socket: undefined,
+              };
+          }
 
-        setContextState((prev) => ({
-          ...prev,
-          consumers: rest,
-        }));
+          return {
+            ...prev,
+            consumers: rest,
+          };
+        });
       };
 
-      if (!contextState.socket) {
-        const socket = new SocketClient(props.wssUrl);
+      setContextState((prev) => {
+        if (!prev.socket) {
+          return {
+            ...prev,
+            consumers: {
+              ...prev.consumers,
+              [consumerId]: null,
+            },
+            socket: new SocketClient(props.wssUrl),
+          };
+        }
 
-        setContextState((prev) => ({
+        return {
           ...prev,
           consumers: {
             ...prev.consumers,
             [consumerId]: null,
           },
-          socket,
-        }));
-
-        return onRelease;
-      }
-
-      setContextState((prev) => ({
-        ...prev,
-        consumers: {
-          ...prev.consumers,
-          [consumerId]: null,
-        },
-      }));
+        };
+      });
 
       return onRelease;
     },
   });
+
+  useEffect(() => () => {
+    // Make sure that the connection closes if the Provider unmounts
+    if (contextState.socket?.connection.OPEN) {
+        contextState.socket?.close();
+    }
+  }, [contextState.socket]);
 
   return (
     <SocketContext.Provider value={contextState}>

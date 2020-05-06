@@ -39,7 +39,9 @@ export const SocketConsumer: React.FC<Props> = ({
   useEffect(() => {
     const releaser = contextState.onDemand();
 
-    return releaser;
+    return () => {
+      releaser();
+    };
   }, []);
 
   if (!socket) {
