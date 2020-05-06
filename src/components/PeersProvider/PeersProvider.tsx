@@ -19,7 +19,7 @@ type RenderProps = {
 
 type Props = {
   me: PeerRecord;
-  room: RoomStatsRecord;
+  room: Pick<RoomStatsRecord, 'peers'>;
   socket: SocketClient;
 
   renderLoading?: () => ReactNode;
@@ -60,10 +60,7 @@ export class PeersProvider extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.peersClient = new Peers(
-      this.props.me,
-      new RTCSignalingChannel(this.props.socket.connection),
-    );
+    this.peersClient = new Peers(new RTCSignalingChannel(this.props.socket.connection));
 
     this.unsubscribeFromLocalStreamStart = this.peersClient.onLocalStreamStart(
       (localStream) => {
@@ -125,14 +122,30 @@ export class PeersProvider extends React.Component<Props, State> {
   }
 
   private broadcastMessage(message: PeerMessageEnvelope['message']) {
-    this.peersClient?.broadcastMessage(this.props.room, { message });
+    const roomPeersWithoutMe = Object
+      .values(this.props.room.peers)
+      .filter((peer) => peer.id !== this.props.me.id);
+
+    this.peersClient?.broadcastMessage(
+      roomPeersWithoutMe,
+      {
+        message,
+        fromPeerId: this.props.me.id,
+      },
+    );
   }
 
   render() {
     return (
       <>
         {this.props.render({
-          startAVBroadcasting: async () => this.peersClient?.startAVBroadcasting(this.props.room),
+          startAVBroadcasting: async () => {
+            const roomPeersWithoutMe = Object
+              .values(this.props.room.peers)
+              .filter((peer) => peer.id !== this.props.me.id);
+
+            this.peersClient?.startAVBroadcasting(roomPeersWithoutMe);
+          },
           stopAVBroadcasting: () => this.peersClient?.stopAVBroadcasting(),
           broadcastMessage: this.broadcastMessage.bind(this),
 

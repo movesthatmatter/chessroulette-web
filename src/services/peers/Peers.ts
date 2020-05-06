@@ -1,7 +1,7 @@
 import { Pubsy } from 'src/lib/Pubsy';
 import { logsy } from 'src/lib/logsy';
-import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
-import { PeerMessageEnvelope } from './records/PeerMessagingPayload';
+import { PeerRecord } from 'dstnd-io';
+import { PeerMessageEnvelope } from './records/PeerMessagingEnvelopePayload';
 import { PeerStream } from './types';
 import { RTCSignalingChannel } from '../socket/RTCSignalingChannel';
 import { AVStreaming } from '../AVStreaming';
@@ -25,10 +25,7 @@ export class Peers {
 
   unsubscribeFromSignalingChannelOnMessage: () => void;
 
-  constructor(
-    private me: PeerRecord,
-    private signalingChannel: RTCSignalingChannel,
-  ) {
+  constructor(private signalingChannel: RTCSignalingChannel) {
     this.localStreamClient = new AVStreaming();
 
     this.localStreamClient.onStart(() => {
@@ -71,16 +68,10 @@ export class Peers {
    * @param msg
    */
   broadcastMessage(
-    room: Pick<RoomStatsRecord, 'peers'>,
-    { message }: Pick<PeerMessageEnvelope, 'message'>,
+    peers: PeerRecord[],
+    payload: Pick<PeerMessageEnvelope, 'message' | 'fromPeerId'>,
   ) {
-    const { [this.me.id]: removed, ...otherPeers } = room.peers;
-
-    const results = Object.keys(otherPeers).map((peerId) =>
-      this.peerConnections[peerId].sendData({
-        fromPeerId: this.me.id,
-        message,
-      }));
+    const results = peers.map((peer) => this.peerConnections[peer.id].sendData(payload));
 
     const okSends = results.filter((r) => r.ok);
     const badSends = results.filter((r) => !r.ok);
@@ -96,9 +87,9 @@ export class Peers {
         // TODO: Do something with these bad sends, like retry or smtg!
         //  It depends on the strategy, but we're not there yet.
         logsy.warn(
-          '[Peer2Peer] Received BadResults while Attempting to send Data to Room',
-          room,
-          `Me: ${this.me.id}`,
+          '[Peer2Peer] Received BadResults while Attempting to send Data to Peers',
+          peers,
+          `Message Payload: ${payload}`,
           `BadResults Count: ${badSends.length} out of ${results.length}`,
           badSends,
           results,
@@ -109,17 +100,13 @@ export class Peers {
   }
 
   // Starts sending and receving streams with EVERY PEER in the room!
-  async startAVBroadcasting(room: Pick<RoomStatsRecord, 'peers'>) {
+  async startAVBroadcasting(peers: PeerRecord[]) {
     await this.localStreamClient.start();
 
-    const { [this.me.id]: removed, ...otherPeers } = room.peers;
-
-    Object
-      .keys(otherPeers)
-      .forEach(async (peerId) => {
-        await this.preparePeerConnection(peerId);
-        await this.invitePeer(peerId);
-      });
+    peers.forEach(async (peer) => {
+      await this.preparePeerConnection(peer.id);
+      await this.invitePeer(peer.id);
+    });
   }
 
   stopAVBroadcasting() {
