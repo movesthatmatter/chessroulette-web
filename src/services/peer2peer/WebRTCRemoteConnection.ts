@@ -4,15 +4,17 @@ import { Result, Err, Ok } from 'ts-results';
 import { getRTCDataXConnection, RTCDataX } from 'src/lib/RTCDataX';
 import { logsy } from 'src/lib/logsy';
 import config from 'src/config';
-import {
-  SignalingChannel,
-  SignalingMessage,
-  SignalingMessageWithDescription,
-  SignalingMessageWithCandidate,
-} from './SignalingChannel';
+// import {
+//   SignalingMessageWithDescription,
+//   SignalingMessageWithCandidate,
+//   SignalingNegotiationMessage,
+// } from './SignalingChannel';
 import { LocalStreamClient } from './LocalStreamClient';
 import { PeerMessage, peerMessage } from './records/PeerMessagingPayload';
 import { PeerStream } from './types';
+import {
+  RTCSignalingChannel, SignalingNegotiationMessage, SignalingMessageWithDescription, SignalingMessageWithCandidate,
+} from '../socket/RTCSignalingChannel';
 
 export class WebRTCRemoteConnection {
   private pubsy = new Pubsy<{
@@ -27,7 +29,8 @@ export class WebRTCRemoteConnection {
   private unsubscribeFromDataChannelOnMessageListener?: () => void;
 
   constructor(
-    private signalingChannel: SignalingChannel,
+    // private signalingChannel: SignalingChannel,
+    private signalingChannel: RTCSignalingChannel,
     private localStream: LocalStreamClient,
     private peerId: string,
   ) {
@@ -44,11 +47,17 @@ export class WebRTCRemoteConnection {
       this.prepareDataChannel(getRTCDataXConnection(event.channel));
 
     // TODO: Make sure this works with the new SocketX
-    this.signalingChannel.onmessage = (msg) => this.onmessage(msg);
+    this.signalingChannel.onMessageType('negotiation', (msg) => {
+      if (msg.content.peer_id === this.peerId) {
+        this.onmessage(msg.content.forward as SignalingNegotiationMessage);
+      }
+    });
   }
 
   private onicecandidate({ candidate }: RTCPeerConnectionIceEvent) {
-    this.signalingChannel.send(this.peerId, { candidate });
+    if (candidate) {
+      this.signalingChannel.negotiateConnection(this.peerId, { candidate });
+    }
   }
 
   private async onnegotiationneeded() {
@@ -56,10 +65,20 @@ export class WebRTCRemoteConnection {
       await this.connection.setLocalDescription(
         await this.connection.createOffer(),
       );
+
+      if (!this.connection.localDescription) {
+        logsy.error('[WebRTCRemoteConnection] onnegotiationneeded - No connection.LocalDescription');
+
+        return;
+      }
+
       // send the offer to the other peer
-      this.signalingChannel.send(this.peerId, {
-        desc: this.connection.localDescription,
-      });
+      this.signalingChannel.negotiateConnection(
+        this.peerId,
+        {
+          desc: this.connection.localDescription,
+        },
+      );
     } catch (error) {
       // TODO: Does this need to be part of logic?
       logsy.error(
@@ -76,7 +95,7 @@ export class WebRTCRemoteConnection {
     });
   }
 
-  private async onmessage(msg: SignalingMessage) {
+  private async onmessage(msg: SignalingNegotiationMessage) {
     // TODO: Type this using io-ts
     try {
       if (msg.desc) {
@@ -117,9 +136,13 @@ export class WebRTCRemoteConnection {
       await this.connection.createAnswer(),
     );
 
-    this.signalingChannel.send(this.peerId, {
-      desc: this.connection.localDescription,
-    });
+    if (!this.connection.localDescription) {
+      logsy.error('[WebRTCRemoteConnection] onSignallingOffer Error - No connection.LocalDescription');
+
+      return;
+    }
+
+    this.signalingChannel.negotiateConnection(this.peerId, { desc: this.connection.localDescription });
   }
 
   private async onSignalingAnswer(msg: SignalingMessageWithDescription) {
@@ -190,7 +213,7 @@ export class WebRTCRemoteConnection {
     this.pubsy.subscribe('onData', fn);
 
   sendData(
-    msg: Omit<PeerMessage, 'timestamp' | 'toPeerId'>,
+    msg: Pick<PeerMessage, 'msgType' | 'content' | 'fromPeerId'>,
   ): Result<PeerMessage, { type: 'DataChannelNotReady'; peerId: string }> {
     if (!this.dataChannel) {
       return new Err({
