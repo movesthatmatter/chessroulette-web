@@ -4,8 +4,7 @@ import { Result, Err, Ok } from 'ts-results';
 import { getRTCDataXConnection, RTCDataX } from 'src/lib/RTCDataX';
 import { logsy } from 'src/lib/logsy';
 import config from 'src/config';
-import { LocalStreamClient } from './LocalStreamClient';
-import { PeerMessage, peerMessage } from './records/PeerMessagingPayload';
+import { PeerMessageEnvelope, peerMessageEnvelope } from './records/PeerMessagingEnvelopePayload';
 import { PeerStream } from './types';
 import {
   RTCSignalingChannel,
@@ -13,11 +12,12 @@ import {
   SignalingMessageWithDescription,
   SignalingMessageWithCandidate,
 } from '../socket/RTCSignalingChannel';
+import { AVStreaming } from '../AVStreaming';
 
-export class WebRTCRemoteConnection {
+export class RTCClient {
   private pubsy = new Pubsy<{
     onRemoteStream: { peerId: string; stream: MediaStream };
-    onData: PeerMessage;
+    onData: PeerMessageEnvelope;
   }>();
 
   private connection: RTCPeerConnection;
@@ -28,7 +28,7 @@ export class WebRTCRemoteConnection {
 
   constructor(
     private signalingChannel: RTCSignalingChannel,
-    private localStream: LocalStreamClient,
+    private localStream: AVStreaming,
     private peerId: string,
   ) {
     this.connection = new RTCPeerConnection({
@@ -45,7 +45,7 @@ export class WebRTCRemoteConnection {
 
     this.signalingChannel.onMessageType('negotiation', (msg) => {
       if (msg.content.peerId === this.peerId) {
-        this.onmessage(msg.content.forward as SignalingNegotiationMessage);
+        this.onSignalingNegotiationMessage(msg.content.forward as SignalingNegotiationMessage);
       }
     });
   }
@@ -93,7 +93,7 @@ export class WebRTCRemoteConnection {
     });
   }
 
-  private async onmessage(msg: SignalingNegotiationMessage) {
+  private async onSignalingNegotiationMessage(msg: SignalingNegotiationMessage) {
     // TODO: Type this using io-ts
     try {
       if (msg.desc) {
@@ -171,7 +171,7 @@ export class WebRTCRemoteConnection {
   private prepareDataChannel(channel: RTCDataX) {
     const onMessageHandler = (event: MessageEvent) => {
       try {
-        const result = peerMessage.decode(JSON.parse(event.data));
+        const result = peerMessageEnvelope.decode(JSON.parse(event.data));
 
         if (isLeft(result)) {
           logsy.error(
@@ -207,15 +207,14 @@ export class WebRTCRemoteConnection {
     this.unsubscribeFromDataChannelOnMessageListener?.();
   }
 
-  onRemoteStream = (fn: (p: PeerStream) => void) =>
-    this.pubsy.subscribe('onRemoteStream', fn);
+  // Update to onConncted, hmmm - not sure I might still need to notify based on remote streams
+  onRemoteStream = (fn: (p: PeerStream) => void) => this.pubsy.subscribe('onRemoteStream', fn);
 
-  onData = (fn: (msg: PeerMessage) => void) =>
-    this.pubsy.subscribe('onData', fn);
+  onData = (fn: (msg: PeerMessageEnvelope) => void) => this.pubsy.subscribe('onData', fn);
 
   sendData(
-    msg: Pick<PeerMessage, 'msgType' | 'content' | 'fromPeerId'>,
-  ): Result<PeerMessage, { type: 'DataChannelNotReady'; peerId: string }> {
+    msg: Pick<PeerMessageEnvelope, 'fromPeerId' | 'message'>,
+  ): Result<PeerMessageEnvelope, { type: 'DataChannelNotReady'; peerId: string }> {
     if (!this.dataChannel) {
       return new Err({
         type: 'DataChannelNotReady',
@@ -223,7 +222,7 @@ export class WebRTCRemoteConnection {
       });
     }
 
-    const msgPayload: PeerMessage = {
+    const msgPayload: PeerMessageEnvelope = {
       ...msg,
       timestamp: String(new Date().getTime()),
       toPeerId: this.peerId,

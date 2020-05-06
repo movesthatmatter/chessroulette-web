@@ -1,7 +1,7 @@
 import { Pubsy } from 'src/lib/Pubsy';
 
 
-export class LocalStreamClient {
+export class AVStreaming {
   private pubsy = new Pubsy<{
     onStart: MediaStream;
     onStop: void;
