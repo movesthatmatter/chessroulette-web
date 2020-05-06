@@ -2,14 +2,16 @@ import React, { ReactNode } from 'react';
 import { Peer2Peer } from 'src/services/peer2peer';
 import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
 import { PeerDataRecord } from 'src/modules/GameRoom/records/PeerDataRecord';
-import { PeerNetworkRefreshPayload, RoomRecord } from 'dstnd-io';
+import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
+import { SocketClient } from 'src/services/socket/SocketClient';
+import { RTCSignalingChannel } from 'src/services/socket/RTCSignalingChannel';
 
 type RenderProps = {
-  start: () => Promise<void>;
-  stop: () => void;
-  sendPeerData: (msg: PeerDataRecord) => void;
-  peerStatus: PeerNetworkRefreshPayload['content'];
-  isConnectionReady: boolean;
+  startAVBroadcasting: () => Promise<void>;
+  stopAVBroadcasting: () => void;
+  broadcastMessage: (msg: PeerDataRecord) => void;
+  // peerStatus: PeerNetworkRefreshPayload['content'];
+  // isConnectionReady: boolean;
   localStream?: MediaStream;
   remoteStreams?: {
     [peerId: string]: {
@@ -17,33 +19,30 @@ type RenderProps = {
       stream: MediaStream;
     };
   };
-
-  // @depreacte in faavor of SRP
-  joinRoom: (roomId: string) => void;
 };
 
 type Props = {
-
-  // room: RoomRecord;
+  me: PeerRecord;
+  room: RoomStatsRecord;
+  socket: SocketClient;
 
   renderLoading?: () => ReactNode;
   render: (p: RenderProps) => ReactNode;
 
-
   onPeerMsgReceived?: (
     msg: PeerMessage,
-    p: Pick<RenderProps, 'sendPeerData' | 'peerStatus'>
+    p: Pick<RenderProps, 'broadcastMessage'>
   ) => void;
   onPeerMsgSent?: (
     msg: PeerMessage,
-    p: Pick<RenderProps, 'sendPeerData' | 'peerStatus'>
+    p: Pick<RenderProps, 'broadcastMessage'>
   ) => void;
 };
 
 type State = {
   isConnectionReady: boolean;
-  peerStatus: PeerNetworkRefreshPayload['content'];
-  joinedRoom?: RoomRecord;
+  // peerStatus: PeerNetworkRefreshPayload['content'];
+  // joinedRoom?: RoomRecord;
   localStream?: MediaStream;
   remoteStreams?: {
     [peerId: string]: {
@@ -56,9 +55,9 @@ type State = {
 export class Peer2PeerProvider extends React.Component<Props, State> {
   private p2p?: Peer2Peer;
 
-  private unsubscribFromOnReadyStateChange?: () => void;
+  // private unsubscribFromOnReadyStateChange?: () => void;
 
-  private unsubscribeFromOnPeerStatusUpdate?: () => void;
+  // private unsubscribeFromOnPeerStatusUpdate?: () => void;
 
   private unsubscribeFromLocalStreamStart?: () => void;
 
@@ -68,34 +67,40 @@ export class Peer2PeerProvider extends React.Component<Props, State> {
 
   state: State = {
     isConnectionReady: false,
-    peerStatus: {
-      me: '',
-      peers: {},
-      count: 0,
-      all_rooms: {},
-      joined_room: null,
-    },
+    // peerStatus: {
+    //   me: '',
+    //   peers: {},
+    //   count: 0,
+    //   all_rooms: {},
+    //   joined_room: null,
+    // },
     localStream: undefined,
     remoteStreams: undefined,
   };
 
   componentDidMount() {
-    this.p2p = new Peer2Peer();
-
-    this.unsubscribFromOnReadyStateChange = this.p2p.onReadyStateChange(
-      (isConnectionReady) => {
-        this.setState({ isConnectionReady });
-      },
+    this.p2p = new Peer2Peer(
+      this.props.me,
+      new RTCSignalingChannel(this.props.socket.connection),
     );
 
-    this.unsubscribeFromOnPeerStatusUpdate = this.p2p.onPeerStatusUpdate(
-      (peerStatus) => {
-        this.setState((prevState) => ({
-          ...prevState,
-          peerStatus,
-        }));
-      },
-    );
+
+    // console.log('P2P component did mount', this.p2p);
+
+    // this.unsubscribFromOnReadyStateChange = this.p2p.onReadyStateChange(
+    //   (isConnectionReady) => {
+    //     this.setState({ isConnectionReady });
+    //   },
+    // );
+
+    // this.unsubscribeFromOnPeerStatusUpdate = this.p2p.onPeerStatusUpdate(
+    //   (peerStatus) => {
+    //     this.setState((prevState) => ({
+    //       ...prevState,
+    //       peerStatus,
+    //     }));
+    //   },
+    // );
 
     this.unsubscribeFromLocalStreamStart = this.p2p.onLocalStreamStart(
       (localStream) => {
@@ -134,15 +139,15 @@ export class Peer2PeerProvider extends React.Component<Props, State> {
 
     this.p2p.onData((data) => {
       this.props.onPeerMsgReceived?.(data, {
-        sendPeerData: (...args) => this.sendPeerData(...args),
-        peerStatus: this.state.peerStatus,
+        broadcastMessage: (...args) => this.broadcastMessage(...args),
+        // peerStatus: this.state.peerStatus,
       });
     });
 
     this.p2p.onDataSent((data) => {
       this.props.onPeerMsgSent?.(data, {
-        sendPeerData: (...args) => this.sendPeerData(...args),
-        peerStatus: this.state.peerStatus,
+        broadcastMessage: (...args) => this.broadcastMessage(...args),
+        // peerStatus: this.state.peerStatus,
       });
     });
 
@@ -154,59 +159,35 @@ export class Peer2PeerProvider extends React.Component<Props, State> {
   componentWillUnmount() {
     this.p2p?.close();
 
-    this.unsubscribFromOnReadyStateChange?.();
-    this.unsubscribeFromOnPeerStatusUpdate?.();
+    // this.unsubscribFromOnReadyStateChange?.();
+    // this.unsubscribeFromOnPeerStatusUpdate?.();
     this.unsubscribeFromLocalStreamStart?.();
     this.unsubscribeFromLocalStreamStop?.();
     this.unsubscribeFromRemoteStreamStart?.();
   }
 
-  private sendPeerData(data: PeerDataRecord) {
-    if (!this.state.peerStatus.joined_room) {
-      throw new Error(
-        'Peer2Peer Error: Cannot sendDAta before joinging a room!',
-      );
-    }
-
-    this.p2p?.sendDataToRoom(
-      this.state.peerStatus.me,
-      this.state.peerStatus.joined_room,
-      JSON.stringify(data)
+  private broadcastMessage(data: PeerDataRecord) {
+    this.p2p?.broadcastMessage(
+      this.props.room,
+      {
+        ...data,
+        // TODO: Fix this by using the proper names
+        msgType: data.msgType === 'chatMessage' ? 'chat' : 'gameData',
+      },
     );
   }
 
   render() {
-    if (!this.p2p) {
-      return this.props.renderLoading?.() || null;
-    }
+    // if (!this.p2p) {
+    //   return this.props.renderLoading?.() || null;
+    // }
 
     return (
       <>
         {this.props.render({
-          joinRoom: (roomId) => {
-            this.p2p?.joinRoom({
-              me: this.state.peerStatus.me,
-              roomId,
-            });
-          },
-          start: async () => {
-            if (!this.state.peerStatus.joined_room) {
-              throw new Error(
-                'Peer2Peer Error: Cannot run start before joinging a room!',
-              );
-            }
-
-            await this.p2p?.startRoomStreaming(
-              this.state.peerStatus.me,
-              this.state.peerStatus.joined_room
-            );
-          },
-          stop: () => {
-            this.p2p?.stop();
-          },
-          sendPeerData: (data: PeerDataRecord) => this.sendPeerData(data),
-          peerStatus: this.state.peerStatus,
-          isConnectionReady: this.state.isConnectionReady,
+          startAVBroadcasting: async () => this.p2p?.startAVBroadcasting(this.props.room),
+          stopAVBroadcasting: () => this.p2p?.stopAVBroadcasting(),
+          broadcastMessage: this.broadcastMessage.bind(this),
 
           localStream: this.state.localStream,
           remoteStreams: this.state.remoteStreams,
