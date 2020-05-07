@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
+import { PeerRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { RTCSignalingChannel } from 'src/services/socket/RTCSignalingChannel';
 import { PeerMessageEnvelope, Peers } from 'src/services/peers';
@@ -19,11 +19,18 @@ type RenderProps = {
 
 type Props = {
   me: PeerRecord;
-  room: Pick<RoomStatsRecord, 'peers'>;
+  peers: PeerRecord[];
   socket: SocketClient;
 
-  renderLoading?: () => ReactNode;
+  onReady?: (
+    p: Pick<RenderProps,
+    | 'startAVBroadcasting'
+    | 'stopAVBroadcasting'
+    | 'broadcastMessage'
+    >
+  ) => void;
   render: (p: RenderProps) => ReactNode;
+  renderLoading?: () => ReactNode;
 
   onPeerMsgReceived?: (
     msg: PeerMessageEnvelope,
@@ -60,7 +67,9 @@ export class PeersProvider extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.peersClient = new Peers(new RTCSignalingChannel(this.props.socket.connection));
+    this.peersClient = new Peers(
+      new RTCSignalingChannel(this.props.socket.connection),
+    );
 
     this.unsubscribeFromLocalStreamStart = this.peersClient.onLocalStreamStart(
       (localStream) => {
@@ -71,29 +80,28 @@ export class PeersProvider extends React.Component<Props, State> {
       },
     );
 
-    this.unsubscribeFromLocalStreamStop = this.peersClient.onLocalStreamStop(() => {
-      this.setState((prevState) => ({
-        ...prevState,
-        localStream: undefined,
-      }));
-    });
-
+    this.unsubscribeFromLocalStreamStop = this.peersClient.onLocalStreamStop(
+      () => {
+        this.setState((prevState) => ({
+          ...prevState,
+          localStream: undefined,
+        }));
+      },
+    );
 
     this.unsubscribeFromRemoteStreamStart = this.peersClient.onRemoteStreamingStart(
       ({ peerId, stream }) => {
-        this.setState(
-          (prevState) => ({
-            ...prevState,
-            // TODO: Not Sure how to do multiple remote streams
-            remoteStreams: {
-              ...prevState.remoteStreams,
-              [peerId]: {
-                peerId,
-                stream,
-              },
+        this.setState((prevState) => ({
+          ...prevState,
+          // TODO: Not Sure how to do multiple remote streams
+          remoteStreams: {
+            ...prevState.remoteStreams,
+            [peerId]: {
+              peerId,
+              stream,
             },
-          }),
-        );
+          },
+        }));
       },
     );
 
@@ -109,6 +117,15 @@ export class PeersProvider extends React.Component<Props, State> {
       });
     });
 
+    if (this.props.onReady) {
+      this.props.onReady({
+        startAVBroadcasting: async () => {
+        this.peersClient?.startAVBroadcasting(this.peersWithoutMe);
+        },
+        stopAVBroadcasting: () => this.peersClient?.stopAVBroadcasting(),
+        broadcastMessage: this.broadcastMessage.bind(this),
+      });
+    }
     // TODO Add local stop
     // TODO Add remote stop
   }
@@ -121,18 +138,15 @@ export class PeersProvider extends React.Component<Props, State> {
     this.unsubscribeFromRemoteStreamStart?.();
   }
 
-  private broadcastMessage(message: PeerMessageEnvelope['message']) {
-    const roomPeersWithoutMe = Object
-      .values(this.props.room.peers)
-      .filter((peer) => peer.id !== this.props.me.id);
+  private get peersWithoutMe() {
+    return this.props.peers.filter((peer) => peer.id !== this.props.me.id);
+  }
 
-    this.peersClient?.broadcastMessage(
-      roomPeersWithoutMe,
-      {
-        message,
-        fromPeerId: this.props.me.id,
-      },
-    );
+  private broadcastMessage(message: PeerMessageEnvelope['message']) {
+    this.peersClient?.broadcastMessage(this.peersWithoutMe, {
+      message,
+      fromPeerId: this.props.me.id,
+    });
   }
 
   render() {
@@ -140,11 +154,7 @@ export class PeersProvider extends React.Component<Props, State> {
       <>
         {this.props.render({
           startAVBroadcasting: async () => {
-            const roomPeersWithoutMe = Object
-              .values(this.props.room.peers)
-              .filter((peer) => peer.id !== this.props.me.id);
-
-            this.peersClient?.startAVBroadcasting(roomPeersWithoutMe);
+            this.peersClient?.startAVBroadcasting(this.peersWithoutMe);
           },
           stopAVBroadcasting: () => this.peersClient?.stopAVBroadcasting(),
           broadcastMessage: this.broadcastMessage.bind(this),
