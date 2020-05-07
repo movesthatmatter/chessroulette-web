@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { noop } from 'src/lib/util';
 import cx from 'classnames';
-import { PeerMessageEnvelope } from 'src/services/peers';
-import { ChatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRecord';
+import { ChatMessageRecord } from './records/ChatMessageRecord';
 
 
 type Props = {
-  me: string;
-  messages: PeerMessageEnvelope<ChatMessageRecord>[];
+  me: {
+    id: string;
+    name: string;
+  };
+  messages: ChatMessageRecord[];
   onSend?: (text: string) => void;
 };
 
@@ -25,17 +27,17 @@ export const ChatBox: React.FC<Props> = ({
       <div className={cls.messageHistory}>
         {messages.map((msg, i) => (
           <div
-            key={`${msg.timestamp + i}`}
+            key={String(i)}
             className={cx(cls.message, {
-              [cls.myMessage]: msg.fromPeerId === me,
+              [cls.myMessage]: msg.from.id === me.id,
             })}
           >
-            <div>{msg.fromPeerId}</div>
+            <div>{msg.from.name}</div>
             <div className={cx(cls.messageContent, {
-              [cls.myMessageContent]: msg.fromPeerId === me,
+              [cls.myMessageContent]: msg.from.name === me.id,
             })}
             >
-              {msg.message.content}
+              {msg.content}
             </div>
           </div>
         ))}

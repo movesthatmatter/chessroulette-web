@@ -10,7 +10,10 @@ export default {
   title: 'Components/ChatBox',
 };
 
-const me = 'Gabe';
+const me = {
+  id: 'gabe',
+  name: 'Gabe',
+};
 const peers = {
   Kasparov: 'Kasparov',
   'Michael Tal': 'Michael Tal',
