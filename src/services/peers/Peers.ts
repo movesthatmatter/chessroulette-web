@@ -3,6 +3,7 @@ import { logsy } from 'src/lib/logsy';
 import { PeerRecord } from 'dstnd-io';
 import { RTCDataX } from 'src/lib/RTCDataX';
 import { Err } from 'dstnd-io/dist/ts-results';
+import { DeepPartial } from 'src/lib/types';
 import { PeerMessageEnvelope } from './records/PeerMessagingEnvelopePayload';
 import { PeerStream, PeerConnectionStatus } from './types';
 import { RTCSignalingChannel } from '../socket/RTCSignalingChannel';
@@ -10,13 +11,19 @@ import { AVStreaming } from '../AVStreaming';
 import { RTCClient } from './RTCClient';
 import { PeerMessageHandler } from './PeerMessageHandler';
 
+type PartialPeerConnectionStatus = {
+  peerId: string;
+} & DeepPartial<PeerConnectionStatus>;
+
 export class Peers {
   private pubsy = new Pubsy<{
+    onPeerConnectionUpdated: PartialPeerConnectionStatus;
+
     onRemoteStreamingStart: { peerId: string; stream: MediaStream };
     onRemoteStreamingStop: { peerId: string };
+
     onPeerMessage: PeerMessageEnvelope;
     onPeerMessageSent: PeerMessageEnvelope;
-    onPeerConnectionStatusChange: PeerConnectionStatus;
   }>();
 
   private localStreamClient: AVStreaming;
@@ -166,19 +173,25 @@ export class Peers {
       peerId,
     );
 
-    // This should be called onPeerConnected
-    // rtc.onRemoteStream((s) => {
-    //   this.pubsy.publish('onRemoteStreamingStart', s);
-    // });
-
-    // rtc.onRemoteStream =
-
-    // rtc.onData((msg) => {
-    //   this.pubsy.publish('onPeerMessage', msg);
-    // });
-
     rtc.connection.onconnectionstatechange = (e) => {
-      console.log('[Peers] Connection State to', peerId, 'changed to', e.currentTarget?.connectionState);
+      if (!(e.currentTarget && 'connectionState' in e.currentTarget)) {
+        return;
+      }
+
+      const { connectionState } = e.currentTarget as any;
+
+      logsy.log('[Peers] Connection State Changed', peerId, connectionState);
+
+      if (connectionState === 'disconnected') {
+        this.pubsy.publish('onPeerConnectionUpdated', {
+          peerId,
+          channels: {
+            data: { on: false },
+            video: { on: false },
+            audio: { on: false },
+          },
+        });
+      }
     };
 
     rtc.onDataChannelOpen = (dataChannel: RTCDataX) => {
@@ -190,13 +203,19 @@ export class Peers {
         dataChannel: messageHandler,
       };
 
-      this.pubsy.publish('onPeerConnectionStatusChange', {
+      messageHandler.onMesssage = (msg) => {
+        this.pubsy.publish('onPeerMessage', msg);
+      };
+
+      // Only at this point is the connection considered Active!
+      this.pubsy.publish('onPeerConnectionUpdated', {
         peerId,
-        isConnected: true,
         channels: {
           data: {
             on: true,
           },
+
+          // These 2 might be different
           video: {
             on: false,
           },
@@ -205,10 +224,6 @@ export class Peers {
           },
         },
       });
-
-      messageHandler.onMesssage = (msg) => {
-        this.pubsy.publish('onPeerMessage', msg);
-      };
     };
 
     rtc.onDataChannelClose = () => {
@@ -220,8 +235,6 @@ export class Peers {
         dataChannel: undefined,
       };
     };
-
-    // rtc.startDataChannel();
 
     this.peerConnections[peerId] = {
       rtc,
@@ -242,7 +255,7 @@ export class Peers {
       content: { peerId },
     });
 
-    console.log('[Peers] Invitation sent to', peerId);
+    logsy.log('[Peers] Invitation sent to', peerId);
   }
 
   // What is the difference between stop and close??
@@ -262,8 +275,8 @@ export class Peers {
     this.peerConnections = {};
   }
 
-  onPeerConnectionStatusChange = (fn: (p: PeerConnectionStatus) => void) =>
-    this.pubsy.subscribe('onPeerConnectionStatusChange', fn);
+  onPeerConnectionUpdated = (fn: (p: PartialPeerConnectionStatus) => void) =>
+    this.pubsy.subscribe('onPeerConnectionUpdated', fn);
 
   onRemoteStreamingStart = (fn: (p: PeerStream) => void) =>
     this.pubsy.subscribe('onRemoteStreamingStart', fn);

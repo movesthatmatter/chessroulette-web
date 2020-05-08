@@ -7,7 +7,6 @@ export type PeerStream = {
 
 export type PeerConnectionStatus = {
   peerId: string;
-  isConnected: boolean;
   channels: {
     data: {
       on: boolean;

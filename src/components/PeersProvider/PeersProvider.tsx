@@ -2,7 +2,16 @@ import React, { ReactNode } from 'react';
 import { PeerRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { RTCSignalingChannel } from 'src/services/socket/RTCSignalingChannel';
-import { PeerMessageEnvelope, Peers, PeerConnectionStatus } from 'src/services/peers';
+import {
+  PeerMessageEnvelope,
+  Peers,
+  PeerConnectionStatus,
+} from 'src/services/peers';
+import { logsy } from 'src/lib/logsy';
+
+type PeerConnections = {
+  [peerId: string]: PeerConnectionStatus & { isConnected: boolean };
+};
 
 type RenderProps = {
   connect: () => void;
@@ -12,7 +21,7 @@ type RenderProps = {
   broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
   localStream?: MediaStream;
 
-  peerConnections: {[peerId: string]: PeerConnectionStatus};
+  peerConnections: PeerConnections;
 
   // @Depreacate in favor of peerConnections
   remoteStreams?: {
@@ -28,11 +37,11 @@ type Props = {
   me: PeerRecord;
   peers: PeerRecord[];
 
-  onReady?: (
-    p: Omit<RenderProps, 'localStream' | 'remoteStreams'>
-  ) => void;
+  onReady?: (p: Omit<RenderProps, 'localStream' | 'remoteStreams'>) => void;
 
-  onPeerConnectionsChanged?: (peerConnections: RenderProps['peerConnections']) => void;
+  onPeerConnectionsChanged?: (
+    peerConnections: RenderProps['peerConnections']
+  ) => void;
 
   onPeerMsgReceived?: (
     msg: PeerMessageEnvelope,
@@ -48,8 +57,7 @@ type Props = {
 };
 
 type State = {
-
-  peerConnections: {[peerId: string]: PeerConnectionStatus};
+  peerConnections: PeerConnections;
 
   // Not sure if the local stream should still be here - probably yes
   localStream?: MediaStream;
@@ -73,7 +81,7 @@ export class PeersProvider extends React.Component<Props, State> {
   private unsubscribeFromRemoteStreamStart?: () => void;
 
   state: State = {
-    peerConnections: [],
+    peerConnections: {},
 
     localStream: undefined,
     remoteStreams: undefined,
@@ -119,16 +127,60 @@ export class PeersProvider extends React.Component<Props, State> {
       },
     );
 
-    this.peersClient.onPeerConnectionStatusChange((peerConnection) => {
-      this.setState((prev) => ({
-        peerConnections: {
-          ...prev.peerConnections,
-          [peerConnection.peerId]: peerConnection,
+    this.peersClient.onPeerConnectionUpdated((status) => {
+      logsy.log('[PeersProvider] onPeerConnectionUpdated', status);
+
+      this.setState(
+        (prev) => {
+          const defaultChannels = {
+            data: {
+              on: false,
+            },
+            audio: {
+              on: false,
+            },
+            video: {
+              on: false,
+            },
+          } as const;
+
+          const prevChannels = prev.peerConnections[status.peerId]?.channels ?? {};
+          const nextChannels = status.channels || {};
+
+          const nextPeerConnectionStateChannels = Object.assign(
+            defaultChannels,
+            prevChannels,
+            nextChannels,
+          );
+
+          const nextPeerConnection = {
+            peerId: status.peerId,
+            channels: nextPeerConnectionStateChannels,
+            isConnected: Object
+              .values(nextPeerConnectionStateChannels)
+              .filter((p) => p.on)
+              .length > 0,
+          };
+
+          if (nextPeerConnection.isConnected) {
+            return {
+              peerConnections: {
+                ...prev.peerConnections,
+                [status.peerId]: nextPeerConnection,
+              },
+            };
+          }
+
+          const { [status.peerId]: removed, ...rest } = prev.peerConnections;
+
+          return {
+            peerConnections: rest,
+          };
         },
-      }), () => {
-        // Update the outside world as well
-        this.props.onPeerConnectionsChanged?.(this.state.peerConnections);
-      });
+        () => {
+          this.props.onPeerConnectionsChanged?.(this.state.peerConnections);
+        },
+      );
     });
 
     this.peersClient.onPeerMessage((data) => {
@@ -149,7 +201,7 @@ export class PeersProvider extends React.Component<Props, State> {
           this.peersClient?.connect(this.peersWithoutMe);
         },
         startAVBroadcasting: async () => {
-        this.peersClient?.startAVBroadcasting(this.peersWithoutMe);
+          this.peersClient?.startAVBroadcasting(this.peersWithoutMe);
         },
         stopAVBroadcasting: () => this.peersClient?.stopAVBroadcasting(),
         broadcastMessage: this.broadcastMessage.bind(this),
@@ -199,7 +251,6 @@ export class PeersProvider extends React.Component<Props, State> {
 
           // @deprecate in favor of ConnectedPeers[]
           remoteStreams: this.state.remoteStreams,
-
 
           peerConnections: this.state.peerConnections,
         })}
