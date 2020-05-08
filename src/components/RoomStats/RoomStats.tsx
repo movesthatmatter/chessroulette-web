@@ -32,14 +32,14 @@ export const RoomStats: React.FC<Props> = (props) => {
                 {Object.values(peerConnections).map(
                   ({ peerId, isConnected, channels }) => (
                     <div key={peerId}>
-                      {props.room.peers[peerId].name}
+                      {peerId}
                       <div>
                         <small>
                           <span>
                             Connection Status:
                             <div className={cx(cls.dot, {
-                              [cls.greenDot]: channels.data.on,
-                              [cls.redDot]: !channels.data.on,
+                              [cls.greenDot]: isConnected,
+                              [cls.redDot]: !isConnected,
                             })}
                             />
                           </span>
