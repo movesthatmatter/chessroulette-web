@@ -180,6 +180,8 @@ export class PeersProvider extends React.Component<Props, State> {
     this.unsubscribeFromLocalStreamStart?.();
     this.unsubscribeFromLocalStreamStop?.();
     this.unsubscribeFromRemoteStreamStart?.();
+
+    this.localStreamClient?.stop();
   }
 
   private get peersWithoutMe() {
