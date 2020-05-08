@@ -3,7 +3,7 @@ import { SocketClient } from 'src/services/socket/SocketClient';
 import { noop } from 'src/lib/util';
 import { SocketContext } from './SocketProvider';
 
-type Props = {
+export type SocketConsumerProps = {
   wssURL?: string;
   autoDemandConnection?: boolean;
   render: (renderProps: {
@@ -19,7 +19,7 @@ type Props = {
   onMessage?: Parameters<SocketClient['onMessage']>[0];
 };
 
-export const SocketConsumer: React.FC<Props> = ({
+export const SocketConsumer: React.FC<SocketConsumerProps> = ({
   onReady = noop,
   onMessage = noop,
   autoDemandConnection = true,

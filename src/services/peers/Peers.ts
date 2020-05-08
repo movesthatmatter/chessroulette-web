@@ -190,6 +190,22 @@ export class Peers {
         dataChannel: messageHandler,
       };
 
+      this.pubsy.publish('onPeerConnectionStatusChange', {
+        peerId,
+        isConnected: true,
+        channels: {
+          data: {
+            on: true,
+          },
+          video: {
+            on: false,
+          },
+          audio: {
+            on: false,
+          },
+        },
+      });
+
       messageHandler.onMesssage = (msg) => {
         this.pubsy.publish('onPeerMessage', msg);
       };
@@ -238,8 +254,8 @@ export class Peers {
     // this.localStreamClient.stop();
     // this.socket.close();
 
-    Object.values(this.peerConnections).forEach((connection) => {
-      connection.close();
+    Object.values(this.peerConnections).forEach((conn) => {
+      conn.rtc.close();
     });
 
     // Free them up from the stack

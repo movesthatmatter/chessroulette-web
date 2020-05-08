@@ -2,13 +2,19 @@ import React, { ReactNode } from 'react';
 import { PeerRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { RTCSignalingChannel } from 'src/services/socket/RTCSignalingChannel';
-import { PeerMessageEnvelope, Peers } from 'src/services/peers';
+import { PeerMessageEnvelope, Peers, PeerConnectionStatus } from 'src/services/peers';
 
 type RenderProps = {
+  connect: () => void;
+
   startAVBroadcasting: () => Promise<void>;
   stopAVBroadcasting: () => void;
   broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
   localStream?: MediaStream;
+
+  peerConnections: {[peerId: string]: PeerConnectionStatus};
+
+  // @Depreacate in favor of peerConnections
   remoteStreams?: {
     [peerId: string]: {
       peerId: string;
@@ -18,19 +24,15 @@ type RenderProps = {
 };
 
 type Props = {
+  socket: SocketClient;
   me: PeerRecord;
   peers: PeerRecord[];
-  socket: SocketClient;
 
   onReady?: (
-    p: Pick<RenderProps,
-    | 'startAVBroadcasting'
-    | 'stopAVBroadcasting'
-    | 'broadcastMessage'
-    >
+    p: Omit<RenderProps, 'localStream' | 'remoteStreams'>
   ) => void;
-  render: (p: RenderProps) => ReactNode;
-  renderLoading?: () => ReactNode;
+
+  onPeerConnectionsChanged?: (peerConnections: RenderProps['peerConnections']) => void;
 
   onPeerMsgReceived?: (
     msg: PeerMessageEnvelope,
@@ -40,10 +42,19 @@ type Props = {
     msg: PeerMessageEnvelope,
     p: Pick<RenderProps, 'broadcastMessage'>
   ) => void;
+
+  render: (p: RenderProps) => ReactNode;
+  renderLoading?: () => ReactNode;
 };
 
 type State = {
+
+  peerConnections: {[peerId: string]: PeerConnectionStatus};
+
+  // Not sure if the local stream should still be here - probably yes
   localStream?: MediaStream;
+
+  // @depreacate in favor of PeerConnections
   remoteStreams?: {
     [peerId: string]: {
       peerId: string;
@@ -62,6 +73,8 @@ export class PeersProvider extends React.Component<Props, State> {
   private unsubscribeFromRemoteStreamStart?: () => void;
 
   state: State = {
+    peerConnections: [],
+
     localStream: undefined,
     remoteStreams: undefined,
   };
@@ -89,6 +102,7 @@ export class PeersProvider extends React.Component<Props, State> {
       },
     );
 
+    // @deprecate
     this.unsubscribeFromRemoteStreamStart = this.peersClient.onRemoteStreamingStart(
       ({ peerId, stream }) => {
         this.setState((prevState) => ({
@@ -105,6 +119,18 @@ export class PeersProvider extends React.Component<Props, State> {
       },
     );
 
+    this.peersClient.onPeerConnectionStatusChange((peerConnection) => {
+      this.setState((prev) => ({
+        peerConnections: {
+          ...prev.peerConnections,
+          [peerConnection.peerId]: peerConnection,
+        },
+      }), () => {
+        // Update the outside world as well
+        this.props.onPeerConnectionsChanged?.(this.state.peerConnections);
+      });
+    });
+
     this.peersClient.onPeerMessage((data) => {
       this.props.onPeerMsgReceived?.(data, {
         broadcastMessage: (...args) => this.broadcastMessage(...args),
@@ -119,13 +145,19 @@ export class PeersProvider extends React.Component<Props, State> {
 
     if (this.props.onReady) {
       this.props.onReady({
+        connect: async () => {
+          this.peersClient?.connect(this.peersWithoutMe);
+        },
         startAVBroadcasting: async () => {
         this.peersClient?.startAVBroadcasting(this.peersWithoutMe);
         },
         stopAVBroadcasting: () => this.peersClient?.stopAVBroadcasting(),
         broadcastMessage: this.broadcastMessage.bind(this),
+
+        peerConnections: this.state.peerConnections,
       });
     }
+
     // TODO Add local stop
     // TODO Add remote stop
   }
@@ -153,6 +185,10 @@ export class PeersProvider extends React.Component<Props, State> {
     return (
       <>
         {this.props.render({
+          connect: async () => {
+            this.peersClient?.connect(this.peersWithoutMe);
+          },
+
           startAVBroadcasting: async () => {
             this.peersClient?.startAVBroadcasting(this.peersWithoutMe);
           },
@@ -163,6 +199,9 @@ export class PeersProvider extends React.Component<Props, State> {
 
           // @deprecate in favor of ConnectedPeers[]
           remoteStreams: this.state.remoteStreams,
+
+
+          peerConnections: this.state.peerConnections,
         })}
       </>
     );
