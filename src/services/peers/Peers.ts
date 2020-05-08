@@ -6,7 +6,7 @@ import { Err } from 'dstnd-io/dist/ts-results';
 import { DeepPartial } from 'src/lib/types';
 import { noop } from 'src/lib/util';
 import { PeerMessageEnvelope } from './records/PeerMessagingEnvelopePayload';
-import { PeerStream, PeerConnectionStatus } from './types';
+import { PeerConnectionStatus } from './types';
 import { RTCSignalingChannel } from '../socket/RTCSignalingChannel';
 import { AVStreaming } from '../AVStreaming';
 import { RTCClient } from './RTCClient';
@@ -43,27 +43,12 @@ export class Peers {
     this.unsubscribeFromSignalingChannelOnMessage = signalingChannel.onMessage(
       (msg) => {
         if (msg.kind === 'webrtcInvitation') {
-          // This should be better at this: don't need to recheck the local stram has started
-          //  I could in theory just start it now as well preemptively
-          // if (this.localStreamClient.hasStarted()) {
-          // Accepting the invitation is the default, which means that upon being invited,
-          //  The RTC Connection starts the negotation and the streaming
-          (async () => {
-            logsy.log(
-              '[Peers] invitation received from ',
-              msg.content.peerId,
-            );
+          logsy.log(
+            '[Peers] invitation received from ',
+            msg.content.peerId,
+          );
 
-            const { rtc } = await this.preparePeerConnection(
-              msg.content.peerId,
-            );
-
-            // If the local stream is already streaming stream to peer right away
-            if (this.localStreamClient.stream) {
-              this.streamToPeer(rtc, this.localStreamClient.stream);
-            }
-          })();
-          // }
+          this.preparePeerConnection(msg.content.peerId);
         }
       },
     );
