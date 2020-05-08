@@ -74,69 +74,72 @@ export const GameRoom: React.FC<Props> = ({
 
   return (
     <>
-      <div>{`Me: ${me}`}</div>
-      {props.peers.filter((p) => p !== me).map((peer) => (
-        <div key={peer}>
-          {/* {peer} */}
-          {/* {props.currentGame} */}
-          {/* <button
+      {/* {props.peers.filter((p) => p !== me).map((peer) => (
+        <div >
+          { {peer} }
+          { {props.currentGame}}
+          { <button
               onClick={() => onNewGame([me, peer])}
               type="button"
             >
-              {`Play ${peer}`} */}
-          {/* </button> */}
+              {`Play ${peer}`} }
+          {</button> }
         </div>
-      ))}
-      <div className={cls.container}>
-        {/* <div className={cls.peersContainer}> */}
-        <div className={cls.avStreams}>
-          {props.remoteStreams?.map(({ peerId, stream }) => (
-            <div key={peerId} className={cls.avStreamContainer}>
-              <span>{peerId}</span>
-              <AVStream
-                stream={stream}
-                autoPlay
-                muted={false}
-                // muted={false}
-                className={cls.avStream}
-              />
-              {!props.currentGame && (
-                <button
-                  type="button"
-                  className={cls.challengeButton}
-                  onClick={() => onNewGame({
-                    from: me,
-                    to: peerId,
-                  })}
-                >
-                  Challenge
-                  {' '}
-                  {peerId}
-                </button>
-              )}
-            </div>
-          ))}
-          {props.localStream && (
-            <AVStream
-              stream={props.localStream}
-              autoPlay
-              muted
-              className={cx([cls.avStream, cls.myAvStream])}
+      ))} */}
+      <div className={cls.gameRoomContainer}>
+        <div className={cls.contentContainer}>
+          <div className={cls.gameWrapper}>
+            <ChessGame
+              players={props.currentGame?.players || unknownPlayers}
+              fen={props.currentGame?.fen}
+              homeColor={(playersByName && playersByName[me] && playersByName[me].color) || 'white'}
+              playable={!!(playersByName && !!playersByName[me])}
+              onMove={(nextFen) => {
+                if (props.currentGame) {
+                  onGameStateUpdate(nextFen);
+                }
+              }}
             />
-          )}
-        </div>
-        <div className={cls.gameWrapper}>
-          <ChessGame
-            players={props.currentGame?.players || unknownPlayers}
-            fen={props.currentGame?.fen}
-            homeColor={(playersByName && playersByName[me] && playersByName[me].color) || 'white'}
-            playable={!!(playersByName && !!playersByName[me])}
-            onMove={(nextFen) => {
-              if (props.currentGame) {
-                onGameStateUpdate(nextFen);
-              }
-            }}
-          />
+          </div>
+          <div className={cls.avStreams}>
+            <div>{`Me: ${me}`}</div>
+            {props.remoteStreams?.map(({ peerId, stream }) => (
+              <div key={peerId} className={cls.avStreamContainer}>
+                <span>{peerId}</span>
+                <AVStream
+                  stream={stream}
+                  autoPlay
+                  muted={false}
+                  // muted={false}
+                  className={cls.avStream}
+                />
+                {!props.currentGame && (
+                  <button
+                    type="button"
+                    className={cls.challengeButton}
+                    onClick={() => onNewGame({
+                      from: me,
+                      to: peerId,
+                    })}
+                  >
+                    Challenge
+                    {' '}
+                    {peerId}
+                  </button>
+                )}
+              </div>
+            ))}
+            {props.localStream && (
+              <AVStream
+
+                stream={props.localStream}
+                autoPlay
+                muted
+                className={cx([cls.avStream, cls.myAvStream])}
+              />
+            )}
+          </div>
+          <div className={cls.spacer} />
         </div>
         <div className={cls.chatBox}>
           <ChatBox
@@ -151,6 +154,23 @@ export const GameRoom: React.FC<Props> = ({
 };
 
 const useStyles = createUseStyles({
+  gameRoomContainer: {
+    zIndex: 1,
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    top: '0',
+    left: '0',
+  },
+  contentContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    zIndex: 1,
+    position: 'relative',
+  },
+  spacer: {
+    width: '100%',
+  },
   container: {
     display: 'flex',
     flexDirection: 'row',
@@ -171,20 +191,27 @@ const useStyles = createUseStyles({
   avStreamContainer: {
     display: 'flex',
     flexDirection: 'column',
+    flex: 1,
+
   },
   avStream: {
-    width: '100%',
+
+    width: '100%    !important',
+    maxWidth: '420px !important',
+    height: 'auto   !important',
+
+
   },
   myAvStream: {
-    width: '50%',
-    '&:first-child': {
-      width: '100%',
-    },
+
   },
   gameWrapper: {
-    flex: 1,
+    position: 'relative',
+    zIndex: 1,
   },
   chatBox: {
-    flex: 0.5,
+    position: 'absolute',
+    bottom: 0,
+    zIndex: 2,
   },
 });

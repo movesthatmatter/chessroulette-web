@@ -115,6 +115,7 @@ const useStyles = createUseStyles({
     maxWidth: '320px',
     bottom: '0',
     marginBottom: '20px',
+    zIndex: 1,
   },
   chatWindowCondensed: {
     width: '320px',
@@ -123,6 +124,7 @@ const useStyles = createUseStyles({
     boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.25)',
     marginTop: '50px',
     // transition: 'all .5s ease-in-out',
+    zIndex: 2,
   },
   chatWindowUpperBarOpen: {
     borderRadius: '14px 14px 0px 0px',
@@ -152,14 +154,15 @@ const useStyles = createUseStyles({
     maxWidth: '320px',
     boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.25)',
     borderRadius: '0px 0px 14px 14px',
+    backgroundColor: 'white',
   },
   containerOpen: {
     height: '450px',
+    backgroundColor: 'white',
   },
   messageHistory: {
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: 'white',
     flex: 1,
     paddingLeft: '10px',
     paddingRight: '10px',
