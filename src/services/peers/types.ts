@@ -11,17 +11,12 @@ export type PeerConnectionStatus = {
     data: {
       on: boolean;
     };
-    audio: {
+    streaming: {
       on: false;
     } | {
       on: true;
-      tracks: MediaStreamTrack[];
-    };
-    video: {
-      on: false;
-    } | {
-      on: true;
-      tracks: MediaStreamTrack[];
+      type: 'audio' | 'video' | 'audio-video';
+      stream: MediaStream;
     };
   };
 };
