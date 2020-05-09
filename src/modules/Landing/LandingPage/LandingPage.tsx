@@ -1,8 +1,8 @@
 import React from 'react';
 import logo from 'src/assets/logo_black.svg';
 import { createUseStyles } from 'src/lib/jss';
+import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
 import { SplashScreenBoardWithButtons } from './components/SplashScreenBoardWithButtons';
-import { JoinCreateButtons } from './components/JoinCreateButtons/JoinCreateButtons';
 
 type Props = {};
 
@@ -23,7 +23,26 @@ export const LandingPage: React.FC<Props> = () => {
           share the generated code with a friend and start playing.
         </div>
         <div className={cls.buttonsContainer}>
-          <JoinCreateButtons />
+          <div style={{ marginRight: '30px' }}>
+
+            <ColoredButton
+              label="CREATE ROOM"
+              color="#08D183"
+              fontSize="21px"
+              padding="15px"
+              onClickFunction={() => console.log('Create Room')}
+            />
+          </div>
+          <div>
+
+            <ColoredButton
+              label="JOIN ROOM"
+              color="#54C4F2"
+              fontSize="21px"
+              padding="15px"
+              onClickFunction={() => console.log('Join Room')}
+            />
+          </div>
         </div>
       </div>
       <SplashScreenBoardWithButtons />
@@ -57,6 +76,9 @@ const useStyles = createUseStyles({
   buttonsContainer: {
     marginTop: '20px',
     marginLeft: '40px',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'spaced-around',
   },
   logo: {
     marginBottom: '40px',
