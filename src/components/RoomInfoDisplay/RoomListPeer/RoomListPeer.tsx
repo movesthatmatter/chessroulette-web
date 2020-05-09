@@ -80,6 +80,7 @@ const useStyle = createUseStyles({
     padding: '3px 0px',
     '&:hover': {
       cursor: 'pointer',
+      backgroundColor: '#F9F9F9',
     },
   },
   chessIconContainer: {

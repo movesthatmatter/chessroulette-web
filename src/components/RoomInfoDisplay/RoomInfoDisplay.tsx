@@ -84,8 +84,8 @@ const useStyle = createUseStyles({
     padding: '5px',
   },
   addPeerContainer: {
-    borderRadius: '25px',
-    padding: '10px',
+    borderRadius: '8px',
+    padding: '8px',
     '&:hover': {
       boxShadow: '1px 1px 4px rgba(0, 0, 0, 0.19)',
       cursor: 'pointer',
