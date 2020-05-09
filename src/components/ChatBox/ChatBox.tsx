@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
 import { noop } from 'src/lib/util';
 import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import chatSVG from './assets/chat_circle.svg';
+import { ChatMessageRecord } from './records/ChatMessageRecord';
 
 type Props = {
-  me: string;
-  messages: PeerMessage[];
+  me: {
+    id: string;
+    name: string;
+  };
+  messages: ChatMessageRecord[];
   onSend?: (text: string) => void;
 };
 
-export const ChatBox: React.FC<Props> = ({
-  me,
-  messages,
-  onSend = noop,
-}) => {
+export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
   const cls = useStyles();
   const [input, setInput] = useState<string>('');
   const [chatWindowMouseOver, setChatWindowMouseOver] = useState<boolean>(false);
@@ -31,9 +30,9 @@ export const ChatBox: React.FC<Props> = ({
       <div className={cls.messageHistory}>
         {messages.map((msg, i) => (
           <div
-            key={`${msg.timestamp + i}`}
+            key={String(i)}
             className={cx(cls.message, {
-              [cls.myMessage]: msg.fromPeerId === me,
+              [cls.myMessage]: msg.from.id === me.id,
             })}
           >
             <div className={cx({
@@ -41,8 +40,7 @@ export const ChatBox: React.FC<Props> = ({
               [cls.messageSenderTitleOther]: msg.fromPeerId !== me,
             })}
             >
-              {msg.fromPeerId}
-
+              {msg.from.name}
             </div>
             <div className={cx(cls.messageContent, {
               [cls.myMessageContent]: msg.fromPeerId === me,
@@ -201,9 +199,7 @@ const useStyles = createUseStyles({
       color: '#6D7073',
     },
   },
-  message: {
-
-  },
+  message: {},
   myMessage: {
 
   },
@@ -242,5 +238,4 @@ const useStyles = createUseStyles({
     paddingLeft: '10px',
     marginBottom: '3px',
   },
-
 });

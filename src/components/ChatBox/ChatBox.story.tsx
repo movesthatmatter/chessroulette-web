@@ -1,35 +1,40 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
-import { now } from 'src/lib/date';
 import { ChatBox } from './ChatBox';
-
+import { ChatMessageRecord } from './records/ChatMessageRecord';
 
 export default {
   component: ChatBox,
   title: 'Components/ChatBox',
 };
 
-const me = 'Gabe';
+const me = {
+  id: 'gabe',
+  name: 'Gabe',
+};
 const peers = {
-  Kasparov: 'Kasparov',
-  'Michael Tal': 'Michael Tal',
+  kasparov: {
+    id: 'kasparov',
+    name: 'Kasparov',
+  },
+  tal: {
+    id: 'Michael Tal',
+    name: 'Michael Tal',
+  },
 };
 
-
 export const defaultStory = () => React.createElement(() => {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<ChatMessageRecord[]>([
     {
+      msgType: 'chatMessage',
       content: 'Hello folks',
-      fromPeerId: me,
-      toPeerId: me,
-      timestamp: String(now().getTime()),
-    },
+      from: me,
+    } as const,
     {
+      msgType: 'chatMessage',
       content: 'Hello there',
-      fromPeerId: peers.Kasparov,
-      toPeerId: me,
-      timestamp: String(now().getTime() + 1234),
-    },
+      from: peers.kasparov,
+    } as const,
   ]);
 
   return (
@@ -40,10 +45,9 @@ export const defaultStory = () => React.createElement(() => {
         setMessages((prevMessages) => [
           ...prevMessages,
           {
+            msgType: 'chatMessage',
             content,
-            fromPeerId: me,
-            toPeerId: '*',
-            timestamp: String(now().getTime()),
+            from: me,
           },
         ]);
       }}

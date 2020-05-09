@@ -16,9 +16,6 @@ type Props = {
   homeColor: 'white' | 'black';
 };
 
-type GameState = {
-  fen: string;
-};
 
 const timerStart = new Date();
 const calcutateTimerDisplay = (): {minutes: number; seconds: number} => {
