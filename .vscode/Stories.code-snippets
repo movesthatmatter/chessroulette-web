@@ -21,16 +21,19 @@
 			"body": [
 				"/* eslint-disable import/no-extraneous-dependencies */",
 				"import React from 'react';",
-				"import { storiesOf } from '@storybook/react-native';",
 				"import { $2 } from './$1';",
 				"",
 				"",
-				"export default storiesOf('$3', module)",
-  			"  .add('default', () => (",
-    		"    <$2 />",
-				"  ));",
+				"export default {",
+				"  component: $2,",
+				"  title: '$4/$2',",
+				"};",
 				"",
+				"export const $3 = () => (",
+					"<$2 />",
+				")",
 			],
 			"description": "Template for Stories",
 		}
 }
+

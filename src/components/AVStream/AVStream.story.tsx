@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LocalStreamClient } from 'src/services/peer2peer/LocalStreamClient';
+import { AVStreaming } from 'src/services/AVStreaming';
 import { AVStream } from './AVStream';
 
 export default {
@@ -7,7 +7,7 @@ export default {
   title: 'Components/AVStream',
 };
 
-const streamClient = new LocalStreamClient();
+const streamClient = new AVStreaming();
 
 export const withWebcam = () => React.createElement(() => {
   const [stream, setStream] = useState<MediaStream | undefined>();

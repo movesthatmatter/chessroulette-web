@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
 import { noop } from 'src/lib/util';
 import cx from 'classnames';
-
+import { ChatMessageRecord } from './records/ChatMessageRecord';
 
 type Props = {
-  me: string;
-  messages: PeerMessage[];
+  me: {
+    id: string;
+    name: string;
+  };
+  messages: ChatMessageRecord[];
   onSend?: (text: string) => void;
 };
 
-export const ChatBox: React.FC<Props> = ({
-  me,
-  messages,
-  onSend = noop,
-}) => {
+export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
   const cls = useStyles();
   const [input, setInput] = useState('');
 
@@ -24,15 +22,16 @@ export const ChatBox: React.FC<Props> = ({
       <div className={cls.messageHistory}>
         {messages.map((msg, i) => (
           <div
-            key={`${msg.timestamp + i}`}
+            key={String(i)}
             className={cx(cls.message, {
-              [cls.myMessage]: msg.fromPeerId === me,
+              [cls.myMessage]: msg.from.id === me.id,
             })}
           >
-            <div>{msg.fromPeerId}</div>
-            <div className={cx(cls.messageContent, {
-              [cls.myMessageContent]: msg.fromPeerId === me,
-            })}
+            <div>{msg.from.name}</div>
+            <div
+              className={cx(cls.messageContent, {
+                [cls.myMessageContent]: msg.from.name === me.id,
+              })}
             >
               {msg.content}
             </div>
@@ -77,16 +76,12 @@ const useStyles = createUseStyles({
     paddingRight: '10px',
     overflow: 'scroll',
   },
-  inputContainer: {
-
-  },
+  inputContainer: {},
   inputBox: {
     width: '100%',
     border: '1px solid #eee',
   },
-  message: {
-
-  },
+  message: {},
   myMessage: {
     textAlign: 'right',
   },
@@ -107,5 +102,4 @@ const useStyles = createUseStyles({
     // marginLeft: '20%',
     textAlign: 'right',
   },
-
 });

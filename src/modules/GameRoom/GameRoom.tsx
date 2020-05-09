@@ -1,32 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { PeerStream } from 'src/services/peer2peer/types';
-import { AVStream } from 'src/components/AVStream';
-import { ChatBox } from 'src/components/ChatBox';
-import { noop } from 'src/lib/util';
-import { PeerMessage } from 'src/services/peer2peer/records/PeerMessagingPayload';
-import cx from 'classnames';
+import { PeerMessageEnvelope, PeerConnectionStatus } from 'src/services/peers';
+import { PeerRecord } from 'dstnd-io';
+import { FaceTime } from 'src/components/FaceTimeArea/FaceTime';
+import { ChatBoxContainer } from 'src/components/ChatBox';
+import { ChatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRecord';
 import {
-  ChessGame, ChessPlayers, ChessGameFen, ChessPlayer,
+  ChessGame,
+  ChessPlayers,
+  ChessGameFen,
+  ChessPlayer,
 } from '../Games/Chess';
 
-type Props = {
-  me: string;
-  peers: string[];
-  currentGame?: {
+export type GameRoomProps = {
+  me: PeerRecord;
+  peerConnections: PeerConnectionStatus[];
+
+  // Game
+  playersByName: Record<string, ChessPlayer> | undefined;
+  currentGame: {
     players: ChessPlayers; // generalize it
     fen?: ChessGameFen;
-  };
-  chatHistory?: PeerMessage[];
-  onNewChatMessage?: (msg: string) => void;
-  onGameStateUpdate?: (nextState: ChessGameFen) => void;
-  localStream?: MediaStream;
-  remoteStreams?: PeerStream[];
-  onNewGame?: (peers: {
-    from: string;
-    to: string;
+  } | undefined;
+  onNewGame: (players: {
+    challenger: string;
+    challengee: string;
   }) => void;
-}
+  onGameStateUpdate: (nextState: ChessGameFen) => void;
+
+  // Streaming
+  startStreaming: () => void;
+  stopStreaming: () => void;
+  localStream: MediaStream | void;
+
+  // Chat
+  // The GameRoom shouldn't have to handle the state and know the intricacies
+  //  of the chat system, instead it only passes the generic broadcast method further
+  //  In the future, the ChatBoxContainer can access it directly from the PeersProvider
+  //  via context
+  chatHistory: ChatMessageRecord[];
+  broadcastMessage: (msg: PeerMessageEnvelope['message']) => void;
+};
 
 const unknownPlayers: ChessPlayers = {
   white: {
@@ -39,110 +53,90 @@ const unknownPlayers: ChessPlayers = {
   },
 };
 
-type ChessPlayersByName = {
-  [name: string]: ChessPlayer;
-}
-
-const chessPlayersByName = (players: ChessPlayers): ChessPlayersByName => ({
-  [players.white.name]: players.white,
-  [players.black.name]: players.black,
-});
-
-export const GameRoom: React.FC<Props> = ({
+export const GameRoom: React.FC<GameRoomProps> = ({
   me,
-  onNewGame = noop,
-  onNewChatMessage = noop,
-  onGameStateUpdate = noop,
-  chatHistory = [],
+  peerConnections,
+  playersByName,
   ...props
 }) => {
   const cls = useStyles();
 
-  // const myColor = (props.currentGame?.players.white.name === me ? 'white' : 'black') ?? 'white';
-
-  const [playersByName, setPlayersByName] = useState<ChessPlayersByName | void>(
-    props.currentGame ? chessPlayersByName(props.currentGame.players) : undefined,
-  );
-
-  useEffect(() => {
-    if (props.currentGame) {
-      setPlayersByName(chessPlayersByName(props.currentGame.players));
-    } else {
-      setPlayersByName(undefined);
-    }
-  }, [props.currentGame?.players]);
-
   return (
     <>
-      <div>{`Me: ${me}`}</div>
-      {props.peers.filter((p) => p !== me).map((peer) => (
-        <div key={peer}>
-          {/* {peer} */}
-          {/* {props.currentGame} */}
-          {/* <button
-              onClick={() => onNewGame([me, peer])}
-              type="button"
-            >
-              {`Play ${peer}`} */}
-          {/* </button> */}
-        </div>
-      ))}
+      <div>{`Me: ${me.name}`}</div>
+      {!props.localStream ? (
+        <button
+          type="button"
+          onClick={props.startStreaming}
+        >
+          Go Live
+        </button>
+      ) : (
+        <>
+          <FaceTime
+            // This should come straight from localStreamClient
+            streamConfig={{
+              on: true,
+              stream: props.localStream,
+              type: 'audio-video',
+            }}
+          />
+          <button
+            type="button"
+            onClick={props.stopStreaming}
+          >
+            Stop
+          </button>
+        </>
+      )}
       <div className={cls.container}>
-        {/* <div className={cls.peersContainer}> */}
-        <div className={cls.avStreams}>
-          {props.remoteStreams?.map(({ peerId, stream }) => (
-            <div key={peerId} className={cls.avStreamContainer}>
-              <span>{peerId}</span>
-              <AVStream
-                stream={stream}
-                autoPlay
-                muted={false}
-                // muted={false}
-                className={cls.avStream}
+        <div className={cls.leftSide}>
+
+          {peerConnections.map((pc) => (
+            <div key={pc.peerId}>
+              <FaceTime
+                streamConfig={pc.channels.streaming}
               />
               {!props.currentGame && (
                 <button
                   type="button"
-                  className={cls.challengeButton}
-                  onClick={() => onNewGame({
-                    from: me,
-                    to: peerId,
+                  onClick={() => props.onNewGame({
+                    challengee: pc.peerId,
+                    challenger: me.id,
                   })}
                 >
-                  Challenge
-                  {' '}
-                  {peerId}
+                  {`Challenge ${pc.peerId}`}
                 </button>
               )}
             </div>
           ))}
-          {props.localStream && (
-            <AVStream
-              stream={props.localStream}
-              autoPlay
-              muted
-              className={cx([cls.avStream, cls.myAvStream])}
-            />
-          )}
         </div>
-        <div className={cls.gameWrapper}>
+        <div className={cls.middleSide}>
           <ChessGame
             players={props.currentGame?.players || unknownPlayers}
             fen={props.currentGame?.fen}
-            homeColor={(playersByName && playersByName[me] && playersByName[me].color) || 'white'}
-            playable={!!(playersByName && !!playersByName[me])}
+            homeColor={
+              (playersByName
+                && playersByName[me.id]
+                && playersByName[me.id].color)
+              || 'white'
+            }
+            playable={!!(playersByName && !!playersByName[me.id])}
             onMove={(nextFen) => {
               if (props.currentGame) {
-                onGameStateUpdate(nextFen);
+                props.onGameStateUpdate(nextFen);
               }
             }}
           />
         </div>
-        <div className={cls.chatBox}>
-          <ChatBox
-            messages={chatHistory}
+        <div className={cls.rightSide}>
+          <ChatBoxContainer
             me={me}
-            onSend={onNewChatMessage}
+            broadcastMessage={(...args) => {
+              console.log('BROADCASTING MESSAGE');
+              props.broadcastMessage(...args);
+            }}
+            chatHistory={props.chatHistory}
           />
         </div>
       </div>
@@ -155,19 +149,23 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'row',
   },
-  avStreams: {
+  leftSide: {
     display: 'flex',
     flexDirection: 'column',
     flex: 0.5,
     paddingRight: '20px',
   },
+  middleSide: {
+    flex: 1,
+  },
+  rightSide: {
+    flex: 0.5,
+  },
   challengeButton: {
     padding: '10px',
     backgroundColor: 'rgb(8, 209, 131)',
   },
-  peersContainer: {
-
-  },
+  peersContainer: {},
   avStreamContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -180,11 +178,5 @@ const useStyles = createUseStyles({
     '&:first-child': {
       width: '100%',
     },
-  },
-  gameWrapper: {
-    flex: 1,
-  },
-  chatBox: {
-    flex: 0.5,
   },
 });
