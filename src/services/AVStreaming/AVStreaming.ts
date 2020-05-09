@@ -7,21 +7,23 @@ export class AVStreaming {
     onStop: void;
   }>();
 
-  private stream?: MediaStream;
+  public stream?: MediaStream;
 
   hasStarted() {
     return !!this.stream;
   }
 
-  async start() {
+  async start(constraints = {
+    video: true,
+    audio: true,
+  }) {
     if (this.stream) {
       return this.stream;
     }
 
-    this.stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: true,
-    });
+    this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+    // This might need more stuff
 
     this.pubsy.publish('onStart', this.stream);
 
