@@ -10,7 +10,7 @@ const logClosedConnectionStyle = 'color: #DF9D04; font-weight: bold';
 const logErrorStyle = 'color: red; font-weight: bold;';
 
 
-export const addLoggingInterceptors = (
+export const addLogger = (
   namespace: string,
   channel: WebDataEventChannel,
 ) => {
@@ -56,15 +56,29 @@ export const addLoggingInterceptors = (
       data: JSON.parse(event.data),
     }),
     (event) => {
+      const msg = event?.data;
+      console.log('msg', msg);
+
       console.group(
         `%c${namespace} %cIncoming Msg:`,
         logUnimportantStyle,
         logIncomingStyle,
       );
-      console.log('data', event.data);
-      console.log('Kind   :', event.data.kind);
-      console.log('Content:', event.data.content);
-      // console.log(event.data);
+      console.log('From   :', msg?.fromPeerId);
+      console.log('To     :', msg?.toPeerId);
+      console.log('Sent at:', new Date(msg?.timestamp));
+
+      console.group('Message');
+      const { msgType, content, ...rest } = msg?.message ?? {};
+
+      console.log('Kind:', msgType);
+      console.log('Content:', content);
+
+      Object.keys(rest).forEach((k) => {
+        console.log(k, rest[k]);
+      });
+      console.groupEnd();
+
       console.groupEnd();
 
       return event;
@@ -78,14 +92,29 @@ export const addLoggingInterceptors = (
   channel.addSendInterceptors([
     (data: any) => JSON.parse(data),
     (data: any) => {
+      const msg = data;
+      console.log('msg', msg);
+
       console.group(
-        `%c${namespace} %cOutgoing Msg:`,
+        `%c${namespace} %cIncoming Msg:`,
         logUnimportantStyle,
-        logOutgoingStyle,
+        logIncomingStyle,
       );
-      // console.log(data);
-      console.log('Kind   :', data.kind);
-      console.log('Content:', data.content);
+      console.log('From   :', msg?.fromPeerId);
+      console.log('To     :', msg?.toPeerId);
+      console.log('Sent at:', new Date(msg?.timestamp * 1000));
+
+      console.group('Message');
+      const { msgType, content, ...rest } = msg?.message ?? {};
+
+      console.log('Kind:', msgType);
+      console.log('Content:', content);
+
+      Object.keys(rest).forEach((k) => {
+        console.log(k, rest[k]);
+      });
+      console.groupEnd();
+
       console.groupEnd();
 
       return data;
