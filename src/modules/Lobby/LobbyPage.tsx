@@ -19,8 +19,8 @@ export const LobbyPage: React.FunctionComponent<Props> = (props) => {
   // Since there is no AppState like Redux or smtg, I'm going to keep it here
   //  for now, but this isn't the best design!
   const [publicRooms, setPublicRooms] = useState<PublicRoomsResponsePayload>([]);
-  const [me, setMe] = useState<PeerRecord | void>(undefined);
-  const [myRoom, setMyRoom] = useState<RoomStatsRecord | void>();
+  const [me, setMe] = useState<PeerRecord | void>();
+  const [joinedRoom, setJoinedRoom] = useState<RoomStatsRecord | void>();
 
   useEffect(() => {
     (async () => {
@@ -35,14 +35,16 @@ export const LobbyPage: React.FunctionComponent<Props> = (props) => {
       onMessage={(msg) => {
         if (msg.kind === 'joinRoomSuccess') {
           setMe(msg.content.me);
-          setMyRoom(msg.content.room);
+          setJoinedRoom(msg.content.room);
+        } else if (msg.kind === 'roomStats') {
+          setJoinedRoom(msg.content);
         }
       }}
       render={({ send }) => (
         <div className={cls.container}>
-          {(myRoom && me) ? (
+          {(joinedRoom && me) ? (
             <GameRoomContainer
-              room={myRoom}
+              room={joinedRoom}
               me={me}
             />
           ) : (
