@@ -1,14 +1,13 @@
 import React from 'react';
 import logo from 'src/assets/logo_black.svg';
 import { createUseStyles } from 'src/lib/jss';
-import { NavLink } from 'react-router-dom';
+import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
 import { SplashScreenBoardWithButtons } from './components/SplashScreenBoardWithButtons';
 
 type Props = {};
 
 export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
-
   return (
     <div className={cls.container}>
       <div className={cls.leftMargin} />
@@ -19,24 +18,34 @@ export const LandingPage: React.FC<Props> = () => {
             P2P Chess Games with Video Chat
           </p>
         </div>
-        <div>
-          <p className={cls.text}>
-            No account needed. Free P2P Chess Game hosting and video chat. Just
-            share the generated code with a friend and start playing.
-          </p>
-          <div style={{ marginBottom: '30px' }} />
-          <div className={cls.link}>
-            <div className={cls.linkContent}>
-              <NavLink to="/game">
-                Play NOW!
-              </NavLink>
-            </div>
+        <div style={{ marginTop: '5px', marginBottom: '10px' }} className={cls.text}>
+          No account needed. Free P2P Chess Game hosting and video chat. Just
+          share the generated code with a friend and start playing.
+        </div>
+        <div className={cls.buttonsContainer}>
+          <div style={{ marginRight: '30px' }}>
+
+            <ColoredButton
+              label="CREATE ROOM"
+              color="#08D183"
+              fontSize="21px"
+              padding="15px"
+              onClickFunction={() => console.log('Create Room')}
+            />
+          </div>
+          <div>
+
+            <ColoredButton
+              label="JOIN ROOM"
+              color="#54C4F2"
+              fontSize="21px"
+              padding="15px"
+              onClickFunction={() => console.log('Join Room')}
+            />
           </div>
         </div>
       </div>
-      <div>
-        <SplashScreenBoardWithButtons />
-      </div>
+      <SplashScreenBoardWithButtons />
       <div className={cls.rightMargin} />
     </div>
   );
@@ -58,12 +67,18 @@ const useStyles = createUseStyles({
   },
   headerText: {
     fontFamily: 'Roboto Slab',
-    fontStyle: 'normal',
     fontWeight: 'bold',
     fontSize: '48px',
     lineHeight: '63px',
     margin: '0 auto',
     color: '#262626',
+  },
+  buttonsContainer: {
+    marginTop: '20px',
+    marginLeft: '40px',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'spaced-around',
   },
   logo: {
     marginBottom: '40px',
@@ -78,6 +93,7 @@ const useStyles = createUseStyles({
     backgroundColor: '#e9685a',
     textAlign: 'center',
     color: 'white',
+    textDecoration: 'none',
 
     '&:hover': {
       transform: 'scale(1.05)',
@@ -88,11 +104,6 @@ const useStyles = createUseStyles({
   },
   linkContent: {
     padding: '10px',
-  },
-  a: {
-    textDecoration: 'none',
-    fontWeight: 400,
-    color: 'white',
   },
   leftMargin: {
     width: '100%',

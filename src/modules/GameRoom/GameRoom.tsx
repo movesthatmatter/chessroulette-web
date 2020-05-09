@@ -145,6 +145,23 @@ export const GameRoom: React.FC<GameRoomProps> = ({
 };
 
 const useStyles = createUseStyles({
+  gameRoomContainer: {
+    zIndex: 1,
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    top: '0',
+    left: '0',
+  },
+  contentContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    zIndex: 1,
+    position: 'relative',
+  },
+  spacer: {
+    width: '100%',
+  },
   container: {
     display: 'flex',
     flexDirection: 'row',
@@ -169,14 +186,22 @@ const useStyles = createUseStyles({
   avStreamContainer: {
     display: 'flex',
     flexDirection: 'column',
+    flex: 1,
   },
   avStream: {
-    width: '100%',
+    width: '100%    !important',
+    maxWidth: '420px !important',
+    height: 'auto   !important',
   },
   myAvStream: {
-    width: '50%',
-    '&:first-child': {
-      width: '100%',
-    },
+  },
+  gameWrapper: {
+    position: 'relative',
+    zIndex: 1,
+  },
+  chatBox: {
+    position: 'absolute',
+    bottom: 0,
+    zIndex: 2,
   },
 });

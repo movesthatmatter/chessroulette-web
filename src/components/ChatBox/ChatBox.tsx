@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { noop } from 'src/lib/util';
 import cx from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import chatSVG from './assets/chat_circle.svg';
 import { ChatMessageRecord } from './records/ChatMessageRecord';
 
 type Props = {
@@ -15,10 +18,15 @@ type Props = {
 
 export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
   const cls = useStyles();
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState<string>('');
+  const [chatWindowMouseOver, setChatWindowMouseOver] = useState<boolean>(false);
+  const [chatOpen, setChatOpen] = useState<boolean>(false);
 
-  return (
-    <div className={cls.container}>
+  const chatExpanded = (
+    <div className={cx(cls.container, {
+      [cls.containerOpen]: chatOpen,
+    })}
+    >
       <div className={cls.messageHistory}>
         {messages.map((msg, i) => (
           <div
@@ -27,11 +35,17 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
               [cls.myMessage]: msg.from.id === me.id,
             })}
           >
-            <div>{msg.from.name}</div>
-            <div
-              className={cx(cls.messageContent, {
-                [cls.myMessageContent]: msg.from.name === me.id,
-              })}
+            <div className={cx({
+              [cls.messageSenderTitleMe]: msg.fromPeerId === me,
+              [cls.messageSenderTitleOther]: msg.fromPeerId !== me,
+            })}
+            >
+              {msg.from.name}
+            </div>
+            <div className={cx(cls.messageContent, {
+              [cls.myMessageContent]: msg.fromPeerId === me,
+              [cls.otherMessageContent]: msg.fromPeerId !== me,
+            })}
             >
               {msg.content}
             </div>
@@ -39,67 +53,189 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
         ))}
       </div>
       <div className={cls.inputContainer}>
-        <textarea
+        <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           className={cls.inputBox}
-          rows={3}
+          onKeyDown={(e) => inputKeyPressHandler(e)}
         />
-        <button
-          type="button"
+        <FontAwesomeIcon
+          icon={faPaperPlane}
+          className={cls.icon}
           onClick={() => {
-            onSend(input);
-            setInput('');
+            if (input.trim() !== '') {
+              onSend(input);
+              setInput('');
+            }
           }}
-        >
-          Send
-        </button>
+        />
       </div>
+    </div>
+  );
+  const inputKeyPressHandler = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (e.key === 'Enter' && input.trim() !== '') {
+      onSend(input);
+      setInput('');
+    }
+  };
+  const chatExpandHandler = (): void => {
+    setChatOpen((prevToggle) => !prevToggle);
+  };
+
+  return (
+    <div className={cls.chatContainer}>
+      <div style={{ position: 'relative' }}>
+        <div
+          className={cx(cls.chatWindowCondensed, {
+            [cls.chatWindowCondensedHover]: chatWindowMouseOver,
+            [cls.chatWindowUpperBarOpen]: chatOpen,
+          })}
+          onClick={() => chatExpandHandler()}
+          onMouseOver={() => setChatWindowMouseOver(true)}
+          onMouseOut={() => setChatWindowMouseOver(false)}
+          onFocus={() => setChatWindowMouseOver(true)}
+          onBlur={() => setChatWindowMouseOver(false)}
+        >
+          <div className={cls.chatWindowHeaderText}>Chat</div>
+          <div className={cls.chatNotificationIcon}>
+            <img src={chatSVG} alt="chat icon" />
+          </div>
+        </div>
+      </div>
+      {chatOpen ? chatExpanded : null}
     </div>
   );
 };
 
 const useStyles = createUseStyles({
+  chatContainer: {
+    position: 'absolute',
+    maxWidth: '320px',
+    bottom: '0',
+    marginBottom: '20px',
+    zIndex: 1,
+  },
+  chatWindowCondensed: {
+    width: '320px',
+    backgroundColor: '#FF7262',
+    borderRadius: '14px 14px 14px 14px',
+    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.25)',
+    marginTop: '50px',
+    // transition: 'all .5s ease-in-out',
+    zIndex: 2,
+  },
+  chatWindowUpperBarOpen: {
+    borderRadius: '14px 14px 0px 0px',
+  },
+  chatWindowCondensedHover: {
+    backgroundColor: '#E66162',
+    cursor: 'pointer',
+  },
+  chatWindowHeaderText: {
+    fontFamily: 'Roboto',
+    fontSize: '24px',
+    fontWeight: 'normal',
+    color: 'white',
+    lineHeight: '28px',
+    padding: '10px',
+    marginLeft: '10px',
+  },
+  chatNotificationIcon: {
+    position: 'absolute',
+    bottom: '20%',
+    left: '80%',
+  },
   container: {
     display: 'flex',
     flex: 1,
-    // backgroundColor: 'gray',
     flexDirection: 'column',
-    maxWidth: '500px',
+    maxWidth: '320px',
+    boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.25)',
+    borderRadius: '0px 0px 14px 14px',
+    backgroundColor: 'white',
+  },
+  containerOpen: {
+    height: '450px',
+    backgroundColor: 'white',
   },
   messageHistory: {
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: 'white',
     flex: 1,
     paddingLeft: '10px',
     paddingRight: '10px',
-    overflow: 'scroll',
+    overflowY: 'scroll',
+    overflowX: 'hidden',
+    marginTop: '15px',
   },
-  inputContainer: {},
+  inputContainer: {
+    padding: '10px',
+    position: 'relative',
+    display: 'inline-block',
+    outline: 'none',
+  },
   inputBox: {
+    backgroundColor: '#f1f3f4',
+    color: '#8e99a4',
+    borderRadius: '14px',
+    border: '2px solid #f1f3f4',
+    font: 'inherit',
+    boxSizing: 'border-box',
     width: '100%',
-    border: '1px solid #eee',
+    fontSize: '18px',
+    padding: '5px',
+    outline: 'none',
+    fontFamily: 'Roboto',
+  },
+  icon: {
+    position: 'absolute',
+    top: '30%',
+    right: '10%',
+    color: '#8e99a4',
+    display: 'inline-block',
+    fontSize: '20px',
+    '&:hover': {
+      cursor: 'pointer',
+      color: '#6D7073',
+    },
   },
   message: {},
   myMessage: {
-    textAlign: 'right',
+
   },
   messageContent: {
-    backgroundColor: '#e9685a',
-    padding: '12px',
-    // maxWidth: '80%',
+    borderRadius: '18px',
+    padding: '5px 15px 5px 15px',
     width: 'auto',
     flexWrap: 'wrap',
-    // display: 'inline',
-    marginBottom: '30px',
-    borderRadius: '16px',
+    marginBottom: '15px',
     color: 'white',
+    fontFamily: 'Roboto',
+    fontSize: '18px',
+    fontWeight: 300,
   },
   myMessageContent: {
-    backgroundColor: 'grey',
-    // alignSelf: '',
-    // marginLeft: '20%',
+    backgroundColor: '#86B3C6',
     textAlign: 'right',
+    marginLeft: '30px',
+  },
+  otherMessageContent: {
+    marginRight: '30px',
+    textAlign: 'left',
+    backgroundColor: '#54C4F2',
+  },
+  messageSenderTitleMe: {
+    fontFamily: 'Roboto',
+    color: '#333333',
+    textAlign: 'right',
+    paddingRight: '10px',
+    marginBottom: '3px',
+  },
+  messageSenderTitleOther: {
+    fontFamily: 'Roboto',
+    color: '#333333',
+    textAlign: 'left',
+    paddingLeft: '10px',
+    marginBottom: '3px',
   },
 });
