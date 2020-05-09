@@ -1,7 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
-import { now } from 'src/lib/date';
-import { PeerMessageEnvelope } from 'src/services/peers';
 import { ChatBox } from './ChatBox';
 import { ChatMessageRecord } from './records/ChatMessageRecord';
 
@@ -15,30 +13,28 @@ const me = {
   name: 'Gabe',
 };
 const peers = {
-  Kasparov: 'Kasparov',
-  'Michael Tal': 'Michael Tal',
+  kasparov: {
+    id: 'kasparov',
+    name: 'Kasparov',
+  },
+  tal: {
+    id: 'Michael Tal',
+    name: 'Michael Tal',
+  },
 };
 
 export const defaultStory = () => React.createElement(() => {
-  const [messages, setMessages] = useState<PeerMessageEnvelope<ChatMessageRecord>[]>([
+  const [messages, setMessages] = useState<ChatMessageRecord[]>([
     {
-      fromPeerId: me.id,
-      toPeerId: me.id,
-      timestamp: String(now().getTime()),
-      message: {
-        msgType: 'chatMessage',
-        content: 'Hello folks',
-      } as const,
-    },
+      msgType: 'chatMessage',
+      content: 'Hello folks',
+      from: me,
+    } as const,
     {
-      fromPeerId: peers.Kasparov,
-      toPeerId: me.id,
-      timestamp: String(now().getTime() + 1234),
-      message: {
-        msgType: 'chatMessage',
-        content: 'Hello there',
-      } as const,
-    },
+      msgType: 'chatMessage',
+      content: 'Hello there',
+      from: peers.kasparov,
+    } as const,
   ]);
 
   return (
@@ -49,13 +45,9 @@ export const defaultStory = () => React.createElement(() => {
         setMessages((prevMessages) => [
           ...prevMessages,
           {
-            fromPeerId: me,
-            toPeerId: '*',
-            timestamp: String(now().getTime()),
-            message: {
-              msgType: 'chatMessage',
-              content,
-            },
+            msgType: 'chatMessage',
+            content,
+            from: me,
           },
         ]);
       }}
