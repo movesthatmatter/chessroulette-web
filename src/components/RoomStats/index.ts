@@ -1,1 +1,1 @@
-export * from './PeersStats';
+export * from './RoomStats';
