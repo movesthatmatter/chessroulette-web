@@ -22,22 +22,22 @@ const peers = {
 export const defaultStory = () => React.createElement(() => {
   const [messages, setMessages] = useState<PeerMessageEnvelope<ChatMessageRecord>[]>([
     {
-      fromPeerId: me,
-      toPeerId: me,
+      fromPeerId: me.id,
+      toPeerId: me.id,
       timestamp: String(now().getTime()),
       message: {
         msgType: 'chatMessage',
         content: 'Hello folks',
-      },
+      } as const,
     },
     {
       fromPeerId: peers.Kasparov,
-      toPeerId: me,
+      toPeerId: me.id,
       timestamp: String(now().getTime() + 1234),
       message: {
         msgType: 'chatMessage',
         content: 'Hello there',
-      },
+      } as const,
     },
   ]);
 

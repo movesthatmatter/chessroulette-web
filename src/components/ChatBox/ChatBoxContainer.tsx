@@ -27,12 +27,10 @@ export const ChatBoxContainer: React.FC<Props> = (props) => {
           me={props.me}
           peers={props.peers}
           socket={socket}
-          onReady={({ startAVBroadcasting }) => {
-            startAVBroadcasting();
+          onReady={(client) => {
+            client.connect();
           }}
           onPeerMsgSent={({ message }) => {
-            console.log('Sendig own message', message);
-
             const decoded = chatMessageRecord.decode(message);
 
             if (isRight(decoded)) {
@@ -54,21 +52,37 @@ export const ChatBoxContainer: React.FC<Props> = (props) => {
               }
             }
           }}
-          render={({ startAVBroadcasting, broadcastMessage }) => (
-            <ChatBox
-              me={props.me}
-              messages={chatHistory}
-              onSend={(content) => {
+          render={({ broadcastMessage }) => (
+            <div>
+              <div>
+                {`Me: ${props.me.name}`}
+              </div>
+              <div>
+                {'Peers: '}
+                {props.peers.map((peer) => (
+                  <span key={peer.id}>
+                    {peer.name}
+                    {' '}
+                    |
+                    {' '}
+                  </span>
+                ))}
+              </div>
+              <ChatBox
+                me={props.me}
+                messages={chatHistory}
+                onSend={(content) => {
                 // Do I need to serialize it??
-                const payload: ChatMessageRecord = {
-                  msgType: 'chatMessage',
-                  from: props.me,
-                  content,
-                };
+                  const payload: ChatMessageRecord = {
+                    msgType: 'chatMessage',
+                    from: props.me,
+                    content,
+                  };
 
-                broadcastMessage(payload);
-              }}
-            />
+                  broadcastMessage(payload);
+                }}
+              />
+            </div>
           )}
         />
       )}

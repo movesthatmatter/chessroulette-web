@@ -58,8 +58,24 @@ export const defaultStory = () =>
             if (msg.kind === 'joinRoomSuccess') {
               setJoinedRoom(msg.content.room);
               setMe(msg.content.me);
+            } else if (msg.kind === 'roomStats') {
+              setJoinedRoom(msg.content);
             }
           }}
+          autoDemandConnection={false}
+          fallbackRender={({ open }) => (
+            <>
+              {publicRooms.map((room) => (
+                <button
+                  key={room.id}
+                  type="button"
+                  onClick={open}
+                >
+                  {`Join ${room.name} (${room.peersCount} peers)`}
+                </button>
+              ))}
+            </>
+          )}
           render={() => (
             <>
               {joinedRoom && me && (
