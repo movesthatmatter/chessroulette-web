@@ -36,15 +36,15 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
             })}
           >
             <div className={cx({
-              [cls.messageSenderTitleMe]: msg.fromPeerId === me,
-              [cls.messageSenderTitleOther]: msg.fromPeerId !== me,
+              [cls.messageSenderTitleMe]: msg.from.id === me.id,
+              [cls.messageSenderTitleOther]: msg.from.id !== me.id,
             })}
             >
               {msg.from.name}
             </div>
             <div className={cx(cls.messageContent, {
-              [cls.myMessageContent]: msg.fromPeerId === me,
-              [cls.otherMessageContent]: msg.fromPeerId !== me,
+              [cls.myMessageContent]: msg.from.id === me.id,
+              [cls.otherMessageContent]: msg.from.id !== me.id,
             })}
             >
               {msg.content}
