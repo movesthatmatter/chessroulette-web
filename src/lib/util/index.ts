@@ -37,3 +37,5 @@ export function shuffle<T extends unknown>(a: T[]) {
   }
   return a;
 }
+
+export const randomId = () => String(Math.random()).slice(2);
