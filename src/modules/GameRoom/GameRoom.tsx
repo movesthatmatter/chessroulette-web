@@ -64,25 +64,36 @@ export const GameRoom: React.FC<GameRoomProps> = ({
   return (
     <>
       <div>{`Me: ${me.name}`}</div>
+      {!props.localStream ? (
+        <button
+          type="button"
+          onClick={props.startStreaming}
+        >
+          Go Live
+        </button>
+      ) : (
+        <>
+          <FaceTime
+            // This should come straight from localStreamClient
+            streamConfig={{
+              on: true,
+              stream: props.localStream,
+              type: 'audio-video',
+            }}
+          />
+          <button
+            type="button"
+            onClick={props.stopStreaming}
+          >
+            Stop
+          </button>
+        </>
+      )}
       <div className={cls.container}>
         <div className={cls.leftSide}>
+
           {peerConnections.map((pc) => (
             <div key={pc.peerId}>
-              {!props.localStream ? (
-                <button
-                  type="button"
-                  onClick={props.startStreaming}
-                >
-                  Start AudioVideo Broadcasting
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={props.stopStreaming}
-                >
-                  Stop AudioVideo Broadcasting
-                </button>
-              )}
               <FaceTime
                 streamConfig={pc.channels.streaming}
               />
@@ -121,7 +132,10 @@ export const GameRoom: React.FC<GameRoomProps> = ({
         <div className={cls.rightSide}>
           <ChatBoxContainer
             me={me}
-            broadcastMessage={props.broadcastMessage}
+            broadcastMessage={(...args) => {
+              console.log('BROADCASTING MESSAGE');
+              props.broadcastMessage(...args);
+            }}
             chatHistory={props.chatHistory}
           />
         </div>
