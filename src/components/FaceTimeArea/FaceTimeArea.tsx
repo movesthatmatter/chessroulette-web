@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { PeerRecord } from 'dstnd-io';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { PeerConnectionStatus } from 'src/services/peers';
 import { AVStream } from '../AVStream';
+import { FaceTime } from './FaceTime';
 
 type Props = {
   me: PeerRecord;
@@ -13,6 +14,8 @@ type Props = {
   stopStreaming: () => void;
 
   peerConnections: PeerConnectionStatus[];
+
+  renderPeer?: (props: {content: ReactNode}) => ReactNode;
 };
 
 export const FaceTimeArea: React.FC<Props> = (props) => {
@@ -20,7 +23,7 @@ export const FaceTimeArea: React.FC<Props> = (props) => {
 
   return (
     <>
-      <>
+      <div>
         {!props.localStream ? (
           <button
             type="button"
@@ -46,29 +49,12 @@ export const FaceTimeArea: React.FC<Props> = (props) => {
             </button>
           </>
         )}
-      </>
+      </div>
       {Object.values(props.peerConnections).map((peerConnection) => (
-        <div className={cls.container} key={peerConnection.peerId}>
-          {peerConnection.peerId}
-          {peerConnection.channels.streaming.on
-            ? (
-              <>
-                <div>
-                  {`Streaming On ${peerConnection.channels.streaming.type}`}
-                </div>
-                <AVStream
-                  stream={peerConnection.channels.streaming.stream}
-                  autoPlay
-                  muted
-                  className={cls.videoBox}
-                />
-              </>
-            ) : (
-              <div className={cls.videoBox}>
-                Streaming Off
-              </div>
-            )}
-        </div>
+        <FaceTime
+          key={peerConnection.peerId}
+          streamConfig={peerConnection.channels.streaming}
+        />
       ))}
     </>
   );
