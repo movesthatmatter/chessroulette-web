@@ -18,6 +18,7 @@ export const RoomStats: React.FC<Props> = (props) => {
       render={({ socket }) => (
         <PeersProvider
           me={props.me}
+          onReady={({ connect }) => connect()}
           peers={Object.values(props.room.peers)}
           socket={socket}
           render={({ peerConnections }) => (
@@ -54,16 +55,16 @@ export const RoomStats: React.FC<Props> = (props) => {
                           <span>
                             Audio:
                             <div className={cx(cls.dot, {
-                              [cls.greenDot]: channels.audio.on,
-                              [cls.redDot]: !channels.audio.on,
+                              [cls.greenDot]: channels.streaming.on && channels.streaming.type !== 'video',
+                              [cls.redDot]: !(channels.streaming.on && channels.streaming.type !== 'video'),
                             })}
                             />
                           </span>
                           <span>
                             Video:
                             <div className={cx(cls.dot, {
-                              [cls.greenDot]: channels.video.on,
-                              [cls.redDot]: !channels.video.on,
+                              [cls.greenDot]: channels.streaming.on && channels.streaming.type !== 'audio',
+                              [cls.redDot]: !(channels.streaming.on && channels.streaming.type !== 'audio'),
                             })}
                             />
                             ]
