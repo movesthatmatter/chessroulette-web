@@ -1,6 +1,6 @@
 import React from 'react';
 import StoryRouter from 'storybook-react-router';
-import { ApiProvider } from 'src/components/Api/ApiProvider';
+import { SocketProvider } from 'src/components/SocketProvider';
 import { LobbyPage } from './LobbyPage';
 import { getPublicRooms } from './resources';
 
@@ -11,7 +11,7 @@ export default {
 };
 
 export const defaultLandingPage = () => (
-  <ApiProvider>
+  <SocketProvider>
     <LobbyPage getRooms={getPublicRooms} />
-  </ApiProvider>
+  </SocketProvider>
 );

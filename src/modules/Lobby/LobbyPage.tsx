@@ -6,7 +6,7 @@ import {
   RoomStatsRecord,
 } from 'dstnd-io';
 import { Result } from 'ts-results';
-import { ApiConsumer } from 'src/components/Api/ApiConsumer';
+import { SocketConsumer } from 'src/components/SocketProvider';
 import { GameRoomContainer } from '../GameRoom/GameRoomContainer';
 
 type Props = {
@@ -31,7 +31,7 @@ export const LobbyPage: React.FunctionComponent<Props> = (props) => {
   }, []);
 
   return (
-    <ApiConsumer
+    <SocketConsumer
       onMessage={(msg) => {
         if (msg.kind === 'joinRoomSuccess') {
           setMe(msg.content.me);
