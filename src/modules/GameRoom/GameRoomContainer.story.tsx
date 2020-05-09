@@ -1,12 +1,18 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { GameRoom } from './GameRoom';
+import { SocketProvider } from 'src/components/SocketProvider';
+import { JoinFirstAvailableRoomHelper } from 'src/storybook/JoinDefaultRoomHelper';
 import { GameRoomContainer } from './GameRoomContainer';
 
 export default {
-  component: GameRoom,
-  title: 'Modules/GameRoomContainer',
+  component: GameRoomContainer,
+  title: 'Modules/GameRoom/GameRoomContainer',
 };
 
-export const defaultStory = () => (
-  <GameRoomContainer />
+export const deafultStory = () => (
+  <SocketProvider>
+    <JoinFirstAvailableRoomHelper
+      render={({ me, room }) => <GameRoomContainer me={me} room={room} />}
+    />
+  </SocketProvider>
 );

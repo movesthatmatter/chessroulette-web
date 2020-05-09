@@ -16,9 +16,6 @@ type Props = {
   homeColor: 'white' | 'black';
 };
 
-type GameState = {
-  fen: string;
-};
 
 export const ChessGame: React.FunctionComponent<Props> = ({
   onMove = noop,
