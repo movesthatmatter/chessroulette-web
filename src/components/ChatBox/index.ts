@@ -1,1 +1,1 @@
-export { ChatBoxContainer as ChatBox } from './ChatBoxContainer';
+export * from './ChatBoxContainer';
