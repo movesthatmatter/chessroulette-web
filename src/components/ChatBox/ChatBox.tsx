@@ -4,7 +4,6 @@ import { noop } from 'src/lib/util';
 import cx from 'classnames';
 import { ChatMessageRecord } from './records/ChatMessageRecord';
 
-
 type Props = {
   me: {
     id: string;
@@ -14,11 +13,7 @@ type Props = {
   onSend?: (text: string) => void;
 };
 
-export const ChatBox: React.FC<Props> = ({
-  me,
-  messages,
-  onSend = noop,
-}) => {
+export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
   const cls = useStyles();
   const [input, setInput] = useState('');
 
@@ -33,9 +28,10 @@ export const ChatBox: React.FC<Props> = ({
             })}
           >
             <div>{msg.from.name}</div>
-            <div className={cx(cls.messageContent, {
-              [cls.myMessageContent]: msg.from.name === me.id,
-            })}
+            <div
+              className={cx(cls.messageContent, {
+                [cls.myMessageContent]: msg.from.name === me.id,
+              })}
             >
               {msg.content}
             </div>
@@ -80,16 +76,12 @@ const useStyles = createUseStyles({
     paddingRight: '10px',
     overflow: 'scroll',
   },
-  inputContainer: {
-
-  },
+  inputContainer: {},
   inputBox: {
     width: '100%',
     border: '1px solid #eee',
   },
-  message: {
-
-  },
+  message: {},
   myMessage: {
     textAlign: 'right',
   },
@@ -110,5 +102,4 @@ const useStyles = createUseStyles({
     // marginLeft: '20%',
     textAlign: 'right',
   },
-
 });

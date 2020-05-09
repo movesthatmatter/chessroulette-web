@@ -7,12 +7,12 @@ import {
   PeerRecord,
 } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
-import { ChatBoxContainer } from './ChatBoxContainer';
+import { PeerChatBoxContainer } from './PeerChatBoxContainer';
 import { SocketProvider, SocketConsumer } from '../SocketProvider';
 
 export default {
-  component: ChatBoxContainer,
-  title: 'Components/ChatBoxContainer',
+  component: PeerChatBoxContainer,
+  title: 'Components/ChatBox/PeerChatBoxContainer',
 };
 
 // TODO: Sometimes when it makes send it would be worth
@@ -80,7 +80,7 @@ export const defaultStory = () =>
             <>
               {joinedRoom && me && (
                 <>
-                  <ChatBoxContainer
+                  <PeerChatBoxContainer
                     peers={Object.values(joinedRoom.peers)}
                     me={me}
                   />
