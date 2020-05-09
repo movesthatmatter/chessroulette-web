@@ -38,7 +38,6 @@ export const FaceTime: React.FC<Props> = ({ streamConfig }) => {
 const useStyles = createUseStyles({
   container: {
     width: '200px',
-    height: '200px',
     background: '#efefef',
   },
 });
