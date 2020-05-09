@@ -57,7 +57,6 @@ export const addLogger = (
     }),
     (event) => {
       const msg = event?.data;
-      console.log('msg', msg);
 
       console.group(
         `%c${namespace} %cIncoming Msg:`,
@@ -93,12 +92,11 @@ export const addLogger = (
     (data: any) => JSON.parse(data),
     (data: any) => {
       const msg = data;
-      console.log('msg', msg);
 
       console.group(
-        `%c${namespace} %cIncoming Msg:`,
+        `%c${namespace} %cOutgoing Msg:`,
         logUnimportantStyle,
-        logIncomingStyle,
+        logOutgoingStyle,
       );
       console.log('From   :', msg?.fromPeerId);
       console.log('To     :', msg?.toPeerId);
