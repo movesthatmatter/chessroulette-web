@@ -5958,12 +5958,12 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.0.5":
-  version "0.0.5"
-  resolved "https://github.com/dstnd/dstnd-io.git#f054486f967a2f431f51a9c16c2ce8e3c43af706"
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.0.6":
+  version "0.0.6"
+  resolved "https://github.com/dstnd/dstnd-io.git#3bbfaed03ccc1070ab4e489a778941fc1f7ea689"
   dependencies:
     io-ts "2.2.2"
-    io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v1"
+    io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.2"
 
 duplexer@^0.1.1:
   version "0.1.1"
@@ -8188,14 +8188,6 @@ invert-kv@^2.0.0:
 "io-ts-isodatetime@https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.2":
   version "0.0.2"
   resolved "https://github.com/GabrielCTroia/io-ts-isodatetime.git#d5db2e0077672adf252f6b7dd0f7dbe93c5f5285"
-  dependencies:
-    date-fns "^2.13.0"
-    io-ts "^2.2.2"
-    io-ts-types "^0.5.6"
-
-"io-ts-isodatetime@https://github.com/GabrielCTroia/io-ts-isodatetime.git#v1":
-  version "1.0.0"
-  resolved "https://github.com/GabrielCTroia/io-ts-isodatetime.git#c7e00e6d671a9b888079a0638bbc2b5dd6648b7f"
   dependencies:
     date-fns "^2.13.0"
     io-ts "^2.2.2"
