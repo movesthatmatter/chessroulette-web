@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { noop } from 'src/lib/util';
 import cx from 'classnames';
@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import chatSVG from './assets/chat_circle.svg';
 import { ChatMessageRecord } from './records/ChatMessageRecord';
+
 
 type Props = {
   me: {
@@ -18,16 +19,18 @@ type Props = {
 
 export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
   const cls = useStyles();
-  const [input, setInput] = useState<string>('');
-  const [chatWindowMouseOver, setChatWindowMouseOver] = useState<boolean>(false);
-  const [chatOpen, setChatOpen] = useState<boolean>(false);
+  const [input, setInput] = useState('');
+  const [chatWindowMouseOver, setChatWindowMouseOver] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [newMessageCounter, setNewMessageCounter] = useState(0);
+  const chatWindowRef = useRef<HTMLDivElement>(null);
 
   const chatExpanded = (
     <div className={cx(cls.container, {
       [cls.containerOpen]: chatOpen,
     })}
     >
-      <div className={cls.messageHistory}>
+      <div ref={chatWindowRef} id="messageHistory" className={cls.messageHistory}>
         {messages.map((msg, i) => (
           <div
             key={String(i)}
@@ -57,7 +60,9 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           className={cls.inputBox}
-          onKeyDown={(e) => inputKeyPressHandler(e)}
+          onKeyDown={(e) => {
+            inputKeyPressHandler(e);
+          }}
         />
         <FontAwesomeIcon
           icon={faPaperPlane}
@@ -72,6 +77,20 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
       </div>
     </div>
   );
+  useEffect(() => {
+    if (!chatOpen && messages[messages.length - 1].from.id !== me.id) {
+      setNewMessageCounter((prevState) => {
+        const incCounter = prevState + 1;
+        return incCounter;
+      });
+    }
+  }, [messages]);
+  useEffect(() => scrollToBottom(), [messages]);
+  const scrollToBottom = () => {
+    if (chatWindowRef && chatWindowRef.current) {
+      chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+    }
+  };
   const inputKeyPressHandler = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter' && input.trim() !== '') {
       onSend(input);
@@ -80,6 +99,7 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
   };
   const chatExpandHandler = (): void => {
     setChatOpen((prevToggle) => !prevToggle);
+    setNewMessageCounter(0);
   };
 
   return (
@@ -99,6 +119,7 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
           <div className={cls.chatWindowHeaderText}>Chat</div>
           <div className={cls.chatNotificationIcon}>
             <img src={chatSVG} alt="chat icon" />
+            <div className={cls.counterContainer}>{newMessageCounter > 0 ? newMessageCounter : ''}</div>
           </div>
         </div>
       </div>
@@ -167,6 +188,7 @@ const useStyles = createUseStyles({
     overflowY: 'scroll',
     overflowX: 'hidden',
     marginTop: '15px',
+    scrollBehavior: 'smooth',
   },
   inputContainer: {
     padding: '10px',
@@ -181,16 +203,14 @@ const useStyles = createUseStyles({
     border: '2px solid #f1f3f4',
     font: 'inherit',
     boxSizing: 'border-box',
-    width: '100%',
+    width: '85%',
     fontSize: '18px',
     padding: '5px',
     outline: 'none',
     fontFamily: 'Roboto',
+    marginRight: '15px',
   },
   icon: {
-    position: 'absolute',
-    top: '30%',
-    right: '10%',
     color: '#8e99a4',
     display: 'inline-block',
     fontSize: '20px',
@@ -198,6 +218,14 @@ const useStyles = createUseStyles({
       cursor: 'pointer',
       color: '#6D7073',
     },
+  },
+  counterContainer: {
+    color: 'white',
+    fontSize: '24px',
+    fontFamily: 'Roboto Slab',
+    position: 'absolute',
+    top: '20%',
+    left: '40%',
   },
   message: {},
   myMessage: {
@@ -208,7 +236,7 @@ const useStyles = createUseStyles({
     padding: '5px 15px 5px 15px',
     width: 'auto',
     flexWrap: 'wrap',
-    marginBottom: '15px',
+    marginBottom: '2px',
     color: 'white',
     fontFamily: 'Roboto',
     fontSize: '18px',
