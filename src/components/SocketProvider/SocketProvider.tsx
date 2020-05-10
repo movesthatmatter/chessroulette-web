@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
+import { randomId } from 'src/lib/util';
 
 type Props = {
   wssUrl?: string;
@@ -17,12 +18,14 @@ export const SocketContext = createContext<SocketContextProps>({
   onDemand: () => () => undefined,
 });
 
+const HEARTBEAT_INTERVAL = 50 * 1000;
+
 export const SocketProvider: React.FC<Props> = (props) => {
   const [contextState, setContextState] = useState<SocketContextProps>({
     socket: undefined,
     consumers: {},
     onDemand: () => {
-      const consumerId = String(Math.random()).slice(2);
+      const consumerId = randomId();
 
       const onRelease = () => {
         // If no other subscribers
@@ -30,15 +33,15 @@ export const SocketProvider: React.FC<Props> = (props) => {
           const { [consumerId]: removed, ...rest } = prev.consumers;
 
           if (Object.keys(rest).length === 0) {
-              prev.socket?.close();
+            prev.socket?.close();
 
-              return {
-                ...prev,
-                consumers: rest,
+            return {
+              ...prev,
+              consumers: rest,
 
-                // remove the socket after closing
-                socket: undefined,
-              };
+              // remove the socket after closing
+              socket: undefined,
+            };
           }
 
           return {
@@ -73,11 +76,28 @@ export const SocketProvider: React.FC<Props> = (props) => {
     },
   });
 
-  useEffect(() => () => {
-    // Make sure that the connection closes if the Provider unmounts
-    if (contextState.socket?.connection.OPEN) {
-        contextState.socket?.close();
+  useEffect(() => {
+    if (contextState.socket) {
+      const token = setInterval(() => {
+        // This is needed because the server(Heroku) closes the connection
+        //  if it's idle for 55 seconds
+        contextState.socket?.send({
+          kind: 'ping',
+          content: randomId(),
+        });
+      }, HEARTBEAT_INTERVAL);
+
+      return () => {
+        clearInterval(token);
+
+        // Make sure that the connection closes if the Provider unmounts
+        if (contextState.socket?.connection.readyState !== WebSocket.CLOSED) {
+          contextState.socket?.close();
+        }
+      };
     }
+
+    return undefined;
   }, [contextState.socket]);
 
   return (

@@ -2,6 +2,7 @@ import React from 'react';
 import logo from 'src/assets/logo_black.svg';
 import { createUseStyles } from 'src/lib/jss';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
+import { NavLink } from 'react-router-dom';
 import { SplashScreenBoardWithButtons } from './components/SplashScreenBoardWithButtons';
 
 type Props = {};
@@ -14,17 +15,17 @@ export const LandingPage: React.FC<Props> = () => {
       <div className={cls.leftSideContainer}>
         <img src={logo} alt="logo" className={cls.logo} />
         <div>
-          <p className={cls.headerText}>
-            P2P Chess Games with Video Chat
-          </p>
+          <p className={cls.headerText}>P2P Chess Games with Video Chat</p>
         </div>
-        <div style={{ marginTop: '5px', marginBottom: '10px' }} className={cls.text}>
+        <div
+          style={{ marginTop: '5px', marginBottom: '10px' }}
+          className={cls.text}
+        >
           No account needed. Free P2P Chess Game hosting and video chat. Just
           share the generated code with a friend and start playing.
         </div>
         <div className={cls.buttonsContainer}>
           <div style={{ marginRight: '30px' }}>
-
             <ColoredButton
               label="CREATE ROOM"
               color="#08D183"
@@ -34,7 +35,6 @@ export const LandingPage: React.FC<Props> = () => {
             />
           </div>
           <div>
-
             <ColoredButton
               label="JOIN ROOM"
               color="#54C4F2"
@@ -42,6 +42,11 @@ export const LandingPage: React.FC<Props> = () => {
               padding="15px"
               onClickFunction={() => console.log('Join Room')}
             />
+          </div>
+          <div>
+            <NavLink to="/game">
+              Go to Lobby
+            </NavLink>
           </div>
         </div>
       </div>

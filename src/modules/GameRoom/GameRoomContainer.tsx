@@ -148,6 +148,7 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
           }) => (
             <GameRoom
               me={props.me}
+              room={props.room}
               peerConnections={Object.values(peerConnections)}
               // Streaming
               startStreaming={startAVBroadcasting}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { PeerMessageEnvelope, PeerConnectionStatus } from 'src/services/peers';
-import { PeerRecord } from 'dstnd-io';
+import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
 import { FaceTime } from 'src/components/FaceTimeArea/FaceTime';
 import { ChatBoxContainer } from 'src/components/ChatBox';
 import { ChatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRecord';
@@ -14,6 +14,7 @@ import {
 
 export type GameRoomProps = {
   me: PeerRecord;
+  room: RoomStatsRecord;
   peerConnections: PeerConnectionStatus[];
 
   // Game
@@ -64,6 +65,10 @@ export const GameRoom: React.FC<GameRoomProps> = ({
   return (
     <>
       <div>{`Me: ${me.name}`}</div>
+      <div>{`Room: ${props.room.name}`}</div>
+      {props.room.type === 'private' && (
+        <div>{`Invite Friends: ${props.room.code}`}</div>
+      )}
       {!props.localStream ? (
         <button
           type="button"
@@ -133,7 +138,6 @@ export const GameRoom: React.FC<GameRoomProps> = ({
           <ChatBoxContainer
             me={me}
             broadcastMessage={(...args) => {
-              console.log('BROADCASTING MESSAGE');
               props.broadcastMessage(...args);
             }}
             chatHistory={props.chatHistory}

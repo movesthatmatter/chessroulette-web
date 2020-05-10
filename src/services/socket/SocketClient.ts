@@ -10,6 +10,8 @@ import {
   PeerJoinedRoomPayload,
   JoinRoomRequestPayload,
   JoinRoomSuccessPayload,
+  pingPayload,
+  PingPayload,
 } from 'dstnd-io';
 
 type ReceivableMessagesMap = {
@@ -19,10 +21,13 @@ type ReceivableMessagesMap = {
   connectionOpened: ConnectionOpenedPayload;
 
   joinRoomSuccess: JoinRoomSuccessPayload;
+
+  ping: PingPayload;
 }
 
 type SendableMessagesMap = {
   joinRoomRequest: JoinRoomRequestPayload;
+  ping: PingPayload;
 }
 
 export class SocketClient {
