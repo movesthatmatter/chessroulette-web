@@ -9,7 +9,7 @@ import { Result } from 'ts-results';
 import { SocketConsumer } from 'src/components/SocketProvider';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
 import { GameRoomContainer } from '../GameRoom/GameRoomContainer';
-import { createRoom } from './resources';
+import { createRoom, createChallenge } from './resources';
 
 type Props = {
   getRooms: () => Promise<Result<PublicRoomsResponsePayload, unknown>>;
@@ -75,29 +75,50 @@ export const LobbyPage: React.FunctionComponent<Props> = (props) => {
                 ))}
               </div>
               {me && (
-                <div className={cls.playWithFriendsContainer}>
-                  <span>Play With Friends</span>
-                  <ColoredButton
-                    label="Create New Room"
-                    color="rgb(8, 209, 131)"
-                    onClickFunction={async () => {
-                      (await createRoom({
-                        nickname: undefined,
-                        peerId: me.id,
-                        type: 'private',
-                      }))
-                        .map((r) => {
-                          send({
-                            kind: 'joinRoomRequest',
-                            content: {
-                              roomId: r.id,
-                              code: r.type === 'private' ? r.code : undefined,
-                            },
+                <>
+                  <div className={cls.box}>
+                    <span>Create Open Challenge</span>
+                    <ColoredButton
+                      label="Create Open Challenge"
+                      color="rgb(8, 209, 131)"
+                      onClickFunction={async () => {
+                        (await createChallenge({ peerId: me.id }))
+                          .map((r) => {
+                            send({
+                              kind: 'joinRoomRequest',
+                              content: {
+                                roomId: r.id,
+                                code: r.type === 'private' ? r.code : undefined,
+                              },
+                            });
                           });
-                        });
-                    }}
-                  />
-                </div>
+                      }}
+                    />
+                  </div>
+                  <div className={cls.box}>
+                    <span>Play With Friends</span>
+                    <ColoredButton
+                      label="Create New Room"
+                      color="rgb(8, 209, 131)"
+                      onClickFunction={async () => {
+                        (await createRoom({
+                          nickname: undefined,
+                          peerId: me.id,
+                          type: 'private',
+                        }))
+                          .map((r) => {
+                            send({
+                              kind: 'joinRoomRequest',
+                              content: {
+                                roomId: r.id,
+                                code: r.type === 'private' ? r.code : undefined,
+                              },
+                            });
+                          });
+                      }}
+                    />
+                  </div>
+                </>
               )}
             </>
           )}
@@ -109,7 +130,8 @@ export const LobbyPage: React.FunctionComponent<Props> = (props) => {
 
 const useStyles = createUseStyles({
   container: {},
-  playWithFriendsContainer: {
+  box: {
     background: '#efefef',
   },
+
 });

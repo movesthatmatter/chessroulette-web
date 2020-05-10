@@ -9,7 +9,10 @@ import {
   createRoomResponse,
   CreateRoomRequest,
   CreateRoomResponse,
-  JoinRoomRequestPayload,
+  CreateChallengeRequest,
+  createChallengeRequest,
+  CreateChallengeResponse,
+  createChallengeResponse,
 } from 'dstnd-io';
 import config from 'src/config';
 
@@ -41,6 +44,20 @@ export const createRoom = async (
 
     return io
       .toResult(createRoomResponse.decode(data))
+      .mapErr(() => 'BadResponse');
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+};
+
+export const createChallenge = async (
+  req: CreateChallengeRequest,
+): Promise<Result<CreateRoomResponse, ApiError>> => {
+  try {
+    const { data } = await http.post('api/challenges', req);
+
+    return io
+      .toResult(createChallengeResponse.decode(data))
       .mapErr(() => 'BadResponse');
   } catch (e) {
     return new Err('BadRequest');
