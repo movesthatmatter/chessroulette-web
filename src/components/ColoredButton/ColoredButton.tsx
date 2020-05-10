@@ -1,36 +1,29 @@
-import React, { useState } from 'react';
-import cx from 'classnames';
+import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 
 type BtnProps = {
   label: string;
-  color: string;
+  color?: string;
   onClickFunction: () => void;
-  fontSize: string;
+  fontSize?: string;
   padding? : string;
   width? : string;
 }
 export const ColoredButton = ({
   label,
-  color,
   onClickFunction,
-  fontSize,
+  color = '#efefef',
+  fontSize = '16',
   padding,
   width,
 }: BtnProps) => {
   const styles = useStyle({ color });
-  const [buttonOver, setButtonOver] = useState<boolean>(false);
+
   return (
     <div className={styles.container}>
       <div
         style={{ backgroundColor: color, width: `${width || ''}` }}
-        className={cx(styles.button, {
-          [styles.buttonMouseOver]: buttonOver,
-        })}
-        onMouseOver={() => setButtonOver(true)}
-        onFocus={() => setButtonOver(true)}
-        onMouseOut={() => setButtonOver(false)}
-        onBlur={() => setButtonOver(false)}
+        className={styles.button}
         onClick={() => onClickFunction()}
       >
         <div
@@ -38,7 +31,6 @@ export const ColoredButton = ({
           className={styles.buttonLabel}
         >
           {label}
-
         </div>
       </div>
     </div>
@@ -57,10 +49,12 @@ const useStyle = createUseStyles({
     boxShadow: '1px 1px 15px rgba(20, 20, 20, 0.27)',
     borderRadius: '3px',
     textAlign: 'center',
-  },
-  buttonMouseOver: {
-    filter: 'brightness(110%)',
-    cursor: 'pointer',
+    padding: '3px 10px',
+
+    '&:hover': {
+      filter: 'brightness(110%)',
+      cursor: 'pointer',
+    },
   },
   buttonLabel: {
     fontFamily: 'Roboto',

@@ -36,6 +36,7 @@ export const JoinFirstAvailableRoomHelper: React.FC<Props> = (props) => {
         kind: 'joinRoomRequest',
         content: {
           roomId: publicRooms[0].id,
+          code: undefined,
         },
       });
     }

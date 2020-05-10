@@ -7,7 +7,9 @@ import {
 } from 'dstnd-io';
 import { Result } from 'ts-results';
 import { SocketConsumer } from 'src/components/SocketProvider';
+import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
 import { GameRoomContainer } from '../GameRoom/GameRoomContainer';
+import { createRoom } from './resources';
 
 type Props = {
   getRooms: () => Promise<Result<PublicRoomsResponsePayload, unknown>>;
@@ -18,7 +20,9 @@ export const LobbyPage: React.FunctionComponent<Props> = (props) => {
 
   // Since there is no AppState like Redux or smtg, I'm going to keep it here
   //  for now, but this isn't the best design!
-  const [publicRooms, setPublicRooms] = useState<PublicRoomsResponsePayload>([]);
+  const [publicRooms, setPublicRooms] = useState<PublicRoomsResponsePayload>(
+    [],
+  );
   const [me, setMe] = useState<PeerRecord | void>();
   const [joinedRoom, setJoinedRoom] = useState<RoomStatsRecord | void>();
 
@@ -38,29 +42,63 @@ export const LobbyPage: React.FunctionComponent<Props> = (props) => {
           setJoinedRoom(msg.content.room);
         } else if (msg.kind === 'roomStats') {
           setJoinedRoom(msg.content);
+        } else if (msg.kind === 'connectionOpened') {
+          setMe(msg.content.me);
         }
       }}
       render={({ send }) => (
         <div className={cls.container}>
-          {(joinedRoom && me) ? (
+          {joinedRoom && me ? (
             <GameRoomContainer
               room={joinedRoom}
               me={me}
             />
           ) : (
             <>
-              {publicRooms.map((room) => (
-                <button
-                  key={room.id}
-                  type="button"
-                  onClick={() => send({
-                    kind: 'joinRoomRequest',
-                    content: { roomId: room.id },
-                  })}
-                >
-                  {room.name}
-                </button>
-              ))}
+              <div>
+                <span>Public Rooms</span>
+                {publicRooms.map((room) => (
+                  <button
+                    key={room.id}
+                    type="button"
+                    onClick={() =>
+                      send({
+                        kind: 'joinRoomRequest',
+                        content: {
+                          roomId: room.id,
+                          code: undefined,
+                        },
+                      })}
+                  >
+                    {room.name}
+                  </button>
+                ))}
+              </div>
+              {me && (
+                <div className={cls.playWithFriendsContainer}>
+                  <span>Play With Friends</span>
+                  <ColoredButton
+                    label="Create New Room"
+                    color="rgb(8, 209, 131)"
+                    onClickFunction={async () => {
+                      (await createRoom({
+                        nickname: undefined,
+                        peerId: me.id,
+                        type: 'private',
+                      }))
+                        .map((r) => {
+                          send({
+                            kind: 'joinRoomRequest',
+                            content: {
+                              roomId: r.id,
+                              code: r.type === 'private' ? r.code : undefined,
+                            },
+                          });
+                        });
+                    }}
+                  />
+                </div>
+              )}
             </>
           )}
         </div>
@@ -71,4 +109,7 @@ export const LobbyPage: React.FunctionComponent<Props> = (props) => {
 
 const useStyles = createUseStyles({
   container: {},
+  playWithFriendsContainer: {
+    background: '#efefef',
+  },
 });
