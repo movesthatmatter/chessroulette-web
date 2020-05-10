@@ -7,7 +7,6 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import chatSVG from './assets/chat_circle.svg';
 import { ChatMessageRecord } from './records/ChatMessageRecord';
 
-
 type Props = {
   me: {
     id: string;
@@ -20,17 +19,21 @@ type Props = {
 export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
   const cls = useStyles();
   const [input, setInput] = useState('');
-  const [chatWindowMouseOver, setChatWindowMouseOver] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [newMessageCounter, setNewMessageCounter] = useState(0);
   const chatWindowRef = useRef<HTMLDivElement>(null);
 
   const chatExpanded = (
-    <div className={cx(cls.container, {
-      [cls.containerOpen]: chatOpen,
-    })}
+    <div
+      className={cx(cls.container, {
+        [cls.containerOpen]: chatOpen,
+      })}
     >
-      <div ref={chatWindowRef} id="messageHistory" className={cls.messageHistory}>
+      <div
+        ref={chatWindowRef}
+        id="messageHistory"
+        className={cls.messageHistory}
+      >
         {messages.map((msg, i) => (
           <div
             key={String(i)}
@@ -38,17 +41,19 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
               [cls.myMessage]: msg.from.id === me.id,
             })}
           >
-            <div className={cx({
-              [cls.messageSenderTitleMe]: msg.from.id === me.id,
-              [cls.messageSenderTitleOther]: msg.from.id !== me.id,
-            })}
+            <div
+              className={cx({
+                [cls.messageSenderTitleMe]: msg.from.id === me.id,
+                [cls.messageSenderTitleOther]: msg.from.id !== me.id,
+              })}
             >
               {msg.from.name}
             </div>
-            <div className={cx(cls.messageContent, {
-              [cls.myMessageContent]: msg.from.id === me.id,
-              [cls.otherMessageContent]: msg.from.id !== me.id,
-            })}
+            <div
+              className={cx(cls.messageContent, {
+                [cls.myMessageContent]: msg.from.id === me.id,
+                [cls.otherMessageContent]: msg.from.id !== me.id,
+              })}
             >
               {msg.content}
             </div>
@@ -78,20 +83,28 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
     </div>
   );
   useEffect(() => {
-    if (!chatOpen && messages[messages.length - 1].from.id !== me.id) {
+    if (
+      !chatOpen
+      && messages.length > 0
+      && messages[messages.length - 1].from.id !== me.id
+    ) {
       setNewMessageCounter((prevState) => {
         const incCounter = prevState + 1;
         return incCounter;
       });
     }
   }, [messages]);
+
   useEffect(() => scrollToBottom(), [messages]);
+
   const scrollToBottom = () => {
     if (chatWindowRef && chatWindowRef.current) {
       chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
     }
   };
-  const inputKeyPressHandler = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+  const inputKeyPressHandler = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ): void => {
     if (e.key === 'Enter' && input.trim() !== '') {
       onSend(input);
       setInput('');
@@ -106,20 +119,15 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
     <div className={cls.chatContainer}>
       <div style={{ position: 'relative' }}>
         <div
-          className={cx(cls.chatWindowCondensed, {
-            [cls.chatWindowCondensedHover]: chatWindowMouseOver,
-            [cls.chatWindowUpperBarOpen]: chatOpen,
-          })}
+          className={cls.chatWindowCondensed}
           onClick={() => chatExpandHandler()}
-          onMouseOver={() => setChatWindowMouseOver(true)}
-          onMouseOut={() => setChatWindowMouseOver(false)}
-          onFocus={() => setChatWindowMouseOver(true)}
-          onBlur={() => setChatWindowMouseOver(false)}
         >
           <div className={cls.chatWindowHeaderText}>Chat</div>
           <div className={cls.chatNotificationIcon}>
             <img src={chatSVG} alt="chat icon" />
-            <div className={cls.counterContainer}>{newMessageCounter > 0 ? newMessageCounter : ''}</div>
+            <div className={cls.counterContainer}>
+              {newMessageCounter > 0 ? newMessageCounter : ''}
+            </div>
           </div>
         </div>
       </div>
@@ -144,13 +152,15 @@ const useStyles = createUseStyles({
     marginTop: '50px',
     // transition: 'all .5s ease-in-out',
     zIndex: 2,
+
+    '&:hover': {
+      backgroundColor: '#E66162',
+      cursor: 'pointer',
+    },
   },
+
   chatWindowUpperBarOpen: {
     borderRadius: '14px 14px 0px 0px',
-  },
-  chatWindowCondensedHover: {
-    backgroundColor: '#E66162',
-    cursor: 'pointer',
   },
   chatWindowHeaderText: {
     fontFamily: 'Roboto',
@@ -228,9 +238,7 @@ const useStyles = createUseStyles({
     left: '40%',
   },
   message: {},
-  myMessage: {
-
-  },
+  myMessage: {},
   messageContent: {
     borderRadius: '18px',
     padding: '5px 15px 5px 15px',
