@@ -1,16 +1,18 @@
 import React from 'react';
-import './App.css';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { LandingPage } from './modules/Landing/LandingPage';
 import { GamePage } from './modules/Game/GamePage';
 import { SocketProvider } from './components/SocketProvider';
+import { createUseStyles } from './lib/jss';
 
 function App() {
   const location = useLocation();
+  const cls = useStyles();
+
   return (
     <SocketProvider>
-      <div className="App">
+      <div className={cls.container}>
         <TransitionGroup component={null}>
           <Switch location={location}>
             <Route exact path="/game" key={location.key}>
@@ -18,13 +20,10 @@ function App() {
                 <CSSTransition
                   in={match !== null}
                   key={location.key}
-                  classNames="gameComponent"
                   timeout={600}
                   unmountOnExit
                 >
-                  <div className="gameComponent">
-                    <GamePage />
-                  </div>
+                  <GamePage />
                 </CSSTransition>
               )}
             </Route>
@@ -33,13 +32,10 @@ function App() {
                 <CSSTransition
                   in={match !== null}
                   key={location.key}
-                  classNames="LandingPageContainer"
                   timeout={600}
                   unmountOnExit
                 >
-                  <div className="LandingPageContainer">
-                    <LandingPage />
-                  </div>
+                  <LandingPage />
                 </CSSTransition>
               )}
             </Route>
@@ -49,5 +45,12 @@ function App() {
     </SocketProvider>
   );
 }
+
+const useStyles = createUseStyles({
+  container: {
+    width: '100%',
+    height: '100%',
+  },
+});
 
 export default App;
