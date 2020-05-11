@@ -197,10 +197,8 @@ export const GameRoom: React.FC<GameRoomProps> = ({
           </div>
           <aside className={cls.rightSide}>
             <RoomInfoDisplay
-              peers={Object.values(props.room.peers).map((p) => p.name)}
-              me={me.name}
-              roomID={props.room.id}
-              roomName={props.room.name}
+              me={me}
+              room={props.room}
             />
 
             <div>
