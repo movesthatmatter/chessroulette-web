@@ -219,8 +219,10 @@ export const GameRoom: React.FC<GameRoomProps> = ({
             />
           </div>
           <aside className={cls.rightSide}>
-            <RoomInfoDisplay me={me} room={props.room} />
-
+            <RoomInfoDisplay
+              me={me}
+              room={props.room}
+            />
             <div>
               {props.room.type === 'private' && (
                 <div>{`Invite Friends: ${props.room.code}`}</div>
