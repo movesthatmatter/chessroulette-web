@@ -1,4 +1,6 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
+import { action } from '@storybook/addon-actions';
 import { PlayWithFriendsPopup } from './PlayWithFriendsPopup';
 
 export default {
@@ -8,6 +10,10 @@ export default {
 
 export const Popup = () => (
   <div style={{ display: 'flex', width: '300px' }}>
-    <PlayWithFriendsPopup close={() => console.log('close')} dispatchCode={(value) => console.log(value)} />
+    <PlayWithFriendsPopup
+      close={action('close')}
+      dispatchCodeJoin={action('dispatch code join')}
+      dispatchCreate={action('dispatch create')}
+    />
   </div>
 );

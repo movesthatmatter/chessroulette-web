@@ -1,43 +1,34 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
-import React from 'react';
+import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { CustomInput } from './CustomInput/CustomInput';
 
-type popProps = {
+type Props = {
   close: () => void;
   dispatchCodeJoin: (value: string) => void;
   dispatchCreate: () => void;
-}
-type inputs = 'input1' | 'input2' | 'input3' | 'input4' | 'input5' | 'input6';
-type inputTypes = {
-  [key in inputs]: string;
 };
-export const PlayWithFriendsPopup = ({ close, dispatchCodeJoin, dispatchCreate }: popProps) => {
+
+const initialInputs = {
+  input1: '',
+  input2: '',
+  input3: '',
+  input4: '',
+  input5: '',
+  input6: '',
+};
+
+export const PlayWithFriendsPopup: React.FC<Props> = ({
+  close,
+  dispatchCodeJoin,
+  dispatchCreate,
+}) => {
   const cls = useStyle();
-  const inputValues: inputTypes = {
-    input1: '',
-    input2: '',
-    input3: '',
-    input4: '',
-    input5: '',
-    input6: '',
-  };
-  const inputChangedHandler = (value: string, id: inputs) => {
-    inputValues[id] = value;
-  };
-  const joinHandler = () => {
-    let valid = true;
-    Object.values(inputValues).forEach((value) => {
-      if (value === '') {
-        valid = false;
-      }
-    });
-    if (valid) {
-      dispatchCodeJoin(Object.values(inputValues).join(''));
-    }
-  };
+
+  const [inputValues, setInputValues] = useState(initialInputs);
+
   return (
     <>
       <div className={cls.exitButton}>
@@ -45,18 +36,21 @@ export const PlayWithFriendsPopup = ({ close, dispatchCodeJoin, dispatchCreate }
           icon={faTimesCircle}
           size="lg"
           className={cls.exitIcon}
-          onClick={() => close()}
+          onClick={close}
         />
       </div>
       <div className={cls.modalContainer}>
-        <div className={cls.modalTitle}>
-          Enter room CODE:
-        </div>
+        <div className={cls.modalTitle}>Enter room CODE:</div>
         <div className={cls.codeInputContainer}>
-          {Object.keys(inputValues).map((input) => (
+          {Object.keys(inputValues).map((inputId) => (
             <CustomInput
-              key={input}
-              inputChanged={(value: string) => inputChangedHandler(value, input as inputs)}
+              key={inputId}
+              inputChanged={(value) => {
+                setInputValues((prev) => ({
+                  ...prev,
+                  [inputId]: value,
+                }));
+              }}
             />
           ))}
         </div>
@@ -69,7 +63,17 @@ export const PlayWithFriendsPopup = ({ close, dispatchCodeJoin, dispatchCreate }
               borderRadius="22px"
               width="165px"
               padding="3px"
-              onClickFunction={() => joinHandler()}
+              onClickFunction={() => {
+                const isValid = Object
+                  .values(inputValues)
+                  .filter((v) => v === '').length === 0;
+
+                if (isValid) {
+                  dispatchCodeJoin(Object.values(inputValues).join(''));
+                }
+
+                // TODO: Show a message if wrong code
+              }}
             />
           </div>
           <div>
@@ -80,7 +84,7 @@ export const PlayWithFriendsPopup = ({ close, dispatchCodeJoin, dispatchCreate }
               borderRadius="22px"
               width="165px"
               padding="3px"
-              onClickFunction={() => dispatchCreate()}
+              onClickFunction={dispatchCreate}
             />
           </div>
         </div>
@@ -88,7 +92,6 @@ export const PlayWithFriendsPopup = ({ close, dispatchCodeJoin, dispatchCreate }
     </>
   );
 };
-
 
 const useStyle = createUseStyles({
   modalContainer: {
