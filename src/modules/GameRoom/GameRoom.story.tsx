@@ -6,7 +6,7 @@ import { AVStreaming } from 'src/services/AVStreaming';
 import { RoomStatsRecord } from 'dstnd-io';
 import { GameRoomContainer } from './GameRoomContainer';
 import { GameRoom } from './GameRoom';
-import { ChessPlayers, ChessGameState } from '../Games/Chess';
+import { ChessGameState } from '../Games/Chess';
 
 export default {
   component: GameRoomContainer,
