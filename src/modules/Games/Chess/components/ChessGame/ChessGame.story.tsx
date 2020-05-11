@@ -28,10 +28,12 @@ export default {
 
 const mockPlayers = {
   white: {
+    id: '1',
     name: 'kasparov',
     color: 'white',
   },
   black: {
+    id: '2',
     name: 'Ficher',
     color: 'black',
   },

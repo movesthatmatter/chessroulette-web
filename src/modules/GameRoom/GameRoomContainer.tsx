@@ -26,36 +26,38 @@ type Props = {
   room: RoomStatsRecord;
 };
 
-type ChessPlayersByName = Record<string, ChessPlayer>;
+type ChessPlayersById = Record<string, ChessPlayer>;
 
-const chessPlayersByName = (players: ChessPlayers): ChessPlayersByName => ({
-  [players.white.name]: players.white,
-  [players.black.name]: players.black,
+const getPlayersById = (players: ChessPlayers): ChessPlayersById => ({
+  [players.white.id]: players.white,
+  [players.black.id]: players.black,
 });
 
 export const GameRoomContainer: React.FC<Props> = (props) => {
   const [chatHistory, setChatHistory] = useState<ChatMessageRecord[]>([]);
   const [currentGame, setCurrentGame] = useState<ChessGameState | undefined>();
   const [
-    playersByName,
-    setPlayersByName,
-  ] = useState<ChessPlayersByName | undefined>(
+    playersById,
+    setPlayersById,
+  ] = useState<ChessPlayersById | undefined>(
     currentGame
-      ? chessPlayersByName(currentGame.players)
+      ? getPlayersById(currentGame.players)
       : undefined,
   );
 
-  const getNewChessGame = (betweenPeersById: string[]): ChessGameState => {
-    const shuffledPeers = shuffle(betweenPeersById);
+  const getNewChessGame = (playerIds: string[]): ChessGameState => {
+    const [whitePlayerId, blackPlayerId] = shuffle(playerIds);
 
     return {
       players: {
         white: {
-          name: shuffledPeers[0],
+          name: props.room.peers[whitePlayerId]?.name,
+          id: whitePlayerId,
           color: 'white',
         },
         black: {
-          name: shuffledPeers[1],
+          name: props.room.peers[blackPlayerId]?.name,
+          id: blackPlayerId,
           color: 'black',
         },
       },
@@ -75,9 +77,9 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (currentGame) {
-      setPlayersByName(chessPlayersByName(currentGame.players));
+      setPlayersById(getPlayersById(currentGame.players));
     } else {
-      setPlayersByName(undefined);
+      setPlayersById(undefined);
     }
   }, [currentGame?.players]);
 
@@ -109,13 +111,13 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
               .map((msg) => {
                 if (msg.msgType === 'gameInvitation') {
                   // If the invitation is not to me return early
-                  if (msg.content.challengee !== props.me.id) {
+                  if (msg.content.challengeeId !== props.me.id) {
                     return;
                   }
 
                   const newGame = getNewChessGame([
-                    msg.content.challenger,
-                    msg.content.challengee,
+                    msg.content.challengerId,
+                    msg.content.challengeeId,
                   ]);
 
                   const whitePlayer = newGame.players.white;
@@ -149,19 +151,19 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
             <GameRoom
               me={props.me}
               room={props.room}
-              peerConnections={Object.values(peerConnections)}
+              peerConnections={peerConnections}
               // Streaming
               startStreaming={startAVBroadcasting}
               stopStreaming={stopAVBroadcasting}
               localStream={localStream}
               // Game
               currentGame={currentGame}
-              playersByName={playersByName}
-              onNewGame={(opponents) => {
+              playersById={playersById}
+              onNewGame={(players) => {
                 const payload: GameInvitationRecord = {
                   msgType: 'gameInvitation',
                   gameType: 'chess',
-                  content: opponents,
+                  content: players,
                 };
 
                 broadcastMessage(payload);

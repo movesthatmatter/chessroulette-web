@@ -2,11 +2,13 @@ import * as io from 'io-ts';
 
 export const chessPlayerWhite = io.type({
   color: io.literal('white'),
+  id: io.string,
   name: io.string,
 });
 
 export const chessPlayerBlack = io.type({
   color: io.literal('black'),
+  id: io.string,
   name: io.string,
 });
 

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
+import cx from 'classnames';
 import { ChessBoard } from '../ChessBoard';
 import { getNewChessGame } from '../../lib/sdk';
 import { ChessPlayers } from '../../records';
 
-type Props = {
+type Props = React.HTMLProps<HTMLDivElement> & {
   players: ChessPlayers;
   playable?: boolean;
   allowSinglePlayerPlay?: boolean;
@@ -44,22 +45,23 @@ export const ChessGame: React.FunctionComponent<Props> = ({
   }, []);
 
   return (
-    <div className={cls.container}>
-      <div className={cls.topScoreInfo}>
-        <div>{timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes}</div>
+    <div className={cx([cls.container, props.className])}>
+      {/* <div className={cls.bar}>
+        <span>10:00</span>
+      </div> */}
+      {/* {props.players[awayColor].name} */}
+      {/* <div>{timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes}</div>
         <div>:</div>
-        <div>{timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds}</div>
-      </div>
+        <div>{timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds}</div> */}
+      {/* </div> */}
       <ChessBoard
         orientation={props.homeColor}
         position={fen}
-        calcWidth={({
-          screenWidth,
-          screenHeight,
-        }: {
-          screenWidth: number;
-          screenHeight: number;
-        }) => (screenWidth * 0.35)}
+        calcWidth={
+          // This needs to be smarter
+          // To make sure it fits in both width and height
+          (p) => Math.min(p.screenWidth * 0.5, p.screenHeight * 0.8)
+        }
         darkSquareStyle={{
           backgroundColor: '#6792B4',
         }}
@@ -88,8 +90,11 @@ export const ChessGame: React.FunctionComponent<Props> = ({
           }
         }}
       />
-      <div className={cls.bottomPlayerInfo}>
-        <div style={{ width: '33%', textAlign: 'left' }}>
+      {/* <div className={cls.bar}>
+        <span>10:00</span>
+      </div> */}
+      {/* {props.players[props.homeColor].name} */}
+      {/* <div style={{ width: '33%', textAlign: 'left' }}>
           {props.players[awayColor].name.replace(/^\w/, (c) => c.toUpperCase())}
         </div>
         <div style={{ width: '33%', textAlign: 'center' }}>
@@ -97,8 +102,8 @@ export const ChessGame: React.FunctionComponent<Props> = ({
         </div>
         <div style={{ width: '33%', textAlign: 'right' }}>
           {props.players[props.homeColor].name.replace(/^\w/, (c) => c.toUpperCase())}
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
     </div>
   );
 };
@@ -112,23 +117,23 @@ const useStyles = createUseStyles({
     flexDirection: 'column',
     width: 'fit-content',
   },
-  topScoreInfo: {
+  bar: {
     fontFamily: 'Roboto',
     fontSize: '22px',
     color: 'white',
     fontWeight: 300,
-    padding: '8px',
+    // padding: '8px',
     display: 'flex',
     flexDirection: 'row',
   },
-  bottomPlayerInfo: {
-    fontFamily: 'Roboto',
-    fontSize: '18px',
-    color: 'white',
-    fontWeight: 300,
-    padding: '8px',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
+  // bottomPlayerInfo: {
+  //   fontFamily: 'Roboto',
+  //   fontSize: '18px',
+  //   color: 'white',
+  //   fontWeight: 300,
+  //   padding: '8px',
+  //   display: 'flex',
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-between',
+  // },
 });

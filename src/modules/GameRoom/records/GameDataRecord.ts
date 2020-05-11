@@ -19,8 +19,8 @@ export const gameInvitationRecord = io.type({
   msgType: io.literal('gameInvitation'),
   gameType: io.keyof(availableGames.props),
   content: io.type({
-    challenger: io.string,
-    challengee: io.string,
+    challengerId: io.string,
+    challengeeId: io.string,
   }),
 });
 export type GameInvitationRecord = io.TypeOf<typeof gameInvitationRecord>;

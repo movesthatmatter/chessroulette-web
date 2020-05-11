@@ -34,6 +34,10 @@ export const LobbyPage: React.FunctionComponent<Props> = (props) => {
     })();
   }, []);
 
+  if (!publicRooms[0]) {
+    return null;
+  }
+
   return (
     <SocketConsumer
       onMessage={(msg) => {
@@ -45,6 +49,15 @@ export const LobbyPage: React.FunctionComponent<Props> = (props) => {
         } else if (msg.kind === 'connectionOpened') {
           setMe(msg.content.me);
         }
+      }}
+      onReady={(socket) => {
+        socket.send({
+          kind: 'joinRoomRequest',
+          content: {
+            roomId: publicRooms[0].id,
+            code: undefined,
+          },
+        });
       }}
       render={({ send }) => (
         <div className={cls.container}>
@@ -129,7 +142,10 @@ export const LobbyPage: React.FunctionComponent<Props> = (props) => {
 };
 
 const useStyles = createUseStyles({
-  container: {},
+  container: {
+    width: '100%',
+    height: '100%',
+  },
   box: {
     background: '#efefef',
   },
