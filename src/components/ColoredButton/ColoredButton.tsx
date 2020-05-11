@@ -8,6 +8,7 @@ type BtnProps = {
   fontSize?: string;
   padding? : string;
   width? : string;
+  borderRadius? : string;
 }
 export const ColoredButton = ({
   label,
@@ -16,13 +17,14 @@ export const ColoredButton = ({
   fontSize = '16',
   padding,
   width,
+  borderRadius,
 }: BtnProps) => {
   const styles = useStyle({ color });
 
   return (
     <div className={styles.container}>
       <div
-        style={{ backgroundColor: color, width: `${width || ''}` }}
+        style={{ backgroundColor: color, width: `${width || ''}`, borderRadius: `${borderRadius || '3px'}` }}
         className={styles.button}
         onClick={() => onClickFunction()}
       >
@@ -47,7 +49,6 @@ const useStyle = createUseStyles({
   },
   button: {
     boxShadow: '1px 1px 15px rgba(20, 20, 20, 0.27)',
-    borderRadius: '3px',
     textAlign: 'center',
     padding: '3px 10px',
 

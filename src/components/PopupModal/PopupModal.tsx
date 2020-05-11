@@ -47,6 +47,6 @@ const useStyles = createUseStyles({
     margin: '0 auto',
     boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.15)',
     borderRadius: '8px',
-    padding: '20px',
+    padding: '3px',
   },
 });
