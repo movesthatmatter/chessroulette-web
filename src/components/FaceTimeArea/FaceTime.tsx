@@ -1,9 +1,13 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { AVStream } from '../AVStream';
+import { AVStream, AVStreamProps } from '../AVStream';
 
-type Props = {
+type Props = Omit<AVStreamProps, 'stream'> & {
   // Does it need to be different for audio only?
+  aspectRatio?: {
+    width: number;
+    height: number;
+  };
   streamConfig:
   | { on: false }
   | {
@@ -13,21 +17,28 @@ type Props = {
   };
 };
 
-export const FaceTime: React.FC<Props> = ({ streamConfig }) => {
+export const FaceTime: React.FC<Props> = ({
+  streamConfig,
+  aspectRatio = {
+    width: 16,
+    height: 9,
+  },
+  ...avStreamProps
+}) => {
   const cls = useStyles();
 
   return (
-    <div className={cls.container}>
+    <div
+      className={cls.container}
+      style={{ paddingBottom: `${100 / (aspectRatio.width / aspectRatio.height)}%` }}
+    >
       {streamConfig.on ? (
-        <>
-          <div>{`Streaming On ${streamConfig.type}`}</div>
-          <AVStream
-            stream={streamConfig.stream}
-            autoPlay
-            muted
-            className={cls.container}
-          />
-        </>
+        <AVStream
+          stream={streamConfig.stream}
+          autoPlay
+          className={cls.video}
+          {...avStreamProps}
+        />
       ) : (
         <span>Streaming Off</span>
       )}
@@ -37,7 +48,14 @@ export const FaceTime: React.FC<Props> = ({ streamConfig }) => {
 
 const useStyles = createUseStyles({
   container: {
-    width: '200px',
-    background: '#efefef',
+    width: '100%',
+    position: 'relative',
+  },
+  video: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
   },
 });

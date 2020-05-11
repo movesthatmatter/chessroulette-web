@@ -3,11 +3,11 @@ import React, { useRef, useEffect } from 'react';
 type VideoAttributes =
   React.DetailedHTMLProps<React.VideoHTMLAttributes<HTMLVideoElement>, HTMLVideoElement>;
 
-type Props = VideoAttributes & {
+export type AVStreamProps = VideoAttributes & {
   stream: MediaStream;
 };
 
-export const AVStream: React.FunctionComponent<Props> = ({
+export const AVStream: React.FunctionComponent<AVStreamProps> = ({
   stream,
   ...videoProps
 }) => {
