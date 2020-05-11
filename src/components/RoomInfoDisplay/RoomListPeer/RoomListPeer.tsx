@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faVideoSlash, faVolumeMute, faVolumeUp, faVideo, faChess,
 } from '@fortawesome/free-solid-svg-icons';
+import { PeerRecord } from 'dstnd-io';
 
 const icons = {
   chess: faChess,
@@ -15,9 +16,14 @@ const icons = {
 type video = typeof icons.video | typeof icons.videoMute;
 type audio = typeof icons.volume | typeof icons.volumeMute;
 
-export const RoomListPeer = ({ peerName, onPeerChallenge }: {
-  peerName: string;
+type Props = {
+  peer: PeerRecord;
   onPeerChallenge: () => void;
+}
+
+export const RoomListPeer: React.FC<Props> = ({
+  peer,
+  onPeerChallenge,
 }) => {
   const cls = useStyle();
   const [over, setMouseOver] = useState<boolean>(false);
@@ -40,7 +46,7 @@ export const RoomListPeer = ({ peerName, onPeerChallenge }: {
         />
       </div>
       <div className={cls.peerNameContainer}>
-        {peerName.replace(/^\w/, (c) => c.toUpperCase())}
+        {peer.name}
       </div>
       <div className={cls.videoIconContainer}>
         <FontAwesomeIcon
