@@ -10,16 +10,13 @@ import {
   PeerRecord,
   RoomStatsRecord,
 } from 'dstnd-io';
-import { Result } from 'ts-results';
 import { GameRoomContainer } from 'src/modules/GameRoom/GameRoomContainer';
 import { SplashScreenBoardWithButtons } from './components/SplashScreenBoardWithButtons';
-import { createRoom, createChallenge } from './resources';
+import { createRoom, createChallenge, getPublicRooms } from './resources';
 
-type Props = {
-  getRooms: () => Promise<Result<PublicRoomsResponsePayload, unknown>>;
-};
+type Props = {};
 
-export const LandingPage: React.FC<Props> = ({ getRooms }: Props) => {
+export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
   const [publicRooms, setPublicRooms] = useState<PublicRoomsResponsePayload>([]);
   const [friendsPopup, setFriendsPopup] = useState(false);
@@ -28,7 +25,9 @@ export const LandingPage: React.FC<Props> = ({ getRooms }: Props) => {
 
   useEffect(() => {
     (async () => {
-      const res = await getRooms();
+      // This shouldn't be here but since we don't have redux or
+      //  a state manager yet it's ok
+      const res = await getPublicRooms();
 
       res.map(setPublicRooms);
     })();
