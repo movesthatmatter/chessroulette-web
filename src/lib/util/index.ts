@@ -5,16 +5,15 @@ export const noop = () => {
 export const range = (length: number, startAt = 0) =>
   Array.from({ length }, (_, i) => i + startAt);
 
-
 /**
  * https://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range
  *
-* Returns a random integer between min (inclusive) and max (inclusive).
-* The value is no lower than min (or the next integer greater than min
-* if min isn't an integer) and no greater than max (or the next integer
-* lower than max if max isn't an integer).
-* Using Math.round() will give you a non-uniform distribution!
-*/
+ * Returns a random integer between min (inclusive) and max (inclusive).
+ * The value is no lower than min (or the next integer greater than min
+ * if min isn't an integer) and no greater than max (or the next integer
+ * lower than max if max isn't an integer).
+ * Using Math.round() will give you a non-uniform distribution!
+ */
 export function getRandomInt(givenMin: number, givenMax: number) {
   const min = Math.ceil(givenMin);
   const max = Math.floor(givenMax);
@@ -39,3 +38,6 @@ export function shuffle<T extends unknown>(a: T[]) {
 }
 
 export const randomId = () => String(Math.random()).slice(2);
+
+export const complement = <T>(anySide: T, [sideA, sideB]: readonly [T, T]) =>
+  (sideA === anySide ? sideB : sideA);
