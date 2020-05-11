@@ -141,10 +141,13 @@ export const LandingPage: React.FC<Props> = ({ getRooms }: Props) => {
 
 const useStyles = createUseStyles({
   container: {
-    display: 'flex',
-    justifyContent: 'center',
+    fontFamily: 'Open Sans, sans-serif',
+    overflow: 'hidden',
+    position: 'absolute',
     width: '100%',
     height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   background: {
