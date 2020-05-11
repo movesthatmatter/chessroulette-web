@@ -23,7 +23,6 @@ export const AVStream: React.FunctionComponent<Props> = ({
     <video
       ref={videoRef}
       {...videoProps}
-      muted
     >
       <track kind="captions" />
     </video>
