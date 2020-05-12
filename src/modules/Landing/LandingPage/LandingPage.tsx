@@ -7,10 +7,9 @@ import { PlayWithFriendsPopup } from 'src/components/PlayWithFriendsPopup/PlayWi
 import { SocketConsumer } from 'src/components/SocketProvider';
 import { PeerRecord, CreateRoomResponse } from 'dstnd-io';
 import { useHistory } from 'react-router-dom';
-import {
-  createRoom, createChallenge, getPrivateRoom,
-} from 'src/resources';
-import { SplashScreenBoardWithButtons } from './components/SplashScreenBoardWithButtons';
+import { createRoom, createChallenge, getPrivateRoom } from 'src/resources';
+import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import chessBackground from './assets/chess_icons.png';
 
 type Props = {};
 
@@ -61,55 +60,66 @@ export const LandingPage: React.FC<Props> = () => {
               )}
             </>
           </PopupModal>
-          <>
-            <div className={cls.leftMargin} />
-            <div className={cls.leftSideContainer}>
-              <img src={logo} alt="logo" className={cls.logo} />
+          <div className={cls.leftSideContainer}>
+            <img src={logo} alt="logo" className={cls.logo} />
+            <div>
+              <p className={cls.headerText}>
+                Play chess online with
+                <br />
+                video streaming
+              </p>
+            </div>
+            <div
+              style={{ marginTop: '5px', marginBottom: '10px' }}
+              className={cls.text}
+            >
+              No account needed.
+              <br />
+              Game hosting and video chat.
+              <br />
+              Play with friends in a private lobby
+              <br />
+              or join an open challenge.
+              <br />
+            </div>
+            <div className={cls.buttonsContainer}>
+              <div style={{ marginRight: '30px' }}>
+                <ColoredButton
+                  label="Play with Friends"
+                  color="#08D183"
+                  fontSize="21px"
+                  padding="5px"
+                  onClickFunction={() => setFriendsPopup(true)}
+                />
+              </div>
               <div>
-                <p className={cls.headerText}>
-                  P2P Chess Games with Video Chat
-                </p>
-              </div>
-              <div
-                style={{ marginTop: '5px', marginBottom: '10px' }}
-                className={cls.text}
-              >
-                No account needed. Free P2P Chess Game hosting and video
-                chat. Just share the generated code with a friend and start
-                playing.
-              </div>
-              <div className={cls.buttonsContainer}>
-                <div style={{ marginRight: '30px' }}>
-                  <ColoredButton
-                    label="Play with Friends"
-                    color="#08D183"
-                    fontSize="21px"
-                    onClickFunction={() => setFriendsPopup(true)}
-                  />
-                </div>
-                <div>
-                  <ColoredButton
-                    label="Play Open Challenge"
-                    color="#54C4F2"
-                    fontSize="21px"
-                    onClickFunction={async () => {
-                      if (!me) {
-                        return;
-                      }
+                <ColoredButton
+                  label="Play Open Challenge"
+                  color="#54C4F2"
+                  fontSize="21px"
+                  padding="5px"
+                  onClickFunction={async () => {
+                    if (!me) {
+                      return;
+                    }
 
-                      (await createChallenge({ peerId: me.id })).map(
-                        (room) => {
-                          history.push(`/gameroom/${toRoomPath(room)}`);
-                        },
-                      );
-                    }}
-                  />
-                </div>
+                    (await createChallenge({ peerId: me.id })).map((room) => {
+                      history.push(`/gameroom/${toRoomPath(room)}`);
+                    });
+                  }}
+                />
+              </div>
+              <div>
+                <Mutunachi
+                  mid={1}
+                  width="171px"
+                  height="222px"
+                  className={cls.mutunachi}
+                />
               </div>
             </div>
-            <SplashScreenBoardWithButtons />
-            <div className={cls.rightMargin} />
-          </>
+          </div>
+          <div className={cls.chessboard} />
         </div>
       )}
     />
@@ -119,19 +129,19 @@ export const LandingPage: React.FC<Props> = () => {
 const useStyles = createUseStyles({
   container: {
     fontFamily: 'Open Sans, sans-serif',
-    overflow: 'hidden',
-    position: 'absolute',
+    position: 'fixed',
     width: '100%',
     height: '100%',
+    top: '0',
+    left: '0',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  background: {
-    color: '#262626',
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#ffffff',
+  chessboard: {
+    width: '360px',
+    height: '321px',
+    background: ` url(${chessBackground})`,
   },
   headerText: {
     fontFamily: 'Roboto Slab',
@@ -140,19 +150,22 @@ const useStyles = createUseStyles({
     lineHeight: '63px',
     margin: '0 auto',
     color: '#262626',
+    position: 'relative',
+    zIndex: 2,
   },
   buttonsContainer: {
-    marginTop: '20px',
-    marginLeft: '40px',
+    marginTop: '80px',
+    marginLeft: '100px',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'spaced-around',
   },
   logo: {
-    marginBottom: '40px',
+    marginBottom: '20px',
   },
   text: {
-    fontFamily: 'Open Sans',
+    fontFamily: 'Roboto Slab',
+    fontSize: '18px',
   },
   link: {
     margin: '0px',
@@ -173,17 +186,16 @@ const useStyles = createUseStyles({
   linkContent: {
     padding: '10px',
   },
-  leftMargin: {
-    width: '100%',
-  },
-  rightMargin: {
-    width: '100%',
-  },
   leftSideContainer: {
     display: 'flex',
+    width: '575px',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    minWidth: '500px',
-    marginRight: '70px',
+  },
+  mutunachi: {
+    position: 'fixed',
+    top: '44%',
+    left: '42%',
+    zIndex: 1,
   },
 });

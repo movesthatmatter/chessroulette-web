@@ -15,7 +15,7 @@ export const Backdrop = ({ show }: backdropProps) => {
 
 const useStyle = createUseStyles({
   backdrop: {
-    backgroundColor: 'rgba(0 ,0, 0, 0.55)',
+    backgroundColor: 'rgba(255, 255, 255, 0.84)',
     width: '100%',
     height: '100%',
     left: '0',

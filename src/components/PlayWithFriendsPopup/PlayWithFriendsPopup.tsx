@@ -3,6 +3,7 @@ import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
+import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { CustomInput } from './CustomInput/CustomInput';
 
 type Props = {
@@ -11,24 +12,13 @@ type Props = {
   dispatchCreate: () => void;
 };
 
-const initialInputs = {
-  input1: '',
-  input2: '',
-  input3: '',
-  input4: '',
-  input5: '',
-  input6: '',
-};
-
 export const PlayWithFriendsPopup: React.FC<Props> = ({
   close,
   dispatchCodeJoin,
   dispatchCreate,
 }) => {
   const cls = useStyle();
-
-  const [inputValues, setInputValues] = useState(initialInputs);
-
+  const [inputValue, setInputValue] = useState('');
   return (
     <>
       <div className={cls.exitButton}>
@@ -42,51 +32,46 @@ export const PlayWithFriendsPopup: React.FC<Props> = ({
       <div className={cls.modalContainer}>
         <div className={cls.modalTitle}>Enter room CODE:</div>
         <div className={cls.codeInputContainer}>
-          {Object.keys(inputValues).map((inputId) => (
-            <CustomInput
-              key={inputId}
-              inputChanged={(value) => {
-                setInputValues((prev) => ({
-                  ...prev,
-                  [inputId]: value,
-                }));
-              }}
-            />
-          ))}
+          <CustomInput onChange={(value) => setInputValue(value)} />
         </div>
-        <div>
+        <div className={cls.bottomPart}>
+          <Mutunachi
+            mid={11}
+            width="101"
+            height="132"
+            style={{ marginRight: '20px' }}
+          />
           <div className={cls.modalButtonContainer}>
-            <ColoredButton
-              label="JOIN"
-              color="#0BCE82"
-              fontSize="21px"
-              borderRadius="22px"
-              width="165px"
-              padding="3px"
-              onClickFunction={() => {
-                const isValid = Object
-                  .values(inputValues)
-                  .filter((v) => v === '').length === 0;
-
-                if (isValid) {
-                  dispatchCodeJoin(Object.values(inputValues).join(''));
-                }
-
-                // TODO: Show a message if wrong code
-              }}
-            />
+            <div style={{ marginBottom: '30px' }}>
+              <ColoredButton
+                label="JOIN"
+                color="#0BCE82"
+                fontSize="21px"
+                borderRadius="22px"
+                width="165px"
+                padding="3px"
+                onClickFunction={() => {
+                  dispatchCodeJoin(inputValue);
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: '30px' }}>
+              <ColoredButton
+                label="CREATE NEW"
+                color="#E66162"
+                fontSize="21px"
+                borderRadius="22px"
+                width="165px"
+                padding="3px"
+                onClickFunction={dispatchCreate}
+              />
+            </div>
           </div>
-          <div>
-            <ColoredButton
-              label="CREATE NEW"
-              color="#E66162"
-              fontSize="21px"
-              borderRadius="22px"
-              width="165px"
-              padding="3px"
-              onClickFunction={dispatchCreate}
-            />
-          </div>
+          <Mutunachi
+            mid={3}
+            width="122"
+            height="166"
+          />
         </div>
       </div>
     </>
@@ -103,6 +88,7 @@ const useStyle = createUseStyles({
   },
   codeInputContainer: {
     marginBottom: '20px',
+    alignSelf: 'center',
   },
   modalTitle: {
     fontFamily: 'Roboto',
@@ -114,12 +100,21 @@ const useStyle = createUseStyles({
     textAlign: 'center',
   },
   modalButtonContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+  },
+  bottomPart: {
     marginBottom: '20px',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
   },
   exitButton: {
     alignSelf: 'flex-end',
     position: 'absolute',
-    right: '3%',
+    right: '5%',
+    top: '4%',
   },
   exitIcon: {
     color: '#E66162',

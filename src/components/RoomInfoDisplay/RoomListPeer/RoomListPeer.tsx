@@ -1,34 +1,27 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faVideoSlash, faVolumeMute, faVolumeUp, faVideo, faChess,
-} from '@fortawesome/free-solid-svg-icons';
+import { faChess } from '@fortawesome/free-solid-svg-icons';
 import { PeerRecord } from 'dstnd-io';
-
-const icons = {
-  chess: faChess,
-  video: faVideo,
-  videoMute: faVideoSlash,
-  volume: faVolumeUp,
-  volumeMute: faVolumeMute,
-};
-type video = typeof icons.video | typeof icons.videoMute;
-type audio = typeof icons.volume | typeof icons.volumeMute;
+import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 
 type Props = {
   peer: PeerRecord;
   onPeerChallenge: () => void;
-}
+  avatar: avatarsType;
+  me: boolean;
+};
+export type avatarsType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
 export const RoomListPeer: React.FC<Props> = ({
   peer,
   onPeerChallenge,
+  avatar,
+  me,
 }) => {
   const cls = useStyle();
-  const [over, setMouseOver] = useState<boolean>(false);
-  const [videoIcon, toggleVideo] = useState<video>(icons.video);
-  const [audioIcon, toggleAudio] = useState<audio>(icons.volume);
+  const [over, setMouseOver] = useState(false);
+
   return (
     <div
       className={cls.listItem}
@@ -37,41 +30,24 @@ export const RoomListPeer: React.FC<Props> = ({
       onFocus={() => setMouseOver(true)}
       onBlur={() => setMouseOver(false)}
     >
-      <div style={{ opacity: `${over ? '1' : '0'}` }} className={cls.chessIconContainer}>
+      <div className={cls.mutunachi}>
+        <Mutunachi mid={avatar} height="35px" />
+      </div>
+      <div
+        className={cls.peerNameContainer}
+        style={{ fontWeight: me ? 'bold' : 'normal' }}
+      >
+        {peer.name}
+      </div>
+      <div
+        style={{ opacity: `${over ? '1' : '0'}` }}
+        className={cls.chessIconContainer}
+      >
         <FontAwesomeIcon
           size="xs"
           icon={faChess}
           className={cls.chessIcon}
           onClick={() => onPeerChallenge()}
-        />
-      </div>
-      <div className={cls.peerNameContainer}>
-        {peer.name}
-      </div>
-      <div className={cls.videoIconContainer}>
-        <FontAwesomeIcon
-          size="xs"
-          icon={videoIcon}
-          className={cls.videoIcon}
-          onClick={() => toggleVideo((prev) => {
-            if (prev === icons.video) {
-              return icons.videoMute;
-            }
-            return icons.video;
-          })}
-        />
-      </div>
-      <div className={cls.volumeIconContainer}>
-        <FontAwesomeIcon
-          size="xs"
-          icon={audioIcon}
-          className={cls.volumeIcon}
-          onClick={() => toggleAudio((prev) => {
-            if (prev === icons.volume) {
-              return icons.volumeMute;
-            }
-            return icons.volume;
-          })}
         />
       </div>
     </div>
@@ -84,20 +60,16 @@ const useStyle = createUseStyles({
     flexDirection: 'row',
     width: '100%',
     padding: '3px 0px',
+    alignItems: 'center',
     '&:hover': {
       cursor: 'pointer',
-      backgroundColor: '#F9F9F9',
+      background:
+        'linear-gradient(to right,  rgba(232, 232, 232, 0) 0%, rgba(241, 241, 241, 0.71) 45.83% ,#F9F9F9 100%)',
     },
   },
   chessIconContainer: {
-    paddingRight: '10px',
+    marginRight: '10px',
     width: '36px',
-  },
-  videoIconContainer: {
-    paddingRight: '5px',
-  },
-  volumeIconContainer: {
-    paddingLeft: '5px',
   },
   chessIcon: {
     padding: '5px',
@@ -107,23 +79,9 @@ const useStyle = createUseStyles({
       transform: 'scale(1.3)',
     },
   },
-  videoIcon: {
-    padding: '5px',
-    borderRadius: '12px',
-    boxShadow: '1px 1px 4px rgba(0, 0, 0, 0.19)',
-    transition: 'all 0.1s ease-in-out',
-    '&:hover': {
-      transform: 'scale(1.3)',
-    },
-  },
-  volumeIcon: {
-    padding: '5px',
-    borderRadius: '12px',
-    boxShadow: '1px 1px 4px rgba(0, 0, 0, 0.19)',
-    transition: 'all 0.1s ease-in-out',
-    '&:hover': {
-      transform: 'scale(1.3)',
-    },
+  mutunachi: {
+    marginRight: '20px',
+    width: '45px',
   },
   peerNameContainer: {
     width: '100%',
