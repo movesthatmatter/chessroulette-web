@@ -10,8 +10,8 @@ import {
   PeerJoinedRoomPayload,
   JoinRoomRequestPayload,
   JoinRoomSuccessPayload,
-  pingPayload,
   PingPayload,
+  JoinRoomFailurePayload,
 } from 'dstnd-io';
 
 type ReceivableMessagesMap = {
@@ -21,20 +21,23 @@ type ReceivableMessagesMap = {
   connectionOpened: ConnectionOpenedPayload;
 
   joinRoomSuccess: JoinRoomSuccessPayload;
+  joinRoomFailure: JoinRoomFailurePayload;
 
   ping: PingPayload;
-}
+};
 
 type SendableMessagesMap = {
   joinRoomRequest: JoinRoomRequestPayload;
   ping: PingPayload;
-}
+};
 
 export class SocketClient {
-  private pubsy = new Pubsy<{
+  private pubsy = new Pubsy<
+  {
     onReady: null;
     onMessage: SocketPayload;
-  } & ReceivableMessagesMap>();
+  } & ReceivableMessagesMap
+  >();
 
   public connection: SocketX;
 
@@ -42,13 +45,12 @@ export class SocketClient {
     this.connection = getSocketXConnection(url);
 
     this.connection.addEventListener('message', ({ data }) => {
-      io
-        .deserialize(socketPayload, JSON.parse(data))
+      io.toResult(socketPayload.decode(JSON.parse(data)))
         .map((msg) => {
-        // I don't like this at all but there's no way to map
-        //  the types to the message in a clean way in typescript
-        //  as it doesn't (yet) support mapping by tagged union kinds
-        // See: https://github.com/microsoft/TypeScript/issues/30581
+          // I don't like this at all but there's no way to map
+          //  the types to the message in a clean way in typescript
+          //  as it doesn't (yet) support mapping by tagged union kinds
+          // See: https://github.com/microsoft/TypeScript/issues/30581
           switch (msg.kind) {
             case 'connectionOpened':
               this.pubsy.publish('connectionOpened', msg);
@@ -64,6 +66,9 @@ export class SocketClient {
               break;
             case 'joinRoomSuccess':
               this.pubsy.publish('joinRoomSuccess', msg);
+              break;
+            case 'joinRoomFailure':
+              this.pubsy.publish('joinRoomFailure', msg);
               break;
             default:
               break;
@@ -82,9 +87,10 @@ export class SocketClient {
     this.connection.send(JSON.stringify(payload));
   }
 
-  onMessageType<
-    K extends keyof ReceivableMessagesMap
-  >(msg: K, fn: (p: ReceivableMessagesMap[K]) => unknown) {
+  onMessageType<K extends keyof ReceivableMessagesMap>(
+    msg: K,
+    fn: (p: ReceivableMessagesMap[K]) => unknown,
+  ) {
     return this.pubsy.subscribe(msg, fn);
   }
 
