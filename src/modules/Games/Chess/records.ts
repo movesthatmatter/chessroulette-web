@@ -27,10 +27,11 @@ export const chessGameState = io.type({
     white: chessPlayerWhite,
     black: chessPlayerBlack,
   }),
-  fen: io.union([io.string, io.undefined]),
+  pgn: io.union([io.string, io.undefined]),
 });
 
 export const chessGameStateFen = io.string;
+export const chessGameStatePgn = io.string;
 
 export type ChessPlayer = io.TypeOf<typeof chessPlayer>;
 export type ChessPlayers = io.TypeOf<typeof chessPlayers>;

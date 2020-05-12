@@ -61,7 +61,7 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
           color: 'black',
         },
       },
-      fen: undefined,
+      pgn: undefined,
     } as const;
   };
 
@@ -88,7 +88,7 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
       if (msg.msgType === 'gameStarted') {
         setCurrentGame(msg.content);
       } else if (msg.msgType === 'gameUpdate') {
-        updateGameStateFen(msg.content.fen);
+        updateGameStateFen(msg.content.pgn);
       } else if (msg.msgType === 'chatMessage') {
         setChatHistory((prev) => [...prev, msg]);
       }
@@ -132,7 +132,7 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
                         white: whitePlayer,
                         black: blackPlayer,
                       },
-                      fen: newGame.fen,
+                      pgn: newGame.pgn,
                     },
                   };
 
@@ -168,11 +168,11 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
 
                 broadcastMessage(payload);
               }}
-              onGameStateUpdate={(fen) => {
+              onGameStateUpdate={(pgn) => {
                 const payload: GameDataRecord = {
                   msgType: 'gameUpdate',
                   gameType: 'chess',
-                  content: { fen },
+                  content: { pgn },
                 };
 
                 broadcastMessage(payload);

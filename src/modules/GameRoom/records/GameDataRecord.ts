@@ -1,5 +1,5 @@
 import * as io from 'io-ts';
-import { chessGameState, chessGameStateFen } from '../../Games/Chess';
+import { chessGameState, chessGameStatePgn } from '../../Games/Chess';
 
 const availableGames = io.type({
   chess: io.null,
@@ -10,7 +10,7 @@ export const gameUpdateRecord = io.type({
   gameType: io.keyof(availableGames.props),
   // Just the Fen
   content: io.type({
-    fen: chessGameStateFen,
+    pgn: chessGameStatePgn,
   }),
 });
 export type GameUpdateRecord = io.TypeOf<typeof gameUpdateRecord>;

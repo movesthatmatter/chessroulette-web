@@ -16,6 +16,7 @@ import {
   ChessPlayers,
   ChessGameFen,
   ChessPlayer,
+  ChessGameState,
 } from '../Games/Chess';
 
 
@@ -26,10 +27,7 @@ export type GameRoomProps = {
 
   // Game
   playersById: Record<string, ChessPlayer> | undefined;
-  currentGame: {
-    players: ChessPlayers; // generalize it
-    fen?: ChessGameFen;
-  } | undefined;
+  currentGame: ChessGameState | undefined;
   onNewGame: (players: {
     challengerId: string;
     challengeeId: string;
@@ -185,12 +183,13 @@ export const GameRoom: React.FC<GameRoomProps> = ({
             <ChessGame
               className={cls.gameContainer}
               players={props.currentGame?.players || unknownPlayers}
-              fen={props.currentGame?.fen}
+              pgn={props.currentGame?.pgn ?? ''}
               homeColor={homeColor}
               playable={playable}
-              onMove={(nextFen) => {
+              allowSinglePlayerPlay
+              onMove={(next) => {
                 if (props.currentGame) {
-                  props.onGameStateUpdate(nextFen);
+                  props.onGameStateUpdate(next);
                 }
               }}
             />
