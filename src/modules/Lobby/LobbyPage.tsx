@@ -8,8 +8,8 @@ import {
 import { Result } from 'ts-results';
 import { SocketConsumer } from 'src/components/SocketProvider';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
+import { createRoom, createChallenge } from 'src/resources';
 import { GameRoomContainer } from '../GameRoom/GameRoomContainer';
-import { createRoom, createChallenge } from './resources';
 
 type Props = {
   getRooms: () => Promise<Result<PublicRoomsResponsePayload, unknown>>;

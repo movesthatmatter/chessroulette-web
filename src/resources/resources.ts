@@ -10,9 +10,12 @@ import {
   CreateRoomRequest,
   CreateRoomResponse,
   CreateChallengeRequest,
-  createChallengeRequest,
-  CreateChallengeResponse,
   createChallengeResponse,
+  privateRoomResponsePayload,
+  publicRoomResponsePayload,
+  PublicRoomResponsePayload,
+  PublicRoomsResponsePayload,
+  PrivateRoomResponsePayload,
 } from 'dstnd-io';
 import config from 'src/config';
 
@@ -24,12 +27,43 @@ const http = getHttpInstance({
   // transformResponse: [],
 });
 
-export const getPublicRooms = async () => {
+export const getPublicRooms = async (): Promise<
+Result<PublicRoomsResponsePayload, ApiError>
+> => {
   try {
     const { data } = await http.get('api/rooms');
 
     return io
-      .deserialize(publicRoomsResponsePayload, data)
+      .toResult(publicRoomsResponsePayload.decode(data))
+      .mapErr(() => 'BadResponse');
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+};
+
+export const getPublicRoom = async (
+  id: string,
+): Promise<Result<PublicRoomResponsePayload, ApiError>> => {
+  try {
+    console.log('GET PUBLIC ROOMS');
+    const { data } = await http.get(`/api/room?id=${id}`);
+
+    return io
+      .toResult(publicRoomResponsePayload.decode(data))
+      .mapErr(() => 'BadResponse');
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+};
+
+export const getPrivateRoom = async (
+  code: string,
+): Promise<Result<PrivateRoomResponsePayload, ApiError>> => {
+  try {
+    const { data } = await http.get(`/api/room?code=${code}`);
+
+    return io
+      .toResult(privateRoomResponsePayload.decode(data))
       .mapErr(() => 'BadResponse');
   } catch (e) {
     return new Err('BadRequest');

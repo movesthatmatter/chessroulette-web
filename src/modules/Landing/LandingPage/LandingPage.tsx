@@ -1,138 +1,116 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import logo from 'src/assets/logo_black.svg';
 import { createUseStyles } from 'src/lib/jss';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
 import { PlayWithFriendsPopup } from 'src/components/PlayWithFriendsPopup/PlayWithFriendsPopup';
 import { SocketConsumer } from 'src/components/SocketProvider';
+import { PeerRecord, CreateRoomResponse } from 'dstnd-io';
+import { useHistory } from 'react-router-dom';
 import {
-  PublicRoomsResponsePayload,
-  PeerRecord,
-  RoomStatsRecord,
-} from 'dstnd-io';
-import { GameRoomContainer } from 'src/modules/GameRoom/GameRoomContainer';
+  createRoom, createChallenge, getPrivateRoom,
+} from 'src/resources';
 import { SplashScreenBoardWithButtons } from './components/SplashScreenBoardWithButtons';
-import { createRoom, createChallenge, getPublicRooms } from './resources';
 
 type Props = {};
 
+const toRoomPath = (room: CreateRoomResponse) =>
+  `${room.id}${room.type === 'private' ? `/${room.code}` : ''}`;
+
 export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
-  const [publicRooms, setPublicRooms] = useState<PublicRoomsResponsePayload>([]);
+  const history = useHistory();
   const [friendsPopup, setFriendsPopup] = useState(false);
   const [me, setMe] = useState<PeerRecord | void>();
-  const [joinedRoom, setJoinedRoom] = useState<RoomStatsRecord | void>();
 
-  useEffect(() => {
-    (async () => {
-      // This shouldn't be here but since we don't have redux or
-      //  a state manager yet it's ok
-      const res = await getPublicRooms();
-
-      res.map(setPublicRooms);
-    })();
-  }, []);
   return (
     <SocketConsumer
       onMessage={(msg) => {
-        if (msg.kind === 'joinRoomSuccess') {
-          setMe(msg.content.me);
-          setJoinedRoom(msg.content.room);
-        } else if (msg.kind === 'roomStats') {
-          setJoinedRoom(msg.content);
-        } else if (msg.kind === 'connectionOpened') {
+        if (msg.kind === 'connectionOpened') {
           setMe(msg.content.me);
         }
       }}
-      render={({ send }) => (
-        <>
-          {joinedRoom && me ? (
-            <GameRoomContainer
-              room={joinedRoom}
-              me={me}
-            />
-          ) : (me && (
-            <div className={cls.container}>
-              <PopupModal show={friendsPopup}>
+      render={() => (
+        <div className={cls.container}>
+          <PopupModal show={friendsPopup}>
+            <>
+              {me && (
                 <PlayWithFriendsPopup
                   close={() => setFriendsPopup(false)}
-                  dispatchCodeJoin={(value) => {
-                    publicRooms.forEach((room) => {
-                      send({
-                        kind: 'joinRoomRequest',
-                        content: {
-                          roomId: room.id,
-                          code: value,
-                        },
+                  dispatchCodeJoin={async (code) => {
+                    (await getPrivateRoom(code))
+                      .mapErr(() => {
+                        console.log('Bad Code - Let the user know');
+                      })
+                      .map((room) => {
+                        history.push(`/gameroom/${toRoomPath(room)}`);
                       });
-                    });
                   }}
                   dispatchCreate={async () => {
-                    (await createRoom({
-                      nickname: undefined,
-                      peerId: me.id,
-                      type: 'private',
-                    }))
-                      .map((r) => {
-                        send({
-                          kind: 'joinRoomRequest',
-                          content: {
-                            roomId: r.id,
-                            code: r.type === 'private' ? r.code : undefined,
-                          },
-                        });
-                      });
+                    (
+                      await createRoom({
+                        nickname: undefined,
+                        peerId: me.id,
+                        type: 'private',
+                      })
+                    ).map((room) => {
+                      history.push(`/gameroom/${toRoomPath(room)}`);
+                    });
                   }}
                 />
-              </PopupModal>
-              <div className={cls.leftMargin} />
-              <div className={cls.leftSideContainer}>
-                <img src={logo} alt="logo" className={cls.logo} />
+              )}
+            </>
+          </PopupModal>
+          <>
+            <div className={cls.leftMargin} />
+            <div className={cls.leftSideContainer}>
+              <img src={logo} alt="logo" className={cls.logo} />
+              <div>
+                <p className={cls.headerText}>
+                  P2P Chess Games with Video Chat
+                </p>
+              </div>
+              <div
+                style={{ marginTop: '5px', marginBottom: '10px' }}
+                className={cls.text}
+              >
+                No account needed. Free P2P Chess Game hosting and video
+                chat. Just share the generated code with a friend and start
+                playing.
+              </div>
+              <div className={cls.buttonsContainer}>
+                <div style={{ marginRight: '30px' }}>
+                  <ColoredButton
+                    label="Play with Friends"
+                    color="#08D183"
+                    fontSize="21px"
+                    onClickFunction={() => setFriendsPopup(true)}
+                  />
+                </div>
                 <div>
-                  <p className={cls.headerText}>P2P Chess Games with Video Chat</p>
-                </div>
-                <div
-                  style={{ marginTop: '5px', marginBottom: '10px' }}
-                  className={cls.text}
-                >
-                  No account needed. Free P2P Chess Game hosting and video chat. Just
-                  share the generated code with a friend and start playing.
-                </div>
-                <div className={cls.buttonsContainer}>
-                  <div style={{ marginRight: '30px' }}>
-                    <ColoredButton
-                      label="Play with Friends"
-                      color="#08D183"
-                      fontSize="21px"
-                      onClickFunction={() => setFriendsPopup(true)}
-                    />
-                  </div>
-                  <div>
-                    <ColoredButton
-                      label="Play Open Challenge"
-                      color="#54C4F2"
-                      fontSize="21px"
-                      onClickFunction={async () => {
-                        (await createChallenge({ peerId: me.id }))
-                          .map((r) => {
-                            send({
-                              kind: 'joinRoomRequest',
-                              content: {
-                                roomId: r.id,
-                                code: r.type === 'private' ? r.code : undefined,
-                              },
-                            });
-                          });
-                      }}
-                    />
-                  </div>
+                  <ColoredButton
+                    label="Play Open Challenge"
+                    color="#54C4F2"
+                    fontSize="21px"
+                    onClickFunction={async () => {
+                      if (!me) {
+                        return;
+                      }
+
+                      (await createChallenge({ peerId: me.id })).map(
+                        (room) => {
+                          history.push(`/gameroom/${toRoomPath(room)}`);
+                        },
+                      );
+                    }}
+                  />
                 </div>
               </div>
-              <SplashScreenBoardWithButtons />
-              <div className={cls.rightMargin} />
             </div>
-          ))}
-        </>
+            <SplashScreenBoardWithButtons />
+            <div className={cls.rightMargin} />
+          </>
+        </div>
       )}
     />
   );
