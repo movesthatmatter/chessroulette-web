@@ -102,7 +102,11 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
           me={props.me}
           peers={Object.values(props.room.peers)}
           socket={socket}
-          onReady={({ connect }) => connect()}
+          onReady={({ connect, startAVBroadcasting }) => {
+            connect();
+
+            setTimeout(startAVBroadcasting, 3 * 1000);
+          }}
           onPeerMsgSent={(envelope) => handleMessages(envelope.message)}
           onPeerMsgReceived={(envelope, { broadcastMessage }) => {
             handleMessages(envelope.message);
