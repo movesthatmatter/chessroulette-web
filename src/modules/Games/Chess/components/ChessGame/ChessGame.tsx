@@ -11,7 +11,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   players: ChessPlayers;
   playable?: boolean;
   allowSinglePlayerPlay?: boolean;
-  onMove?: (fen: string) => void;
+  onMove?: (pgn: string) => void;
   // fen?: string;
   pgn: string;
 
@@ -42,6 +42,12 @@ export const ChessGame: React.FunctionComponent<Props> = ({
   const [gameInstance] = useState(getNewChessGame());
   const [fen, setFen] = useState(gameInstance.fen);
   const [history, setHistory] = useState([] as Move[]);
+
+  const [maxSeconds] = useState(10 * 60);
+  const [ellapsedSeconds, setEllapsedSeconds] = useState({
+    home: 0,
+    away: 0,
+  });
   // const;
 
 
@@ -93,14 +99,6 @@ export const ChessGame: React.FunctionComponent<Props> = ({
           return allowSinglePlayerPlay || p.piece.slice(0, 1) === props.homeColor.slice(0, 1);
         }}
         onDrop={({ sourceSquare, targetSquare }) => {
-          // const game = getNewChessGame();
-
-          // if (pgn) {
-          //   gameInstance.load_pgn(pgn);
-          // } else {
-          //   game.load(fen);
-          // }
-
           // see if the move is legal
           const validMove = gameInstance.move({
             from: sourceSquare,
@@ -108,14 +106,8 @@ export const ChessGame: React.FunctionComponent<Props> = ({
           });
 
           if (validMove !== null) {
-            // const nextFen = game.fen();
-            // const nextPgn = gameInstance.history();
-
-            // console.log('history', game.history());
-
-            // do it here too so it's faster
+            // save it here too so it's snappy fast
             setFen(gameInstance.fen());
-
             onMove(gameInstance.pgn());
           }
         }}

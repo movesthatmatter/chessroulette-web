@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
@@ -14,11 +14,10 @@ import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import {
   ChessGame,
   ChessPlayers,
-  ChessGameFen,
   ChessPlayer,
   ChessGameState,
 } from '../Games/Chess';
-
+import { Coundtdown } from './components/Countdown';
 
 export type GameRoomProps = {
   me: PeerRecord;
@@ -27,12 +26,9 @@ export type GameRoomProps = {
 
   // Game
   playersById: Record<string, ChessPlayer> | undefined;
-  currentGame: ChessGameState | undefined;
-  onNewGame: (players: {
-    challengerId: string;
-    challengeeId: string;
-  }) => void;
-  onGameStateUpdate: (nextState: ChessGameFen) => void;
+  currentGame: ChessGameState;
+  onNewGame: (players: { challengerId: string; challengeeId: string }) => void;
+  onGameStateUpdate: (nextState: ChessGameState) => void;
 
   // Streaming
   startStreaming: () => void;
@@ -82,6 +78,8 @@ export const GameRoom: React.FC<GameRoomProps> = ({
     ? props.currentGame.players[awayColor].id
     : null;
 
+  const [lastMoveTimestamp, setLastMoveTimestamp] = useState(new Date().getTime());
+
   return (
     <div className={cls.container}>
       <div className={cls.paddingWrapper}>
@@ -97,11 +95,16 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                     <>
                       <div>
                         <h4>{props.room.peers[playerAwayId].name}</h4>
-                        <span>10:00</span>
+                        <Coundtdown
+                          timeLeft={props.currentGame?.timeLeft?.[awayColor] ?? 0}
+                          paused={props.currentGame?.lastMoved === awayColor}
+                        />
                       </div>
                       <div className={cls.peerBox}>
                         <FaceTime
-                          streamConfig={peerConnections[playerAwayId].channels.streaming}
+                          streamConfig={
+                            peerConnections[playerAwayId].channels.streaming
+                          }
                         />
                       </div>
                     </>
@@ -112,15 +115,13 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                     </div>
                   )}
                 </div>
-
               </div>
               <div className={cx([cls.playerBox, cls.playerHome])}>
-
                 <div className={cls.peerBoxContainer}>
                   {props.localStream ? (
                     <div className={cls.peerBox}>
                       <FaceTime
-                      // This should come straight from localStreamClient
+                        // This should come straight from localStreamClient
                         streamConfig={{
                           on: true,
                           stream: props.localStream,
@@ -147,35 +148,38 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                   )} */}
                   {/* </div> */}
                   <div>
-                    <span>10:00</span>
+                    <Coundtdown
+                      timeLeft={props.currentGame?.timeLeft?.[homeColor] ?? 0}
+                      paused={props.currentGame?.lastMoved === homeColor}
+                    />
                     <h4>{props.room.peers[playerHomeId].name}</h4>
                   </div>
                 </div>
               </div>
               {
-              // peerConnections.map((pc) => (
-              //   <div className={cls.peerBoxContainer}>
-              //     <div
-              //       className={cls.peerBox}
-              //       key={pc.peerId}
-              //     >
-              //       <FaceTime
-              //         streamConfig={pc.channels.streaming}
-              //       />
-              //       {/* {!props.currentGame && (
-              //       <button
-              //         type="button"
-              //         onClick={() => props.onNewGame({
-              //           challengee: pc.peerId,
-              //           challenger: me.id,
-              //         })}
-              //       >
-              //         {`Challenge ${pc.peerId}`}
-              //       </button>
-              //     )} */}
-              //     </div>
-              //   </div>
-              // ))
+                // peerConnections.map((pc) => (
+                //   <div className={cls.peerBoxContainer}>
+                //     <div
+                //       className={cls.peerBox}
+                //       key={pc.peerId}
+                //     >
+                //       <FaceTime
+                //         streamConfig={pc.channels.streaming}
+                //       />
+                //       {/* {!props.currentGame && (
+                //       <button
+                //         type="button"
+                //         onClick={() => props.onNewGame({
+                //           challengee: pc.peerId,
+                //           challenger: me.id,
+                //         })}
+                //       >
+                //         {`Challenge ${pc.peerId}`}
+                //       </button>
+                //     )} */}
+                //     </div>
+                //   </div>
+                // ))
               }
             </div>
           </aside>
@@ -189,23 +193,39 @@ export const GameRoom: React.FC<GameRoomProps> = ({
               allowSinglePlayerPlay
               onMove={(next) => {
                 if (props.currentGame) {
-                  props.onGameStateUpdate(next);
+                  const currentMovedColor = props.currentGame.lastMoved === 'white' ? 'black' : 'white';
+                  // get only seconds the smaller bit for now
+
+                  const now = new Date().getTime();
+                  const secondsSinceLastMoved = now - lastMoveTimestamp;
+
+                  setLastMoveTimestamp(now);
+
+                  props.onGameStateUpdate({
+                    ...props.currentGame,
+                    pgn: next,
+                    lastMoved: currentMovedColor,
+                    ...(props.currentGame.timeLeft && {
+                      timeLeft: {
+                        ...props.currentGame.timeLeft,
+                        [currentMovedColor]:
+                          props.currentGame.timeLeft[currentMovedColor]
+                          - secondsSinceLastMoved,
+                      },
+                    }),
+                  });
                 }
               }}
             />
           </div>
           <aside className={cls.rightSide}>
-            <RoomInfoDisplay
-              me={me}
-              room={props.room}
-            />
+            <RoomInfoDisplay me={me} room={props.room} />
 
             <div>
               {props.room.type === 'private' && (
                 <div>{`Invite Friends: ${props.room.code}`}</div>
               )}
             </div>
-
 
             <div className={cls.chatWrapper}>
               <ChatBoxContainer
@@ -277,7 +297,6 @@ const useStyles = createUseStyles({
   playerCharacter: {
     width: '40p%',
     textAlign: 'center',
-
   },
   playerAway: {
     // background: 'red',
@@ -377,8 +396,7 @@ const useStyles = createUseStyles({
     maxWidth: '420px !important',
     height: 'auto   !important',
   },
-  myAvStream: {
-  },
+  myAvStream: {},
   gameWrapper: {
     position: 'relative',
     zIndex: 1,
@@ -389,5 +407,4 @@ const useStyles = createUseStyles({
     zIndex: 2,
     right: '16px',
   },
-
 });

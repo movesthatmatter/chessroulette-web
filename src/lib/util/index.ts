@@ -1,3 +1,6 @@
+import humanizeDuration, { Humanizer } from 'humanize-duration';
+import { differenceInMilliseconds } from 'date-fns';
+
 export const noop = () => {
   // do nothing
 };
@@ -41,3 +44,51 @@ export const randomId = () => String(Math.random()).slice(2);
 
 export const complement = <T>(anySide: T, [sideA, sideB]: readonly [T, T]) =>
   (sideA === anySide ? sideB : sideA);
+
+export const durationFormats = {
+  minimal: humanizeDuration.humanizer({
+    largest: 2,
+    round: true,
+  }),
+};
+
+export const prettyTimeDiff = (
+  dateLeft: Date, dateRight: Date,
+  {
+    format = durationFormats.minimal,
+    options = {},
+  }: {
+    format?: Humanizer;
+    options?: humanizeDuration.Options;
+  } = {},
+) => format(differenceInMilliseconds(dateLeft, dateRight), options);
+
+export const prettyCountdown = (
+  ms: number, {
+    format = humanizeDuration.humanizer({
+      language: 'custom',
+      languages: {
+        custom: {
+          y: () => 'y',
+          mo: () => 'mo',
+          w: () => 'w',
+          d: () => 'd',
+          h: () => 'hr',
+          m: () => 'min',
+          s: () => 's',
+          ms: () => 'ms',
+        },
+      },
+    }),
+    options = {
+      largest: 2,
+      round: true,
+      delimiter: ' ',
+      spacer: '',
+      // units: ['d', 'h', 'm'],
+    },
+  }: {
+    format?: Humanizer;
+    options?: humanizeDuration.Options;
+  },
+) => format(ms, options);

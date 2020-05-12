@@ -123,12 +123,22 @@ const players = {
   } as const,
 };
 
+const elapsedTime = {
+  white: 0,
+  black: 0,
+};
+
 export const roomWithPlayers = () =>
   React.createElement(() => {
     const [localStream, setLocalStream] = useState<MediaStream | undefined>();
     const [currentGame, setCurrentGame] = useState<ChessGameState>({
       players,
       pgn: '',
+      timeLeft: {
+        white: 10 * 60 * 1000,
+        black: 10 * 60 * 1000,
+      },
+      lastMoved: 'black',
     });
 
     useEffect(() => {
@@ -155,12 +165,12 @@ export const roomWithPlayers = () =>
           peerConnections={getPeerConnections(localStream)}
           onNewGame={action('on new game')}
           startStreaming={action('start streaming')}
-          onGameStateUpdate={(pgn) => {
-            // if (curren)
-            setCurrentGame((prev) => ({
-              ...prev,
-              pgn,
-            }));
+          onGameStateUpdate={(nextGameState) => {
+            console.log('current game', currentGame);
+            console.log('next game state', nextGameState);
+            console.log('current times', currentGame?.timeLeft);
+            console.log('next times', nextGameState?.timeLeft);
+            setCurrentGame(nextGameState);
           }}
           stopStreaming={action('stop streaming')}
           broadcastMessage={action('broadcast messsage')}
