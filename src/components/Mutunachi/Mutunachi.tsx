@@ -27,13 +27,13 @@ const map = {
   11: m11,
 };
 
-type Props = React.DetailedHTMLProps<
+export type MutunachiProps = React.DetailedHTMLProps<
 React.ImgHTMLAttributes<HTMLImageElement>,
 HTMLImageElement
 > & {
   mid: keyof typeof map;
 };
 
-export const Mutunachi: React.FC<Props> = ({ mid, ...imgProps }) => (
+export const Mutunachi: React.FC<MutunachiProps> = ({ mid, ...imgProps }) => (
   <img src={map[mid]} alt="Mutunachi" {...imgProps} />
 );
