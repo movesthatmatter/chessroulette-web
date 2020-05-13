@@ -92,7 +92,11 @@ export const LandingPage: React.FC<Props> = () => {
                   onClickFunction={() => setFriendsPopup(true)}
                 />
               </div>
-              <div>
+              <div className={cls.buttonWithMutunachiWrapper}>
+                <Mutunachi
+                  mid="mutunachiIceCreamAndBaloons"
+                  className={cls.mutunachi}
+                />
                 <ColoredButton
                   label="Play Open Challenge"
                   color="#54C4F2"
@@ -107,14 +111,6 @@ export const LandingPage: React.FC<Props> = () => {
                       history.push(`/gameroom/${toRoomPath(room)}`);
                     });
                   }}
-                />
-              </div>
-              <div>
-                <Mutunachi
-                  mid={1}
-                  width="171px"
-                  height="222px"
-                  className={cls.mutunachi}
                 />
               </div>
             </div>
@@ -192,10 +188,19 @@ const useStyles = createUseStyles({
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
+  buttonWithMutunachiWrapper: {
+    position: 'relative',
+  },
   mutunachi: {
-    position: 'fixed',
-    top: '44%',
-    left: '42%',
+    // position: 'fixed',
+    // top: '44%',
+    // left: '42%',
+    position: 'absolute',
     zIndex: 1,
+    width: '171px',
+    top: `-${171 + 50}px`,
+    left: '12%',
+    // height: '222px',
+
   },
 });
