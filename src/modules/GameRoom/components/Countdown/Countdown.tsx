@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { prettyCountdown } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
+import dateFormat from 'dateformat';
 
 type Props = {
   timeLeft: number;
@@ -43,7 +44,7 @@ export const Coundtdown: React.FC<Props> = ({
       [props.activeClassName || '']: !props.paused,
     })}
     >
-      <span>{prettyCountdown(timeLeft, {})}</span>
+      <span>{dateFormat(timeLeft, 'MM:ss')}</span>
     </div>
   );
 };

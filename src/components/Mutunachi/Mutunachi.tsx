@@ -34,6 +34,19 @@ HTMLImageElement
   mid: keyof typeof map;
 };
 
-export const Mutunachi: React.FC<MutunachiProps> = ({ mid, ...imgProps }) => (
-  <img src={map[mid]} alt="Mutunachi" {...imgProps} />
+export const Mutunachi: React.FC<MutunachiProps> = ({
+  mid, className, style, ...imgProps
+}) => (
+  <div className={className} style={style}>
+    <img
+      src={map[mid]}
+      alt="Mutunachi"
+      {...imgProps}
+      style={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'contain',
+      }}
+    />
+  </div>
 );

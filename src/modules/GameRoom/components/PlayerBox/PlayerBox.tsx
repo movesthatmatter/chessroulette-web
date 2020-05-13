@@ -38,19 +38,33 @@ export const PlayerBox: React.FC<Props> = (props) => {
     >
       <div className={cls.info}>
         <div className={cls.infoLeft}>
-          <h4>{props.player.name}</h4>
+          <div className={cls.smallMutunachiWrapper}>
+            <Mutunachi
+              mid={props.mutunachiId}
+              className={cls.mutunachiSmall}
+            />
+          </div>
+          <div className={cls.playerDetailsWrapper}>
+            <h4>{props.player.name}</h4>
+            <div className={cls.playerDetails} />
+          </div>
         </div>
         {props.currentGame && (
-          <Coundtdown
-            className={cls.countdown}
-            timeLeft={props.currentGame.timeLeft?.[props.player.color] ?? 0}
-            paused={!props.currentGame || (props.currentGame.lastMoved === props.player.color)}
-            activeClassName={cx({
-              [cls.activeTurn]: props.currentGame && (
-                props.currentGame.lastMoved !== props.player.color
-              ),
-            })}
-          />
+          <div className={cx(cls.countDownWrapper, {
+            [cls.countDownWrapperReversed]: props.side === 'home',
+          })}
+          >
+            <Coundtdown
+              className={cls.countdown}
+              timeLeft={props.currentGame.timeLeft?.[props.player.color] ?? 0}
+              paused={!props.currentGame || (props.currentGame.lastMoved === props.player.color)}
+              activeClassName={cx({
+                [cls.activeCountdownTurn]: props.currentGame && (
+                  props.currentGame.lastMoved !== props.player.color
+                ),
+              })}
+            />
+          </div>
         )}
       </div>
       <div className={cls.tvWrapper}>
@@ -58,10 +72,12 @@ export const PlayerBox: React.FC<Props> = (props) => {
           width={boardSize / 2}
           streamConfig={props.streamConfig}
           fallbackComponent={(
-            <Mutunachi
-              mid={props.mutunachiId}
-              className={cls.mutunachi}
-            />
+            <div className={cls.streamFallbackContainer}>
+              <Mutunachi
+                mid={props.mutunachiId}
+                className={cls.mutunachi}
+              />
+            </div>
           )}
           muted={props.muted}
         />
@@ -76,13 +92,10 @@ const useStyles = createUseStyles({
     textAlign: 'right',
     display: 'flex',
     flexDirection: 'column',
+    fontFamily: 'Roboto',
   },
   containerReversed: {
     flexDirection: 'column-reverse',
-  },
-
-  activeTurn: {
-    background: 'yellow',
   },
   tv: {
     background: 'grey',
@@ -99,10 +112,16 @@ const useStyles = createUseStyles({
     display: 'flex',
     justifyContent: 'flex-end',
   },
-  mutunachi: {
-    width: '40p%',
-    maxWidth: '150px',
+  streamFallbackContainer: {
     textAlign: 'center',
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  mutunachi: {
+    height: '70%',
   },
   info: {
     textAlign: 'left',
@@ -111,11 +130,47 @@ const useStyles = createUseStyles({
   },
   infoLeft: {
     flex: 1,
-  },
-  countdown: {
-    width: '100px',
+    fontFamily: 'Roboto',
     display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  smallMutunachiWrapper: {
+    flex: 0.2,
+  },
+  mutunachiSmall: {},
+  playerDetailsWrapper: {
+    flex: 1,
+    marginLeft: '10px',
+  },
+  playerDetails: {},
+  countDownWrapper: {
     alignItems: 'center',
     justifyContent: 'flex-end',
+    display: 'flex',
+    width: '80px',
+    paddingBottom: '10px',
+  },
+  countDownWrapperReversed: {
+    paddingBottom: '0px',
+    paddingTop: '10px',
+  },
+  countdown: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: 'Roboto',
+    padding: '0 10px',
+
+    backgroundColor: '#EFE7E8',
+    borderRadius: '5px',
+    boxShadow: '1px 1px 15px rgba(0, 0, 0, 0.24)',
+  },
+  activeCountdownTurn: {
+    color: 'white',
+    backgroundColor: 'rgb(247, 98, 123) !important',
+    boxShadow: '1px 1px 15px rgba(20, 20, 20, 0.27)',
   },
 });
