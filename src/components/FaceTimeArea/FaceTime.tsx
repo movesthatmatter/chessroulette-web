@@ -1,8 +1,9 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
+import cx from 'classnames';
 import { AVStream, AVStreamProps } from '../AVStream';
 
-type Props = Omit<AVStreamProps, 'stream'> & {
+export type FaceTimeProps = Omit<AVStreamProps, 'stream'> & {
   // Does it need to be different for audio only?
   aspectRatio?: {
     width: number;
@@ -15,47 +16,41 @@ type Props = Omit<AVStreamProps, 'stream'> & {
     type: 'audio' | 'video' | 'audio-video';
     stream: MediaStream;
   };
+
+  containerClassName?: string;
+
+  streamingOffFallback?: React.ReactNode;
 };
 
-export const FaceTime: React.FC<Props> = ({
+export const FaceTime: React.FC<FaceTimeProps> = ({
   streamConfig,
-  aspectRatio = {
-    width: 16,
-    height: 9,
-  },
+  className,
+  streamingOffFallback,
+  containerClassName,
   ...avStreamProps
 }) => {
   const cls = useStyles();
 
   return (
-    <div
-      className={cls.container}
-      style={{ paddingBottom: `${100 / (aspectRatio.width / aspectRatio.height)}%` }}
-    >
-      {streamConfig.on ? (
-        <AVStream
-          stream={streamConfig.stream}
-          autoPlay
-          className={cls.video}
-          {...avStreamProps}
-        />
-      ) : (
-        <span>Streaming Off</span>
-      )}
+    <div className={containerClassName}>
+      {streamConfig.on
+        ? (
+          <AVStream
+            stream={streamConfig.stream}
+            autoPlay
+            className={cx(cls.video, className)}
+            {...avStreamProps}
+          />
+        )
+        : (streamingOffFallback)}
     </div>
   );
 };
 
 const useStyles = createUseStyles({
-  container: {
-    width: '100%',
-    position: 'relative',
-  },
+  container: {},
   video: {
     width: '100%',
-    height: '100%',
-    position: 'absolute',
-    top: 0,
-    left: 0,
+    height: 'auto', // to make sure it maintains the aspect ratio
   },
 });

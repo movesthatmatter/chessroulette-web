@@ -3,6 +3,7 @@ import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { Move } from 'chess.js';
+import { getBoardSize } from 'src/modules/GameRoom/util';
 import { ChessBoard } from '../ChessBoard';
 import { getNewChessGame } from '../../lib/sdk';
 import { ChessPlayers } from '../../records';
@@ -80,11 +81,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
       <ChessBoard
         orientation={props.homeColor}
         position={fen}
-        calcWidth={
-          // This needs to be smarter
-          // To make sure it fits in both width and height
-          (p) => Math.min(p.screenWidth * 0.5, p.screenHeight * 0.8)
-        }
+        calcWidth={getBoardSize}
         history={history}
         darkSquareStyle={{
           backgroundColor: '#6792B4',

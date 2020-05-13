@@ -7,6 +7,9 @@ type Props = {
   timeLeft: number;
   paused: boolean;
   interval?: number;
+
+  className?: string;
+  activeClassName?: string;
 };
 
 export const Coundtdown: React.FC<Props> = ({
@@ -36,8 +39,8 @@ export const Coundtdown: React.FC<Props> = ({
   }, [props.timeLeft]);
 
   return (
-    <div className={cx(cls.container, {
-      [cls.active]: !props.paused,
+    <div className={cx(cls.container, props.className, {
+      [props.activeClassName || '']: !props.paused,
     })}
     >
       <span>{prettyCountdown(timeLeft, {})}</span>
@@ -47,7 +50,4 @@ export const Coundtdown: React.FC<Props> = ({
 
 const useStyles = createUseStyles({
   container: {},
-  active: {
-    background: 'rgba(255, 255, 0, .4)',
-  },
 });

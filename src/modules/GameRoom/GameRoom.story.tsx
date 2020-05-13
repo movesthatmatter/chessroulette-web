@@ -4,6 +4,7 @@ import { SocketProvider } from 'src/components/SocketProvider';
 import { action } from '@storybook/addon-actions';
 import { AVStreaming } from 'src/services/AVStreaming';
 import { RoomStatsRecord } from 'dstnd-io';
+import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { GameRoomContainer } from './GameRoomContainer';
 import { GameRoom } from './GameRoom';
 import { ChessGameState } from '../Games/Chess';
@@ -50,7 +51,7 @@ const room: RoomStatsRecord = {
   peers,
 } as const;
 
-const getPeerConnections = (localStream: MediaStream) =>
+const getPeerConnections = (localStream?: MediaStream) =>
   Object.values(peers).reduce(
     (res, peer) => ({
       ...res,
@@ -59,10 +60,14 @@ const getPeerConnections = (localStream: MediaStream) =>
         channels: {
           data: { on: true },
           streaming: {
-            on: true,
-            type: 'audio-video',
-            // stream: new MediaStream(),
-            stream: localStream,
+            ...localStream ? {
+              on: true,
+              type: 'audio-video',
+              // stream: new MediaStream(),
+              stream: localStream,
+            } : {
+              on: false,
+            },
           },
         },
       } as const,
@@ -70,45 +75,27 @@ const getPeerConnections = (localStream: MediaStream) =>
     {},
   );
 
-export const publicRoom = () =>
-  React.createElement(() => {
-    const [localStream, setLocalStream] = useState<MediaStream | undefined>();
-
-    useEffect(() => {
-      const client = new AVStreaming();
-
-      (async () => {
-        setLocalStream(await client.start({ audio: false, video: true }));
-      })();
-
-      return () => {
-        client.stop();
-      };
-    }, []);
-
-    if (!localStream) {
-      return null;
-    }
-
-    return (
-      <SocketProvider>
-        <GameRoom
-          me={peers[myId]}
-          room={room}
-          peerConnections={getPeerConnections(localStream)}
-          onNewGame={action('on new game')}
-          startStreaming={action('start streaming')}
-          onGameStateUpdate={action('on game state update')}
-          stopStreaming={action('stop streaming')}
-          broadcastMessage={action('broadcast messsage')}
-          localStream={undefined}
-          playersById={undefined}
-          currentGame={undefined}
-          chatHistory={[]}
-        />
-      </SocketProvider>
-    );
-  });
+export const publicRoom = () => (
+  <SocketProvider>
+    <WithLocalStream render={(localStream) => (
+      <GameRoom
+        me={peers[myId]}
+        room={room}
+        peerConnections={getPeerConnections()}
+        onNewGame={action('on new game')}
+        startStreaming={action('start streaming')}
+        onGameStateUpdate={action('on game state update')}
+        stopStreaming={action('stop streaming')}
+        broadcastMessage={action('broadcast messsage')}
+        localStream={undefined}
+        playersById={undefined}
+        currentGame={undefined}
+        chatHistory={[]}
+      />
+    )}
+    />
+  </SocketProvider>
+);
 
 const players = {
   white: {
@@ -166,15 +153,47 @@ export const roomWithPlayers = () =>
           onNewGame={action('on new game')}
           startStreaming={action('start streaming')}
           onGameStateUpdate={(nextGameState) => {
-            console.log('current game', currentGame);
-            console.log('next game state', nextGameState);
-            console.log('current times', currentGame?.timeLeft);
-            console.log('next times', nextGameState?.timeLeft);
             setCurrentGame(nextGameState);
           }}
           stopStreaming={action('stop streaming')}
           broadcastMessage={action('broadcast messsage')}
           localStream={localStream}
+          playersById={{
+            [players.white.id]: players.white,
+            [players.black.id]: players.black,
+          }}
+          currentGame={currentGame}
+          chatHistory={[]}
+        />
+      </SocketProvider>
+    );
+  });
+
+export const roomWithPlayersAndNoStream = () =>
+  React.createElement(() => {
+    const [currentGame, setCurrentGame] = useState<ChessGameState>({
+      players,
+      pgn: '',
+      timeLeft: {
+        white: 10 * 60 * 1000,
+        black: 10 * 60 * 1000,
+      },
+      lastMoved: 'black',
+    });
+
+    return (
+      <SocketProvider>
+        <GameRoom
+          me={peers[myId]}
+          room={room}
+          peerConnections={getPeerConnections()}
+          onNewGame={action('on new game')}
+          startStreaming={action('start streaming')}
+          onGameStateUpdate={(nextGameState) => {
+            setCurrentGame(nextGameState);
+          }}
+          stopStreaming={action('stop streaming')}
+          broadcastMessage={action('broadcast messsage')}
           playersById={{
             [players.white.id]: players.white,
             [players.black.id]: players.black,

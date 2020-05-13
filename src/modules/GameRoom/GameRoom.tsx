@@ -32,7 +32,7 @@ export type GameRoomProps = {
   // Streaming
   startStreaming: () => void;
   stopStreaming: () => void;
-  localStream: MediaStream | void;
+  localStream?: MediaStream;
 
   // Chat
   // The GameRoom shouldn't have to handle the state and know the intricacies
@@ -85,46 +85,46 @@ export const GameRoom: React.FC<GameRoomProps> = ({
           <img src={logo} alt="logo" className={cls.logo} />
         </div>
         <main className={cls.grid}>
-          <aside className={cls.leftSide}>
-            <div className={cls.playersContainer}>
-              {props.currentGame && playerAwayId ? (
-                <PlayerBox
-                  className={cls.playerBox}
-                  currentGame={props.currentGame}
-                  player={props.currentGame.players[awayColor]}
-                  mutunachiId={9}
-                  side="away"
-                  streamConfig={peerConnections[playerAwayId].channels.streaming}
-                />
-              ) : (
-                <div className={cls.playerBox}>
-                  game not started
-                </div>
-              )}
+          <aside className={cx(cls.leftSide, cls.playersContainer)}>
+            {props.currentGame && playerAwayId ? (
               <PlayerBox
-                className={cls.playerBox}
+                className={cx(cls.playerBox, cls.playerBoxAway)}
                 currentGame={props.currentGame}
-                player={props.currentGame?.players[homeColor] ?? {
-                  ...me,
-                  color: 'white',
-                }}
-                mutunachiId={3}
-                side="home"
-                streamConfig={
-                  (playerHomeId === me.id)
-                    ? peerConnections[playerHomeId].channels.streaming
-                    : {
-                      ...props.localStream ? {
-                        on: true,
-                        stream: props.localStream,
-                        type: 'audio-video',
-                      } : {
-                        on: false,
-                      },
-                    }
-                }
+                player={props.currentGame.players[awayColor]}
+                mutunachiId={9}
+                side="away"
+                streamConfig={peerConnections[playerAwayId].channels.streaming}
               />
-            </div>
+            ) : (
+              <div className={cx(cls.playerBox, cls.playerBoxAway)}>
+                game not started
+              </div>
+            )}
+            <PlayerBox
+              className={cx(cls.playerBox, cls.playerBoxHome)}
+              currentGame={props.currentGame}
+              player={props.currentGame?.players[homeColor] ?? {
+                ...me,
+                color: 'white',
+              }}
+              mutunachiId={3}
+              side="home"
+              streamConfig={
+                (playerHomeId !== me.id)
+                  ? peerConnections[playerHomeId].channels.streaming
+                  : {
+                    ...props.localStream ? {
+                      on: true,
+                      stream: props.localStream,
+                      type: 'audio-video',
+                    } : {
+                      on: false,
+                    },
+                  }
+              }
+              // Mute it if it's my stream so it doesn't createa a howling effect
+              muted={playerHomeId === me.id}
+            />
           </aside>
           <div className={cls.middleSide}>
             <ChessGame
@@ -214,19 +214,17 @@ const useStyles = createUseStyles({
     flexDirection: 'row',
   },
   playersContainer: {
-    height: '100%',
-    border: '1px solid #dedede',
-
     display: 'flex',
-    flexWrap: 'wrap',
     flexDirection: 'column',
-    alignItems: 'baseline',
+    alignItems: 'flex-end',
   },
   playerBox: {
     width: '100%',
     flex: 1,
     textAlign: 'center',
   },
+  playerBoxHome: {},
+  playerBoxAway: {},
   playerStreamFallback: {
     textAlign: 'center',
   },
