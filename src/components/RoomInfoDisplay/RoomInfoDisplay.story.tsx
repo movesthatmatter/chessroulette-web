@@ -19,14 +19,14 @@ const peers = {
     id: '2',
     name: 'Piper',
   },
-  // 3: {
-  //   id: '3',
-  //   name: 'Jartica',
-  // },
-  // 4: {
-  //   id: '4',
-  //   name: 'Teleenciclopedia',
-  // },
+  3: {
+    id: '3',
+    name: 'Jartica',
+  },
+  4: {
+    id: '4',
+    name: 'Teleenciclopedia',
+  },
   // 5: {
   //   id: '5',
   //   name: 'Samurai',

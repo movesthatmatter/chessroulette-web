@@ -19,6 +19,7 @@ import {
 } from '../Games/Chess';
 import { Coundtdown } from './components/Countdown';
 
+
 export type GameRoomProps = {
   me: PeerRecord;
   room: RoomStatsRecord;
@@ -77,7 +78,6 @@ export const GameRoom: React.FC<GameRoomProps> = ({
   const playerAwayId = props.currentGame
     ? props.currentGame.players[awayColor].id
     : null;
-
   const [lastMoveTimestamp, setLastMoveTimestamp] = useState(new Date().getTime());
 
   return (
@@ -219,14 +219,15 @@ export const GameRoom: React.FC<GameRoomProps> = ({
             />
           </div>
           <aside className={cls.rightSide}>
-            <RoomInfoDisplay me={me} room={props.room} />
-
+            <RoomInfoDisplay
+              me={me}
+              room={props.room}
+            />
             <div>
               {props.room.type === 'private' && (
                 <div>{`Invite Friends: ${props.room.code}`}</div>
               )}
             </div>
-
             <div className={cls.chatWrapper}>
               <ChatBoxContainer
                 me={me}
@@ -407,4 +408,5 @@ const useStyles = createUseStyles({
     zIndex: 2,
     right: '16px',
   },
+
 });
