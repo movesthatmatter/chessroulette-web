@@ -2474,6 +2474,11 @@
   resolved "https://registry.yarnpkg.com/@types/html-minifier-terser/-/html-minifier-terser-5.0.0.tgz#7532440c138605ced1b555935c3115ddd20e8bef"
   integrity sha512-q95SP4FdkmF0CwO0F2q0H6ZgudsApaY/yCtAQNRn1gduef5fGpyEphzy0YCq/N0UFvDSnLg5V8jFK/YGXlDiCw==
 
+"@types/humanize-duration@^3.18.0":
+  version "3.18.0"
+  resolved "https://registry.yarnpkg.com/@types/humanize-duration/-/humanize-duration-3.18.0.tgz#1de456980ff537a17cd62447f3d128bb57198d5a"
+  integrity sha512-11QHl+GvEQ5TlCjA9xqQKNv4S0P8XFq5uHeZe2UPjngESBl7tA1tai/60eEYwWMFWIyQOl7ybarYF0B33K3Qtg==
+
 "@types/is-function@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/is-function/-/is-function-1.0.0.tgz#1b0b819b1636c7baf0d6785d030d12edf70c3e83"
@@ -5958,9 +5963,9 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.0.6":
-  version "0.0.6"
-  resolved "https://github.com/dstnd/dstnd-io.git#3bbfaed03ccc1070ab4e489a778941fc1f7ea689"
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.0.7":
+  version "0.0.7"
+  resolved "https://github.com/dstnd/dstnd-io.git#d44288dad5ce5ed61f099e82f9a8c0ea1d3fd4ea"
   dependencies:
     io-ts "2.2.2"
     io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.2"
@@ -7946,6 +7951,11 @@ https-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-1.0.0.tgz#ec06c10e0a34c0f2faf199f7fd7fc78fffd03c73"
   integrity sha1-7AbBDgo0wPL68Zn3/X/Hj//QPHM=
+
+humanize-duration@^3.22.0:
+  version "3.22.0"
+  resolved "https://registry.yarnpkg.com/humanize-duration/-/humanize-duration-3.22.0.tgz#b0b577e2071f231e69b71bfae25e1bb342ffb915"
+  integrity sha512-kq2Ncl1E8I7LJtjWhraQS8/LCsdt6fTQ+fwrGJ8dLSNFITW5YQpGWAgPgzjfIErAID7QHv0PA+HZBPfAf6f7IA==
 
 hyphenate-style-name@^1.0.3:
   version "1.0.3"

@@ -6,7 +6,7 @@ import { AVStreaming } from 'src/services/AVStreaming';
 import { RoomStatsRecord } from 'dstnd-io';
 import { GameRoomContainer } from './GameRoomContainer';
 import { GameRoom } from './GameRoom';
-import { ChessPlayers } from '../Games/Chess';
+import { ChessPlayers, ChessGameState } from '../Games/Chess';
 
 export default {
   component: GameRoomContainer,
@@ -78,7 +78,7 @@ export const publicRoom = () =>
       const client = new AVStreaming();
 
       (async () => {
-        setLocalStream(await client.start());
+        setLocalStream(await client.start({ audio: false, video: true }));
       })();
 
       return () => {
@@ -123,15 +123,29 @@ const players = {
   } as const,
 };
 
+const elapsedTime = {
+  white: 0,
+  black: 0,
+};
+
 export const roomWithPlayers = () =>
   React.createElement(() => {
     const [localStream, setLocalStream] = useState<MediaStream | undefined>();
+    const [currentGame, setCurrentGame] = useState<ChessGameState>({
+      players,
+      pgn: '',
+      timeLeft: {
+        white: 10 * 60 * 1000,
+        black: 10 * 60 * 1000,
+      },
+      lastMoved: 'black',
+    });
 
     useEffect(() => {
       const client = new AVStreaming();
 
       (async () => {
-        setLocalStream(await client.start());
+        setLocalStream(await client.start({ audio: false, video: true }));
       })();
 
       return () => {
@@ -151,7 +165,13 @@ export const roomWithPlayers = () =>
           peerConnections={getPeerConnections(localStream)}
           onNewGame={action('on new game')}
           startStreaming={action('start streaming')}
-          onGameStateUpdate={action('on game state update')}
+          onGameStateUpdate={(nextGameState) => {
+            console.log('current game', currentGame);
+            console.log('next game state', nextGameState);
+            console.log('current times', currentGame?.timeLeft);
+            console.log('next times', nextGameState?.timeLeft);
+            setCurrentGame(nextGameState);
+          }}
           stopStreaming={action('stop streaming')}
           broadcastMessage={action('broadcast messsage')}
           localStream={localStream}
@@ -159,9 +179,7 @@ export const roomWithPlayers = () =>
             [players.white.id]: players.white,
             [players.black.id]: players.black,
           }}
-          currentGame={{
-            players,
-          }}
+          currentGame={currentGame}
           chatHistory={[]}
         />
       </SocketProvider>
@@ -176,7 +194,7 @@ export const waitingForPlayer = () =>
       const client = new AVStreaming();
 
       (async () => {
-        setLocalStream(await client.start());
+        setLocalStream(await client.start({ audio: false, video: true }));
       })();
 
       return () => {

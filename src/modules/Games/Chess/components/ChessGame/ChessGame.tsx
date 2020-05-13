@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
+import { Move } from 'chess.js';
 import { ChessBoard } from '../ChessBoard';
 import { getNewChessGame } from '../../lib/sdk';
 import { ChessPlayers } from '../../records';
@@ -10,8 +11,9 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   players: ChessPlayers;
   playable?: boolean;
   allowSinglePlayerPlay?: boolean;
-  onMove?: (fen: string) => void;
-  fen?: string;
+  onMove?: (pgn: string) => void;
+  // fen?: string;
+  pgn: string;
 
   // The bottom side
   homeColor: 'white' | 'black';
@@ -30,14 +32,35 @@ const calcutateTimerDisplay = (): {minutes: number; seconds: number} => {
 
 export const ChessGame: React.FunctionComponent<Props> = ({
   onMove = noop,
-  fen = getNewChessGame().fen(),
+  // fen = getNewChessGame().fen(),
+  pgn = '',
   allowSinglePlayerPlay = false,
   playable = true,
   ...props
 }) => {
   const cls = useStyles();
+  const [gameInstance] = useState(getNewChessGame());
+  const [fen, setFen] = useState(gameInstance.fen);
+  const [history, setHistory] = useState([] as Move[]);
+
+  const [maxSeconds] = useState(10 * 60);
+  const [ellapsedSeconds, setEllapsedSeconds] = useState({
+    home: 0,
+    away: 0,
+  });
+  // const;
+
+
   const [timer, setTimer] = useState<{minutes: number; seconds: number}>(calcutateTimerDisplay());
   const awayColor = props.homeColor === 'white' ? 'black' : 'white';
+
+  // useEffect(() => [])
+
+  useEffect(() => {
+    gameInstance.load_pgn(pgn);
+    setFen(gameInstance.fen());
+    setHistory(gameInstance.history({ verbose: true }));
+  }, [pgn]);
 
   useEffect(() => {
     const timerInterval = setInterval(() => setTimer(calcutateTimerDisplay()), 1000);
@@ -62,6 +85,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
           // To make sure it fits in both width and height
           (p) => Math.min(p.screenWidth * 0.5, p.screenHeight * 0.8)
         }
+        history={history}
         darkSquareStyle={{
           backgroundColor: '#6792B4',
         }}
@@ -75,18 +99,16 @@ export const ChessGame: React.FunctionComponent<Props> = ({
           return allowSinglePlayerPlay || p.piece.slice(0, 1) === props.homeColor.slice(0, 1);
         }}
         onDrop={({ sourceSquare, targetSquare }) => {
-          const game = getNewChessGame(fen);
-
           // see if the move is legal
-          const validMove = game.move({
+          const validMove = gameInstance.move({
             from: sourceSquare,
             to: targetSquare,
           });
 
           if (validMove !== null) {
-            const nextFen = game.fen();
-
-            onMove(nextFen);
+            // save it here too so it's snappy fast
+            setFen(gameInstance.fen());
+            onMove(gameInstance.pgn());
           }
         }}
       />

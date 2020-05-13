@@ -7,9 +7,7 @@ import { eitherToResult } from 'src/lib/ioutil';
 import { ChatMessageRecord, chatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRecord';
 import * as io from 'io-ts';
 import {
-
   ChessPlayers,
-  ChessGameFen,
   ChessPlayer,
   ChessGameState,
 } from '../Games/Chess';
@@ -45,7 +43,7 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
       : undefined,
   );
 
-  const getNewChessGame = (playerIds: string[]): ChessGameState => {
+  const getNewChessGame = (playerIds: string[], time = 10 * 60): ChessGameState => {
     const [whitePlayerId, blackPlayerId] = shuffle(playerIds);
 
     return {
@@ -61,18 +59,17 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
           color: 'black',
         },
       },
-      fen: undefined,
+      timeLeft: {
+        white: time,
+        black: time,
+      },
+      lastMoved: 'black', // at first set it to black so white's timer starts
+      pgn: '',
     } as const;
   };
 
-  const updateGameStateFen = (fen?: ChessGameFen) => {
-    setCurrentGame(
-      (prev) =>
-        prev && {
-          ...prev,
-          fen,
-        },
-    );
+  const updateGameStatePgn = (nextGameState: ChessGameState) => {
+    setCurrentGame(nextGameState);
   };
 
   useEffect(() => {
@@ -88,7 +85,7 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
       if (msg.msgType === 'gameStarted') {
         setCurrentGame(msg.content);
       } else if (msg.msgType === 'gameUpdate') {
-        updateGameStateFen(msg.content.fen);
+        updateGameStatePgn(msg.content);
       } else if (msg.msgType === 'chatMessage') {
         setChatHistory((prev) => [...prev, msg]);
       }
@@ -102,7 +99,11 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
           me={props.me}
           peers={Object.values(props.room.peers)}
           socket={socket}
-          onReady={({ connect }) => connect()}
+          onReady={({ connect, startAVBroadcasting }) => {
+            connect();
+
+            setTimeout(startAVBroadcasting, 3 * 1000);
+          }}
           onPeerMsgSent={(envelope) => handleMessages(envelope.message)}
           onPeerMsgReceived={(envelope, { broadcastMessage }) => {
             handleMessages(envelope.message);
@@ -120,20 +121,11 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
                     msg.content.challengeeId,
                   ]);
 
-                  const whitePlayer = newGame.players.white;
-                  const blackPlayer = newGame.players.black;
-
                   // Otherwise Accept it right away for now
                   const returnMsgPayload: GameStartedRecord = {
                     msgType: 'gameStarted',
                     gameType: 'chess',
-                    content: {
-                      players: {
-                        white: whitePlayer,
-                        black: blackPlayer,
-                      },
-                      fen: newGame.fen,
-                    },
+                    content: newGame,
                   };
 
                   // Send the game to the peers
@@ -168,11 +160,11 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
 
                 broadcastMessage(payload);
               }}
-              onGameStateUpdate={(fen) => {
+              onGameStateUpdate={(nextGameState) => {
                 const payload: GameDataRecord = {
                   msgType: 'gameUpdate',
                   gameType: 'chess',
-                  content: { fen },
+                  content: nextGameState,
                 };
 
                 broadcastMessage(payload);

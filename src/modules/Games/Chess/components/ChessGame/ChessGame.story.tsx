@@ -44,6 +44,7 @@ export const asWhite = () => (
     homeColor="white"
     players={mockPlayers}
     allowSinglePlayerPlay
+    pgn=""
   />
 );
 export const asBlack = () => (
@@ -51,10 +52,11 @@ export const asBlack = () => (
     homeColor="black"
     players={mockPlayers}
     allowSinglePlayerPlay
+    pgn=""
   />
 );
 export const withLoggingOnMove = () => React.createElement(() => {
-  const [fen, setFen] = useState<string | undefined>();
+  const [fen, setFen] = useState<string>('');
 
   return (
     <ChessGame
@@ -65,7 +67,8 @@ export const withLoggingOnMove = () => React.createElement(() => {
       }}
       players={mockPlayers}
       allowSinglePlayerPlay
-      fen={fen}
+      pgn={fen}
+      // fen={fen}
     />
   );
 });
@@ -73,14 +76,15 @@ export const withLoggingOnMove = () => React.createElement(() => {
 export const withStartedGame = () => (
   <ChessGame
     homeColor="black"
-    fen="rnb1kbnr/ppp1pppp/3q4/3p4/4PP2/2N5/PPPP2PP/R1BQKBNR b KQkq - 2 3"
+    // fen="rnb1kbnr/ppp1pppp/3q4/3p4/4PP2/2N5/PPPP2PP/R1BQKBNR b KQkq - 2 3"
     players={mockPlayers}
+    pgn=""
   />
 );
 
 export const demoRandomGame = () =>
   React.createElement(() => {
-    const [gameState, setGameState] = useState({ fen: '' });
+    const [gameState, setGameState] = useState({ pgn: '' });
 
     useEffect(() => {
       const game = getNewChessGame();
@@ -90,7 +94,7 @@ export const demoRandomGame = () =>
         () => {
           setGameState((prevState) => ({
             ...prevState,
-            fen: game.fen(),
+            pgn: game.pgn(),
           }));
         },
         3 * 1000,
@@ -98,6 +102,6 @@ export const demoRandomGame = () =>
     }, []);
 
     return (
-      <ChessGame homeColor="white" fen={gameState.fen} players={mockPlayers} />
+      <ChessGame homeColor="white" pgn={gameState.pgn} players={mockPlayers} />
     );
   });
