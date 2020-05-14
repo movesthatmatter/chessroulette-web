@@ -5,16 +5,16 @@ import { action } from '@storybook/addon-actions';
 import { AVStreaming } from 'src/services/AVStreaming';
 import { RoomStatsRecord } from 'dstnd-io';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
+import { PeerRecordMock } from 'src/mocks/records';
 import { GameRoomContainer } from './GameRoomContainer';
 import { GameRoom } from './GameRoom';
-import { ChessGameState } from '../Games/Chess';
+import { ChessGameState, reduceChessGame } from '../Games/Chess';
+import { GamePlayer, GamePlayersBySide } from '../Games/Chess/chessGameStateReducer';
 
 export default {
   component: GameRoomContainer,
   title: 'Modules/GameRoom/GameRoom',
 };
-
-const myId = 1;
 
 const peers = {
   1: {
@@ -25,23 +25,9 @@ const peers = {
     id: '2',
     name: 'Piper',
   },
-  // 3: {
-  //   id: '3',
-  //   name: 'Jartica',
-  // },
-  // 4: {
-  //   id: '4',
-  //   name: 'Teleenciclopedia',
-  // },
-  // 5: {
-  //   id: '5',
-  //   name: 'Samurai',
-  // },
-  // 6: {
-  //   id: '6',
-  //   name: 'Lebada',
-  // },
 } as const;
+
+const myId = peers[1].id;
 
 const room: RoomStatsRecord = {
   id: '0',
@@ -77,7 +63,7 @@ const getPeerConnections = (localStream?: MediaStream) =>
 
 export const publicRoom = () => (
   <SocketProvider>
-    <WithLocalStream render={(localStream) => (
+    <WithLocalStream render={() => (
       <GameRoom
         me={peers[myId]}
         room={room}
@@ -97,36 +83,21 @@ export const publicRoom = () => (
   </SocketProvider>
 );
 
-const players = {
-  white: {
-    color: 'white',
-    id: peers[1].id,
-    name: peers[1].name,
-  } as const,
-  black: {
-    color: 'black',
-    id: peers[2].id,
-    name: peers[2].name,
-  } as const,
+const peerMock = new PeerRecordMock();
+const playersBySide: GamePlayersBySide = {
+  home: peerMock.withProps({ id: myId }),
+  away: peerMock.withProps({ id: peers[2].id }),
 };
 
-const elapsedTime = {
-  white: 0,
-  black: 0,
-};
 
 export const roomWithPlayers = () =>
   React.createElement(() => {
     const [localStream, setLocalStream] = useState<MediaStream | undefined>();
-    const [currentGame, setCurrentGame] = useState<ChessGameState>({
-      players,
-      pgn: '',
-      timeLeft: {
-        white: 10 * 60 * 1000,
-        black: 10 * 60 * 1000,
-      },
-      lastMoved: 'black',
-    });
+    const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
+      playersBySide,
+      homeColor: 'random',
+      timeLimit: 'blitz',
+    }));
 
     useEffect(() => {
       const client = new AVStreaming();
@@ -159,8 +130,8 @@ export const roomWithPlayers = () =>
           broadcastMessage={action('broadcast messsage')}
           localStream={localStream}
           playersById={{
-            [players.white.id]: players.white,
-            [players.black.id]: players.black,
+            [currentGame.players.white.id]: currentGame.players.white,
+            [currentGame.players.black.id]: currentGame.players.black,
           }}
           currentGame={currentGame}
           chatHistory={[]}
@@ -171,15 +142,11 @@ export const roomWithPlayers = () =>
 
 export const roomWithPlayersAndNoStream = () =>
   React.createElement(() => {
-    const [currentGame, setCurrentGame] = useState<ChessGameState>({
-      players,
-      pgn: '',
-      timeLeft: {
-        white: 10 * 60 * 1000,
-        black: 10 * 60 * 1000,
-      },
-      lastMoved: 'black',
-    });
+    const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
+      playersBySide,
+      homeColor: 'white',
+      timeLimit: 'rapid',
+    }));
 
     return (
       <SocketProvider>
@@ -195,8 +162,8 @@ export const roomWithPlayersAndNoStream = () =>
           stopStreaming={action('stop streaming')}
           broadcastMessage={action('broadcast messsage')}
           playersById={{
-            [players.white.id]: players.white,
-            [players.black.id]: players.black,
+            [currentGame.players.white.id]: currentGame.players.white,
+            [currentGame.players.black.id]: currentGame.players.black,
           }}
           currentGame={currentGame}
           chatHistory={[]}

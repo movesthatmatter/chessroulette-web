@@ -14,9 +14,9 @@ import {
   ChessPlayers,
   ChessPlayer,
   ChessGameState,
+  reduceChessGame,
 } from '../Games/Chess';
 import { PlayerBox } from './components/PlayerBox/PlayerBox';
-
 
 export type GameRoomProps = {
   me: PeerRecord;
@@ -25,7 +25,7 @@ export type GameRoomProps = {
 
   // Game
   playersById: Record<string, ChessPlayer> | undefined;
-  currentGame: ChessGameState;
+  currentGame: ChessGameState | undefined;
   onNewGame: (players: { challengerId: string; challengeeId: string }) => void;
   onGameStateUpdate: (nextState: ChessGameState) => void;
 
@@ -65,6 +65,7 @@ export const GameRoom: React.FC<GameRoomProps> = ({
   ...props
 }) => {
   const cls = useStyles();
+  const [lastMoveTime, setLastMoveTime] = useState<Date | undefined>();
 
   const homeColor = (playersById && playersById[me.id] && playersById[me.id].color) || 'white';
   const awayColor = complement(homeColor, chessColors);
@@ -76,7 +77,6 @@ export const GameRoom: React.FC<GameRoomProps> = ({
   const playerAwayId = props.currentGame
     ? props.currentGame.players[awayColor].id
     : null;
-  const [lastMoveTimestamp, setLastMoveTimestamp] = useState(new Date().getTime());
 
   return (
     <div className={cls.container}>
@@ -90,6 +90,21 @@ export const GameRoom: React.FC<GameRoomProps> = ({
               <PlayerBox
                 className={cx(cls.playerBox, cls.playerBoxAway)}
                 currentGame={props.currentGame}
+                onTimeFinished={() => {
+                  if (
+                    !props.currentGame
+                    || props.currentGame.state === 'finished'
+                    || props.currentGame.state === 'neverStarted'
+                  ) {
+                    return;
+                  }
+
+                  props.onGameStateUpdate(
+                    reduceChessGame.timerFinished(props.currentGame, {
+                      loser: awayColor,
+                    }),
+                  );
+                }}
                 player={props.currentGame.players[awayColor]}
                 mutunachiId={9}
                 side="away"
@@ -103,23 +118,42 @@ export const GameRoom: React.FC<GameRoomProps> = ({
             <PlayerBox
               className={cx(cls.playerBox, cls.playerBoxHome)}
               currentGame={props.currentGame}
-              player={props.currentGame?.players[homeColor] ?? {
-                ...me,
-                color: 'white',
+              onTimeFinished={() => {
+                if (
+                  !props.currentGame
+                  || props.currentGame.state === 'finished'
+                  || props.currentGame.state === 'neverStarted'
+                ) {
+                  return;
+                }
+
+                props.onGameStateUpdate(
+                  reduceChessGame.timerFinished(props.currentGame, {
+                    loser: homeColor,
+                  }),
+                );
               }}
+              player={
+                props.currentGame?.players[homeColor] ?? {
+                  ...me,
+                  color: 'white',
+                }
+              }
               mutunachiId={3}
               side="home"
               streamConfig={
-                (playerHomeId !== me.id)
+                playerHomeId !== me.id
                   ? peerConnections[playerHomeId].channels.streaming
                   : {
-                    ...props.localStream ? {
-                      on: true,
-                      stream: props.localStream,
-                      type: 'audio-video',
-                    } : {
-                      on: false,
-                    },
+                    ...(props.localStream
+                      ? {
+                        on: true,
+                        stream: props.localStream,
+                        type: 'audio-video',
+                      }
+                      : {
+                        on: false,
+                      }),
                   }
               }
               // Mute it if it's my stream so it doesn't createa a howling effect
@@ -134,30 +168,28 @@ export const GameRoom: React.FC<GameRoomProps> = ({
               homeColor={homeColor}
               playable={playable}
               allowSinglePlayerPlay
-              onMove={(next) => {
-                if (props.currentGame) {
-                  const currentMovedColor = props.currentGame.lastMoved === 'white' ? 'black' : 'white';
-                  // get only seconds the smaller bit for now
-
-                  const now = new Date().getTime();
-                  const secondsSinceLastMoved = now - lastMoveTimestamp;
-
-                  setLastMoveTimestamp(now);
-
-                  props.onGameStateUpdate({
-                    ...props.currentGame,
-                    pgn: next,
-                    lastMoved: currentMovedColor,
-                    ...(props.currentGame.timeLeft && {
-                      timeLeft: {
-                        ...props.currentGame.timeLeft,
-                        [currentMovedColor]:
-                          props.currentGame.timeLeft[currentMovedColor]
-                          - secondsSinceLastMoved,
-                      },
-                    }),
-                  });
+              onMove={(nextPgn) => {
+                // don't move unles the game is pending or started
+                if (
+                  !props.currentGame
+                  || props.currentGame.state === 'finished'
+                  || props.currentGame.state === 'neverStarted'
+                ) {
+                  return;
                 }
+
+                const now = new Date();
+
+                const nextGame = reduceChessGame.move(props.currentGame, {
+                  pgn: nextPgn,
+                  msSinceLastMove: typeof lastMoveTime === 'undefined'
+                    ? 0
+                    : now.getTime() - lastMoveTime.getTime(),
+                });
+
+                setLastMoveTime(now);
+
+                props.onGameStateUpdate(nextGame);
               }}
             />
           </div>
@@ -251,5 +283,4 @@ const useStyles = createUseStyles({
     zIndex: 2,
     right: '16px',
   },
-
 });

@@ -16,8 +16,10 @@ type Props = {
   player: ChessPlayer;
   side: 'home' | 'away';
   streamConfig: PeerConnectionStatus['channels']['streaming'];
-  currentGame: ChessGameState;
+  currentGame: ChessGameState | undefined;
   mutunachiId: MutunachiProps['mid'];
+
+  onTimeFinished: () => void;
 
   className?: string;
   muted?: boolean;
@@ -57,7 +59,8 @@ export const PlayerBox: React.FC<Props> = (props) => {
             <Coundtdown
               className={cls.countdown}
               timeLeft={props.currentGame.timeLeft?.[props.player.color] ?? 0}
-              paused={!props.currentGame || (props.currentGame.lastMoved === props.player.color)}
+              paused={!props.currentGame || props.currentGame.state !== 'started' || (props.currentGame.lastMoved === props.player.color)}
+              onFinished={props.onTimeFinished}
               activeClassName={cx({
                 [cls.activeCountdownTurn]: props.currentGame && (
                   props.currentGame.lastMoved !== props.player.color

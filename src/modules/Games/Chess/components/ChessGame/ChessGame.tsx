@@ -100,6 +100,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
           const validMove = gameInstance.move({
             from: sourceSquare,
             to: targetSquare,
+            promotion: 'q', // keep it simple for now
           });
 
           if (validMove !== null) {
