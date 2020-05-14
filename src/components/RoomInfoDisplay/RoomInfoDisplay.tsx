@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { faUserPlus, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,7 +15,7 @@ export type RoomInfoProps = {
   room: RoomStatsRecord;
   peerConnections: PeerConnections;
   players: Record<string, {id: string}> | undefined;
-  localStream? : MediaStream | void;
+  localStream?: MediaStream;
   onLeaveRoom?: (roomId?: string) => void;
   onInviteNewPeer?: () => void;
   onChallenge?: (peerId: string) => void;
@@ -46,6 +46,13 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
   const cls = useStyle();
   const [showAddModal, setShowAddModal] = useState(false);
   const [toChallenge, setToChallenge] = useState('');
+
+  const peersWithoutPlayers = Object.values(room.peers).filter((peer) => {
+    if (players) {
+      return !(peer.id in players);
+    }
+    return true;
+  });
 
   return (
     <>
@@ -83,31 +90,25 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
         </div>
         <div className={cls.listContainer}>
           {room.peersCount > 1
-            ? (Object.values(room.peers).map((peer) => {
-              if (players
-              && Object.values(players).filter((player) => player.id === peer.id).length > 0) {
-                return null;
-              }
-              return (
-                <div className={cls.listItem}>
-                  <RoomListPeer
-                    me={peer.id === me.id}
-                    peer={peer}
-                    streaming={(peer.id === me.id) && (localStream)
-                      ? {
-                        on: true,
-                        stream: localStream,
-                        type: 'audio-video',
-                      }
-                      : peerConnections[peer.id].channels.streaming}
-                    avatar={peer.id.slice(-1)[0] as unknown as AvatarsType}
-                    onPeerChallenge={() => onChallenge(peer.id)}
-                    canChallenge={peer.id !== me.id && gamePlayable === true}
-                    onDisplayChallengeName={(value: string) => setToChallenge(value)}
-                  />
-                </div>
-              );
-            }))
+            ? peersWithoutPlayers.map((peer) => (
+              <div className={cls.listItem}>
+                <RoomListPeer
+                  me={peer.id === me.id}
+                  peer={peer}
+                  streaming={(peer.id === me.id) && (localStream)
+                    ? {
+                      on: true,
+                      stream: localStream,
+                      type: 'audio-video',
+                    }
+                    : peerConnections[peer.id].channels.streaming}
+                  avatar={peer.id.slice(-1)[0] as unknown as AvatarsType}
+                  onPeerChallenge={() => onChallenge(peer.id)}
+                  canChallenge={peer.id !== me.id && gamePlayable === true}
+                  onDisplayChallengeName={(value) => setToChallenge(value)}
+                />
+              </div>
+            ))
             : (
               <div>
                 Waiting for peers. User invite button to

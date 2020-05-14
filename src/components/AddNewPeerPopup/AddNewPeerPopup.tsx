@@ -64,12 +64,12 @@ export const AddNewPeerPopUp: React.FC<Props> = ({
                 padding: '5px',
               }}
             >
-              {`https://chessroulette.now.sh${location.pathname!}${location.key!}`}
+              {`${window.location}${location.pathname!}${location.key!}`}
             </span>
             <div
               className={cls.copyButton}
               onClick={() => {
-                navigator.clipboard.writeText(`https://chessroulette.now.sh${location.pathname!}${location.key!}`);
+                navigator.clipboard.writeText(`${window.location}${location.pathname!}${location.key!}`);
                 setCopied(true);
               }}
             >
@@ -92,6 +92,7 @@ const useStyle = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     padding: '40px 20px',
+    maxWidth: '400px',
   },
   label: {
     fontFamily: 'Open Sans',

@@ -221,7 +221,7 @@ export const GameRoom: React.FC<GameRoomProps> = ({
           <aside className={cls.rightSide}>
             <RoomInfoDisplay
               me={me}
-              localStream={props.localStream}
+              localStream={props.localStream as MediaStream}
               room={props.room}
               peerConnections={peerConnections}
               players={playersById}

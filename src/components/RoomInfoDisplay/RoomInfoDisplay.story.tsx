@@ -49,7 +49,7 @@ const players = {
     id: peers[1].id,
     name: peers[1].name,
   } as const,
-  2: {
+  5: {
     color: 'black',
     id: peers[5].id,
     name: peers[5].name,
