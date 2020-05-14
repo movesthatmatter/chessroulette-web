@@ -27,7 +27,7 @@ export class RoomStatsRecordMock {
     const type = types[chance.integer({ min: 0, max: 1 })] as 'public' | 'private';
 
     return {
-      id: String(chance.integer()),
+      id: String(chance.integer({ min: 1 })),
       name: String(chance.city()),
       ...type === 'private' ? {
         type,

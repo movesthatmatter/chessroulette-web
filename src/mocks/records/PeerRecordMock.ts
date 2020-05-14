@@ -10,7 +10,7 @@ const chance = new Chance();
 export class PeerRecordMock {
   record(): PeerRecord {
     return {
-      id: String(chance.integer()),
+      id: String(chance.integer({ min: 1 })),
       name: chance.name(),
     };
   }

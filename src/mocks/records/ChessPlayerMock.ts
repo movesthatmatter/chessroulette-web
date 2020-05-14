@@ -13,7 +13,7 @@ const colors = ['white', 'black'];
 export class ChessPlayerMock {
   record(): ChessPlayer {
     return {
-      id: String(chance.integer()),
+      id: String(chance.integer({ min: 1 })),
       name: String(chance.name()),
       color: colors[chance.integer({ min: 0, max: 1 })] as 'white' | 'black',
     };
