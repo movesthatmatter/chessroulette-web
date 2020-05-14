@@ -40,8 +40,6 @@ export const RoomListPeer: React.FC<Props> = ({
     onDisplayChallengeName('');
   };
 
-  console.log('peer', peer);
-
   return (
     <div
       className={cls.listItem}
@@ -54,7 +52,7 @@ export const RoomListPeer: React.FC<Props> = ({
       <div className={cls.topBar}>
         {streamConfig.on && (
           <div className={cls.mutunachi}>
-            <Mutunachi mid={avatar} height="35px" />
+            <Mutunachi mid={avatar} style={{ height: '35px' }} />
           </div>
         )}
         <div
@@ -72,7 +70,7 @@ export const RoomListPeer: React.FC<Props> = ({
           <FaceTime streamConfig={streamConfig} />
         ) : (
           <div className={cls.mutunachiLarge}>
-            <Mutunachi mid={avatar} height="90px" />
+            <Mutunachi mid={avatar} style={{ height: '90px' }} />
           </div>
         )}
       </div>

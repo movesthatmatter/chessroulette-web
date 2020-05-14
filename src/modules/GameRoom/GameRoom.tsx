@@ -7,7 +7,6 @@ import { ChatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRec
 import { PeerConnections } from 'src/components/PeersProvider';
 import logo from 'src/assets/logo_black.svg';
 import cx from 'classnames';
-import { complement } from 'src/lib/util';
 import { RoomInfoDisplay } from 'src/components/RoomInfoDisplay';
 import {
   ChessGame,
@@ -95,10 +94,6 @@ export const GameRoom: React.FC<GameRoomProps> = ({
   const homeColor = (playersById[me.id] && playersById[me.id].color) || 'white';
   const awayColor = otherChessColor(homeColor);
   const playable = !!playersById[me.id];
-
-
-  console.log('chess game state', props.currentGame);
-  console.log('players by id', playersById);
 
   const playerHomeId = props.currentGame
     ? props.currentGame.players[homeColor].id

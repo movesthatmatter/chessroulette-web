@@ -13,27 +13,14 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   playable?: boolean;
   allowSinglePlayerPlay?: boolean;
   onMove?: (pgn: string) => void;
-  // fen?: string;
   pgn: string;
 
   // The bottom side
   homeColor: 'white' | 'black';
 };
 
-
-const timerStart = new Date();
-const calcutateTimerDisplay = (): {minutes: number; seconds: number} => {
-  const dif = +new Date() - +timerStart;
-  const display = {
-    minutes: Math.floor((dif / 1000 / 60) % 60),
-    seconds: Math.floor((dif / 1000) % 60),
-  };
-  return display;
-};
-
 export const ChessGame: React.FunctionComponent<Props> = ({
   onMove = noop,
-  // fen = getNewChessGame().fen(),
   pgn = '',
   allowSinglePlayerPlay = false,
   playable = true,
@@ -44,40 +31,14 @@ export const ChessGame: React.FunctionComponent<Props> = ({
   const [fen, setFen] = useState(gameInstance.fen);
   const [history, setHistory] = useState([] as Move[]);
 
-  const [maxSeconds] = useState(10 * 60);
-  const [ellapsedSeconds, setEllapsedSeconds] = useState({
-    home: 0,
-    away: 0,
-  });
-  // const;
-
-
-  const [timer, setTimer] = useState<{minutes: number; seconds: number}>(calcutateTimerDisplay());
-  const awayColor = props.homeColor === 'white' ? 'black' : 'white';
-
-  // useEffect(() => [])
-
   useEffect(() => {
     gameInstance.load_pgn(pgn);
     setFen(gameInstance.fen());
     setHistory(gameInstance.history({ verbose: true }));
   }, [pgn]);
 
-  useEffect(() => {
-    const timerInterval = setInterval(() => setTimer(calcutateTimerDisplay()), 1000);
-    return () => clearInterval(timerInterval);
-  }, []);
-
   return (
     <div className={cx([cls.container, props.className])}>
-      {/* <div className={cls.bar}>
-        <span>10:00</span>
-      </div> */}
-      {/* {props.players[awayColor].name} */}
-      {/* <div>{timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes}</div>
-        <div>:</div>
-        <div>{timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds}</div> */}
-      {/* </div> */}
       <ChessBoard
         orientation={props.homeColor}
         position={fen}
@@ -110,20 +71,6 @@ export const ChessGame: React.FunctionComponent<Props> = ({
           }
         }}
       />
-      {/* <div className={cls.bar}>
-        <span>10:00</span>
-      </div> */}
-      {/* {props.players[props.homeColor].name} */}
-      {/* <div style={{ width: '33%', textAlign: 'left' }}>
-          {props.players[awayColor].name.replace(/^\w/, (c) => c.toUpperCase())}
-        </div>
-        <div style={{ width: '33%', textAlign: 'center' }}>
-          :
-        </div>
-        <div style={{ width: '33%', textAlign: 'right' }}>
-          {props.players[props.homeColor].name.replace(/^\w/, (c) => c.toUpperCase())}
-        </div> */}
-      {/* </div> */}
     </div>
   );
 };
@@ -142,18 +89,7 @@ const useStyles = createUseStyles({
     fontSize: '22px',
     color: 'white',
     fontWeight: 300,
-    // padding: '8px',
     display: 'flex',
     flexDirection: 'row',
   },
-  // bottomPlayerInfo: {
-  //   fontFamily: 'Roboto',
-  //   fontSize: '18px',
-  //   color: 'white',
-  //   fontWeight: 300,
-  //   padding: '8px',
-  //   display: 'flex',
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  // },
 });
