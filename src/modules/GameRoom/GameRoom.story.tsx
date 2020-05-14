@@ -9,7 +9,7 @@ import { PeerRecordMock } from 'src/mocks/records';
 import { GameRoomContainer } from './GameRoomContainer';
 import { GameRoom } from './GameRoom';
 import { ChessGameState, reduceChessGame } from '../Games/Chess';
-import { GamePlayer, GamePlayersBySide } from '../Games/Chess/chessGameStateReducer';
+import { GamePlayersBySide } from '../Games/Chess/chessGameStateReducer';
 
 export default {
   component: GameRoomContainer,
@@ -88,13 +88,12 @@ const playersBySide: GamePlayersBySide = {
   away: peerMock.withProps({ id: peers[2].id }),
 };
 
-
 export const roomWithPlayers = () =>
   React.createElement(() => {
     const [localStream, setLocalStream] = useState<MediaStream | undefined>();
     const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
       playersBySide,
-      homeColor: 'random',
+      homeColor: 'white',
       timeLimit: 'blitz',
     }));
 

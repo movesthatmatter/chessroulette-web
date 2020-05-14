@@ -1,4 +1,5 @@
 import { shuffle } from 'src/lib/util';
+import { minutes } from 'src/lib/time';
 import {
   ChessGameStatePgn,
   ChessGameColor,
@@ -12,12 +13,10 @@ import { otherChessColor } from './util';
 import { getNewChessGame } from './lib/sdk';
 
 
-const mins = (n: number) => n * 60 * 1000;
-
 const timeLimitMsMap: {[key in ChessGameTimeLimit]: number} = {
-  bullet: mins(0.3),
-  blitz: mins(5),
-  rapid: mins(15),
+  bullet: minutes(1),
+  blitz: minutes(5),
+  rapid: minutes(15),
   untimed: -1,
 };
 

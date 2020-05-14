@@ -56,8 +56,6 @@ const unknownPlayers: ChessPlayers = {
   },
 };
 
-const chessColors = ['white', 'black'] as const;
-
 type ChessPlayersById = Record<string, ChessPlayer>;
 
 // Memoize this to make it faster if needed
@@ -122,7 +120,6 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                   ) {
                     return;
                   }
-
                   props.onGameStateUpdate(
                     reduceChessGame.timerFinished(props.currentGame, {
                       loser: awayColor,
