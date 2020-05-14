@@ -15,8 +15,6 @@ export const GameRoomPage: React.FC<Props> = () => {
   const [me, setMe] = useState<PeerRecord | void>();
   const [joinedRoom, setJoinedRoom] = useState<RoomStatsRecord | void>();
 
-  console.log('params', params);
-
   if (!('id' in params)) {
     return (
       <div>

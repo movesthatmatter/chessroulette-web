@@ -1,13 +1,11 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState, useEffect } from 'react';
-import { RoomStatsRecord, roomStatsRecord } from 'dstnd-io';
+import { RoomStatsRecord } from 'dstnd-io';
 import { action } from '@storybook/addon-actions';
 import { AVStreaming } from 'src/services/AVStreaming';
 import StoryRouter from 'storybook-react-router';
-import { PeerConnectionStatus } from 'src/services/peers';
 import { RoomInfoDisplay } from './RoomInfoDisplay';
-import { PeerConnections } from '../PeersProvider';
 
 export default {
   component: RoomInfoDisplay,
@@ -185,6 +183,7 @@ export const PublicRoom = () => React.createElement(() => {
         playersById={playersById}
         localStream={localStream}
         gameInProgress={false}
+        onChallenge={action('on challenge')}
       />
     </div>
   );

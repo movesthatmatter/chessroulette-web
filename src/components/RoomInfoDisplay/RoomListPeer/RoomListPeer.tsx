@@ -47,7 +47,7 @@ export const RoomListPeer: React.FC<Props> = ({
       onMouseOut={() => checkMouseOut()}
       onFocus={() => checkMouseOver()}
       onBlur={() => checkMouseOut()}
-      onClick={() => onPeerChallenge()}
+      onClick={onPeerChallenge}
     >
       <div className={cls.topBar}>
         {streamConfig.on && (
@@ -111,13 +111,7 @@ const useStyle = createUseStyles({
     maxWidth: '80%',
     alignSelf: 'center',
   },
-  videoContainer: {
-
-  },
-  mutunachiLarge: {
-
-  },
-  challenge: {
-
-  },
+  videoContainer: {},
+  mutunachiLarge: {},
+  challenge: {},
 });

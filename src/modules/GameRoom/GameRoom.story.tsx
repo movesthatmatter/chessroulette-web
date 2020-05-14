@@ -68,8 +68,11 @@ export const publicRoom = () => (
         me={peers[myId]}
         room={room}
         peerConnections={getPeerConnections()}
-        onNewGame={action('on new game')}
         startStreaming={action('start streaming')}
+        onChallengeOffer={action('on challenge offered')}
+        onChallengeAccepted={action('on challenge accepted')}
+        onChallengeRefused={action('on challenge refused')}
+        onChallengeCancelled={action('on challenge cancelled')}
         onGameStateUpdate={action('on game state update')}
         stopStreaming={action('stop streaming')}
         broadcastMessage={action('broadcast messsage')}
@@ -119,7 +122,10 @@ export const roomWithPlayers = () =>
           me={peers[myId]}
           room={room}
           peerConnections={getPeerConnections(localStream)}
-          onNewGame={action('on new game')}
+          onChallengeOffer={action('on challenge offered')}
+          onChallengeAccepted={action('on challenge accepted')}
+          onChallengeRefused={action('on challenge refused')}
+          onChallengeCancelled={action('on challenge cancelled')}
           startStreaming={action('start streaming')}
           onGameStateUpdate={(nextGameState) => {
             setCurrentGame(nextGameState);
@@ -148,7 +154,10 @@ export const roomWithPlayersAndNoStream = () =>
           me={peers[myId]}
           room={room}
           peerConnections={getPeerConnections()}
-          onNewGame={action('on new game')}
+          onChallengeOffer={action('on challenge offered')}
+          onChallengeAccepted={action('on challenge accepted')}
+          onChallengeRefused={action('on challenge refused')}
+          onChallengeCancelled={action('on challenge cancelled')}
           startStreaming={action('start streaming')}
           onGameStateUpdate={(nextGameState) => {
             setCurrentGame(nextGameState);
@@ -188,7 +197,10 @@ export const waitingForPlayer = () =>
           me={peers[myId]}
           room={room}
           peerConnections={getPeerConnections(localStream)}
-          onNewGame={action('on new game')}
+          onChallengeOffer={action('on challenge offered')}
+          onChallengeAccepted={action('on challenge accepted')}
+          onChallengeRefused={action('on challenge refused')}
+          onChallengeCancelled={action('on challenge cancelled')}
           startStreaming={action('start streaming')}
           onGameStateUpdate={action('on game state update')}
           stopStreaming={action('stop streaming')}

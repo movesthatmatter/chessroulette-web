@@ -8,6 +8,7 @@ import { PopupModal } from 'src/components/PopupModal/PopupModal';
 import { AddNewPeerPopUp } from 'src/components/AddNewPeerPopup/AddNewPeerPopup';
 import { PeerConnections } from 'src/components/PeersProvider';
 import { PeerConnectionStatus } from 'src/services/peers';
+import { GameChallengeRecord } from 'src/modules/GameRoom/records';
 import { RoomListPeer, AvatarsType } from './RoomListPeer/RoomListPeer';
 
 
@@ -17,10 +18,11 @@ export type RoomInfoProps = {
   peerConnections: PeerConnections;
   playersById: Record<string, {id: string}>;
   gameInProgress: boolean;
+
   localStream?: MediaStream;
   onLeaveRoom?: (roomId?: string) => void;
   onInviteNewPeer?: () => void;
-  onChallenge?: (peerId: string) => void;
+  onChallenge?: (challenge: GameChallengeRecord) => void;
 };
 
 const setTitleState = (gameInProgress: boolean, peers: number): string => {
@@ -114,7 +116,10 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
                 streamConfig={(pc.peerId === me.id) ? myStreamConfig : pc.channels.streaming}
                 // TODO: Add a typesafe util to do this avatar slicing
                 avatar={pc.peerId.slice(-1)[0] as unknown as AvatarsType}
-                onPeerChallenge={() => onChallenge(pc.peerId)}
+                onPeerChallenge={() => onChallenge({
+                  challengerId: me.id,
+                  challengeeId: pc.peerId,
+                })}
                 canChallenge={!gameInProgress && pc.peerId === me.id}
                 onDisplayChallengeName={(value) => setToChallenge(value)}
               />
