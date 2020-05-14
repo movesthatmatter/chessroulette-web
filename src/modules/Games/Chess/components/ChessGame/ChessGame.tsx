@@ -20,7 +20,6 @@ type Props = React.HTMLProps<HTMLDivElement> & {
 export const ChessGame: React.FunctionComponent<Props> = ({
   onMove = noop,
   pgn = '',
-  allowSinglePlayerPlay = false,
   playable = true,
   ...props
 }) => {
@@ -48,13 +47,11 @@ export const ChessGame: React.FunctionComponent<Props> = ({
         lightSquareStyle={{
           backgroundColor: '#D7D7D7',
         }}
-        allowDrag={(p) => {
-          if (!playable) {
-            return false;
-          }
-          return allowSinglePlayerPlay || p.piece.slice(0, 1) === props.homeColor.slice(0, 1);
-        }}
         onDrop={({ sourceSquare, targetSquare }) => {
+          if (!playable) {
+            return;
+          }
+
           // see if the move is legal
           const validMove = gameInstance.move({
             from: sourceSquare,

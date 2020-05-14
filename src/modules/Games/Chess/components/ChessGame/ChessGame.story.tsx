@@ -4,6 +4,8 @@ import { noop } from 'src/lib/util';
 import { action } from '@storybook/addon-actions';
 import { ChessGame } from './ChessGame';
 import { getNewChessGame, ChessInstance } from '../../lib/sdk';
+import { ChessGameColor } from '../../records';
+import { otherChessColor } from '../../util';
 
 const randomPlay = (
   chess: ChessInstance,
@@ -55,16 +57,20 @@ export const asBlack = () => (
 );
 export const withLoggingOnMove = () => React.createElement(() => {
   const [fen, setFen] = useState<string>('');
+  const [lastMoved, setLastMoved] = useState<ChessGameColor>('black');
+  const myColor: ChessGameColor = 'white';
 
   return (
     <ChessGame
       homeColor="white"
       onMove={(newFen) => {
         setFen(newFen);
+        setLastMoved((prev) => otherChessColor(prev));
         action('onMove')(newFen);
       }}
       allowSinglePlayerPlay
       pgn={fen}
+      playable={myColor !== lastMoved}
       // fen={fen}
     />
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { PeerMessageEnvelope } from 'src/services/peers';
-import { PeerRecord, RoomStatsRecord, roomStatsPayload } from 'dstnd-io';
+import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
 import { ChatBoxContainer } from 'src/components/ChatBox';
 import { ChatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRecord';
 import { PeerConnections } from 'src/components/PeersProvider';
@@ -9,11 +9,9 @@ import logo from 'src/assets/logo_black.svg';
 import cx from 'classnames';
 import { RoomInfoDisplay } from 'src/components/RoomInfoDisplay';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
-import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
 import { PopupContent } from 'src/components/PopupContent';
 import {
   ChessGame,
-  ChessPlayers,
   ChessPlayer,
   ChessGameState,
   reduceChessGame,
@@ -82,6 +80,7 @@ export const GameRoom: React.FC<GameRoomProps> = ({
   const cls = useStyles();
   const [lastMoveTime, setLastMoveTime] = useState<Date | undefined>();
   const [showingPopup, setShowingPopup] = useState<Partial<PopupTypesMap>>({ none: undefined });
+  const [playable, setPlayable] = useState(false);
 
   const playersById = props.currentGame
     ? getPlayersById(props.currentGame)
@@ -96,7 +95,6 @@ export const GameRoom: React.FC<GameRoomProps> = ({
 
   const homeColor = (playersById[me.id] && playersById[me.id].color) || 'white';
   const awayColor = otherChessColor(homeColor);
-  const playable = !!playersById[me.id];
 
   const playerHomeId = props.currentGame
     ? props.currentGame.players[homeColor].id
@@ -105,6 +103,16 @@ export const GameRoom: React.FC<GameRoomProps> = ({
     ? props.currentGame.players[awayColor].id
     : null;
 
+  useEffect(() => {
+    setPlayable(() => {
+      if (!props.currentGame) {
+        return false;
+      }
+
+      // The game is playable only if ME is a player and it's ME's turn
+      return !!playersById[me.id] && props.currentGame.lastMoved !== playersById[me.id].color;
+    });
+  }, [props.currentGame]);
 
   useEffect(() => {
     if (props.challengeOffer) {
