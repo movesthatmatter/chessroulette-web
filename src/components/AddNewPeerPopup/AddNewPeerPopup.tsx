@@ -1,19 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { faTimesCircle, faCopy } from '@fortawesome/free-solid-svg-icons';
 
-type NewPeerPopProps = {
-  code: string;
-  close: () => void;
-};
+import { useLocation } from 'react-router-dom';
 
-export const AddNewPeerPopUp: React.FC<NewPeerPopProps> = ({
-  code,
+type Props = {
+  close?: () => void;
+}
+
+export const AddNewPeerPopUp: React.FC<Props> = ({
   close,
 }) => {
   const cls = useStyle();
+  const location = useLocation();
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    if (copied) {
+      setInterval(() => {
+        setCopied(false);
+      }, 1000);
+    }
+  }, [copied]);
   return (
     <>
       <div className={cls.exitButton}>
@@ -26,16 +35,52 @@ export const AddNewPeerPopUp: React.FC<NewPeerPopProps> = ({
       </div>
       <div className={cls.container}>
         <div className={cls.label}>
-          Share the following code with your friends
+          Click on the code to copy it and share with your friends
         </div>
         <div className={cls.bottomContainer}>
           <div className={cls.spacer} />
           <div className={cls.codeContainer}>
-            <div className={cls.code}>
-              {code}
+            <div
+              className={cls.code}
+              onClick={() => {
+                navigator.clipboard.writeText(location.key!);
+                setCopied(true);
+              }}
+            >
+              {location.key!}
             </div>
           </div>
           <div className={cls.spacer} />
+        </div>
+        <div className={cls.urlContainer}>
+          <div>
+            Or you can simply copy this URL and send it :
+          </div>
+          <div className={cls.urlPart}>
+            <span
+              style={{
+                color: '#F7627B',
+                fontSize: '18px',
+                padding: '5px',
+              }}
+            >
+              {`${window.location}${location.pathname!}${location.key!}`}
+            </span>
+            <div
+              className={cls.copyButton}
+              onClick={() => {
+                navigator.clipboard.writeText(`${window.location}${location.pathname!}${location.key!}`);
+                setCopied(true);
+              }}
+            >
+              <FontAwesomeIcon
+                icon={faCopy}
+                size="2x"
+                color="#F7627B"
+              />
+            </div>
+          </div>
+          {copied && <div style={{ fontFamily: 'Open Sans', color: '#F7627B' }}>Copied!</div>}
         </div>
       </div>
     </>
@@ -47,6 +92,7 @@ const useStyle = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     padding: '40px 20px',
+    maxWidth: '400px',
   },
   label: {
     fontFamily: 'Open Sans',
@@ -59,6 +105,16 @@ const useStyle = createUseStyles({
   bottomContainer: {
     display: 'flex',
     marginTop: '15px',
+
+  },
+  urlContainer: {
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontFamily: 'Open Sans',
+    fontSize: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: '20px',
   },
   codeContainer: {
     backgroundColor: '#F7627B',
@@ -69,6 +125,9 @@ const useStyle = createUseStyles({
     color: 'white',
     lineHeight: '41px',
     fontSize: '30px',
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   code: {
     padding: '10px',
@@ -82,5 +141,16 @@ const useStyle = createUseStyles({
   exitIcon: {
     color: '#E66162',
     cursor: 'pointer',
+  },
+  urlPart: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '10px',
+  },
+  copyButton: {
+    marginLeft: '20px',
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
 });
