@@ -28,30 +28,17 @@ export default {
   title: 'Modules/Games/Chess/components/Chess Game',
 };
 
-const mockPlayers = {
-  white: {
-    id: '1',
-    name: 'kasparov',
-    color: 'white',
-  },
-  black: {
-    id: '2',
-    name: 'Ficher',
-    color: 'black',
-  },
-} as const;
-
 export const asWhite = () => (
   <ChessGame
     homeColor="white"
-    allowSinglePlayerPlay
+    playable
     pgn=""
   />
 );
 export const asBlack = () => (
   <ChessGame
     homeColor="black"
-    allowSinglePlayerPlay
+    playable
     pgn=""
   />
 );
@@ -68,7 +55,6 @@ export const withLoggingOnMove = () => React.createElement(() => {
         setLastMoved((prev) => otherChessColor(prev));
         action('onMove')(newFen);
       }}
-      allowSinglePlayerPlay
       pgn={fen}
       playable={myColor !== lastMoved}
       // fen={fen}
@@ -76,9 +62,32 @@ export const withLoggingOnMove = () => React.createElement(() => {
   );
 });
 
+export const withSwitchingSide = () => React.createElement(() => {
+  const [fen, setFen] = useState<string>('');
+  const [lastMoved, setLastMoved] = useState<ChessGameColor>('black');
+  const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
+
+  return (
+    <ChessGame
+      homeColor={homeColor}
+      onMove={(newFen) => {
+        setFen(newFen);
+        setLastMoved((prev) => otherChessColor(prev));
+        setHomeColor((prev) => otherChessColor(prev));
+        action('onMove')(newFen);
+      }}
+      pgn={fen}
+      playable={homeColor !== lastMoved}
+      // fen={fen}
+    />
+  );
+});
+
+
 export const withStartedGame = () => (
   <ChessGame
     homeColor="black"
+    playable
     // fen="rnb1kbnr/ppp1pppp/3q4/3p4/4PP2/2N5/PPPP2PP/R1BQKBNR b KQkq - 2 3"
     pgn=""
   />
@@ -104,6 +113,10 @@ export const demoRandomGame = () =>
     }, []);
 
     return (
-      <ChessGame homeColor="white" pgn={gameState.pgn} />
+      <ChessGame
+        homeColor="white"
+        pgn={gameState.pgn}
+        playable
+      />
     );
   });

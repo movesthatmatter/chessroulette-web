@@ -211,7 +211,6 @@ export const GameRoom: React.FC<GameRoomProps> = ({
               pgn={props.currentGame?.pgn ?? ''}
               homeColor={homeColor}
               playable={playable}
-              allowSinglePlayerPlay
               onMove={(nextPgn) => {
                 // don't move unles the game is pending or started
                 if (

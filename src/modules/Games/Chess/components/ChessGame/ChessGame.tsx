@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { Move } from 'chess.js';
+import { Move, Square } from 'chess.js';
 import { getBoardSize } from 'src/modules/GameRoom/util';
 import { ChessBoard } from '../ChessBoard';
 import { getNewChessGame } from '../../lib/sdk';
 
 type Props = React.HTMLProps<HTMLDivElement> & {
-  playable?: boolean;
-  allowSinglePlayerPlay?: boolean;
+  playable: boolean;
   onMove?: (pgn: string) => void;
   pgn: string;
 
@@ -34,6 +33,31 @@ export const ChessGame: React.FunctionComponent<Props> = ({
     setHistory(gameInstance.history({ verbose: true }));
   }, [pgn]);
 
+  const onMoveHandler = ({
+    sourceSquare,
+    targetSquare,
+  }: {
+    sourceSquare: Square;
+    targetSquare: Square;
+  }) => {
+    if (!playable) {
+      return;
+    }
+
+    // see if the move is legal
+    const validMove = gameInstance.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: 'q', // keep it simple for now
+    });
+
+    if (validMove !== null) {
+      // save it here too so it's snappy fast
+      setFen(gameInstance.fen());
+      onMove(gameInstance.pgn());
+    }
+  };
+
   return (
     <div className={cx([cls.container, props.className])}>
       <ChessBoard
@@ -47,24 +71,8 @@ export const ChessGame: React.FunctionComponent<Props> = ({
         lightSquareStyle={{
           backgroundColor: '#D7D7D7',
         }}
-        onDrop={({ sourceSquare, targetSquare }) => {
-          if (!playable) {
-            return;
-          }
-
-          // see if the move is legal
-          const validMove = gameInstance.move({
-            from: sourceSquare,
-            to: targetSquare,
-            promotion: 'q', // keep it simple for now
-          });
-
-          if (validMove !== null) {
-            // save it here too so it's snappy fast
-            setFen(gameInstance.fen());
-            onMove(gameInstance.pgn());
-          }
-        }}
+        onSquareClickMove={onMoveHandler}
+        onDrop={onMoveHandler}
       />
     </div>
   );
@@ -78,13 +86,5 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     width: 'fit-content',
-  },
-  bar: {
-    fontFamily: 'Roboto',
-    fontSize: '22px',
-    color: 'white',
-    fontWeight: 300,
-    display: 'flex',
-    flexDirection: 'row',
   },
 });
