@@ -221,7 +221,11 @@ export const GameRoom: React.FC<GameRoomProps> = ({
           <aside className={cls.rightSide}>
             <RoomInfoDisplay
               me={me}
+              localStream={props.localStream}
               room={props.room}
+              peerConnections={peerConnections}
+              players={playersById}
+              gamePlayable={playable}
             />
             <div>
               {props.room.type === 'private' && (
