@@ -6,6 +6,7 @@ import { AVStreaming } from 'src/services/AVStreaming';
 import { RoomStatsRecord } from 'dstnd-io';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerRecordMock } from 'src/mocks/records';
+import { range } from 'src/lib/util';
 import { GameRoomContainer } from './GameRoomContainer';
 import { GameRoom } from './GameRoom';
 import { ChessGameState, reduceChessGame } from '../Games/Chess';
@@ -37,8 +38,8 @@ const room: RoomStatsRecord = {
   peers,
 } as const;
 
-const getPeerConnections = (localStream?: MediaStream) =>
-  Object.values(peers).reduce(
+const getPeerConnections = (localStream?: MediaStream, givenPeers = room.peers) =>
+  Object.values(givenPeers).reduce(
     (res, peer) => ({
       ...res,
       [peer.id]: {
@@ -49,7 +50,6 @@ const getPeerConnections = (localStream?: MediaStream) =>
             ...localStream ? {
               on: true,
               type: 'audio-video',
-              // stream: new MediaStream(),
               stream: localStream,
             } : {
               on: false,
@@ -154,6 +154,51 @@ export const roomWithPlayersAndNoStream = () =>
           me={peers[myId]}
           room={room}
           peerConnections={getPeerConnections()}
+          onChallengeOffer={action('on challenge offered')}
+          onChallengeAccepted={action('on challenge accepted')}
+          onChallengeRefused={action('on challenge refused')}
+          onChallengeCancelled={action('on challenge cancelled')}
+          startStreaming={action('start streaming')}
+          onGameStateUpdate={(nextGameState) => {
+            setCurrentGame(nextGameState);
+          }}
+          stopStreaming={action('stop streaming')}
+          broadcastMessage={action('broadcast messsage')}
+          currentGame={currentGame}
+          chatHistory={[]}
+        />
+      </SocketProvider>
+    );
+  });
+
+const peerMocks = range(3).map(() => peerMock.record());
+const peerMocksAsMap = peerMocks.reduce((prev, nextPeer) => ({
+  ...prev,
+  [`${nextPeer.id}`]: nextPeer,
+}), {});
+
+export const roomWithPlayersAndSpectators = () =>
+  React.createElement(() => {
+    const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
+      playersBySide: {
+        ...playersBySide,
+        away: peerMocks[0],
+      },
+      homeColor: 'white',
+      timeLimit: 'rapid',
+    }));
+
+    const peerConnections = getPeerConnections(undefined, peerMocksAsMap);
+
+    return (
+      <SocketProvider>
+        <GameRoom
+          me={peers[myId]}
+          room={{
+            ...room,
+            peers: peerMocksAsMap,
+          }}
+          peerConnections={peerConnections}
           onChallengeOffer={action('on challenge offered')}
           onChallengeAccepted={action('on challenge accepted')}
           onChallengeRefused={action('on challenge refused')}
