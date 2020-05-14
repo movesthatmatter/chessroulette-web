@@ -2,6 +2,7 @@
 import React from 'react';
 import { ChessPlayerMock } from 'src/mocks/records';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
+import { action } from '@storybook/addon-actions';
 import { PlayerBox } from './PlayerBox';
 
 
@@ -30,6 +31,7 @@ export const homePlayer = () => (
         }}
         currentGame={undefined}
         mutunachiId={8}
+        onTimeFinished={action('on time finished')}
       />
     )}
     />

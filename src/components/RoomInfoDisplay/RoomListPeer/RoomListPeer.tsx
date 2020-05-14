@@ -1,23 +1,16 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChess } from '@fortawesome/free-solid-svg-icons';
 import { PeerRecord } from 'dstnd-io';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { FaceTime } from 'src/components/FaceTimeArea/FaceTime';
+import { PeerConnectionStatus } from 'src/services/peers';
 
 type Props = {
   peer: PeerRecord;
   onPeerChallenge: () => void;
   avatar: AvatarsType;
-  me?: boolean;
-  streaming?: {
-    on: false;
-  } | {
-    on: true;
-    type: 'audio' | 'video' | 'audio-video';
-    stream: MediaStream;
-  };
+  isMe: boolean;
+  streamConfig: PeerConnectionStatus['channels']['streaming'];
   canChallenge: boolean;
   onDisplayChallengeName: (value: string) => void;
 };
@@ -27,23 +20,28 @@ export const RoomListPeer: React.FC<Props> = ({
   peer,
   onPeerChallenge,
   avatar,
-  me,
-  streaming,
+  isMe,
+  streamConfig,
   canChallenge,
   onDisplayChallengeName,
 }) => {
   const cls = useStyle();
   const [over, setMouseOver] = useState(false);
+
   const checkMouseOver = () => {
     if (canChallenge) {
       onDisplayChallengeName(peer.name);
     }
     setMouseOver(true);
   };
+
   const checkMouseOut = () => {
     setMouseOver(false);
     onDisplayChallengeName('');
   };
+
+  console.log('peer', peer);
+
   return (
     <div
       className={cls.listItem}
@@ -54,7 +52,7 @@ export const RoomListPeer: React.FC<Props> = ({
       onClick={() => onPeerChallenge()}
     >
       <div className={cls.topBar}>
-        {streaming && (
+        {streamConfig.on && (
           <div className={cls.mutunachi}>
             <Mutunachi mid={avatar} height="35px" />
           </div>
@@ -62,18 +60,16 @@ export const RoomListPeer: React.FC<Props> = ({
         <div
           className={cls.peerNameContainer}
           style={{
-            fontWeight: me ? 'bold' : 'normal',
-            color: me ? '#F7627B' : '#000000',
+            fontWeight: isMe ? 'bold' : 'normal',
+            color: isMe ? '#F7627B' : '#000000',
           }}
         >
           {peer.name}
         </div>
       </div>
       <div className={cls.videoContainer}>
-        {streaming ? (
-          <FaceTime
-            streamConfig={streaming}
-          />
+        {streamConfig.on ? (
+          <FaceTime streamConfig={streamConfig} />
         ) : (
           <div className={cls.mutunachiLarge}>
             <Mutunachi mid={avatar} height="90px" />

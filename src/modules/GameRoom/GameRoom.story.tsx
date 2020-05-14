@@ -74,7 +74,6 @@ export const publicRoom = () => (
         stopStreaming={action('stop streaming')}
         broadcastMessage={action('broadcast messsage')}
         localStream={undefined}
-        playersById={undefined}
         currentGame={undefined}
         chatHistory={[]}
       />
@@ -129,10 +128,6 @@ export const roomWithPlayers = () =>
           stopStreaming={action('stop streaming')}
           broadcastMessage={action('broadcast messsage')}
           localStream={localStream}
-          playersById={{
-            [currentGame.players.white.id]: currentGame.players.white,
-            [currentGame.players.black.id]: currentGame.players.black,
-          }}
           currentGame={currentGame}
           chatHistory={[]}
         />
@@ -161,10 +156,6 @@ export const roomWithPlayersAndNoStream = () =>
           }}
           stopStreaming={action('stop streaming')}
           broadcastMessage={action('broadcast messsage')}
-          playersById={{
-            [currentGame.players.white.id]: currentGame.players.white,
-            [currentGame.players.black.id]: currentGame.players.black,
-          }}
           currentGame={currentGame}
           chatHistory={[]}
         />
@@ -204,7 +195,6 @@ export const waitingForPlayer = () =>
           stopStreaming={action('stop streaming')}
           broadcastMessage={action('broadcast messsage')}
           localStream={localStream}
-          playersById={undefined}
           currentGame={undefined}
           chatHistory={[]}
         />

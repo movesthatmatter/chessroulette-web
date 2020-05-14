@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
 import { SocketConsumer } from 'src/components/SocketProvider';
 import { PeersProvider } from 'src/components/PeersProvider';
@@ -9,8 +9,6 @@ import {
 } from 'src/components/ChatBox/records/ChatMessageRecord';
 import * as io from 'io-ts';
 import {
-  ChessPlayers,
-  ChessPlayer,
   ChessGameState,
   reduceChessGame,
 } from '../Games/Chess';
@@ -27,27 +25,9 @@ type Props = {
   room: RoomStatsRecord;
 };
 
-type ChessPlayersById = Record<string, ChessPlayer>;
-
-const getPlayersById = (players: ChessPlayers): ChessPlayersById => ({
-  [players.white.id]: players.white,
-  [players.black.id]: players.black,
-});
-
 export const GameRoomContainer: React.FC<Props> = (props) => {
   const [chatHistory, setChatHistory] = useState<ChatMessageRecord[]>([]);
   const [currentGame, setCurrentGame] = useState<ChessGameState | undefined>();
-  const [playersById, setPlayersById] = useState<ChessPlayersById | undefined>(
-    currentGame ? getPlayersById(currentGame.players) : undefined,
-  );
-
-  useEffect(() => {
-    if (currentGame) {
-      setPlayersById(getPlayersById(currentGame.players));
-    } else {
-      setPlayersById(undefined);
-    }
-  }, [currentGame?.players]);
 
   const handleMessages = (payload: unknown) => {
     eitherToResult(
@@ -127,7 +107,6 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
               localStream={localStream}
               // Game
               currentGame={currentGame}
-              playersById={playersById}
               onNewGame={(players) => {
                 const payload: GameInvitationRecord = {
                   msgType: 'gameInvitation',

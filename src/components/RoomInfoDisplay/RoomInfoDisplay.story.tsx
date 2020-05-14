@@ -4,9 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { RoomStatsRecord, roomStatsRecord } from 'dstnd-io';
 import { action } from '@storybook/addon-actions';
 import { AVStreaming } from 'src/services/AVStreaming';
-import { SocketProvider } from 'src/components/SocketProvider';
 import StoryRouter from 'storybook-react-router';
-import { RoomInfoDisplay, RoomInfoProps } from './RoomInfoDisplay';
+import { PeerConnectionStatus } from 'src/services/peers';
+import { RoomInfoDisplay } from './RoomInfoDisplay';
+import { PeerConnections } from '../PeersProvider';
 
 export default {
   component: RoomInfoDisplay,
@@ -14,7 +15,7 @@ export default {
   decorators: [StoryRouter()],
 };
 
-const myId = 3;
+
 const peers = {
   1: {
     id: '1',
@@ -41,9 +42,9 @@ const peers = {
     name: 'Lebada',
   },
 } as const;
+const myId = peers[3].id;
 
-
-const players = {
+const playersById = {
   1: {
     color: 'white',
     id: peers[1].id,
@@ -114,7 +115,7 @@ const getPeerConnectionsWithNoVideos = () =>
         peerId: peer.id,
         channels: {
           data: { on: true },
-          streaming: undefined,
+          streaming: { on: false },
         },
       } as const,
     }),
@@ -132,7 +133,7 @@ const getPeerConnectionsWithSomeVideo = (localStream: MediaStream) =>
             peerId: peer.id,
             channels: {
               data: { on: true },
-              streaming: undefined,
+              streaming: { on: false },
             },
           } as const,
         };
@@ -179,11 +180,11 @@ export const PublicRoom = () => React.createElement(() => {
         me={peers[myId]}
         room={publicRoom}
         peerConnections={getPeerConnections(localStream)}
-        onLeaveRoom={() => console.log('leave room!')}
-        onInviteNewPeer={() => console.log('invite new one')}
-        players={players}
+        onLeaveRoom={action('leave room!')}
+        onInviteNewPeer={action('invite new one')}
+        playersById={playersById}
         localStream={localStream}
-        gamePlayable
+        gameInProgress={false}
       />
     </div>
   );
@@ -212,11 +213,11 @@ export const PrivateRoom = () => React.createElement(() => {
         me={peers[myId]}
         room={privateRoom}
         peerConnections={getPeerConnections(localStream)}
-        onLeaveRoom={() => console.log('leave room!')}
-        onInviteNewPeer={() => console.log('invite new one')}
-        players={players}
+        onLeaveRoom={action('leave room!')}
+        onInviteNewPeer={action('invite new one')}
+        playersById={playersById}
         localStream={localStream}
-        gamePlayable
+        gameInProgress={false}
       />
     </div>
   );
@@ -247,11 +248,11 @@ export const RoomWithSomeVideosOnly = () => React.createElement(() => {
         me={peers[myId]}
         room={publicRoom}
         peerConnections={getPeerConnectionsWithSomeVideo(localStream)}
-        onLeaveRoom={() => console.log('leave room!')}
-        onInviteNewPeer={() => console.log('invite new one')}
-        players={players}
+        onLeaveRoom={action('leave room!')}
+        onInviteNewPeer={action('invite new one')}
+        playersById={playersById}
         localStream={localStream}
-        gamePlayable={false}
+        gameInProgress
       />
     </div>
   );
@@ -264,10 +265,10 @@ export const NoVideo = () => React.createElement(() => (
       me={peers[myId]}
       room={publicRoom}
       peerConnections={getPeerConnectionsWithNoVideos()}
-      onLeaveRoom={() => console.log('leave room!')}
-      onInviteNewPeer={() => console.log('invite new one')}
-      players={players}
-      gamePlayable
+      onLeaveRoom={action('leave room!')}
+      onInviteNewPeer={action('invite new one')}
+      playersById={playersById}
+      gameInProgress={false}
     />
   </div>
 ));
@@ -279,10 +280,10 @@ export const NoVideoGameInProgress = () => React.createElement(() => (
       me={peers[myId]}
       room={publicRoom}
       peerConnections={getPeerConnectionsWithNoVideos()}
-      onLeaveRoom={() => console.log('leave room!')}
-      onInviteNewPeer={() => console.log('invite new one')}
-      players={players}
-      gamePlayable={false}
+      onLeaveRoom={action('leave room!')}
+      onInviteNewPeer={action('invite new one')}
+      playersById={playersById}
+      gameInProgress
     />
   </div>
 ));
@@ -293,11 +294,11 @@ export const NoPeersJoinedYet = () => React.createElement(() => (
     <RoomInfoDisplay
       me={emptyRoom.peers[1]}
       room={emptyRoom}
-      peerConnections={getPeerConnectionsWithNoVideos()}
-      onLeaveRoom={() => console.log('leave room!')}
-      onInviteNewPeer={() => console.log('invite new one')}
-      players={undefined}
-      gamePlayable={false}
+      peerConnections={{}}
+      onLeaveRoom={action('leave room!')}
+      onInviteNewPeer={action('invite new one')}
+      playersById={{}}
+      gameInProgress={false}
     />
   </div>
 ));

@@ -17,6 +17,7 @@ import {
   reduceChessGame,
 } from '../Games/Chess';
 import { PlayerBox } from './components/PlayerBox/PlayerBox';
+import { otherChessColor } from '../Games/Chess/util';
 
 export type GameRoomProps = {
   me: PeerRecord;
@@ -24,7 +25,7 @@ export type GameRoomProps = {
   peerConnections: PeerConnections;
 
   // Game
-  playersById: Record<string, ChessPlayer> | undefined;
+  // playersById: Record<string, ChessPlayer>;
   currentGame: ChessGameState | undefined;
   onNewGame: (players: { challengerId: string; challengeeId: string }) => void;
   onGameStateUpdate: (nextState: ChessGameState) => void;
@@ -58,18 +59,46 @@ const unknownPlayers: ChessPlayers = {
 
 const chessColors = ['white', 'black'] as const;
 
+type ChessPlayersById = Record<string, ChessPlayer>;
+
+// Memoize this to make it faster if needed
+const getPlayersById = (gameState: ChessGameState | undefined): ChessPlayersById => {
+  if (!gameState) {
+    return {};
+  }
+
+  return {
+    [gameState.players.white.id]: gameState.players.white,
+    [gameState.players.black.id]: gameState.players.black,
+  };
+};
+
 export const GameRoom: React.FC<GameRoomProps> = ({
   me,
   peerConnections,
-  playersById,
   ...props
 }) => {
   const cls = useStyles();
   const [lastMoveTime, setLastMoveTime] = useState<Date | undefined>();
 
-  const homeColor = (playersById && playersById[me.id] && playersById[me.id].color) || 'white';
-  const awayColor = complement(homeColor, chessColors);
-  const playable = !!(playersById && !!playersById[me.id]);
+  const playersById = props.currentGame
+    ? getPlayersById(props.currentGame)
+    // If there is no game in progress set me as the initial player
+    : {
+      [me.id]: {
+        id: me.id,
+        name: me.name,
+        color: 'white',
+      } as const,
+    };
+
+  const homeColor = (playersById[me.id] && playersById[me.id].color) || 'white';
+  const awayColor = otherChessColor(homeColor);
+  const playable = !!playersById[me.id];
+
+
+  console.log('chess game state', props.currentGame);
+  console.log('players by id', playersById);
 
   const playerHomeId = props.currentGame
     ? props.currentGame.players[homeColor].id
@@ -199,8 +228,8 @@ export const GameRoom: React.FC<GameRoomProps> = ({
               localStream={props.localStream as MediaStream}
               room={props.room}
               peerConnections={peerConnections}
-              players={playersById}
-              gamePlayable={playable}
+              playersById={playersById}
+              gameInProgress={!!props.currentGame && (props.currentGame.state === 'pending' || props.currentGame.state === 'started')}
             />
             <div>
               {props.room.type === 'private' && (
