@@ -42,7 +42,6 @@ const mockPlayers = {
 export const asWhite = () => (
   <ChessGame
     homeColor="white"
-    players={mockPlayers}
     allowSinglePlayerPlay
     pgn=""
   />
@@ -50,7 +49,6 @@ export const asWhite = () => (
 export const asBlack = () => (
   <ChessGame
     homeColor="black"
-    players={mockPlayers}
     allowSinglePlayerPlay
     pgn=""
   />
@@ -65,7 +63,6 @@ export const withLoggingOnMove = () => React.createElement(() => {
         setFen(newFen);
         action('onMove')(newFen);
       }}
-      players={mockPlayers}
       allowSinglePlayerPlay
       pgn={fen}
       // fen={fen}
@@ -77,7 +74,6 @@ export const withStartedGame = () => (
   <ChessGame
     homeColor="black"
     // fen="rnb1kbnr/ppp1pppp/3q4/3p4/4PP2/2N5/PPPP2PP/R1BQKBNR b KQkq - 2 3"
-    players={mockPlayers}
     pgn=""
   />
 );
@@ -102,6 +98,6 @@ export const demoRandomGame = () =>
     }, []);
 
     return (
-      <ChessGame homeColor="white" pgn={gameState.pgn} players={mockPlayers} />
+      <ChessGame homeColor="white" pgn={gameState.pgn} />
     );
   });

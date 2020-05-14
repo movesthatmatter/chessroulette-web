@@ -6,10 +6,8 @@ import { Move } from 'chess.js';
 import { getBoardSize } from 'src/modules/GameRoom/util';
 import { ChessBoard } from '../ChessBoard';
 import { getNewChessGame } from '../../lib/sdk';
-import { ChessPlayers } from '../../records';
 
 type Props = React.HTMLProps<HTMLDivElement> & {
-  players: ChessPlayers;
   playable?: boolean;
   allowSinglePlayerPlay?: boolean;
   onMove?: (pgn: string) => void;
