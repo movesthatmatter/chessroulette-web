@@ -95,10 +95,9 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
         </div>
         <div className={cls.challengeContainer}>
           <div style={{ padding: '5px' }}>
-            {toChallenge !== '' && gameInProgress
+            {toChallenge !== ''
               ? `Challenge : ${toChallenge}`
               : setTitleState(gameInProgress, room.peersCount)}
-
           </div>
         </div>
         <div className={cls.listContainer}>
@@ -120,7 +119,7 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
                   challengerId: me.id,
                   challengeeId: pc.peerId,
                 })}
-                canChallenge={!gameInProgress && pc.peerId === me.id}
+                canChallenge={!gameInProgress && pc.peerId !== me.id}
                 onDisplayChallengeName={(value) => setToChallenge(value)}
               />
             </div>

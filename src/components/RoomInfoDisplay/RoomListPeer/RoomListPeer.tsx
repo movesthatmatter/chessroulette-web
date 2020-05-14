@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { PeerRecord } from 'dstnd-io';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
@@ -26,17 +26,14 @@ export const RoomListPeer: React.FC<Props> = ({
   onDisplayChallengeName,
 }) => {
   const cls = useStyle();
-  const [over, setMouseOver] = useState(false);
 
   const checkMouseOver = () => {
     if (canChallenge) {
       onDisplayChallengeName(peer.name);
     }
-    setMouseOver(true);
   };
 
   const checkMouseOut = () => {
-    setMouseOver(false);
     onDisplayChallengeName('');
   };
 
@@ -47,7 +44,11 @@ export const RoomListPeer: React.FC<Props> = ({
       onMouseOut={() => checkMouseOut()}
       onFocus={() => checkMouseOver()}
       onBlur={() => checkMouseOut()}
-      onClick={onPeerChallenge}
+      onClick={() => {
+        if (canChallenge) {
+          onPeerChallenge();
+        }
+      }}
     >
       <div className={cls.topBar}>
         {streamConfig.on && (
