@@ -1,27 +1,21 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { PeerRecord } from 'dstnd-io';
-import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import { Mutunachi, MutunachiProps } from 'src/components/Mutunachi/Mutunachi';
 import { FaceTime } from 'src/components/FaceTimeArea/FaceTime';
-import { PeerConnectionStatus } from 'src/services/peers';
+import { Peer } from 'src/components/RoomProvider';
 
 type Props = {
-  peer: PeerRecord;
-  onPeerChallenge: () => void;
-  avatar: AvatarsType;
+  peer: Peer;
   isMe: boolean;
-  streamConfig: PeerConnectionStatus['channels']['streaming'];
   canChallenge: boolean;
+  onPeerChallenge: () => void;
   onDisplayChallengeName: (value: string) => void;
 };
-export type AvatarsType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
 export const RoomListPeer: React.FC<Props> = ({
   peer,
   onPeerChallenge,
-  avatar,
   isMe,
-  streamConfig,
   canChallenge,
   onDisplayChallengeName,
 }) => {
@@ -51,11 +45,9 @@ export const RoomListPeer: React.FC<Props> = ({
       }}
     >
       <div className={cls.topBar}>
-        {streamConfig.on && (
-          <div className={cls.mutunachi}>
-            <Mutunachi mid={avatar} style={{ height: '35px' }} />
-          </div>
-        )}
+        <div className={cls.mutunachi}>
+          <Mutunachi mid={peer.avatarId as MutunachiProps['mid']} style={{ height: '35px' }} />
+        </div>
         <div
           className={cls.peerNameContainer}
           style={{
@@ -67,11 +59,11 @@ export const RoomListPeer: React.FC<Props> = ({
         </div>
       </div>
       <div className={cls.videoContainer}>
-        {streamConfig.on ? (
-          <FaceTime streamConfig={streamConfig} />
+        {peer.connection.channels.streaming.on ? (
+          <FaceTime streamConfig={peer.connection.channels.streaming} />
         ) : (
           <div className={cls.mutunachiLarge}>
-            <Mutunachi mid={avatar} style={{ height: '90px' }} />
+            <Mutunachi mid={peer.avatarId as MutunachiProps['mid']} style={{ height: '90px' }} />
           </div>
         )}
       </div>
@@ -86,9 +78,7 @@ const useStyle = createUseStyles({
     borderRadius: '14px',
     '&:hover': {
       cursor: 'pointer',
-      background:
-      // eslint-disable-next-line max-len
-        'linear-gradient(#EFE7E8 0% ,rgba(232, 232, 232, 0) 100%)',
+      background: 'linear-gradient(#EFE7E8 0% ,rgba(232, 232, 232, 0) 100%)',
     },
     padding: '5px',
   },
