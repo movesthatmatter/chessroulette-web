@@ -3,6 +3,7 @@ import React from 'react';
 import { RoomProvider } from './RoomProvider';
 import { SocketProvider } from '../SocketProvider';
 import { RoomInfoDisplay } from '../RoomInfoDisplay';
+import { RoomStats } from '../RoomStats';
 
 
 export default {
@@ -15,12 +16,15 @@ export const defaultStory = () => (
     <RoomProvider
       id="1"
       render={({ me, room }) => (
-        <RoomInfoDisplay
-          me={me}
-          room={room}
-          gameInProgress={false}
-          playersById={{}}
-        />
+        <>
+          <RoomInfoDisplay
+            me={me}
+            room={room}
+            gameInProgress={false}
+            playersById={{}}
+          />
+          <RoomStats room={room} />
+        </>
       )}
       renderFallback={() => (
         <div>doesnt work</div>

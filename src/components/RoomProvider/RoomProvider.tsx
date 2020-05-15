@@ -2,6 +2,7 @@ import React, { useState, ReactNode, useEffect } from 'react';
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { AVStreamingConstraints } from 'src/services/AVStreaming';
+import { noop } from 'src/lib/util';
 import { SocketConsumer } from '../SocketProvider';
 import { PeersProvider, PeerConnections } from '../PeersProvider';
 import { Room, Peer } from './types';
@@ -25,21 +26,24 @@ type Props = {
     error: Errors | undefined;
     loading: boolean;
   }) => ReactNode;
+
+  onMessageReceived?: PeersProvider['props']['onPeerMsgReceived'];
+  onMessageSent?: PeersProvider['props']['onPeerMsgSent'];
 };
 
 type Errors = 'WrongCode';
 
-export const RoomProvider: React.FC<Props> = (props) => {
+export const RoomProvider: React.FC<Props> = ({
+  onMessageReceived = noop,
+  onMessageSent = noop,
+  ...props
+}) => {
   const [error, setError] = useState<Errors | undefined>();
   const [
     socketRecords,
     setSocketRecords,
   ] = useState<{me: PeerRecord; room: RoomStatsRecord} | undefined>();
   const [rtcPeerConnections, setRtcPeerConnections] = useState<PeerConnections>({});
-
-  // const [me, setMe] = useState<Peer | undefined>();
-  // const [room, setRoom] = useState<Room | undefined>();
-
   const [meAndMyRoom, setMeAndMyRoom] = useState<{me: Peer; room: Room} | undefined>();
 
   useEffect(() => {
@@ -118,6 +122,7 @@ export const RoomProvider: React.FC<Props> = (props) => {
         },
 
         // Updates from RTC (Peer Connections)
+        me: nextMe,
         peers: nextPeers,
         peersCount: Object.keys(nextPeers).length,
       };
@@ -155,12 +160,17 @@ export const RoomProvider: React.FC<Props> = (props) => {
                 socket={socket}
                 me={socketRecords.me}
                 initialPeers={Object.values(socketRecords.room.peers)}
-                onReady={({ connect }) => {
+                onReady={({ connect, startAVBroadcasting }) => {
                 // Connect to all the peers right away
                   connect();
+
+                  // setTimeout(() => {
+                  //   startAVBroadcasting();
+                  // }, 3 * 1000);
                 }}
                 onPeerConnectionsChanged={setRtcPeerConnections}
-                // TODO: This might b more useful as a map
+                onPeerMsgReceived={onMessageReceived}
+                onPeerMsgSent={onMessageSent}
 
                 render={({
                   startAVBroadcasting,
