@@ -1,5 +1,9 @@
 import { Pubsy } from 'src/lib/Pubsy';
 
+export type AVStreamingConstraints = {
+  video: boolean;
+  audio: boolean;
+}
 
 export class AVStreaming {
   private pubsy = new Pubsy<{
@@ -13,9 +17,9 @@ export class AVStreaming {
     return !!this.stream;
   }
 
-  async start(constraints = {
+  async start(constraints: AVStreamingConstraints = {
     video: true,
-    audio: true,
+    audio: false,
   }) {
     if (this.stream) {
       return this.stream;
