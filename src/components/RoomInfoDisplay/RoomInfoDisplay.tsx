@@ -15,7 +15,6 @@ export type RoomInfoProps = {
   playersById: Record<string, { id: string }>;
   gameInProgress: boolean;
 
-  localStream?: MediaStream;
   onLeaveRoom?: (roomId?: string) => void;
   onInviteNewPeer?: () => void;
   onChallenge?: (challenge: GameChallengeRecord) => void;

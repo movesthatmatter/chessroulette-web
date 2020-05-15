@@ -1,7 +1,3 @@
-// export const Peer = {
-//   id: '1',
-//   name: 'Broasca',
-// };
 import { PeerRecord } from 'dstnd-io';
 import Chance from 'chance';
 
