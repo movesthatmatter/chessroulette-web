@@ -11,6 +11,7 @@ import m8 from './assets/mutunachi_8.png';
 import m9 from './assets/mutunachi_9.png';
 import m10 from './assets/mutunachi_10.png';
 import m11 from './assets/Group 20.png';
+import mutunachiIceCreamAndBaloons from './assets/mutunachi_ice_cream_and_baloons.png';
 
 const map = {
   0: m0,
@@ -25,15 +26,29 @@ const map = {
   9: m9,
   10: m10,
   11: m11,
+  mutunachiIceCreamAndBaloons,
 };
 
-type Props = React.DetailedHTMLProps<
+export type MutunachiProps = React.DetailedHTMLProps<
 React.ImgHTMLAttributes<HTMLImageElement>,
 HTMLImageElement
 > & {
   mid: keyof typeof map;
 };
 
-export const Mutunachi: React.FC<Props> = ({ mid, ...imgProps }) => (
-  <img src={map[mid]} alt="Mutunachi" {...imgProps} />
+export const Mutunachi: React.FC<MutunachiProps> = ({
+  mid, className, style, ...imgProps
+}) => (
+  <div className={className} style={style}>
+    <img
+      src={map[mid]}
+      alt="Mutunachi"
+      {...imgProps}
+      style={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'contain',
+      }}
+    />
+  </div>
 );

@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { shuffle } from 'src/lib/util';
+import React, { useState } from 'react';
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
 import { SocketConsumer } from 'src/components/SocketProvider';
 import { PeersProvider } from 'src/components/PeersProvider';
 import { eitherToResult } from 'src/lib/ioutil';
-import { ChatMessageRecord, chatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRecord';
-import * as io from 'io-ts';
 import {
-  ChessPlayers,
-  ChessPlayer,
-  ChessGameState,
-} from '../Games/Chess';
+  ChatMessageRecord,
+  chatMessageRecord,
+} from 'src/components/ChatBox/records/ChatMessageRecord';
+import * as io from 'io-ts';
+import { ChessGameState, reduceChessGame } from '../Games/Chess';
 import { GameRoom } from './GameRoom';
 import {
-  GameInvitationRecord,
   GameDataRecord,
   gameDataRecord,
   GameStartedRecord,
+  GameChallengeOfferRecord,
+  GameChallengeRefusedRecord,
+  GameChallengeCancelledRecord,
 } from './records/GameDataRecord';
 
 type Props = {
@@ -24,70 +24,37 @@ type Props = {
   room: RoomStatsRecord;
 };
 
-type ChessPlayersById = Record<string, ChessPlayer>;
-
-const getPlayersById = (players: ChessPlayers): ChessPlayersById => ({
-  [players.white.id]: players.white,
-  [players.black.id]: players.black,
-});
-
 export const GameRoomContainer: React.FC<Props> = (props) => {
   const [chatHistory, setChatHistory] = useState<ChatMessageRecord[]>([]);
   const [currentGame, setCurrentGame] = useState<ChessGameState | undefined>();
   const [
-    playersById,
-    setPlayersById,
-  ] = useState<ChessPlayersById | undefined>(
-    currentGame
-      ? getPlayersById(currentGame.players)
-      : undefined,
-  );
-
-  const getNewChessGame = (playerIds: string[], time = 10 * 60): ChessGameState => {
-    const [whitePlayerId, blackPlayerId] = shuffle(playerIds);
-
-    return {
-      players: {
-        white: {
-          name: props.room.peers[whitePlayerId]?.name,
-          id: whitePlayerId,
-          color: 'white',
-        },
-        black: {
-          name: props.room.peers[blackPlayerId]?.name,
-          id: blackPlayerId,
-          color: 'black',
-        },
-      },
-      timeLeft: {
-        white: time,
-        black: time,
-      },
-      lastMoved: 'black', // at first set it to black so white's timer starts
-      pgn: '',
-    } as const;
-  };
-
-  const updateGameStatePgn = (nextGameState: ChessGameState) => {
-    setCurrentGame(nextGameState);
-  };
-
-  useEffect(() => {
-    if (currentGame) {
-      setPlayersById(getPlayersById(currentGame.players));
-    } else {
-      setPlayersById(undefined);
-    }
-  }, [currentGame?.players]);
+    challengeOffer,
+    setChallengeOffer,
+  ] = useState<GameChallengeOfferRecord | undefined>();
 
   const handleMessages = (payload: unknown) => {
-    eitherToResult(io.union([gameDataRecord, chatMessageRecord]).decode(payload)).map((msg) => {
+    eitherToResult(
+      io.union([gameDataRecord, chatMessageRecord]).decode(payload),
+    ).map((msg) => {
       if (msg.msgType === 'gameStarted') {
+        setChallengeOffer(undefined);
         setCurrentGame(msg.content);
       } else if (msg.msgType === 'gameUpdate') {
-        updateGameStatePgn(msg.content);
+        setCurrentGame(msg.content);
       } else if (msg.msgType === 'chatMessage') {
         setChatHistory((prev) => [...prev, msg]);
+      } else if (msg.msgType === 'gameChallengeOffer') {
+        // If the invitation is not to me return early
+        // if (msg.content.challengeeId !== props.me.id) {
+        //   return;
+        // }
+
+        setChallengeOffer(msg);
+      } else if (
+        msg.msgType === 'gameChallengeRefused'
+        || msg.msgType === 'gameChallengeCancelled'
+      ) {
+        setChallengeOffer(undefined);
       }
     });
   };
@@ -105,34 +72,7 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
             setTimeout(startAVBroadcasting, 3 * 1000);
           }}
           onPeerMsgSent={(envelope) => handleMessages(envelope.message)}
-          onPeerMsgReceived={(envelope, { broadcastMessage }) => {
-            handleMessages(envelope.message);
-
-            eitherToResult(gameDataRecord.decode(envelope.message))
-              .map((msg) => {
-                if (msg.msgType === 'gameInvitation') {
-                  // If the invitation is not to me return early
-                  if (msg.content.challengeeId !== props.me.id) {
-                    return;
-                  }
-
-                  const newGame = getNewChessGame([
-                    msg.content.challengerId,
-                    msg.content.challengeeId,
-                  ]);
-
-                  // Otherwise Accept it right away for now
-                  const returnMsgPayload: GameStartedRecord = {
-                    msgType: 'gameStarted',
-                    gameType: 'chess',
-                    content: newGame,
-                  };
-
-                  // Send the game to the peers
-                  broadcastMessage(returnMsgPayload);
-                }
-              });
-          }}
+          onPeerMsgReceived={(envelope) => handleMessages(envelope.message)}
           render={({
             broadcastMessage,
             startAVBroadcasting,
@@ -150,14 +90,69 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
               localStream={localStream}
               // Game
               currentGame={currentGame}
-              playersById={playersById}
-              onNewGame={(players) => {
-                const payload: GameInvitationRecord = {
-                  msgType: 'gameInvitation',
+              challengeOffer={challengeOffer?.content}
+              onChallengeOffer={(challenge) => {
+                const payload: GameChallengeOfferRecord = {
+                  msgType: 'gameChallengeOffer',
                   gameType: 'chess',
-                  content: players,
+                  content: challenge,
                 };
 
+                broadcastMessage(payload);
+              }}
+              onChallengeAccepted={({ challengeeId, challengerId }) => {
+                // Ensure no one but the challengee can accept an offer
+                if (props.me.id !== challengeeId) {
+                  return;
+                }
+
+                // Once the challenge is accepted the game can start
+                const newGame = reduceChessGame.prepareGame({
+                  timeLimit: 'rapid', // Get it from outside
+                  homeColor: 'random', // Get it from outside
+                  playersBySide: {
+                    home: props.room.peers[challengerId],
+                    away: props.room.peers[challengeeId],
+                  },
+                });
+
+                const payload: GameStartedRecord = {
+                  msgType: 'gameStarted',
+                  gameType: 'chess',
+                  content: newGame,
+                };
+
+                // Send the game to the peers
+                broadcastMessage(payload);
+              }}
+              onChallengeRefused={(challenge) => {
+                // Ensure no one but the challengee can refuse an offer
+                if (props.me.id !== challenge.challengeeId) {
+                  return;
+                }
+
+                const payload: GameChallengeRefusedRecord = {
+                  msgType: 'gameChallengeRefused',
+                  gameType: 'chess',
+                  content: challenge,
+                };
+
+                // Send the game to the peers
+                broadcastMessage(payload);
+              }}
+              onChallengeCancelled={(challenge) => {
+                // Ensure no one but the challenger can cancel an offer
+                if (props.me.id !== challenge.challengerId) {
+                  return;
+                }
+
+                const payload: GameChallengeCancelledRecord = {
+                  msgType: 'gameChallengeCancelled',
+                  gameType: 'chess',
+                  content: challenge,
+                };
+
+                // Send the game to the peers
                 broadcastMessage(payload);
               }}
               onGameStateUpdate={(nextGameState) => {
