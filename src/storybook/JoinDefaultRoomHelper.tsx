@@ -2,7 +2,7 @@ import React, { useState, useEffect, ReactNode } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { PublicRoomsResponsePayload, PeerRecord, RoomStatsRecord } from 'dstnd-io';
 import { SocketConsumer, SocketConsumerProps } from 'src/components/SocketProvider';
-import { getPublicRooms } from 'src/modules/Lobby/resources';
+import { getPublicRooms } from 'src/resources';
 
 type Props = Pick<SocketConsumerProps, 'autoDemandConnection' | 'fallbackRender'> & {
   render: (props: {

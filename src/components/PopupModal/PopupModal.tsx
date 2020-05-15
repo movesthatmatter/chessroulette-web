@@ -45,8 +45,8 @@ const useStyles = createUseStyles({
     transition: 'all 0.3s ease-out',
     backgroundColor: 'white',
     margin: '0 auto',
-    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.15)',
-    borderRadius: '8px',
+    boxShadow: '1px 1px 20px rgba(0, 0, 0, 0.13)',
+    borderRadius: '35px',
     padding: '3px',
   },
 });

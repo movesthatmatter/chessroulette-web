@@ -1,43 +1,24 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
-import React from 'react';
+import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
+import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { CustomInput } from './CustomInput/CustomInput';
 
-type popProps = {
+type Props = {
   close: () => void;
   dispatchCodeJoin: (value: string) => void;
   dispatchCreate: () => void;
-}
-type inputs = 'input1' | 'input2' | 'input3' | 'input4' | 'input5' | 'input6';
-type inputTypes = {
-  [key in inputs]: string;
 };
-export const PlayWithFriendsPopup = ({ close, dispatchCodeJoin, dispatchCreate }: popProps) => {
+
+export const PlayWithFriendsPopup: React.FC<Props> = ({
+  close,
+  dispatchCodeJoin,
+  dispatchCreate,
+}) => {
   const cls = useStyle();
-  const inputValues: inputTypes = {
-    input1: '',
-    input2: '',
-    input3: '',
-    input4: '',
-    input5: '',
-    input6: '',
-  };
-  const inputChangedHandler = (value: string, id: inputs) => {
-    inputValues[id] = value;
-  };
-  const joinHandler = () => {
-    let valid = true;
-    Object.values(inputValues).forEach((value) => {
-      if (value === '') {
-        valid = false;
-      }
-    });
-    if (valid) {
-      dispatchCodeJoin(Object.values(inputValues).join(''));
-    }
-  };
+  const [inputValue, setInputValue] = useState('');
   return (
     <>
       <div className={cls.exitButton}>
@@ -45,50 +26,57 @@ export const PlayWithFriendsPopup = ({ close, dispatchCodeJoin, dispatchCreate }
           icon={faTimesCircle}
           size="lg"
           className={cls.exitIcon}
-          onClick={() => close()}
+          onClick={close}
         />
       </div>
       <div className={cls.modalContainer}>
-        <div className={cls.modalTitle}>
-          Enter room CODE:
-        </div>
+        <div className={cls.modalTitle}>Enter room CODE:</div>
         <div className={cls.codeInputContainer}>
-          {Object.keys(inputValues).map((input) => (
-            <CustomInput
-              key={input}
-              inputChanged={(value: string) => inputChangedHandler(value, input as inputs)}
-            />
-          ))}
+          <CustomInput onChange={(value) => setInputValue(value)} />
         </div>
-        <div>
+        <div className={cls.bottomPart}>
+          <Mutunachi
+            mid={11}
+            width="101"
+            height="132"
+            style={{ marginRight: '20px' }}
+          />
           <div className={cls.modalButtonContainer}>
-            <ColoredButton
-              label="JOIN"
-              color="#0BCE82"
-              fontSize="21px"
-              borderRadius="22px"
-              width="165px"
-              padding="3px"
-              onClickFunction={() => joinHandler()}
-            />
+            <div style={{ marginBottom: '30px' }}>
+              <ColoredButton
+                label="JOIN"
+                color="#0BCE82"
+                fontSize="21px"
+                borderRadius="22px"
+                width="165px"
+                padding="3px"
+                onClickFunction={() => {
+                  dispatchCodeJoin(inputValue);
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: '30px' }}>
+              <ColoredButton
+                label="CREATE NEW"
+                color="#E66162"
+                fontSize="21px"
+                borderRadius="22px"
+                width="165px"
+                padding="3px"
+                onClickFunction={dispatchCreate}
+              />
+            </div>
           </div>
-          <div>
-            <ColoredButton
-              label="CREATE NEW"
-              color="#E66162"
-              fontSize="21px"
-              borderRadius="22px"
-              width="165px"
-              padding="3px"
-              onClickFunction={() => dispatchCreate()}
-            />
-          </div>
+          <Mutunachi
+            mid={3}
+            width="122"
+            height="166"
+          />
         </div>
       </div>
     </>
   );
 };
-
 
 const useStyle = createUseStyles({
   modalContainer: {
@@ -100,6 +88,7 @@ const useStyle = createUseStyles({
   },
   codeInputContainer: {
     marginBottom: '20px',
+    alignSelf: 'center',
   },
   modalTitle: {
     fontFamily: 'Roboto',
@@ -111,12 +100,21 @@ const useStyle = createUseStyles({
     textAlign: 'center',
   },
   modalButtonContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+  },
+  bottomPart: {
     marginBottom: '20px',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
   },
   exitButton: {
     alignSelf: 'flex-end',
     position: 'absolute',
-    right: '3%',
+    right: '5%',
+    top: '4%',
   },
   exitIcon: {
     color: '#E66162',

@@ -1,104 +1,79 @@
 import React, { useEffect, useState } from 'react';
 import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
+import cx from 'classnames';
+import { Move, Square } from 'chess.js';
+import { getBoardSize } from 'src/modules/GameRoom/util';
 import { ChessBoard } from '../ChessBoard';
 import { getNewChessGame } from '../../lib/sdk';
-import { ChessPlayers } from '../../records';
 
-type Props = {
-  players: ChessPlayers;
-  playable?: boolean;
-  allowSinglePlayerPlay?: boolean;
-  onMove?: (fen: string) => void;
-  fen?: string;
+type Props = React.HTMLProps<HTMLDivElement> & {
+  playable: boolean;
+  onMove?: (pgn: string) => void;
+  pgn: string;
 
   // The bottom side
   homeColor: 'white' | 'black';
 };
 
-
-const timerStart = new Date();
-const calcutateTimerDisplay = (): {minutes: number; seconds: number} => {
-  const dif = +new Date() - +timerStart;
-  const display = {
-    minutes: Math.floor((dif / 1000 / 60) % 60),
-    seconds: Math.floor((dif / 1000) % 60),
-  };
-  return display;
-};
-
 export const ChessGame: React.FunctionComponent<Props> = ({
   onMove = noop,
-  fen = getNewChessGame().fen(),
-  allowSinglePlayerPlay = false,
+  pgn = '',
   playable = true,
   ...props
 }) => {
   const cls = useStyles();
-  const [timer, setTimer] = useState<{minutes: number; seconds: number}>(calcutateTimerDisplay());
-  const awayColor = props.homeColor === 'white' ? 'black' : 'white';
+  const [gameInstance] = useState(getNewChessGame());
+  const [fen, setFen] = useState(gameInstance.fen);
+  const [history, setHistory] = useState([] as Move[]);
 
   useEffect(() => {
-    const timerInterval = setInterval(() => setTimer(calcutateTimerDisplay()), 1000);
-    return () => clearInterval(timerInterval);
-  }, []);
+    gameInstance.load_pgn(pgn);
+    setFen(gameInstance.fen());
+    setHistory(gameInstance.history({ verbose: true }));
+  }, [pgn]);
+
+  const onMoveHandler = ({
+    sourceSquare,
+    targetSquare,
+  }: {
+    sourceSquare: Square;
+    targetSquare: Square;
+  }) => {
+    if (!playable) {
+      return;
+    }
+
+    // see if the move is legal
+    const validMove = gameInstance.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: 'q', // keep it simple for now
+    });
+
+    if (validMove !== null) {
+      // save it here too so it's snappy fast
+      setFen(gameInstance.fen());
+      onMove(gameInstance.pgn());
+    }
+  };
 
   return (
-    <div className={cls.container}>
-      <div className={cls.topScoreInfo}>
-        <div>{timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes}</div>
-        <div>:</div>
-        <div>{timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds}</div>
-      </div>
+    <div className={cx([cls.container, props.className])}>
       <ChessBoard
         orientation={props.homeColor}
         position={fen}
-        calcWidth={({
-          screenWidth,
-          screenHeight,
-        }: {
-          screenWidth: number;
-          screenHeight: number;
-        }) => (screenWidth * 0.35)}
+        calcWidth={getBoardSize}
+        history={history}
         darkSquareStyle={{
           backgroundColor: '#6792B4',
         }}
         lightSquareStyle={{
           backgroundColor: '#D7D7D7',
         }}
-        allowDrag={(p) => {
-          if (!playable) {
-            return false;
-          }
-          return allowSinglePlayerPlay || p.piece.slice(0, 1) === props.homeColor.slice(0, 1);
-        }}
-        onDrop={({ sourceSquare, targetSquare }) => {
-          const game = getNewChessGame(fen);
-
-          // see if the move is legal
-          const validMove = game.move({
-            from: sourceSquare,
-            to: targetSquare,
-          });
-
-          if (validMove !== null) {
-            const nextFen = game.fen();
-
-            onMove(nextFen);
-          }
-        }}
+        onSquareClickMove={onMoveHandler}
+        onDrop={onMoveHandler}
       />
-      <div className={cls.bottomPlayerInfo}>
-        <div style={{ width: '33%', textAlign: 'left' }}>
-          {props.players[awayColor].name.replace(/^\w/, (c) => c.toUpperCase())}
-        </div>
-        <div style={{ width: '33%', textAlign: 'center' }}>
-          :
-        </div>
-        <div style={{ width: '33%', textAlign: 'right' }}>
-          {props.players[props.homeColor].name.replace(/^\w/, (c) => c.toUpperCase())}
-        </div>
-      </div>
     </div>
   );
 };
@@ -111,24 +86,5 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     width: 'fit-content',
-  },
-  topScoreInfo: {
-    fontFamily: 'Roboto',
-    fontSize: '22px',
-    color: 'white',
-    fontWeight: 300,
-    padding: '8px',
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  bottomPlayerInfo: {
-    fontFamily: 'Roboto',
-    fontSize: '18px',
-    color: 'white',
-    fontWeight: 300,
-    padding: '8px',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
 });

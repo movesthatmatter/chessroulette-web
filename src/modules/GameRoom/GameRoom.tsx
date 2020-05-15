@@ -1,38 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { PeerMessageEnvelope, PeerConnectionStatus } from 'src/services/peers';
+import { PeerMessageEnvelope } from 'src/services/peers';
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
-import { FaceTime } from 'src/components/FaceTimeArea/FaceTime';
 import { ChatBoxContainer } from 'src/components/ChatBox';
 import { ChatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRecord';
+import { PeerConnections } from 'src/components/PeersProvider';
+import logo from 'src/assets/logo_black.svg';
+import cx from 'classnames';
+import { RoomInfoDisplay } from 'src/components/RoomInfoDisplay';
+import { PopupModal } from 'src/components/PopupModal/PopupModal';
+import { PopupContent } from 'src/components/PopupContent';
 import {
   ChessGame,
-  ChessPlayers,
-  ChessGameFen,
   ChessPlayer,
+  ChessGameState,
+  reduceChessGame,
 } from '../Games/Chess';
+import { PlayerBox } from './components/PlayerBox/PlayerBox';
+import { otherChessColor } from '../Games/Chess/util';
+import { GameChallengeRecord } from './records/GameDataRecord';
+import { ChallengeOfferPopup } from './components/ChallengeOfferPopup';
 
 export type GameRoomProps = {
   me: PeerRecord;
   room: RoomStatsRecord;
-  peerConnections: PeerConnectionStatus[];
+  peerConnections: PeerConnections;
 
   // Game
-  playersByName: Record<string, ChessPlayer> | undefined;
-  currentGame: {
-    players: ChessPlayers; // generalize it
-    fen?: ChessGameFen;
-  } | undefined;
-  onNewGame: (players: {
-    challenger: string;
-    challengee: string;
-  }) => void;
-  onGameStateUpdate: (nextState: ChessGameFen) => void;
+  onChallengeOffer: (challenge: GameChallengeRecord) => void;
+  onChallengeAccepted: (challenge: GameChallengeRecord) => void;
+  onChallengeRefused: (challenge: GameChallengeRecord) => void;
+  onChallengeCancelled: (challenge: GameChallengeRecord) => void;
+  challengeOffer?: GameChallengeRecord;
+
+  currentGame: ChessGameState | undefined;
+  // onNewGame: (players: { challengerId: string; challengeeId: string }) => void;
+  onGameStateUpdate: (nextState: ChessGameState) => void;
 
   // Streaming
   startStreaming: () => void;
   stopStreaming: () => void;
-  localStream: MediaStream | void;
+  localStream?: MediaStream;
 
   // Chat
   // The GameRoom shouldn't have to handle the state and know the intricacies
@@ -43,169 +51,306 @@ export type GameRoomProps = {
   broadcastMessage: (msg: PeerMessageEnvelope['message']) => void;
 };
 
-const unknownPlayers: ChessPlayers = {
-  white: {
-    name: 'Unknown',
-    color: 'white',
-  },
-  black: {
-    name: 'Unknown',
-    color: 'black',
-  },
+type ChessPlayersById = Record<string, ChessPlayer>;
+
+// Memoize this to make it faster if needed
+const getPlayersById = (
+  gameState: ChessGameState | undefined,
+): ChessPlayersById => {
+  if (!gameState) {
+    return {};
+  }
+
+  return {
+    [gameState.players.white.id]: gameState.players.white,
+    [gameState.players.black.id]: gameState.players.black,
+  };
 };
+
+type PopupTypesMap = {
+  none: undefined;
+  challengeOffer: GameChallengeRecord;
+}
 
 export const GameRoom: React.FC<GameRoomProps> = ({
   me,
   peerConnections,
-  playersByName,
   ...props
 }) => {
   const cls = useStyles();
+  const [lastMoveTime, setLastMoveTime] = useState<Date | undefined>();
+  const [showingPopup, setShowingPopup] = useState<Partial<PopupTypesMap>>({ none: undefined });
+  const [playable, setPlayable] = useState(false);
+
+  const playersById = props.currentGame
+    ? getPlayersById(props.currentGame)
+    // If there is no game in progress set me as the initial player
+    : {
+      [me.id]: {
+        id: me.id,
+        name: me.name,
+        color: 'white',
+      } as const,
+    };
+
+  const homeColor = (playersById[me.id] && playersById[me.id].color) || 'white';
+  const awayColor = otherChessColor(homeColor);
+
+  const playerHomeId = props.currentGame
+    ? props.currentGame.players[homeColor].id
+    : me.id;
+  const playerAwayId = props.currentGame
+    ? props.currentGame.players[awayColor].id
+    : null;
+
+  useEffect(() => {
+    setPlayable(() => {
+      if (!props.currentGame) {
+        return false;
+      }
+
+      // The game is playable only if ME is a player and it's ME's turn
+      return !!playersById[me.id] && props.currentGame.lastMoved !== playersById[me.id].color;
+    });
+  }, [props.currentGame]);
+
+  useEffect(() => {
+    if (props.challengeOffer) {
+      // If we get a challenge offer show the popup
+      setShowingPopup({ challengeOffer: props.challengeOffer });
+    } else if (showingPopup.challengeOffer) {
+      // If the offer gets removed, and the popup is still on, hide it
+      setShowingPopup({ none: undefined });
+    }
+  }, [props.challengeOffer]);
 
   return (
-    <>
-      <div>{`Me: ${me.name}`}</div>
-      <div>{`Room: ${props.room.name}`}</div>
-      {props.room.type === 'private' && (
-        <div>{`Invite Friends: ${props.room.code}`}</div>
-      )}
-      {!props.localStream ? (
-        <button
-          type="button"
-          onClick={props.startStreaming}
-        >
-          Go Live
-        </button>
-      ) : (
-        <>
-          <FaceTime
-            // This should come straight from localStreamClient
-            streamConfig={{
-              on: true,
-              stream: props.localStream,
-              type: 'audio-video',
-            }}
-          />
-          <button
-            type="button"
-            onClick={props.stopStreaming}
-          >
-            Stop
-          </button>
-        </>
-      )}
-      <div className={cls.container}>
-        <div className={cls.leftSide}>
-
-          {peerConnections.map((pc) => (
-            <div key={pc.peerId}>
-              <FaceTime
-                streamConfig={pc.channels.streaming}
+    <div className={cls.container}>
+      <div className={cls.paddingWrapper}>
+        <div className={cls.top}>
+          <img src={logo} alt="logo" className={cls.logo} />
+        </div>
+        <main className={cls.grid}>
+          <aside className={cx(cls.leftSide, cls.playersContainer)}>
+            {props.currentGame && playerAwayId ? (
+              <PlayerBox
+                className={cx(cls.playerBox, cls.playerBoxAway)}
+                currentGame={props.currentGame}
+                onTimeFinished={() => {
+                  if (
+                    !props.currentGame
+                    || props.currentGame.state === 'finished'
+                    || props.currentGame.state === 'neverStarted'
+                  ) {
+                    return;
+                  }
+                  props.onGameStateUpdate(
+                    reduceChessGame.timerFinished(props.currentGame, {
+                      loser: awayColor,
+                    }),
+                  );
+                }}
+                player={props.currentGame.players[awayColor]}
+                mutunachiId={9}
+                side="away"
+                streamConfig={peerConnections[playerAwayId].channels.streaming}
               />
-              {!props.currentGame && (
-                <button
-                  type="button"
-                  onClick={() => props.onNewGame({
-                    challengee: pc.peerId,
-                    challenger: me.id,
-                  })}
-                >
-                  {`Challenge ${pc.peerId}`}
-                </button>
+            ) : (
+              <div className={cx(cls.playerBox, cls.playerBoxAway)}>
+                game not started
+              </div>
+            )}
+            <PlayerBox
+              className={cx(cls.playerBox, cls.playerBoxHome)}
+              currentGame={props.currentGame}
+              onTimeFinished={() => {
+                if (
+                  !props.currentGame
+                  || props.currentGame.state === 'finished'
+                  || props.currentGame.state === 'neverStarted'
+                ) {
+                  return;
+                }
+
+                props.onGameStateUpdate(
+                  reduceChessGame.timerFinished(props.currentGame, {
+                    loser: homeColor,
+                  }),
+                );
+              }}
+              player={
+                props.currentGame?.players[homeColor] ?? {
+                  ...me,
+                  color: 'white',
+                }
+              }
+              mutunachiId={3}
+              side="home"
+              streamConfig={
+                playerHomeId !== me.id
+                  ? peerConnections[playerHomeId].channels.streaming
+                  : {
+                    ...(props.localStream
+                      ? {
+                        on: true,
+                        stream: props.localStream,
+                        type: 'audio-video',
+                      }
+                      : {
+                        on: false,
+                      }),
+                  }
+              }
+              // Mute it if it's my stream so it doesn't createa a howling effect
+              muted={playerHomeId === me.id}
+            />
+          </aside>
+          <div className={cls.middleSide}>
+            <ChessGame
+              className={cls.gameContainer}
+              pgn={props.currentGame?.pgn ?? ''}
+              homeColor={homeColor}
+              playable={playable}
+              onMove={(nextPgn) => {
+                // don't move unles the game is pending or started
+                if (
+                  !props.currentGame
+                  || props.currentGame.state === 'finished'
+                  || props.currentGame.state === 'neverStarted'
+                ) {
+                  return;
+                }
+
+                const now = new Date();
+
+                const nextGame = reduceChessGame.move(props.currentGame, {
+                  pgn: nextPgn,
+                  msSinceLastMove:
+                    typeof lastMoveTime === 'undefined'
+                      ? 0
+                      : now.getTime() - lastMoveTime.getTime(),
+                });
+
+                setLastMoveTime(now);
+
+                props.onGameStateUpdate(nextGame);
+              }}
+            />
+          </div>
+          <aside className={cls.rightSide}>
+            <RoomInfoDisplay
+              me={me}
+              localStream={props.localStream as MediaStream}
+              room={props.room}
+              peerConnections={peerConnections}
+              playersById={playersById}
+              gameInProgress={
+                !!props.currentGame
+                && (props.currentGame.state === 'pending'
+                  || props.currentGame.state === 'started')
+              }
+              onChallenge={(challengeOffer) => {
+                props.onChallengeOffer(challengeOffer);
+              }}
+            />
+            <div>
+              {props.room.type === 'private' && (
+                <div>{`Invite Friends: ${props.room.code}`}</div>
               )}
             </div>
-          ))}
-        </div>
-        <div className={cls.middleSide}>
-          <ChessGame
-            players={props.currentGame?.players || unknownPlayers}
-            fen={props.currentGame?.fen}
-            homeColor={
-              (playersByName
-                && playersByName[me.id]
-                && playersByName[me.id].color)
-              || 'white'
-            }
-            playable={!!(playersByName && !!playersByName[me.id])}
-            onMove={(nextFen) => {
-              if (props.currentGame) {
-                props.onGameStateUpdate(nextFen);
-              }
-            }}
-          />
-        </div>
-        <div className={cls.rightSide}>
-          <ChatBoxContainer
-            me={me}
-            broadcastMessage={(...args) => {
-              props.broadcastMessage(...args);
-            }}
-            chatHistory={props.chatHistory}
-          />
-        </div>
+            <div className={cls.chatWrapper}>
+              <ChatBoxContainer
+                me={me}
+                broadcastMessage={(...args) => {
+                  props.broadcastMessage(...args);
+                }}
+                chatHistory={props.chatHistory}
+              />
+            </div>
+          </aside>
+        </main>
       </div>
-    </>
+
+      <PopupModal show={!!showingPopup.challengeOffer}>
+        <PopupContent>
+          {showingPopup.challengeOffer && (
+            <ChallengeOfferPopup
+              challengeOffer={showingPopup.challengeOffer}
+              me={me}
+
+              // TODO: Change the peers to not come from the room anymore
+              //  but from the intersection between Room.peers and Peers.peerConnections
+              peers={props.room.peers}
+
+              onAccepted={props.onChallengeAccepted}
+              onRefused={props.onChallengeRefused}
+              onCancelled={props.onChallengeCancelled}
+            />
+          )}
+        </PopupContent>
+      </PopupModal>
+    </div>
   );
 };
 
 const useStyles = createUseStyles({
-  gameRoomContainer: {
-    zIndex: 1,
-    position: 'absolute',
-    height: '100%',
+  container: {
     width: '100%',
-    top: '0',
-    left: '0',
-  },
-  contentContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    zIndex: 1,
+    height: '100%',
+    background: '#efefef',
     position: 'relative',
   },
-  spacer: {
-    width: '100%',
+  paddingWrapper: {
+    padding: '4px 16px',
+    height: 'calc(100% - 16px)',
   },
-  container: {
+  top: {
+    paddingBottom: '16px',
+  },
+  logo: {
+    width: '200px',
+  },
+  bottom: {},
+  grid: {
     display: 'flex',
     flexDirection: 'row',
+  },
+  playersContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+  },
+  playerBox: {
+    width: '100%',
+    flex: 1,
+    textAlign: 'center',
+  },
+  playerBoxHome: {},
+  playerBoxAway: {},
+  playerStreamFallback: {
+    textAlign: 'center',
+  },
+  playerCharacter: {
+    width: '40p%',
+    textAlign: 'center',
   },
   leftSide: {
     display: 'flex',
     flexDirection: 'column',
-    flex: 0.5,
-    paddingRight: '20px',
+    flex: 1,
   },
   middleSide: {
-    flex: 1,
+    border: '#ddd 1px solid',
+    margin: '0 16px',
   },
+  gameContainer: {},
   rightSide: {
-    flex: 0.5,
-  },
-  challengeButton: {
-    padding: '10px',
-    backgroundColor: 'rgb(8, 209, 131)',
-  },
-  peersContainer: {},
-  avStreamContainer: {
-    display: 'flex',
-    flexDirection: 'column',
     flex: 1,
   },
-  avStream: {
-    width: '100%    !important',
-    maxWidth: '420px !important',
-    height: 'auto   !important',
-  },
-  myAvStream: {
-  },
-  gameWrapper: {
-    position: 'relative',
-    zIndex: 1,
-  },
-  chatBox: {
+  chatWrapper: {
     position: 'absolute',
     bottom: 0,
     zIndex: 2,
+    right: '16px',
   },
 });

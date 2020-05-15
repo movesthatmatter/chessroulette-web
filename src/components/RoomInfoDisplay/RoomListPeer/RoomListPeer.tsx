@@ -1,72 +1,79 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faVideoSlash, faVolumeMute, faVolumeUp, faVideo, faChess,
-} from '@fortawesome/free-solid-svg-icons';
+import { PeerRecord } from 'dstnd-io';
+import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import { FaceTime } from 'src/components/FaceTimeArea/FaceTime';
+import { PeerConnectionStatus } from 'src/services/peers';
 
-const icons = {
-  chess: faChess,
-  video: faVideo,
-  videoMute: faVideoSlash,
-  volume: faVolumeUp,
-  volumeMute: faVolumeMute,
-};
-type video = typeof icons.video | typeof icons.videoMute;
-type audio = typeof icons.volume | typeof icons.volumeMute;
-
-export const RoomListPeer = ({ peerName, onPeerChallenge }: {
-  peerName: string;
+type Props = {
+  peer: PeerRecord;
   onPeerChallenge: () => void;
+  avatar: AvatarsType;
+  isMe: boolean;
+  streamConfig: PeerConnectionStatus['channels']['streaming'];
+  canChallenge: boolean;
+  onDisplayChallengeName: (value: string) => void;
+};
+export type AvatarsType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+
+export const RoomListPeer: React.FC<Props> = ({
+  peer,
+  onPeerChallenge,
+  avatar,
+  isMe,
+  streamConfig,
+  canChallenge,
+  onDisplayChallengeName,
 }) => {
   const cls = useStyle();
-  const [over, setMouseOver] = useState<boolean>(false);
-  const [videoIcon, toggleVideo] = useState<video>(icons.video);
-  const [audioIcon, toggleAudio] = useState<audio>(icons.volume);
+
+  const checkMouseOver = () => {
+    if (canChallenge) {
+      onDisplayChallengeName(peer.name);
+    }
+  };
+
+  const checkMouseOut = () => {
+    onDisplayChallengeName('');
+  };
+
   return (
     <div
       className={cls.listItem}
-      onMouseOver={() => setMouseOver(true)}
-      onMouseOut={() => setMouseOver(false)}
-      onFocus={() => setMouseOver(true)}
-      onBlur={() => setMouseOver(false)}
+      onMouseOver={() => checkMouseOver()}
+      onMouseOut={() => checkMouseOut()}
+      onFocus={() => checkMouseOver()}
+      onBlur={() => checkMouseOut()}
+      onClick={() => {
+        if (canChallenge) {
+          onPeerChallenge();
+        }
+      }}
     >
-      <div style={{ opacity: `${over ? '1' : '0'}` }} className={cls.chessIconContainer}>
-        <FontAwesomeIcon
-          size="xs"
-          icon={faChess}
-          className={cls.chessIcon}
-          onClick={() => onPeerChallenge()}
-        />
+      <div className={cls.topBar}>
+        {streamConfig.on && (
+          <div className={cls.mutunachi}>
+            <Mutunachi mid={avatar} style={{ height: '35px' }} />
+          </div>
+        )}
+        <div
+          className={cls.peerNameContainer}
+          style={{
+            fontWeight: isMe ? 'bold' : 'normal',
+            color: isMe ? '#F7627B' : '#000000',
+          }}
+        >
+          {peer.name}
+        </div>
       </div>
-      <div className={cls.peerNameContainer}>
-        {peerName.replace(/^\w/, (c) => c.toUpperCase())}
-      </div>
-      <div className={cls.videoIconContainer}>
-        <FontAwesomeIcon
-          size="xs"
-          icon={videoIcon}
-          className={cls.videoIcon}
-          onClick={() => toggleVideo((prev) => {
-            if (prev === icons.video) {
-              return icons.videoMute;
-            }
-            return icons.video;
-          })}
-        />
-      </div>
-      <div className={cls.volumeIconContainer}>
-        <FontAwesomeIcon
-          size="xs"
-          icon={audioIcon}
-          className={cls.volumeIcon}
-          onClick={() => toggleAudio((prev) => {
-            if (prev === icons.volume) {
-              return icons.volumeMute;
-            }
-            return icons.volume;
-          })}
-        />
+      <div className={cls.videoContainer}>
+        {streamConfig.on ? (
+          <FaceTime streamConfig={streamConfig} />
+        ) : (
+          <div className={cls.mutunachiLarge}>
+            <Mutunachi mid={avatar} style={{ height: '90px' }} />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -75,51 +82,37 @@ export const RoomListPeer = ({ peerName, onPeerChallenge }: {
 const useStyle = createUseStyles({
   listItem: {
     display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-    padding: '3px 0px',
+    flexDirection: 'column',
+    borderRadius: '14px',
     '&:hover': {
       cursor: 'pointer',
-      backgroundColor: '#F9F9F9',
+      background:
+      // eslint-disable-next-line max-len
+        'linear-gradient(#EFE7E8 0% ,rgba(232, 232, 232, 0) 100%)',
     },
+    padding: '5px',
+  },
+  topBar: {
+    display: 'flex',
+    paddingLeft: '10px',
   },
   chessIconContainer: {
-    paddingRight: '10px',
+    marginRight: '10px',
     width: '36px',
-  },
-  videoIconContainer: {
-    paddingRight: '5px',
-  },
-  volumeIconContainer: {
-    paddingLeft: '5px',
   },
   chessIcon: {
     padding: '5px',
     borderRadius: '12px',
     boxShadow: '1px 1px 4px rgba(0, 0, 0, 0.19)',
-    '&:hover': {
-      transform: 'scale(1.3)',
-    },
   },
-  videoIcon: {
-    padding: '5px',
-    borderRadius: '12px',
-    boxShadow: '1px 1px 4px rgba(0, 0, 0, 0.19)',
-    transition: 'all 0.1s ease-in-out',
-    '&:hover': {
-      transform: 'scale(1.3)',
-    },
-  },
-  volumeIcon: {
-    padding: '5px',
-    borderRadius: '12px',
-    boxShadow: '1px 1px 4px rgba(0, 0, 0, 0.19)',
-    transition: 'all 0.1s ease-in-out',
-    '&:hover': {
-      transform: 'scale(1.3)',
-    },
+  mutunachi: {
+    marginRight: '10px',
   },
   peerNameContainer: {
-    width: '100%',
+    maxWidth: '80%',
+    alignSelf: 'center',
   },
+  videoContainer: {},
+  mutunachiLarge: {},
+  challenge: {},
 });

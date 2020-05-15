@@ -138,11 +138,15 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
 
 const useStyles = createUseStyles({
   chatContainer: {
-    position: 'absolute',
     maxWidth: '320px',
-    bottom: '0',
-    marginBottom: '20px',
-    zIndex: 1,
+
+    // The absolute positions are better set by the parent
+    //  because it knows exactly how it wants it positioned and where
+
+    // position: 'absolute',
+    // zIndex: 1,
+    // bottom: '0',
+    // marginBottom: '20px',
   },
   chatWindowCondensed: {
     width: '320px',

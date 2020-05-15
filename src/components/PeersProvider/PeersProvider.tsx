@@ -10,7 +10,7 @@ import {
 import { logsy } from 'src/lib/logsy';
 import { AVStreaming } from 'src/services/AVStreaming';
 
-type PeerConnections = {
+export type PeerConnections = {
   [peerId: string]: PeerConnectionStatus & { isConnected: boolean };
 };
 

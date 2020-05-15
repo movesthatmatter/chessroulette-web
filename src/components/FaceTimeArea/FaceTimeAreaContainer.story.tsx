@@ -7,7 +7,7 @@ import { SocketProvider } from '../SocketProvider';
 
 export default {
   component: FaceTimeAreaContainer,
-  title: 'components/FaceTimeAreaContainer',
+  title: 'components/FaceTime/FaceTimeAreaContainer',
 };
 
 export const defaultStory = () => (
