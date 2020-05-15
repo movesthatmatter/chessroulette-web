@@ -27,8 +27,8 @@ type RenderProps = {
 
 type Props = {
   socket: SocketClient;
-  me: PeerRecord;
-  initialPeers: PeerRecord[];
+  meId: string;
+  initialPeerIds: string[];
 
   onReady?: (p: Omit<RenderProps, 'localStream' | 'remoteStreams'>) => void;
 
@@ -65,10 +65,20 @@ export class PeersProvider extends React.Component<Props, State> {
 
   private unsubscribeFromRemoteStreamStart?: () => void;
 
+  private initialPeerIdsWithoutMe: string[];
+
   state: State = {
     peerConnections: {},
     localStream: undefined,
   };
+
+  constructor(props: Props) {
+    super(props);
+
+    // Take Me out of the Peers
+    this.initialPeerIdsWithoutMe = props.initialPeerIds
+      .filter((peerId) => peerId !== props.meId);
+  }
 
   componentDidMount() {
     this.localStreamClient = new AVStreaming();
@@ -162,7 +172,7 @@ export class PeersProvider extends React.Component<Props, State> {
 
     if (this.props.onReady) {
       this.props.onReady({
-        connect: async () => this.peersClient?.connect(this.peerIdsWithoutMe),
+        connect: async () => this.peersClient?.connect(this.initialPeerIdsWithoutMe),
 
         startAVBroadcasting: () => this.startAVBroadcasting(),
         stopAVBroadcasting: () => this.stopAVBroadcasting(),
@@ -183,14 +193,10 @@ export class PeersProvider extends React.Component<Props, State> {
     this.localStreamClient?.stop();
   }
 
-  private get peerIdsWithoutMe() {
-    return Object.keys(this.state.peerConnections);
-  }
-
   private broadcastMessage(message: PeerMessageEnvelope['message']) {
     this.peersClient?.broadcastMessage({
       message,
-      fromPeerId: this.props.me.id,
+      fromPeerId: this.props.meId,
     });
   }
 
@@ -206,7 +212,7 @@ export class PeersProvider extends React.Component<Props, State> {
     return (
       <>
         {this.props.render({
-          connect: async () => this.peersClient?.connect(this.peerIdsWithoutMe),
+          connect: async () => this.peersClient?.connect(this.initialPeerIdsWithoutMe),
 
           startAVBroadcasting: () => this.startAVBroadcasting(),
           stopAVBroadcasting: () => this.stopAVBroadcasting(),

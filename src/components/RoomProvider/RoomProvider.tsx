@@ -75,6 +75,9 @@ export const RoomProvider: React.FC<Props> = ({
         },
       };
 
+      console.log('[PeersRoomProvider] Inside State Update: prev', prev);
+      console.log('[PeersRoomProvider] Inside State Update: rtcPeerConnections', rtcPeerConnections);
+      console.log('[PeersRoomProvider] Inside State Update: socketConnections', socketRecords.room.peers);
       // The rule for now is that the PeerConnections are taking precedence over Room.peers
       //  For ex: If a Socket Peer drops but there is still an active RTC PeerConnection to it,
       //   that peer will stay
@@ -82,10 +85,13 @@ export const RoomProvider: React.FC<Props> = ({
       //   it will not show up
       const nextPeers: Room['peers'] = Object
         .keys(rtcPeerConnections)
-        // Take out me from peers
+        // Take me out from peers
         .filter((peerId) => peerId !== nextMe.id)
         .reduce((res, peerId) => {
-          if (!prev?.room.peers[peerId] && socketRecords.room.peers[peerId]) {
+          console.log('[PeersRoomProvider] Inside State Update: in peer reducer for peer', peerId);
+          // If it's a new Opened RTC Connection add it
+          // if (!prev?.room.peers[peerId] && socketRecords.room.peers[peerId]) {
+          if (socketRecords.room.peers[peerId]) {
             const { room: socketRoom } = socketRecords;
             const { [peerId]: socketRoomPeer } = socketRoom.peers;
             const { [peerId]: rtcConnection } = rtcPeerConnections;
@@ -105,10 +111,20 @@ export const RoomProvider: React.FC<Props> = ({
               ...res,
               [peerId]: nextPeer,
             };
+          } if (prev?.room.peers[peerId]) {
+            return {
+              ...res,
+              [peerId]: prev.room.peers[peerId],
+            };
           }
+
+          console.log('[PeersRoomProvider] Inside State Update: in the else', !prev?.room.peers[peerId] && socketRecords.room.peers[peerId], res);
 
           return res;
         }, {});
+
+
+      console.log('[PeersRoomProvider] Inside State Update: nextPeers', nextPeers);
 
       const nextRoom: Room = {
         // Updates from Socket
@@ -127,6 +143,8 @@ export const RoomProvider: React.FC<Props> = ({
         peersCount: Object.keys(nextPeers).length,
       };
 
+      console.log('[PeersRoomProvider] Inside State Update: nextRoom', nextRoom);
+
       return {
         me: nextMe,
         room: nextRoom,
@@ -134,13 +152,35 @@ export const RoomProvider: React.FC<Props> = ({
     });
   }, [rtcPeerConnections, socketRecords]);
 
+  useEffect(() => {
+    console.log('[PeersRoomProvider] socketRecords updated', socketRecords);
+  }, [socketRecords]);
+
+  useEffect(() => {
+    console.log('[PeersRoomProvider] meAndMyRoom updated', meAndMyRoom?.room);
+  }, [meAndMyRoom]);
+
   return (
     <SocketConsumer
       onMessage={(msg) => {
+        console.log('[PeersRoomProvider] socket consumer onMessage', msg);
         if (msg.kind === 'joinRoomSuccess') {
           setSocketRecords(msg.content);
         } else if (msg.kind === 'joinRoomFailure') {
           setError('WrongCode');
+        } else if (msg.kind === 'roomStats') {
+          // This is needed because when there is a new Peer Joining the room
+          //  The Peer Info comes from the socket
+          setSocketRecords((prev) => (prev
+            ? ({
+              ...prev,
+              room: msg.content,
+            })
+            // If prev isn't defined yet, just return it
+            // it means somehow it didn't have a chance to setMe so this payload
+            //  won't suffice. If this happens it's an error!
+            : prev
+          ));
         }
 
         // TODO: Is there a need for onLeave??
@@ -158,8 +198,8 @@ export const RoomProvider: React.FC<Props> = ({
             ? (
               <PeersProvider
                 socket={socket}
-                me={socketRecords.me}
-                initialPeers={Object.values(socketRecords.room.peers)}
+                meId={socketRecords.me.id}
+                initialPeerIds={Object.keys(socketRecords.room.peers)}
                 onReady={({ connect, startAVBroadcasting }) => {
                 // Connect to all the peers right away
                   connect();
@@ -168,7 +208,10 @@ export const RoomProvider: React.FC<Props> = ({
                   //   startAVBroadcasting();
                   // }, 3 * 1000);
                 }}
-                onPeerConnectionsChanged={setRtcPeerConnections}
+                onPeerConnectionsChanged={(p) => {
+                  console.log('[PeersRoomProvider] onPeerConnectionsChanged', p);
+                  setRtcPeerConnections(p);
+                }}
                 onPeerMsgReceived={onMessageReceived}
                 onPeerMsgSent={onMessageSent}
 

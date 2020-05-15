@@ -17,12 +17,12 @@ export const defaultStory = () => (
       id="1"
       render={({ me, room }) => (
         <>
-          <RoomInfoDisplay
+          {/* <RoomInfoDisplay
             me={me}
             room={room}
             gameInProgress={false}
             playersById={{}}
-          />
+          /> */}
           <RoomStats room={room} />
         </>
       )}
