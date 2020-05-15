@@ -1,23 +1,37 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { JoinFirstAvailableRoomHelper } from 'src/storybook/JoinDefaultRoomHelper';
+import { RoomMocker } from 'src/mocks/records/RoomMocker';
+import { range } from 'src/lib/util';
+import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { RoomStats } from './RoomStats';
-import { SocketProvider } from '../SocketProvider';
 
 export default {
   component: RoomStats,
   title: 'Components/RoomStats',
 };
 
-export const defaultStory = () => (
-  <SocketProvider>
-    <JoinFirstAvailableRoomHelper
-      render={({ room, me }) => (
-        <RoomStats
-          room={room}
-          me={me}
-        />
-      )}
-    />
-  </SocketProvider>
+const roomMocker = new RoomMocker();
+const peerMocker = new PeerMocker();
+
+const peersWithDataConnections = range(5).map(() => peerMocker.withProps({
+  connection: {
+    channels: {
+      data: { on: true },
+      streaming: { on: false },
+    },
+  },
+}));
+
+export const withNoConnections = () => (
+  <RoomStats room={roomMocker.record()} />
+);
+
+export const withDataConnections = () => (
+  <RoomStats room={roomMocker.withProps({
+    peers: peersWithDataConnections.reduce((accum, peer) => ({
+      ...accum,
+      [peer.id]: peer,
+    }), {}),
+  })}
+  />
 );

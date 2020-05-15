@@ -1,85 +1,71 @@
 import React from 'react';
-import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { PeersProvider } from '../PeersProvider';
-import { SocketConsumer } from '../SocketProvider';
+import { Room } from '../RoomProvider';
 
 type Props = {
-  me: PeerRecord;
-  room: RoomStatsRecord;
+  room: Room;
 };
 
 export const RoomStats: React.FC<Props> = (props) => {
   const cls = useStyles();
 
   return (
-    <SocketConsumer
-      render={({ socket }) => (
-        <PeersProvider
-          me={props.me}
-          onReady={({ connect }) => connect()}
-          peers={Object.values(props.room.peers)}
-          socket={socket}
-          render={({ peerConnections }) => (
-            <>
+    <>
+      <div>
+        {`Room: ${props.room.name}(${props.room.id}) - ${props.room.peersCount} Peers`}
+      </div>
+      <div>
+        {`Me: ${props.room.me.name}(${props.room.me.id})`}
+      </div>
+      <div>
+        <div>Peers:</div>
+        {Object.values(props.room.peers).map(
+          ({ id, name, connection }) => (
+            <div key={id}>
+              <span>{`Peer: ${name}(${id})`}</span>
               <div>
-                {props.room.name}
-                {' '}
-                Room Stats:
+                <small>
+                  {/* <span>
+                    Connection Status:
+                    <div className={cx(cls.dot, {
+                      [cls.greenDot]: isConnected,
+                      [cls.redDot]: !isConnected,
+                    })}
+                    />
+                  </span> */}
+                  <span>
+                    [Data:
+                    <div className={cx(cls.dot, {
+                      [cls.greenDot]: connection.channels.data.on,
+                      [cls.redDot]: !connection.channels.data.on,
+                    })}
+                    />
+                  </span>
+                  <span>
+                    Audio:
+                    <div className={cx(cls.dot, {
+                      [cls.greenDot]: connection.channels.streaming.on && connection.channels.streaming.type !== 'video',
+                      [cls.redDot]: !(connection.channels.streaming.on && connection.channels.streaming.type !== 'video'),
+                    })}
+                    />
+                  </span>
+                  <span>
+                    Video:
+                    <div className={cx(cls.dot, {
+                      [cls.greenDot]: connection.channels.streaming.on && connection.channels.streaming.type !== 'audio',
+                      [cls.redDot]: !(connection.channels.streaming.on && connection.channels.streaming.type !== 'audio'),
+                    })}
+                    />
+                    ]
+                  </span>
+                </small>
               </div>
-              <div>
-                <p>Peers:</p>
-                {Object.values(peerConnections).map(
-                  ({ peerId, isConnected, channels }) => (
-                    <div key={peerId}>
-                      {peerId}
-                      <div>
-                        <small>
-                          <span>
-                            Connection Status:
-                            <div className={cx(cls.dot, {
-                              [cls.greenDot]: isConnected,
-                              [cls.redDot]: !isConnected,
-                            })}
-                            />
-                          </span>
-                          <span>
-                            [Data:
-                            <div className={cx(cls.dot, {
-                              [cls.greenDot]: channels.data.on,
-                              [cls.redDot]: !channels.data.on,
-                            })}
-                            />
-                          </span>
-                          <span>
-                            Audio:
-                            <div className={cx(cls.dot, {
-                              [cls.greenDot]: channels.streaming.on && channels.streaming.type !== 'video',
-                              [cls.redDot]: !(channels.streaming.on && channels.streaming.type !== 'video'),
-                            })}
-                            />
-                          </span>
-                          <span>
-                            Video:
-                            <div className={cx(cls.dot, {
-                              [cls.greenDot]: channels.streaming.on && channels.streaming.type !== 'audio',
-                              [cls.redDot]: !(channels.streaming.on && channels.streaming.type !== 'audio'),
-                            })}
-                            />
-                            ]
-                          </span>
-                        </small>
-                      </div>
-                    </div>
-                  ),
-                )}
-              </div>
-            </>
-          )}
-        />
-      )}
-    />
+            </div>
+          ),
+        )}
+      </div>
+    </>
   );
 };
 const useStyles = createUseStyles({
