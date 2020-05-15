@@ -71,7 +71,7 @@ export const RoomListPeer: React.FC<Props> = ({
           <FaceTime streamConfig={streamConfig} />
         ) : (
           <div className={cls.mutunachiLarge}>
-            <Mutunachi mid={avatar} style={{ height: '90px' }} />
+            <Mutunachi mid={avatar} style={{ height: '128px', marginTop: '8px' }} />
           </div>
         )}
       </div>
@@ -94,7 +94,7 @@ const useStyle = createUseStyles({
   },
   topBar: {
     display: 'flex',
-    paddingLeft: '10px',
+    marginBottom: '5px',
   },
   chessIconContainer: {
     marginRight: '10px',

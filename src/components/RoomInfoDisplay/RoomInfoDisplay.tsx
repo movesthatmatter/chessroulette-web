@@ -10,6 +10,7 @@ import { PeerConnections } from 'src/components/PeersProvider';
 import { PeerConnectionStatus } from 'src/services/peers';
 import { GameChallengeRecord } from 'src/modules/GameRoom/records';
 import { RoomListPeer, AvatarsType } from './RoomListPeer/RoomListPeer';
+import { Mutunachi } from '../Mutunachi/Mutunachi';
 
 
 export type RoomInfoProps = {
@@ -102,9 +103,20 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
         </div>
         <div className={cls.listContainer}>
           {(peerConnectionsWithoutPlayers.length === 0) && (
-            <div>
-              Waiting for peers. User invite button to
-              share the room and invite your friends
+            <div style={{ textAlign: 'center' }}>
+              Waiting for peers.
+              <br />
+              <br />
+              Dont just sit there, click the + icon above and
+              invite some friends over.
+              <br />
+              <br />
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Mutunachi
+                  mid={4}
+                  style={{ height: '100px' }}
+                />
+              </div>
             </div>
           )}
           {peerConnectionsWithoutPlayers.map((pc) => (
