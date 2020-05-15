@@ -99,8 +99,8 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
               timeLimit: 'rapid', // Get it from outside
               homeColor: 'random', // Get it from outside
               playersBySide: {
-                home: room.peers[challengerId],
-                away: room.peers[challengeeId],
+                home: (challengerId === me.id) ? me : room.peers[challengerId],
+                away: (challengeeId === me.id) ? me : room.peers[challengeeId],
               },
             });
 
