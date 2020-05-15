@@ -17,6 +17,8 @@ type PartialPeerConnectionStatus = {
 
 export class Peers {
   private pubsy = new Pubsy<{
+    // TODO @deprecate in favor of the whole onPeerConnectionsUpdated?
+    //  So the rtc connections state is only kept in one place
     onPeerConnectionUpdated: PartialPeerConnectionStatus;
 
     onRemoteStreamingStart: { peerId: string; stream: MediaStream };
@@ -88,6 +90,10 @@ export class Peers {
       logsy.log('[Peers] Connection State Changed', peerId, connectionState);
 
       if (connectionState === 'disconnected') {
+        // Remove the bad connection from the state
+        const { [peerId]: removed, ...rest } = this.peerConnections;
+        this.peerConnections = rest;
+
         this.pubsy.publish('onPeerConnectionUpdated', {
           peerId,
           channels: {
@@ -221,8 +227,8 @@ export class Peers {
       .values(this.peerConnections)
       .map(({ dataChannel }) => dataChannel?.send(payload) ?? new Err(undefined));
 
-    const okSends = results.filter((r) => r);
-    const badSends = results.filter((r) => !r);
+    const okSends = results.filter((r) => r.ok);
+    const badSends = results.filter((r) => !r.ok);
 
     if (okSends.length > 0) {
       okSends[0].map((m) => {
@@ -256,6 +262,8 @@ export class Peers {
 
     // Free them up from the stack
     this.peerConnections = {};
+
+    // TODO: Update the PeerProvider??
   }
 
   onPeerConnectionUpdated = (fn: (p: PartialPeerConnectionStatus) => void) =>
