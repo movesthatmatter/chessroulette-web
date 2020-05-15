@@ -28,7 +28,7 @@ type RenderProps = {
 type Props = {
   socket: SocketClient;
   me: PeerRecord;
-  peers: PeerRecord[];
+  initialPeers: PeerRecord[];
 
   onReady?: (p: Omit<RenderProps, 'localStream' | 'remoteStreams'>) => void;
 
@@ -162,9 +162,8 @@ export class PeersProvider extends React.Component<Props, State> {
 
     if (this.props.onReady) {
       this.props.onReady({
-        connect: async () => {
-          this.peersClient?.connect(this.peersWithoutMe);
-        },
+        connect: async () => this.peersClient?.connect(this.peerIdsWithoutMe),
+
         startAVBroadcasting: () => this.startAVBroadcasting(),
         stopAVBroadcasting: () => this.stopAVBroadcasting(),
         broadcastMessage: this.broadcastMessage.bind(this),
@@ -184,12 +183,12 @@ export class PeersProvider extends React.Component<Props, State> {
     this.localStreamClient?.stop();
   }
 
-  private get peersWithoutMe() {
-    return this.props.peers.filter((peer) => peer.id !== this.props.me.id);
+  private get peerIdsWithoutMe() {
+    return Object.keys(this.state.peerConnections);
   }
 
   private broadcastMessage(message: PeerMessageEnvelope['message']) {
-    this.peersClient?.broadcastMessage(this.peersWithoutMe, {
+    this.peersClient?.broadcastMessage({
       message,
       fromPeerId: this.props.me.id,
     });
@@ -207,9 +206,7 @@ export class PeersProvider extends React.Component<Props, State> {
     return (
       <>
         {this.props.render({
-          connect: async () => {
-            this.peersClient?.connect(this.peersWithoutMe);
-          },
+          connect: async () => this.peersClient?.connect(this.peerIdsWithoutMe),
 
           startAVBroadcasting: () => this.startAVBroadcasting(),
           stopAVBroadcasting: () => this.stopAVBroadcasting(),

@@ -1,6 +1,5 @@
 import { Pubsy } from 'src/lib/Pubsy';
 import { logsy } from 'src/lib/logsy';
-import { PeerRecord } from 'dstnd-io';
 import { RTCDataX } from 'src/lib/RTCDataX';
 import { Err } from 'dstnd-io/dist/ts-results';
 import { DeepPartial } from 'src/lib/types';
@@ -54,20 +53,17 @@ export class Peers {
     );
   }
 
-  connect(peers: PeerRecord[]) {
-    logsy.log(
-      '[Peers] Connecting to',
-      peers.map((p) => p.name),
-    );
+  connect(peersIds: string[]) {
+    logsy.log('[Peers] Connecting to', peersIds);
 
-    peers.forEach(async (peer) => {
-      await this.preparePeerConnection(peer.id);
-      await this.invitePeer(peer.id);
+    peersIds.forEach(async (peerId) => {
+      await this.preparePeerConnection(peerId);
+      await this.invitePeer(peerId);
 
-      logsy.log('[Peers] Connection to', peer.name, 'ready');
+      logsy.log('[Peers] Connection to', peerId, 'ready');
 
       // To be connected at least the data channel needs be started!
-      this.peerConnections[peer.id].rtc.openDataChannel();
+      this.peerConnections[peerId].rtc.openDataChannel();
     });
   }
 
@@ -219,12 +215,11 @@ export class Peers {
    * @param msg
    */
   broadcastMessage(
-    peers: PeerRecord[],
     payload: Pick<PeerMessageEnvelope, 'message' | 'fromPeerId'>,
   ) {
-    const results = peers
-      .map(({ id }) => this.peerConnections[id].dataChannel)
-      .map((dataChannel) => dataChannel?.send(payload) ?? new Err(undefined));
+    const results = Object
+      .values(this.peerConnections)
+      .map(({ dataChannel }) => dataChannel?.send(payload) ?? new Err(undefined));
 
     const okSends = results.filter((r) => r);
     const badSends = results.filter((r) => !r);
@@ -241,7 +236,7 @@ export class Peers {
         //  It depends on the strategy, but we're not there yet.
         logsy.warn(
           '[Peers] Received BadResults while Attempting to send Data to Peers',
-          peers,
+          Object.keys(this.peerConnections),
           `Message Payload: ${payload}`,
           `BadResults Count: ${badSends.length} out of ${results.length}`,
           badSends,
