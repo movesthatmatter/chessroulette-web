@@ -4,10 +4,9 @@ import { JoinFirstAvailableRoomHelper } from 'src/storybook/JoinDefaultRoomHelpe
 import { eitherToResult } from 'src/lib/ioutil';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { ChatBoxContainer } from './ChatBoxContainer';
-import { SocketConsumer, SocketProvider } from '../SocketProvider';
-import { PeersProvider } from '../PeersProvider';
+import { SocketProvider } from '../SocketProvider';
 import { chatMessageRecord, ChatMessageRecord } from './records/ChatMessageRecord';
-
+import { RoomProvider } from '../RoomProvider';
 
 export default {
   component: ChatBoxContainer,
@@ -28,40 +27,39 @@ export const defaultStory = () => React.createElement(() => {
   return (
     <SocketProvider>
       <JoinFirstAvailableRoomHelper
-        render={({ room, me }) => (
-          <SocketConsumer
-            render={({ socket }) => (
-              <PeersProvider
-                me={me}
-                peers={Object.values(room.peers)}
-                socket={socket}
-                onPeerMsgReceived={handleMessages}
-                onPeerMsgSent={handleMessages}
-                onReady={(client) => client.connect()}
-                render={({ broadcastMessage, peerConnections }) => (
-                  <div>
-                    <div>
-                      {`Me: ${me.name}`}
-                    </div>
-                    <div>
-                      {'Peers: '}
-                      {Object.values(peerConnections).map((pc) => (
-                        <span key={pc.peerId}>
-                          {room.peers[pc.peerId].name}
-                          {' '}
-                          |
-                          {' '}
-                        </span>
-                      ))}
-                    </div>
-                    <ChatBoxContainer
-                      me={me}
-                      broadcastMessage={broadcastMessage}
-                      chatHistory={chatHistory}
-                    />
-                  </div>
-                )}
-              />
+        render={({ room: socketRoom, me }) => (
+          <RoomProvider
+            id={socketRoom.id}
+            code={'code' in socketRoom ? socketRoom.code : undefined}
+            onMessageReceived={handleMessages}
+            onMessageSent={handleMessages}
+            renderFallback={() => (
+              <>
+                {`Couldn't connect to Room ${socketRoom.name}`}
+              </>
+            )}
+            render={({ room, broadcastMessage }) => (
+              <>
+                <div>
+                  {`Me: ${me.name}`}
+                </div>
+                <div>
+                  {'Peers: '}
+                  {Object.values(room.peers).map((peer) => (
+                    <span key={peer.id}>
+                      {peer.name}
+                      {' '}
+                      |
+                      {' '}
+                    </span>
+                  ))}
+                </div>
+                <ChatBoxContainer
+                  me={me}
+                  broadcastMessage={broadcastMessage}
+                  chatHistory={chatHistory}
+                />
+              </>
             )}
           />
         )}
