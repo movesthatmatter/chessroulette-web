@@ -198,6 +198,11 @@ export class Peers {
           pc.rtc.connection.removeTrack(sender);
         });
       });
+
+
+    // TODO: Is there a difference between the above and
+    //  stream.getTracks().forEach((track) => track.stop())
+    // Do I need to do both??
   }
 
   /**

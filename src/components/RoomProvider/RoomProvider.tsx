@@ -1,7 +1,9 @@
-import React, { useState, ReactNode, useEffect } from 'react';
+import React, {
+  useState, ReactNode, useEffect, useRef,
+} from 'react';
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/services/peers';
-import { AVStreamingConstraints } from 'src/services/AVStreaming';
+import { AVStreamingConstraints, AVStreaming } from 'src/services/AVStreaming';
 import { noop } from 'src/lib/util';
 import { SocketConsumer } from '../SocketProvider';
 import { PeersProvider, PeerConnections } from '../PeersProvider';
@@ -38,6 +40,8 @@ export const RoomProvider: React.FC<Props> = ({
   onMessageSent = noop,
   ...props
 }) => {
+  const avStreamClient = useRef(new AVStreaming());
+  const [localStream, setLocalStream] = useState<MediaStream | undefined>();
   const [error, setError] = useState<Errors | undefined>();
   const [
     socketRecords,
@@ -64,20 +68,20 @@ export const RoomProvider: React.FC<Props> = ({
 
         // Updates From RTC (Peer Connections)
         connection: {
-          ...rtcPeerConnections[meId]
-            ? { channels: rtcPeerConnections[meId].channels }
-            : {
-              channels: {
-                data: { on: false },
-                streaming: { on: false },
-              },
-            },
+          channels: {
+            // This is fake and I don't like it being here
+            data: { on: false },
+            streaming: localStream
+              ? {
+                on: true,
+                type: 'audio-video',
+                stream: localStream,
+              }
+              : { on: false },
+          },
         },
       };
 
-      console.log('[PeersRoomProvider] Inside State Update: prev', prev);
-      console.log('[PeersRoomProvider] Inside State Update: rtcPeerConnections', rtcPeerConnections);
-      console.log('[PeersRoomProvider] Inside State Update: socketConnections', socketRecords.room.peers);
       // The rule for now is that the PeerConnections are taking precedence over Room.peers
       //  For ex: If a Socket Peer drops but there is still an active RTC PeerConnection to it,
       //   that peer will stay
@@ -88,9 +92,10 @@ export const RoomProvider: React.FC<Props> = ({
         // Take me out from peers
         .filter((peerId) => peerId !== nextMe.id)
         .reduce((res, peerId) => {
-          console.log('[PeersRoomProvider] Inside State Update: in peer reducer for peer', peerId);
-          // If it's a new Opened RTC Connection add it
-          // if (!prev?.room.peers[peerId] && socketRecords.room.peers[peerId]) {
+          // TODO: Revise this logic here as I'm not sure it's working as it should
+          //  or at the very least I'm not sure it's not extraneous, like the 2nd if
+
+
           if (socketRecords.room.peers[peerId]) {
             const { room: socketRoom } = socketRecords;
             const { [peerId]: socketRoomPeer } = socketRoom.peers;
@@ -111,20 +116,18 @@ export const RoomProvider: React.FC<Props> = ({
               ...res,
               [peerId]: nextPeer,
             };
-          } if (prev?.room.peers[peerId]) {
+          }
+
+          // If it's a new one
+          if (prev?.room.peers[peerId]) {
             return {
               ...res,
               [peerId]: prev.room.peers[peerId],
             };
           }
 
-          console.log('[PeersRoomProvider] Inside State Update: in the else', !prev?.room.peers[peerId] && socketRecords.room.peers[peerId], res);
-
           return res;
         }, {});
-
-
-      console.log('[PeersRoomProvider] Inside State Update: nextPeers', nextPeers);
 
       const nextRoom: Room = {
         // Updates from Socket
@@ -143,27 +146,16 @@ export const RoomProvider: React.FC<Props> = ({
         peersCount: Object.keys(nextPeers).length,
       };
 
-      console.log('[PeersRoomProvider] Inside State Update: nextRoom', nextRoom);
-
       return {
         me: nextMe,
         room: nextRoom,
       };
     });
-  }, [rtcPeerConnections, socketRecords]);
-
-  useEffect(() => {
-    console.log('[PeersRoomProvider] socketRecords updated', socketRecords);
-  }, [socketRecords]);
-
-  useEffect(() => {
-    console.log('[PeersRoomProvider] meAndMyRoom updated', meAndMyRoom?.room);
-  }, [meAndMyRoom]);
+  }, [rtcPeerConnections, socketRecords, localStream]);
 
   return (
     <SocketConsumer
       onMessage={(msg) => {
-        console.log('[PeersRoomProvider] socket consumer onMessage', msg);
         if (msg.kind === 'joinRoomSuccess') {
           setSocketRecords(msg.content);
         } else if (msg.kind === 'joinRoomFailure') {
@@ -200,31 +192,64 @@ export const RoomProvider: React.FC<Props> = ({
                 socket={socket}
                 meId={socketRecords.me.id}
                 initialPeerIds={Object.keys(socketRecords.room.peers)}
-                onReady={({ connect, startAVBroadcasting }) => {
+                onReady={({ connect, startStreaming }) => {
                 // Connect to all the peers right away
                   connect();
 
-                  // setTimeout(() => {
-                  //   startAVBroadcasting();
-                  // }, 3 * 1000);
+                  // And start streaming
+                  (async () => {
+                    const nextLocalStream = await avStreamClient.current.start();
+
+                    setLocalStream((prev) => {
+                      // If there is a local stram running already don't change anything
+                      if (prev) {
+                        return prev;
+                      }
+
+                      return nextLocalStream;
+                    });
+                    startStreaming(nextLocalStream);
+                  })();
                 }}
-                onPeerConnectionsChanged={(p) => {
-                  console.log('[PeersRoomProvider] onPeerConnectionsChanged', p);
-                  setRtcPeerConnections(p);
-                }}
+
+                // Start a new local stream everytime it's needed
+                onLocalStreamRequested={() => avStreamClient.current.start()}
+                onPeerConnectionsChanged={setRtcPeerConnections}
                 onPeerMsgReceived={onMessageReceived}
                 onPeerMsgSent={onMessageSent}
 
                 render={({
-                  startAVBroadcasting,
-                  stopAVBroadcasting,
+                  startStreaming,
+                  stopStreaming,
                   broadcastMessage,
                 }) => (meAndMyRoom
                   ? props.render({
                     me: meAndMyRoom.me,
                     room: meAndMyRoom.room,
-                    startStreaming: () => startAVBroadcasting(),
-                    stopStreaming: stopAVBroadcasting,
+
+                    startStreaming: async (constraints) => {
+                      const nextLocalStream = await avStreamClient.current.start(constraints);
+
+                      setLocalStream((prev) => {
+                        // If there is a local stram running already don't change anything
+                        if (prev) {
+                          return prev;
+                        }
+
+                        return nextLocalStream;
+                      });
+                      startStreaming(nextLocalStream);
+                    },
+                    stopStreaming: () => {
+                      stopStreaming();
+
+                      // Stop the local client as well
+                      // TODO: Do I need to stop each RTC's Connection stream too?
+                      // I'd suppose I do
+                      if (localStream) {
+                        avStreamClient.current.stop(localStream);
+                      }
+                    },
                     broadcastMessage,
                   })
                   : props.renderFallback({ error, loading: !error }))}
