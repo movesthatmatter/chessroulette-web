@@ -95,7 +95,7 @@ export const GameRoom: React.FC<GameRoomProps> = ({
   const awayColor = otherChessColor(homeColor);
 
   const playerHomeAsPeer = props.currentGame
-    ? room.peers[props.currentGame.players[homeColor].id]
+    ? room.peers[props.currentGame.players[homeColor].id] || me
     : me;
   const playerAwayAsPeer = props.currentGame
     ? room.peers[props.currentGame.players[awayColor].id]
