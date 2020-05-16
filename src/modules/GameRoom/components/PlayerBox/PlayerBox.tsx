@@ -33,7 +33,7 @@ export const PlayerBox: React.FC<Props> = (props) => {
 
   return (
     <div
-      style={{ width: boardSize / 2 }}
+      style={{ height: screenHeight }}
       className={cx(cls.container, props.className, {
         [cls.containerReversed]: props.side === 'home',
       })}
@@ -43,7 +43,7 @@ export const PlayerBox: React.FC<Props> = (props) => {
           <div className={cls.smallMutunachiWrapper}>
             <Mutunachi
               mid={props.mutunachiId}
-              className={cls.mutunachiSmall}
+              style={{ height: '50px' }}
             />
           </div>
           <div className={cls.playerDetailsWrapper}>
@@ -78,7 +78,7 @@ export const PlayerBox: React.FC<Props> = (props) => {
             <div className={cls.streamFallbackContainer}>
               <Mutunachi
                 mid={props.mutunachiId}
-                className={cls.mutunachi}
+                style={{ height: '250px' }}
               />
             </div>
           )}
@@ -95,7 +95,7 @@ const useStyles = createUseStyles({
     textAlign: 'right',
     display: 'flex',
     flexDirection: 'column',
-    fontFamily: 'Roboto',
+    fontFamily: 'Open Sans',
   },
   containerReversed: {
     flexDirection: 'column-reverse',
@@ -123,9 +123,6 @@ const useStyles = createUseStyles({
     flexDirection: 'column',
     justifyContent: 'center',
   },
-  mutunachi: {
-    height: '70%',
-  },
   info: {
     textAlign: 'left',
     display: 'flex',
@@ -141,7 +138,6 @@ const useStyles = createUseStyles({
   smallMutunachiWrapper: {
     flex: 0.2,
   },
-  mutunachiSmall: {},
   playerDetailsWrapper: {
     flex: 1,
     marginLeft: '10px',

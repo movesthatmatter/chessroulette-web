@@ -37,7 +37,7 @@ HTMLImageElement
 };
 
 export const Mutunachi: React.FC<MutunachiProps> = ({
-  mid, className, style, ...imgProps
+  mid, className, style, height, ...imgProps
 }) => (
   <div className={className} style={style}>
     <img
@@ -45,8 +45,7 @@ export const Mutunachi: React.FC<MutunachiProps> = ({
       alt="Mutunachi"
       {...imgProps}
       style={{
-        width: '100%',
-        height: '100%',
+        height: height ? `${height}` : '100%',
         objectFit: 'contain',
       }}
     />

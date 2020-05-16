@@ -45,9 +45,12 @@ export const RoomListPeer: React.FC<Props> = ({
       }}
     >
       <div className={cls.topBar}>
-        <div className={cls.mutunachi}>
-          <Mutunachi mid={peer.avatarId as MutunachiProps['mid']} style={{ height: '35px' }} />
-        </div>
+        {peer.connection.channels.streaming.on
+        && (
+          <div className={cls.mutunachi}>
+            <Mutunachi mid={peer.avatarId as MutunachiProps['mid']} style={{ height: '35px' }} />
+          </div>
+        )}
         <div
           className={cls.peerNameContainer}
           style={{
@@ -63,7 +66,7 @@ export const RoomListPeer: React.FC<Props> = ({
           <FaceTime streamConfig={peer.connection.channels.streaming} />
         ) : (
           <div className={cls.mutunachiLarge}>
-            <Mutunachi mid={peer.avatarId as MutunachiProps['mid']} style={{ height: '90px' }} />
+            <Mutunachi mid={peer.avatarId as MutunachiProps['mid']} style={{ height: '120px' }} />
           </div>
         )}
       </div>
@@ -84,7 +87,7 @@ const useStyle = createUseStyles({
   },
   topBar: {
     display: 'flex',
-    paddingLeft: '10px',
+    marginBottom: '5px',
   },
   chessIconContainer: {
     marginRight: '10px',
@@ -100,9 +103,10 @@ const useStyle = createUseStyles({
   },
   peerNameContainer: {
     maxWidth: '80%',
-    alignSelf: 'center',
+
   },
-  videoContainer: {},
+  videoContainer: {
+  },
   mutunachiLarge: {},
   challenge: {},
 });
