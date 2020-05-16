@@ -244,7 +244,6 @@ export const GameRoom: React.FC<GameRoomProps> = ({
             <RoomInfoDisplay
               me={me}
               room={room}
-              // peerConnections={peerConnections}
               playersById={playersById}
               gameInProgress={
                 !!props.currentGame
@@ -255,11 +254,6 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                 props.onChallengeOffer(challengeOffer);
               }}
             />
-            <div>
-              {room.type === 'private' && (
-                <div>{`Invite Friends: ${room.code}`}</div>
-              )}
-            </div>
             <div className={cls.chatWrapper}>
               <ChatBoxContainer
                 me={me}
