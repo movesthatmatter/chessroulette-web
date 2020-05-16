@@ -20,7 +20,9 @@ export const WithLocalStream: React.FC<Props> = ({
     })();
 
     return () => {
-      client.stop();
+      if (localStream) {
+        client.stop(localStream);
+      }
     };
   }, []);
 

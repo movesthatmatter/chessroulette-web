@@ -6,6 +6,7 @@ import { noop } from 'src/lib/util';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
 import { AddNewPeerPopUp } from 'src/components/AddNewPeerPopup/AddNewPeerPopup';
 import { GameChallengeRecord } from 'src/modules/GameRoom/records';
+import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { RoomListPeer } from './RoomListPeer';
 import { Room, Peer } from '../RoomProvider/types';
 
@@ -82,9 +83,20 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
         </div>
         <div className={cls.listContainer}>
           {nonPlayerPeersIncludingMe.length === 0 && (
-            <div>
-              Waiting for peers. User invite button to share the room and invite
-              your friends
+            <div style={{ textAlign: 'center' }}>
+              Waiting for peers.
+              <br />
+              <br />
+              Dont just sit there, click the + icon above and
+              invite some friends over.
+              <br />
+              <br />
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Mutunachi
+                  mid={4}
+                  style={{ height: '100px' }}
+                />
+              </div>
             </div>
           )}
           {nonPlayerPeersIncludingMe.map((peer) => (

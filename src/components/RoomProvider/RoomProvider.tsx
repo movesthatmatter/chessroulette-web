@@ -1,7 +1,9 @@
-import React, { useState, ReactNode, useEffect } from 'react';
+import React, {
+  useState, ReactNode, useEffect, useRef,
+} from 'react';
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/services/peers';
-import { AVStreamingConstraints } from 'src/services/AVStreaming';
+import { AVStreamingConstraints, AVStreaming } from 'src/services/AVStreaming';
 import { noop } from 'src/lib/util';
 import { SocketConsumer } from '../SocketProvider';
 import { PeersProvider, PeerConnections } from '../PeersProvider';
@@ -38,6 +40,8 @@ export const RoomProvider: React.FC<Props> = ({
   onMessageSent = noop,
   ...props
 }) => {
+  const avStreamClient = useRef(new AVStreaming());
+  const [localStream, setLocalStream] = useState<MediaStream | undefined>();
   const [error, setError] = useState<Errors | undefined>();
   const [
     socketRecords,
@@ -64,14 +68,17 @@ export const RoomProvider: React.FC<Props> = ({
 
         // Updates From RTC (Peer Connections)
         connection: {
-          ...rtcPeerConnections[meId]
-            ? { channels: rtcPeerConnections[meId].channels }
-            : {
-              channels: {
-                data: { on: false },
-                streaming: { on: false },
-              },
-            },
+          channels: {
+            // This is fake and I don't like it being here
+            data: { on: false },
+            streaming: localStream
+              ? {
+                on: true,
+                type: 'audio-video',
+                stream: localStream,
+              }
+              : { on: false },
+          },
         },
       };
 
@@ -82,10 +89,14 @@ export const RoomProvider: React.FC<Props> = ({
       //   it will not show up
       const nextPeers: Room['peers'] = Object
         .keys(rtcPeerConnections)
-        // Take out me from peers
+        // Take me out from peers
         .filter((peerId) => peerId !== nextMe.id)
         .reduce((res, peerId) => {
-          if (!prev?.room.peers[peerId] && socketRecords.room.peers[peerId]) {
+          // TODO: Revise this logic here as I'm not sure it's working as it should
+          //  or at the very least I'm not sure it's not extraneous, like the 2nd if
+
+
+          if (socketRecords.room.peers[peerId]) {
             const { room: socketRoom } = socketRecords;
             const { [peerId]: socketRoomPeer } = socketRoom.peers;
             const { [peerId]: rtcConnection } = rtcPeerConnections;
@@ -104,6 +115,14 @@ export const RoomProvider: React.FC<Props> = ({
             return {
               ...res,
               [peerId]: nextPeer,
+            };
+          }
+
+          // If it's a new one
+          if (prev?.room.peers[peerId]) {
+            return {
+              ...res,
+              [peerId]: prev.room.peers[peerId],
             };
           }
 
@@ -132,7 +151,7 @@ export const RoomProvider: React.FC<Props> = ({
         room: nextRoom,
       };
     });
-  }, [rtcPeerConnections, socketRecords]);
+  }, [rtcPeerConnections, socketRecords, localStream]);
 
   return (
     <SocketConsumer
@@ -141,6 +160,19 @@ export const RoomProvider: React.FC<Props> = ({
           setSocketRecords(msg.content);
         } else if (msg.kind === 'joinRoomFailure') {
           setError('WrongCode');
+        } else if (msg.kind === 'roomStats') {
+          // This is needed because when there is a new Peer Joining the room
+          //  The Peer Info comes from the socket
+          setSocketRecords((prev) => (prev
+            ? ({
+              ...prev,
+              room: msg.content,
+            })
+            // If prev isn't defined yet, just return it
+            // it means somehow it didn't have a chance to setMe so this payload
+            //  won't suffice. If this happens it's an error!
+            : prev
+          ));
         }
 
         // TODO: Is there a need for onLeave??
@@ -158,30 +190,66 @@ export const RoomProvider: React.FC<Props> = ({
             ? (
               <PeersProvider
                 socket={socket}
-                me={socketRecords.me}
-                initialPeers={Object.values(socketRecords.room.peers)}
-                onReady={({ connect, startAVBroadcasting }) => {
+                meId={socketRecords.me.id}
+                initialPeerIds={Object.keys(socketRecords.room.peers)}
+                onReady={({ connect, startStreaming }) => {
                 // Connect to all the peers right away
                   connect();
 
-                  // setTimeout(() => {
-                  //   startAVBroadcasting();
-                  // }, 3 * 1000);
+                  // And start streaming
+                  (async () => {
+                    const nextLocalStream = await avStreamClient.current.start();
+
+                    setLocalStream((prev) => {
+                      // If there is a local stram running already don't change anything
+                      if (prev) {
+                        return prev;
+                      }
+
+                      return nextLocalStream;
+                    });
+                    startStreaming(nextLocalStream);
+                  })();
                 }}
+
+                // Start a new local stream everytime it's needed
+                onLocalStreamRequested={() => avStreamClient.current.start()}
                 onPeerConnectionsChanged={setRtcPeerConnections}
                 onPeerMsgReceived={onMessageReceived}
                 onPeerMsgSent={onMessageSent}
 
                 render={({
-                  startAVBroadcasting,
-                  stopAVBroadcasting,
+                  startStreaming,
+                  stopStreaming,
                   broadcastMessage,
                 }) => (meAndMyRoom
                   ? props.render({
                     me: meAndMyRoom.me,
                     room: meAndMyRoom.room,
-                    startStreaming: () => startAVBroadcasting(),
-                    stopStreaming: stopAVBroadcasting,
+
+                    startStreaming: async (constraints) => {
+                      const nextLocalStream = await avStreamClient.current.start(constraints);
+
+                      setLocalStream((prev) => {
+                        // If there is a local stram running already don't change anything
+                        if (prev) {
+                          return prev;
+                        }
+
+                        return nextLocalStream;
+                      });
+                      startStreaming(nextLocalStream);
+                    },
+                    stopStreaming: () => {
+                      stopStreaming();
+
+                      // Stop the local client as well
+                      // TODO: Do I need to stop each RTC's Connection stream too?
+                      // I'd suppose I do
+                      if (localStream) {
+                        avStreamClient.current.stop(localStream);
+                      }
+                    },
                     broadcastMessage,
                   })
                   : props.renderFallback({ error, loading: !error }))}

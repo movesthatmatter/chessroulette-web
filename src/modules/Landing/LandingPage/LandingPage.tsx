@@ -94,7 +94,7 @@ export const LandingPage: React.FC<Props> = () => {
               </div>
               <div className={cls.buttonWithMutunachiWrapper}>
                 <Mutunachi
-                  mid="mutunachiIceCreamAndBaloons"
+                  mid={12}
                   className={cls.mutunachi}
                 />
                 <ColoredButton

@@ -66,7 +66,10 @@ export const RoomListPeer: React.FC<Props> = ({
           <FaceTime streamConfig={peer.connection.channels.streaming} />
         ) : (
           <div className={cls.mutunachiLarge}>
-            <Mutunachi mid={peer.avatarId as MutunachiProps['mid']} style={{ height: '120px' }} />
+            <Mutunachi 
+              mid={peer.avatarId as MutunachiProps['mid']}
+              style={{ height: '128px', marginTop: '8px' }}
+            />
           </div>
         )}
       </div>
