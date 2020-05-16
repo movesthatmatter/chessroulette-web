@@ -21,10 +21,10 @@ export type RoomInfoProps = {
 };
 
 const setTitleState = (gameInProgress: boolean, peers: number): string => {
+  if (gameInProgress) {
+    return 'Game in progress';
+  }
   if (peers >= 2) {
-    if (gameInProgress) {
-      return 'Game in progress';
-    }
     return 'Click on a peer to challenge';
   }
   return 'Invite a friend to start playing!';
