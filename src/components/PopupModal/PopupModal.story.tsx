@@ -5,7 +5,7 @@ import { PopupModal } from './PopupModal';
 
 export default {
   component: PopupModal,
-  title: 'Components/Popup Modal',
+  title: 'Components/Popups/Popup Modal',
 };
 
 export const ModalComponent = () => React.createElement(() => {

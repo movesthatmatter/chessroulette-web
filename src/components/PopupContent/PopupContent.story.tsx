@@ -6,7 +6,7 @@ import { PopupContent } from './PopupContent';
 
 export default {
   component: PopupContent,
-  title: 'Components/PopupContent',
+  title: 'Components/Popups/PopupContent',
 };
 
 export const defaultStory = () => (
