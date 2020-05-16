@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import { PeerRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { RTCSignalingChannel } from 'src/services/socket/RTCSignalingChannel';
 import {
@@ -8,7 +7,6 @@ import {
   PeerConnectionStatus,
 } from 'src/services/peers';
 import { logsy } from 'src/lib/logsy';
-import { AVStreaming } from 'src/services/AVStreaming';
 
 export type PeerConnections = {
   [peerId: string]: PeerConnectionStatus & { isConnected: boolean };
@@ -16,12 +14,10 @@ export type PeerConnections = {
 
 type RenderProps = {
   connect: () => void;
-
-  startAVBroadcasting: () => void;
-  stopAVBroadcasting: () => void;
+  startStreaming: (stream: MediaStream) => void;
+  stopStreaming: () => void;
   broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
 
-  localStream?: MediaStream;
   peerConnections: PeerConnections;
 };
 
@@ -35,6 +31,8 @@ type Props = {
   onPeerConnectionsChanged?: (
     peerConnections: RenderProps['peerConnections']
   ) => void;
+
+  onLocalStreamRequested?: () => Promise<MediaStream>;
 
   onPeerMsgReceived?: (
     msg: PeerMessageEnvelope,
@@ -51,120 +49,102 @@ type Props = {
 
 type State = {
   peerConnections: PeerConnections;
-  localStream?: MediaStream;
 };
 
 export class PeersProvider extends React.Component<Props, State> {
   private peersClient?: Peers;
 
-  private localStreamClient?: AVStreaming;
-
-  private unsubscribeFromLocalStreamStart?: () => void;
-
-  private unsubscribeFromLocalStreamStop?: () => void;
-
-  private unsubscribeFromRemoteStreamStart?: () => void;
-
   private initialPeerIdsWithoutMe: string[];
+
+  private unsubscribers: {[k: string]: () => void} = {};
 
   state: State = {
     peerConnections: {},
-    localStream: undefined,
   };
 
   constructor(props: Props) {
     super(props);
 
     // Take Me out of the Peers
-    this.initialPeerIdsWithoutMe = props.initialPeerIds
-      .filter((peerId) => peerId !== props.meId);
+    this.initialPeerIdsWithoutMe = props.initialPeerIds.filter((peerId) => peerId !== props.meId);
   }
 
   componentDidMount() {
-    this.localStreamClient = new AVStreaming();
-    this.peersClient = new Peers(
-      new RTCSignalingChannel(this.props.socket.connection),
-      this.localStreamClient,
-    );
+    this.peersClient = new Peers(new RTCSignalingChannel(this.props.socket.connection));
 
-    this.unsubscribeFromLocalStreamStart = this.localStreamClient.onStart(
-      (localStream) => {
-        this.setState((prevState) => ({
-          ...prevState,
-          localStream,
-        }));
-      },
-    );
+    this.unsubscribers.onPeerConnectionUpdated = this.peersClient.onPeerConnectionUpdated(
+      (status) => {
+        logsy.log('[PeersProvider] onPeerConnectionUpdated', status);
 
-    this.unsubscribeFromLocalStreamStop = this.localStreamClient.onStop(
-      () => {
-        this.setState((prevState) => ({
-          ...prevState,
-          localStream: undefined,
-        }));
-      },
-    );
-
-    this.peersClient.onPeerConnectionUpdated((status) => {
-      logsy.log('[PeersProvider] onPeerConnectionUpdated', status);
-
-      this.setState(
-        (prev) => {
-          const defaultChannels: PeerConnectionStatus['channels'] = {
-            data: {
-              on: false,
-            },
-            streaming: {
-              on: false,
-            },
-          } as const;
-
-          const prevChannels = prev.peerConnections[status.peerId]?.channels ?? {};
-          const nextChannels = status.channels || {};
-
-          const nextPeerConnectionStateChannels = Object.assign(
-            defaultChannels,
-            prevChannels,
-            nextChannels,
-          );
-
-          const nextPeerConnection = {
-            peerId: status.peerId,
-            channels: nextPeerConnectionStateChannels,
-            isConnected: Object
-              .values(nextPeerConnectionStateChannels)
-              .filter((p) => p.on)
-              .length > 0,
-          };
-
-          if (nextPeerConnection.isConnected) {
-            return {
-              peerConnections: {
-                ...prev.peerConnections,
-                [status.peerId]: nextPeerConnection,
+        this.setState(
+          (prev) => {
+            const defaultChannels: PeerConnectionStatus['channels'] = {
+              data: {
+                on: false,
               },
+              streaming: {
+                on: false,
+              },
+            } as const;
+
+            const prevChannels = prev.peerConnections[status.peerId]?.channels ?? {};
+            const nextChannels = status.channels || {};
+
+            const nextPeerConnectionStateChannels = Object.assign(
+              defaultChannels,
+              prevChannels,
+              nextChannels,
+            );
+
+            const nextPeerConnection = {
+              peerId: status.peerId,
+              channels: nextPeerConnectionStateChannels,
+              isConnected: Object
+                .values(nextPeerConnectionStateChannels)
+                .filter((p) => p.on)
+                .length > 0,
             };
-          }
 
-          const { [status.peerId]: removed, ...rest } = prev.peerConnections;
+            if (nextPeerConnection.isConnected) {
+              return {
+                peerConnections: {
+                  ...prev.peerConnections,
+                  [status.peerId]: nextPeerConnection,
+                },
+              };
+            }
 
-          return {
-            peerConnections: rest,
-          };
-        },
-        () => {
+            const { [status.peerId]: removed, ...rest } = prev.peerConnections;
+
+            return {
+              peerConnections: rest,
+            };
+          },
+          () => {
           this.props.onPeerConnectionsChanged?.(this.state.peerConnections);
-        },
-      );
-    });
+          },
+        );
+      },
+    );
 
-    this.peersClient.onPeerMessage((data) => {
+    this.unsubscribers.onLocalStreamRequested = this.peersClient.onLocalStreamRequested(
+      async ({ resolve, reject }) => {
+        if (!this.props.onLocalStreamRequested) {
+          reject();
+          return;
+        }
+
+        resolve(await this.props.onLocalStreamRequested());
+      },
+    );
+
+    this.unsubscribers.onPeerMessage = this.peersClient.onPeerMessage((data) => {
       this.props.onPeerMsgReceived?.(data, {
         broadcastMessage: (...args) => this.broadcastMessage(...args),
       });
     });
 
-    this.peersClient.onPeerMessageSent((data) => {
+    this.unsubscribers.onPeerMessageSent = this.peersClient.onPeerMessageSent((data) => {
       this.props.onPeerMsgSent?.(data, {
         broadcastMessage: (...args) => this.broadcastMessage(...args),
       });
@@ -173,9 +153,8 @@ export class PeersProvider extends React.Component<Props, State> {
     if (this.props.onReady) {
       this.props.onReady({
         connect: async () => this.peersClient?.connect(this.initialPeerIdsWithoutMe),
-
-        startAVBroadcasting: () => this.startAVBroadcasting(),
-        stopAVBroadcasting: () => this.stopAVBroadcasting(),
+        startStreaming: (stream) => this.peersClient?.startStreaming(stream),
+        stopStreaming: () => this.peersClient?.stopStreaming(),
         broadcastMessage: this.broadcastMessage.bind(this),
 
         peerConnections: this.state.peerConnections,
@@ -184,13 +163,13 @@ export class PeersProvider extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
+    // Unsubscribe from each listener
+    Object
+      .values(this.unsubscribers)
+      .forEach((unsubscribe) => unsubscribe());
+
+    // And only then close the peers client
     this.peersClient?.close();
-
-    this.unsubscribeFromLocalStreamStart?.();
-    this.unsubscribeFromLocalStreamStop?.();
-    this.unsubscribeFromRemoteStreamStart?.();
-
-    this.localStreamClient?.stop();
   }
 
   private broadcastMessage(message: PeerMessageEnvelope['message']) {
@@ -200,28 +179,16 @@ export class PeersProvider extends React.Component<Props, State> {
     });
   }
 
-  private startAVBroadcasting() {
-    this.localStreamClient?.start();
-  }
-
-  private stopAVBroadcasting() {
-    this.localStreamClient?.stop();
-  }
-
   render() {
     return (
-      <>
-        {this.props.render({
-          connect: async () => this.peersClient?.connect(this.initialPeerIdsWithoutMe),
+      this.props.render({
+        connect: async () => this.peersClient?.connect(this.initialPeerIdsWithoutMe),
+        startStreaming: (stream) => this.peersClient?.startStreaming(stream),
+        stopStreaming: () => this.peersClient?.stopStreaming(),
+        broadcastMessage: this.broadcastMessage.bind(this),
 
-          startAVBroadcasting: () => this.startAVBroadcasting(),
-          stopAVBroadcasting: () => this.stopAVBroadcasting(),
-          broadcastMessage: this.broadcastMessage.bind(this),
-
-          localStream: this.state.localStream,
-          peerConnections: this.state.peerConnections,
-        })}
-      </>
+        peerConnections: this.state.peerConnections,
+      })
     );
   }
 }
