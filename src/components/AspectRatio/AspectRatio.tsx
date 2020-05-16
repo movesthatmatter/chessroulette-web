@@ -8,7 +8,7 @@ export type AspectRatioProps = React.HTMLProps<HTMLDivElement> & {
     height: number;
   };
 } & ({
-  width?: number;
+  width?: number | string;
   height?: never;
 } | {
   height?: number;
@@ -35,7 +35,7 @@ export const AspectRatio: React.FC<AspectRatioProps> = ({
     >
       <div
         className={cx(cls.container, props.className)}
-        // style={{ paddingBottom: `${100 / (aspectRatio.width / aspectRatio.height)}%` }}
+        style={{ paddingBottom: `${100 / (aspectRatio.width / aspectRatio.height)}%` }}
       >
         <div className={cls.content}>
           {props.children}
@@ -54,7 +54,7 @@ const useStyles = createUseStyles({
   content: {
     width: '100%',
     height: '100%',
-    //   position: 'absolute',
+    position: 'absolute',
     top: 0,
     left: 0,
   },

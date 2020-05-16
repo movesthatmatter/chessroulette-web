@@ -5,17 +5,20 @@ import { createUseStyles } from 'src/lib/jss';
 import { AspectRatio } from 'src/components/AspectRatio';
 
 type Props = Omit<FaceTimeProps, 'classNames' | 'style'> & {
-  width: number;
+  width?: number | string;
   classNames?: string;
   fallbackComponent?: React.ReactNode;
 }
 
-export const TV: React.FC<Props> = (props) => {
+export const TV: React.FC<Props> = ({
+  width = '100%',
+  ...props
+}) => {
   const cls = useStyles();
 
   return (
     <AspectRatio
-      width={props.width}
+      width={width}
       aspectRatio={{ width: 4, height: 3 }}
       className={cx(cls.container, props.classNames)}
     >

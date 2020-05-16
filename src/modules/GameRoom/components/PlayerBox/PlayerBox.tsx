@@ -4,9 +4,7 @@ import { Mutunachi, MutunachiProps } from 'src/components/Mutunachi/Mutunachi';
 import { ChessGameState, ChessPlayer } from 'src/modules/Games/Chess';
 import { PeerConnectionStatus } from 'src/services/peers';
 import cx from 'classnames';
-import { useWindowSize } from '@react-hook/window-size';
 import { Coundtdown } from '../Countdown';
-import { getBoardSize } from '../../util';
 import { TV } from '../TV/TV';
 
 // / Normally this shouldn't be called when there is no game started
@@ -27,13 +25,9 @@ type Props = {
 
 export const PlayerBox: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const [screenWidth, screenHeight] = useWindowSize();
-
-  const boardSize = getBoardSize({ screenWidth, screenHeight });
 
   return (
     <div
-      style={{ height: screenHeight }}
       className={cx(cls.container, props.className, {
         [cls.containerReversed]: props.side === 'home',
       })}
@@ -41,10 +35,7 @@ export const PlayerBox: React.FC<Props> = (props) => {
       <div className={cls.info}>
         <div className={cls.infoLeft}>
           <div className={cls.smallMutunachiWrapper}>
-            <Mutunachi
-              mid={props.mutunachiId}
-              style={{ height: '50px' }}
-            />
+            <Mutunachi mid={props.mutunachiId} style={{ height: '50px' }} />
           </div>
           <div className={cls.playerDetailsWrapper}>
             <h4>{props.player.name}</h4>
@@ -52,19 +43,24 @@ export const PlayerBox: React.FC<Props> = (props) => {
           </div>
         </div>
         {props.currentGame && (
-          <div className={cx(cls.countDownWrapper, {
-            [cls.countDownWrapperReversed]: props.side === 'home',
-          })}
+          <div
+            className={cx(cls.countDownWrapper, {
+              [cls.countDownWrapperReversed]: props.side === 'home',
+            })}
           >
             <Coundtdown
               className={cls.countdown}
               timeLeft={props.currentGame.timeLeft?.[props.player.color] ?? 0}
-              paused={!props.currentGame || props.currentGame.state !== 'started' || (props.currentGame.lastMoved === props.player.color)}
+              paused={
+                !props.currentGame
+                || props.currentGame.state !== 'started'
+                || props.currentGame.lastMoved === props.player.color
+              }
               onFinished={props.onTimeFinished}
               activeClassName={cx({
-                [cls.activeCountdownTurn]: props.currentGame && (
-                  props.currentGame.lastMoved !== props.player.color
-                ),
+                [cls.activeCountdownTurn]:
+                  props.currentGame
+                  && props.currentGame.lastMoved !== props.player.color,
               })}
             />
           </div>
@@ -72,14 +68,10 @@ export const PlayerBox: React.FC<Props> = (props) => {
       </div>
       <div className={cls.tvWrapper}>
         <TV
-          width={boardSize / 2}
           streamConfig={props.streamConfig}
           fallbackComponent={(
             <div className={cls.streamFallbackContainer}>
-              <Mutunachi
-                mid={props.mutunachiId}
-                style={{ height: '250px' }}
-              />
+              <Mutunachi mid={props.mutunachiId} style={{ height: '250px' }} />
             </div>
           )}
           muted={props.muted}

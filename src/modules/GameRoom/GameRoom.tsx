@@ -9,7 +9,8 @@ import { RoomInfoDisplay } from 'src/components/RoomInfoDisplay';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
 import { PopupContent } from 'src/components/PopupContent';
 import { Room, Peer } from 'src/components/RoomProvider';
-import { MutunachiProps } from 'src/components/Mutunachi/Mutunachi';
+import { MutunachiProps, Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import useWindowSize from '@react-hook/window-size';
 import {
   ChessGame,
   ChessPlayer,
@@ -20,6 +21,7 @@ import { PlayerBox } from './components/PlayerBox/PlayerBox';
 import { otherChessColor } from '../Games/Chess/util';
 import { GameChallengeRecord } from './records/GameDataRecord';
 import { ChallengeOfferPopup } from './components/ChallengeOfferPopup';
+import { getBoardSize } from './util';
 
 export type GameRoomProps = {
   me: Peer;
@@ -79,6 +81,9 @@ export const GameRoom: React.FC<GameRoomProps> = ({
   const [lastMoveTime, setLastMoveTime] = useState<Date | undefined>();
   const [showingPopup, setShowingPopup] = useState<Partial<PopupTypesMap>>({ none: undefined });
   const [playable, setPlayable] = useState(false);
+  const [screenWidth, screenHeight] = useWindowSize();
+
+  const boardSize = getBoardSize({ screenWidth, screenHeight });
 
   const playersById = props.currentGame
     ? getPlayersById(props.currentGame)
@@ -129,70 +134,79 @@ export const GameRoom: React.FC<GameRoomProps> = ({
           <img src={logo} alt="logo" className={cls.logo} />
         </div>
         <main className={cls.grid}>
-          <aside className={cx(cls.leftSide, cls.playersContainer)}>
-            {props.currentGame && playerAwayAsPeer ? (
+          <aside className={cx(cls.leftSide)}>
+            <div
+              className={cls.playersContainer}
+              style={{ width: boardSize / 2 }}
+            >
+              {props.currentGame && playerAwayAsPeer ? (
+                <PlayerBox
+                  className={cx(cls.playerBox, cls.playerBoxAway)}
+                  currentGame={props.currentGame}
+                  onTimeFinished={() => {
+                    if (
+                      !props.currentGame
+                    || props.currentGame.state === 'finished'
+                    || props.currentGame.state === 'neverStarted'
+                    ) {
+                      return;
+                    }
+                    props.onGameStateUpdate(
+                      reduceChessGame.timerFinished(props.currentGame, {
+                        loser: awayColor,
+                      }),
+                    );
+                  }}
+                  player={props.currentGame.players[awayColor]}
+                  mutunachiId={playerAwayAsPeer.avatarId as unknown as MutunachiProps['mid']}
+                  side="away"
+                  streamConfig={playerAwayAsPeer.connection.channels.streaming}
+                />
+              ) : (
+                <div className={cx(cls.playerBox, cls.playerBoxAway, cls.noPlayerFallback)}>
+                  <div className={cls.awayTitle}>
+                    <span style={{ fontWeight: 'bold', fontSize: '24px' }}>Game not started.</span>
+                    <br />
+                    Challenge one of your friends to start a game.
+                  </div>
+                  {/* <Mutunachi
+                    mid={0}
+                    style={{ height: '10%' }}
+                  /> */}
+                </div>
+
+              )}
               <PlayerBox
-                className={cx(cls.playerBox, cls.playerBoxAway)}
+                className={cx(cls.playerBox, cls.playerBoxHome)}
                 currentGame={props.currentGame}
                 onTimeFinished={() => {
                   if (
                     !props.currentGame
-                    || props.currentGame.state === 'finished'
-                    || props.currentGame.state === 'neverStarted'
+                  || props.currentGame.state === 'finished'
+                  || props.currentGame.state === 'neverStarted'
                   ) {
                     return;
                   }
+
                   props.onGameStateUpdate(
                     reduceChessGame.timerFinished(props.currentGame, {
-                      loser: awayColor,
+                      loser: homeColor,
                     }),
                   );
                 }}
-                player={props.currentGame.players[awayColor]}
-                mutunachiId={playerAwayAsPeer.avatarId as unknown as MutunachiProps['mid']}
-                side="away"
-                streamConfig={playerAwayAsPeer.connection.channels.streaming}
-              />
-            ) : (
-              <div className={cx(cls.playerBox, cls.playerBoxAway)}>
-                <div className={cls.awayTitle}>
-                  <span style={{ fontWeight: 'bold', fontSize: '24px' }}>Game not started.</span>
-                  <br />
-                  Challenge one of your friends to start a game.
-                </div>
-              </div>
-
-            )}
-            <PlayerBox
-              className={cx(cls.playerBox, cls.playerBoxHome)}
-              currentGame={props.currentGame}
-              onTimeFinished={() => {
-                if (
-                  !props.currentGame
-                  || props.currentGame.state === 'finished'
-                  || props.currentGame.state === 'neverStarted'
-                ) {
-                  return;
-                }
-
-                props.onGameStateUpdate(
-                  reduceChessGame.timerFinished(props.currentGame, {
-                    loser: homeColor,
-                  }),
-                );
-              }}
-              player={
+                player={
                 props.currentGame?.players[homeColor] ?? {
-                  ...me,
-                  color: 'white',
+                    ...me,
+                    color: 'white',
+                  }
                 }
-              }
-              mutunachiId={playerHomeAsPeer.avatarId as unknown as MutunachiProps['mid']}
-              side="home"
-              streamConfig={playerHomeAsPeer.connection.channels.streaming}
-              // Mute it if it's my stream so it doesn't createa a howling effect
-              muted={playerHomeAsPeer.id === me.id}
-            />
+                mutunachiId={playerHomeAsPeer.avatarId as unknown as MutunachiProps['mid']}
+                side="home"
+                streamConfig={playerHomeAsPeer.connection.channels.streaming}
+                // Mute it if it's my stream so it doesn't createa a howling effect
+                muted={playerHomeAsPeer.id === me.id}
+              />
+            </div>
           </aside>
           <div className={cls.middleSide}>
             <ChessGame
@@ -289,7 +303,6 @@ const useStyles = createUseStyles({
     position: 'relative',
     fontFamily: 'Open Sans',
     fontSize: '16px',
-    display: 'flex',
   },
   paddingWrapper: {
     padding: '4px 16px',
@@ -305,12 +318,12 @@ const useStyles = createUseStyles({
   grid: {
     display: 'flex',
     flexDirection: 'row',
-    height: '100%',
   },
   playersContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
+    flex: 1,
   },
   playerBox: {
     width: '100%',
@@ -318,10 +331,11 @@ const useStyles = createUseStyles({
     textAlign: 'center',
   },
   playerBoxHome: {},
-  playerBoxAway: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
+  playerBoxAway: {},
+  noPlayerFallback: {
+    // display: 'flex',
+    // flexDirection: 'column',
+    // justifyContent: 'center',
   },
   playerStreamFallback: {
     textAlign: 'center',
@@ -334,6 +348,7 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
+    alignItems: 'flex-end',
   },
   middleSide: {
     margin: '0 16px',
@@ -349,7 +364,7 @@ const useStyles = createUseStyles({
     right: '16px',
   },
   awayTitle: {
-    textAlign: 'left',
+    textAlign: 'center',
     backgroundColor: '#E3E3E3',
     color: '#F7627B',
     padding: '8px',
