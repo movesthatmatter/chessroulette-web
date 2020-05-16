@@ -1,14 +1,11 @@
 import { Pubsy } from 'src/lib/Pubsy';
 import { logsy } from 'src/lib/logsy';
-import { PeerRecord } from 'dstnd-io';
 import { RTCDataX } from 'src/lib/RTCDataX';
 import { Err } from 'dstnd-io/dist/ts-results';
 import { DeepPartial } from 'src/lib/types';
-import { noop } from 'src/lib/util';
 import { PeerMessageEnvelope } from './records/PeerMessagingEnvelopePayload';
 import { PeerConnectionStatus } from './types';
 import { RTCSignalingChannel } from '../socket/RTCSignalingChannel';
-import { AVStreaming } from '../AVStreaming';
 import { RTCClient } from './RTCClient';
 import { PeerMessageHandler } from './PeerMessageHandler';
 
@@ -18,10 +15,14 @@ type PartialPeerConnectionStatus = {
 
 export class Peers {
   private pubsy = new Pubsy<{
+    // TODO @deprecate in favor of the whole onPeerConnectionsUpdated?
+    //  So the rtc connections state is only kept in one place
     onPeerConnectionUpdated: PartialPeerConnectionStatus;
 
-    onRemoteStreamingStart: { peerId: string; stream: MediaStream };
-    onRemoteStreamingStop: { peerId: string };
+    onLocalStreamRequested: {
+      resolve(stream: MediaStream): void;
+      reject: () => void;
+    };
 
     onPeerMessage: PeerMessageEnvelope;
     onPeerMessageSent: PeerMessageEnvelope;
@@ -36,10 +37,7 @@ export class Peers {
 
   unsubscribeFromSignalingChannelOnMessage: () => void;
 
-  constructor(
-    private signalingChannel: RTCSignalingChannel,
-    private localStreamClient: AVStreaming,
-  ) {
+  constructor(private signalingChannel: RTCSignalingChannel) {
     this.unsubscribeFromSignalingChannelOnMessage = signalingChannel.onMessage(
       (msg) => {
         if (msg.kind === 'webrtcInvitation') {
@@ -54,20 +52,17 @@ export class Peers {
     );
   }
 
-  connect(peers: PeerRecord[]) {
-    logsy.log(
-      '[Peers] Connecting to',
-      peers.map((p) => p.name),
-    );
+  connect(peersIds: string[]) {
+    logsy.log('[Peers] Connecting to', peersIds);
 
-    peers.forEach(async (peer) => {
-      await this.preparePeerConnection(peer.id);
-      await this.invitePeer(peer.id);
+    peersIds.forEach(async (peerId) => {
+      await this.preparePeerConnection(peerId);
+      await this.invitePeer(peerId);
 
-      logsy.log('[Peers] Connection to', peer.name, 'ready');
+      logsy.log('[Peers] Connection to', peerId, 'ready');
 
       // To be connected at least the data channel needs be started!
-      this.peerConnections[peer.id].rtc.openDataChannel();
+      this.peerConnections[peerId].rtc.openDataChannel();
     });
   }
 
@@ -92,6 +87,10 @@ export class Peers {
       logsy.log('[Peers] Connection State Changed', peerId, connectionState);
 
       if (connectionState === 'disconnected') {
+        // Remove the bad connection from the state
+        const { [peerId]: removed, ...rest } = this.peerConnections;
+        this.peerConnections = rest;
+
         this.pubsy.publish('onPeerConnectionUpdated', {
           peerId,
           channels: {
@@ -142,37 +141,8 @@ export class Peers {
         dataChannel: undefined,
       };
 
-      // Unsubscribe from listeners
-      unsubscribeFromLocalStreamOnStart();
-      unsubscribeFromLocalStreamOnStop();
-
       logsy.log('[Peers] Peer Connection Closed for', peerId);
     };
-
-    let unsubscribeFromLocalStreamOnStart = noop;
-
-    if (this.localStreamClient.stream) {
-      this.streamToPeer(rtc, this.localStreamClient.stream);
-    } else {
-      // TODO: Listen to constraint changes
-      unsubscribeFromLocalStreamOnStart = this.localStreamClient.onStart(
-        (stream) => {
-          this.streamToPeer(rtc, stream);
-        },
-      );
-    }
-
-    // TODO: Listen to constraint changes
-    const unsubscribeFromLocalStreamOnStop = this.localStreamClient.onStop(
-      () => {
-        // TODO: Make sure this is correct
-        rtc.connection.getSenders().forEach((sender) => {
-          rtc.connection.removeTrack(sender);
-        });
-
-        // TODO: here I need to send a message to the othe peer that the streaming has stopped!
-      },
-    );
 
     rtc.onRemoteStream = (stream) => {
       this.pubsy.publish('onPeerConnectionUpdated', {
@@ -187,13 +157,20 @@ export class Peers {
       });
     };
 
+    // This is a bit more intricate b/c instead of simply publishing an event
+    //  and waiting for it's response or not somewhere else, uncoupled
+    //  here the logic needs to wait for response from the higher up layers in
+    //  the same context (so the stream can be started right away), hence passing
+    //  a resolver/rejectior logic right in the event
+    rtc.onLocalStreamRequested = () => new Promise((resolve, reject) => {
+      this.pubsy.publish('onLocalStreamRequested', { resolve, reject });
+    });
+
     this.peerConnections[peerId] = {
       rtc,
     };
 
     return this.peerConnections[peerId];
-
-    // TODO: Manage dropped/closed connections
   }
 
   private async invitePeer(peerId: string) {
@@ -205,11 +182,27 @@ export class Peers {
     logsy.log('[Peers] Invitation sent to', peerId);
   }
 
-  private streamToPeer(rtc: RTCClient, stream: MediaStream) {
-    stream.getTracks().forEach((track) => {
-      // Send the Stream to the given Peer
-      rtc.connection.addTrack(track, stream);
-    });
+  startStreaming(stream: MediaStream) {
+    Object
+      .keys(this.peerConnections)
+      .forEach(async (peerId) => {
+        this.peerConnections[peerId].rtc.startStreaming(stream);
+      });
+  }
+
+  stopStreaming() {
+    Object
+      .values(this.peerConnections)
+      .forEach((pc) => {
+        pc.rtc.connection.getSenders().forEach((sender) => {
+          pc.rtc.connection.removeTrack(sender);
+        });
+      });
+
+
+    // TODO: Is there a difference between the above and
+    //  stream.getTracks().forEach((track) => track.stop())
+    // Do I need to do both??
   }
 
   /**
@@ -218,16 +211,13 @@ export class Peers {
    * @param room
    * @param msg
    */
-  broadcastMessage(
-    peers: PeerRecord[],
-    payload: Pick<PeerMessageEnvelope, 'message' | 'fromPeerId'>,
-  ) {
-    const results = peers
-      .map(({ id }) => this.peerConnections[id].dataChannel)
-      .map((dataChannel) => dataChannel?.send(payload) ?? new Err(undefined));
+  broadcastMessage(payload: Pick<PeerMessageEnvelope, 'message' | 'fromPeerId'>) {
+    const results = Object
+      .values(this.peerConnections)
+      .map(({ dataChannel }) => dataChannel?.send(payload) ?? new Err(undefined));
 
-    const okSends = results.filter((r) => r);
-    const badSends = results.filter((r) => !r);
+    const okSends = results.filter((r) => r.ok);
+    const badSends = results.filter((r) => !r.ok);
 
     if (okSends.length > 0) {
       okSends[0].map((m) => {
@@ -241,7 +231,7 @@ export class Peers {
         //  It depends on the strategy, but we're not there yet.
         logsy.warn(
           '[Peers] Received BadResults while Attempting to send Data to Peers',
-          peers,
+          Object.keys(this.peerConnections),
           `Message Payload: ${payload}`,
           `BadResults Count: ${badSends.length} out of ${results.length}`,
           badSends,
@@ -261,6 +251,8 @@ export class Peers {
 
     // Free them up from the stack
     this.peerConnections = {};
+
+    // TODO: Update the PeerProvider??
   }
 
   onPeerConnectionUpdated = (fn: (p: PartialPeerConnectionStatus) => void) =>
@@ -271,4 +263,9 @@ export class Peers {
 
   onPeerMessageSent = (fn: (msg: PeerMessageEnvelope) => void) =>
     this.pubsy.subscribe('onPeerMessageSent', fn);
+
+  onLocalStreamRequested = (fn: (msg: {
+    resolve: (stream: MediaStream) => void;
+    reject: () => void;
+  }) => void) => this.pubsy.subscribe('onLocalStreamRequested', fn)
 }

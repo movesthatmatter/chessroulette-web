@@ -1,11 +1,14 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState, useEffect } from 'react';
-import { RoomStatsRecord } from 'dstnd-io';
+import React from 'react';
 import { action } from '@storybook/addon-actions';
-import { AVStreaming } from 'src/services/AVStreaming';
 import StoryRouter from 'storybook-react-router';
+import { RoomMocker } from 'src/mocks/records/RoomMocker';
+import { PeerMocker } from 'src/mocks/records/PeerMocker';
+import { WithLocalStream } from 'src/storybook/WithLocalStream';
+import Chance from 'chance';
 import { RoomInfoDisplay } from './RoomInfoDisplay';
+import { Peer } from '../RoomProvider';
 
 export default {
   component: RoomInfoDisplay,
@@ -13,257 +16,136 @@ export default {
   decorators: [StoryRouter()],
 };
 
+const chance = new Chance();
+const roomMocker = new RoomMocker();
+const peerMocker = new PeerMocker();
 
-const peers = {
-  1: {
-    id: '1',
-    name: 'Broasca',
-  },
-  2: {
-    id: '2',
-    name: 'Piper',
-  },
-  3: {
-    id: '3',
-    name: 'Jartica',
-  },
-  4: {
-    id: '4',
-    name: 'Kasparov',
-  },
-  5: {
-    id: '5',
-    name: 'Horny Predator',
-  },
-  6: {
-    id: '6',
-    name: 'Lebada',
-  },
-} as const;
-const myId = peers[3].id;
+const me = peerMocker.withProps({
+  name: 'Aristotel',
+});
+const roomPeers = [
+  // These could've been automted but I wanted to maintain the names :)
+  peerMocker.withProps({ name: 'Broasca' }),
+  peerMocker.withProps({ name: 'Piper' }),
+  peerMocker.withProps({ name: 'Jartica' }),
+  peerMocker.withProps({ name: 'Horny Predator' }),
+  peerMocker.withProps({ name: 'Lebada' }),
+];
 
 const playersById = {
-  1: {
-    color: 'white',
-    id: peers[1].id,
-    name: peers[1].name,
-  } as const,
-  5: {
-    color: 'black',
-    id: peers[5].id,
-    name: peers[5].name,
-  } as const,
+  [me.id]: me,
+  [roomPeers[2].id]: roomPeers[2],
 };
 
-const publicRoom: RoomStatsRecord = {
-  id: '0',
+const publicRoom = roomMocker.withProps({
+  me,
+  peers: roomPeers.reduce((accum, peer) => ({
+    ...accum,
+    [peer.id]: peer,
+  }), {}),
   name: 'Valencia',
   type: 'public',
-  peersCount: Object.keys(peers).length,
-  peers,
-} as const;
+});
 
-const privateRoom: RoomStatsRecord = {
-  id: '2',
-  name: 'Berlin',
-  peersCount: Object.keys(peers).length,
-  peers,
+const privateRoom = roomMocker.withProps({
+  me,
+  peers: roomPeers.reduce((accum, peer) => ({
+    ...accum,
+    [peer.id]: peer,
+  }), {}),
+  name: 'Valencia',
   type: 'private',
-  code: 'A33B22',
-} as const;
+});
 
-const emptyRoom: RoomStatsRecord = {
-  id: '3',
-  name: 'Tokyo',
-  peersCount: 1,
-  peers: {
-    1: {
-      id: '1',
-      name: 'Micul Print',
+const emptyRoom = roomMocker.withProps({
+  me,
+  peers: {},
+});
+
+const getPeerWithStream = (p: Peer, stream: MediaStream): Peer => ({
+  ...p,
+  connection: {
+    ...p.connection,
+    channels: {
+      ...p.connection.channels,
+      streaming: {
+        on: true,
+        type: 'audio-video',
+        stream,
+      },
     },
   },
-  type: 'private',
-  code: 'A33B22',
-} as const;
-
-const getPeerConnections = (localStream: MediaStream) =>
-  Object.values(peers).reduce(
-    (res, peer) => ({
-      ...res,
-      [peer.id]: {
-        peerId: peer.id,
-        channels: {
-          data: { on: true },
-          streaming: {
-            on: true,
-            type: 'audio-video',
-            stream: localStream,
-          },
-        },
-      } as const,
-    }),
-    {},
-  );
-
-const getPeerConnectionsWithNoVideos = () =>
-  Object.values(peers).reduce(
-    (res, peer) => ({
-      ...res,
-      [peer.id]: {
-        peerId: peer.id,
-        channels: {
-          data: { on: true },
-          streaming: { on: false },
-        },
-      } as const,
-    }),
-    {},
-  );
-
-
-const getPeerConnectionsWithSomeVideo = (localStream: MediaStream) =>
-  Object.values(peers).reduce(
-    (res, peer) => {
-      if (peer.id === '2' || peer.id === '3') {
-        return {
-          ...res,
-          [peer.id]: {
-            peerId: peer.id,
-            channels: {
-              data: { on: true },
-              streaming: { on: false },
-            },
-          } as const,
-        };
-      }
-      return {
-        ...res,
-        [peer.id]: {
-          peerId: peer.id,
-          channels: {
-            data: { on: true },
-            streaming: {
-              on: true,
-              type: 'audio-video',
-              stream: localStream,
-            },
-          },
-        } as const,
-      };
-    },
-    {},
-  );
-
-export const PublicRoom = () => React.createElement(() => {
-  const [localStream, setLocalStream] = useState<MediaStream | undefined>();
-
-  useEffect(() => {
-    const client = new AVStreaming();
-
-    (async () => {
-      setLocalStream(await client.start({ audio: false, video: true }));
-    })();
-
-    return () => {
-      client.stop();
-    };
-  }, []);
-
-  if (!localStream) {
-    return null;
-  }
-  return (
-    <div style={{ display: 'flex', width: '350px' }}>
-      <RoomInfoDisplay
-        me={peers[myId]}
-        room={publicRoom}
-        peerConnections={getPeerConnections(localStream)}
-        onLeaveRoom={action('leave room!')}
-        onInviteNewPeer={action('invite new one')}
-        playersById={playersById}
-        localStream={localStream}
-        gameInProgress={false}
-        onChallenge={action('on challenge')}
-      />
-    </div>
-  );
 });
-export const PrivateRoom = () => React.createElement(() => {
-  const [localStream, setLocalStream] = useState<MediaStream | undefined>();
 
-  useEffect(() => {
-    const client = new AVStreaming();
+const getPeersWithSomeStreams = (
+  peersMap: Record<string, Peer>,
+  stream: MediaStream,
+): Record<string, Peer> => Object.values(peersMap).reduce((accum, peer) => ({
+  ...accum,
+  [peer.id]: chance.integer({ min: 0, max: 1 })
+    ? getPeerWithStream(peer, stream)
+    : peer,
+}), {});
 
-    (async () => {
-      setLocalStream(await client.start({ audio: false, video: true }));
-    })();
-
-    return () => {
-      client.stop();
-    };
-  }, []);
-
-  if (!localStream) {
-    return null;
-  }
-  return (
-    <div style={{ display: 'flex', width: '350px' }}>
+export const PublicRoom = () => (
+  <WithLocalStream
+    render={(localStream) => (
       <RoomInfoDisplay
-        me={peers[myId]}
-        room={privateRoom}
-        peerConnections={getPeerConnections(localStream)}
+        me={publicRoom.me}
+        room={{
+          ...publicRoom,
+          peers: getPeersWithSomeStreams(publicRoom.peers, localStream),
+        }}
         onLeaveRoom={action('leave room!')}
         onInviteNewPeer={action('invite new one')}
         playersById={playersById}
-        localStream={localStream}
         gameInProgress={false}
       />
-    </div>
-  );
-});
+    )}
+  />
+);
 
-
-export const RoomWithSomeVideosOnly = () => React.createElement(() => {
-  const [localStream, setLocalStream] = useState<MediaStream | undefined>();
-
-  useEffect(() => {
-    const client = new AVStreaming();
-
-    (async () => {
-      setLocalStream(await client.start({ audio: false, video: true }));
-    })();
-
-    return () => {
-      client.stop();
-    };
-  }, []);
-
-  if (!localStream) {
-    return null;
-  }
-  return (
-    <div style={{ display: 'flex', width: '350px' }}>
+export const PrivateRoom = () => (
+  <WithLocalStream
+    render={(localStream) => (
       <RoomInfoDisplay
-        me={peers[myId]}
-        room={publicRoom}
-        peerConnections={getPeerConnectionsWithSomeVideo(localStream)}
+        me={privateRoom.me}
+        room={{
+          ...privateRoom,
+          peers: getPeersWithSomeStreams(privateRoom.peers, localStream),
+        }}
         onLeaveRoom={action('leave room!')}
         onInviteNewPeer={action('invite new one')}
         playersById={playersById}
-        localStream={localStream}
-        gameInProgress
+        gameInProgress={false}
       />
-    </div>
-  );
-});
+    )}
+  />
+);
 
+export const RoomWithSomeVideosOnly = () => (
+  <WithLocalStream
+    render={(localStream) => (
+      <RoomInfoDisplay
+        me={privateRoom.me}
+        room={{
+          ...privateRoom,
+          peers: getPeersWithSomeStreams(privateRoom.peers, localStream),
+        }}
+        onLeaveRoom={action('leave room!')}
+        onInviteNewPeer={action('invite new one')}
+        playersById={playersById}
+        gameInProgress={false}
+      />
+    )}
+  />
+);
 
 export const NoVideo = () => React.createElement(() => (
   <div style={{ display: 'flex', width: '350px' }}>
     <RoomInfoDisplay
-      me={peers[myId]}
+      me={publicRoom.me}
       room={publicRoom}
-      peerConnections={getPeerConnectionsWithNoVideos()}
       onLeaveRoom={action('leave room!')}
       onInviteNewPeer={action('invite new one')}
       playersById={playersById}
@@ -272,13 +154,11 @@ export const NoVideo = () => React.createElement(() => (
   </div>
 ));
 
-
 export const NoVideoGameInProgress = () => React.createElement(() => (
   <div style={{ display: 'flex', width: '350px' }}>
     <RoomInfoDisplay
-      me={peers[myId]}
+      me={publicRoom.me}
       room={publicRoom}
-      peerConnections={getPeerConnectionsWithNoVideos()}
       onLeaveRoom={action('leave room!')}
       onInviteNewPeer={action('invite new one')}
       playersById={playersById}
@@ -287,13 +167,11 @@ export const NoVideoGameInProgress = () => React.createElement(() => (
   </div>
 ));
 
-
 export const NoPeersJoinedYet = () => React.createElement(() => (
   <div style={{ display: 'flex', width: '350px' }}>
     <RoomInfoDisplay
-      me={emptyRoom.peers[1]}
+      me={emptyRoom.me}
       room={emptyRoom}
-      peerConnections={{}}
       onLeaveRoom={action('leave room!')}
       onInviteNewPeer={action('invite new one')}
       playersById={{}}

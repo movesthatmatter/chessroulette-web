@@ -12,7 +12,7 @@ export default {
 export const deafultStory = () => (
   <SocketProvider>
     <JoinFirstAvailableRoomHelper
-      render={({ me, room }) => <GameRoomContainer me={me} room={room} />}
+      render={({ room }) => <GameRoomContainer id={room.id} />}
     />
   </SocketProvider>
 );
