@@ -4,7 +4,6 @@ import { noop } from 'src/lib/util';
 import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import chatSVG from './assets/chat_circle.svg';
 import { ChatMessageRecord } from './records/ChatMessageRecord';
 
 type Props = {
@@ -122,13 +121,14 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
           className={cls.chatWindowCondensed}
           onClick={() => chatExpandHandler()}
         >
-          <div className={cls.chatWindowHeaderText}>Chat</div>
-          <div className={cls.chatNotificationIcon}>
-            <img src={chatSVG} alt="chat icon" />
-            <div className={cls.counterContainer}>
-              {newMessageCounter > 0 ? newMessageCounter : ''}
-            </div>
+          <div className={cls.chatWindowHeaderText}>
+            <span style={{ fontSize: '16px' }}>Chat</span>
           </div>
+          <div className={cls.counterContainer}>
+
+            {newMessageCounter > 0 ? newMessageCounter : ''}
+          </div>
+
         </div>
       </div>
       {chatOpen ? chatExpanded : null}
@@ -138,25 +138,16 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
 
 const useStyles = createUseStyles({
   chatContainer: {
-    maxWidth: '320px',
-
-    // The absolute positions are better set by the parent
-    //  because it knows exactly how it wants it positioned and where
-
-    // position: 'absolute',
-    // zIndex: 1,
-    // bottom: '0',
-    // marginBottom: '20px',
+    width: '300px',
   },
   chatWindowCondensed: {
-    width: '320px',
-    backgroundColor: '#FF7262',
-    borderRadius: '14px 14px 14px 14px',
-    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.25)',
-    marginTop: '50px',
+    backgroundColor: '#F7627B',
+    borderRadius: '3px',
+    boxShadow: '1px 1px 10px rgba(0, 0, 0, 0.18)',
     // transition: 'all .5s ease-in-out',
     zIndex: 2,
-
+    display: 'flex',
+    justifyContent: 'space-between',
     '&:hover': {
       backgroundColor: '#E66162',
       cursor: 'pointer',
@@ -164,48 +155,40 @@ const useStyles = createUseStyles({
   },
 
   chatWindowUpperBarOpen: {
-    borderRadius: '14px 14px 0px 0px',
+    borderRadius: '3px 3px 0px 0px',
   },
   chatWindowHeaderText: {
-    fontFamily: 'Roboto',
-    fontSize: '24px',
-    fontWeight: 'normal',
+    fontFamily: 'Open Sans',
     color: 'white',
-    lineHeight: '28px',
-    padding: '10px',
+    padding: '5px',
     marginLeft: '10px',
-  },
-  chatNotificationIcon: {
-    position: 'absolute',
-    bottom: '20%',
-    left: '80%',
   },
   container: {
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
     maxWidth: '320px',
-    boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.25)',
-    borderRadius: '0px 0px 14px 14px',
+    boxShadow: '1px 1px 10px rgba(0, 0, 0, 0.18)',
+    borderRadius: '0px 0px 3px 3px',
     backgroundColor: 'white',
   },
   containerOpen: {
-    height: '450px',
+    height: '320px',
     backgroundColor: 'white',
   },
   messageHistory: {
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    paddingLeft: '10px',
-    paddingRight: '10px',
+    paddingLeft: '8px',
+    paddingRight: '8px',
     overflowY: 'scroll',
     overflowX: 'hidden',
-    marginTop: '15px',
+    marginTop: '10px',
     scrollBehavior: 'smooth',
   },
   inputContainer: {
-    padding: '10px',
+    padding: '5px',
     position: 'relative',
     display: 'inline-block',
     outline: 'none',
@@ -213,16 +196,17 @@ const useStyles = createUseStyles({
   inputBox: {
     backgroundColor: '#f1f3f4',
     color: '#8e99a4',
-    borderRadius: '14px',
+    borderRadius: '10px',
     border: '2px solid #f1f3f4',
     font: 'inherit',
     boxSizing: 'border-box',
     width: '85%',
-    fontSize: '18px',
+    fontSize: '16px',
     padding: '5px',
     outline: 'none',
-    fontFamily: 'Roboto',
+    fontFamily: 'Open Sans',
     marginRight: '15px',
+    marginLeft: '5px',
   },
   icon: {
     color: '#8e99a4',
@@ -236,22 +220,22 @@ const useStyles = createUseStyles({
   counterContainer: {
     color: 'white',
     fontSize: '24px',
-    fontFamily: 'Roboto Slab',
-    position: 'absolute',
-    top: '20%',
-    left: '40%',
+    fontFamily: 'Open Sans',
+    marginRight: '20px',
+    textAlign: 'center',
+    alignSelf: 'center',
   },
   message: {},
   myMessage: {},
   messageContent: {
-    borderRadius: '18px',
+    borderRadius: '10px',
     padding: '5px 15px 5px 15px',
     width: 'auto',
     flexWrap: 'wrap',
     marginBottom: '2px',
     color: 'white',
-    fontFamily: 'Roboto',
-    fontSize: '18px',
+    fontFamily: 'Open Sans',
+    fontSize: '16px',
     fontWeight: 300,
   },
   myMessageContent: {
@@ -265,14 +249,16 @@ const useStyles = createUseStyles({
     backgroundColor: '#54C4F2',
   },
   messageSenderTitleMe: {
-    fontFamily: 'Roboto',
+    fontFamily: 'Open Sans',
+    fontSize: '14px',
     color: '#333333',
     textAlign: 'right',
     paddingRight: '10px',
     marginBottom: '3px',
   },
   messageSenderTitleOther: {
-    fontFamily: 'Roboto',
+    fontFamily: 'Open Sans',
+    fontSize: '14px',
     color: '#333333',
     textAlign: 'left',
     paddingLeft: '10px',

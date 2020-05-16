@@ -9,6 +9,7 @@ import { RoomInfoDisplay } from 'src/components/RoomInfoDisplay';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
 import { PopupContent } from 'src/components/PopupContent';
 import { Room, Peer } from 'src/components/RoomProvider';
+import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import {
   ChessGame,
   ChessPlayer,
@@ -148,14 +149,19 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                   );
                 }}
                 player={props.currentGame.players[awayColor]}
-                mutunachiId={9}
+                mutunachiId="mutunachiIceCreamAndBaloons"
                 side="away"
                 streamConfig={room.peers[playerAwayId].connection.channels.streaming}
               />
             ) : (
               <div className={cx(cls.playerBox, cls.playerBoxAway)}>
-                Game not started
+                <div className={cls.awayTitle}>
+                  <span style={{ fontWeight: 'bold', fontSize: '24px' }}>Game not started.</span>
+                  <br />
+                  Challenge one of your friends to start a game.
+                </div>
               </div>
+
             )}
             <PlayerBox
               className={cx(cls.playerBox, cls.playerBoxHome)}
@@ -283,8 +289,11 @@ const useStyles = createUseStyles({
   container: {
     width: '100%',
     height: '100%',
-    background: '#efefef',
+    background: '#F1F1F1',
     position: 'relative',
+    fontFamily: 'Open Sans',
+    fontSize: '16px',
+    display: 'flex',
   },
   paddingWrapper: {
     padding: '4px 16px',
@@ -300,6 +309,7 @@ const useStyles = createUseStyles({
   grid: {
     display: 'flex',
     flexDirection: 'row',
+    height: '100%',
   },
   playersContainer: {
     display: 'flex',
@@ -312,7 +322,11 @@ const useStyles = createUseStyles({
     textAlign: 'center',
   },
   playerBoxHome: {},
-  playerBoxAway: {},
+  playerBoxAway: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
   playerStreamFallback: {
     textAlign: 'center',
   },
@@ -326,7 +340,6 @@ const useStyles = createUseStyles({
     flex: 1,
   },
   middleSide: {
-    border: '#ddd 1px solid',
     margin: '0 16px',
   },
   gameContainer: {},
@@ -338,5 +351,13 @@ const useStyles = createUseStyles({
     bottom: 0,
     zIndex: 2,
     right: '16px',
+  },
+  awayTitle: {
+    textAlign: 'left',
+    backgroundColor: '#E3E3E3',
+    color: '#F7627B',
+    padding: '8px',
+    borderRadius: '14px',
+    width: 'fit-content',
   },
 });
