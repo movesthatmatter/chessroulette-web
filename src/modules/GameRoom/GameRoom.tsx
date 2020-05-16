@@ -9,7 +9,7 @@ import { RoomInfoDisplay } from 'src/components/RoomInfoDisplay';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
 import { PopupContent } from 'src/components/PopupContent';
 import { Room, Peer } from 'src/components/RoomProvider';
-import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import { MutunachiProps } from 'src/components/Mutunachi/Mutunachi';
 import {
   ChessGame,
   ChessPlayer,
@@ -94,11 +94,11 @@ export const GameRoom: React.FC<GameRoomProps> = ({
   const homeColor = (playersById[me.id] && playersById[me.id].color) || 'white';
   const awayColor = otherChessColor(homeColor);
 
-  const playerHomeId = props.currentGame
-    ? props.currentGame.players[homeColor].id
-    : me.id;
-  const playerAwayId = props.currentGame
-    ? props.currentGame.players[awayColor].id
+  const playerHomeAsPeer = props.currentGame
+    ? room.peers[props.currentGame.players[homeColor].id]
+    : me;
+  const playerAwayAsPeer = props.currentGame
+    ? room.peers[props.currentGame.players[awayColor].id]
     : null;
 
   useEffect(() => {
@@ -130,7 +130,7 @@ export const GameRoom: React.FC<GameRoomProps> = ({
         </div>
         <main className={cls.grid}>
           <aside className={cx(cls.leftSide, cls.playersContainer)}>
-            {props.currentGame && playerAwayId ? (
+            {props.currentGame && playerAwayAsPeer ? (
               <PlayerBox
                 className={cx(cls.playerBox, cls.playerBoxAway)}
                 currentGame={props.currentGame}
@@ -149,9 +149,9 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                   );
                 }}
                 player={props.currentGame.players[awayColor]}
-                mutunachiId="mutunachiIceCreamAndBaloons"
+                mutunachiId={playerAwayAsPeer.avatarId as unknown as MutunachiProps['mid']}
                 side="away"
-                streamConfig={room.peers[playerAwayId].connection.channels.streaming}
+                streamConfig={playerAwayAsPeer.connection.channels.streaming}
               />
             ) : (
               <div className={cx(cls.playerBox, cls.playerBoxAway)}>
@@ -187,15 +187,11 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                   color: 'white',
                 }
               }
-              mutunachiId={3}
+              mutunachiId={playerHomeAsPeer.avatarId as unknown as MutunachiProps['mid']}
               side="home"
-              streamConfig={
-                playerHomeId !== me.id
-                  ? room.peers[playerHomeId].connection.channels.streaming
-                  : me.connection.channels.streaming
-              }
+              streamConfig={playerHomeAsPeer.connection.channels.streaming}
               // Mute it if it's my stream so it doesn't createa a howling effect
-              muted={playerHomeId === me.id}
+              muted={playerHomeAsPeer.id === me.id}
             />
           </aside>
           <div className={cls.middleSide}>

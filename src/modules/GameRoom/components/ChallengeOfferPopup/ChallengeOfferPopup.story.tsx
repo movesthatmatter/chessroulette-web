@@ -1,5 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { action } from '@storybook/addon-actions';
+import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { ChallengeOfferPopup } from './ChallengeOfferPopup';
 import { GameChallengeRecord } from '../../records/GameDataRecord';
 
@@ -23,36 +25,33 @@ const challengeOfferOthers: GameChallengeRecord = {
   challengeeId: '4',
 };
 
-const me = {
-  id: '1',
-  name: 'Capra',
-};
+// const me = {
+//   id: '1',
+//   name: 'Capra',
+// };
 
-const peers = {
-  1: {
-    id: '1',
-    name: 'Capra',
-  },
-  2: {
-    id: '2',
-    name: 'Elefantu verde',
-  },
-  3: {
-    id: '3',
-    name: 'Hipopotamu',
-  },
-  4: {
-    id: '4',
-    name: 'Girafa Mov',
-  },
-};
+const peerMocker = new PeerMocker();
+const me = peerMocker.withProps({
+  name: 'Capra',
+});
+
+const peers = [
+  peerMocker.withProps({ name: 'Elefantu verde' }),
+  peerMocker.withProps({ name: 'Hipopotamu' }),
+  peerMocker.withProps({ name: 'Girafa Mov' }),
+];
+
+const peersAsMap = peers.reduce((accum, peer) => ({
+  ...accum,
+  [peer.id]: peer,
+}), {});
 
 export const YouChallenging = () => React.createElement(() => (
   <div style={{ display: 'flex', width: '400px' }}>
     <ChallengeOfferPopup
       challengeOffer={challengeOfferSending}
       me={me}
-      peers={peers}
+      peers={peersAsMap}
       onAccepted={action('accepted')}
       onCancelled={action('cancelled')}
       onRefused={action('refused')}
@@ -60,12 +59,13 @@ export const YouChallenging = () => React.createElement(() => (
   </div>
 ));
 
+
 export const ReceivingChallenge = () => React.createElement(() => (
   <div style={{ display: 'flex', width: '400px' }}>
     <ChallengeOfferPopup
       challengeOffer={challengeOfferReceiving}
       me={me}
-      peers={peers}
+      peers={peersAsMap}
       onAccepted={action('accepted')}
       onCancelled={action('cancelled')}
       onRefused={action('refused')}
@@ -78,7 +78,7 @@ export const OthersChallenge = () => React.createElement(() => (
     <ChallengeOfferPopup
       challengeOffer={challengeOfferOthers}
       me={me}
-      peers={peers}
+      peers={peersAsMap}
       onAccepted={action('accepted')}
       onCancelled={action('cancelled')}
       onRefused={action('refused')}

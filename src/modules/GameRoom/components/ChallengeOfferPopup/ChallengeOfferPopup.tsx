@@ -1,18 +1,14 @@
 import React from 'react';
-import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
 import { createUseStyles } from 'src/lib/jss';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
-import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
-import { AvatarsType } from 'src/components/RoomInfoDisplay/RoomListPeer/RoomListPeer';
+import { Mutunachi, MutunachiProps } from 'src/components/Mutunachi/Mutunachi';
+import { Peer } from 'src/components/RoomProvider';
 import { GameChallengeRecord } from '../../records/GameDataRecord';
 
 type Props = {
   challengeOffer: GameChallengeRecord;
-  me: PeerRecord;
-
-  // This should be the new Peer Record
-  //  not this aberation :)
-  peers: RoomStatsRecord['peers'];
+  me: Peer;
+  peers: Record<string, Peer>;
 
   onAccepted: (offer: GameChallengeRecord) => void;
   onRefused: (offer: GameChallengeRecord) => void;
@@ -36,7 +32,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
         </span>
         <div className={cls.bottomPart}>
           <Mutunachi
-            mid={me.id.slice(-1)[0] as unknown as AvatarsType}
+            mid={me.avatarId as unknown as MutunachiProps['mid']}
             style={{ height: '100px' }}
           />
           <div className={cls.buttonsContainer}>
@@ -55,7 +51,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
             />
           </div>
           <Mutunachi
-            mid={peers[challengeOffer.challengerId].id.slice(-1)[0] as unknown as AvatarsType}
+            mid={peers[challengeOffer.challengerId].avatarId as unknown as MutunachiProps['mid']}
             style={{ height: '100px' }}
           />
         </div>
@@ -67,7 +63,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
     return (
       <div className={cls.challengeContainer}>
         <Mutunachi
-          mid={me.id.slice(-1)[0] as unknown as AvatarsType}
+          mid={me.avatarId as unknown as MutunachiProps['mid']}
           style={{ height: '90px', marginBottom: '10px' }}
         />
         {'You\'re challenging '}
@@ -82,6 +78,10 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
             onClickFunction={() => props.onCancelled(challengeOffer)}
           />
         </div>
+        <Mutunachi
+          mid={peers[challengeOffer.challengeeId].avatarId as unknown as MutunachiProps['mid']}
+          style={{ height: '90px' }}
+        />
       </div>
     );
   }
@@ -89,7 +89,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
   return (
     <div className={cls.randomChallengeContainer}>
       <Mutunachi
-        mid={peers[challengeOffer.challengerId].id.slice(-1)[0] as unknown as AvatarsType}
+        mid={peers[challengeOffer.challengerId].avatarId as unknown as MutunachiProps['mid']}
         style={{ height: '90px' }}
       />
       <div className={cls.challengeText}>
@@ -102,7 +102,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
         </span>
       </div>
       <Mutunachi
-        mid={peers[challengeOffer.challengeeId].id.slice(-1)[0] as unknown as AvatarsType}
+        mid={peers[challengeOffer.challengeeId].avatarId as unknown as MutunachiProps['mid']}
         style={{ height: '90px' }}
       />
     </div>
