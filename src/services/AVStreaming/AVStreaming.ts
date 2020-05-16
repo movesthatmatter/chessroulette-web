@@ -8,7 +8,7 @@ export class AVStreaming {
 
   async start(constraints: AVStreamingConstraints = {
     video: true,
-    audio: false,
+    audio: true,
   }) {
     return navigator.mediaDevices.getUserMedia(constraints);
   }
