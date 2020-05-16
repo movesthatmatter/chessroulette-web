@@ -1,8 +1,3 @@
-// export const Peer = {
-//   id: '1',
-//   name: 'Broasca',
-// };
-// import { Chess } from 'dstnd-io';
 import Chance from 'chance';
 import { RoomStatsRecord, PeerRecord } from 'dstnd-io';
 import { range } from 'src/lib/util';
@@ -19,11 +14,14 @@ const getPeersMap = (count: number) =>
     .map(() => peerMock.record())
     .reduce((r, next) => ({ ...r, [next.id]: next }), {});
 
-export class RoomStatsRecordMock {
+export class RoomStatsRecordMocker {
   record(
-    peersCount = 4,
-    peers = getPeersMap(peersCount),
+    peersMapOrPeersCount: Record<string, PeerRecord> | number = 4,
   ): RoomStatsRecord {
+    const peers = typeof peersMapOrPeersCount === 'number'
+      ? getPeersMap(peersMapOrPeersCount)
+      : peersMapOrPeersCount;
+
     const type = types[chance.integer({ min: 0, max: 1 })] as 'public' | 'private';
 
     return {
@@ -42,17 +40,24 @@ export class RoomStatsRecordMock {
 
   withProps(
     props: Partial<RoomStatsRecord>,
-    peersCount?: number,
-    peers?: Record<string, PeerRecord>,
+    peersMapOrPeersCount: Record<string, PeerRecord> | number = 4,
   ): RoomStatsRecord {
+    const mergedRecord = {
+      ...this.record(peersMapOrPeersCount),
+      ...props,
+    };
+
     return {
-      ...this.record(peersCount, peers),
+      ...mergedRecord,
       ...props.type === 'private' ? {
         type: 'private',
         code: props.code || chance.hash({ length: 6 }),
       } : {
         type: 'public',
       },
+
+      // Update the count
+      peersCount: Object.keys(mergedRecord.peers).length,
     };
   }
 

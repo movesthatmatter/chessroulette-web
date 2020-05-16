@@ -16,6 +16,8 @@ export class RTCClient {
 
   public onDataChannelClose?: () => void;
 
+  public onLocalStreamRequested?: () => Promise<MediaStream>;
+
   public onRemoteStream?: (stream: MediaStream) => void;
 
   private dataChannel?: RTCDataX;
@@ -118,6 +120,15 @@ export class RTCClient {
 
   private async onSignallingOffer(msg: SignalingMessageWithDescription) {
     await this.connection.setRemoteDescription(msg.desc);
+
+    // Once the offer was made by remote peer and set as description
+    //  It's time to send over the local stream (if available).
+    // This could be unanswered by the Me which shouldn't stop the connection
+    //  but it should wait for it
+    if (this.onLocalStreamRequested) {
+      this.startStreaming(await this.onLocalStreamRequested());
+    }
+
     await this.connection.setLocalDescription(
       await this.connection.createAnswer(),
     );
@@ -141,6 +152,12 @@ export class RTCClient {
 
   private async onSignalingCandidate(msg: SignalingMessageWithCandidate) {
     await this.connection.addIceCandidate(msg.candidate);
+  }
+
+  startStreaming(stream: MediaStream) {
+    stream.getTracks().forEach((track) => {
+      this.connection.addTrack(track, stream);
+    });
   }
 
   openDataChannel() {

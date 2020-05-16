@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { PeerMessageEnvelope } from 'src/services/peers';
-import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
 import { ChatBoxContainer } from 'src/components/ChatBox';
 import { ChatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRecord';
-import { PeerConnections } from 'src/components/PeersProvider';
 import logo from 'src/assets/logo_black.svg';
 import cx from 'classnames';
 import { RoomInfoDisplay } from 'src/components/RoomInfoDisplay';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
 import { PopupContent } from 'src/components/PopupContent';
+import { Room, Peer } from 'src/components/RoomProvider';
 import {
   ChessGame,
   ChessPlayer,
@@ -22,9 +21,8 @@ import { GameChallengeRecord } from './records/GameDataRecord';
 import { ChallengeOfferPopup } from './components/ChallengeOfferPopup';
 
 export type GameRoomProps = {
-  me: PeerRecord;
-  room: RoomStatsRecord;
-  peerConnections: PeerConnections;
+  me: Peer;
+  room: Room;
 
   // Game
   onChallengeOffer: (challenge: GameChallengeRecord) => void;
@@ -40,7 +38,6 @@ export type GameRoomProps = {
   // Streaming
   startStreaming: () => void;
   stopStreaming: () => void;
-  localStream?: MediaStream;
 
   // Chat
   // The GameRoom shouldn't have to handle the state and know the intricacies
@@ -74,7 +71,7 @@ type PopupTypesMap = {
 
 export const GameRoom: React.FC<GameRoomProps> = ({
   me,
-  peerConnections,
+  room,
   ...props
 }) => {
   const cls = useStyles();
@@ -153,11 +150,11 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                 player={props.currentGame.players[awayColor]}
                 mutunachiId={9}
                 side="away"
-                streamConfig={peerConnections[playerAwayId].channels.streaming}
+                streamConfig={room.peers[playerAwayId].connection.channels.streaming}
               />
             ) : (
               <div className={cx(cls.playerBox, cls.playerBoxAway)}>
-                game not started
+                Game not started
               </div>
             )}
             <PlayerBox
@@ -188,18 +185,8 @@ export const GameRoom: React.FC<GameRoomProps> = ({
               side="home"
               streamConfig={
                 playerHomeId !== me.id
-                  ? peerConnections[playerHomeId].channels.streaming
-                  : {
-                    ...(props.localStream
-                      ? {
-                        on: true,
-                        stream: props.localStream,
-                        type: 'audio-video',
-                      }
-                      : {
-                        on: false,
-                      }),
-                  }
+                  ? room.peers[playerHomeId].connection.channels.streaming
+                  : me.connection.channels.streaming
               }
               // Mute it if it's my stream so it doesn't createa a howling effect
               muted={playerHomeId === me.id}
@@ -240,9 +227,8 @@ export const GameRoom: React.FC<GameRoomProps> = ({
           <aside className={cls.rightSide}>
             <RoomInfoDisplay
               me={me}
-              localStream={props.localStream as MediaStream}
-              room={props.room}
-              peerConnections={peerConnections}
+              room={room}
+              // peerConnections={peerConnections}
               playersById={playersById}
               gameInProgress={
                 !!props.currentGame
@@ -254,8 +240,8 @@ export const GameRoom: React.FC<GameRoomProps> = ({
               }}
             />
             <div>
-              {props.room.type === 'private' && (
-                <div>{`Invite Friends: ${props.room.code}`}</div>
+              {room.type === 'private' && (
+                <div>{`Invite Friends: ${room.code}`}</div>
               )}
             </div>
             <div className={cls.chatWrapper}>
@@ -280,7 +266,7 @@ export const GameRoom: React.FC<GameRoomProps> = ({
 
               // TODO: Change the peers to not come from the room anymore
               //  but from the intersection between Room.peers and Peers.peerConnections
-              peers={props.room.peers}
+              peers={room.peers}
 
               onAccepted={props.onChallengeAccepted}
               onRefused={props.onChallengeRefused}

@@ -2,25 +2,20 @@ import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { faUserPlus, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { RoomStatsRecord, PeerRecord } from 'dstnd-io';
 import { noop } from 'src/lib/util';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
 import { AddNewPeerPopUp } from 'src/components/AddNewPeerPopup/AddNewPeerPopup';
-import { PeerConnections } from 'src/components/PeersProvider';
-import { PeerConnectionStatus } from 'src/services/peers';
 import { GameChallengeRecord } from 'src/modules/GameRoom/records';
-import { RoomListPeer, AvatarsType } from './RoomListPeer/RoomListPeer';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
-
+import { RoomListPeer } from './RoomListPeer';
+import { Room, Peer } from '../RoomProvider/types';
 
 export type RoomInfoProps = {
-  me: PeerRecord;
-  room: RoomStatsRecord;
-  peerConnections: PeerConnections;
-  playersById: Record<string, {id: string}>;
+  me: Peer;
+  room: Room;
+  playersById: Record<string, { id: string }>;
   gameInProgress: boolean;
 
-  localStream?: MediaStream;
   onLeaveRoom?: (roomId?: string) => void;
   onInviteNewPeer?: () => void;
   onChallenge?: (challenge: GameChallengeRecord) => void;
@@ -39,9 +34,7 @@ const setTitleState = (gameInProgress: boolean, peers: number): string => {
 export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
   me,
   room,
-  peerConnections,
   playersById,
-  localStream,
   gameInProgress,
   onLeaveRoom = noop,
   onInviteNewPeer = noop,
@@ -51,22 +44,9 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
   const [showAddModal, setShowAddModal] = useState(false);
   const [toChallenge, setToChallenge] = useState('');
 
-  // Only deal with the peers that are connection via P2P not Socket
-  //  as those don't mean much yet :)
-  //  (meaning you need to be connection via P@P to be able to stream and play)
-  const peerConnectionsWithoutPlayers = Object
-    .values(peerConnections)
-    .filter((pc) => !(pc.peerId in playersById));
-
-  const myStreamConfig: PeerConnectionStatus['channels']['streaming'] = {
-    ...localStream ? {
-      on: true,
-      stream: localStream,
-      type: 'audio-video', // assume this for now but it isn't good. It should come from localStream
-    } : {
-      on: false,
-    },
-  };
+  const nonPlayerPeersIncludingMe = Object.values(room.peers)
+    .concat(me)
+    .filter((peer) => !(peer.id in playersById));
 
   return (
     <>
@@ -102,7 +82,7 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
           </div>
         </div>
         <div className={cls.listContainer}>
-          {(peerConnectionsWithoutPlayers.length === 0) && (
+          {nonPlayerPeersIncludingMe.length === 0 && (
             <div style={{ textAlign: 'center' }}>
               Waiting for peers.
               <br />
@@ -119,20 +99,18 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
               </div>
             </div>
           )}
-          {peerConnectionsWithoutPlayers.map((pc) => (
-            <div className={cls.listItem} key={pc.peerId}>
+          {nonPlayerPeersIncludingMe.map((peer) => (
+            <div className={cls.listItem} key={peer.id}>
               <RoomListPeer
-                isMe={pc.peerId === me.id}
-                peer={room.peers[pc.peerId]}
-                streamConfig={(pc.peerId === me.id) ? myStreamConfig : pc.channels.streaming}
-                // TODO: Add a typesafe util to do this avatar slicing
-                avatar={pc.peerId.slice(-1)[0] as unknown as AvatarsType}
-                onPeerChallenge={() => onChallenge({
-                  challengerId: me.id,
-                  challengeeId: pc.peerId,
-                })}
-                canChallenge={!gameInProgress && pc.peerId !== me.id}
-                onDisplayChallengeName={(value) => setToChallenge(value)}
+                isMe={peer.id === me.id}
+                peer={peer}
+                onPeerChallenge={() =>
+                  onChallenge({
+                    challengerId: me.id,
+                    challengeeId: peer.id,
+                  })}
+                canChallenge={!gameInProgress && peer.id !== me.id}
+                onDisplayChallengeName={setToChallenge}
               />
             </div>
           ))}
@@ -140,9 +118,7 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
       </div>
       {room.type === 'private' && (
         <PopupModal show={showAddModal}>
-          <AddNewPeerPopUp
-            close={() => setShowAddModal(false)}
-          />
+          <AddNewPeerPopUp close={() => setShowAddModal(false)} />
         </PopupModal>
       )}
     </>
@@ -171,9 +147,7 @@ const useStyle = createUseStyles({
     marginBottom: '4px',
     position: 'relative',
   },
-  challengeBillboard: {
-
-  },
+  challengeBillboard: {},
   headerContainer: {
     display: 'flex',
     flexDirection: 'row',
