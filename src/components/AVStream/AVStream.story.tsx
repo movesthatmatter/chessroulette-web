@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { AVStreaming } from 'src/services/AVStreaming';
+import React from 'react';
+import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { AVStream } from './AVStream';
 
 export default {
@@ -7,32 +7,14 @@ export default {
   title: 'Components/AVStream',
 };
 
-const streamClient = new AVStreaming();
-
-export const withWebcam = () => React.createElement(() => {
-  const [stream, setStream] = useState<MediaStream | undefined>();
-
-  useEffect(() => {
-    (async () => {
-      setStream(await streamClient.start());
-    })();
-
-    return () => {
-      streamClient.stop();
-    };
-  }, []);
-
-  if (!stream) {
-    return (
-      <div>Loading Stream...</div>
-    );
-  }
-
-  return (
-    <AVStream
-      stream={stream}
-      autoPlay
-      muted
-    />
-  );
-});
+export const withWebcam = () => (
+  <WithLocalStream
+    render={(stream) => (
+      <AVStream
+        stream={stream}
+        autoPlay
+        muted
+      />
+    )}
+  />
+);

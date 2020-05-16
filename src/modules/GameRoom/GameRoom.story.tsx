@@ -1,8 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { SocketProvider } from 'src/components/SocketProvider';
 import { action } from '@storybook/addon-actions';
-import { AVStreaming } from 'src/services/AVStreaming';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerRecordMock } from 'src/mocks/records';
 import { range } from 'src/lib/util';
@@ -59,28 +58,11 @@ const playersBySide: GamePlayersBySide = {
 
 export const roomWithPlayers = () =>
   React.createElement(() => {
-    const [localStream, setLocalStream] = useState<MediaStream | undefined>();
     const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
       playersBySide,
       homeColor: 'white',
       timeLimit: 'blitz',
     }));
-
-    useEffect(() => {
-      const client = new AVStreaming();
-
-      (async () => {
-        setLocalStream(await client.start({ audio: false, video: true }));
-      })();
-
-      return () => {
-        client.stop();
-      };
-    }, []);
-
-    if (!localStream) {
-      return null;
-    }
 
     return (
       <SocketProvider>
@@ -167,42 +149,21 @@ export const roomWithPlayersAndSpectators = () =>
     );
   });
 
-export const waitingForPlayer = () =>
-  React.createElement(() => {
-    const [localStream, setLocalStream] = useState<MediaStream | undefined>();
-
-    useEffect(() => {
-      const client = new AVStreaming();
-
-      (async () => {
-        setLocalStream(await client.start({ audio: false, video: true }));
-      })();
-
-      return () => {
-        client.stop();
-      };
-    }, []);
-
-    if (!localStream) {
-      return null;
-    }
-
-    return (
-      <SocketProvider>
-        <GameRoom
-          me={roomWithNoConnections.me}
-          room={roomWithNoConnections}
-          onChallengeOffer={action('on challenge offered')}
-          onChallengeAccepted={action('on challenge accepted')}
-          onChallengeRefused={action('on challenge refused')}
-          onChallengeCancelled={action('on challenge cancelled')}
-          startStreaming={action('start streaming')}
-          onGameStateUpdate={action('on game state update')}
-          stopStreaming={action('stop streaming')}
-          broadcastMessage={action('broadcast messsage')}
-          currentGame={undefined}
-          chatHistory={[]}
-        />
-      </SocketProvider>
-    );
-  });
+export const waitingForPlayer = () => (
+  <SocketProvider>
+    <GameRoom
+      me={roomWithNoConnections.me}
+      room={roomWithNoConnections}
+      onChallengeOffer={action('on challenge offered')}
+      onChallengeAccepted={action('on challenge accepted')}
+      onChallengeRefused={action('on challenge refused')}
+      onChallengeCancelled={action('on challenge cancelled')}
+      startStreaming={action('start streaming')}
+      onGameStateUpdate={action('on game state update')}
+      stopStreaming={action('stop streaming')}
+      broadcastMessage={action('broadcast messsage')}
+      currentGame={undefined}
+      chatHistory={[]}
+    />
+  </SocketProvider>
+);
