@@ -10,7 +10,7 @@ export class PeerMocker {
     return {
       id,
       name: chance.name(),
-      avatarId: id.slice(-1)[0],
+      avatarId: String(id.slice(-1)[0]),
       connection: {
         channels: {
           data: { on: false },
