@@ -57,7 +57,6 @@ export const getPublicRoom = async (
   id: string,
 ): Promise<Result<PublicRoomResponsePayload, ApiError>> => {
   try {
-    console.log('GET PUBLIC ROOMS');
     const { data } = await http.get(`/api/room?id=${id}`);
 
     return io
@@ -72,7 +71,11 @@ export const getPrivateRoom = async (
   code: string,
 ): Promise<Result<PrivateRoomResponsePayload, ApiError>> => {
   try {
-    const { data } = await http.get(`/api/room?code=${code}`);
+    const { data } = await http.get('/api/room', {
+      params: {
+        code,
+      },
+    });
 
     return io
       .toResult(privateRoomResponsePayload.decode(data))
