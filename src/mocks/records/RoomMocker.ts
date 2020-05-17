@@ -13,13 +13,22 @@ export class RoomMocker {
   ): Room {
     const roomStatsRecord = roomStatsMocker.record(peersMapOrPeersCount);
 
+    const me = peerMocker.record();
+    const peers = Object.values(roomStatsRecord.peers).reduce((accum, peer) => ({
+      ...accum,
+      [peer.id]: peerMocker.record(),
+    }), {});
+
     return {
       ...roomStatsRecord,
-      me: peerMocker.record(),
-      peers: Object.values(roomStatsRecord.peers).reduce((accum, peer) => ({
-        ...accum,
-        [peer.id]: peerMocker.record(),
-      }), {}),
+      me,
+      peers,
+      peersIncludingMe: {
+        ...peers,
+        ...{
+          [me.id]: me,
+        },
+      },
     };
   }
 

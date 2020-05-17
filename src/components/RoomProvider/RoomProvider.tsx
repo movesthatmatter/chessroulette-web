@@ -149,6 +149,11 @@ export const RoomProvider: React.FC<Props> = ({
         me: nextMe,
         peers: nextPeers,
         peersCount: Object.keys(nextPeers).length,
+
+        peersIncludingMe: {
+          ...nextPeers,
+          [nextMe.id]: nextMe,
+        },
       };
 
       return {
