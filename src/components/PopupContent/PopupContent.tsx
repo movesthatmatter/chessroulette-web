@@ -38,6 +38,7 @@ const useStyle = createUseStyles({
     justifyContent: 'center',
     alignContent: 'center',
     padding: '20px',
+    maxWidth: '500px',
   },
   // modalTitle: {
   //   fontFamily: 'Roboto',
