@@ -32,7 +32,6 @@ export const getIceURLS = async (): Promise<Result<IceServersResponse, ApiError>
 
     return io
       .toResult(iceServersResponse.decode(data))
-      .map((servers) => servers.filter((s) => !s.credential))
       .mapErr(() => 'BadResponse');
   } catch (e) {
     return new Err('BadRequest');
