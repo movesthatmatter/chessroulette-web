@@ -272,11 +272,10 @@ export const GameRoom: React.FC<GameRoomProps> = ({
           {showingPopup.challengeOffer && (
             <ChallengeOfferPopup
               challengeOffer={showingPopup.challengeOffer}
-              me={me}
 
-              // TODO: Change the peers to not come from the room anymore
-              //  but from the intersection between Room.peers and Peers.peerConnections
-              peers={room.peers}
+              meId={room.me.id}
+              challengee={room.peersIncludingMe[showingPopup.challengeOffer.challengeeId]}
+              challenger={room.peersIncludingMe[showingPopup.challengeOffer.challengerId]}
 
               onAccepted={props.onChallengeAccepted}
               onRefused={props.onChallengeRefused}
