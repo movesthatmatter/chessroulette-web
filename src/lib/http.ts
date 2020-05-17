@@ -20,7 +20,7 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
       '%cHttp %cRequest:',
       logUnimportantStyle,
       logImportantStyle,
-      request,
+      request.url,
     );
     console.log('Options:    ', {
       ...request.params,
@@ -49,7 +49,7 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
         logUnimportantStyle,
         logImportantStyle,
         logSuccessStyle,
-        response,
+        response.config.url,
       );
 
       console.log('Response: ', response);
