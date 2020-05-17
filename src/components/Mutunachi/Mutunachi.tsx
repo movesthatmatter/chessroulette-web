@@ -1,4 +1,9 @@
+/* eslint-disable quote-props */
 import React from 'react';
+import { createUseStyles } from 'src/lib/jss';
+import cx from 'classnames';
+
+import { getRandomInt } from 'src/lib/util';
 import m0 from './assets/mutunachi_0.png';
 import m1 from './assets/mutunachi_1.png';
 import m2 from './assets/mutunachi_2.png';
@@ -19,50 +24,61 @@ import m16 from './assets/mutunachi_16.png';
 import m17 from './assets/mutunachi_17.png';
 import m18 from './assets/mutunachi_18.png';
 
-const map = {
-  0: m0,
-  1: m1,
-  2: m2,
-  3: m3,
-  4: m4,
-  5: m5,
-  6: m6,
-  7: m7,
-  8: m8,
-  9: m9,
-  10: m10,
-  11: m11,
-  12: m12,
-  13: m13,
-  14: m14,
-  15: m15,
-  16: m16,
-  17: m17,
-  18: m18,
+const map: {[k: string]: unknown} = {
+  '0': m0,
+  '1': m1,
+  '2': m2,
+  '3': m3,
+  '4': m4,
+  '5': m5,
+  '6': m6,
+  '7': m7,
+  '8': m8,
+  '9': m9,
+  '10': m10,
+  '11': m11,
+  '12': m12,
+  '13': m13,
+  '14': m14,
+  '15': m15,
+  '16': m16,
+  '17': m17,
+  '18': m18,
 };
 
 export type MutunachiProps = React.DetailedHTMLProps<
 React.ImgHTMLAttributes<HTMLImageElement>,
 HTMLImageElement
-> & {
+> & ({
   mid: keyof typeof map;
-  imgStyle?: React.ImgHTMLAttributes<HTMLImageElement>['style'];
-};
+  random?: never;
+} | {
+  mid?: never;
+  random: true;
+});
 
 export const Mutunachi: React.FC<MutunachiProps> = ({
-  mid, className, style, ...imgProps
-}) => (
-  <img
-    className={className}
-    src={map[mid]}
-    alt="Mutunachi"
-    style={{
-      objectFit: 'contain',
-      width: '100%',
-      display: 'block',
+  mid,
+  className,
+  ...imgProps
+}) => {
+  const cls = useStyles();
+  const randomId = String(getRandomInt(0, 18));
 
-      ...style,
-    }}
-    {...imgProps}
-  />
-);
+  return (
+    <img
+      className={cx(cls.img, className)}
+      src={((mid && map[mid]) || map[randomId]) as string}
+      alt="Mutunachi"
+      {...imgProps}
+    />
+  );
+};
+
+const useStyles = createUseStyles({
+  img: {
+    objectFit: 'contain',
+    width: '100%',
+    display: 'block',
+  },
+});

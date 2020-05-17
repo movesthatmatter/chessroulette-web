@@ -6,6 +6,7 @@ import {
 } from 'src/components/ChatBox/records/ChatMessageRecord';
 import * as io from 'io-ts';
 import { RoomProvider } from 'src/components/RoomProvider';
+import { AwesomeLoader, AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { ChessGameState, reduceChessGame } from '../Games/Chess';
 import { GameRoom } from './GameRoom';
 import {
@@ -64,9 +65,7 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
 
       onMessageReceived={(envelope) => handleMessages(envelope.message)}
       onMessageSent={(envelope) => handleMessages(envelope.message)}
-      renderFallback={() => (
-        <div>Room not connected</div>
-      )}
+      renderFallback={() => <AwesomeLoaderPage />}
       render={({
         room, me, broadcastMessage, startStreaming, stopStreaming,
       }) => (

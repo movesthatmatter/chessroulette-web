@@ -30,7 +30,7 @@ export const homePlayer = () => (
           type: 'audio-video',
         }}
         currentGame={undefined}
-        mutunachiId={8}
+        avatarId="8"
         onTimeFinished={action('on time finished')}
       />
     )}

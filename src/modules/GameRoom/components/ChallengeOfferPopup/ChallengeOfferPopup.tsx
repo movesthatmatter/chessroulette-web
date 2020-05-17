@@ -32,7 +32,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
         </span>
         <div className={cls.bottomPart}>
           <Mutunachi
-            mid={me.avatarId as unknown as MutunachiProps['mid']}
+            mid={me.avatarId}
             style={{ height: '100px' }}
           />
           <div className={cls.buttonsContainer}>
@@ -51,7 +51,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
             />
           </div>
           <Mutunachi
-            mid={peers[challengeOffer.challengerId].avatarId as unknown as MutunachiProps['mid']}
+            mid={peers[challengeOffer.challengerId].avatarId}
             style={{ height: '100px' }}
           />
         </div>
@@ -63,7 +63,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
     return (
       <div className={cls.challengeContainer}>
         <Mutunachi
-          mid={me.avatarId as unknown as MutunachiProps['mid']}
+          mid={me.avatarId}
           style={{ height: '90px', marginBottom: '10px' }}
         />
         {'You\'re challenging '}
@@ -79,7 +79,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
           />
         </div>
         <Mutunachi
-          mid={peers[challengeOffer.challengeeId].avatarId as unknown as MutunachiProps['mid']}
+          mid={peers[challengeOffer.challengeeId].avatarId}
           style={{ height: '90px' }}
         />
       </div>
@@ -89,7 +89,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
   return (
     <div className={cls.randomChallengeContainer}>
       <Mutunachi
-        mid={peers[challengeOffer.challengerId].avatarId as unknown as MutunachiProps['mid']}
+        mid={peers[challengeOffer.challengerId].avatarId}
         style={{ height: '90px' }}
       />
       <div className={cls.challengeText}>
@@ -102,7 +102,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
         </span>
       </div>
       <Mutunachi
-        mid={peers[challengeOffer.challengeeId].avatarId as unknown as MutunachiProps['mid']}
+        mid={peers[challengeOffer.challengeeId].avatarId}
         style={{ height: '90px' }}
       />
     </div>

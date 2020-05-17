@@ -158,7 +158,7 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                     );
                   }}
                   player={props.currentGame.players[awayColor]}
-                  mutunachiId={playerAwayAsPeer.avatarId as unknown as MutunachiProps['mid']}
+                  avatarId={playerAwayAsPeer.avatarId}
                   side="away"
                   streamConfig={playerAwayAsPeer.connection.channels.streaming}
                 />
@@ -200,7 +200,7 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                     color: 'white',
                   }
                 }
-                mutunachiId={playerHomeAsPeer.avatarId as unknown as MutunachiProps['mid']}
+                avatarId={playerHomeAsPeer.avatarId}
                 side="home"
                 streamConfig={playerHomeAsPeer.connection.channels.streaming}
                 // Mute it if it's my stream so it doesn't createa a howling effect
