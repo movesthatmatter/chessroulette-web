@@ -1,14 +1,15 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
-import { Mutunachi, MutunachiProps } from 'src/components/Mutunachi/Mutunachi';
+import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Peer } from 'src/components/RoomProvider';
 import { GameChallengeRecord } from '../../records/GameDataRecord';
 
 type Props = {
   challengeOffer: GameChallengeRecord;
-  me: Peer;
-  peers: Record<string, Peer>;
+  challenger: Peer;
+  challengee: Peer;
+  meId: string;
 
   onAccepted: (offer: GameChallengeRecord) => void;
   onRefused: (offer: GameChallengeRecord) => void;
@@ -17,134 +18,173 @@ type Props = {
 
 export const ChallengeOfferPopup: React.FC<Props> = ({
   challengeOffer,
-  me,
-  peers,
+  challengee,
+  challenger,
+  meId,
   ...props
 }) => {
   const cls = useStyles();
 
-  if (challengeOffer.challengeeId === me.id) {
+  if (challengeOffer.challengeeId === meId) {
     return (
-      <div className={cls.challengebyContainer}>
-        {'You\'ve been challenged by '}
-        <span className={cls.bold}>
-          {`${peers[challengeOffer.challengerId].name}`}
-        </span>
-        <div className={cls.bottomPart}>
-          <Mutunachi
-            mid={me.avatarId}
-            style={{ height: '100px' }}
-          />
+      <div className={cls.container}>
+        <div className={cls.grid}>
+          <div className={cls.side}>
+            <Mutunachi
+              mid={challengee.avatarId}
+              className={cls.mutunachi}
+            />
+          </div>
+
+          <div className={cls.middle}>
+            {'You\'ve been challenged by '}
+            <span className={cls.bold}>
+              {`${challenger.name}`}
+            </span>
+
+
+          </div>
+
+          <div className={cls.side}>
+            <Mutunachi
+              mid={challenger.avatarId}
+              className={cls.mutunachi}
+            />
+          </div>
+        </div>
+        <div className={cls.bottom}>
           <div className={cls.buttonsContainer}>
-            <div style={{ marginBottom: '10px' }}>
-              <ColoredButton
-                label="Accept"
-                color="#08D183"
-                onClickFunction={() => props.onAccepted(challengeOffer)}
-              />
-            </div>
-            <div style={{ marginBottom: '10px' }}>VS</div>
             <ColoredButton
+              className={cls.button}
+              label="Accept"
+              color="#08D183"
+              onClickFunction={() => props.onAccepted(challengeOffer)}
+            />
+            <ColoredButton
+              className={cls.button}
               label="Refuse"
               color="#E66162"
               onClickFunction={() => props.onRefused(challengeOffer)}
             />
           </div>
-          <Mutunachi
-            mid={peers[challengeOffer.challengerId].avatarId}
-            style={{ height: '100px' }}
-          />
         </div>
       </div>
     );
   }
 
-  if (challengeOffer.challengerId === me.id) {
+  if (challengeOffer.challengerId === meId) {
     return (
-      <div className={cls.challengeContainer}>
-        <Mutunachi
-          mid={me.avatarId}
-          style={{ height: '90px', marginBottom: '10px' }}
-        />
-        {'You\'re challenging '}
-        <div className={cls.bold}>
-          {`${peers[challengeOffer.challengeeId].name}`}
+      <div className={cls.container}>
+        <div className={cls.grid}>
+          <div className={cls.side}>
+            <Mutunachi
+              mid={challenger.avatarId}
+              className={cls.mutunachi}
+            />
+          </div>
+          <div className={cls.middle}>
+            <div>
+              {'You\'re challenging '}
+              <div className={cls.bold}>
+                {`${challengee.name}`}
+              </div>
+            </div>
+            <div>
+              <span>Waiting for response...</span>
+            </div>
+          </div>
+          <div className={cls.side}>
+            <Mutunachi
+              mid={challengee.avatarId}
+              className={cls.mutunachi}
+            />
+          </div>
         </div>
-        <span style={{ fontSize: '13px', marginTop: '10px' }}>Waiting for resonse...</span>
-        <div className={cls.buttonsContainer}>
-          <ColoredButton
-            label="Cancel"
-            color="#E66162"
-            onClickFunction={() => props.onCancelled(challengeOffer)}
-          />
+        <div className={cls.bottom}>
+          <div className={cls.buttonsContainer}>
+            <ColoredButton
+              className={cls.button}
+              label="Cancel"
+              color="#E66162"
+              onClickFunction={() => props.onCancelled(challengeOffer)}
+            />
+          </div>
         </div>
-        <Mutunachi
-          mid={peers[challengeOffer.challengeeId].avatarId}
-          style={{ height: '90px' }}
-        />
       </div>
     );
   }
 
   return (
-    <div className={cls.randomChallengeContainer}>
-      <Mutunachi
-        mid={peers[challengeOffer.challengerId].avatarId}
-        style={{ height: '90px' }}
-      />
-      <div className={cls.challengeText}>
-        <span className={cls.bold} style={{ marginRight: '30px' }}>
-          {`${peers[challengeOffer.challengerId].name}`}
-        </span>
-        challenges
-        <span className={cls.bold} style={{ marginLeft: '30px' }}>
-          {`${peers[challengeOffer.challengeeId].name}`}
-        </span>
+    <div className={cls.container}>
+      <div className={cls.grid}>
+        <div className={cls.side}>
+          <Mutunachi
+            mid={challenger.avatarId}
+            className={cls.mutunachi}
+          />
+        </div>
+
+        <div className={cls.middle}>
+          <div className={cls.challengeText}>
+            <span className={cls.bold}>
+              {`${challenger.name}`}
+            </span>
+            challenges
+            <span className={cls.bold}>
+              {`${challengee.name}`}
+            </span>
+          </div>
+        </div>
+
+        <div className={cls.side}>
+          <Mutunachi
+            mid={challengee.avatarId}
+            className={cls.mutunachi}
+          />
+        </div>
       </div>
-      <Mutunachi
-        mid={peers[challengeOffer.challengeeId].avatarId}
-        style={{ height: '90px' }}
-      />
     </div>
   );
 };
 
 const useStyles = createUseStyles({
-  challengebyContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
+  container: {
+    maxWidth: '500px',
     fontFamily: 'Open Sans',
     fontSize: '16px',
     textAlign: 'center',
-    width: '100%',
   },
-  challengeContainer: {
+  grid: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  mutunachi: {
+    width: '120px',
+  },
+  middle: {
+    flex: 1,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    fontFamily: 'Open Sans',
-    fontSize: '18px',
+    alignItems: 'center',
     textAlign: 'center',
   },
-  randomChallengeContainer: {
+  side: {
+    flex: 1,
+    display: 'flex',
+  },
+  bottomPart: {},
+  bottom: {},
+  buttonsContainer: {
     display: 'flex',
     flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-evenly',
-    fontFamily: 'Open Sans',
-    fontSize: '18px',
-    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    justifyItems: 'space-between',
   },
-  bottomPart: {
-    display: 'flex',
-    width: '100%',
-    marginTop: '20px',
-    justifyContent: 'space-evenly',
-  },
-  buttonsContainer: {
-    marginTop: '20px',
-
+  button: {
+    marginLeft: '10px',
+    marginRight: '10px',
   },
   challengeText: {
     display: 'flex',
