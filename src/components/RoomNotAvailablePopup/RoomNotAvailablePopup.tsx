@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
-import { createRoom, createChallenge, getPrivateRoom } from 'src/resources';
+import { resources } from 'src/resources';
 import { useHistory } from 'react-router-dom';
 import { SocketConsumer } from 'src/components/SocketProvider';
 import { PeerRecord, CreateRoomResponse } from 'dstnd-io';
@@ -56,7 +56,7 @@ export const RoomNotAvailablePopup: React.FC<Props> = () => {
                     padding="5px"
                     onClickFunction={async () => {
                       (
-                        await createRoom({
+                        await resources.createRoom({
                           nickname: undefined,
                           peerId: me.id,
                           type: 'private',
@@ -80,7 +80,7 @@ export const RoomNotAvailablePopup: React.FC<Props> = () => {
                     return;
                   }
 
-                  (await createChallenge({ peerId: me.id })).map((room) => {
+                  (await resources.createChallenge({ peerId: me.id })).map((room) => {
                     history.push(`/gameroom/${toRoomPath(room)}`);
                   });
                 }}

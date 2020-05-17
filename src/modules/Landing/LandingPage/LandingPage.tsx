@@ -7,7 +7,7 @@ import { PlayWithFriendsPopup } from 'src/components/PlayWithFriendsPopup/PlayWi
 import { SocketConsumer } from 'src/components/SocketProvider';
 import { PeerRecord, CreateRoomResponse } from 'dstnd-io';
 import { useHistory } from 'react-router-dom';
-import { createRoom, createChallenge, getPrivateRoom } from 'src/resources';
+import { resources } from 'src/resources';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import chessBackground from './assets/chess_icons.png';
 
@@ -37,7 +37,7 @@ export const LandingPage: React.FC<Props> = () => {
                 <PlayWithFriendsPopup
                   close={() => setFriendsPopup(false)}
                   dispatchCodeJoin={async (code) => {
-                    (await getPrivateRoom(code))
+                    (await resources.getPrivateRoom(code))
                       .mapErr(() => {
                         console.log('Bad Code - Let the user know');
                       })
@@ -47,7 +47,7 @@ export const LandingPage: React.FC<Props> = () => {
                   }}
                   dispatchCreate={async () => {
                     (
-                      await createRoom({
+                      await resources.createRoom({
                         nickname: undefined,
                         peerId: me.id,
                         type: 'private',
@@ -107,7 +107,7 @@ export const LandingPage: React.FC<Props> = () => {
                       return;
                     }
 
-                    (await createChallenge({ peerId: me.id })).map((room) => {
+                    (await resources.createChallenge({ peerId: me.id })).map((room) => {
                       history.push(`/gameroom/${toRoomPath(room)}`);
                     });
                   }}
