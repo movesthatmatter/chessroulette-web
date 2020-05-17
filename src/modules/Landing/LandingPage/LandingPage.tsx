@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import logo from 'src/assets/logo_black.svg';
+import logo from 'src/assets/logo.svg';
 import { createUseStyles } from 'src/lib/jss';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
@@ -158,6 +158,7 @@ const useStyles = createUseStyles({
   },
   logo: {
     marginBottom: '20px',
+    width: '357px',
   },
   text: {
     fontFamily: 'Roboto Slab',
