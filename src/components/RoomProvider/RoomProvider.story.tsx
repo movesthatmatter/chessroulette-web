@@ -5,6 +5,7 @@ import { RoomProvider } from './RoomProvider';
 import { SocketProvider } from '../SocketProvider';
 import { RoomInfoDisplay } from '../RoomInfoDisplay';
 import { RoomStats } from '../RoomStats';
+import { AwesomeLoaderPage } from '../AwesomeLoader';
 
 
 export default {
@@ -28,7 +29,7 @@ export const withRoomStats = () => (
         </>
       )}
       renderFallback={() => (
-        <div>doesnt work</div>
+        <AwesomeLoaderPage />
       )}
     />
   </SocketProvider>
@@ -69,7 +70,7 @@ export const withStreaming = () => (
         </>
       )}
       renderFallback={() => (
-        <div>doesnt work</div>
+        <AwesomeLoaderPage />
       )}
     />
   </SocketProvider>
