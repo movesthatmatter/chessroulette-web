@@ -9,11 +9,11 @@ export default {
 };
 
 export const Popup = () => (
-  <div style={{ display: 'flex', width: '300px' }}>
-    <PlayWithFriendsPopup
-      close={action('close')}
-      dispatchCodeJoin={action('dispatch code join')}
-      dispatchCreate={action('dispatch create')}
-    />
-  </div>
+  // <div style={{ display: 'flex', width: '300px' }}>
+  <PlayWithFriendsPopup
+    close={action('close')}
+    dispatchCodeJoin={action('dispatch code join')}
+    dispatchCreate={action('dispatch create')}
+  />
+  // </div>
 );

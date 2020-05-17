@@ -9,6 +9,7 @@ import { PeerRecord, CreateRoomResponse } from 'dstnd-io';
 import { useHistory } from 'react-router-dom';
 import { resources } from 'src/resources';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import { PopupContent } from 'src/components/PopupContent';
 import chessBackground from './assets/chess_icons.png';
 
 type Props = {};
@@ -32,33 +33,38 @@ export const LandingPage: React.FC<Props> = () => {
       render={() => (
         <div className={cls.container}>
           <PopupModal show={friendsPopup}>
-            <>
-              {me && (
-                <PlayWithFriendsPopup
-                  close={() => setFriendsPopup(false)}
-                  dispatchCodeJoin={async (code) => {
-                    (await resources.getPrivateRoom(code))
-                      .mapErr(() => {
-                        console.log('Bad Code - Let the user know');
-                      })
-                      .map((room) => {
+            <PopupContent
+              hasCloseButton
+              onClose={() => setFriendsPopup(false)}
+            >
+              <>
+                {me && (
+                  <PlayWithFriendsPopup
+                    close={() => setFriendsPopup(false)}
+                    dispatchCodeJoin={async (code) => {
+                      (await resources.getPrivateRoom(code))
+                        .mapErr(() => {
+                          console.log('Bad Code - Let the user know');
+                        })
+                        .map((room) => {
+                          history.push(`/gameroom/${toRoomPath(room)}`);
+                        });
+                    }}
+                    dispatchCreate={async () => {
+                      (
+                        await resources.createRoom({
+                          nickname: undefined,
+                          peerId: me.id,
+                          type: 'private',
+                        })
+                      ).map((room) => {
                         history.push(`/gameroom/${toRoomPath(room)}`);
                       });
-                  }}
-                  dispatchCreate={async () => {
-                    (
-                      await resources.createRoom({
-                        nickname: undefined,
-                        peerId: me.id,
-                        type: 'private',
-                      })
-                    ).map((room) => {
-                      history.push(`/gameroom/${toRoomPath(room)}`);
-                    });
-                  }}
-                />
-              )}
-            </>
+                    }}
+                  />
+                )}
+              </>
+            </PopupContent>
           </PopupModal>
           <div className={cls.leftSideContainer}>
             <img src={logo} alt="logo" className={cls.logo} />
