@@ -192,15 +192,10 @@ const useStyles = createUseStyles({
     position: 'relative',
   },
   mutunachi: {
-    // position: 'fixed',
-    // top: '44%',
-    // left: '42%',
     position: 'absolute',
     zIndex: 1,
-    width: '171px',
     top: `-${171 + 50}px`,
     left: '12%',
-    // height: '222px',
-
+    height: '220px',
   },
 });
