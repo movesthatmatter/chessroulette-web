@@ -1,10 +1,13 @@
 import React, {
   useState, ReactNode, useEffect, useRef,
 } from 'react';
-import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
+import {
+  PeerRecord, RoomStatsRecord, IceServerRecord,
+} from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { AVStreamingConstraints, AVStreaming } from 'src/services/AVStreaming';
 import { noop } from 'src/lib/util';
+import { resources } from 'src/resources';
 import { SocketConsumer } from '../SocketProvider';
 import { PeersProvider, PeerConnections } from '../PeersProvider';
 import { Room, Peer } from './types';
@@ -41,6 +44,8 @@ export const RoomProvider: React.FC<Props> = ({
   ...props
 }) => {
   const avStreamClient = useRef(new AVStreaming());
+
+  const [iceServers, setIceServers] = useState<IceServerRecord[] | undefined>();
   const [localStream, setLocalStream] = useState<MediaStream | undefined>();
   const [error, setError] = useState<Errors | undefined>();
   const [
@@ -153,6 +158,14 @@ export const RoomProvider: React.FC<Props> = ({
     });
   }, [rtcPeerConnections, socketRecords, localStream]);
 
+  useEffect(() => {
+    (async () => {
+      // Try to get and set the IceServers on mount
+      // TODO: This could be cached here and on the server as well
+      (await resources.getIceURLS()).map(setIceServers);
+    })();
+  }, []);
+
   return (
     <SocketConsumer
       onMessage={(msg) => {
@@ -186,10 +199,12 @@ export const RoomProvider: React.FC<Props> = ({
       })}
       render={({ socket }) => (
         <>
-          {(socketRecords)
+          {(socketRecords && iceServers)
             ? (
               <PeersProvider
                 socket={socket}
+                iceServers={iceServers}
+
                 meId={socketRecords.me.id}
                 initialPeerIds={Object.keys(socketRecords.room.peers)}
                 onReady={({ connect, startStreaming }) => {

@@ -37,7 +37,10 @@ export class Peers {
 
   unsubscribeFromSignalingChannelOnMessage: () => void;
 
-  constructor(private signalingChannel: RTCSignalingChannel) {
+  constructor(
+    private signalingChannel: RTCSignalingChannel,
+    private iceServers: RTCIceServer[],
+  ) {
     this.unsubscribeFromSignalingChannelOnMessage = signalingChannel.onMessage(
       (msg) => {
         if (msg.kind === 'webrtcInvitation') {
@@ -75,7 +78,7 @@ export class Peers {
       return this.peerConnections[peerId];
     }
 
-    const rtc = new RTCClient(this.signalingChannel, peerId);
+    const rtc = new RTCClient(this.iceServers, this.signalingChannel, peerId);
 
     rtc.connection.onconnectionstatechange = (e) => {
       if (!(e.currentTarget && 'connectionState' in e.currentTarget)) {

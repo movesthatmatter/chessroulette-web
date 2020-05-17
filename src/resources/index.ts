@@ -1,1 +1,3 @@
-export * from './resources';
+import * as allResources from './resources';
+
+export const resources = allResources;
