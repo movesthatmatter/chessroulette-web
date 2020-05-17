@@ -1,5 +1,5 @@
 /* eslint-disable quote-props */
-import React from 'react';
+import React, { useRef } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 
@@ -63,7 +63,7 @@ export const Mutunachi: React.FC<MutunachiProps> = ({
   ...imgProps
 }) => {
   const cls = useStyles();
-  const randomId = String(getRandomInt(0, 18));
+  const randomId = useRef(String(getRandomInt(0, 18))).current;
 
   return (
     <img
