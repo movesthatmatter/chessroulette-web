@@ -1,5 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
+import cx from 'classnames';
 
 type BtnProps = {
   label: string;
@@ -9,6 +10,7 @@ type BtnProps = {
   padding? : string;
   width? : string;
   borderRadius? : string;
+  className?: string;
 }
 export const ColoredButton = ({
   label,
@@ -18,11 +20,12 @@ export const ColoredButton = ({
   padding,
   width,
   borderRadius,
+  className,
 }: BtnProps) => {
   const styles = useStyle({ color });
 
   return (
-    <div className={styles.container}>
+    <div className={cx(styles.container, className)}>
       <div
         style={{ backgroundColor: color, width: `${width || ''}`, borderRadius: `${borderRadius || '3px'}` }}
         className={styles.button}

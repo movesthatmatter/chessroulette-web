@@ -49,7 +49,7 @@ export const RoomListPeer: React.FC<Props> = ({
         && (
           <div className={cls.mutunachi}>
             <Mutunachi
-              mid={peer.avatarId as unknown as MutunachiProps['mid']}
+              mid={peer.avatarId}
               style={{ height: '35px' }}
             />
           </div>
@@ -70,7 +70,7 @@ export const RoomListPeer: React.FC<Props> = ({
         ) : (
           <div className={cls.mutunachiLarge}>
             <Mutunachi
-              mid={peer.avatarId as unknown as MutunachiProps['mid']}
+              mid={peer.avatarId}
               style={{ height: '128px', marginTop: '8px' }}
             />
           </div>

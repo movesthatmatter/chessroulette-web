@@ -25,16 +25,13 @@ export class RTCClient {
   private unsubscribeFromSignalingOnMessageType: Function;
 
   constructor(
+    iceServers: RTCIceServer[],
     private signalingChannel: RTCSignalingChannel,
     private peerId: string,
   ) {
-    this.connection = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: config.REACT_APP_ICE_SERVERS,
-        },
-      ],
-    });
+    this.connection = new RTCPeerConnection({ iceServers });
+
+    logsy.log('[RTCClient] instantiating iceServers', iceServers);
 
     this.connection.onicecandidate = (event) => this.onicecandidate(event);
     this.connection.onnegotiationneeded = () => this.onnegotiationneeded();

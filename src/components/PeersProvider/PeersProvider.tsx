@@ -23,6 +23,8 @@ type RenderProps = {
 
 type Props = {
   socket: SocketClient;
+  iceServers: RTCIceServer[];
+
   meId: string;
   initialPeerIds: string[];
 
@@ -70,7 +72,10 @@ export class PeersProvider extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.peersClient = new Peers(new RTCSignalingChannel(this.props.socket.connection));
+    this.peersClient = new Peers(
+      new RTCSignalingChannel(this.props.socket.connection),
+      this.props.iceServers,
+    );
 
     this.unsubscribers.onPeerConnectionUpdated = this.peersClient.onPeerConnectionUpdated(
       (status) => {

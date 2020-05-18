@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import logo from 'src/assets/logo_black.svg';
+import logo from 'src/assets/logo.svg';
 import { createUseStyles } from 'src/lib/jss';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
@@ -7,8 +7,9 @@ import { PlayWithFriendsPopup } from 'src/components/PlayWithFriendsPopup/PlayWi
 import { SocketConsumer } from 'src/components/SocketProvider';
 import { PeerRecord, CreateRoomResponse } from 'dstnd-io';
 import { useHistory } from 'react-router-dom';
-import { createRoom, createChallenge, getPrivateRoom } from 'src/resources';
+import { resources } from 'src/resources';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import { PopupContent } from 'src/components/PopupContent';
 import chessBackground from './assets/chess_icons.png';
 
 type Props = {};
@@ -32,33 +33,38 @@ export const LandingPage: React.FC<Props> = () => {
       render={() => (
         <div className={cls.container}>
           <PopupModal show={friendsPopup}>
-            <>
-              {me && (
-                <PlayWithFriendsPopup
-                  close={() => setFriendsPopup(false)}
-                  dispatchCodeJoin={async (code) => {
-                    (await getPrivateRoom(code))
-                      .mapErr(() => {
-                        console.log('Bad Code - Let the user know');
-                      })
-                      .map((room) => {
+            <PopupContent
+              hasCloseButton
+              onClose={() => setFriendsPopup(false)}
+            >
+              <>
+                {me && (
+                  <PlayWithFriendsPopup
+                    close={() => setFriendsPopup(false)}
+                    dispatchCodeJoin={async (code) => {
+                      (await resources.getPrivateRoom(code))
+                        .mapErr(() => {
+                          console.log('Bad Code - Let the user know');
+                        })
+                        .map((room) => {
+                          history.push(`/gameroom/${toRoomPath(room)}`);
+                        });
+                    }}
+                    dispatchCreate={async () => {
+                      (
+                        await resources.createRoom({
+                          nickname: undefined,
+                          peerId: me.id,
+                          type: 'private',
+                        })
+                      ).map((room) => {
                         history.push(`/gameroom/${toRoomPath(room)}`);
                       });
-                  }}
-                  dispatchCreate={async () => {
-                    (
-                      await createRoom({
-                        nickname: undefined,
-                        peerId: me.id,
-                        type: 'private',
-                      })
-                    ).map((room) => {
-                      history.push(`/gameroom/${toRoomPath(room)}`);
-                    });
-                  }}
-                />
-              )}
-            </>
+                    }}
+                  />
+                )}
+              </>
+            </PopupContent>
           </PopupModal>
           <div className={cls.leftSideContainer}>
             <img src={logo} alt="logo" className={cls.logo} />
@@ -107,7 +113,7 @@ export const LandingPage: React.FC<Props> = () => {
                       return;
                     }
 
-                    (await createChallenge({ peerId: me.id })).map((room) => {
+                    (await resources.createChallenge({ peerId: me.id })).map((room) => {
                       history.push(`/gameroom/${toRoomPath(room)}`);
                     });
                   }}
@@ -158,6 +164,7 @@ const useStyles = createUseStyles({
   },
   logo: {
     marginBottom: '20px',
+    width: '357px',
   },
   text: {
     fontFamily: 'Roboto Slab',

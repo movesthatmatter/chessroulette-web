@@ -1,9 +1,8 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import cx from 'classnames';
 import { CustomInput } from './CustomInput/CustomInput';
 
 type Props = {
@@ -13,111 +12,114 @@ type Props = {
 };
 
 export const PlayWithFriendsPopup: React.FC<Props> = ({
-  close,
   dispatchCodeJoin,
   dispatchCreate,
 }) => {
   const cls = useStyle();
   const [inputValue, setInputValue] = useState('');
   return (
-    <>
-      <div className={cls.exitButton}>
-        <FontAwesomeIcon
-          icon={faTimesCircle}
-          size="lg"
-          className={cls.exitIcon}
-          onClick={close}
-        />
-      </div>
-      <div className={cls.modalContainer}>
-        <div className={cls.modalTitle}>Enter room CODE:</div>
+    <div className={cx(cls.container)}>
+      <div className={cls.top}>
         <div className={cls.codeInputContainer}>
-          <CustomInput onChange={(value) => setInputValue(value)} />
-        </div>
-        <div className={cls.bottomPart}>
-          <Mutunachi
-            mid={11}
-            width="101"
-            height="132"
-            style={{ marginRight: '20px' }}
+          <CustomInput
+            className={cls.input}
+            value={inputValue}
+            onChange={setInputValue}
+            placeholder="Enter room code"
           />
-          <div className={cls.modalButtonContainer}>
-            <div style={{ marginBottom: '30px' }}>
-              <ColoredButton
-                label="JOIN"
-                color="#0BCE82"
-                fontSize="21px"
-                borderRadius="22px"
-                width="165px"
-                padding="3px"
-                onClickFunction={() => {
-                  dispatchCodeJoin(inputValue);
-                }}
-              />
-            </div>
-            <div style={{ marginBottom: '30px' }}>
-              <ColoredButton
-                label="CREATE NEW"
-                color="#E66162"
-                fontSize="21px"
-                borderRadius="22px"
-                width="165px"
-                padding="3px"
-                onClickFunction={dispatchCreate}
-              />
-            </div>
-          </div>
+        </div>
+      </div>
+      <div className={cls.grid}>
+        <div className={cls.side}>
           <Mutunachi
             mid={3}
-            width="122"
-            height="166"
+            className={cls.mutunachi}
+          />
+        </div>
+        <div className={cls.middle}>
+          <div>
+            <ColoredButton
+              className={cls.button}
+              label="Join"
+              color="#0BCE82"
+              width="140px"
+              borderRadius="16px"
+              onClickFunction={() => {
+                dispatchCodeJoin(inputValue);
+              }}
+            />
+          </div>
+          <div>
+            <ColoredButton
+              className={cls.button}
+              label="Create new"
+              color="#E66162"
+              width="140px"
+              borderRadius="17px"
+              onClickFunction={dispatchCreate}
+            />
+          </div>
+        </div>
+        <div className={cls.side}>
+          <Mutunachi
+            mid={16}
+            className={cls.mutunachi}
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
 const useStyle = createUseStyles({
-  modalContainer: {
+  container: {
+    maxWidth: '500px',
+    fontFamily: 'Open Sans',
+    fontSize: '16px',
+    textAlign: 'center',
+
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignContent: 'center',
-    padding: '20px',
   },
-  codeInputContainer: {
-    marginBottom: '20px',
-    alignSelf: 'center',
-  },
-  modalTitle: {
-    fontFamily: 'Roboto',
-    fontSize: '24px',
-    lineHeight: '33px',
-    fontWeight: 'normal',
-    marginBottom: '5px',
-    color: '#262626',
-    textAlign: 'center',
-  },
-  modalButtonContainer: {
+  middle: {
+    flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+
+    margin: '0 5px',
   },
-  bottomPart: {
-    marginBottom: '20px',
+  side: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  button: {
+    marginBottom: '15px',
+    borderRadius: '8px',
+  },
+  codeInputContainer: {
+    alignSelf: 'center',
+  },
+  input: {
+    width: '200px',
+    borderRadius: '8px',
+  },
+  mutunachi: {
+    width: '120px',
+  },
+  top: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+  },
+  grid: {
+    flex: 1,
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'flex-end',
-  },
-  exitButton: {
-    alignSelf: 'flex-end',
-    position: 'absolute',
-    right: '5%',
-    top: '4%',
-  },
-  exitIcon: {
-    color: '#E66162',
-    cursor: 'pointer',
   },
 });

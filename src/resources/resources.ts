@@ -1,9 +1,6 @@
 import { getHttpInstance } from 'src/lib/http';
-import { Err, Result, Ok } from 'ts-results';
+import { Err, Result } from 'ts-results';
 import {
-  // JoinRoomRequestPayloadRecord,
-  // joinRoomResponsePayload,
-  // publicRoomsPayload,
   io,
   publicRoomsResponsePayload,
   createRoomResponse,
@@ -16,6 +13,8 @@ import {
   PublicRoomResponsePayload,
   PublicRoomsResponsePayload,
   PrivateRoomResponsePayload,
+  iceServersResponse,
+  IceServersResponse,
 } from 'dstnd-io';
 import config from 'src/config';
 
@@ -26,6 +25,18 @@ const http = getHttpInstance({
   // transformRequest: [],
   // transformResponse: [],
 });
+
+export const getIceURLS = async (): Promise<Result<IceServersResponse, ApiError>> => {
+  try {
+    const { data } = await http.get('api/iceurls');
+
+    return io
+      .toResult(iceServersResponse.decode(data))
+      .mapErr(() => 'BadResponse');
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+};
 
 export const getPublicRooms = async (): Promise<
 Result<PublicRoomsResponsePayload, ApiError>
@@ -45,7 +56,6 @@ export const getPublicRoom = async (
   id: string,
 ): Promise<Result<PublicRoomResponsePayload, ApiError>> => {
   try {
-    console.log('GET PUBLIC ROOMS');
     const { data } = await http.get(`/api/room?id=${id}`);
 
     return io
@@ -60,7 +70,11 @@ export const getPrivateRoom = async (
   code: string,
 ): Promise<Result<PrivateRoomResponsePayload, ApiError>> => {
   try {
-    const { data } = await http.get(`/api/room?code=${code}`);
+    const { data } = await http.get('/api/room', {
+      params: {
+        code,
+      },
+    });
 
     return io
       .toResult(privateRoomResponsePayload.decode(data))

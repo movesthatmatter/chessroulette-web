@@ -12,4 +12,6 @@ export type Peer = PeerRecord & {
 export type Room = RoomStatsRecord & {
   me: Peer;
   peers: Record<string, Peer>;
+
+  peersIncludingMe: Record<string, Peer>;
 }

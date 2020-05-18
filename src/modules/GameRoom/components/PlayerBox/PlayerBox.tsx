@@ -15,7 +15,7 @@ type Props = {
   side: 'home' | 'away';
   streamConfig: PeerConnectionStatus['channels']['streaming'];
   currentGame: ChessGameState | undefined;
-  mutunachiId: MutunachiProps['mid'];
+  avatarId: string;
 
   onTimeFinished: () => void;
 
@@ -35,7 +35,10 @@ export const PlayerBox: React.FC<Props> = (props) => {
       <div className={cls.info}>
         <div className={cls.infoLeft}>
           <div className={cls.smallMutunachiWrapper}>
-            <Mutunachi mid={props.mutunachiId} style={{ height: '50px' }} />
+            <Mutunachi
+              mid={props.avatarId}
+              style={{ height: '50px' }}
+            />
           </div>
           <div className={cls.playerDetailsWrapper}>
             <h4>{props.player.name}</h4>
@@ -71,7 +74,7 @@ export const PlayerBox: React.FC<Props> = (props) => {
           streamConfig={props.streamConfig}
           fallbackComponent={(
             <div className={cls.streamFallbackContainer}>
-              <Mutunachi mid={props.mutunachiId} style={{ height: '250px' }} />
+              <Mutunachi mid={props.avatarId} style={{ height: '250px' }} />
             </div>
           )}
           muted={props.muted}
