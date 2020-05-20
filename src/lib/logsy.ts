@@ -30,9 +30,15 @@ logsy.createDefaultHandler({
 
 const consoleHandler = Logger.createDefaultHandler();
 const sentryHandler = (...[messages, context]: Parameters<ILogHandler>) => {
+  // Only track Warnings and up (Errors, Critical, etc);
+  if (context.level.value < 5) {
+    return;
+  }
+
   const msgsAsArray = Array.prototype.slice.call(messages);
 
   const level = String(context.level.name).toLowerCase();
+
   Sentry.captureMessage(
     msgsAsArray.join(' '),
     (logsyToSentrySeverityMap as any)[level] || 'critical',

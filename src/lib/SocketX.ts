@@ -13,7 +13,9 @@ export const getSocketXConnection = (url = config.WSS_ENDPOINT) => {
   const instance = getWebDataEventChannel(new WebSocket(url)) as SocketX;
 
   // addJsonParseInterceptors(instance);
-  addLoggingInterceptors('SocketX', instance);
+  if (config.DEBUG) {
+    addLoggingInterceptors('SocketX', instance);
+  }
 
   return instance;
 };
