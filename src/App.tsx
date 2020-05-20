@@ -5,6 +5,8 @@ import { LandingPage } from './modules/Landing/LandingPage';
 import { SocketProvider } from './components/SocketProvider';
 import { createUseStyles } from './lib/jss';
 import { GameRoomPage } from './modules/GameRoom';
+import { GA } from './services/Analytics';
+
 
 function App() {
   const location = useLocation();
@@ -14,6 +16,7 @@ function App() {
     <SocketProvider>
       <div className={cls.container}>
         <TransitionGroup component={null}>
+          { GA.init() && <GA.RouteTracker /> }
           <Switch location={location}>
             <Route exact path="/gameroom/:id/:code?" key={location.key}>
               {({ match }) => (

@@ -48,6 +48,7 @@
     "prettier-eslint-cli": "5.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-ga": "^2.7.0",
     "react-jss": "^10.1.1",
     "react-move": "^6.1.0",
     "react-router-dom": "^5.1.2",
