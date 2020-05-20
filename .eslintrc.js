@@ -1,7 +1,7 @@
 module.exports = {
   extends: ['airbnb', 'plugin:@typescript-eslint/recommended', 'plugin:jest/recommended'],
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'prettier', 'jest', 'react-hooks'],
+  plugins: ['@typescript-eslint', 'prettier', 'jest', 'react-hooks', "babel"],
   globals: {
     'fetch': false,
   },
@@ -52,7 +52,16 @@ module.exports = {
     // TODO: Re-enable All of these when bringing in accessibilty
     "jsx-a11y/aria-role": "off",
     "jsx-a11y/no-static-element-interactions": "off",
-    "jsx-a11y/click-events-have-key-events": "off"
+    "jsx-a11y/click-events-have-key-events": "off",
+
+    "class-methods-use-this": "off",
+
+    // See https://github.com/babel/eslint-plugin-babel/issues/185#issuecomment-569996329
+    "no-unused-expressions": "off",
+    "babel/no-unused-expressions": "error",
+
+    // Typescript will take are of this complain
+    'array-callback-return': 'off'
   },
   env: {
     "browser": true

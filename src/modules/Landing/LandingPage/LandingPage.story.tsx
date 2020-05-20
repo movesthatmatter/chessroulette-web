@@ -1,5 +1,6 @@
 import React from 'react';
 import StoryRouter from 'storybook-react-router';
+import { SocketProvider } from 'src/components/SocketProvider';
 import { LandingPage } from './LandingPage';
 
 export default {
@@ -8,4 +9,8 @@ export default {
   decorators: [StoryRouter()],
 };
 
-export const defaultLandingPage = () => <LandingPage />;
+export const defaultLandingPage = () => (
+  <SocketProvider>
+    <LandingPage />
+  </SocketProvider>
+);
