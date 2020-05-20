@@ -1,3 +1,4 @@
+import config from 'src/config';
 import {
   WebDataEventChannelFrom,
   getWebDataEventChannel,
@@ -9,7 +10,9 @@ export type RTCDataX = WebDataEventChannelFrom<RTCDataChannel>;
 export const getRTCDataXConnection = (channel: RTCDataChannel) => {
   const instance = getWebDataEventChannel(channel) as RTCDataX;
 
-  addLogger('RTCDataX', instance);
+  if (config.DEBUG) {
+    addLogger('RTCDataX', instance);
+  }
 
   return instance;
 };

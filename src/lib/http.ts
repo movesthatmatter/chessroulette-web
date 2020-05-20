@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosInterceptorManager, AxiosResponse } from 'axios';
 import config from 'src/config';
 
 
@@ -10,10 +10,7 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
   const logSuccessStyle = 'color: #4CAF50; font-weight: bold;';
   const logErrorStyle = 'color: red; font-weight: bold;';
 
-  instance.interceptors.request.use((request) => {
-  // const requestBody = (typeof request.data === 'string')
-  //   ? tryToJSONParseOrReturn(options.body)
-  //   : options.body;
+  const requestInterceptor = (request: AxiosRequestConfig) => {
     const requestBody = request.data;
 
     console.group(
@@ -33,36 +30,33 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
     console.groupEnd();
 
     return request;
-  });
+  };
 
-  instance.interceptors.response.use(
-    (response) => {
-    // console.log('Http Response:', response);
+  const responseInterceptor = (response: AxiosResponse) => {
+    console.group(
+      '%cHttp %cResponse %cSuccess:',
+      logUnimportantStyle,
+      logImportantStyle,
+      logSuccessStyle,
+      response.config.url,
+    );
 
-      // const response = await localFetch(request, options);
-      // const json = await response.json();
+    console.log('Response: ', response);
+    console.log('Body:     ', response.data);
+    // console.log('Copy Body:', {
+    //   stringified: JSON.stringify(json),
+    // });
+    console.groupEnd();
 
-      // const responseOk = response.status >= 200 && response.status < 300;
+    // return new Ok(response);
+    return response;
+  };
 
-      console.group(
-        '%cHttp %cResponse %cSuccess:',
-        logUnimportantStyle,
-        logImportantStyle,
-        logSuccessStyle,
-        response.config.url,
-      );
 
-      console.log('Response: ', response);
-      console.log('Body:     ', response.data);
-      // console.log('Copy Body:', {
-      //   stringified: JSON.stringify(json),
-      // });
-      console.groupEnd();
+  if (config.DEBUG) {
+    instance.interceptors.request.use(requestInterceptor);
 
-      // return new Ok(response);
-      return response;
-    },
-    (e) => {
+    instance.interceptors.response.use(responseInterceptor, (e) => {
       console.group(
         '%cHttp %cResponse %cError:',
         logUnimportantStyle,
@@ -74,8 +68,9 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
       console.groupEnd();
 
       return Promise.reject(e);
-    },
-  );
+    });
+  }
+
 
   return instance;
 };
