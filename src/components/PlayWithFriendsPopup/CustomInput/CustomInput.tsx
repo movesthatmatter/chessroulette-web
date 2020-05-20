@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 
@@ -17,12 +17,11 @@ export const CustomInput: React.FC<Props> = ({
   ...inputProps
 }) => {
   const cls = useStyle();
-
+  const [placeholder, setPlaceholder] = useState('Enter Room Code');
   const inputChangeHandler = (nextValue: string) => {
-    if (nextValue === ' ' || !checkInputValidity(nextValue)) {
+    if (!checkInputValidity(nextValue)) {
       return;
     }
-
     onChange(nextValue);
   };
 
@@ -35,6 +34,9 @@ export const CustomInput: React.FC<Props> = ({
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => (
         inputChangeHandler(e.target.value)
       )}
+      onFocus={() => setPlaceholder('')}
+      onBlur={() => setPlaceholder('Enter Room Code')}
+      placeholder={placeholder}
       {...inputProps}
     />
   );
@@ -44,7 +46,7 @@ const checkInputValidity = (inputValue: string): boolean => {
   if (!inputValue) {
     return false;
   }
-  const pattern = /^[a-zA-Z0-9\s]*$/;
+  const pattern = /^[a-zA-Z0-9]*$/;
   return pattern.test(inputValue);
 };
 

@@ -353,7 +353,7 @@ const useStyles = createUseStyles({
   chatWrapper: {
     position: 'absolute',
     bottom: 0,
-    zIndex: 2,
+    zIndex: 99,
     right: '16px',
   },
   awayTitle: {

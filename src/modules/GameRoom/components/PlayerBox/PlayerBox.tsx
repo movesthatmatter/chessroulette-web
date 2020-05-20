@@ -74,7 +74,7 @@ export const PlayerBox: React.FC<Props> = (props) => {
           streamConfig={props.streamConfig}
           fallbackComponent={(
             <div className={cls.streamFallbackContainer}>
-              <Mutunachi mid={props.avatarId} style={{ height: '250px' }} />
+              <Mutunachi mid={props.avatarId} style={{ height: '100%', width: '100%' }} />
             </div>
           )}
           muted={props.muted}

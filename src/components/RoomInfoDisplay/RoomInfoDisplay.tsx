@@ -6,6 +6,7 @@ import { noop } from 'src/lib/util';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
 import { AddNewPeerPopUp } from 'src/components/AddNewPeerPopup/AddNewPeerPopup';
 import { GameChallengeRecord } from 'src/modules/GameRoom/records';
+import { ExitAlert } from 'src/components/ExitAlert/ExitAlert';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { RoomListPeer } from './RoomListPeer';
 import { Room, Peer } from '../RoomProvider/types';
@@ -47,7 +48,7 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
   const nonPlayerPeersIncludingMe = Object.values(room.peers)
     .concat(me)
     .filter((peer) => !(peer.id in playersById));
-
+  const [showLeaveAlert, setShowLeaveAlert] = useState(false);
   return (
     <>
       <div className={cls.roomInfoContainer}>
@@ -69,7 +70,7 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
             <FontAwesomeIcon
               icon={faSignOutAlt}
               size="lg"
-              onClick={() => onLeaveRoom()}
+              onClick={() => setShowLeaveAlert(true)}
               color="#F7627B"
             />
           </div>
@@ -82,23 +83,41 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
           </div>
         </div>
         <div className={cls.listContainer}>
-          {nonPlayerPeersIncludingMe.length === 0 && (
-            <div style={{ textAlign: 'center' }}>
-              Waiting for peers.
-              <br />
-              <br />
-              Dont just sit there, click the + icon above and
-              invite some friends over.
-              <br />
-              <br />
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Mutunachi
-                  mid={4}
-                  style={{ height: '100px' }}
-                />
+          {(nonPlayerPeersIncludingMe.length === 0) && (!gameInProgress)
+            ? (
+              <div style={{ textAlign: 'center' }}>
+                Waiting for peers.
+                <br />
+                <br />
+                Dont just sit there, click the + icon above and
+                invite some friends over.
+                <br />
+                <br />
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Mutunachi
+                    mid={4}
+                    style={{ height: '100px' }}
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            ) : null}
+          {(nonPlayerPeersIncludingMe.length === 0) && (gameInProgress)
+            ? (
+              <div style={{ textAlign: 'center' }}>
+                No spectators
+                <br />
+                <br />
+                Invite others to join.
+                <br />
+                Afterwards you can challenge anyone from the spectators to a game.
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Mutunachi
+                    mid={4}
+                    style={{ height: '100px' }}
+                  />
+                </div>
+              </div>
+            ) : null}
           {nonPlayerPeersIncludingMe.map((peer) => (
             <div className={cls.listItem} key={peer.id}>
               <RoomListPeer
@@ -121,6 +140,9 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
           <AddNewPeerPopUp close={() => setShowAddModal(false)} />
         </PopupModal>
       )}
+      <PopupModal show={showLeaveAlert}>
+        <ExitAlert onClose={() => setShowLeaveAlert(false)} />
+      </PopupModal>
     </>
   );
 };

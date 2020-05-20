@@ -24,8 +24,7 @@ export const PlayWithFriendsPopup: React.FC<Props> = ({
           <CustomInput
             className={cls.input}
             value={inputValue}
-            onChange={setInputValue}
-            placeholder="Enter room code"
+            onChange={(val: string) => setInputValue(val)}
           />
         </div>
       </div>
