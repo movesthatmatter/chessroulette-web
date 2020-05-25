@@ -19,7 +19,10 @@ export const defaultStory = () => (
         <div>
           {`Me: ${p.me.name}(${p.me.id})`}
           {p.me.connection.channels.streaming.on ? (
-            <FaceTime streamConfig={p.me.connection.channels.streaming} />
+            <FaceTime
+              streamConfig={p.me.connection.channels.streaming}
+              muted
+            />
           ) : (
             <p>Streaming not on</p>
           )}
