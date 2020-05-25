@@ -44,6 +44,7 @@
     "js-logger": "^1.6.0",
     "jss": "^10.1.1",
     "now": "^19.0.1",
+    "peerjs": "^1.2.0",
     "prettier-eslint": "9.0.1",
     "prettier-eslint-cli": "5.0.0",
     "react": "^16.13.1",
