@@ -18,7 +18,7 @@ export default {
 const roomMocker = new RoomMocker();
 const peerMocker = new PeerMocker();
 
-const roomPeers = range(4).map(() => peerMocker.record());
+const roomPeers = range(2).map(() => peerMocker.record());
 const room = roomMocker.withProps({
   peers: roomPeers.reduce((accum, peer) => ({
     ...accum,

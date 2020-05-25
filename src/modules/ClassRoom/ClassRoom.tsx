@@ -3,8 +3,11 @@ import { createUseStyles } from 'src/lib/jss';
 import { Room } from 'src/components/RoomProvider';
 import { Grid, Box } from 'grommet';
 import { FaceTime } from 'src/components/FaceTimeArea';
+import { ChatBox } from 'src/components/ChatBox/ChatBox';
+import { ChatBoxContainer } from 'src/components/ChatBox';
 import { MemberList } from './components/MemberList';
 import { MemberStreamingReel } from './components/MemberStreamingReel/MemberStreamingReel';
+import { Chat } from './components/Chat';
 
 type Props = {
   room: Room;
@@ -56,7 +59,18 @@ export const ClassRoom: React.FC<Props> = (props) => {
         />
       </main>
       <aside className={cls.side}>
-        <MemberList peers={Object.values(props.room.peers)} />
+        <MemberList
+          className={cls.memberList}
+          peers={Object.values(props.room.peers)}
+        />
+        <Chat
+          className={cls.chatContainer}
+          myId={props.room.me.id}
+          messages={[]}
+          onSend={(msg) => {
+            console.log('sending', msg);
+          }}
+        />
       </aside>
     </div>
   );
@@ -83,14 +97,31 @@ const useStyles = createUseStyles({
     width: '100%',
   },
   side: {
+    borderLeft: '1px solid #efefef',
+    boxShadow: '0px 0 10px #ddd',
+    zIndex: 1,
     flex: 0.4,
     maxWidth: '380px',
+    // background: 'yellow',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  memberList: {
+    // flex: 1,
+    maxHeight: '50vh',
+    overflow: 'scroll',
+    borderBottom: '1px solid #ddd',
+  },
+  chatContainer: {
+    // background: 'green',
+    flex: 1,
+    // minHeight: '50vh',
   },
   streamingReel: {
     position: 'absolute',
     bottom: '10px',
     left: 0,
     right: 0,
-    zIndex: 999,
+    // zIndex: 999,
   },
 });
