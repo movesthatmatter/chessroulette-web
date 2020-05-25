@@ -69,6 +69,7 @@ export const PeerProvider: React.FC<Props> = (props) => {
             // host: '127.0.0.1',
             host: 'dstnd-signaling.herokuapp.com',
             port: 80,
+            secure: false,
             // port: 443,
             // config: {
 
