@@ -3,7 +3,7 @@ import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { Move, Square } from 'chess.js';
-import { getBoardSize } from 'src/modules/GameRoom/util';
+import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
 import { ChessBoard } from '../ChessBoard';
 import { getNewChessGame } from '../../lib/sdk';
 
@@ -14,12 +14,16 @@ type Props = React.HTMLProps<HTMLDivElement> & {
 
   // The bottom side
   homeColor: 'white' | 'black';
+
+  getBoardSize?: (p: {screenWidth: number; screenHeight: number}) => number;
 };
 
 export const ChessGame: React.FunctionComponent<Props> = ({
   onMove = noop,
   pgn = '',
   playable = true,
+  // boardSize =
+  getBoardSize = getDefaultBoardSize,
   ...props
 }) => {
   const cls = useStyles();

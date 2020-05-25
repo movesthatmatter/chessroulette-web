@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Room } from 'src/components/RoomProvider';
-import { Grid, Box } from 'grommet';
+import { Grid, Box, Button } from 'grommet';
 import { FaceTime } from 'src/components/FaceTimeArea';
 import { ChatBox } from 'src/components/ChatBox/ChatBox';
 import { ChatBoxContainer } from 'src/components/ChatBox';
+import { Workshop } from 'grommet-icons';
 import { MemberList } from './components/MemberList';
 import { MemberStreamingReel } from './components/MemberStreamingReel/MemberStreamingReel';
 import { Chat } from './components/Chat';
+import { BlackBoard, BlackBoardProps } from './components/BlackBoard';
+import { ChessBoard } from '../Games/Chess/components/ChessBoard';
+import { ChessStudy } from '../ChessStudy';
 
 type Props = {
   room: Room;
@@ -16,43 +20,41 @@ type Props = {
 export const ClassRoom: React.FC<Props> = (props) => {
   const cls = useStyles();
 
+  const [mode, setMode] = useState<BlackBoardProps['mode']>('study');
+
   return (
-  // <Grid
-  //   // className={cls.container}
-  //   fill
-  //   rows={['auto']}
-  //   columns={['auto']}
-  //   areas={[
-  //     { name: 'main', start: [1, 1], end: [1, 1] },
-  //     { name: 'side', start: [1, 0], end: [1, 1] },
-  //   ]}
-  // >
-  //   <Box
-  //     gridArea="main"
-  //     className={cls.main}
-  //     justify="center"
-  //     align="center"
-  //   >
-  //     main
-
-  //   </Box>
-  //   <Box
-  //     gridArea="side"
-  //     className={cls.side}
-  //   >
-  //     side
-  //   </Box>
-  // </Grid>
-
     <div className={cls.container}>
       <main className={cls.main}>
-        <FaceTime
-          containerClassName={cls.faceTime}
-          streamConfig={props.room.me.connection.channels.streaming}
-          streamingOffFallback={(
-            <div className={cls.initialView} />
+        <header className={cls.header}>
+          <Button
+            icon={<Workshop />}
+            onClick={() => {
+              setMode((prev) => (prev === 'study' ? 'facetime' : 'study'));
+            }}
+            className={cls.topButton}
+            // size="small"
+            // primary
+          />
+        </header>
+        <BlackBoard
+          mode={mode}
+          facetimeComponent={(
+            <FaceTime
+              containerClassName={cls.faceTime}
+              streamConfig={props.room.me.connection.channels.streaming}
+              streamingOffFallback={(
+                <div className={cls.initialView} />
+              )}
+            />
+          )}
+          studyComponent={(
+            <ChessStudy
+              className={cls.studyContainer}
+              bottomPadding={200}
+            />
           )}
         />
+
         <MemberStreamingReel
           className={cls.streamingReel}
           peers={Object.values(props.room.peers)}
@@ -87,6 +89,21 @@ const useStyles = createUseStyles({
     flex: 1,
     position: 'relative',
   },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    // height:
+    display: 'flex',
+    padding: '16px',
+    justifyContent: 'flex-end',
+    zIndex: 2,
+  },
+  topButton: {
+    background: 'rgba(255, 255, 255)',
+    borderRadius: '20px',
+  },
   faceTime: {
     width: '100%',
     height: '100%',
@@ -95,6 +112,11 @@ const useStyles = createUseStyles({
     background: '#555',
     height: '100%',
     width: '100%',
+  },
+  studyContainer: {
+    width: '100%',
+    height: '100%',
+    // background: 'red',
   },
   side: {
     borderLeft: '1px solid #efefef',
