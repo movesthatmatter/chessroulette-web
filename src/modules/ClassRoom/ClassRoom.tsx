@@ -5,7 +5,7 @@ import { Grid, Box, Button } from 'grommet';
 import { FaceTime } from 'src/components/FaceTimeArea';
 import { ChatBox } from 'src/components/ChatBox/ChatBox';
 import { ChatBoxContainer } from 'src/components/ChatBox';
-import { Workshop } from 'grommet-icons';
+import { Workshop, View } from 'grommet-icons';
 import { MemberList } from './components/MemberList';
 import { MemberStreamingReel } from './components/MemberStreamingReel/MemberStreamingReel';
 import { Chat } from './components/Chat';
@@ -26,15 +26,25 @@ export const ClassRoom: React.FC<Props> = (props) => {
     <div className={cls.container}>
       <main className={cls.main}>
         <header className={cls.header}>
-          <Button
-            icon={<Workshop />}
-            onClick={() => {
-              setMode((prev) => (prev === 'study' ? 'facetime' : 'study'));
-            }}
-            className={cls.topButton}
-            // size="small"
-            // primary
-          />
+          {mode === 'facetime' ? (
+            <Button
+              icon={<Workshop />}
+              onClick={() => {
+                setMode('study');
+              }}
+              className={cls.topButton}
+            />
+          ) : (
+            <Button
+              icon={<View />}
+              onClick={() => {
+                setMode('facetime');
+              }}
+              // className={cls.topButton}
+              primary
+            />
+          )}
+
         </header>
         <BlackBoard
           mode={mode}

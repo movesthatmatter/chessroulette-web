@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { createUseStyles } from 'src/lib/jss';
+import React, {
+  useEffect, useRef, useReducer,
+} from 'react';
 import PeerSDK from 'peerjs';
-import { PeerConnectionStatus } from 'src/services/peers';
-import { PeerRecord } from 'dstnd-io';
 import { SocketConsumer } from '../SocketProvider';
-import { PeerConnections } from '../PeersProvider';
-import { Peer } from '../RoomProvider';
+import { Room } from '../RoomProvider';
+import {
+  initialState, reducer, createRoomAction, addPeerAction, addMyStream, addPeerStream,
+} from './reducer';
 
 const namespace = 'dstnd_';
 const wNamespace = (s: string) => `${namespace}${s}`;
@@ -16,64 +17,41 @@ const woNamespace = (s: string) => (
 );
 
 type RenderProps = {
-  me: Peer;
-  peers: Record<string, Peer>;
+  room: Room;
 }
 
-type Props = {
+export type PeerProviderProps = {
+  roomCredentials: {
+    id: string;
+    code?: string;
+  };
   render: (p: RenderProps) => React.ReactNode;
 };
 
-export const PeerProvider: React.FC<Props> = (props) => {
+export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   const peerSDK = useRef<PeerSDK>();
-
-  const [me, setMe] = useState<Peer | undefined>();
-  const [peers, setPeers] = useState<Record<string, Peer>>({});
-  // const [pcs, setPcs] = useState({});
-  // const [peerConnections, setPeerConnections] = useState<PeerConnections>({});
-
-  // useEffect(() => {
-  //   const peer = new Peer();
-  // }, []);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    console.log('Me Updated', me);
-  }, [me]);
-
-  useEffect(() => {
-    console.log('Peers Updated', peers);
-  }, [peers]);
+    console.log('[Peer Provider] state updated', state);
+  }, [state]);
 
   return (
     <SocketConsumer
       onMessage={(msg) => {
+        console.log('on msg', msg);
         if (msg.kind === 'joinRoomSuccess') {
-          // This is only be called once if I'm right
-          setMe({
-            ...msg.content.me,
-            avatarId: msg.content.me.id.slice(-1)[0],
-            connection: {
-              // This shouldn't be so
-              // there's no connetion with myself :)
-              channels: {
-                data: { on: true },
-                streaming: { on: false },
-              },
-            },
-          });
-
-          // console.log('[PeerProvider] my id', wNamespace(msg.content.me.id));
+          dispatch(createRoomAction({
+            room: msg.content.room,
+            me: msg.content.me,
+          }));
 
           const sdk = new PeerSDK(wNamespace(msg.content.me.id), {
             debug: 0,
-            // host: '127.0.0.1',
-            host: 'dstnd-signaling.herokuapp.com',
-            // port: 80,
-            secure: true,
-            // port: 443,
-            // config: {
-
-            // }
+            host: '127.0.0.1',
+            port: 9000,
+            // host: 'dstnd-signaling.herokuapp.com',
+            secure: false,
           });
 
           sdk.on('open', () => {
@@ -97,62 +75,22 @@ export const PeerProvider: React.FC<Props> = (props) => {
                   console.log('[PeerProvider] connection opened', idWNamespace);
 
                   pc.send(`hi from ${msg.content.me.id}`);
-
-                  setPeers((prev) => ({
-                    ...prev,
-                    [peerId]: {
-                      ...msg.content.room.peers[peerId],
-                      avatarId: peerId.slice(-1)[0],
-                      connection: {
-                        channels: {
-                          data: { on: true },
-                          streaming: { on: false },
-                        },
-                      },
-                    },
-                  }));
-
-                  // sdk.call(idWNamespace);
+                  dispatch(addPeerAction(msg.content.room.peers[peerId]));
 
                   // calling
                   navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                     .then((stream) => {
-                      setMe((prev) => (!prev ? prev : ({
-                        ...prev,
-                        connection: {
-                          ...prev.connection,
-                          channels: {
-                            ...prev.connection.channels,
-                            streaming: {
-                              on: true,
-                              stream,
-                              type: 'audio-video',
-                            },
-                          },
-                        },
-                      })));
+                      dispatch(addMyStream({ stream }));
 
                       const call = sdk.call(idWNamespace, stream);
 
                       call.on('stream',
                         (remoteStream) => {
                           console.log('Remote Stream Received', peerId);
-                          setPeers((prev) => ({
-                            ...prev,
-                            [peerId]: {
-                              ...prev[peerId],
-                              connection: {
-                                ...prev[peerId].connection,
-                                channels: {
-                                  ...prev[peerId].connection.channels,
-                                  streaming: {
-                                    on: true,
-                                    type: 'audio-video', // this needs to be dynamic
-                                    stream: remoteStream,
-                                  },
-                                },
-                              },
-                            },
+
+                          dispatch(addPeerStream({
+                            peerId,
+                            stream: remoteStream,
                           }));
                           // Show stream in some <video> element.
                         });
@@ -162,10 +100,6 @@ export const PeerProvider: React.FC<Props> = (props) => {
                 });
               });
           });
-
-          // sdk.on('')
-
-          console.log('sdk', sdk);
 
           sdk.on('error', (e) => {
             console.warn('[PeerProvider] SDK Error', e);
@@ -182,22 +116,10 @@ export const PeerProvider: React.FC<Props> = (props) => {
 
             pc.on('open', () => {
               console.log('[PeerProvider] on open sending message back');
-              pc.send(`hi back from ${msg.content.me.id}`);
 
-
-              setPeers((prev) => ({
-                ...prev,
-                [peerId]: {
-                  id: peerId,
-                  name: `${peerId}'s Name`,
-                  avatarId: peerId.slice(-1)[0],
-                  connection: {
-                    channels: {
-                      data: { on: false },
-                      streaming: { on: false },
-                    },
-                  },
-                },
+              dispatch(addPeerAction({
+                id: peerId,
+                name: 'This is not given yet',
               }));
             });
           });
@@ -209,56 +131,16 @@ export const PeerProvider: React.FC<Props> = (props) => {
                 call.on('stream', (remoteStream) => {
                   const peerId = woNamespace(call.peer);
 
-                  console.log('received remote stream from', peerId);
-
-                  setMe((prev) => (!prev ? prev : ({
-                    ...prev,
-                    connection: {
-                      ...prev.connection,
-                      channels: {
-                        ...prev.connection.channels,
-                        streaming: {
-                          on: true,
-                          stream: myStream,
-                          type: 'audio-video',
-                        },
-                      },
-                    },
-                  })));
-
-
-                  setPeers((prev) => ({
-                    ...prev,
-                    [peerId]: {
-                      ...prev[peerId],
-                      connection: {
-                        ...prev[peerId].connection,
-                        channels: {
-                          ...prev[peerId].connection.channels,
-                          streaming: {
-                            on: true,
-                            type: 'audio-video', // this needs to be dynamic
-                            stream: remoteStream,
-                          },
-                        },
-                      },
-                    },
+                  dispatch(addMyStream({ stream: myStream }));
+                  dispatch(addPeerStream({
+                    peerId,
+                    stream: remoteStream,
                   }));
-
-                  // setPeers((prev) => ({
-                  //   ...prev,
-                  //   [peerId]:
-                  // }))
-                  // call.metadata;
-                  // Show stream in some <video> element.
                 });
               }, (err) => {
                 console.error('Failed to get local stream', err);
               });
           });
-
-          console.log('[PeerProvider] me', sdk.id);
-
 
           peerSDK.current = sdk;
         }
@@ -266,15 +148,13 @@ export const PeerProvider: React.FC<Props> = (props) => {
       onReady={(socket) => socket.send({
         kind: 'joinRoomRequest',
         content: {
-          roomId: '1',
-          code: undefined,
+          roomId: props.roomCredentials.id,
+          code: props.roomCredentials.code,
         },
       })}
       render={() => (
         <>
-          {me && props.render({
-            peers, me,
-          })}
+          {state.room && props.render({ room: state.room })}
         </>
       )}
     />

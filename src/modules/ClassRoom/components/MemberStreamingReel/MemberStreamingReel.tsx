@@ -72,7 +72,7 @@ const useStyles = createUseStyles({
     float: 'left',
   },
   textContainer: {
-    padding: '3px 6px',
+    padding: '0 6px 10px',
     position: 'absolute',
     bottom: 0,
     left: 0,

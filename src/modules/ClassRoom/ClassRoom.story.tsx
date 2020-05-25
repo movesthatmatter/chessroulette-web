@@ -7,7 +7,9 @@ import { Grommet } from 'grommet';
 import { Peer } from 'src/components/RoomProvider';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { defaultTheme } from 'src/theme';
+import { SocketProvider } from 'src/components/SocketProvider';
 import { ClassRoom } from './ClassRoom';
+import { ClassRoomContainer } from './ClassRoomContainer';
 
 
 export default {
@@ -60,5 +62,18 @@ export const defaultStory = () => (
       />
     )}
     />
+  </Grommet>
+);
+
+export const withContainer = () => (
+  <Grommet theme={defaultTheme} full>
+    <SocketProvider>
+      {/* <WithLocalStream render={(stream) => ( */}
+      <ClassRoomContainer
+        roomCredentials={{ id: '1' }}
+      />
+      {/* )}
+    /> */}
+    </SocketProvider>
   </Grommet>
 );
