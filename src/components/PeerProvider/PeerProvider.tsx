@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import PeerSDK from 'peerjs';
 import { logsy } from 'src/lib/logsy';
+import config from 'src/config';
 import { SocketConsumer } from '../SocketProvider';
 import { Room } from '../RoomProvider';
 import {
@@ -50,13 +51,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
             me: msg.content.me,
           }));
 
-          const sdk = new PeerSDK(wNamespace(msg.content.me.id), {
-            debug: 0,
-            host: '127.0.0.1',
-            port: 9000,
-            // host: 'dstnd-signaling.herokuapp.com',
-            secure: false,
-          });
+          const sdk = new PeerSDK(wNamespace(msg.content.me.id), config.SIGNALING_SERVER_CONFIG);
 
           sdk.on('error', logsy.error);
 
