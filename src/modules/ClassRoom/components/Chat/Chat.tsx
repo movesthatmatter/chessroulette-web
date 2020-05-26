@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Text, Header } from 'grommet';
 
-type Props = {
+export type ChatProps = {
   myId: string;
   messages: ChatMessageRecord[];
   onSend: (msg: string) => void;
@@ -14,7 +14,7 @@ type Props = {
   className?: string;
 };
 
-export const Chat: React.FC<Props> = ({
+export const Chat: React.FC<ChatProps> = ({
   onSend,
   myId,
   messages,

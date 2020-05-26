@@ -1,8 +1,4 @@
-import React, {
-  useContext,
-  useEffect,
-} from 'react';
-import { noop } from 'src/lib/util';
+import React, { useContext, useEffect } from 'react';
 import { PeerContext } from './PeerContext';
 import { Room } from '../RoomProvider';
 import { PeerMessageEnvelope } from './records';
@@ -15,48 +11,35 @@ type RenderProps = {
 type PeerConsumerProps = {
   render: (p: RenderProps) => React.ReactNode;
 
-  onPeerMsgReceived?: (
-    msg: PeerMessageEnvelope,
-
-  // TODO: Is this really needed?
-  // p: Pick<RenderProps, 'broadcastMessage'>
-  ) => void;
-  onPeerMsgSent?: (
-    msg: PeerMessageEnvelope,
-
-  // TODO: Is this really needed?
-  // p: Pick<RenderProps, 'broadcastMessage'>
-  ) => void;
+  onPeerMsgReceived?: (msg: PeerMessageEnvelope) => void;
+  onPeerMsgSent?: (msg: PeerMessageEnvelope) => void;
 };
 
 export const PeerConsumer: React.FC<PeerConsumerProps> = ({
-  onPeerMsgReceived = noop,
-  onPeerMsgSent = noop,
+  onPeerMsgReceived,
+  onPeerMsgSent,
   ...props
 }) => {
   const contextState = useContext(PeerContext);
 
   useEffect(() => {
-    if (contextState.proxy) {
+    if (contextState.state === 'connected') {
       const unsubscribers = [
-        contextState.proxy.onPeerMessageReceived(onPeerMsgReceived),
-        contextState.proxy.onPeerMessageSent(onPeerMsgSent),
+        onPeerMsgReceived && contextState.proxy.onPeerMessageReceived(onPeerMsgReceived),
+        onPeerMsgSent && contextState.proxy.onPeerMessageSent(onPeerMsgSent),
       ];
 
       return () => {
-        unsubscribers.forEach((unsubscribe) => unsubscribe());
+        unsubscribers.forEach((unsubscribe) => unsubscribe?.());
       };
     }
 
     return () => undefined;
-  }, [contextState]);
+  }, [contextState, onPeerMsgReceived, onPeerMsgSent]);
 
   return (
     <>
-      {contextState.room && props.render({
-        room: contextState.room,
-        broadcastMessage: contextState.broadcastMessage,
-      })}
+      {contextState.state === 'connected' && props.render(contextState)}
     </>
   );
 };

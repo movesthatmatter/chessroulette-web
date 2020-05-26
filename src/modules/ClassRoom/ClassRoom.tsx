@@ -10,7 +10,7 @@ import { PeerProviderProps } from 'src/components/PeerProvider';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { MemberList } from './components/MemberList';
 import { MemberStreamingReel } from './components/MemberStreamingReel/MemberStreamingReel';
-import { Chat } from './components/Chat';
+import { ChatContainer } from './components/Chat';
 import { BlackBoard, BlackBoardProps } from './components/BlackBoard';
 import { ChessBoard } from '../Games/Chess/components/ChessBoard';
 import { ChessStudy } from '../ChessStudy';
@@ -79,12 +79,7 @@ export const ClassRoom: React.FC<Props> = (props) => {
           className={cls.memberList}
           peers={Object.values(props.room.peers)}
         />
-        <Chat
-          className={cls.chatContainer}
-          myId={props.room.me.id}
-          messages={[]}
-          onSend={props.broadcastMessage}
-        />
+        <ChatContainer className={cls.chatContainer} />
       </aside>
     </div>
   );

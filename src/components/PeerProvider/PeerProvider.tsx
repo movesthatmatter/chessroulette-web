@@ -6,8 +6,8 @@ import { logsy } from 'src/lib/logsy';
 import config from 'src/config';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { isLeft } from 'fp-ts/lib/Either';
+import { noop } from 'src/lib/util';
 import { SocketConsumer } from '../SocketProvider';
-import { Room } from '../RoomProvider';
 import {
   initialState,
   reducer,
@@ -23,11 +23,6 @@ import { PeerMessageEnvelope, peerMessageEnvelope } from './records';
 import { Proxy } from './Proxy';
 import { PeerContextProps, PeerContext } from './PeerContext';
 
-type RenderProps = {
-  room: Room;
-  broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
-};
-
 export type PeerProviderProps = {
   roomCredentials: {
     id: string;
@@ -36,19 +31,49 @@ export type PeerProviderProps = {
 };
 
 export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
-  const broadcastMessage: RenderProps['broadcastMessage'] = (message) => {
-    const payload: PeerMessageEnvelope = {
-      message,
-      timestamp: toISODateTime(new Date()),
-    };
+  const peerSDK = useRef<PeerSDK>();
+  const activePeerConnections = useRef(new ActivePeerConnections()).current;
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const proxy = useRef(new Proxy()).current;
+  const [contextState, setContextState] = useState<PeerContextProps>({ state: 'init' });
 
-    Object.keys(state.room?.peers ?? {}).forEach((peerId) => {
-      activePeerConnections.get(peerId)?.data?.send(payload);
+  useEffect(() => {
+    setContextState((prev) => {
+      if (!state.room) {
+        return prev;
+      }
+
+      return ({
+        state: 'connected',
+        proxy,
+        room: state.room,
+
+        // this is needed here as otherwise the old state is used
+        broadcastMessage: (message) => {
+          const payload: PeerMessageEnvelope = {
+            message,
+            timestamp: toISODateTime(new Date()),
+          };
+
+          Object
+            .keys(state.room?.peers ?? {})
+            .forEach((peerId) => {
+            activePeerConnections.get(peerId)?.data?.send(payload);
+            });
+
+          proxy.publishOnPeerMessageSent(payload);
+        },
+      });
     });
+  }, [state.room]);
 
-    proxy.publishOnPeerMessageSent(payload);
-    // props.onPeerMsgSent?.(payload, { broadcastMessage });
-  };
+  useEffect(() => () => {
+    activePeerConnections.removeAll();
+
+    // Destroy the PeerJS Server connection as well
+    peerSDK.current?.destroy();
+  }, []);
+
 
   const onDataHandler = (data: unknown) => {
     const result = peerMessageEnvelope.decode(data);
@@ -63,33 +88,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
     }
 
     proxy.publishOnPeerMessageReceived(result.right);
-    // props.onPeerMsgReceived?.(result.right, { broadcastMessage });
   };
-
-  const peerSDK = useRef<PeerSDK>();
-  const activePeerConnections = useRef(new ActivePeerConnections()).current;
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-
-  const proxy = useRef(new Proxy()).current;
-  const [contextState, setContextState] = useState<PeerContextProps>({
-    proxy,
-    broadcastMessage,
-  });
-
-  useEffect(() => {
-    setContextState((prev) => ({
-      ...prev,
-      room: state.room,
-    }));
-  }, [state.room]);
-
-  useEffect(() => () => {
-    activePeerConnections.removeAll();
-
-    // Destroy the PeerJS Server connection as well
-    peerSDK.current?.destroy();
-  }, []);
 
   return (
     <SocketConsumer
@@ -223,14 +222,19 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           peerSDK.current = sdk;
         }
       }}
-      onReady={(socket) =>
+      onReady={(socket) => {
+        setContextState(() => ({
+          state: 'connecting',
+        }));
+
         socket.send({
           kind: 'joinRoomRequest',
           content: {
             roomId: props.roomCredentials.id,
             code: props.roomCredentials.code,
           },
-        })}
+        });
+      }}
       render={() => (
         <PeerContext.Provider value={contextState}>
           {props.children}

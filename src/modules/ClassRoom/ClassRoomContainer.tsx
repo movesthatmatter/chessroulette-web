@@ -11,13 +11,6 @@ export const ClassRoomContainer: React.FC<Props> = (props) => (
   //  The point of the splitting it so the consumer can be used further down
   //  in the chat, study, game, etc., so the state can pe managed locally
   <PeerProvider roomCredentials={props.roomCredentials}>
-    <PeerConsumer
-      render={({ room, broadcastMessage }) => (
-        <ClassRoom
-          room={room}
-          broadcastMessage={broadcastMessage}
-        />
-      )}
-    />
+    <PeerConsumer render={(p) => <ClassRoom {...p} />} />
   </PeerProvider>
 );
