@@ -6,6 +6,8 @@ import { FaceTime } from 'src/components/FaceTimeArea';
 import { ChatBox } from 'src/components/ChatBox/ChatBox';
 import { ChatBoxContainer } from 'src/components/ChatBox';
 import { Workshop, View } from 'grommet-icons';
+import { PeerProviderProps } from 'src/components/PeerProvider';
+import { PeerMessageEnvelope } from 'src/services/peers';
 import { MemberList } from './components/MemberList';
 import { MemberStreamingReel } from './components/MemberStreamingReel/MemberStreamingReel';
 import { Chat } from './components/Chat';
@@ -15,6 +17,8 @@ import { ChessStudy } from '../ChessStudy';
 
 type Props = {
   room: Room;
+
+  broadcastMessage: (msg: PeerMessageEnvelope['message']) => void;
 };
 
 export const ClassRoom: React.FC<Props> = (props) => {
@@ -79,9 +83,7 @@ export const ClassRoom: React.FC<Props> = (props) => {
           className={cls.chatContainer}
           myId={props.room.me.id}
           messages={[]}
-          onSend={(msg) => {
-            console.log('sending', msg);
-          }}
+          onSend={props.broadcastMessage}
         />
       </aside>
     </div>

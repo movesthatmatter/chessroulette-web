@@ -1,6 +1,5 @@
 import { createAction, createReducer } from 'deox';
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
-import { Return } from 'grommet-icons';
 import { Room, Peer } from '../RoomProvider';
 
 

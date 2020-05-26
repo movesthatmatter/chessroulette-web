@@ -1,9 +1,11 @@
 import React, {
-  useEffect, useRef, useReducer,
+  useEffect, useRef, useReducer, useState,
 } from 'react';
 import PeerSDK from 'peerjs';
 import { logsy } from 'src/lib/logsy';
 import config from 'src/config';
+import { toISODateTime } from 'src/lib/date/ISODateTime';
+import { isLeft } from 'fp-ts/lib/Either';
 import { SocketConsumer } from '../SocketProvider';
 import { Room } from '../RoomProvider';
 import {
@@ -17,23 +19,70 @@ import {
 } from './reducer';
 import { ActivePeerConnections } from './ActivePeerConnections';
 import { wNamespace, woNamespace } from './util';
+import { PeerMessageEnvelope, peerMessageEnvelope } from './records';
+import { Proxy } from './Proxy';
+import { PeerContextProps, PeerContext } from './PeerContext';
 
 type RenderProps = {
   room: Room;
-}
+  broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
+};
 
 export type PeerProviderProps = {
   roomCredentials: {
     id: string;
     code?: string;
   };
-  render: (p: RenderProps) => React.ReactNode;
 };
 
 export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
+  const broadcastMessage: RenderProps['broadcastMessage'] = (message) => {
+    const payload: PeerMessageEnvelope = {
+      message,
+      timestamp: toISODateTime(new Date()),
+    };
+
+    Object.keys(state.room?.peers ?? {}).forEach((peerId) => {
+      activePeerConnections.get(peerId)?.data?.send(payload);
+    });
+
+    proxy.publishOnPeerMessageSent(payload);
+    // props.onPeerMsgSent?.(payload, { broadcastMessage });
+  };
+
+  const onDataHandler = (data: unknown) => {
+    const result = peerMessageEnvelope.decode(data);
+
+    if (isLeft(result)) {
+      logsy.error(
+        '[PeerProvider] onMessageHandler(): Message Decoding Error',
+        data,
+      );
+
+      return;
+    }
+
+    proxy.publishOnPeerMessageReceived(result.right);
+    // props.onPeerMsgReceived?.(result.right, { broadcastMessage });
+  };
+
   const peerSDK = useRef<PeerSDK>();
   const activePeerConnections = useRef(new ActivePeerConnections()).current;
   const [state, dispatch] = useReducer(reducer, initialState);
+
+
+  const proxy = useRef(new Proxy()).current;
+  const [contextState, setContextState] = useState<PeerContextProps>({
+    proxy,
+    broadcastMessage,
+  });
+
+  useEffect(() => {
+    setContextState((prev) => ({
+      ...prev,
+      room: state.room,
+    }));
+  }, [state.room]);
 
   useEffect(() => () => {
     activePeerConnections.removeAll();
@@ -46,19 +95,23 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
     <SocketConsumer
       onMessage={(msg) => {
         if (msg.kind === 'joinRoomSuccess') {
-          dispatch(createRoomAction({
-            room: msg.content.room,
-            me: msg.content.me,
-          }));
+          dispatch(
+            createRoomAction({
+              room: msg.content.room,
+              me: msg.content.me,
+            }),
+          );
 
-          const sdk = new PeerSDK(wNamespace(msg.content.me.id), config.SIGNALING_SERVER_CONFIG);
+          const sdk = new PeerSDK(
+            wNamespace(msg.content.me.id),
+            config.SIGNALING_SERVER_CONFIG,
+          );
 
           sdk.on('error', logsy.error);
 
           sdk.on('open', () => {
             // Connect to all Peers
-            Object
-              .values(msg.content.room.peers)
+            Object.values(msg.content.room.peers)
               .filter(({ id }) => id !== msg.content.me.id)
               .forEach((peer) => {
                 const namespacedPeerId = wNamespace(peer.id);
@@ -80,10 +133,12 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
                       const call = sdk.call(namespacedPeerId, stream);
 
                       call.on('stream', (remoteStream) => {
-                        dispatch(addPeerStream({
-                          peerId: peer.id,
-                          stream: remoteStream,
-                        }));
+                        dispatch(
+                          addPeerStream({
+                            peerId: peer.id,
+                            stream: remoteStream,
+                          }),
+                        );
                       });
 
                       activePeerConnections.add(peer.id, {
@@ -95,6 +150,8 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
                     });
                 });
 
+                pc.on('data', onDataHandler);
+
                 pc.on('close', () => {
                   dispatch(removePeerAction({ peerId: peer.id }));
 
@@ -103,17 +160,16 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
               });
           });
 
-
           sdk.on('connection', (pc) => {
             const peerId = woNamespace(pc.peer);
 
             pc.on('error', logsy.error);
 
-            pc.on('data', (data) => {
-              console.log('[PeerProvider] received data', data);
-            });
+            pc.on('data', onDataHandler);
 
             pc.on('open', () => {
+              activePeerConnections.add(peerId, { data: pc });
+
               dispatch(addPeerAction({
                 id: peerId,
                 name: 'TBD (will come from metadata)',
@@ -121,12 +177,10 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
             });
 
             pc.on('close', () => {
-              dispatch(removePeerAction({ peerId }));
-
               activePeerConnections.remove(peerId);
-            });
 
-            activePeerConnections.add(peerId, { data: pc });
+              dispatch(removePeerAction({ peerId }));
+            });
           });
 
           sdk.on('close', () => {
@@ -140,7 +194,8 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           sdk.on('call', (call) => {
             const peerId = woNamespace(call.peer);
 
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            navigator.mediaDevices
+              .getUserMedia({ video: true, audio: true })
               .then((localStream) => {
                 activePeerConnections.add(peerId, {
                   media: {
@@ -155,10 +210,12 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
                 call.answer(localStream);
                 call.on('stream', (remoteStream) => {
                   dispatch(addMyStream({ stream: localStream }));
-                  dispatch(addPeerStream({
-                    peerId,
-                    stream: remoteStream,
-                  }));
+                  dispatch(
+                    addPeerStream({
+                      peerId,
+                      stream: remoteStream,
+                    }),
+                  );
                 });
               });
           });
@@ -166,17 +223,18 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           peerSDK.current = sdk;
         }
       }}
-      onReady={(socket) => socket.send({
-        kind: 'joinRoomRequest',
-        content: {
-          roomId: props.roomCredentials.id,
-          code: props.roomCredentials.code,
-        },
-      })}
+      onReady={(socket) =>
+        socket.send({
+          kind: 'joinRoomRequest',
+          content: {
+            roomId: props.roomCredentials.id,
+            code: props.roomCredentials.code,
+          },
+        })}
       render={() => (
-        <>
-          {state.room && props.render({ room: state.room })}
-        </>
+        <PeerContext.Provider value={contextState}>
+          {props.children}
+        </PeerContext.Provider>
       )}
     />
   );

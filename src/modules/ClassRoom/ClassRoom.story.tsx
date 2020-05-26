@@ -8,6 +8,7 @@ import { Peer } from 'src/components/RoomProvider';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { defaultTheme } from 'src/theme';
 import { SocketProvider } from 'src/components/SocketProvider';
+import { PeerProvider } from 'src/components/PeerProvider';
 import { ClassRoom } from './ClassRoom';
 import { ClassRoomContainer } from './ClassRoomContainer';
 
@@ -68,12 +69,9 @@ const addStreamToPeers = (
 export const withContainer = () => (
   <Grommet theme={defaultTheme} full>
     <SocketProvider>
-      {/* <WithLocalStream render={(stream) => ( */}
       <ClassRoomContainer
         roomCredentials={{ id: '1' }}
       />
-      {/* )}
-    /> */}
     </SocketProvider>
   </Grommet>
 );

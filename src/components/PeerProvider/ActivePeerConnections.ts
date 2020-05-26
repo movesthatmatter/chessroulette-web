@@ -18,6 +18,10 @@ export class ActivePeerConnections {
     };
   }
 
+  get(peerId: string) {
+    return this.connections[peerId];
+  }
+
   remove(peerId: string) {
     const pc = this.connections[peerId];
 
@@ -32,7 +36,6 @@ export class ActivePeerConnections {
 
     pc.media?.connection.close();
     pc.data?.close();
-
 
     // Remove the current apc
     const { [peerId]: removed, ...rest } = this.connections;
