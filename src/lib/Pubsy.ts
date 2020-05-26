@@ -20,7 +20,9 @@ export class Pubsy<TChannelPayloadMap extends {[k: string]: unknown}> {
     // Unsubscriber
     return () => {
       if (this.subscribers[channelName]) {
-        delete this.subscribers[subId];
+        const { [subId]: removed, ...rest } = this.subscribers[channelName];
+
+        this.subscribers[channelName] = rest;
       }
 
       if (Object.keys(this.subscribers[channelName]).length === 0) {
