@@ -17,6 +17,11 @@ export const addPeerAction = createAction(
   (resolve) => (p: PeerRecord) => resolve(p),
 );
 
+export const removePeerAction = createAction(
+  'Remove Peer',
+  (resolve) => (p: {peerId: PeerRecord['id']}) => resolve(p),
+);
+
 export const addMyStream = createAction(
   'Add My Stream',
   (resolve) => (p: {
@@ -103,6 +108,25 @@ export const reducer = createReducer(initialState, (handleAction) => ([
         peersIncludingMe: {
           ...state.room?.peersIncludingMe ?? {},
           ...nextPeers,
+        },
+      },
+    };
+  }),
+  handleAction(removePeerAction, (state, { payload }) => {
+    if (!state.room) {
+      return state;
+    }
+
+    const { [payload.peerId]: removed, ...restPeers } = state.room.peers;
+
+    return {
+      ...state,
+      room: {
+        ...state.room,
+        peers: restPeers,
+        peersIncludingMe: {
+          ...restPeers,
+          [state.room.me.id]: state.room.me,
         },
       },
     };

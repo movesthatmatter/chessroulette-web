@@ -51,19 +51,19 @@ const addStreamToPeers = (
   [peer.id]: getPeerWithStream(peer, stream),
 }), {});
 
-export const defaultStory = () => (
-  <Grommet theme={defaultTheme} full>
-    <WithLocalStream render={(stream) => (
-      <ClassRoom room={{
-        ...room,
-        me: getPeerWithStream(room.me, stream),
-        peers: addStreamToPeers(room.peers, stream),
-      }}
-      />
-    )}
-    />
-  </Grommet>
-);
+// export const defaultStory = () => (
+//   <Grommet theme={defaultTheme} full>
+//     <WithLocalStream render={(stream) => (
+//       <ClassRoom room={{
+//         ...room,
+//         me: getPeerWithStream(room.me, stream),
+//         peers: addStreamToPeers(room.peers, stream),
+//       }}
+//       />
+//     )}
+//     />
+//   </Grommet>
+// );
 
 export const withContainer = () => (
   <Grommet theme={defaultTheme} full>
