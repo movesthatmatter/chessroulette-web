@@ -108,6 +108,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
             wNamespace(msg.content.me.id),
             config.SIGNALING_SERVER_CONFIG,
           );
+          peerSDK.current = sdk;
 
           sdk.on('error', logsy.error);
 
@@ -229,8 +230,6 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
                 });
               });
           });
-
-          peerSDK.current = sdk;
         }
       }}
       onReady={(socket) => {
