@@ -6,7 +6,8 @@ import { logsy } from 'src/lib/logsy';
 import config from 'src/config';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { isLeft } from 'fp-ts/lib/Either';
-import { noop } from 'src/lib/util';
+import { eitherToResult } from 'src/lib/ioutil';
+import { peerRecord } from 'dstnd-io';
 import { SocketConsumer } from '../SocketProvider';
 import {
   initialState,
@@ -19,7 +20,9 @@ import {
 } from './reducer';
 import { ActivePeerConnections } from './ActivePeerConnections';
 import { wNamespace, woNamespace } from './util';
-import { PeerMessageEnvelope, peerMessageEnvelope } from './records';
+import {
+  peerMessageEnvelope, PeerMessageEnvelope, peerConnectionMetadata, PeerConnectionMetadata,
+} from './records';
 import { Proxy } from './Proxy';
 import { PeerContextProps, PeerContext } from './PeerContext';
 
@@ -114,7 +117,12 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
               .filter(({ id }) => id !== msg.content.me.id)
               .forEach((peer) => {
                 const namespacedPeerId = wNamespace(peer.id);
-                const pc = sdk.connect(namespacedPeerId);
+
+                const metadata: PeerConnectionMetadata = {
+                  peer: msg.content.me,
+                };
+
+                const pc = sdk.connect(namespacedPeerId, { metadata });
 
                 pc.on('error', logsy.error);
 
@@ -167,12 +175,15 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
             pc.on('data', onDataHandler);
 
             pc.on('open', () => {
-              activePeerConnections.add(peerId, { data: pc });
+              eitherToResult(peerConnectionMetadata.decode(pc.metadata))
+                .map((metadata) => {
+                  activePeerConnections.add(peerId, { data: pc });
 
-              dispatch(addPeerAction({
-                id: peerId,
-                name: 'TBD (will come from metadata)',
-              }));
+                  dispatch(addPeerAction({
+                    id: peerId,
+                    name: metadata.peer.name,
+                  }));
+                });
             });
 
             pc.on('close', () => {

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, createRef } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { PeerContext } from './PeerContext';
 import { Room } from '../RoomProvider';
 import { PeerMessageEnvelope } from './records';
