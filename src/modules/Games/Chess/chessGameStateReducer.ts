@@ -30,7 +30,10 @@ export type GamePlayersBySide = {
   away: GamePlayer;
 }
 
-const getPlayerSideColor = (homeColor: ChessGameColor | 'random', players: GamePlayersBySide) => {
+const getPlayerSideColor = (
+  homeColor: ChessGameColor | 'random',
+  players: GamePlayersBySide,
+) => {
   if (homeColor === 'random') {
     const [white, black] = shuffle([players.home, players.away]);
 

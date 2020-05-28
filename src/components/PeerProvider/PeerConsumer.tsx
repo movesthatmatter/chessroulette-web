@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, createRef } from 'react';
 import { PeerContext } from './PeerContext';
 import { Room } from '../RoomProvider';
 import { PeerMessageEnvelope } from './records';
@@ -10,6 +10,7 @@ type RenderProps = {
 
 type PeerConsumerProps = {
   render: (p: RenderProps) => React.ReactNode;
+  onReady?: (p: RenderProps) => void;
 
   onPeerMsgReceived?: (msg: PeerMessageEnvelope) => void;
   onPeerMsgSent?: (msg: PeerMessageEnvelope) => void;
@@ -36,6 +37,12 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
 
     return () => undefined;
   }, [contextState, onPeerMsgReceived, onPeerMsgSent]);
+
+  useEffect(() => {
+    if (contextState.state === 'connected') {
+      props.onReady?.(contextState);
+    }
+  }, [contextState]);
 
   return (
     <>

@@ -1,24 +1,17 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Room } from 'src/components/RoomProvider';
-import { Grid, Box, Button } from 'grommet';
+import { Button } from 'grommet';
 import { FaceTime } from 'src/components/FaceTimeArea';
-import { ChatBox } from 'src/components/ChatBox/ChatBox';
-import { ChatBoxContainer } from 'src/components/ChatBox';
 import { Workshop, View } from 'grommet-icons';
-import { PeerProviderProps } from 'src/components/PeerProvider';
-import { PeerMessageEnvelope } from 'src/services/peers';
 import { MemberList } from './components/MemberList';
 import { MemberStreamingReel } from './components/MemberStreamingReel/MemberStreamingReel';
 import { ChatContainer } from './components/Chat';
 import { BlackBoard, BlackBoardProps } from './components/BlackBoard';
-import { ChessBoard } from '../Games/Chess/components/ChessBoard';
-import { ChessStudy } from '../ChessStudy';
+import { ChessStudyContainer } from '../ChessStudy/ChessStudyContainer';
 
 type Props = {
   room: Room;
-
-  broadcastMessage: (msg: PeerMessageEnvelope['message']) => void;
 };
 
 export const ClassRoom: React.FC<Props> = (props) => {
@@ -44,7 +37,6 @@ export const ClassRoom: React.FC<Props> = (props) => {
               onClick={() => {
                 setMode('facetime');
               }}
-              // className={cls.topButton}
               primary
             />
           )}
@@ -62,7 +54,8 @@ export const ClassRoom: React.FC<Props> = (props) => {
             />
           )}
           studyComponent={(
-            <ChessStudy
+            <ChessStudyContainer
+              room={props.room}
               className={cls.studyContainer}
               bottomPadding={200}
             />
@@ -101,7 +94,6 @@ const useStyles = createUseStyles({
     top: 0,
     left: 0,
     right: 0,
-    // height:
     display: 'flex',
     padding: '16px',
     justifyContent: 'flex-end',
@@ -123,7 +115,6 @@ const useStyles = createUseStyles({
   studyContainer: {
     width: '100%',
     height: '100%',
-    // background: 'red',
   },
   side: {
     borderLeft: '1px solid #efefef',
@@ -131,26 +122,21 @@ const useStyles = createUseStyles({
     zIndex: 1,
     flex: 0.4,
     maxWidth: '380px',
-    // background: 'yellow',
     display: 'flex',
     flexDirection: 'column',
   },
   memberList: {
-    // flex: 1,
     maxHeight: '50vh',
     overflow: 'scroll',
     borderBottom: '1px solid #ddd',
   },
   chatContainer: {
-    // background: 'green',
     flex: 1,
-    // minHeight: '50vh',
   },
   streamingReel: {
     position: 'absolute',
     bottom: '10px',
     left: 0,
     right: 0,
-    // zIndex: 999,
   },
 });

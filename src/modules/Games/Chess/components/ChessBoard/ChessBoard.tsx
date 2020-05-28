@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { Move, Square } from 'chess.js';
 import { CSSProperties } from 'src/lib/jss/types';
 import { noop } from 'src/lib/util';
+import { getStartingFen } from '../../lib/util';
 
-type Props = Chessboard['props'] & {
+export type ChessBoardProps = Chessboard['props'] & {
   history: Move[];
   onSquareClickMove?: (props: {
     targetSquare: Square;
@@ -12,7 +13,7 @@ type Props = Chessboard['props'] & {
   }) => void;
 };
 
-export const ChessBoard: React.FC<Props> = ({
+export const ChessBoard: React.FC<ChessBoardProps> = ({
   history,
   onSquareClickMove = noop,
   ...boardProps
