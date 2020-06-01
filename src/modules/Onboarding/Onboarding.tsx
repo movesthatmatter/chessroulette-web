@@ -5,25 +5,34 @@ import {
 } from 'grommet';
 import cx from 'classnames';
 import { useHistory } from 'react-router-dom';
-import { resources } from 'src/resources';
+import { CreateRoomRequest, CreateRoomResponse, UserRecord } from 'dstnd-io';
+import { Result } from 'ts-results';
+import { createRoom } from 'src/resources/resources';
 
-type Props = {};
+type Props = {
+  onSetUser: (
+    userInfo: { name: string },
+    // roomInfo: Omit<CreateRoomRequest, 'peerId'>
+  ) => Promise<Result<UserRecord, unknown>>;
+};
 
-const toRoomPath = (room: {id: string; type: 'public' | 'private'; code?: string}) =>
-  `${room.id}${room.type === 'private' ? `/${room.code}` : ''}`;
+const toRoomPath = (room: {
+  id: string;
+  type: 'public' | 'private';
+  code?: string;
+}) => `${room.id}${room.type === 'private' ? `/${room.code}` : ''}`;
 
 export const Onboarding: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const [showForm, setShowForm] = useState<'none' | 'student' | 'instructor'>('student');
+  const [showForm, setShowForm] = useState<'none' | 'student' | 'instructor'>(
+    'student',
+  );
   const history = useHistory();
 
   return (
     <div className={cls.container}>
-
       <Box className={cls.main} as="main" justify="center">
-        <Heading level={3}>
-          Welcome to 101Chess
-        </Heading>
+        <Heading level={3}>Welcome to 101Chess</Heading>
         {showForm === 'none' && (
           <>
             <Button
@@ -59,10 +68,7 @@ export const Onboarding: React.FC<Props> = (props) => {
                 placeholder="Your name"
                 className={cls.input}
               />
-              <TextInput
-                placeholder="Classroom name"
-                className={cls.input}
-              />
+              <TextInput placeholder="Classroom name" className={cls.input} />
             </Form>
             <Button
               className={cls.button}
@@ -92,10 +98,7 @@ export const Onboarding: React.FC<Props> = (props) => {
                 placeholder="Your name"
                 className={cls.input}
               />
-              <TextInput
-                placeholder="Classroom code"
-                className={cls.input}
-              />
+              <TextInput placeholder="Classroom code" className={cls.input} />
             </Form>
             <Button
               className={cx(cls.button, cls.button)}
@@ -104,17 +107,14 @@ export const Onboarding: React.FC<Props> = (props) => {
               size="large"
               focusIndicator={false}
               onClick={async () => {
-                (await resources.createUser({ name: 'John The Frog' }))
-                  .map(async (user) => {
-                    // TODO: This will be add to the app state, and the app
-                    //  state persisted if needed
-                    window.localStorage.setItem('user', JSON.stringify(user));
-
-                    (await resources.createRoom({
-                      nickname: 'my room',
-                      type: 'private',
-                      peerId: user.id,
-                    })).map((room) => {
+                (await props.onSetUser({ name: 'John The Frog' }))
+                  .map((user) => createRoom({
+                    nickname: 'my room',
+                    type: 'private',
+                    peerId: user.id,
+                  }))
+                  .map(async (roomPromise) => {
+                    (await roomPromise).map((room) => {
                       history.push(`/classroom/${toRoomPath(room)}`);
                     });
                   });
@@ -147,7 +147,6 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
     alignItems: 'center',
     // flexDirection: 'column',
-
   },
   main: {
     border: '2px solid #efefef',

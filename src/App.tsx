@@ -9,6 +9,7 @@ import { GA } from './services/Analytics';
 import { OnboardingPage } from './modules/Onboarding/OnboardingPage';
 import { defaultTheme } from './theme';
 import { ClassRoomPage } from './modules/ClassRoom/ClassRoomPage';
+import { ReduxProvider } from './redux/Provider';
 
 
 function App() {
@@ -16,54 +17,55 @@ function App() {
   const cls = useStyles();
 
   return (
-    <SocketProvider>
-      <div className={cls.container}>
-        <TransitionGroup component={null}>
-          { GA.init() && <GA.RouteTracker /> }
-          <Switch location={location}>
-            <Route exact path="/gameroom/:id/:code?" key={location.key}>
-              {({ match }) => (
-                <CSSTransition
-                  in={match !== null}
-                  key={location.key}
-                  timeout={600}
-                  unmountOnExit
-                >
-                  <GameRoomPage />
-                </CSSTransition>
-              )}
-            </Route>
-            <Route exact path="/classroom/:id/:code?" key={location.key}>
-              {({ match }) => (
-                <CSSTransition
-                  in={match !== null}
-                  key={location.key}
-                  timeout={600}
-                  unmountOnExit
-                >
-                  <ClassRoomPage />
-                </CSSTransition>
-              )}
-            </Route>
-            <Route exact strict path="/" key={location.key}>
-              {({ match }) => (
-                <CSSTransition
-                  in={match !== null}
-                  key={location.key}
-                  timeout={600}
-                  unmountOnExit
-                >
-                  <Grommet theme={defaultTheme} full>
-                    <OnboardingPage />
-                  </Grommet>
-                </CSSTransition>
-              )}
-            </Route>
-          </Switch>
-        </TransitionGroup>
-      </div>
-    </SocketProvider>
-    // </Grommet>
+    <ReduxProvider>
+      <SocketProvider>
+        <div className={cls.container}>
+          <TransitionGroup component={null}>
+            { GA.init() && <GA.RouteTracker /> }
+            <Switch location={location}>
+              <Route exact path="/gameroom/:id/:code?" key={location.key}>
+                {({ match }) => (
+                  <CSSTransition
+                    in={match !== null}
+                    key={location.key}
+                    timeout={600}
+                    unmountOnExit
+                  >
+                    <GameRoomPage />
+                  </CSSTransition>
+                )}
+              </Route>
+              <Route exact path="/classroom/:id/:code?" key={location.key}>
+                {({ match }) => (
+                  <CSSTransition
+                    in={match !== null}
+                    key={location.key}
+                    timeout={600}
+                    unmountOnExit
+                  >
+                    <ClassRoomPage />
+                  </CSSTransition>
+                )}
+              </Route>
+              <Route exact strict path="/" key={location.key}>
+                {({ match }) => (
+                  <CSSTransition
+                    in={match !== null}
+                    key={location.key}
+                    timeout={600}
+                    unmountOnExit
+                  >
+                    <Grommet theme={defaultTheme} full>
+                      <OnboardingPage />
+                    </Grommet>
+                  </CSSTransition>
+                )}
+              </Route>
+            </Switch>
+          </TransitionGroup>
+        </div>
+      </SocketProvider>
+    </ReduxProvider>
   );
 }
 

@@ -3,6 +3,8 @@ import React from 'react';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
 import StoryRouter from 'storybook-react-router';
+import { action } from '@storybook/addon-actions';
+import { Ok } from 'ts-results';
 import { Onboarding } from './Onboarding';
 
 export default {
@@ -13,6 +15,15 @@ export default {
 
 export const defaultStory = () => (
   <Grommet theme={defaultTheme} full>
-    <Onboarding />
+    <Onboarding
+      onSetUser={(...args) => {
+        action('on set user')(...args);
+
+        return Promise.resolve(new Ok({
+          id: '1',
+          name: 'Mock User',
+        }));
+      }}
+    />
   </Grommet>
 );

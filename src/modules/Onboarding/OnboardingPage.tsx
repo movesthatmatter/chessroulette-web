@@ -1,8 +1,8 @@
 import React from 'react';
-import { Onboarding } from './Onboarding';
+import { OnboardingContainer } from './OnboardingContainer';
 
 type Props = {};
 
 export const OnboardingPage: React.FC<Props> = () => (
-  <Onboarding />
+  <OnboardingContainer />
 );
