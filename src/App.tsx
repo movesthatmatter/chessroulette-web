@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { Grommet } from 'grommet';
+import { Grommet, Box } from 'grommet';
 import { SocketProvider } from './components/SocketProvider';
 import { createUseStyles } from './lib/jss';
 import { GameRoomPage } from './modules/GameRoom';
@@ -19,51 +19,53 @@ function App() {
   return (
     <ReduxProvider>
       <SocketProvider>
-        <div className={cls.container}>
-          <TransitionGroup component={null}>
-            { GA.init() && <GA.RouteTracker /> }
-            <Switch location={location}>
-              <Route exact path="/gameroom/:id/:code?" key={location.key}>
-                {({ match }) => (
-                  <CSSTransition
-                    in={match !== null}
-                    key={location.key}
-                    timeout={600}
-                    unmountOnExit
-                  >
-                    <GameRoomPage />
-                  </CSSTransition>
-                )}
-              </Route>
-              <Route exact path="/classroom/:id/:code?" key={location.key}>
-                {({ match }) => (
-                  <CSSTransition
-                    in={match !== null}
-                    key={location.key}
-                    timeout={600}
-                    unmountOnExit
-                  >
-                    <ClassRoomPage />
-                  </CSSTransition>
-                )}
-              </Route>
-              <Route exact strict path="/" key={location.key}>
-                {({ match }) => (
-                  <CSSTransition
-                    in={match !== null}
-                    key={location.key}
-                    timeout={600}
-                    unmountOnExit
-                  >
-                    <Grommet theme={defaultTheme} full>
+        <Grommet theme={defaultTheme} full>
+          <Box className={cls.container}>
+            <TransitionGroup component={null}>
+              { GA.init() && <GA.RouteTracker /> }
+              <Switch location={location}>
+                <Route exact path="/gameroom/:id/:code?" key={location.key}>
+                  {({ match }) => (
+                    <CSSTransition
+                      in={match !== null}
+                      key={location.key}
+                      timeout={600}
+                      unmountOnExit
+                    >
+                      <GameRoomPage />
+                    </CSSTransition>
+                  )}
+                </Route>
+                <Route exact path="/classroom/:id/:code?" key={location.key}>
+                  {({ match }) => (
+                    <CSSTransition
+                      in={match !== null}
+                      key={location.key}
+                      timeout={600}
+                      unmountOnExit
+                    >
+                      <ClassRoomPage />
+                    </CSSTransition>
+                  )}
+                </Route>
+                <Route exact strict path="/" key={location.key}>
+                  {({ match }) => (
+                    <CSSTransition
+                      in={match !== null}
+                      key={location.key}
+                      timeout={600}
+                      unmountOnExit
+                    >
+
                       <OnboardingPage />
-                    </Grommet>
-                  </CSSTransition>
-                )}
-              </Route>
-            </Switch>
-          </TransitionGroup>
-        </div>
+
+                    </CSSTransition>
+                  )}
+                </Route>
+              </Switch>
+            </TransitionGroup>
+          </Box>
+        </Grommet>
       </SocketProvider>
     </ReduxProvider>
   );

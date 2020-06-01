@@ -3,6 +3,8 @@ import { PeerConsumer, PeerProvider, PeerProviderProps } from 'src/components/Pe
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication/selectors';
+import { Layer, Box } from 'grommet';
+import { OnboardingWidget } from 'src/modules/Onboarding/components/OnboardingWidget';
 import { ClassRoom } from './ClassRoom';
 
 type Props = {
@@ -13,8 +15,13 @@ export const ClassRoomContainer: React.FC<Props> = (props) => {
   const auth = useSelector(selectAuthentication);
 
   if (!auth.isAuthenticated) {
-    // TODO: Have a better fallback
-    return null;
+    return (
+      <Layer>
+        <Box pad="medium">
+          <OnboardingWidget mode="student" />
+        </Box>
+      </Layer>
+    );
   }
 
   return (

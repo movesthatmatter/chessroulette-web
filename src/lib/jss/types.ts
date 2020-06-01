@@ -1,14 +1,10 @@
 import * as css from 'csstype';
 
-const Keyframes = {
-  '0%': null,
-};
-
-type X = '0%' | '10%';
-
 export type CSSProperties = css.Properties & {
   '&'?: css.Properties;
   '&:hover'?: css.Properties;
+  '&:focus'?: css.Properties;
+  '&:blur'?: css.Properties;
   '&:first-child'?: css.Properties;
   '&:last-child'?: css.Properties;
 
