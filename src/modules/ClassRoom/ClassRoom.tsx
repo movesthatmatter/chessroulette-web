@@ -16,7 +16,6 @@ type Props = {
 
 export const ClassRoom: React.FC<Props> = (props) => {
   const cls = useStyles();
-
   const [mode, setMode] = useState<BlackBoardProps['mode']>('study');
 
   return (

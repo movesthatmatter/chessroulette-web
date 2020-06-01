@@ -1,11 +1,14 @@
 import React from 'react';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { LandingPage } from './modules/Landing/LandingPage';
+import { Grommet } from 'grommet';
 import { SocketProvider } from './components/SocketProvider';
 import { createUseStyles } from './lib/jss';
 import { GameRoomPage } from './modules/GameRoom';
 import { GA } from './services/Analytics';
+import { OnboardingPage } from './modules/Onboarding/OnboardingPage';
+import { defaultTheme } from './theme';
+import { ClassRoomPage } from './modules/ClassRoom/ClassRoomPage';
 
 
 function App() {
@@ -30,6 +33,18 @@ function App() {
                 </CSSTransition>
               )}
             </Route>
+            <Route exact path="/classroom/:id/:code?" key={location.key}>
+              {({ match }) => (
+                <CSSTransition
+                  in={match !== null}
+                  key={location.key}
+                  timeout={600}
+                  unmountOnExit
+                >
+                  <ClassRoomPage />
+                </CSSTransition>
+              )}
+            </Route>
             <Route exact strict path="/" key={location.key}>
               {({ match }) => (
                 <CSSTransition
@@ -38,7 +53,9 @@ function App() {
                   timeout={600}
                   unmountOnExit
                 >
-                  <LandingPage />
+                  <Grommet theme={defaultTheme} full>
+                    <OnboardingPage />
+                  </Grommet>
                 </CSSTransition>
               )}
             </Route>
@@ -46,6 +63,7 @@ function App() {
         </TransitionGroup>
       </div>
     </SocketProvider>
+    // </Grommet>
   );
 }
 
@@ -55,7 +73,6 @@ const useStyles = createUseStyles({
     height: '100%',
 
     fontFamily: 'Roboto',
-
   },
 });
 

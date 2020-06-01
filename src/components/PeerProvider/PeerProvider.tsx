@@ -7,7 +7,7 @@ import config from 'src/config';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { isLeft } from 'fp-ts/lib/Either';
 import { eitherToResult } from 'src/lib/ioutil';
-import { peerRecord } from 'dstnd-io';
+import { peerRecord, UserRecord } from 'dstnd-io';
 import { SocketConsumer } from '../SocketProvider';
 import {
   initialState,
@@ -31,6 +31,7 @@ export type PeerProviderProps = {
     id: string;
     code?: string;
   };
+  userId: UserRecord['id'];
 };
 
 export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
@@ -236,6 +237,11 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
         setContextState(() => ({
           state: 'connecting',
         }));
+
+        socket.send({
+          kind: 'userIdentification',
+          content: { userId: props.userId },
+        });
 
         socket.send({
           kind: 'joinRoomRequest',

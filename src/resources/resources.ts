@@ -1,5 +1,4 @@
 import { getHttpInstance } from 'src/lib/http';
-import { Err, Result } from 'ts-results';
 import {
   io,
   publicRoomsResponsePayload,
@@ -15,8 +14,12 @@ import {
   PrivateRoomResponsePayload,
   iceServersResponse,
   IceServersResponse,
+  CreateUserRequestPayload,
+  CreateUserResponsePayload,
+  createUserResponsePayload,
 } from 'dstnd-io';
 import config from 'src/config';
+import { Result, Err } from 'dstnd-io/dist/ts-results';
 
 type ApiError = 'BadRequest' | 'BadResponse';
 
@@ -106,6 +109,20 @@ export const createChallenge = async (
 
     return io
       .toResult(createChallengeResponse.decode(data))
+      .mapErr(() => 'BadResponse');
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+};
+
+export const createUser = async (
+  req: CreateUserRequestPayload,
+): Promise<Result<CreateUserResponsePayload, ApiError>> => {
+  try {
+    const { data } = await http.post('api/users', req);
+
+    return io
+      .toResult(createUserResponsePayload.decode(data))
       .mapErr(() => 'BadResponse');
   } catch (e) {
     return new Err('BadRequest');

@@ -14,6 +14,7 @@ export default {
 export const defaultStory = () => (
   <SocketProvider>
     <PeerProvider
+      userId="1"
       roomCredentials={{
         id: '1',
       }}

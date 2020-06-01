@@ -12,6 +12,7 @@ import {
   JoinRoomSuccessPayload,
   PingPayload,
   JoinRoomFailurePayload,
+  UserIdentificationPayload,
 } from 'dstnd-io';
 
 type ReceivableMessagesMap = {
@@ -28,6 +29,7 @@ type ReceivableMessagesMap = {
 
 type SendableMessagesMap = {
   joinRoomRequest: JoinRoomRequestPayload;
+  userIdentification: UserIdentificationPayload;
   ping: PingPayload;
 };
 

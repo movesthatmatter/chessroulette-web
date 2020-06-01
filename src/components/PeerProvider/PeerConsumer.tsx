@@ -10,6 +10,7 @@ type RenderProps = {
 
 type PeerConsumerProps = {
   render: (p: RenderProps) => React.ReactNode;
+  renderFallback?: () => React.ReactNode;
   onReady?: (p: RenderProps) => void;
 
   onPeerMsgReceived?: (msg: PeerMessageEnvelope) => void;
@@ -19,6 +20,7 @@ type PeerConsumerProps = {
 export const PeerConsumer: React.FC<PeerConsumerProps> = ({
   onPeerMsgReceived,
   onPeerMsgSent,
+  renderFallback = () => null,
   ...props
 }) => {
   const contextState = useContext(PeerContext);
@@ -46,7 +48,9 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
 
   return (
     <>
-      {contextState.state === 'connected' && props.render(contextState)}
+      {contextState.state === 'connected'
+        ? props.render(contextState)
+        : renderFallback()}
     </>
   );
 };
