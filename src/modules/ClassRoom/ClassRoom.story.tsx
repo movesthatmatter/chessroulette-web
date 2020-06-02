@@ -2,15 +2,16 @@
 import React from 'react';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
-import { range } from 'src/lib/util';
+import { range, getRandomInt } from 'src/lib/util';
 import { Grommet } from 'grommet';
 import { Peer } from 'src/components/RoomProvider';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { defaultTheme } from 'src/theme';
 import { SocketProvider } from 'src/components/SocketProvider';
-import { PeerProvider } from 'src/components/PeerProvider';
+import { PeerProvider, PeerConsumer } from 'src/components/PeerProvider';
+import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
+import { ReduxProvider } from 'src/redux/Provider';
 import { ClassRoom } from './ClassRoom';
-import { ClassRoomContainer } from './ClassRoomContainer';
 
 
 export default {
@@ -21,7 +22,7 @@ export default {
 const roomMocker = new RoomMocker();
 const peerMocker = new PeerMocker();
 
-const roomPeers = range(2).map(() => peerMocker.record());
+const roomPeers = range(10).map(() => peerMocker.record());
 const room = roomMocker.withProps({
   peers: roomPeers.reduce((accum, peer) => ({
     ...accum,
@@ -52,26 +53,55 @@ const addStreamToPeers = (
   [peer.id]: getPeerWithStream(peer, stream),
 }), {});
 
-// export const defaultStory = () => (
-//   <Grommet theme={defaultTheme} full>
-//     <WithLocalStream render={(stream) => (
-//       <ClassRoom room={{
-//         ...room,
-//         me: getPeerWithStream(room.me, stream),
-//         peers: addStreamToPeers(room.peers, stream),
-//       }}
-//       />
-//     )}
-//     />
-//   </Grommet>
-// );
-
-export const withContainer = () => (
+export const defaultStory = () => (
   <Grommet theme={defaultTheme} full>
-    <SocketProvider>
-      <ClassRoomContainer
-        roomCredentials={{ id: '1' }}
-      />
-    </SocketProvider>
+    <WithLocalStream render={(stream) => (
+      <SocketProvider>
+        <PeerProvider
+          roomCredentials={{
+            id: '1',
+          }}
+          // This might not allow it to work with sockets
+          userId="1"
+        >
+          <PeerConsumer
+            render={(p) => (
+              <ClassRoom
+                {...p}
+                room={{
+                  ...p.room,
+                  me: getPeerWithStream(room.me, stream),
+                  peers: addStreamToPeers(room.peers, stream),
+                }}
+                initialMode="study"
+              />
+            )}
+            renderFallback={() => <AwesomeLoaderPage />}
+          />
+        </PeerProvider>
+      </SocketProvider>
+    )}
+    />
   </Grommet>
+);
+
+export const withPeerProvider = () => (
+  <ReduxProvider>
+    <Grommet theme={defaultTheme} full>
+      <SocketProvider>
+        <PeerProvider
+          roomCredentials={{
+            id: '1',
+          }}
+          // This might not allow it to work with sockets
+          userId={String(getRandomInt(1, 6))}
+        >
+          <PeerConsumer
+            render={(p) => <ClassRoom {...p} />}
+            renderFallback={() => <AwesomeLoaderPage />}
+          />
+        </PeerProvider>
+      </SocketProvider>
+    </Grommet>
+  </ReduxProvider>
 );

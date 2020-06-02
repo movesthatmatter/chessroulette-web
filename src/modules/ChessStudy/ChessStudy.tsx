@@ -4,12 +4,14 @@ import { createUseStyles } from 'src/lib/jss';
 import { ChessStudyBoard, ChessStudyBoardProps } from './components/ChessStudyBoard';
 
 export type ChessStudyProps = ChessStudyBoardProps & {
-  bottomPadding: number;
+  paddingTop?: number;
+  paddingBottom?: number;
   className?: string;
 };
 
 export const ChessStudy: React.FC<ChessStudyProps> = ({
-  bottomPadding,
+  paddingTop = 0,
+  paddingBottom = 0,
   className,
   ...boardProps
 }) => {
@@ -17,10 +19,13 @@ export const ChessStudy: React.FC<ChessStudyProps> = ({
 
   return (
     <div className={className}>
-      <div className={cls.container}>
+      <div
+        className={cls.container}
+        style={{ paddingTop }}
+      >
         <ChessStudyBoard
           orientation="white"
-          calcWidth={(p) => (p.screenHeight) - bottomPadding}
+          calcWidth={(p) => p.screenHeight - paddingBottom - paddingTop}
           {...boardProps}
         />
       </div>

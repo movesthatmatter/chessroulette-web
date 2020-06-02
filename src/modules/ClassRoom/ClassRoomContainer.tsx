@@ -5,10 +5,11 @@ import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication/selectors';
 import { Layer, Box } from 'grommet';
 import { OnboardingWidget } from 'src/modules/Onboarding/components/OnboardingWidget';
-import { ClassRoom } from './ClassRoom';
+import { ClassRoom, ClassroomProps } from './ClassRoom';
 
 type Props = {
   roomCredentials: PeerProviderProps['roomCredentials'];
+  initialClassroomMode?: ClassroomProps['initialMode'];
 };
 
 export const ClassRoomContainer: React.FC<Props> = (props) => {
@@ -33,7 +34,7 @@ export const ClassRoomContainer: React.FC<Props> = (props) => {
       userId={auth.user.id}
     >
       <PeerConsumer
-        render={(p) => <ClassRoom {...p} />}
+        render={(p) => <ClassRoom {...p} initialMode={props.initialClassroomMode} />}
         renderFallback={() => <AwesomeLoaderPage />}
       />
     </PeerProvider>

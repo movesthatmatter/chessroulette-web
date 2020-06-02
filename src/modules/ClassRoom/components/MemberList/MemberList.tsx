@@ -4,6 +4,7 @@ import { Room, Peer } from 'src/components/RoomProvider';
 import { List, Heading, Header } from 'grommet';
 
 type Props = {
+  me: Peer;
   peers: Peer[];
   className?: string;
 };
@@ -17,7 +18,7 @@ export const MemberList: React.FC<Props> = (props) => {
         Members
       </Header>
       <List
-        data={props.peers.map((p) => p.name)}
+        data={[props.me, ...props.peers].map((p) => (p.id === props.me.id ? `${p.name} (Me)` : p.name))}
         className={props.className}
       />
     </>

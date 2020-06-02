@@ -10,13 +10,17 @@ import { ChatContainer } from './components/Chat';
 import { BlackBoard, BlackBoardProps } from './components/BlackBoard';
 import { ChessStudyContainer } from '../ChessStudy/ChessStudyContainer';
 
-type Props = {
+export type ClassroomProps = {
   room: Room;
+  initialMode?: BlackBoardProps['mode'];
 };
 
-export const ClassRoom: React.FC<Props> = (props) => {
+export const ClassRoom: React.FC<ClassroomProps> = ({
+  initialMode = 'facetime',
+  ...props
+}) => {
   const cls = useStyles();
-  const [mode, setMode] = useState<BlackBoardProps['mode']>('study');
+  const [mode, setMode] = useState<BlackBoardProps['mode']>(initialMode);
 
   return (
     <div className={cls.container}>
@@ -56,7 +60,8 @@ export const ClassRoom: React.FC<Props> = (props) => {
             <ChessStudyContainer
               room={props.room}
               className={cls.studyContainer}
-              bottomPadding={200}
+              paddingTop={60}
+              paddingBottom={200}
             />
           )}
         />
@@ -69,6 +74,7 @@ export const ClassRoom: React.FC<Props> = (props) => {
       <aside className={cls.side}>
         <MemberList
           className={cls.memberList}
+          me={props.room.me}
           peers={Object.values(props.room.peers)}
         />
         <ChatContainer className={cls.chatContainer} />
@@ -114,6 +120,7 @@ const useStyles = createUseStyles({
   studyContainer: {
     width: '100%',
     height: '100%',
+    background: 'rgba(18, 50, 65, .2)',
   },
   side: {
     borderLeft: '1px solid #efefef',
