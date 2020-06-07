@@ -13,19 +13,38 @@ export const BlackBoard: React.FC<BlackBoardProps> = ({
 }) => {
   const cls = useStyles();
 
-  if (mode === 'facetime') {
-    return (
-      <>
-        {props.facetimeComponent}
-      </>
-    );
-  }
-
+  // TODO: This is only temporary, until the whole
+  //  state will be held in redux
   return (
     <>
-      {props.studyComponent}
+      <div style={{
+        display: mode === 'facetime' ? 'block' : 'none',
+      }}
+      >
+        {props.facetimeComponent}
+      </div>
+      <div style={{
+        display: mode === 'facetime' ? 'none' : 'block',
+      }}
+      >
+        {props.studyComponent}
+      </div>
     </>
   );
+
+  // if (mode === 'facetime') {
+  //   return (
+  //     <>
+  //       {props.facetimeComponent}
+  //     </>
+  //   );
+  // }
+
+  // return (
+  //   <>
+  //     {props.studyComponent}
+  //   </>
+  // );
 };
 
 const useStyles = createUseStyles({

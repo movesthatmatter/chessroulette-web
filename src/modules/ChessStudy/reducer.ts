@@ -1,5 +1,6 @@
 import { createReducer, createAction } from 'deox';
 import { ShortMove } from 'chess.js';
+import { GenericStateSlice } from 'src/redux/types';
 import { StudyStateRecord } from './records';
 import { getStartingPgn, getGameAfterMove, getStartingFen } from '../Games/Chess/lib/util';
 
@@ -25,3 +26,13 @@ export const reducer = createReducer(initialState, (handleAction) => ([
     .val),
   handleAction(updateAction, (_, { payload }) => payload),
 ]));
+
+export const stateSliceByKey = {
+  chessStudy: reducer,
+};
+
+export type ModuleState = ReturnType<typeof reducer>;
+export type ModuleStateSlice = GenericStateSlice<
+  typeof stateSliceByKey,
+  typeof reducer
+>;

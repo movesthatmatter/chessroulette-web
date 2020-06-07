@@ -1,15 +1,13 @@
-import React, {
-  useRef, useReducer, useEffect,
-} from 'react';
+import React, { useRef, useEffect } from 'react';
 import { PeerConsumer } from 'src/components/PeerProvider';
 import { PeerMessageEnvelope } from 'src/components/PeerProvider/records';
 import { Room } from 'src/components/RoomProvider';
 import { eitherToResult } from 'src/lib/ioutil';
+import { useDispatch, useSelector } from 'react-redux';
 import { ChessStudy, ChessStudyProps } from './ChessStudy';
-import {
-  reducer, initialState, moveAction, updateAction,
-} from './reducer';
+import { moveAction, updateAction } from './reducer';
 import { StudyStateUpdatedPayload, studyStatePayload } from './records';
+import { selectChessStudy } from './selectors';
 
 
 type PeerRef = {
@@ -26,7 +24,8 @@ export const ChessStudyContainer: React.FC<Props> = ({
   ...studyProps
 }) => {
   const peerRef = useRef<PeerRef>();
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const dispatch = useDispatch();
+  const state = useSelector(selectChessStudy);
 
   const handleMessages = ({ message }: PeerMessageEnvelope) => {
     eitherToResult(studyStatePayload.decode(message))
