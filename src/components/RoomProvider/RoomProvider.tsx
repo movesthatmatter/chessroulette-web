@@ -12,7 +12,6 @@ import { SocketConsumer } from '../SocketProvider';
 import { PeersProvider, PeerConnections } from '../PeersProvider';
 import { Room, Peer } from './types';
 
-
 type RenderProps = {
   me: Peer;
   room: Room;
@@ -99,7 +98,6 @@ export const RoomProvider: React.FC<Props> = ({
         .reduce((res, peerId) => {
           // TODO: Revise this logic here as I'm not sure it's working as it should
           //  or at the very least I'm not sure it's not extraneous, like the 2nd if
-
 
           if (socketRecords.room.peers[peerId]) {
             const { room: socketRoom } = socketRecords;

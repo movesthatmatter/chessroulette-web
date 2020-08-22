@@ -12,9 +12,6 @@ export const Page: React.FC<Props> = (props) => {
       <div className={cls.paddingWrapper}>
         <div className={cls.top}>
           <img src={logo} alt="logo" className={cls.logo} />
-          <menu>
-            <button>Play A Friend</button>
-          </menu>
         </div>
         <main className={cls.main}>
           {props.children}

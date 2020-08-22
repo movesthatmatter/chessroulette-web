@@ -32,7 +32,7 @@ export const FaceTime: React.FC<FaceTimeProps> = ({
   const cls = useStyles();
 
   return (
-    <div className={containerClassName}>
+    <div className={cx(cls.container, containerClassName)}>
       {streamConfig.on
         ? (
           <AVStream
