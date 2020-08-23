@@ -5,7 +5,7 @@ import { action } from '@storybook/addon-actions';
 import { PeerRecordMock } from 'src/mocks/records';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
-import { ChessGameV2 } from './ChessGameV2';
+import { StandaloneChessGame } from './StandaloneChessGame';
 import { getNewChessGame, ChessInstance } from '../../lib/sdk';
 import { ChessGameColor, ChessGameState } from '../../records';
 import { otherChessColor } from '../../util';
@@ -29,8 +29,8 @@ const randomPlay = (
 };
 
 export default {
-  component: ChessGameV2,
-  title: 'Modules/Games/Chess/components/Chess Game V2',
+  component: StandaloneChessGame,
+  title: 'Modules/Games/Chess/components/StandaloneChessGame',
 };
 
 const peerMock = new PeerRecordMock();
@@ -47,12 +47,12 @@ export const asWhite = () => React.createElement(() => {
   const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
     playersBySide,
     homeColor: 'white',
-    timeLimit: 'blitz',
+    timeLimit: 'rapid',
   }));
 
   return (
     <Grommet theme={defaultTheme}>
-      <ChessGameV2
+      <StandaloneChessGame
         homeColor="white"
         playable
         game={currentGame}
@@ -60,6 +60,27 @@ export const asWhite = () => React.createElement(() => {
     </Grommet>
   );
 });
+
+// export const withSwitchingSide = () => React.createElement(() => {
+//   const [fen, setFen] = useState<string>('');
+//   const [lastMoved, setLastMoved] = useState<ChessGameColor>('black');
+//   const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
+
+//   return (
+//     <ChessGameV2
+//       homeColor={homeColor}
+//       onMove={(newFen) => {
+//         setFen(newFen);
+//         setLastMoved((prev) => otherChessColor(prev));
+//         setHomeColor((prev) => otherChessColor(prev));
+//         action('onMove')(newFen);
+//       }}
+//       pgn={fen}
+//       playable={homeColor !== lastMoved}
+//       // fen={fen}
+//     />
+//   );
+// });
 // export const asBlack = () => (
 //   <ChessGameV2
 //     homeColor="black"

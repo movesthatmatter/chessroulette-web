@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { Move, Square } from 'chess.js';
 import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
 import { Coundtdown } from 'src/modules/GameRoom/components/Countdown';
-import { ChessBoard } from '../ChessBoard';
-import { getNewChessGame } from '../../lib/sdk';
 import { ChessGameState } from '../../records';
 import { otherChessColor } from '../../util';
+import { ChessGame } from '../ChessGame/ChessGame';
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   playable: boolean;
@@ -22,7 +20,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   getBoardSize?: (p: {screenWidth: number; screenHeight: number}) => number;
 };
 
-export const ChessGameV2: React.FunctionComponent<Props> = ({
+export const StandaloneChessGame: React.FunctionComponent<Props> = ({
   game,
   onMove = noop,
   // pgn = '',
@@ -32,42 +30,6 @@ export const ChessGameV2: React.FunctionComponent<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
-  const [gameInstance] = useState(getNewChessGame());
-  const [fen, setFen] = useState(gameInstance.fen);
-  const [history, setHistory] = useState([] as Move[]);
-
-  useEffect(() => {
-    if (game && game.pgn) {
-      gameInstance.load_pgn(game.pgn);
-      setFen(gameInstance.fen());
-      setHistory(gameInstance.history({ verbose: true }));
-    }
-  }, [game]);
-
-  const onMoveHandler = ({
-    sourceSquare,
-    targetSquare,
-  }: {
-    sourceSquare: Square;
-    targetSquare: Square;
-  }) => {
-    if (!playable) {
-      return;
-    }
-
-    // see if the move is legal
-    const validMove = gameInstance.move({
-      from: sourceSquare,
-      to: targetSquare,
-      promotion: 'q', // keep it simple for now
-    });
-
-    if (validMove !== null) {
-      // save it here too so it's snappy fast
-      setFen(gameInstance.fen());
-      onMove(gameInstance.pgn());
-    }
-  };
 
   return (
     <div className={cx([cls.container, props.className])}>
@@ -96,22 +58,12 @@ export const ChessGameV2: React.FunctionComponent<Props> = ({
           </div>
         </div>
       )}
-      <div className={cls.board}>
-        <ChessBoard
-          orientation={props.homeColor}
-          position={fen}
-          calcWidth={(p) => getBoardSize(p) - 100} // account for the top and bottom bars
-          history={history}
-          darkSquareStyle={{
-            backgroundColor: '#6792B4',
-          }}
-          lightSquareStyle={{
-            backgroundColor: '#D7D7D7',
-          }}
-          onSquareClickMove={onMoveHandler}
-          onDrop={onMoveHandler}
-        />
-      </div>
+      <ChessGame
+        homeColor={props.homeColor}
+        pgn={game?.pgn ?? ''}
+        playable={playable}
+        getBoardSize={(p) => getBoardSize(p) - 100}
+      />
       {game && (
         <div className={cx([cls.playerBar, cls.playerBarBottom])}>
           <div className={cls.playerBarContent}>
@@ -148,13 +100,11 @@ const useStyles = createUseStyles({
     flexDirection: 'column',
     width: 'fit-content',
   },
-  board: {
-    boxShadow: '1px 1px 20px rgba(20, 20, 20, 0.27)',
-    borderRadius: '30px',
-  },
-  awayPlayer: {
-
-  },
+  // board: {
+  //   boxShadow: '1px 1px 20px rgba(20, 20, 20, 0.27)',
+  //   borderRadius: '30px',
+  // },
+  awayPlayer: {},
   homePlayer: {},
   playerBar: {
     height: '40px',

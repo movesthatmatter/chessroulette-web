@@ -1,5 +1,6 @@
 import { shuffle } from 'src/lib/util';
 import { minutes } from 'src/lib/time';
+import { toISODateTime } from 'src/lib/date/ISODateTime';
 import {
   ChessGameStatePgn,
   ChessGameColor,
@@ -11,7 +12,6 @@ import {
 } from './records';
 import { otherChessColor } from './util';
 import { getNewChessGame } from './lib/sdk';
-
 
 const timeLimitMsMap: {[key in ChessGameTimeLimit]: number} = {
   bullet: minutes(1),
@@ -81,9 +81,12 @@ export const prepareGameAction = ({
       white: timeLimitMsMap[timeLimit],
       black: timeLimitMsMap[timeLimit],
     },
-    lastMoved: undefined,
     pgn: undefined,
     winner: undefined,
+
+    lastMoveAt: undefined,
+    lastMoveBy: undefined,
+    lastMoved: undefined,
   };
 };
 
@@ -91,39 +94,54 @@ const moveAction = (
   prev: ChessGameStatePending | ChessGameStateStarted,
   next: {
     pgn: ChessGameStatePgn;
-    msSinceLastMove: number;
+    // msSinceLastMove: number;
   },
 ): ChessGameStateStarted | ChessGameStateFinished => {
   // Default it to black so when the game just starts
   //  it sets the 1st move to white
   const { lastMoved: prevLastMoved = 'black' } = prev;
 
-  const currentLastMoved = otherChessColor(prevLastMoved);
+  const currentLastMovedBy = otherChessColor(prevLastMoved);
 
   const instance = getNewChessGame();
 
   instance.load_pgn(next.pgn);
 
+  // const prevLastMove = prev.lastMoveAt && new Date() || now;
+
+  const now = new Date();
+  const moveElapsedMs = prev.lastMoveAt !== undefined
+    ? now.getTime() - new Date(prev.lastMoveAt).getTime()
+    : 0; // Zero if first move;
+
+  console.log('move ETA', moveElapsedMs);
+  console.log('prev', prev, prev.lastMoveAt);
+
   if (instance.game_over()) {
     return {
       ...prev,
       state: 'finished',
-      winner: instance.in_draw() ? '1/2' : currentLastMoved,
+      winner: instance.in_draw() ? '1/2' : currentLastMovedBy,
       pgn: next.pgn as ChessGameStatePgn,
-      lastMoved: currentLastMoved,
+
+      lastMoveAt: toISODateTime(now),
+      lastMoveBy: currentLastMovedBy,
+      lastMoved: currentLastMovedBy,
     };
   }
 
-  const timeLeft = prev.timeLeft[currentLastMoved] - next.msSinceLastMove;
+  const timeLeft = prev.timeLeft[currentLastMovedBy] - moveElapsedMs;
 
   return {
     ...prev,
     state: 'started',
     pgn: next.pgn,
-    lastMoved: currentLastMoved,
+    lastMoveAt: toISODateTime(now),
+    lastMoveBy: currentLastMovedBy,
+    lastMoved: currentLastMovedBy,
     timeLeft: {
       ...prev.timeLeft,
-      [currentLastMoved]: timeLeft,
+      [currentLastMovedBy]: timeLeft,
     },
     winner: undefined,
   };

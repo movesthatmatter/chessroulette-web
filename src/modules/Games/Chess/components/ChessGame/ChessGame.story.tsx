@@ -83,7 +83,6 @@ export const withSwitchingSide = () => React.createElement(() => {
   );
 });
 
-
 export const withStartedGame = () => (
   <ChessGame
     homeColor="black"
