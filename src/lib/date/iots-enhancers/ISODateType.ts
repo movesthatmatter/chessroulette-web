@@ -12,7 +12,6 @@ import {
   ISODate as ISODateType,
 } from '../ISODate';
 
-
 /**
  * Accepts input as 2011-09-21!
  */

@@ -40,15 +40,6 @@ const useStyle = createUseStyles({
     padding: '20px',
     maxWidth: '500px',
   },
-  // modalTitle: {
-  //   fontFamily: 'Roboto',
-  //   fontSize: '24px',
-  //   lineHeight: '33px',
-  //   fontWeight: 'normal',
-  //   marginBottom: '5px',
-  //   color: '#262626',
-  //   textAlign: 'center',
-  // },
   exitButton: {
     alignSelf: 'flex-end',
     position: 'absolute',

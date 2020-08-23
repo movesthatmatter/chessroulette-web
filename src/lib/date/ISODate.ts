@@ -14,7 +14,6 @@ enum ISODateBrand { _ = '' }
  */
 export type ISODate = ISODateBrand & string;
 
-
 /**
  * This function checks if the given string is of the ISO Format (yyyy-mm-dd)
  * and if the actual date is a valid one - i.e. not 2014-45-99 or even not 2014-02-31
@@ -87,7 +86,6 @@ export function toISOYear(date: Date | ISODate | string): ISOYear {
   throw new Error(`isValidDateString() Invalid Date Error: ${date}`);
 }
 
-
 // By the same style we can export a few more helper types
 enum ISOMonthBrand { _ = ''}
 
@@ -98,7 +96,6 @@ export type ISOMonth = ISOMonthBrand & string;
 
 export const isValidISOMonth = (s: string): s is ISOMonth =>
   String(s).match(/^\d{2}$/) !== null && Number(s) > 0 && Number(s) < 13;
-
 
 export function toISOMonth(date: Date | ISODate | string): ISOMonth {
   if (typeof date === 'string') {

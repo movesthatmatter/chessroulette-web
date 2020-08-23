@@ -9,7 +9,6 @@ import { Peer, Room } from '../RoomProvider';
 type Props = {
   me: Peer;
   peer: Peer;
-  // peers: Room['peers'];
   width: number;
 };
 
@@ -18,7 +17,7 @@ export const StreamingBox: React.FC<Props> = (props) => {
 
   return (
     <div className={cls.container} style={{ width: props.width }}>
-      <div>
+      <>
         <FaceTime
           streamConfig={props.peer.connection.channels.streaming}
           className={cls.peerFacetime}
@@ -26,7 +25,7 @@ export const StreamingBox: React.FC<Props> = (props) => {
         <div className={cls.titleWrapper}>
           <Text className={cls.title}>{props.peer.name}</Text>
         </div>
-      </div>
+      </>
       <FaceTime
         streamConfig={props.me.connection.channels.streaming}
         className={cls.myFacetime}
@@ -34,16 +33,6 @@ export const StreamingBox: React.FC<Props> = (props) => {
           width: props.width / 4,
         }}
       />
-      {/* <MemberStreamingReel
-        className={cls.reel}
-        peers={Object.values(props.peers)}
-        itemWidth={props.width / 5}
-        itemMargin={props.width / 50}
-        style={{
-          padding: `${props.width / 50}px`,
-          paddingBottom: `${props.width / 50}px`,
-        }}
-      /> */}
     </div>
   );
 };

@@ -17,7 +17,6 @@ describe('ISO DateTime isValid', () => {
     expect(isValidISODateTime('03:45:59.611')).toBe(false);
   });
 
-
   test('invalid if random string', () => {
     expect(isValidISODateTime('asd')).toBe(false);
   });

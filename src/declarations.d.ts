@@ -6,3 +6,5 @@
  */
 
 declare module 'validatorjs/src/lang/en';
+
+declare module '*.wav';
