@@ -27,8 +27,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
 export const ChessGame: React.FunctionComponent<Props> = ({
   onMove = noop,
   pgn = '',
-  playable = true,
-  // boardSize =
+  playable = false,
   getBoardSize = getDefaultBoardSize,
   ...props
 }) => {
@@ -55,8 +54,6 @@ export const ChessGame: React.FunctionComponent<Props> = ({
     }
   }, [pgn]);
 
-  // useEffect(())
-
   const onMoveHandler = ({
     sourceSquare,
     targetSquare,
@@ -76,8 +73,6 @@ export const ChessGame: React.FunctionComponent<Props> = ({
     });
 
     if (validMove !== null) {
-      // save it here too so it's snappy fast
-      setFen(gameInstance.fen());
       onMove(gameInstance.pgn());
     }
   };

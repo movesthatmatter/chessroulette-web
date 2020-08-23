@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
@@ -10,7 +10,6 @@ import { ChessGame } from '../ChessGame/ChessGame';
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   playable: boolean;
-  // pgn: string;
   game: ChessGameState | undefined;
 
   // The bottom side
@@ -25,9 +24,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
 export const StandaloneChessGame: React.FunctionComponent<Props> = ({
   game,
   onMove = noop,
-  // pgn = '',
-  playable = true,
-  // boardSize =
+  playable = false,
   getBoardSize = getDefaultBoardSize,
   ...props
 }) => {
@@ -95,16 +92,10 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
 
 const useStyles = createUseStyles({
   container: {
-    // backgroundColor: '#272729',
-
     display: 'flex',
     flexDirection: 'column',
     width: 'fit-content',
   },
-  // board: {
-  //   boxShadow: '1px 1px 20px rgba(20, 20, 20, 0.27)',
-  //   borderRadius: '30px',
-  // },
   awayPlayer: {},
   homePlayer: {},
   playerBar: {
@@ -144,7 +135,5 @@ const useStyles = createUseStyles({
     color: 'white',
     backgroundColor: 'red !important',
     boxShadow: '1px 1px 15px rgba(20, 20, 20, 0.27)',
-
-    // opacity:
   },
 });
