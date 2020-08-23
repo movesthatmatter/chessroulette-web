@@ -56,31 +56,83 @@ export const asWhite = () => React.createElement(() => {
         homeColor="white"
         playable
         game={currentGame}
+        onMove={action('on move')}
+        onTimerFinished={action('on timer finished')}
       />
     </Grommet>
   );
 });
 
-// export const withSwitchingSide = () => React.createElement(() => {
-//   const [fen, setFen] = useState<string>('');
-//   const [lastMoved, setLastMoved] = useState<ChessGameColor>('black');
-//   const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
+export const withSwitchingSide = () => React.createElement(() => {
+  // const [fen, setFen] = useState<string>('');
+  const [lastMoved, setLastMoved] = useState<ChessGameColor>('black');
+  const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
 
-//   return (
-//     <ChessGameV2
-//       homeColor={homeColor}
-//       onMove={(newFen) => {
-//         setFen(newFen);
-//         setLastMoved((prev) => otherChessColor(prev));
-//         setHomeColor((prev) => otherChessColor(prev));
-//         action('onMove')(newFen);
-//       }}
-//       pgn={fen}
-//       playable={homeColor !== lastMoved}
-//       // fen={fen}
-//     />
-//   );
-// });
+  const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
+    playersBySide,
+    homeColor: 'white',
+    timeLimit: 'bullet',
+  }));
+
+  return (
+    <Grommet theme={defaultTheme}>
+      <StandaloneChessGame
+        homeColor={homeColor}
+        onMove={(nextPgn) => {
+          if (
+            !currentGame
+            || currentGame.state === 'finished'
+            || currentGame.state === 'neverStarted'
+          ) {
+            return;
+          }
+
+          // setFen(newFen);
+          setCurrentGame(reduceChessGame.move(currentGame, { pgn: nextPgn }));
+
+          setLastMoved((prev) => otherChessColor(prev));
+          setHomeColor((prev) => otherChessColor(prev));
+          action('onMove')(nextPgn);
+        }}
+        onTimerFinished={() => {
+          if (
+            !currentGame
+            || currentGame.state === 'finished'
+            || currentGame.state === 'neverStarted'
+          ) {
+            return;
+          }
+
+          setCurrentGame(reduceChessGame.timerFinished(currentGame));
+        }}
+        game={currentGame}
+        playable={homeColor !== lastMoved}
+      />
+    </Grommet>
+  );
+});
+
+export const mated = () => React.createElement(() => {
+  const [currentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
+    playersBySide,
+    homeColor: 'white',
+    timeLimit: 'rapid',
+    pgn: '1. e4 e5 2. Qf3 Na6 3. Bc4 h6 4. Qxf7#',
+  }));
+
+  return (
+    <Grommet theme={defaultTheme}>
+      <StandaloneChessGame
+        homeColor="white"
+        playable
+        game={currentGame}
+        onMove={action('on move')}
+        onTimerFinished={action('on timer finished')}
+      />
+    </Grommet>
+  );
+});
+
 // export const asBlack = () => (
 //   <ChessGameV2
 //     homeColor="black"

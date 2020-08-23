@@ -1,4 +1,6 @@
-import { Move, ChessInstance, ShortMove } from 'chess.js';
+import {
+  Move, ChessInstance, ShortMove, Piece, Square,
+} from 'chess.js';
 import { Result, Ok, Err } from 'ts-results';
 import { getNewChessGame } from './sdk';
 
@@ -30,4 +32,20 @@ export const getGameAfterMove = (
   }
 
   return new Err(undefined);
+};
+
+export const getSquareForPiece = (pgn: string, lookupPiece: Piece) => {
+  const engine = getNewChessGame();
+
+  const validPgn = engine.load_pgn(pgn);
+
+  if (!validPgn) {
+    return undefined;
+  }
+
+  return engine.SQUARES.find((sq) => {
+    const p = engine.get(sq);
+
+    return p?.color === lookupPiece.color && p?.type === lookupPiece.type;
+  });
 };

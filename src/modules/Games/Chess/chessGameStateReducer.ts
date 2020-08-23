@@ -57,14 +57,16 @@ export const prepareGameAction = ({
   playersBySide,
   timeLimit = 'rapid',
   homeColor = 'random',
+  pgn = '',
 }: {
   playersBySide: GamePlayersBySide;
   timeLimit?: ChessGameTimeLimit;
   homeColor?: ChessGameColor | 'random';
-}): ChessGameStatePending => {
+  pgn?: ChessGameStatePgn;
+}): ChessGameStatePending | ChessGameStateStarted | ChessGameStateFinished => {
   const playersByColor = getPlayerSideColor(homeColor, playersBySide);
 
-  return {
+  const pendingGameState: ChessGameStatePending = {
     state: 'pending',
     timeLimit,
     players: {
@@ -88,6 +90,13 @@ export const prepareGameAction = ({
     lastMoveBy: undefined,
     lastMoved: undefined,
   };
+
+  if (pgn) {
+    // If there is a pgn given on prepare, then simulate a move action!
+    return moveAction(pendingGameState, { pgn });
+  }
+
+  return pendingGameState;
 };
 
 const moveAction = (
@@ -113,9 +122,6 @@ const moveAction = (
   const moveElapsedMs = prev.lastMoveAt !== undefined
     ? now.getTime() - new Date(prev.lastMoveAt).getTime()
     : 0; // Zero if first move;
-
-  console.log('move ETA', moveElapsedMs);
-  console.log('prev', prev, prev.lastMoveAt);
 
   if (instance.game_over()) {
     return {
@@ -149,7 +155,9 @@ const moveAction = (
 
 const timerFinishedAction = (
   prev: ChessGameStateStarted | ChessGameStatePending,
-  next: {
+
+  // @deprecated
+  next?: {
     loser: ChessGameColor;
   },
 ): ChessGameStateNeverStarted | ChessGameStateFinished => {
@@ -163,7 +171,7 @@ const timerFinishedAction = (
   return {
     ...prev,
     state: 'finished',
-    winner: otherChessColor(next.loser),
+    winner: otherChessColor(prev.lastMoveBy),
   };
 };
 

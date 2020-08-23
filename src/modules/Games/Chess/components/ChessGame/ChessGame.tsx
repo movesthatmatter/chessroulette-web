@@ -6,6 +6,12 @@ import { Move, Square } from 'chess.js';
 import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
 import { ChessBoard } from '../ChessBoard';
 import { getNewChessGame } from '../../lib/sdk';
+import validMoveSound from '../../assets/sounds/valid_move.wav';
+import inCheckSound from '../../assets/sounds/in_check.wav';
+import { getSquareForPiece } from '../../lib/util';
+
+const validMoveAudio = new Audio(validMoveSound);
+const inCheckAudio = new Audio(inCheckSound);
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   playable: boolean;
@@ -30,12 +36,26 @@ export const ChessGame: React.FunctionComponent<Props> = ({
   const [gameInstance] = useState(getNewChessGame());
   const [fen, setFen] = useState(gameInstance.fen);
   const [history, setHistory] = useState([] as Move[]);
+  const [inCheckSquare, setInCheckSquare] = useState<Square | undefined>();
 
   useEffect(() => {
-    gameInstance.load_pgn(pgn);
+    const validPgn = gameInstance.load_pgn(pgn);
     setFen(gameInstance.fen());
     setHistory(gameInstance.history({ verbose: true }));
+
+    setInCheckSquare(undefined);
+
+    // This shouldn't be here
+    if (gameInstance.in_check()) {
+      setInCheckSquare(getSquareForPiece(pgn, { color: gameInstance.turn(), type: 'k' }));
+
+      inCheckAudio.play();
+    } else if (validPgn) {
+      validMoveAudio.play();
+    }
   }, [pgn]);
+
+  // useEffect(())
 
   const onMoveHandler = ({
     sourceSquare,
@@ -67,8 +87,8 @@ export const ChessGame: React.FunctionComponent<Props> = ({
       <ChessBoard
         orientation={props.homeColor}
         position={fen}
-        calcWidth={getBoardSize}
         history={history}
+        calcWidth={getBoardSize}
         darkSquareStyle={{
           backgroundColor: '#6792B4',
         }}
@@ -77,6 +97,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
         }}
         onSquareClickMove={onMoveHandler}
         onDrop={onMoveHandler}
+        inCheckSquare={inCheckSquare}
       />
     </div>
   );

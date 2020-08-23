@@ -10,12 +10,14 @@ import { ChessGame } from '../ChessGame/ChessGame';
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   playable: boolean;
-  onMove?: (pgn: string) => void;
   // pgn: string;
   game: ChessGameState | undefined;
 
   // The bottom side
   homeColor: 'white' | 'black';
+
+  onMove: (pgn: string) => void;
+  onTimerFinished: () => void;
 
   getBoardSize?: (p: {screenWidth: number; screenHeight: number}) => number;
 };
@@ -48,12 +50,11 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
                 || game.state !== 'started'
                 || game.lastMoved === otherChessColor(props.homeColor)
               }
-            // onFinished={props.onTimeFinished}
-            // activeClassName={cx({
-            //   [cls.activeCountdownTurn]:
-            //       props.currentGame
-            //       && props.currentGame.lastMoved !== props.player.color,
-            // })}
+              onFinished={props.onTimerFinished}
+              activeClassName={cx({
+                [cls.activeCountdownTurn]: game?.lastMoveBy === props.homeColor,
+              })}
+              finishedClassName={cls.finishedCountdown}
             />
           </div>
         </div>
@@ -61,8 +62,9 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
       <ChessGame
         homeColor={props.homeColor}
         pgn={game?.pgn ?? ''}
-        playable={playable}
+        playable={playable && game?.state !== 'finished'}
         getBoardSize={(p) => getBoardSize(p) - 100}
+        onMove={onMove}
       />
       {game && (
         <div className={cx([cls.playerBar, cls.playerBarBottom])}>
@@ -78,12 +80,11 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
                 || game.state !== 'started'
                 || game.lastMoved === props.homeColor
               }
-            // onFinished={props.onTimeFinished}
-            // activeClassName={cx({
-            //   [cls.activeCountdownTurn]:
-            //       props.currentGame
-            //       && props.currentGame.lastMoved !== props.player.color,
-            // })}
+              onFinished={props.onTimerFinished}
+              activeClassName={cx({
+                [cls.activeCountdownTurn]: game?.lastMoveBy !== props.homeColor,
+              })}
+              finishedClassName={cls.finishedCountdown}
             />
           </div>
         </div>
@@ -133,5 +134,17 @@ const useStyles = createUseStyles({
     height: '40px',
 
     backgroundColor: '#EFE7E8',
+  },
+  activeCountdownTurn: {
+    color: 'white',
+    backgroundColor: 'rgb(247, 98, 123) !important',
+    boxShadow: '1px 1px 15px rgba(20, 20, 20, 0.27)',
+  },
+  finishedCountdown: {
+    color: 'white',
+    backgroundColor: 'red !important',
+    boxShadow: '1px 1px 15px rgba(20, 20, 20, 0.27)',
+
+    // opacity:
   },
 });
