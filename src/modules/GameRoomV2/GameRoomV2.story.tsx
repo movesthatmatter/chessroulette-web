@@ -57,6 +57,27 @@ export const defaultStory = () => (
   </Grommet>
 );
 
+export const withoutGame = () => (
+  <Grommet theme={defaultTheme} full>
+    <WithLocalStream render={(stream) => React.createElement(() => {
+      const me = peerMock.withChannels({
+        streaming: {
+          on: true,
+          type: 'audio-video',
+          stream,
+        },
+      });
+
+      return (
+        <GameRoomV2
+          me={me}
+        />
+      );
+    })}
+    />
+  </Grommet>
+);
+
 export const asPage = () => (
   <Grommet theme={defaultTheme} full>
     <WithLocalStream render={(stream) => React.createElement(() => {

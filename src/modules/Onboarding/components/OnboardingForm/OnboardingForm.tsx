@@ -7,7 +7,6 @@ import cx from 'classnames';
 import { getInputValidator } from 'src/lib/inputValidator';
 import { Form as FinalForm, Field } from 'react-final-form';
 
-
 export type InstructorInput = {
   userName: string;
   roomName: string;

@@ -4,17 +4,20 @@ import { StreamingBox } from 'src/components/StreamingBox';
 import { Peer } from 'src/components/RoomProvider';
 import { StandaloneChessGame } from 'src/modules/Games/Chess/components/StandaloneChessGame';
 import { ChessGameState, reduceChessGame } from 'src/modules/Games/Chess';
-import { Box } from 'grommet';
+import { Box, Button } from 'grommet';
 import { PopupContent } from 'src/components/PopupContent';
 import { Modal } from 'src/components/Modal/Modal';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
 
 type Props = {
   me: Peer;
-  opponent: Peer;
-  game: ChessGameState | undefined;
+} & ({
+  game: ChessGameState;
   onGameStateUpdate: (nextGame: ChessGameState) => void;
-};
+  opponent: Peer;
+} | {
+  game?: undefined;
+});
 
 export const GameRoomV2: React.FC<Props> = (props) => {
   const cls = useStyles();
@@ -66,11 +69,33 @@ export const GameRoomV2: React.FC<Props> = (props) => {
           />
         )}
         getStreamingBoxComponent={(dimensions) => (
-          <StreamingBox
-            me={props.me}
-            peer={props.opponent}
-            width={dimensions.width}
-          />
+          <>
+            <StreamingBox
+              me={props.me}
+              peer={props.game && props.opponent}
+              width={dimensions.width}
+            />
+            {!props.game && (
+              <div className={cls.playButtonsContainer}>
+                <Button
+                  type="button"
+                  primary
+                  fill
+                  className={cls.button}
+                  size="large"
+                  label="Play a Friend"
+                />
+                <Button
+                  type="button"
+                  primary
+                  fill
+                  size="large"
+                  className={cls.button}
+                  label="Play a Rando"
+                />
+              </div>
+            )}
+          </>
         )}
       />
       <Modal
@@ -95,5 +120,15 @@ const useStyles = createUseStyles({
   container: {
     width: '100%',
     height: '100%',
+  },
+  playButtonsContainer: {
+    padding: '1em 0',
+  },
+  button: {
+    // padding: '10px !important',
+    marginBottom: '1.5em',
+    '&:hover': {
+      opacity: 0.8,
+    },
   },
 });

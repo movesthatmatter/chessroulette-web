@@ -8,7 +8,7 @@ import { Peer, Room } from '../RoomProvider';
 
 type Props = {
   me: Peer;
-  peer: Peer;
+  peer?: Peer;
   width: number;
 };
 
@@ -17,22 +17,29 @@ export const StreamingBox: React.FC<Props> = (props) => {
 
   return (
     <div className={cls.container} style={{ width: props.width }}>
-      <>
+      {props.peer ? (
+        <>
+          <FaceTime
+            streamConfig={props.peer.connection.channels.streaming}
+            className={cls.fullFacetime}
+          />
+          <div className={cls.titleWrapper}>
+            <Text className={cls.title}>{props.peer.name}</Text>
+          </div>
+          <FaceTime
+            streamConfig={props.me.connection.channels.streaming}
+            className={cls.myFacetime}
+            style={{
+              width: props.width / 4,
+            }}
+          />
+        </>
+      ) : (
         <FaceTime
-          streamConfig={props.peer.connection.channels.streaming}
-          className={cls.peerFacetime}
+          streamConfig={props.me.connection.channels.streaming}
+          className={cls.fullFacetime}
         />
-        <div className={cls.titleWrapper}>
-          <Text className={cls.title}>{props.peer.name}</Text>
-        </div>
-      </>
-      <FaceTime
-        streamConfig={props.me.connection.channels.streaming}
-        className={cls.myFacetime}
-        style={{
-          width: props.width / 4,
-        }}
-      />
+      )}
     </div>
   );
 };
@@ -56,7 +63,7 @@ const useStyles = createUseStyles({
     border: '2px solid rgba(0, 0, 0, .3)',
     // opacity: 0.95,
   },
-  peerFacetime: {},
+  fullFacetime: {},
   title: {
     background: 'rgba(255, 255, 255, .8)',
     textAlign: 'center',
