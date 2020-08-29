@@ -6,6 +6,7 @@ import { PeerMessageEnvelope } from './records';
 type RenderProps = {
   room: Room;
   broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
+  showMyStream: () => void;
 };
 
 type PeerConsumerProps = {

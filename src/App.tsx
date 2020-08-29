@@ -11,7 +11,6 @@ import { defaultTheme } from './theme';
 import { ClassRoomPage } from './modules/ClassRoom/ClassRoomPage';
 import { ReduxProvider } from './redux/Provider';
 
-
 function App() {
   const location = useLocation();
   const cls = useStyles();

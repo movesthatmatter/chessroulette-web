@@ -1,10 +1,11 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { MemberStreamingReel } from 'src/modules/ClassRoom/components/MemberStreamingReel';
-import { Text } from 'grommet';
+import { Text, Button } from 'grommet';
 import { FaceTime } from '../FaceTimeArea';
 import { PeerConnections } from '../PeersProvider';
 import { Peer, Room } from '../RoomProvider';
+import { AspectRatio } from '../AspectRatio';
 
 type Props = {
   me: Peer;
@@ -35,10 +36,21 @@ export const StreamingBox: React.FC<Props> = (props) => {
           />
         </>
       ) : (
-        <FaceTime
-          streamConfig={props.me.connection.channels.streaming}
-          className={cls.fullFacetime}
-        />
+        <>
+          {props.me.connection.channels.streaming.on ? (
+            <FaceTime
+              streamConfig={props.me.connection.channels.streaming}
+              className={cls.fullFacetime}
+            />
+          ) : (
+            <AspectRatio className={cls.noFacetime}>
+              <Button type="button">
+                Start Streaming
+              </Button>
+            </AspectRatio>
+          )}
+
+        </>
       )}
     </div>
   );
@@ -63,7 +75,13 @@ const useStyles = createUseStyles({
     border: '2px solid rgba(0, 0, 0, .3)',
     // opacity: 0.95,
   },
-  fullFacetime: {},
+  fullFacetime: {
+    // width: '100%',
+    // height: 'auto', // to make sure it maintains the aspect ratio
+  },
+  noFacetime: {
+    background: '#ededed',
+  },
   title: {
     background: 'rgba(255, 255, 255, .8)',
     textAlign: 'center',

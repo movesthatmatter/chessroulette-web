@@ -228,10 +228,10 @@ export const GameRoom: React.FC<GameRoomProps> = ({
 
                 const nextGame = reduceChessGame.move(props.currentGame, {
                   pgn: nextPgn,
-                  msSinceLastMove:
-                    typeof lastMoveTime === 'undefined'
-                      ? 0
-                      : now.getTime() - lastMoveTime.getTime(),
+                  // msSinceLastMove:
+                  //   typeof lastMoveTime === 'undefined'
+                  //     ? 0
+                  //     : now.getTime() - lastMoveTime.getTime(),
                 });
 
                 setLastMoveTime(now);

@@ -1,21 +1,25 @@
 import React from 'react';
-import { createUseStyles } from 'src/lib/jss';
-import { PeerProvider } from 'src/components/PeerProvider';
 
-type Props = {};
+import { PeerConsumer } from 'src/components/PeerProvider';
+import { ChessGameState } from 'src/modules/Games/Chess';
+import { Peer } from 'src/components/RoomProvider';
+import { GameRoomV2 } from '../GameRoomV2';
 
-export const GameRoomV2Container: React.FC<Props> = (props) => {
-  const cls = useStyles();
+type Props = & ({
+  game: ChessGameState;
+  onGameStateUpdate: (nextGame: ChessGameState) => void;
+  opponent: Peer;
+} | {
+  game?: undefined;
+})
 
-  return (
-    <PeerProvider>
-      <div className={cls.container}>
-        works
-      </div>
-    </PeerProvider>
-  );
-};
-
-const useStyles = createUseStyles({
-  container: {},
-});
+export const GameRoomV2Container: React.FC<Props> = (props) => (
+  <PeerConsumer
+    render={(p) => <GameRoomV2 me={p.room.me} {...props} />}
+    onReady={(p) => {
+      // Show my stream right away for now but later it could be
+      // on demand from inside the room
+      p.showMyStream();
+    }}
+  />
+);

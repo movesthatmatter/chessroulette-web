@@ -8,6 +8,7 @@ import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { isLeft } from 'fp-ts/lib/Either';
 import { eitherToResult } from 'src/lib/ioutil';
 import { peerRecord, UserRecord } from 'dstnd-io';
+import { noop } from 'src/lib/util';
 import { SocketConsumer } from '../SocketProvider';
 import {
   initialState,
@@ -21,7 +22,10 @@ import {
 import { ActivePeerConnections } from './ActivePeerConnections';
 import { wNamespace, woNamespace } from './util';
 import {
-  peerMessageEnvelope, PeerMessageEnvelope, peerConnectionMetadata, PeerConnectionMetadata,
+  peerMessageEnvelope,
+  PeerMessageEnvelope,
+  peerConnectionMetadata,
+  PeerConnectionMetadata,
 } from './records';
 import { Proxy } from './Proxy';
 import { PeerContextProps, PeerContext } from './PeerContext';
@@ -39,7 +43,10 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   const activePeerConnections = useRef(new ActivePeerConnections()).current;
   const [state, dispatch] = useReducer(reducer, initialState);
   const proxy = useRef(new Proxy()).current;
-  const [contextState, setContextState] = useState<PeerContextProps>({ state: 'init' });
+  const [contextState, setContextState] = useState<PeerContextProps>({
+    state: 'init',
+    showMyStream: noop,
+  });
 
   useEffect(() => {
     setContextState((prev) => {
@@ -47,7 +54,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
         return prev;
       }
 
-      return ({
+      return {
         state: 'connected',
         proxy,
         room: state.room,
@@ -59,25 +66,35 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
             timestamp: toISODateTime(new Date()),
           };
 
-          Object
-            .keys(state.room?.peers ?? {})
-            .forEach((peerId) => {
+          Object.keys(state.room?.peers ?? {}).forEach((peerId) => {
             activePeerConnections.get(peerId)?.data?.send(payload);
-            });
+          });
 
           proxy.publishOnPeerMessageSent(payload);
         },
-      });
+
+        showMyStream: () => {
+          if (!state.room?.me.connection.channels.streaming.on) {
+            navigator.mediaDevices
+              .getUserMedia({ video: true, audio: true })
+              .then((stream) => {
+                dispatch(addMyStream({ stream }));
+              });
+          }
+        },
+      };
     });
   }, [state.room]);
 
-  useEffect(() => () => {
-    activePeerConnections.removeAll();
+  useEffect(
+    () => () => {
+      activePeerConnections.removeAll();
 
-    // Destroy the PeerJS Server connection as well
-    peerSDK.current?.destroy();
-  }, []);
-
+      // Destroy the PeerJS Server connection as well
+      peerSDK.current?.destroy();
+    },
+    [],
+  );
 
   const onDataHandler = (data: unknown) => {
     const result = peerMessageEnvelope.decode(data);
@@ -177,15 +194,18 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
             pc.on('data', onDataHandler);
 
             pc.on('open', () => {
-              eitherToResult(peerConnectionMetadata.decode(pc.metadata))
-                .map((metadata) => {
+              eitherToResult(peerConnectionMetadata.decode(pc.metadata)).map(
+                (metadata) => {
                   activePeerConnections.add(peerId, { data: pc });
 
-                  dispatch(addPeerAction({
-                    id: peerId,
-                    name: metadata.peer.name,
-                  }));
-                });
+                  dispatch(
+                    addPeerAction({
+                      id: peerId,
+                      name: metadata.peer.name,
+                    }),
+                  );
+                },
+              );
             });
 
             pc.on('close', () => {
@@ -236,6 +256,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       onReady={(socket) => {
         setContextState(() => ({
           state: 'connecting',
+          showMyStream: noop,
         }));
 
         socket.send({

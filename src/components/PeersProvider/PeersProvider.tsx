@@ -53,6 +53,7 @@ type State = {
   peerConnections: PeerConnections;
 };
 
+// @depreacated in favor of PeerProvider which uses Peer.js
 export class PeersProvider extends React.Component<Props, State> {
   private peersClient?: Peers;
 

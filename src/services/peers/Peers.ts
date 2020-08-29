@@ -13,6 +13,7 @@ type PartialPeerConnectionStatus = {
   peerId: string;
 } & DeepPartial<PeerConnectionStatus>;
 
+// Depreacted in favor of Peer.js
 export class Peers {
   private pubsy = new Pubsy<{
     // TODO @deprecate in favor of the whole onPeerConnectionsUpdated?
@@ -201,7 +202,6 @@ export class Peers {
           pc.rtc.connection.removeTrack(sender);
         });
       });
-
 
     // TODO: Is there a difference between the above and
     //  stream.getTracks().forEach((track) => track.stop())

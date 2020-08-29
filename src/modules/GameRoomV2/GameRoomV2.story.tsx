@@ -5,7 +5,7 @@ import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { defaultTheme } from 'src/theme';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { reduceChessGame, ChessGameState, ChessGameColor } from 'src/modules/Games/Chess';
-import { Page } from 'src/components/Page/Page';
+import { Page } from 'src/components/Page';
 import { GameRoomV2 } from './GameRoomV2';
 import { otherChessColor } from '../Games/Chess/util';
 
