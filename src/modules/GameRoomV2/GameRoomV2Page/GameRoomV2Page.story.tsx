@@ -1,5 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
+import { Grommet } from 'grommet';
+import { defaultTheme } from 'src/theme';
+import { SocketProvider } from 'src/components/SocketProvider';
+import { PeerProvider } from 'src/components/PeerProvider';
 import { GameRoomV2Page } from './GameRoomV2Page';
 
 export default {
@@ -8,5 +12,17 @@ export default {
 };
 
 export const defaultStory = () => (
-  <GameRoomV2Page />
+  <Grommet theme={defaultTheme} full>
+    <SocketProvider>
+      {/* <PeerProvider
+        roomCredentials={{
+          id: '1',
+        }}
+        // This might not allow it to work with sockets
+        userId="1"
+      > */}
+      <GameRoomV2Page />
+      {/* </PeerProvider> */}
+    </SocketProvider>
+  </Grommet>
 );

@@ -1,20 +1,30 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Page } from 'src/components/Page/Page';
-import { GameRoomV2 } from '../GameRoomV2';
+import { PeerProvider } from 'src/components/PeerProvider';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectAuthentication } from 'src/services/Authentication';
+import { GameRoomV2Container } from '../GameRoomV2Container/GameRoomV2Container';
 
 type Props = {};
 
-export const GameRoomV2Page: React.FC<Props> = (props) => {
-  const cls = useStyles();
+export const GameRoomV2Page: React.FC<Props> = () => {
+  const params = useParams<{id: string; code?: string}>();
+
+  const auth = useSelector(selectAuthentication);
+
+  // If not authenticated with a real user create a temporary Guest
 
   return (
     <Page>
-      {/* <GameRoomV2 /> */}
+      <PeerProvider
+        roomCredentials={params}
+        // userId={auth.isAuthenticated ? auth.user.id :}
+        userId="1"
+      >
+        <GameRoomV2Container />
+      </PeerProvider>
     </Page>
   );
 };
-
-const useStyles = createUseStyles({
-  container: {},
-});

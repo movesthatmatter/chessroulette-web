@@ -10,6 +10,8 @@ import { OnboardingPage } from './modules/Onboarding/OnboardingPage';
 import { defaultTheme } from './theme';
 import { ClassRoomPage } from './modules/ClassRoom/ClassRoomPage';
 import { ReduxProvider } from './redux/Provider';
+import { GameRoomV2Page } from './modules/GameRoomV2/GameRoomV2Page';
+import { LandingPageV2 } from './modules/Landing/LandingPageV2';
 
 function App() {
   const location = useLocation();
@@ -56,7 +58,9 @@ function App() {
                       unmountOnExit
                     >
 
-                      <OnboardingPage />
+                      {/* <OnboardingPage /> */}
+                      {/* <GameRoomV2Page /> */}
+                      <LandingPageV2 />
 
                     </CSSTransition>
                   )}
