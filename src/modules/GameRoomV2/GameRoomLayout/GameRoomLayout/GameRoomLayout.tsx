@@ -6,7 +6,7 @@ type Dimensions = { width: number; height: number };
 
 type Props = {
   getGameComponent: (containerDimensions: Dimensions) => ReactElement;
-  getStreamingBoxComponent: (containerDimensions: Dimensions) => ReactElement;
+  getSideComponent: (containerDimensions: Dimensions) => ReactElement;
 };
 
 const getLayoutSizes = (containerDimensions: Dimensions, ratios = {
@@ -66,13 +66,10 @@ export const GameRoomLayout: React.FC<Props> = (props) => {
                   height: `${layout.gameArea}px`,
                 }}
               >
-                <div className={cls.streamingBox}>
-                  {props.getStreamingBoxComponent({
-                    width: layout.sideArea,
-                    height: layout.gameArea,
-                  })}
-                </div>
-                <div className={cls.chatBox} />
+                {props.getSideComponent({
+                  width: layout.sideArea,
+                  height: layout.gameArea,
+                })}
               </aside>
             </div>
           );

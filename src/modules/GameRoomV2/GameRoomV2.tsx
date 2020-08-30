@@ -8,6 +8,7 @@ import { Box, Button } from 'grommet';
 import { PopupContent } from 'src/components/PopupContent';
 import { Modal } from 'src/components/Modal/Modal';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
+import { ChatContainer } from '../ClassRoom/components/Chat';
 
 type Props = {
   me: Peer;
@@ -68,34 +69,38 @@ export const GameRoomV2: React.FC<Props> = (props) => {
             }}
           />
         )}
-        getStreamingBoxComponent={(dimensions) => (
-          <>
+        getSideComponent={(dimensions) => (
+          <div className={cls.side}>
             <StreamingBox
               me={props.me}
               peer={props.game && props.opponent}
               width={dimensions.width}
             />
-            {!props.game && (
-              <div className={cls.playButtonsContainer}>
-                <Button
-                  type="button"
-                  primary
-                  fill
-                  className={cls.button}
-                  size="large"
-                  label="Play a Friend"
-                />
-                <Button
-                  type="button"
-                  primary
-                  fill
-                  size="large"
-                  className={cls.button}
-                  label="Play a Rando"
-                />
-              </div>
-            )}
-          </>
+            <div className={cls.sideBottom}>
+              {!props.game ? (
+                <div className={cls.playButtonsContainer}>
+                  <Button
+                    type="button"
+                    primary
+                    fill
+                    className={cls.button}
+                    size="large"
+                    label="Play a Friend"
+                  />
+                  <Button
+                    type="button"
+                    primary
+                    fill
+                    size="large"
+                    className={cls.button}
+                    label="Play a Rando"
+                  />
+                </div>
+              ) : (
+                <ChatContainer className={cls.chatContainer} />
+              )}
+            </div>
+          </div>
         )}
       />
       <Modal
@@ -125,10 +130,22 @@ const useStyles = createUseStyles({
     padding: '1em 0',
   },
   button: {
-    // padding: '10px !important',
     marginBottom: '1.5em',
     '&:hover': {
       opacity: 0.8,
     },
+  },
+  side: {
+    display: 'flex',
+    height: '100%',
+    flexDirection: 'column',
+  },
+  sideBottom: {
+    flex: 1,
+  },
+  chatContainer: {
+    // border: '1px solid #ccc',
+    height: '100%',
+    background: 'white',
   },
 });

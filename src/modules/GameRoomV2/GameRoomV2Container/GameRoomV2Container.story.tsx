@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { SocketProvider } from 'src/components/SocketProvider';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
-import { PeerProvider } from 'src/components/PeerProvider';
+import { PeerProvider, PeerConsumer } from 'src/components/PeerProvider';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { ChessGameState, reduceChessGame } from 'src/modules/Games/Chess';
 import { action } from '@storybook/addon-actions';
+import { Page } from 'src/components/Page';
 import { GameRoomV2Container } from './GameRoomV2Container';
 
 export default {
@@ -35,44 +36,49 @@ export const withoutGame = () => (
 
 export const withGame = () => (
   <Grommet theme={defaultTheme} full>
-    <WithLocalStream render={(stream) => React.createElement(() => {
-      const me = peerMock.record();
+    <WithLocalStream render={(stream) => (
+      <SocketProvider>
+        <PeerProvider
+          roomCredentials={{
+            id: '1',
+          }}
+          // This might not allow it to work with sockets
+          userId="1"
+        >
+          <PeerConsumer render={(p) => React.createElement(() => {
+            const me = peerMock.withProps(p.room.me);
 
-      const opponent = peerMock.withChannels({
-        streaming: {
-          on: true,
-          type: 'audio-video',
-          stream,
-        },
-      });
+            const opponent = peerMock.withChannels({
+              streaming: {
+                on: true,
+                type: 'audio-video',
+                stream,
+              },
+            });
 
-      const [currentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
-        playersBySide: {
-          away: opponent,
-          home: me,
-        },
-        homeColor: 'white',
-        timeLimit: 'blitz',
-      }));
+            const [currentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
+              playersBySide: {
+                away: opponent,
+                home: me,
+              },
+              homeColor: 'white',
+              timeLimit: 'blitz',
+            }));
 
-      return (
-        <SocketProvider>
-          <PeerProvider
-            roomCredentials={{
-              id: '1',
-            }}
-            // This might not allow it to work with sockets
-            userId="1"
-          >
-            <GameRoomV2Container
-              game={currentGame}
-              onGameStateUpdate={action('on game state update')}
-              opponent={opponent}
-            />
-          </PeerProvider>
-        </SocketProvider>
-      );
-    })}
+            return (
+              <Page>
+                <GameRoomV2Container
+                  game={currentGame}
+                  onGameStateUpdate={action('on game state update')}
+                  opponent={opponent}
+                />
+              </Page>
+            );
+          })}
+          />
+        </PeerProvider>
+      </SocketProvider>
+    )}
     />
   </Grommet>
 );

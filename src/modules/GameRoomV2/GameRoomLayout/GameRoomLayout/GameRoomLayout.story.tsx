@@ -45,7 +45,7 @@ export const defaultStory = () => (
                 getBoardSize={() => dimensions.width - 100}
               />
             )}
-            getStreamingBoxComponent={(dimensions) => (
+            getSideComponent={(dimensions) => (
               <StreamingBox
                 me={me}
                 peer={opponent}
