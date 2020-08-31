@@ -7,6 +7,7 @@ import { ChessGameState, reduceChessGame } from 'src/modules/Games/Chess';
 import { Box, Button } from 'grommet';
 import { PopupContent } from 'src/components/PopupContent';
 import { Modal } from 'src/components/Modal/Modal';
+import { PlayButtonWidget } from 'src/components/PlayButtonWidget';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
 import { ChatContainer } from '../ClassRoom/components/Chat';
 
@@ -79,7 +80,9 @@ export const GameRoomV2: React.FC<Props> = (props) => {
             <div className={cls.sideBottom}>
               {!props.game ? (
                 <div className={cls.playButtonsContainer}>
-                  <Button
+                  <PlayButtonWidget type="challenge" />
+                  <PlayButtonWidget type="friendly" />
+                  {/* <Button
                     type="button"
                     primary
                     fill
@@ -94,7 +97,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
                     size="large"
                     className={cls.button}
                     label="Play a Rando"
-                  />
+                  /> */}
                 </div>
               ) : (
                 <ChatContainer className={cls.chatContainer} />
@@ -144,7 +147,6 @@ const useStyles = createUseStyles({
     flex: 1,
   },
   chatContainer: {
-    // border: '1px solid #ccc',
     height: '100%',
     background: 'white',
   },

@@ -33,7 +33,7 @@ function App() {
                       timeout={600}
                       unmountOnExit
                     >
-                      <GameRoomPage />
+                      <GameRoomV2Page />
                     </CSSTransition>
                   )}
                 </Route>

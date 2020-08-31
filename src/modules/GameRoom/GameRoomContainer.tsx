@@ -6,7 +6,7 @@ import {
 } from 'src/components/ChatBox/records/ChatMessageRecord';
 import * as io from 'io-ts';
 import { RoomProvider } from 'src/components/RoomProvider';
-import { AwesomeLoader, AwesomeLoaderPage } from 'src/components/AwesomeLoader';
+import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { ChessGameState, reduceChessGame } from '../Games/Chess';
 import { GameRoom } from './GameRoom';
 import {
@@ -98,8 +98,8 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
               timeLimit: 'rapid', // Get it from outside
               homeColor: 'random', // Get it from outside
               playersBySide: {
-                home: (challengerId === me.id) ? me : room.peers[challengerId],
-                away: (challengeeId === me.id) ? me : room.peers[challengeeId],
+                home: (challengerId === me.id) ? me.user : room.peers[challengerId].user,
+                away: (challengeeId === me.id) ? me.user : room.peers[challengeeId].user,
               },
             });
 

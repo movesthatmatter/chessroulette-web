@@ -4,13 +4,11 @@ import { noop } from 'src/lib/util';
 import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { PeerRecord } from 'dstnd-io';
 import { ChatMessageRecord } from './records/ChatMessageRecord';
 
 type Props = {
-  me: {
-    id: string;
-    name: string;
-  };
+  me: PeerRecord;
   messages: ChatMessageRecord[];
   onSend?: (text: string) => void;
 };
@@ -46,7 +44,7 @@ export const ChatBox: React.FC<Props> = ({ me, messages, onSend = noop }) => {
                 [cls.messageSenderTitleOther]: msg.from.id !== me.id,
               })}
             >
-              {msg.from.name}
+              {msg.from.user.name}
             </div>
             <div
               className={cx(cls.messageContent, {

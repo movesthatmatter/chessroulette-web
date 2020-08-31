@@ -31,7 +31,7 @@ export const ClassRoomContainer: React.FC<Props> = (props) => {
   //  in the chat, study, game, etc., so the state can pe managed locally
     <PeerProvider
       roomCredentials={props.roomCredentials}
-      userId={auth.user.id}
+      userInfo={auth.user}
     >
       <PeerConsumer
         render={(p) => <ClassRoom {...p} initialMode={props.initialClassroomMode} />}

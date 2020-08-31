@@ -7,7 +7,7 @@ import config from 'src/config';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { isLeft } from 'fp-ts/lib/Either';
 import { eitherToResult } from 'src/lib/ioutil';
-import { peerRecord, UserRecord } from 'dstnd-io';
+import { PeerRecord, UserInfoRecord } from 'dstnd-io';
 import { noop } from 'src/lib/util';
 import { SocketConsumer } from '../SocketProvider';
 import {
@@ -35,7 +35,7 @@ export type PeerProviderProps = {
     id: string;
     code?: string;
   };
-  userId: UserRecord['id'];
+  userInfo: UserInfoRecord;
 };
 
 export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
@@ -201,7 +201,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
                   dispatch(
                     addPeerAction({
                       id: peerId,
-                      name: metadata.peer.name,
+                      user: props.userInfo,
                     }),
                   );
                 },
@@ -261,7 +261,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
 
         socket.send({
           kind: 'userIdentification',
-          content: { userId: props.userId },
+          content: { userId: props.userInfo.id },
         });
 
         socket.send({

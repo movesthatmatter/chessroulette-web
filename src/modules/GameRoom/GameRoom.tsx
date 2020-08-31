@@ -9,7 +9,6 @@ import { RoomInfoDisplay } from 'src/components/RoomInfoDisplay';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
 import { PopupContent } from 'src/components/PopupContent';
 import { Room, Peer } from 'src/components/RoomProvider';
-import { MutunachiProps, Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import useWindowSize from '@react-hook/window-size';
 import {
   ChessGame,
@@ -91,7 +90,7 @@ export const GameRoom: React.FC<GameRoomProps> = ({
     : {
       [me.id]: {
         id: me.id,
-        name: me.name,
+        name: me.user.name,
         color: 'white',
       } as const,
     };
@@ -158,7 +157,7 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                     );
                   }}
                   player={props.currentGame.players[awayColor]}
-                  avatarId={playerAwayAsPeer.avatarId}
+                  avatarId={playerAwayAsPeer.user.avatarId}
                   side="away"
                   streamConfig={playerAwayAsPeer.connection.channels.streaming}
                 />
@@ -196,11 +195,11 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                 }}
                 player={
                 props.currentGame?.players[homeColor] ?? {
-                    ...me,
+                    ...me.user,
                     color: 'white',
                   }
                 }
-                avatarId={playerHomeAsPeer.avatarId}
+                avatarId={playerHomeAsPeer.user.avatarId}
                 side="home"
                 streamConfig={playerHomeAsPeer.connection.channels.streaming}
                 // Mute it if it's my stream so it doesn't createa a howling effect

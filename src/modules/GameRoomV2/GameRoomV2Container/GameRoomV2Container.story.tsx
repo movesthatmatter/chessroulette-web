@@ -9,6 +9,7 @@ import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { ChessGameState, reduceChessGame } from 'src/modules/Games/Chess';
 import { action } from '@storybook/addon-actions';
 import { Page } from 'src/components/Page';
+import { UserInfoMocker } from 'src/mocks/records';
 import { GameRoomV2Container } from './GameRoomV2Container';
 
 export default {
@@ -17,6 +18,7 @@ export default {
 };
 
 const peerMock = new PeerMocker();
+const userInfoMock = new UserInfoMocker();
 
 export const withoutGame = () => (
   <Grommet theme={defaultTheme} full>
@@ -26,7 +28,7 @@ export const withoutGame = () => (
           id: '1',
         }}
         // This might not allow it to work with sockets
-        userId="1"
+        userInfo={userInfoMock.withProps({ id: '1' })}
       >
         <GameRoomV2Container />
       </PeerProvider>
@@ -43,7 +45,7 @@ export const withGame = () => (
             id: '1',
           }}
           // This might not allow it to work with sockets
-          userId="1"
+          userInfo={userInfoMock.withProps({ id: '1' })}
         >
           <PeerConsumer render={(p) => React.createElement(() => {
             const me = peerMock.withProps(p.room.me);
@@ -58,8 +60,8 @@ export const withGame = () => (
 
             const [currentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
               playersBySide: {
-                away: opponent,
-                home: me,
+                away: opponent.user,
+                home: me.user,
               },
               homeColor: 'white',
               timeLimit: 'blitz',

@@ -1,8 +1,8 @@
 import { createAction } from 'deox';
-import { UserRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'dstnd-io';
 
 export const setUserAction = createAction(
   'setUserAction',
-  (resolve) => (p: UserRecord) => resolve(p),
+  (resolve) => (p: UserInfoRecord) => resolve(p),
 );
 export const unsetUserAction = createAction('unsetUserAction');

@@ -62,14 +62,8 @@ export const RoomProvider: React.FC<Props> = ({
         return prev;
       }
 
-      const meId = socketRecords.me.id;
-
       const nextMe: Peer = {
-        // Updates From Socket
-        id: meId,
-        name: socketRecords.me.name,
-        avatarId: meId.slice(-1)[0],
-
+        ...socketRecords.me,
         // Updates From RTC (Peer Connections)
         connection: {
           channels: {
@@ -105,11 +99,7 @@ export const RoomProvider: React.FC<Props> = ({
             const { [peerId]: rtcConnection } = rtcPeerConnections;
 
             const nextPeer: Peer = {
-              id: socketRoomPeer.id,
-              name: socketRoomPeer.name,
-              // Thiis should come from somewhere else lowerver (server or smtg)
-              avatarId: socketRoomPeer.id.slice(-1)[0],
-
+              ...socketRoomPeer,
               connection: {
                 channels: rtcConnection.channels,
               },

@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
+import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { ChatBox } from './ChatBox';
 import { ChatMessageRecord } from './records/ChatMessageRecord';
 
@@ -8,19 +9,13 @@ export default {
   title: 'Components/ChatBox',
 };
 
-const me = {
-  id: 'gabe',
-  name: 'Gabe',
-};
+const peerMocker = new PeerMocker();
+
+const me = peerMocker.withUserInfoProps({ name: 'gabe' });
+
 const peers = {
-  kasparov: {
-    id: 'kasparov',
-    name: 'Kasparov',
-  },
-  tal: {
-    id: 'Michael Tal',
-    name: 'Michael Tal',
-  },
+  kasparov: peerMocker.withUserInfoProps({ name: 'kasparov' }),
+  tal: peerMocker.withUserInfoProps({ name: 'tal' }),
 };
 
 export const defaultStory = () => React.createElement(() => {

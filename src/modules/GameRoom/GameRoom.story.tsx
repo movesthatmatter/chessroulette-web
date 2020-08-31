@@ -52,8 +52,8 @@ export const publicRoom = () => (
 
 const peerMock = new PeerRecordMock();
 const playersBySide: GamePlayersBySide = {
-  home: peerMock.withProps({ id: roomWithNoConnections.me.id }),
-  away: peerMock.withProps({ id: roomWithNoConnectionsPeers[0].id }),
+  home: peerMock.withProps({ id: roomWithNoConnections.me.id }).user,
+  away: peerMock.withProps({ id: roomWithNoConnectionsPeers[0].id }).user,
 };
 
 export const roomWithPlayers = () =>
@@ -121,7 +121,7 @@ export const roomWithPlayersAndSpectators = () =>
     const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
       playersBySide: {
         ...playersBySide,
-        away: roomWithNoConnectionsPeers[0],
+        away: roomWithNoConnectionsPeers[0].user,
       },
       homeColor: 'white',
       timeLimit: 'rapid',

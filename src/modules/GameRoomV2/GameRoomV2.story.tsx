@@ -1,13 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Grommet } from 'grommet';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { defaultTheme } from 'src/theme';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
-import { reduceChessGame, ChessGameState, ChessGameColor } from 'src/modules/Games/Chess';
+import { reduceChessGame, ChessGameState } from 'src/modules/Games/Chess';
 import { Page } from 'src/components/Page';
 import { GameRoomV2 } from './GameRoomV2';
-import { otherChessColor } from '../Games/Chess/util';
 
 export default {
   component: GameRoomV2,
@@ -37,8 +36,8 @@ export const defaultStory = () => (
 
       const [currentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
         playersBySide: {
-          away: opponent,
-          home: me,
+          away: opponent.user,
+          home: me.user,
         },
         homeColor: 'white',
         timeLimit: 'blitz',
@@ -99,8 +98,8 @@ export const asPage = () => (
 
       const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
         playersBySide: {
-          away: opponent,
-          home: me,
+          away: opponent.user,
+          home: me.user,
         },
         homeColor: 'white',
         timeLimit: 'bullet',
@@ -124,21 +123,25 @@ export const asPage = () => (
 export const asPageWithSwitchingSides = () => (
   <Grommet theme={defaultTheme} full>
     <WithLocalStream render={(stream) => React.createElement(() => {
+      const me = peerMock.withChannels({
+        streaming: {
+          on: true,
+          type: 'audio-video',
+          stream,
+        },
+      });
+
+      const opponent = peerMock.withChannels({
+        streaming: {
+          on: true,
+          type: 'audio-video',
+          stream,
+        },
+      });
+
       const [playersBySide, setPlayersBySide] = useState({
-        home: peerMock.withChannels({
-          streaming: {
-            on: true,
-            type: 'audio-video',
-            stream,
-          },
-        }),
-        away: peerMock.withChannels({
-          streaming: {
-            on: true,
-            type: 'audio-video',
-            stream,
-          },
-        }),
+        home: me.user,
+        away: opponent.user,
       });
 
       const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
@@ -154,8 +157,8 @@ export const asPageWithSwitchingSides = () => (
       return (
         <Page>
           <GameRoomV2
-            me={playersBySide.home}
-            opponent={playersBySide.away}
+            me={me}
+            opponent={opponent}
             game={currentGame}
             // onGameStateUpdate={setCurrentGame}
             onGameStateUpdate={(nextGame) => {
@@ -195,8 +198,8 @@ export const asPageWithFinishedGame = () => (
 
       const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
         playersBySide: {
-          away: opponent,
-          home: me,
+          away: opponent.user,
+          home: me.user,
         },
         homeColor: 'white',
         timeLimit: 'bullet',

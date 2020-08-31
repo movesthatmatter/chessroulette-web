@@ -48,7 +48,10 @@ export const reducer = createReducer(initialState, (handleAction) => ([
   handleAction(createRoomAction, (state, { payload }) => {
     const nextMe = {
       ...payload.me,
-      avatarId: payload.me.id.slice(-1)[0],
+      user: {
+        ...payload.me.user,
+        avatarId: payload.me.id.slice(-1)[0],
+      },
       connection: {
         // This shouldn't be so
         // there's no connetion with myself :)
@@ -85,8 +88,12 @@ export const reducer = createReducer(initialState, (handleAction) => ([
       ...state.room?.peers ?? {},
       [payload.id]: {
         id: payload.id,
-        name: payload.name,
-        avatarId: payload.id.slice(-1)[0],
+        user: {
+          name: payload.user.name,
+          id: payload.user.name,
+          avatarId: payload.id.slice(-1)[0],
+        },
+        // This should be in user
         connection: {
           channels: {
             // These could be passed in the action

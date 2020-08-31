@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
 import { action } from '@storybook/addon-actions';
-import { PeerRecordMock } from 'src/mocks/records';
+import { PeerRecordMock, UserInfoMocker } from 'src/mocks/records';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
 import { StandaloneChessGame } from './StandaloneChessGame';
@@ -15,14 +15,14 @@ export default {
   title: 'Modules/Games/Chess/components/StandaloneChessGame',
 };
 
-const peerMock = new PeerRecordMock();
+const userInfoMocker = new UserInfoMocker();
 
-const me = peerMock.record();
-const opponent = peerMock.record();
+const me = userInfoMocker.record();
+const opponent = userInfoMocker.record();
 
 const playersBySide: GamePlayersBySide = {
-  home: peerMock.withProps({ id: me.id }),
-  away: peerMock.withProps({ id: opponent.id }),
+  home: userInfoMocker.withProps({ id: me.id }),
+  away: userInfoMocker.withProps({ id: opponent.id }),
 };
 
 export const asWhite = () => React.createElement(() => {

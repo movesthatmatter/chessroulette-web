@@ -1,4 +1,4 @@
-import { UserRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'dstnd-io';
 import { createReducer, createAction } from 'deox';
 import { GenericStateSlice } from 'src/redux/types';
 import { setUserAction, unsetUserAction } from './actions';
@@ -7,7 +7,7 @@ type State = {
   isAuthenticated: false;
 } | {
   isAuthenticated: true;
-  user: UserRecord;
+  user: UserInfoRecord;
 }
 
 const initialState = {

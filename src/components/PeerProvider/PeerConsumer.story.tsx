@@ -1,10 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
+import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { PeerProvider } from './PeerProvider';
 import { SocketProvider } from '../SocketProvider';
 import { FaceTime } from '../FaceTimeArea';
 import { PeerConsumer } from './PeerConsumer';
-
 
 export default {
   component: PeerProvider,
@@ -14,7 +14,11 @@ export default {
 export const defaultStory = () => (
   <SocketProvider>
     <PeerProvider
-      userId="1"
+      userInfo={{
+        id: '1',
+        name: 'Kasparov',
+        avatarId: '1',
+      }}
       roomCredentials={{
         id: '1',
       }}
@@ -23,7 +27,7 @@ export const defaultStory = () => (
         render={({ room }) => (
           <>
             <div>
-              {`Me: ${room.me.name}(${room.me.id})`}
+              {`Me: ${room.me.user.name}(${room.me.id})`}
               {room.me.connection.channels.streaming.on ? (
                 <FaceTime
                   streamConfig={room.me.connection.channels.streaming}
@@ -35,9 +39,9 @@ export const defaultStory = () => (
             </div>
             <p>Peers:</p>
             <ul>
-              {Object.values(room.peers).map(({ id, name, connection }) => (
+              {Object.values(room.peers).map(({ id, user, connection }) => (
                 <div key={id}>
-                  <div>{`${name}(${id})`}</div>
+                  <div>{`${user.name}(${id})`}</div>
                   {connection.channels.streaming.on ? (
                     <FaceTime streamConfig={connection.channels.streaming} />
                   ) : (

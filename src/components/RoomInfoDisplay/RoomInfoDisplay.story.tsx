@@ -7,6 +7,7 @@ import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import Chance from 'chance';
+import { UserInfoMocker } from 'src/mocks/records';
 import { RoomInfoDisplay } from './RoomInfoDisplay';
 import { Peer } from '../RoomProvider';
 
@@ -19,17 +20,22 @@ export default {
 const chance = new Chance();
 const roomMocker = new RoomMocker();
 const peerMocker = new PeerMocker();
+const userInfoMocker = new UserInfoMocker();
 
 const me = peerMocker.withProps({
-  name: 'Aristotel',
+  user: {
+    name: 'Aristotel',
+    id: '1',
+    avatarId: '1',
+  },
 });
 const roomPeers = [
   // These could've been automted but I wanted to maintain the names :)
-  peerMocker.withProps({ name: 'Broasca' }),
-  peerMocker.withProps({ name: 'Piper' }),
-  peerMocker.withProps({ name: 'Jartica' }),
-  peerMocker.withProps({ name: 'Horny Predator' }),
-  peerMocker.withProps({ name: 'Lebada' }),
+  peerMocker.withProps(userInfoMocker.withProps({ name: 'Broasca' })),
+  peerMocker.withProps(userInfoMocker.withProps({ name: 'Piper' })),
+  peerMocker.withProps(userInfoMocker.withProps({ name: 'Jartica' })),
+  peerMocker.withProps(userInfoMocker.withProps({ name: 'Horny Predator' })),
+  peerMocker.withProps(userInfoMocker.withProps({ name: 'Lebada' })),
 ];
 
 const playersById = {

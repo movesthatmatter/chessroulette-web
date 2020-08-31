@@ -1,6 +1,7 @@
 import { shuffle } from 'src/lib/util';
 import { minutes } from 'src/lib/time';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
+import { UserInfoRecord } from 'dstnd-io';
 import {
   ChessGameStatePgn,
   ChessGameColor,
@@ -20,10 +21,7 @@ const timeLimitMsMap: {[key in ChessGameTimeLimit]: number} = {
   untimed: -1,
 };
 
-export type GamePlayer = {
-  id: string;
-  name: string;
-}
+export type GamePlayer = UserInfoRecord;
 
 export type GamePlayersBySide = {
   home: GamePlayer;

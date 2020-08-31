@@ -41,13 +41,13 @@ export const defaultStory = () => React.createElement(() => {
             render={({ room, broadcastMessage }) => (
               <>
                 <div>
-                  {`Me: ${me.name}`}
+                  {`Me: ${me.user.name}`}
                 </div>
                 <div>
                   {'Peers: '}
                   {Object.values(room.peers).map((peer) => (
                     <span key={peer.id}>
-                      {peer.name}
+                      {peer.user.name}
                       {' '}
                       |
                       {' '}

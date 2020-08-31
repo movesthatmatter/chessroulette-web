@@ -4,7 +4,7 @@ import cx from 'classnames';
 import { ChatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRecord';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { Text, Header } from 'grommet';
+import { Header } from 'grommet';
 
 export type ChatProps = {
   myId: string;
@@ -48,7 +48,7 @@ export const Chat: React.FC<ChatProps> = ({
                 [cls.messageSenderTitleOther]: msg.from.id !== myId,
               })}
             >
-              {msg.from.name}
+              {msg.from.user.name}
             </div>
             <div
               className={cx(cls.messageContent, {

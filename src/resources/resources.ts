@@ -14,9 +14,9 @@ import {
   PrivateRoomResponsePayload,
   iceServersResponse,
   IceServersResponse,
-  CreateUserRequestPayload,
-  CreateUserResponsePayload,
-  createUserResponsePayload,
+  RegisterPeerRequestPayload,
+  RegisterPeerResponsePayload,
+  registerPeerResponsePayload,
 } from 'dstnd-io';
 import config from 'src/config';
 import { Result, Err } from 'dstnd-io/dist/ts-results';
@@ -115,19 +115,31 @@ export const createChallenge = async (
   }
 };
 
-export const createUser = async (
-  req: CreateUserRequestPayload,
-): Promise<Result<CreateUserResponsePayload, ApiError>> => {
+export const registerPeer = async (
+  req: RegisterPeerRequestPayload,
+): Promise<Result<RegisterPeerResponsePayload, ApiError>> => {
   try {
-    const { data } = await http.post('api/users', req);
+    const { data } = await http.post('api/peers', req);
 
     return io
-      .toResult(createUserResponsePayload.decode(data))
+      .toResult(registerPeerResponsePayload.decode(data))
       .mapErr(() => 'BadResponse');
   } catch (e) {
     return new Err('BadRequest');
   }
 };
+
+// export const createGuestUser = async (): Promise<Result<CreateUserResponsePayload, ApiError>> => {
+//   try {
+//     const { data } = await http.post('api/users/guest');
+
+//     return io
+//       .toResult(createUserResponsePayload.decode(data))
+//       .mapErr(() => 'BadResponse');
+//   } catch (e) {
+//     return new Err('BadRequest');
+//   }
+// };
 
 // export const joinPrivateRoom = async (
 //   req: JoinPrivateRoomRequestPayload,

@@ -24,6 +24,7 @@ export const defaultStory = () => (
           return Promise.resolve(new Ok({
             id: '1',
             name: 'Mock User',
+            avatarId: '1',
           }));
         }}
       />

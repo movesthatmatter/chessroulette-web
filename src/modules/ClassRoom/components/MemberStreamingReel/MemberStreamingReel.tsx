@@ -47,7 +47,7 @@ export const MemberStreamingReel: React.FC<Props> = ({
                 streamConfig={peer.connection.channels.streaming}
               />
               <div className={cls.textContainer}>
-                <Text size="small">{peer.name}</Text>
+                <Text size="small">{peer.user.name}</Text>
               </div>
             </Box>
           ))}

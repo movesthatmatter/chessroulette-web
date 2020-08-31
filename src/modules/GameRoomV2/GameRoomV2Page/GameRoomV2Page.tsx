@@ -21,7 +21,12 @@ export const GameRoomV2Page: React.FC<Props> = () => {
       <PeerProvider
         roomCredentials={params}
         // userId={auth.isAuthenticated ? auth.user.id :}
-        userId="1"
+        userInfo={auth.isAuthenticated ? auth.user : {
+          // Don't hardcode this
+          id: '123',
+          name: 'asda',
+          avatarId: '3',
+        }}
       >
         <GameRoomV2Container />
       </PeerProvider>

@@ -11,8 +11,8 @@ import { SocketProvider } from 'src/components/SocketProvider';
 import { PeerProvider, PeerConsumer } from 'src/components/PeerProvider';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { ReduxProvider } from 'src/redux/Provider';
+import { UserInfoMocker } from 'src/mocks/records';
 import { ClassRoom } from './ClassRoom';
-
 
 export default {
   component: ClassRoom,
@@ -21,6 +21,7 @@ export default {
 
 const roomMocker = new RoomMocker();
 const peerMocker = new PeerMocker();
+const userInfoMocker = new UserInfoMocker();
 
 const roomPeers = range(10).map(() => peerMocker.record());
 const room = roomMocker.withProps({
@@ -62,7 +63,7 @@ export const defaultStory = () => (
             id: '1',
           }}
           // This might not allow it to work with sockets
-          userId="1"
+          userInfo={userInfoMocker.withProps({ id: '1' })}
         >
           <PeerConsumer
             render={(p) => (
@@ -90,11 +91,9 @@ export const withPeerProvider = () => (
     <Grommet theme={defaultTheme} full>
       <SocketProvider>
         <PeerProvider
-          roomCredentials={{
-            id: '1',
-          }}
+          roomCredentials={{ id: '1' }}
           // This might not allow it to work with sockets
-          userId={String(getRandomInt(1, 6))}
+          userInfo={userInfoMocker.withProps({ id: String(getRandomInt(1, 6)) })}
         >
           <PeerConsumer
             render={(p) => <ClassRoom {...p} />}

@@ -1,10 +1,8 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { MemberStreamingReel } from 'src/modules/ClassRoom/components/MemberStreamingReel';
 import { Text, Button } from 'grommet';
 import { FaceTime } from '../FaceTimeArea';
-import { PeerConnections } from '../PeersProvider';
-import { Peer, Room } from '../RoomProvider';
+import { Peer } from '../RoomProvider';
 import { AspectRatio } from '../AspectRatio';
 
 type Props = {
@@ -25,7 +23,7 @@ export const StreamingBox: React.FC<Props> = (props) => {
             className={cls.fullFacetime}
           />
           <div className={cls.titleWrapper}>
-            <Text className={cls.title}>{props.peer.name}</Text>
+            <Text className={cls.title}>{props.peer.user.name}</Text>
           </div>
           <FaceTime
             streamConfig={props.me.connection.channels.streaming}

@@ -1,7 +1,11 @@
 import Chance from 'chance';
 import { Peer } from 'src/components/RoomProvider';
+import { UserInfoRecord, userInfoRecord } from 'dstnd-io';
+import { UserInfoMocker } from './UserInfoMocker';
 
 const chance = new Chance();
+
+const userInfoMocker = new UserInfoMocker();
 
 export class PeerMocker {
   record(): Peer {
@@ -9,8 +13,7 @@ export class PeerMocker {
 
     return {
       id,
-      name: chance.name(),
-      avatarId: String(id.slice(-1)[0]),
+      user: userInfoMocker.record(),
       connection: {
         channels: {
           data: { on: false },
@@ -40,5 +43,11 @@ export class PeerMocker {
         },
       },
     };
+  }
+
+  withUserInfoProps(userInfoProps: Partial<UserInfoRecord>): Peer {
+    return this.withProps({
+      user: userInfoMocker.withProps(userInfoProps),
+    });
   }
 }

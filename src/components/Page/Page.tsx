@@ -21,7 +21,7 @@ export const Page: React.FC<Props> = (props) => {
   );
 };
 
-const topHeightPx = 40;
+const topHeightPx = 60;
 
 const useStyles = createUseStyles({
   container: {
@@ -36,7 +36,8 @@ const useStyles = createUseStyles({
     // height: '100%',
   },
   top: {
-    paddingBottom: '0px',
+    paddingTop: '.6em',
+    paddingBottom: '.6em',
     height: `${topHeightPx}px`,
   },
   logo: {

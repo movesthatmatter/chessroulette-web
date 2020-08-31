@@ -1,7 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { Layer, Box } from 'grommet';
-import { UserRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'dstnd-io';
 import { Result } from 'ts-results';
 import { useHistory } from 'react-router-dom';
 import { createRoom } from 'src/resources/resources';
@@ -9,8 +8,8 @@ import { OnboardingForm, OnboardingFormProps } from '../OnboardingForm';
 
 type Props = Pick<OnboardingFormProps, 'mode'> & {
   onSetUser: (
-    userInfo: { name: string },
-  ) => Promise<Result<UserRecord, unknown>>;
+    userInfo: UserInfoRecord,
+  ) => Promise<Result<UserInfoRecord, unknown>>;
 };
 
 const toRoomPath = (room: {
@@ -27,20 +26,22 @@ export const OnboardingWidget: React.FC<Props> = (props) => {
     <OnboardingForm
       mode={props.mode}
       onCreateClassroom={async (input) => {
-        (await props.onSetUser({ name: input.userName }))
-          .map((user) => createRoom({
-            nickname: 'my room',
-            type: 'private',
-            peerId: user.id,
-          }))
-          .map(async (roomPromise) => {
-            (await roomPromise).map((room) => {
-              history.push(`/classroom/${toRoomPath(room)}`);
-            });
-          });
+        // TO NOTE: Removed on Aug 31 when I added the UserInfoRecord to PeerRecord
+
+        // (await props.onSetUser({ name: input.userName }))
+        //   .map((user) => createRoom({
+        //     nickname: 'my room',
+        //     type: 'private',
+        //     peerId: user.id,
+        //   }))
+        //   .map(async (roomPromise) => {
+        //     (await roomPromise).map((room) => {
+        //       history.push(`/classroom/${toRoomPath(room)}`);
+        //     });
+        //   });
       }}
       onJoinClassroom={async (input) => {
-        (await props.onSetUser({ name: input.userName }));
+        // (await props.onSetUser({ name: input.userName }));
       }}
     />
   );

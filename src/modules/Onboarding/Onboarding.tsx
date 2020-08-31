@@ -1,13 +1,13 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { UserRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'dstnd-io';
 import { Result } from 'ts-results';
 import { OnboardingWidget } from './components/OnboardingWidget';
 
 type Props = {
   onSetUser: (
-    userInfo: { name: string },
-  ) => Promise<Result<UserRecord, unknown>>;
+    userInfo: UserInfoRecord,
+  ) => Promise<Result<UserInfoRecord, unknown>>;
 };
 
 export const Onboarding: React.FC<Props> = (props) => {

@@ -32,10 +32,7 @@ export const ChatContainer: React.FC<Props> = (chatProps) => {
             const payload: ChatMessageRecord = {
               msgType: 'chatMessage',
               content,
-              from: {
-                id: room.me.id,
-                name: room.me.name,
-              },
+              from: room.me,
             };
 
             broadcastMessage(payload);
