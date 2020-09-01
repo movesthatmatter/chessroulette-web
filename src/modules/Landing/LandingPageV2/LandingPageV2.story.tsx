@@ -1,5 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
+import { Grommet } from 'grommet';
+import { defaultTheme } from 'src/theme';
 import { LandingPageV2 } from './LandingPageV2';
 
 export default {
@@ -8,5 +10,7 @@ export default {
 };
 
 export const defaultStory = () => (
-  <LandingPageV2 />
+  <Grommet theme={defaultTheme} full>
+    <LandingPageV2 />
+  </Grommet>
 );

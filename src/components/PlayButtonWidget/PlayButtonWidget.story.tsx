@@ -11,7 +11,7 @@ export default {
 
 export const defaultStory = () => (
   <Grommet theme={defaultTheme}>
-    <div style={{ width: '300px' }}>
+    <div style={{ width: '200px' }}>
       <PlayButtonWidget type="friendly" />
       <PlayButtonWidget type="challenge" />
     </div>

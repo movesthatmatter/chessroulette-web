@@ -4,6 +4,7 @@ import { GameRoomV2 } from 'src/modules/GameRoomV2/GameRoomV2';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { Peer } from 'src/components/RoomProvider';
+import { PlayButtonWidget } from 'src/components/PlayButtonWidget';
 
 type Props = {};
 
@@ -46,7 +47,9 @@ export const LandingPageV2: React.FC<Props> = () => {
   // For now the Landing Page simply impersonates a GameRoom
   return (
     <Page>
-      <GameRoomV2 room={room} />
+      <PlayButtonWidget type="challenge" />
+      <PlayButtonWidget type="friendly" />
+      {/* <GameRoomV2 room={room} /> */}
     </Page>
   );
 };

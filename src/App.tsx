@@ -12,6 +12,7 @@ import { ClassRoomPage } from './modules/ClassRoom/ClassRoomPage';
 import { ReduxProvider } from './redux/Provider';
 import { GameRoomV2Page } from './modules/GameRoomV2/GameRoomV2Page';
 import { LandingPageV2 } from './modules/Landing/LandingPageV2';
+import { LandingPage } from './modules/Landing/LandingPage';
 
 function App() {
   const location = useLocation();
@@ -61,6 +62,7 @@ function App() {
                       {/* <OnboardingPage /> */}
                       {/* <GameRoomV2Page /> */}
                       <LandingPageV2 />
+                      {/* <LandingPage /> */}
 
                     </CSSTransition>
                   )}

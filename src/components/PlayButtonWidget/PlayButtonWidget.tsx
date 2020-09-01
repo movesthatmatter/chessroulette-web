@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { Button, Box } from 'grommet';
+import { Box } from 'grommet';
 import { noop } from 'src/lib/util';
+import { Button } from 'src/components/Button';
 import { Modal } from '../Modal/Modal';
 import { PopupContent } from '../PopupContent';
 
@@ -20,13 +21,10 @@ export const PlayButtonWidget: React.FC<Props> = ({
   const [visiblePopup, setVisiblePopup] = useState<VisiblePopup>('none');
 
   return (
-    <>
+    <Box margin="small">
       <Button
-        type="button"
-        primary
-        fill
-        className={cls.button}
         onClick={() => { setVisiblePopup(type); }}
+        size="medium"
         label={type === 'friendly' ? 'Play a Friend' : 'Challenge'}
       />
 
@@ -55,16 +53,10 @@ export const PlayButtonWidget: React.FC<Props> = ({
           </Box>
         </PopupContent>
       </Modal>
-    </>
+    </Box>
   );
 };
 
 const useStyles = createUseStyles({
   container: {},
-  button: {
-    marginBottom: '1.5em',
-    '&:hover': {
-      opacity: 0.8,
-    },
-  },
 });
