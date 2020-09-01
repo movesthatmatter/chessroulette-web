@@ -7,7 +7,7 @@ import config from 'src/config';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { isLeft } from 'fp-ts/lib/Either';
 import { eitherToResult } from 'src/lib/ioutil';
-import { PeerRecord, UserInfoRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'dstnd-io';
 import { noop } from 'src/lib/util';
 import { SocketConsumer } from '../SocketProvider';
 import {
@@ -122,6 +122,8 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
             }),
           );
 
+          // TODO: This should be in its own message handler and inside a UseEffect
+          //  since we don't want to initialize it multiple times
           const sdk = new PeerSDK(
             wNamespace(msg.content.me.id),
             config.SIGNALING_SERVER_CONFIG,

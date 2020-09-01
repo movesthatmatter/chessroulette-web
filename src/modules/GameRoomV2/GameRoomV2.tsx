@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { StreamingBox } from 'src/components/StreamingBox';
-import { Peer } from 'src/components/RoomProvider';
+import { Room } from 'src/components/RoomProvider';
 import { StandaloneChessGame } from 'src/modules/Games/Chess/components/StandaloneChessGame';
 import { ChessGameState, reduceChessGame } from 'src/modules/Games/Chess';
-import { Box, Button } from 'grommet';
+import { Box } from 'grommet';
 import { PopupContent } from 'src/components/PopupContent';
 import { Modal } from 'src/components/Modal/Modal';
 import { PlayButtonWidget } from 'src/components/PlayButtonWidget';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
 import { ChatContainer } from '../ClassRoom/components/Chat';
+import { otherChessColor } from '../Games/Chess/util';
 
 type Props = {
-  me: Peer;
+  room: Room;
 } & ({
   game: ChessGameState;
   onGameStateUpdate: (nextGame: ChessGameState) => void;
-  opponent: Peer;
 } | {
   game?: undefined;
 });
@@ -25,7 +25,11 @@ export const GameRoomV2: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [showGameFinishedPopup, setShowGameFinishedPopup] = useState(false);
 
-  const homeColor = props.me.id === props.game?.players.black.id ? 'black' : 'white';
+  const homeColor = props.room.me.id === props.game?.players.black.id ? 'black' : 'white';
+
+  const opponent = props.game
+    ? props.room.peers[props.game.players[otherChessColor(homeColor)].id]
+    : undefined;
 
   useEffect(() => {
     if (props.game?.state === 'finished') {
@@ -41,7 +45,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
             homeColor={homeColor}
             playable={
               (props.game?.state === 'pending' || props.game?.state === 'started')
-              && props.game.players[homeColor].id === props.me.id
+              && props.game.players[homeColor].id === props.room.me.id
             }
             game={props.game}
             getBoardSize={() => dimensions.width}
@@ -73,8 +77,9 @@ export const GameRoomV2: React.FC<Props> = (props) => {
         getSideComponent={(dimensions) => (
           <div className={cls.side}>
             <StreamingBox
-              me={props.me}
-              peer={props.game && props.opponent}
+              room={props.room}
+              opponentPeerId={opponent?.id}
+              // peer={opponent}
               width={dimensions.width}
             />
             <div className={cls.sideBottom}>
@@ -82,22 +87,6 @@ export const GameRoomV2: React.FC<Props> = (props) => {
                 <div className={cls.playButtonsContainer}>
                   <PlayButtonWidget type="challenge" />
                   <PlayButtonWidget type="friendly" />
-                  {/* <Button
-                    type="button"
-                    primary
-                    fill
-                    className={cls.button}
-                    size="large"
-                    label="Play a Friend"
-                  />
-                  <Button
-                    type="button"
-                    primary
-                    fill
-                    size="large"
-                    className={cls.button}
-                    label="Play a Rando"
-                  /> */}
                 </div>
               ) : (
                 <ChatContainer className={cls.chatContainer} />
@@ -131,12 +120,6 @@ const useStyles = createUseStyles({
   },
   playButtonsContainer: {
     padding: '1em 0',
-  },
-  button: {
-    marginBottom: '1.5em',
-    '&:hover': {
-      opacity: 0.8,
-    },
   },
   side: {
     display: 'flex',

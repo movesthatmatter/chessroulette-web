@@ -6,6 +6,7 @@ import { ChessGame } from 'src/modules/Games/Chess';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
+import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { GameRoomLayout } from './GameRoomLayout';
 
 export default {
@@ -14,6 +15,7 @@ export default {
 };
 
 const peerMock = new PeerMocker();
+const roomMocker = new RoomMocker();
 
 export const defaultStory = () => (
   <Grommet theme={defaultTheme} full>
@@ -34,6 +36,15 @@ export const defaultStory = () => (
         },
       });
 
+      const publicRoom = roomMocker.withProps({
+        me,
+        peers: {
+          [opponent.id]: opponent,
+        },
+        name: 'Valencia',
+        type: 'public',
+      });
+
       return (
         <div style={{ width: '100%', height: '100%' }}>
           <GameRoomLayout
@@ -47,8 +58,7 @@ export const defaultStory = () => (
             )}
             getSideComponent={(dimensions) => (
               <StreamingBox
-                me={me}
-                peer={opponent}
+                room={publicRoom}
                 width={dimensions.width}
               />
             )}

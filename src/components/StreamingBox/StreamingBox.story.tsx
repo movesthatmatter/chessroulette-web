@@ -4,6 +4,7 @@ import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
+import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { StreamingBox } from './StreamingBox';
 
 export default {
@@ -12,6 +13,7 @@ export default {
 };
 
 const peerMock = new PeerMocker();
+const roomMocker = new RoomMocker();
 
 export const defaultStory = () => (
   <WithLocalStream
@@ -32,11 +34,19 @@ export const defaultStory = () => (
         },
       });
 
+      const publicRoom = roomMocker.withProps({
+        me,
+        peers: {
+          [opponent.id]: opponent,
+        },
+        name: 'Valencia',
+        type: 'public',
+      });
+
       return (
         <Grommet theme={defaultTheme} full>
           <StreamingBox
-            me={me}
-            peer={opponent}
+            room={publicRoom}
             width={600}
           />
         </Grommet>

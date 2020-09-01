@@ -2,31 +2,34 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Text, Button } from 'grommet';
 import { FaceTime } from '../FaceTimeArea';
-import { Peer } from '../RoomProvider';
+import { Room } from '../RoomProvider';
 import { AspectRatio } from '../AspectRatio';
 
 type Props = {
-  me: Peer;
-  peer?: Peer;
+  room: Room;
   width: number;
+  opponentPeerId?: string;
 };
 
 export const StreamingBox: React.FC<Props> = (props) => {
   const cls = useStyles();
 
+  const peersList = Object.values(props.room.peers);
+
+  // Only shows the 1st peer for now!
   return (
     <div className={cls.container} style={{ width: props.width }}>
-      {props.peer ? (
+      {peersList.length > 0 ? (
         <>
           <FaceTime
-            streamConfig={props.peer.connection.channels.streaming}
+            streamConfig={peersList[0].connection.channels.streaming}
             className={cls.fullFacetime}
           />
           <div className={cls.titleWrapper}>
-            <Text className={cls.title}>{props.peer.user.name}</Text>
+            <Text className={cls.title}>{peersList[0].user.name}</Text>
           </div>
           <FaceTime
-            streamConfig={props.me.connection.channels.streaming}
+            streamConfig={props.room.me.connection.channels.streaming}
             className={cls.myFacetime}
             style={{
               width: props.width / 4,
@@ -35,9 +38,9 @@ export const StreamingBox: React.FC<Props> = (props) => {
         </>
       ) : (
         <>
-          {props.me.connection.channels.streaming.on ? (
+          {props.room.me.connection.channels.streaming.on ? (
             <FaceTime
-              streamConfig={props.me.connection.channels.streaming}
+              streamConfig={props.room.me.connection.channels.streaming}
               className={cls.fullFacetime}
             />
           ) : (

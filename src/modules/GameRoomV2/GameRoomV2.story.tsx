@@ -6,6 +6,8 @@ import { defaultTheme } from 'src/theme';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { reduceChessGame, ChessGameState } from 'src/modules/Games/Chess';
 import { Page } from 'src/components/Page';
+import { RoomMocker } from 'src/mocks/records/RoomMocker';
+import { publicRoomResponsePayload } from 'dstnd-io';
 import { GameRoomV2 } from './GameRoomV2';
 
 export default {
@@ -14,6 +16,7 @@ export default {
 };
 
 const peerMock = new PeerMocker();
+const roomMocker = new RoomMocker();
 
 export const defaultStory = () => (
   <Grommet theme={defaultTheme} full>
@@ -34,6 +37,16 @@ export const defaultStory = () => (
         },
       });
 
+      const publicRoom = roomMocker.withProps({
+        me,
+        peers: {
+          [me.id]: me,
+          [opponent.id]: opponent,
+        },
+        name: 'Valencia',
+        type: 'public',
+      });
+
       const [currentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
         playersBySide: {
           away: opponent.user,
@@ -45,8 +58,7 @@ export const defaultStory = () => (
 
       return (
         <GameRoomV2
-          me={me}
-          opponent={opponent}
+          room={publicRoom}
           game={currentGame}
           onGameStateUpdate={() => currentGame}
         />
@@ -67,10 +79,17 @@ export const withoutGame = () => (
         },
       });
 
+      const publicRoom = roomMocker.withProps({
+        me,
+        peers: {
+          [me.id]: me,
+        },
+        name: 'Valencia',
+        type: 'public',
+      });
+
       return (
-        <GameRoomV2
-          me={me}
-        />
+        <GameRoomV2 room={publicRoom} />
       );
     })}
     />
@@ -105,11 +124,20 @@ export const asPage = () => (
         timeLimit: 'bullet',
       }));
 
+      const publicRoom = roomMocker.withProps({
+        me,
+        peers: {
+          [me.id]: me,
+          [opponent.id]: opponent,
+        },
+        name: 'Valencia',
+        type: 'public',
+      });
+
       return (
         <Page>
           <GameRoomV2
-            me={me}
-            opponent={opponent}
+            room={publicRoom}
             game={currentGame}
             onGameStateUpdate={setCurrentGame}
           />
@@ -150,15 +178,20 @@ export const asPageWithSwitchingSides = () => (
         timeLimit: 'bullet',
       }));
 
-      // useEffect(() => {
-      //   setCu
-      // }, [homeColor]);
+      const publicRoom = roomMocker.withProps({
+        me,
+        peers: {
+          [me.id]: me,
+          [opponent.id]: opponent,
+        },
+        name: 'Valencia',
+        type: 'public',
+      });
 
       return (
         <Page>
           <GameRoomV2
-            me={me}
-            opponent={opponent}
+            room={publicRoom}
             game={currentGame}
             // onGameStateUpdate={setCurrentGame}
             onGameStateUpdate={(nextGame) => {
@@ -196,6 +229,16 @@ export const asPageWithFinishedGame = () => (
         },
       });
 
+      const publicRoom = roomMocker.withProps({
+        me,
+        peers: {
+          [me.id]: me,
+          [opponent.id]: opponent,
+        },
+        name: 'Valencia',
+        type: 'public',
+      });
+
       const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
         playersBySide: {
           away: opponent.user,
@@ -209,8 +252,7 @@ export const asPageWithFinishedGame = () => (
       return (
         <Page>
           <GameRoomV2
-            me={me}
-            opponent={opponent}
+            room={publicRoom}
             game={currentGame}
             onGameStateUpdate={setCurrentGame}
           />

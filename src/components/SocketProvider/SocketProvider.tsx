@@ -77,27 +77,27 @@ export const SocketProvider: React.FC<Props> = (props) => {
   });
 
   useEffect(() => {
-    if (contextState.socket) {
-      const token = setInterval(() => {
+    if (!contextState.socket) {
+      return undefined;
+    }
+
+    const intervalId = setInterval(() => {
         // This is needed because the server(Heroku) closes the connection
         //  if it's idle for 55 seconds
         contextState.socket?.send({
           kind: 'ping',
           content: randomId(),
         });
-      }, HEARTBEAT_INTERVAL);
+    }, HEARTBEAT_INTERVAL);
 
-      return () => {
-        clearInterval(token);
+    return () => {
+      clearInterval(intervalId);
 
-        // Make sure that the connection closes if the Provider unmounts
-        if (contextState.socket?.connection.readyState !== WebSocket.CLOSED) {
+      // Make sure that the connection closes if the Provider unmounts
+      if (contextState.socket?.connection.readyState !== WebSocket.CLOSED) {
           contextState.socket?.close();
-        }
-      };
-    }
-
-    return undefined;
+      }
+    };
   }, [contextState.socket]);
 
   return (

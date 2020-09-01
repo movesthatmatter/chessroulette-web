@@ -16,7 +16,7 @@ type Props = & ({
 
 export const GameRoomV2Container: React.FC<Props> = (props) => (
   <PeerConsumer
-    render={(p) => <GameRoomV2 me={p.room.me} {...props} />}
+    render={(p) => <GameRoomV2 room={p.room} {...props} />}
     renderFallback={() => <AwesomeLoaderPage />}
     onReady={(p) => {
       // Show my stream right away for now but later it could be

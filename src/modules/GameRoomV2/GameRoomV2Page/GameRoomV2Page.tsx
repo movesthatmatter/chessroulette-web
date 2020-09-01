@@ -1,10 +1,10 @@
 import React from 'react';
-import { createUseStyles } from 'src/lib/jss';
 import { Page } from 'src/components/Page/Page';
 import { PeerProvider } from 'src/components/PeerProvider';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication';
+import { getRandomInt } from 'src/lib/util';
 import { GameRoomV2Container } from '../GameRoomV2Container/GameRoomV2Container';
 
 type Props = {};
@@ -23,7 +23,7 @@ export const GameRoomV2Page: React.FC<Props> = () => {
         // userId={auth.isAuthenticated ? auth.user.id :}
         userInfo={auth.isAuthenticated ? auth.user : {
           // Don't hardcode this
-          id: '123',
+          id: String(getRandomInt(1, 6)),
           name: 'asda',
           avatarId: '3',
         }}
