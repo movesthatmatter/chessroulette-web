@@ -1,6 +1,8 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import logo from 'src/assets/logo.svg';
+import { AuthenticationConsumer } from 'src/services/Authentication';
+import { Box } from 'grommet';
 
 type Props = {};
 
@@ -11,7 +13,22 @@ export const Page: React.FC<Props> = (props) => {
     <div className={cls.container}>
       <div className={cls.paddingWrapper}>
         <div className={cls.top}>
-          <img src={logo} alt="logo" className={cls.logo} />
+          <div className={cls.topMain}>
+            <img src={logo} alt="logo" className={cls.logo} />
+          </div>
+
+          <AuthenticationConsumer
+            renderAuthenticated={(auth) => (
+              // <Box alignSelf="end" justify="end">
+              <div className={cls.topRight}>
+                <p>
+                  {'Welcome '}
+                  <strong>{auth.user.name}</strong>
+                </p>
+              </div>
+              // </Box>
+            )}
+          />
         </div>
         <main className={cls.main}>
           {props.children}
@@ -39,6 +56,18 @@ const useStyles = createUseStyles({
     paddingTop: '.6em',
     paddingBottom: '.6em',
     height: `${topHeightPx}px`,
+    display: 'flex',
+    flexDirection: 'row',
+    // alignItems: 'space-around',
+    alignContent: 'space-between',
+  },
+  topMain: {
+    flex: 1,
+  },
+  topRight: {
+    // just
+    // alignSelf: 'flex-end',
+    justifySelf: 'flex-end',
   },
   logo: {
     width: '200px',
