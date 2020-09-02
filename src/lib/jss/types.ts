@@ -5,6 +5,7 @@ export type CSSProperties = css.Properties & {
   '&:hover'?: css.Properties;
   '&:focus'?: css.Properties;
   '&:blur'?: css.Properties;
+  '&:active'?: css.Properties;
   '&:first-child'?: css.Properties;
   '&:last-child'?: css.Properties;
 
