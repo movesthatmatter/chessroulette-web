@@ -56,6 +56,9 @@ export const LandingPage: React.FC<Props> = () => {
                           nickname: undefined,
                           peerId: me.id,
                           type: 'private',
+                          game: {
+                            timeLimit: 'rapid',
+                          },
                         })
                       ).map((room) => {
                         history.push(`/gameroom/${toRoomPath(room)}`);
@@ -113,7 +116,12 @@ export const LandingPage: React.FC<Props> = () => {
                       return;
                     }
 
-                    (await resources.createChallenge({ peerId: me.id })).map((room) => {
+                    (await resources.createChallenge({
+                      peerId: me.id,
+                      game: {
+                        timeLimit: 'rapid',
+                      },
+                    })).map((room) => {
                       history.push(`/gameroom/${toRoomPath(room)}`);
                     });
                   }}

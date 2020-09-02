@@ -142,6 +142,8 @@ export const RoomProvider: React.FC<Props> = ({
           ...nextPeers,
           [nextMe.id]: nextMe,
         },
+
+        game: socketRecords.room.game,
       };
 
       return {

@@ -60,6 +60,9 @@ export const RoomNotAvailablePopup: React.FC<Props> = () => {
                           nickname: undefined,
                           peerId: me.id,
                           type: 'private',
+                          game: {
+                            timeLimit: 'blitz',
+                          },
                         })
                       ).map((room) => {
                         history.push(`/gameroom/${toRoomPath(room)}`);
@@ -80,7 +83,13 @@ export const RoomNotAvailablePopup: React.FC<Props> = () => {
                     return;
                   }
 
-                  (await resources.createChallenge({ peerId: me.id })).map((room) => {
+                  (await resources.createChallenge({
+                    peerId: me.id,
+                    game: {
+                      // This should not be hardcoded
+                      timeLimit: 'rapid',
+                    },
+                  })).map((room) => {
                     history.push(`/gameroom/${toRoomPath(room)}`);
                   });
                 }}

@@ -15,7 +15,7 @@ type Props = {
 export const ClassRoomContainer: React.FC<Props> = (props) => {
   const auth = useSelector(selectAuthentication);
 
-  if (!auth.isAuthenticated) {
+  if (auth.authenticationType === 'none') {
     return (
       <Layer>
         <Box pad="medium">
@@ -31,7 +31,7 @@ export const ClassRoomContainer: React.FC<Props> = (props) => {
   //  in the chat, study, game, etc., so the state can pe managed locally
     <PeerProvider
       roomCredentials={props.roomCredentials}
-      userInfo={auth.user}
+      user={auth.user}
     >
       <PeerConsumer
         render={(p) => <ClassRoom {...p} initialMode={props.initialClassroomMode} />}

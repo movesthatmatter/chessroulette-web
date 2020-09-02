@@ -6,7 +6,7 @@ import { OnboardingWidget } from './components/OnboardingWidget';
 
 type Props = {
   onSetUser: (
-    userInfo: UserInfoRecord,
+    userId: string,
   ) => Promise<Result<UserInfoRecord, unknown>>;
 };
 

@@ -27,6 +27,7 @@ const me = peerMocker.withProps({
     name: 'Aristotel',
     id: '1',
     avatarId: '1',
+    isGuest: false,
   },
 });
 const roomPeers = [

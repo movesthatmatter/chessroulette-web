@@ -7,9 +7,7 @@ import { createRoom } from 'src/resources/resources';
 import { OnboardingForm, OnboardingFormProps } from '../OnboardingForm';
 
 type Props = Pick<OnboardingFormProps, 'mode'> & {
-  onSetUser: (
-    userInfo: UserInfoRecord,
-  ) => Promise<Result<UserInfoRecord, unknown>>;
+  onSetUser: (userId: string) => Promise<Result<UserInfoRecord, unknown>>;
 };
 
 const toRoomPath = (room: {
