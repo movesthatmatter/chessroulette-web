@@ -88,12 +88,7 @@ export const reducer = createReducer(initialState, (handleAction) => ([
       ...state.room?.peers ?? {},
       [payload.id]: {
         id: payload.id,
-        user: {
-          name: payload.user.name,
-          id: payload.user.name,
-          avatarId: payload.id.slice(-1)[0],
-        },
-        // This should be in user
+        user: payload.user,
         connection: {
           channels: {
             // These could be passed in the action
@@ -163,6 +158,7 @@ export const reducer = createReducer(initialState, (handleAction) => ([
         ...state.room,
         me: nextMe,
         peersIncludingMe: {
+          ...state.room.peersIncludingMe,
           [nextMe.id]: nextMe,
         },
       },
