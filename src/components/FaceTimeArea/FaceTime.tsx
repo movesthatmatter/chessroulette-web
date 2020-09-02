@@ -1,6 +1,7 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
+import { PeerStreamingConfig } from 'src/services/peers';
 import { AVStream, AVStreamProps } from '../AVStream';
 
 export type FaceTimeProps = Omit<AVStreamProps, 'stream'> & {
@@ -9,14 +10,7 @@ export type FaceTimeProps = Omit<AVStreamProps, 'stream'> & {
     width: number;
     height: number;
   };
-  streamConfig:
-  | { on: false }
-  | {
-    on: true;
-    type: 'audio' | 'video' | 'audio-video';
-    stream: MediaStream;
-  };
-
+  streamConfig: PeerStreamingConfig;
   containerClassName?: string;
 
   streamingOffFallback?: React.ReactNode;
