@@ -1,16 +1,16 @@
 import { PeerRecord } from 'dstnd-io';
 import Chance from 'chance';
-import { UserInfoMocker } from './UserInfoMocker';
+import { UserRecordMocker } from './UserRecordMocker';
 
 const chance = new Chance();
 
-const userInfoMock = new UserInfoMocker();
+const userRecordMock = new UserRecordMocker();
 
 export class PeerRecordMock {
   record(): PeerRecord {
     return {
       id: String(chance.integer({ min: 1 })),
-      user: userInfoMock.record(),
+      user: userRecordMock.record(),
     };
   }
 

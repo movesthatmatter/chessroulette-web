@@ -4619,6 +4619,11 @@ chess.js@^0.10.3:
   resolved "https://registry.yarnpkg.com/chess.js/-/chess.js-0.10.3.tgz#8c3b98e8411c2ff3ab4b1fc022ddebd1ae037120"
   integrity sha512-i51JgVM0ksFMbLJYKoDpfrcFxJHq/XQQx8NltCdfMyDv7vpU5JVzsZz1EOw7nA27eGA5t8tSxodAN+Wc704BoQ==
 
+chess.js@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/chess.js/-/chess.js-0.11.0.tgz#e1802179b944eab5daf11b5d4bce08cdcadbeffa"
+  integrity sha512-yTpi6XbRMkBtnjSvbt6wEp9Y7JzhJl1MC3GNn67q5ClyccXxCRf5cMPSUg4OblrUapg1kLHm7WzxxEVp20NK1Q==
+
 chessboardjsx@^2.4.2:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/chessboardjsx/-/chessboardjsx-2.4.2.tgz#69b607f67a7bd8c66b86d7e33dfb631cd87f6533"
@@ -6082,10 +6087,12 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.0.11":
-  version "0.0.11"
-  resolved "https://github.com/dstnd/dstnd-io.git#71b10da17ab176b0b5055f0944b720e6e7718936"
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.0.12":
+  version "0.0.12"
+  resolved "https://github.com/dstnd/dstnd-io.git#8a847640b2e6f8849315234b12e63fcc1b34d49b"
   dependencies:
+    "@types/chess.js" "^0.10.1"
+    chess.js "^0.11.0"
     fp-ts "^2.8.2"
     io-ts "2.2.2"
     io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.2"
