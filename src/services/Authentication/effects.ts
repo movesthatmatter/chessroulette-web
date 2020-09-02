@@ -1,26 +1,27 @@
 import { Dispatch } from 'redux';
 import { resources } from 'src/resources';
-import { UserInfoRecord } from 'dstnd-io';
+import { UserRecord } from 'dstnd-io';
 import { setUserAction } from './actions';
 
 // TODO: This needs to be revised in order to offer proper auth flow!
-export const setUser = (
-  userInfo: UserInfoRecord,
-) => async (dispatch: Dispatch) => (
-  await resources.registerPeer({ userInfo })
+export const setUser = (userId: UserRecord['id']) => async (dispatch: Dispatch) => (
+  await resources.registerPeer({ userId })
 )
   .map(({ user }) => {
-    // This shouldn't be done in this way!
-    //  The Regiser Peer doesn't create the User but only registers it
     dispatch(setUserAction(user));
 
     return user;
   });
 
-// export const createRoom = (roomCredentials: CreateRoomRequest) => (dispatch: Dispatch) => {
-//   createRoom({
-//                     nickname: 'my room',
-//                     type: 'private',
-//                     peerId: user.id,
-//                   })
-// }
+export const setGuest = () => async (dispatch: Dispatch) => (
+  await resources.getGuestUserRegisteredAsPeer()
+)
+  .mapErr((e) => {
+    console.log('set guest error', e);
+  })
+  .map((peer) => {
+    console.log('set guest success', peer.user);
+    dispatch(setUserAction(peer.user));
+
+    return peer.user;
+  });
