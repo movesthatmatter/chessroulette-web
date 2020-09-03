@@ -1,3 +1,3 @@
 import { ModuleStateSlice } from './reducer';
 
-export const selectAuthentication = (state: ModuleStateSlice) => state.auth;
+export const selectAuthentication = (state: ModuleStateSlice) => state.authentication;

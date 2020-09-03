@@ -46,7 +46,7 @@ const reducer = createReducer(initialState as AuthenticationState, (handleAction
 ]);
 
 export const stateSliceByKey = {
-  auth: reducer,
+  authentication: reducer,
 };
 
 export type ModuleState = ReturnType<typeof reducer>;

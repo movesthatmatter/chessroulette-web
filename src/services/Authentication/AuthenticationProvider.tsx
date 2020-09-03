@@ -11,8 +11,13 @@ export const AuthenticationProvider: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // TODO: This will check for a real user auth
-    dispatch(setGuest());
+    if (authentication.authenticationType === 'none') {
+      // TODO: This will check for a real user auth
+
+      // This should also send bck the user id (guest id) for a refresher
+      // otherwise it will expire when the server restarts
+      dispatch(setGuest());
+    }
   }, []);
 
   // TODO: There should probably be different logic based on the auth state
