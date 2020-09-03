@@ -50,7 +50,6 @@ export const StreamingBox: React.FC<Props> = (props) => {
               </Button>
             </AspectRatio>
           )}
-
         </>
       )}
     </div>

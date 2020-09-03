@@ -129,17 +129,18 @@ export const registerPeer = async (
   }
 };
 
-// export const createGuestUser = async (): Promise<Result<CreateUserResponsePayload, ApiError>> => {
-//   try {
-//     const { data } = await http.post('api/users/guest');
+export const getGuestUserRegisteredAsPeer = async ():
+Promise<Result<RegisterPeerResponsePayload, ApiError>> => {
+  try {
+    const { data } = await http.post('api/peers/guest');
 
-//     return io
-//       .toResult(createUserResponsePayload.decode(data))
-//       .mapErr(() => 'BadResponse');
-//   } catch (e) {
-//     return new Err('BadRequest');
-//   }
-// };
+    return io
+      .toResult(registerPeerResponsePayload.decode(data))
+      .mapErr(() => 'BadResponse');
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+};
 
 // export const joinPrivateRoom = async (
 //   req: JoinPrivateRoomRequestPayload,

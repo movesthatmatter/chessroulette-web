@@ -13,6 +13,7 @@ import { ReduxProvider } from './redux/Provider';
 import { GameRoomV2Page } from './modules/GameRoomV2/GameRoomV2Page';
 import { LandingPageV2 } from './modules/Landing/LandingPageV2';
 import { LandingPage } from './modules/Landing/LandingPage';
+import { AuthenticationProvider } from './services/Authentication';
 
 function App() {
   const location = useLocation();
@@ -20,58 +21,60 @@ function App() {
 
   return (
     <ReduxProvider>
-      <SocketProvider>
-        <Grommet theme={defaultTheme} full>
-          <Box className={cls.container}>
-            <TransitionGroup component={null}>
-              { GA.init() && <GA.RouteTracker /> }
-              <Switch location={location}>
-                <Route exact path="/gameroom/:id/:code?" key={location.key}>
-                  {({ match }) => (
-                    <CSSTransition
-                      in={match !== null}
-                      key={location.key}
-                      timeout={600}
-                      unmountOnExit
-                    >
-                      <GameRoomV2Page />
-                    </CSSTransition>
-                  )}
-                </Route>
-                <Route exact path="/classroom/:id/:code?" key={location.key}>
-                  {({ match }) => (
-                    <CSSTransition
-                      in={match !== null}
-                      key={location.key}
-                      timeout={600}
-                      unmountOnExit
-                    >
-                      <ClassRoomPage />
-                    </CSSTransition>
-                  )}
-                </Route>
-                <Route exact strict path="/" key={location.key}>
-                  {({ match }) => (
-                    <CSSTransition
-                      in={match !== null}
-                      key={location.key}
-                      timeout={600}
-                      unmountOnExit
-                    >
+      <AuthenticationProvider>
+        <SocketProvider>
+          <Grommet theme={defaultTheme} full>
+            <Box className={cls.container}>
+              <TransitionGroup component={null}>
+                { GA.init() && <GA.RouteTracker /> }
+                <Switch location={location}>
+                  <Route exact path="/gameroom/:id/:code?" key={location.key}>
+                    {({ match }) => (
+                      <CSSTransition
+                        in={match !== null}
+                        key={location.key}
+                        timeout={600}
+                        unmountOnExit
+                      >
+                        <GameRoomV2Page />
+                      </CSSTransition>
+                    )}
+                  </Route>
+                  <Route exact path="/classroom/:id/:code?" key={location.key}>
+                    {({ match }) => (
+                      <CSSTransition
+                        in={match !== null}
+                        key={location.key}
+                        timeout={600}
+                        unmountOnExit
+                      >
+                        <ClassRoomPage />
+                      </CSSTransition>
+                    )}
+                  </Route>
+                  <Route exact strict path="/" key={location.key}>
+                    {({ match }) => (
+                      <CSSTransition
+                        in={match !== null}
+                        key={location.key}
+                        timeout={600}
+                        unmountOnExit
+                      >
 
-                      {/* <OnboardingPage /> */}
-                      {/* <GameRoomV2Page /> */}
-                      <LandingPageV2 />
-                      {/* <LandingPage /> */}
+                        {/* <OnboardingPage /> */}
+                        {/* <GameRoomV2Page /> */}
+                        <LandingPageV2 />
+                        {/* <LandingPage /> */}
 
-                    </CSSTransition>
-                  )}
-                </Route>
-              </Switch>
-            </TransitionGroup>
-          </Box>
-        </Grommet>
-      </SocketProvider>
+                      </CSSTransition>
+                    )}
+                  </Route>
+                </Switch>
+              </TransitionGroup>
+            </Box>
+          </Grommet>
+        </SocketProvider>
+      </AuthenticationProvider>
     </ReduxProvider>
   );
 }
