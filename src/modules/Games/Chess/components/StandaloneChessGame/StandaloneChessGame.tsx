@@ -6,6 +6,8 @@ import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
 import { Coundtdown } from 'src/modules/GameRoom/components/Countdown';
 import { ChessGameState, ChessGameColor, ChessMove } from 'dstnd-io';
 import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
+import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import { Avatar } from 'src/components/Avatar';
 import { otherChessColor } from '../../util';
 import { ChessGame } from '../ChessGame/ChessGame';
 
@@ -45,6 +47,7 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
         <div className={cx([cls.playerBar, cls.playerBarTop])}>
           <div className={cls.playerBarContent}>
             <div className={cls.playerInfo}>
+              <Avatar id={opponentPlayer.user.avatarId} width={40} className={cls.avatar} />
               {opponentPlayer.user.name}
             </div>
 
@@ -76,6 +79,7 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
         <div className={cx([cls.playerBar, cls.playerBarBottom])}>
           <div className={cls.playerBarContent}>
             <div className={cls.playerInfo}>
+              <Avatar id={myPlayer.user.avatarId} width={40} className={cls.avatar} />
               {myPlayer.user.name}
             </div>
             <Coundtdown
@@ -123,7 +127,14 @@ const useStyles = createUseStyles({
   playerBarBottom: {
     paddingBottom: '0px',
   },
-  playerInfo: {},
+  playerInfo: {
+    display: 'flex',
+    alignContent: 'center',
+    alignItems: 'center',
+  },
+  avatar: {
+    marginRight: '14px',
+  },
   countdown: {
     minWidth: '80px',
     display: 'flex',
