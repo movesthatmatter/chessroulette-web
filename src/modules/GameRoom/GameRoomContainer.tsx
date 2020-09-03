@@ -48,7 +48,9 @@ export const GameRoomContainer: React.FC<Props> = (props) => {
         //   return;
         // }
 
-        setChallengeOffer(msg);
+        // Note: Took it out on Sept 2 after a huge refactoing on GameRoomV2
+        //  and this broke. Just didn't have time to lookup the fix
+        // setChallengeOffer(msg);
       } else if (
         msg.msgType === 'gameChallengeRefused'
         || msg.msgType === 'gameChallengeCancelled'

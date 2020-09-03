@@ -10,11 +10,13 @@ import { PopupModal } from 'src/components/PopupModal/PopupModal';
 import { PopupContent } from 'src/components/PopupContent';
 import { Room, Peer } from 'src/components/RoomProvider';
 import useWindowSize from '@react-hook/window-size';
+import { chessGameActions } from 'dstnd-io';
 import {
   ChessGame,
   ChessPlayer,
   ChessGameState,
   reduceChessGame,
+  ChessGameStateStarted,
 } from '../Games/Chess';
 import { PlayerBox } from './components/PlayerBox/PlayerBox';
 import { otherChessColor } from '../Games/Chess/util';
@@ -214,28 +216,32 @@ export const GameRoom: React.FC<GameRoomProps> = ({
               homeColor={homeColor}
               playable={playable}
               onMove={(nextPgn) => {
+                // Note: Took it out on Sept 2 after a huge refactoing on GameRoomV2
+                //  and this broke. Just didn't have time to lookup the fix
+                // setChallengeOffer(msg);
+
                 // don't move unles the game is pending or started
-                if (
-                  !props.currentGame
-                  || props.currentGame.state === 'finished'
-                  || props.currentGame.state === 'neverStarted'
-                ) {
-                  return;
-                }
+                // if (
+                //   !props.currentGame
+                //   || props.currentGame.state === 'finished'
+                //   || props.currentGame.state === 'neverStarted'
+                // ) {
+                //   return;
+                // }
 
-                const now = new Date();
+                // const now = new Date();
 
-                const nextGame = reduceChessGame.move(props.currentGame, {
-                  pgn: nextPgn,
-                  // msSinceLastMove:
-                  //   typeof lastMoveTime === 'undefined'
-                  //     ? 0
-                  //     : now.getTime() - lastMoveTime.getTime(),
-                });
+                // const nextGame = chessGameActions.move(props.currentGame, {
+                //   pgn: nextPgn,
+                //   // msSinceLastMove:
+                //   //   typeof lastMoveTime === 'undefined'
+                //   //     ? 0
+                //   //     : now.getTime() - lastMoveTime.getTime(),
+                // });
 
-                setLastMoveTime(now);
+                // setLastMoveTime(now);
 
-                props.onGameStateUpdate(nextGame);
+                // props.onGameStateUpdate(nextGame);
               }}
             />
           </div>
