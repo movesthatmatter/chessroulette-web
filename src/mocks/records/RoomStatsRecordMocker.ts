@@ -40,7 +40,7 @@ export class RoomStatsRecordMocker {
       // This is an opponentWaitingGame
       game: prepareGameAction({
         timeLimit: 'blitz',
-        players: [peers[0].user],
+        players: [Object.values(peers)[0].user],
       }),
     };
   }
