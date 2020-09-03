@@ -7,8 +7,10 @@ import config from 'src/config';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { isLeft } from 'fp-ts/lib/Either';
 import { eitherToResult } from 'src/lib/ioutil';
-import { UserInfoRecord } from 'dstnd-io';
+import { UserRecord } from 'dstnd-io';
 import { noop } from 'src/lib/util';
+import { SocketClient } from 'src/services/socket/SocketClient';
+import reducerLogger from 'use-reducer-logger';
 import { SocketConsumer } from '../SocketProvider';
 import {
   initialState,
@@ -18,6 +20,7 @@ import {
   addMyStream,
   addPeerStream,
   removePeerAction,
+  updateRoomAction,
 } from './reducer';
 import { ActivePeerConnections } from './ActivePeerConnections';
 import { wNamespace, woNamespace } from './util';
@@ -35,18 +38,22 @@ export type PeerProviderProps = {
     id: string;
     code?: string;
   };
-  userInfo: UserInfoRecord;
+  user: UserRecord;
 };
 
 export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   const peerSDK = useRef<PeerSDK>();
   const activePeerConnections = useRef(new ActivePeerConnections()).current;
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(
+    config.DEBUG ? reducerLogger(reducer) : reducer,
+    initialState,
+  );
   const proxy = useRef(new Proxy()).current;
   const [contextState, setContextState] = useState<PeerContextProps>({
     state: 'init',
     showMyStream: noop,
   });
+  const [socket, setSocket] = useState<SocketClient | undefined>();
 
   useEffect(() => {
     setContextState((prev) => {
@@ -67,7 +74,13 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           };
 
           Object.keys(state.room?.peers ?? {}).forEach((peerId) => {
-            activePeerConnections.get(peerId)?.data?.send(payload);
+            // activePeerConnections.get(peerId)?.data?.send(payload);
+
+            // Send it over Socket instead of RTC for reliability
+            socket?.send({
+              kind: 'peerMessage',
+              content: payload,
+            });
           });
 
           proxy.publishOnPeerMessageSent(payload);
@@ -114,6 +127,12 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   return (
     <SocketConsumer
       onMessage={(msg) => {
+        if (msg.kind === 'roomStats') {
+          dispatch(updateRoomAction({ room: msg.content }));
+
+          return;
+        }
+
         if (msg.kind === 'joinRoomSuccess') {
           dispatch(
             createRoomAction({
@@ -203,7 +222,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
                   dispatch(
                     addPeerAction({
                       id: peerId,
-                      user: props.userInfo,
+                      user: props.user,
                     }),
                   );
                 },
@@ -255,18 +274,20 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           });
         }
       }}
-      onReady={(socket) => {
+      onReady={(socketClient) => {
+        setSocket(socketClient);
+
         setContextState(() => ({
           state: 'connecting',
           showMyStream: noop,
         }));
 
-        socket.send({
+        socketClient.send({
           kind: 'userIdentification',
-          content: { userId: props.userInfo.id },
+          content: { userId: props.user.id },
         });
 
-        socket.send({
+        socketClient.send({
           kind: 'joinRoomRequest',
           content: {
             roomId: props.roomCredentials.id,

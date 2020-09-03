@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { PeerProvider } from './PeerProvider';
 import { SocketProvider } from '../SocketProvider';
 import { FaceTime } from '../FaceTimeArea';
@@ -14,10 +13,11 @@ export default {
 export const defaultStory = () => (
   <SocketProvider>
     <PeerProvider
-      userInfo={{
+      user={{
         id: '1',
         name: 'Kasparov',
         avatarId: '1',
+        isGuest: false,
       }}
       roomCredentials={{
         id: '1',

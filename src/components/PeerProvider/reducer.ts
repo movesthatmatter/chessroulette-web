@@ -10,6 +10,13 @@ export const createRoomAction = createAction(
   }) => resolve(p),
 );
 
+export const updateRoomAction = createAction(
+  'Update Room',
+  (resolve) => (p: {
+    room: RoomStatsRecord;
+  }) => resolve(p),
+);
+
 export const addPeerAction = createAction(
   'Add Peer',
   (resolve) => (p: PeerRecord) => resolve(p),
@@ -43,6 +50,8 @@ export const initialState: State = {
   room: undefined,
 };
 
+// const roomWithPeers = (room: RoomStatsRecord): Room =>
+
 export const reducer = createReducer(initialState, (handleAction) => ([
   // handleAction(createRoomAction, (state) => state),
   handleAction(createRoomAction, (state, { payload }) => {
@@ -75,6 +84,58 @@ export const reducer = createReducer(initialState, (handleAction) => ([
           [payload.me.id]: nextMe,
         },
         peersCount: Object.keys(nextPeers).length,
+      },
+    };
+  }),
+  handleAction(updateRoomAction, (state, { payload }) => {
+    if (!state.room) {
+      return state;
+    }
+
+    const nextPeers = Object
+      .keys(payload.room.peers)
+      .filter((peerId) => state.room?.me.id !== peerId) // Takes me out
+      .reduce((res, nextPeerId) => {
+        // Create new peer if not existent
+        if (!state.room?.peers[nextPeerId]) {
+          return {
+            ...res,
+            [nextPeerId]: {
+              ...payload.room.peers[nextPeerId],
+
+              // Simply add the connection
+              connection: {
+                channels: {
+                  // These could be passed in the action
+                  data: { on: true },
+                  streaming: { on: false },
+                },
+              },
+            } as const,
+          };
+        }
+
+        // Otherwise merge them - this also removes lingering peers
+        return {
+          ...res,
+          [nextPeerId]: {
+            ...state.room.peers[nextPeerId],
+            ...state.room?.peers[nextPeerId],
+          },
+        };
+      }, {} as Room['peers']);
+
+    return {
+      ...state,
+      room: {
+        ...state.room,
+        ...payload.room,
+        peers: nextPeers,
+        peersCount: Object.keys(nextPeers).length,
+        peersIncludingMe: {
+          [state.room.me.id]: state.room.me,
+          ...nextPeers,
+        },
       },
     };
   }),
