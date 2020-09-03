@@ -13,7 +13,14 @@ import {
   PingPayload,
   JoinRoomFailurePayload,
   UserIdentificationPayload,
+  WhoAmIRequestPayload,
+
+  GameDrawOfferingRequestPayload,
+  GameResignationRequestPayload,
+  GameMoveRequestPayload,
+  GameJoinRequestPayload,
 } from 'dstnd-io';
+import { PeerMessageEnvelope } from 'src/components/PeerProvider/records';
 
 type ReceivableMessagesMap = {
   peerJoinedRoom: PeerJoinedRoomPayload;
@@ -25,12 +32,31 @@ type ReceivableMessagesMap = {
   joinRoomFailure: JoinRoomFailurePayload;
 
   ping: PingPayload;
+
+  // This is the same as RTC Data, but over Socket for reliability
+  peerMessage: {
+    kind: 'peerMessage';
+    content: PeerMessageEnvelope;
+  };
 };
 
 type SendableMessagesMap = {
   joinRoomRequest: JoinRoomRequestPayload;
   userIdentification: UserIdentificationPayload;
   ping: PingPayload;
+  whoami: WhoAmIRequestPayload;
+
+  // Game
+  gameDrawOfferingRequestPayload: GameDrawOfferingRequestPayload;
+  gameResignationRequestPayload: GameResignationRequestPayload;
+  gameMoveRequestPayload: GameMoveRequestPayload;
+  gameJoinRequestPayload: GameJoinRequestPayload;
+
+  // This is the same as RTC Data, but over Socket for reliability
+  peerMessage: {
+    kind: 'peerMessage';
+    content: PeerMessageEnvelope;
+  };
 };
 
 export class SocketClient {
