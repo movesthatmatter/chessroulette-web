@@ -3,39 +3,39 @@ import { createUseStyles } from 'src/lib/jss';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { Room } from 'src/components/RoomProvider';
 import { StandaloneChessGame } from 'src/modules/Games/Chess/components/StandaloneChessGame';
-import { ChessGameState, reduceChessGame } from 'src/modules/Games/Chess';
 import { Box } from 'grommet';
 import { PopupContent } from 'src/components/PopupContent';
 import { Modal } from 'src/components/Modal/Modal';
-import { PlayButtonWidget } from 'src/components/PlayButtonWidget';
+import { ChessMove } from 'dstnd-io/dist/chessGame';
+import { noop } from 'src/lib/util';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
-import { ChatContainer } from '../ClassRoom/components/Chat';
-import { otherChessColor } from '../Games/Chess/util';
+import { ChessGameColor } from '../Games/Chess';
+import { getOpponent, isPlayer, getPlayerColor } from './util';
 
 type Props = {
   room: Room;
-} & ({
-  game: ChessGameState;
-  onGameStateUpdate: (nextGame: ChessGameState) => void;
-} | {
-  game?: undefined;
-});
+  homeColor: ChessGameColor;
+  onMove?: (m: ChessMove) => void;
+};
 
-export const GameRoomV2: React.FC<Props> = (props) => {
+export const GameRoomV2: React.FC<Props> = ({
+  onMove = noop,
+  ...props
+}) => {
   const cls = useStyles();
   const [showGameFinishedPopup, setShowGameFinishedPopup] = useState(false);
 
-  const homeColor = props.room.me.id === props.game?.players.black.id ? 'black' : 'white';
+  const homeColor = getPlayerColor(props.room.me.id, props.room.game.players);
 
-  const opponent = props.game
-    ? props.room.peers[props.game.players[otherChessColor(homeColor)].id]
-    : undefined;
+  const opponentPlayer = getOpponent(props.room.me.id, props.room.game.players);
+
+  const { game } = props.room;
 
   useEffect(() => {
-    if (props.game?.state === 'finished') {
+    if (props.room.game.state === 'finished') {
       setShowGameFinishedPopup(true);
     }
-  }, [props.game]);
+  }, [props.room.game]);
 
   return (
     <div className={cls.container}>
@@ -44,53 +44,55 @@ export const GameRoomV2: React.FC<Props> = (props) => {
           <StandaloneChessGame
             homeColor={homeColor}
             playable={
-              (props.game?.state === 'pending' || props.game?.state === 'started')
-              && props.game.players[homeColor].id === props.room.me.id
+              (game.state === 'pending' || game.state === 'started')
+              && isPlayer(props.room.me.id, game.players)
+              && game.lastMoveBy !== homeColor
             }
-            game={props.game}
+            game={props.room.game}
             getBoardSize={() => dimensions.width}
-            onMove={(nextPgn) => {
+            onMove={(nextMove) => {
               // don't move unless the game is pending or started
               if (
-                !props.game
-                || props.game.state === 'finished'
-                || props.game.state === 'neverStarted'
+                !game
+                || game.state === 'finished'
+                || game.state === 'neverStarted'
               ) {
                 return;
               }
 
-              props.onGameStateUpdate(reduceChessGame.move(props.game, { pgn: nextPgn }));
+              // props.onGameStateUpdate(chessGameActions.move(props.game, { pgn: nextPgn }));
+              onMove(nextMove);
             }}
-            onTimerFinished={() => {
-              if (
-                !props.game
-                || props.game.state === 'finished'
-                || props.game.state === 'neverStarted'
-              ) {
-                return;
-              }
+            // onTimerFinished={() => {
+            //   if (
+            //     !props.game
+            //     || props.game.state === 'finished'
+            //     || props.game.state === 'neverStarted'
+            //   ) {
+            //     return;
+            //   }
 
-              props.onGameStateUpdate(reduceChessGame.timerFinished(props.game));
-            }}
+            //   props.onGameStateUpdate(chessGameActions.timerFinished(props.game));
+            // }}
           />
         )}
         getSideComponent={(dimensions) => (
           <div className={cls.side}>
             <StreamingBox
               room={props.room}
-              opponentPeerId={opponent?.id}
+              opponentPeerId={opponentPlayer?.user.id}
               // peer={opponent}
               width={dimensions.width}
             />
             <div className={cls.sideBottom}>
-              {!props.game ? (
+              {/* {!props.game ? (
                 <div className={cls.playButtonsContainer}>
                   <PlayButtonWidget type="challenge" />
                   <PlayButtonWidget type="friendly" />
                 </div>
               ) : (
                 <ChatContainer className={cls.chatContainer} />
-              )}
+              )} */}
             </div>
           </div>
         )}
@@ -105,7 +107,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
           onClose={() => setShowGameFinishedPopup(false)}
         >
           <Box>
-            {`${props.game?.winner} won`}
+            {`${game?.winner} won`}
           </Box>
         </PopupContent>
       </Modal>

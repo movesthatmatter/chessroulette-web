@@ -4,7 +4,6 @@ import { PeerProvider } from 'src/components/PeerProvider';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication';
-import { getRandomInt } from 'src/lib/util';
 import { GameRoomV2Container } from '../GameRoomV2Container/GameRoomV2Container';
 
 type Props = {};
@@ -15,18 +14,15 @@ export const GameRoomV2Page: React.FC<Props> = () => {
   const auth = useSelector(selectAuthentication);
 
   // If not authenticated with a real user create a temporary Guest
+  if (auth.authenticationType === 'none') {
+    return null;
+  }
 
   return (
     <Page>
       <PeerProvider
         roomCredentials={params}
-        // userId={auth.isAuthenticated ? auth.user.id :}
-        userInfo={auth.isAuthenticated ? auth.user : {
-          // Don't hardcode this
-          id: String(getRandomInt(1, 6)),
-          name: 'asda',
-          avatarId: '3',
-        }}
+        user={auth.user}
       >
         <GameRoomV2Container />
       </PeerProvider>

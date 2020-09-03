@@ -4,11 +4,14 @@ import { Grommet } from 'grommet';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { defaultTheme } from 'src/theme';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
-import { reduceChessGame, ChessGameState } from 'src/modules/Games/Chess';
 import { Page } from 'src/components/Page';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
-import { publicRoomResponsePayload } from 'dstnd-io';
+import {
+  chessGameActions, ChessGameState, ChessGameStateStarted, ChessGameColor,
+} from 'dstnd-io';
+import { action } from '@storybook/addon-actions';
 import { GameRoomV2 } from './GameRoomV2';
+import { otherChessColor } from '../Games/Chess/util';
 
 export default {
   component: GameRoomV2,
@@ -37,6 +40,14 @@ export const defaultStory = () => (
         },
       });
 
+      const homeColor = 'white';
+
+      const [currentGame] = useState<ChessGameState>(chessGameActions.prepareGame({
+        players: [me.user, opponent.user],
+        preferredColor: homeColor,
+        timeLimit: 'blitz',
+      }));
+
       const publicRoom = roomMocker.withProps({
         me,
         peers: {
@@ -45,22 +56,14 @@ export const defaultStory = () => (
         },
         name: 'Valencia',
         type: 'public',
+        game: currentGame,
       });
-
-      const [currentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
-        playersBySide: {
-          away: opponent.user,
-          home: me.user,
-        },
-        homeColor: 'white',
-        timeLimit: 'blitz',
-      }));
 
       return (
         <GameRoomV2
           room={publicRoom}
-          game={currentGame}
-          onGameStateUpdate={() => currentGame}
+          homeColor={homeColor}
+          onMove={action('on move')}
         />
       );
     })}
@@ -89,7 +92,7 @@ export const withoutGame = () => (
       });
 
       return (
-        <GameRoomV2 room={publicRoom} />
+        <GameRoomV2 room={publicRoom} homeColor="white" />
       );
     })}
     />
@@ -115,16 +118,9 @@ export const asPage = () => (
         },
       });
 
-      const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
-        playersBySide: {
-          away: opponent.user,
-          home: me.user,
-        },
-        homeColor: 'white',
-        timeLimit: 'bullet',
-      }));
+      const homeColor = 'white';
 
-      const publicRoom = roomMocker.withProps({
+      const [publicRoom, setPublicRoom] = useState(roomMocker.withProps({
         me,
         peers: {
           [me.id]: me,
@@ -132,14 +128,27 @@ export const asPage = () => (
         },
         name: 'Valencia',
         type: 'public',
-      });
+        game: chessGameActions.prepareGame({
+          players: [me.user, opponent.user],
+          preferredColor: homeColor,
+          timeLimit: 'bullet',
+        }),
+      }));
 
       return (
         <Page>
           <GameRoomV2
             room={publicRoom}
-            game={currentGame}
-            onGameStateUpdate={setCurrentGame}
+            homeColor={homeColor}
+            onMove={(nextMove) => {
+              setPublicRoom((prev) => ({
+                ...prev,
+                game: chessGameActions.move(
+                  prev.game as ChessGameStateStarted,
+                  { move: nextMove },
+                ),
+              }));
+            }}
           />
         </Page>
       );
@@ -167,18 +176,9 @@ export const asPageWithSwitchingSides = () => (
         },
       });
 
-      const [playersBySide, setPlayersBySide] = useState({
-        home: me.user,
-        away: opponent.user,
-      });
+      const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
 
-      const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
-        playersBySide,
-        homeColor: 'white',
-        timeLimit: 'bullet',
-      }));
-
-      const publicRoom = roomMocker.withProps({
+      const [publicRoom, setPublicRoom] = useState(roomMocker.withProps({
         me,
         peers: {
           [me.id]: me,
@@ -186,21 +186,25 @@ export const asPageWithSwitchingSides = () => (
         },
         name: 'Valencia',
         type: 'public',
-      });
+        game: chessGameActions.prepareGame({
+          players: [me.user, opponent.user],
+          preferredColor: homeColor,
+          timeLimit: 'bullet',
+        }),
+      }));
 
       return (
         <Page>
           <GameRoomV2
             room={publicRoom}
-            game={currentGame}
-            // onGameStateUpdate={setCurrentGame}
-            onGameStateUpdate={(nextGame) => {
-              setPlayersBySide((prev) => ({
-                home: prev.away,
-                away: prev.home,
+            homeColor={homeColor}
+            onMove={(move) => {
+              setPublicRoom((prev) => ({
+                ...prev,
+                game: chessGameActions.move(prev.game as ChessGameStateStarted, { move }),
               }));
 
-              setCurrentGame(nextGame);
+              setHomeColor((prev) => otherChessColor(prev));
             }}
           />
         </Page>
@@ -229,7 +233,9 @@ export const asPageWithFinishedGame = () => (
         },
       });
 
-      const publicRoom = roomMocker.withProps({
+      const homeColor = 'white';
+
+      const [publicRoom] = useState(roomMocker.withProps({
         me,
         peers: {
           [me.id]: me,
@@ -237,24 +243,20 @@ export const asPageWithFinishedGame = () => (
         },
         name: 'Valencia',
         type: 'public',
-      });
-
-      const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
-        playersBySide: {
-          away: opponent.user,
-          home: me.user,
-        },
-        homeColor: 'white',
-        timeLimit: 'bullet',
-        pgn: '1. e4 e5 2. Qf3 Na6 3. Bc4 h6 4. Qxf7#',
+        game: chessGameActions.prepareGame({
+          players: [me.user, opponent.user],
+          preferredColor: homeColor,
+          timeLimit: 'bullet',
+          pgn: '1. e4 e5 2. Qf3 Na6 3. Bc4 h6 4. Qxf7#',
+        }),
       }));
 
       return (
         <Page>
           <GameRoomV2
             room={publicRoom}
-            game={currentGame}
-            onGameStateUpdate={setCurrentGame}
+            onMove={action('on move')}
+            homeColor={homeColor}
           />
         </Page>
       );

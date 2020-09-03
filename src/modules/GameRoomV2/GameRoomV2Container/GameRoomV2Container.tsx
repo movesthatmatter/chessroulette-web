@@ -1,27 +1,86 @@
 import React from 'react';
-
 import { PeerConsumer } from 'src/components/PeerProvider';
-import { ChessGameState } from 'src/modules/Games/Chess';
-import { Peer } from 'src/components/RoomProvider';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
+import { Layer, Box } from 'grommet';
+import { Button } from 'src/components/Button';
+import { useHistory } from 'react-router-dom';
+import { ClipboardCopy } from 'src/components/CipboardCopy';
+import { SocketConsumer } from 'src/components/SocketProvider';
 import { GameRoomV2 } from '../GameRoomV2';
+import { isPlayer } from '../util';
 
-type Props = & ({
-  game: ChessGameState;
-  onGameStateUpdate: (nextGame: ChessGameState) => void;
-  opponent: Peer;
-} | {
-  game?: undefined;
-})
+type Props = {};
 
-export const GameRoomV2Container: React.FC<Props> = (props) => (
-  <PeerConsumer
-    render={(p) => <GameRoomV2 room={p.room} {...props} />}
-    renderFallback={() => <AwesomeLoaderPage />}
-    onReady={(p) => {
-      // Show my stream right away for now but later it could be
-      // on demand from inside the room
-      p.showMyStream();
-    }}
-  />
-);
+export const GameRoomV2Container: React.FC<Props> = () => {
+  const history = useHistory();
+
+  return (
+    <SocketConsumer
+      render={({ socket }) => (
+        <PeerConsumer
+          render={(p) => {
+            const isMePlayer = isPlayer(p.room.me.id, p.room.game.players);
+
+            return (
+              <>
+                {p.room.game.state === 'waitingForOpponent' && (
+                  <>
+                    {isMePlayer ? (
+                      <Layer position="center">
+                        <Box pad="medium" gap="small" width="medium">
+                          Waiting for Opponent
+                          <ClipboardCopy value={window.location.href} />
+                          <Button
+                            onClick={() => history.goBack()}
+                            label="Cancel"
+                          />
+                        </Box>
+                      </Layer>
+                    ) : (
+                      <Layer position="center">
+                        <Box pad="medium" gap="small" width="medium">
+                          {/* <FaceTimeSetup /> */}
+                          Do you want to join the game?
+                          <Button
+                            onClick={() => {
+                              socket.send({
+                                kind: 'gameJoinRequest',
+                                content: undefined,
+                              });
+                            }}
+                            primary
+                            label="Join"
+                          />
+                          <Button
+                            onClick={() => history.goBack()}
+                            label="Cancel"
+                          />
+                        </Box>
+                      </Layer>
+                    )}
+                  </>
+                )}
+                <GameRoomV2
+                  room={p.room}
+                  homeColor="white"
+                  onMove={(nextMove) => {
+                    socket.send({
+                      kind: 'gameMoveRequest',
+                      content: nextMove,
+                    });
+                  }}
+                />
+              </>
+            );
+          }}
+          renderFallback={() => <AwesomeLoaderPage />}
+          onReady={(p) => {
+            // Show my stream right away for now but later it could be
+            // on demand from inside the room
+            p.showMyStream();
+          }}
+        />
+      )}
+    />
+  );
+};
