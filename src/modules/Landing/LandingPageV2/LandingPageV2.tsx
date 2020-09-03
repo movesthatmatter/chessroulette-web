@@ -1,55 +1,83 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Page } from 'src/components/Page';
-import { GameRoomV2 } from 'src/modules/GameRoomV2/GameRoomV2';
-import { PeerMocker } from 'src/mocks/records/PeerMocker';
-import { RoomMocker } from 'src/mocks/records/RoomMocker';
-import { Peer } from 'src/components/RoomProvider';
 import { PlayButtonWidget } from 'src/components/PlayButtonWidget';
+import { Box } from 'grommet';
+import { resources } from 'src/resources';
+import { SocketConsumer } from 'src/components/SocketProvider';
+import { PeerRecord, CreateRoomResponse } from 'dstnd-io';
+import { useHistory } from 'react-router-dom';
+import { AuthenticationConsumer } from 'src/services/Authentication';
 
 type Props = {};
 
-const peerMocker = new PeerMocker();
-const roomMocker = new RoomMocker();
+const toRoomPath = (room: CreateRoomResponse) =>
+  `${room.id}${room.type === 'private' ? `/${room.code}` : ''}`;
 
 export const LandingPageV2: React.FC<Props> = () => {
-  const [room, setRoom] = useState(roomMocker.record(0));
-
-  useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setRoom((prev) => {
-          // TODO: This should actually use the authenticated user info or the guest info!
-
-          const me: Peer = {
-            ...prev.me,
-            connection: peerMocker.withChannels({
-              streaming: {
-                on: true,
-                type: 'audio-video',
-                stream,
-              },
-            }).connection,
-          };
-
-          return {
-            ...prev,
-            me,
-            peersIncludingMe: {
-              ...prev.peersIncludingMe,
-              [me.id]: me,
-            },
-          };
-        });
-      });
-  }, []);
+  // TODO: All of this Peer Gather could be removed if
+  //  I could createa  challenge with the User id instead of
+  //  the Peer Id
+  const [me, setMe] = useState<PeerRecord | undefined>();
+  const history = useHistory();
+  // const
 
   // For now the Landing Page simply impersonates a GameRoom
   return (
     <Page>
-      <PlayButtonWidget type="challenge" />
-      <PlayButtonWidget type="friendly" />
-      {/* <GameRoomV2 room={room} /> */}
+      <Box>
+        <AuthenticationConsumer renderAuthenticated={(auth) => (
+          <SocketConsumer
+            onMessage={(msg) => {
+              if (msg.kind === 'myStats') {
+                setMe(msg.content);
+              }
+            }}
+            render={() => (
+              (me && (
+                <Box width="medium" alignSelf="center">
+                  <PlayButtonWidget
+                    type="challenge"
+                    onSubmit={async () => {
+                      (await resources.createChallenge({
+                        peerId: me.id,
+                        game: {
+                          // Don't hardcode
+                          timeLimit: 'rapid',
+                        },
+                      }))
+                        .mapErr((e) => {
+                          console.log('error', e);
+                        })
+                        .map((room) => {
+                          history.push(`/gameroom/${toRoomPath(room)}`);
+                        });
+                    }}
+                  />
+                  <PlayButtonWidget
+                    type="friendly"
+                    onSubmit={async () => {
+                      // (await resources.createChallenge({ peerId: me.id }))
+                      //   .map((room) => {
+                      //     history.push(`/gameroom/${toRoomPath(room)}`);
+                      //   });
+                      // console.log('join challenge');
+                    }}
+                  />
+                </Box>
+              ))
+            )}
+            onReady={(socket) => {
+              socket.send({
+                kind: 'userIdentification',
+                content: { userId: auth.user.id },
+              });
+
+              socket.send({ kind: 'whoami', content: '' });
+            }}
+          />
+        )}
+        />
+      </Box>
     </Page>
   );
 };
