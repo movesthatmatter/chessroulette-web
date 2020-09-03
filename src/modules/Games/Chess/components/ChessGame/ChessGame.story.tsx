@@ -50,10 +50,10 @@ export const withLoggingOnMove = () => React.createElement(() => {
   return (
     <ChessGame
       homeColor="white"
-      onMove={(newFen) => {
-        setFen(newFen);
+      onMove={(_, newPgn) => {
+        setFen(newPgn);
         setLastMoved((prev) => otherChessColor(prev));
-        action('onMove')(newFen);
+        action('onMove')(newPgn);
       }}
       pgn={fen}
       playable={myColor !== lastMoved}
@@ -70,11 +70,11 @@ export const withSwitchingSide = () => React.createElement(() => {
   return (
     <ChessGame
       homeColor={homeColor}
-      onMove={(newFen) => {
-        setFen(newFen);
+      onMove={(_, pgn) => {
+        setFen(pgn);
         setLastMoved((prev) => otherChessColor(prev));
         setHomeColor((prev) => otherChessColor(prev));
-        action('onMove')(newFen);
+        action('onMove')(pgn);
       }}
       pgn={fen}
       playable={homeColor !== lastMoved}

@@ -1,14 +1,16 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
 import { action } from '@storybook/addon-actions';
-import { PeerRecordMock, UserInfoMocker } from 'src/mocks/records';
+import { UserInfoMocker } from 'src/mocks/records';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
+import {
+  chessGameActions, ChessGameState, ChessGameColor, UserInfoRecord, ChessGameStateStarted,
+} from 'dstnd-io';
 import { StandaloneChessGame } from './StandaloneChessGame';
-import { ChessGameColor, ChessGameState } from '../../records';
+// import { ChessGameColor, ChessGameState } from '../../records';
 import { otherChessColor } from '../../util';
-import { reduceChessGame } from '../..';
-import { GamePlayersBySide } from '../../chessGameStateReducer';
+// import { GamePlayersBySide } from '../../chessGameStateReducer';
 
 export default {
   component: StandaloneChessGame,
@@ -20,15 +22,20 @@ const userInfoMocker = new UserInfoMocker();
 const me = userInfoMocker.record();
 const opponent = userInfoMocker.record();
 
-const playersBySide: GamePlayersBySide = {
-  home: userInfoMocker.withProps({ id: me.id }),
-  away: userInfoMocker.withProps({ id: opponent.id }),
-};
+// const playersBySide: GamePlayersBySide = {
+//   home: userInfoMocker.withProps({ id: me.id }),
+//   away: userInfoMocker.withProps({ id: opponent.id }),
+// };
+
+const players = [
+  userInfoMocker.withProps({ id: me.id }),
+  userInfoMocker.withProps({ id: opponent.id }),
+] as [UserInfoRecord, UserInfoRecord];
 
 export const asWhite = () => React.createElement(() => {
-  const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
-    playersBySide,
-    homeColor: 'white',
+  const [currentGame, setCurrentGame] = useState<ChessGameState>(chessGameActions.prepareGame({
+    players,
+    preferredColor: 'white',
     timeLimit: 'bullet',
   }));
 
@@ -38,7 +45,7 @@ export const asWhite = () => React.createElement(() => {
         homeColor="white"
         playable={currentGame.state !== 'finished' && currentGame.state !== 'neverStarted'}
         game={currentGame}
-        onMove={(nextPgn) => {
+        onMove={(move) => {
           if (
             !currentGame
             || currentGame.state === 'finished'
@@ -47,8 +54,8 @@ export const asWhite = () => React.createElement(() => {
             return;
           }
 
-          setCurrentGame(reduceChessGame.move(currentGame, { pgn: nextPgn }));
-          action('onMove')(nextPgn);
+          setCurrentGame(chessGameActions.move(currentGame as ChessGameStateStarted, { move }));
+          action('onMove')(move);
         }}
         onTimerFinished={() => {
           if (
@@ -59,7 +66,7 @@ export const asWhite = () => React.createElement(() => {
             return;
           }
 
-          setCurrentGame(reduceChessGame.timerFinished(currentGame));
+          setCurrentGame(chessGameActions.timerFinished(currentGame as ChessGameStateStarted));
         }}
       />
     </Grommet>
@@ -71,9 +78,9 @@ export const withSwitchingSide = () => React.createElement(() => {
   const [lastMoved, setLastMoved] = useState<ChessGameColor>('black');
   const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
 
-  const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
-    playersBySide,
-    homeColor: 'white',
+  const [currentGame, setCurrentGame] = useState<ChessGameState>(chessGameActions.prepareGame({
+    players,
+    preferredColor: 'white',
     timeLimit: 'bullet',
   }));
 
@@ -81,7 +88,7 @@ export const withSwitchingSide = () => React.createElement(() => {
     <Grommet theme={defaultTheme}>
       <StandaloneChessGame
         homeColor={homeColor}
-        onMove={(nextPgn) => {
+        onMove={(move) => {
           if (
             !currentGame
             || currentGame.state === 'finished'
@@ -91,11 +98,11 @@ export const withSwitchingSide = () => React.createElement(() => {
           }
 
           // setFen(newFen);
-          setCurrentGame(reduceChessGame.move(currentGame, { pgn: nextPgn }));
+          setCurrentGame(chessGameActions.move(currentGame as ChessGameStateStarted, { move }));
 
           setLastMoved((prev) => otherChessColor(prev));
           setHomeColor((prev) => otherChessColor(prev));
-          action('onMove')(nextPgn);
+          action('onMove')(move);
         }}
         onTimerFinished={() => {
           if (
@@ -106,7 +113,7 @@ export const withSwitchingSide = () => React.createElement(() => {
             return;
           }
 
-          setCurrentGame(reduceChessGame.timerFinished(currentGame));
+          setCurrentGame(chessGameActions.timerFinished(currentGame as ChessGameStateStarted));
         }}
         game={currentGame}
         playable={homeColor !== lastMoved}
@@ -116,9 +123,9 @@ export const withSwitchingSide = () => React.createElement(() => {
 });
 
 export const mated = () => React.createElement(() => {
-  const [currentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
-    playersBySide,
-    homeColor: 'white',
+  const [currentGame] = useState<ChessGameState>(chessGameActions.prepareGame({
+    players,
+    preferredColor: 'white',
     timeLimit: 'rapid',
     pgn: '1. e4 e5 2. Qf3 Na6 3. Bc4 h6 4. Qxf7#',
   }));

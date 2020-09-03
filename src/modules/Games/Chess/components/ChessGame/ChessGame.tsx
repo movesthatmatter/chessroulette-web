@@ -4,6 +4,7 @@ import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { Move, Square } from 'chess.js';
 import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
+import { ChessMove, ChessGameStatePgn } from 'dstnd-io';
 import { ChessBoard } from '../ChessBoard';
 import { getNewChessGame } from '../../lib/sdk';
 import validMoveSound from '../../assets/sounds/valid_move.wav';
@@ -15,7 +16,7 @@ const inCheckAudio = new Audio(inCheckSound);
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   playable: boolean;
-  onMove?: (pgn: string) => void;
+  onMove?: (m: ChessMove, pgn: ChessGameStatePgn) => void;
   pgn: string;
 
   // The bottom side
@@ -65,15 +66,18 @@ export const ChessGame: React.FunctionComponent<Props> = ({
       return;
     }
 
-    // see if the move is legal
-    const validMove = gameInstance.move({
+    const nextMove: ChessMove = {
       from: sourceSquare,
       to: targetSquare,
-      promotion: 'q', // keep it simple for now
-    });
+      promotion: 'q', // TODO: don't hardcode the queen
+    };
+
+    // see if the move is legal
+    const validMove = gameInstance.move(nextMove);
 
     if (validMove !== null) {
-      onMove(gameInstance.pgn());
+      // onMove(gameInstance.pgn());
+      onMove(nextMove, gameInstance.pgn());
     }
   };
 

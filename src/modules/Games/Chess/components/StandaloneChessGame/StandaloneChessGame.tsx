@@ -4,7 +4,8 @@ import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
 import { Coundtdown } from 'src/modules/GameRoom/components/Countdown';
-import { ChessGameState } from '../../records';
+import { ChessGameState, ChessGameColor, ChessMove } from 'dstnd-io';
+import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
 import { otherChessColor } from '../../util';
 import { ChessGame } from '../ChessGame/ChessGame';
 
@@ -13,10 +14,10 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   game: ChessGameState | undefined;
 
   // The bottom side
-  homeColor: 'white' | 'black';
+  homeColor: ChessGameColor;
 
-  onMove: (pgn: string) => void;
-  onTimerFinished: () => void;
+  onMove: (m: ChessMove) => void;
+  onTimerFinished?: () => void;
 
   getBoardSize?: (p: {screenWidth: number; screenHeight: number}) => number;
 };
@@ -24,19 +25,27 @@ type Props = React.HTMLProps<HTMLDivElement> & {
 export const StandaloneChessGame: React.FunctionComponent<Props> = ({
   game,
   onMove = noop,
+  onTimerFinished = noop,
   playable = false,
   getBoardSize = getDefaultBoardSize,
   ...props
 }) => {
   const cls = useStyles();
 
+  const myPlayer = game
+    ? getPlayerByColor(props.homeColor, game.players)
+    : undefined;
+  const opponentPlayer = game
+    ? getPlayerByColor(otherChessColor(props.homeColor), game.players)
+    : undefined;
+
   return (
     <div className={cx([cls.container, props.className])}>
-      {game && (
+      {opponentPlayer && (
         <div className={cx([cls.playerBar, cls.playerBarTop])}>
           <div className={cls.playerBarContent}>
             <div className={cls.playerInfo}>
-              {game?.players[otherChessColor(props.homeColor)].name}
+              {opponentPlayer.user.name}
             </div>
 
             <Coundtdown
@@ -47,7 +56,7 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
                 || game.state !== 'started'
                 || game.lastMoved === otherChessColor(props.homeColor)
               }
-              onFinished={props.onTimerFinished}
+              onFinished={onTimerFinished}
               activeClassName={cx({
                 [cls.activeCountdownTurn]: game?.lastMoveBy === props.homeColor,
               })}
@@ -63,11 +72,11 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
         getBoardSize={(p) => getBoardSize(p) - 100}
         onMove={onMove}
       />
-      {game && (
+      {myPlayer && (
         <div className={cx([cls.playerBar, cls.playerBarBottom])}>
           <div className={cls.playerBarContent}>
             <div className={cls.playerInfo}>
-              {game?.players[props.homeColor].name}
+              {myPlayer.user.name}
             </div>
             <Coundtdown
               className={cls.countdown}
@@ -77,7 +86,7 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
                 || game.state !== 'started'
                 || game.lastMoved === props.homeColor
               }
-              onFinished={props.onTimerFinished}
+              onFinished={onTimerFinished}
               activeClassName={cx({
                 [cls.activeCountdownTurn]: game?.lastMoveBy !== props.homeColor,
               })}
