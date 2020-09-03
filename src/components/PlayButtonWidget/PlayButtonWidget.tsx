@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { Box } from 'grommet';
+import { Box, Layer } from 'grommet';
 import { noop } from 'src/lib/util';
-import { Button } from 'src/components/Button';
 import { Modal } from '../Modal/Modal';
 import { PopupContent } from '../PopupContent';
+import { Button } from '../Button';
+import { FaceTime } from '../FaceTimeArea';
+import { FaceTimeSetup } from '../FaceTimeArea/FaceTimeSetup';
 
 type Props = {
   type: 'friendly' | 'challenge';
@@ -19,6 +21,7 @@ export const PlayButtonWidget: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
   const [visiblePopup, setVisiblePopup] = useState<VisiblePopup>('none');
+  const [faceTimeOn, setFaceTimeOn] = useState(false);
 
   return (
     <Box margin="small">
@@ -27,32 +30,48 @@ export const PlayButtonWidget: React.FC<Props> = ({
         size="medium"
         label={type === 'friendly' ? 'Play a Friend' : 'Challenge'}
       />
-
-      <Modal visible={visiblePopup === 'challenge'}>
-        <PopupContent
-          hasCloseButton
-          onClose={() => setVisiblePopup('none')}
-        >
-          <Box>
+      {visiblePopup === 'challenge' && (
+        <Layer position="center">
+          <Box pad="medium" gap="small" width="medium">
+            <FaceTimeSetup onUpdated={(s) => setFaceTimeOn(s.on)} />
             Create challenge
             <Button
               type="button"
+              label="Submit"
+              primary
               onClick={onSubmit}
+              disabled={!faceTimeOn}
+            />
+            <Button
+              type="button"
+              label="Cancel"
+              onClick={() => setVisiblePopup('none')}
             />
           </Box>
-        </PopupContent>
-      </Modal>
+        </Layer>
+      )}
 
-      <Modal visible={visiblePopup === 'friendly'}>
-        <PopupContent
-          hasCloseButton
-          onClose={() => setVisiblePopup('none')}
-        >
-          <Box>
-            play a friend
+      {visiblePopup === 'friendly' && (
+        <Layer position="center">
+          <Box pad="medium" gap="small" width="medium">
+            <FaceTimeSetup onUpdated={(s) => setFaceTimeOn(s.on)} />
+
+            Play a Friend
+            <Button
+              type="button"
+              label="Submit"
+              primary
+              onClick={onSubmit}
+              disabled={!faceTimeOn}
+            />
+            <Button
+              type="button"
+              label="Cancel"
+              onClick={() => setVisiblePopup('none')}
+            />
           </Box>
-        </PopupContent>
-      </Modal>
+        </Layer>
+      )}
     </Box>
   );
 };
