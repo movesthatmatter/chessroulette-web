@@ -2602,6 +2602,13 @@
   dependencies:
     redux "^4.0.0"
 
+"@types/redux-persist@^4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@types/redux-persist/-/redux-persist-4.3.1.tgz#aa4c876859e0bea5155e5f7980e5b8c4699dc2e6"
+  integrity sha1-qkyHaFngvqUVXl95gOW4xGmdwuY=
+  dependencies:
+    redux-persist "*"
+
 "@types/source-list-map@*":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@types/source-list-map/-/source-list-map-0.1.2.tgz#0078836063ffaf17412349bba364087e0ac02ec9"
@@ -6087,15 +6094,15 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.0.12":
-  version "0.0.12"
-  resolved "https://github.com/dstnd/dstnd-io.git#8a847640b2e6f8849315234b12e63fcc1b34d49b"
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.0.13":
+  version "0.0.13"
+  resolved "https://github.com/dstnd/dstnd-io.git#91fd8036470a47e664124cba95a9bc7084ba12e7"
   dependencies:
     "@types/chess.js" "^0.10.1"
     chess.js "^0.11.0"
     fp-ts "^2.8.2"
-    io-ts "2.2.2"
-    io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.2"
+    io-ts "2.2.10"
+    io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.3"
 
 duplexer3@^0.1.4:
   version "0.1.4"
@@ -7339,11 +7346,6 @@ forwarded@~0.1.2:
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
   integrity sha1-mMI9qxF1ZXuMBXPozszZGw/xjIQ=
 
-fp-ts@^2.5.4:
-  version "2.8.1"
-  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.8.1.tgz#b1812171469a7c0fcbc0b770ac2568f8356d1993"
-  integrity sha512-HuA/6roEliHoBgEOLCKmGRcM90e2trW/ITZZ9d9P/ra7PreqQagC3Jg6OzqWkai13KUbG90b8QO9rHPBGK/ckw==
-
 fp-ts@^2.8.2:
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.8.2.tgz#7948dea1ceef32e487d7f7f47bd2d3c4fcccfc0d"
@@ -8432,25 +8434,21 @@ invert-kv@^2.0.0:
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-2.0.0.tgz#7393f5afa59ec9ff5f67a27620d11c226e3eec02"
   integrity sha512-wPVv/y/QQ/Uiirj/vh3oP+1Ww+AWehmi1g5fFWGPF6IpCBCDVrhgHRMvrLfdYcwDh3QJbGXDW4JAuzxElLSqKA==
 
-"io-ts-isodatetime@https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.2":
-  version "0.0.2"
-  resolved "https://github.com/GabrielCTroia/io-ts-isodatetime.git#d5db2e0077672adf252f6b7dd0f7dbe93c5f5285"
+"io-ts-isodatetime@https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.3":
+  version "0.0.3"
+  resolved "https://github.com/GabrielCTroia/io-ts-isodatetime.git#304b49d1c77589f79e482880a6cf882e2484829f"
   dependencies:
     date-fns "^2.13.0"
-    io-ts "^2.2.2"
-    io-ts-types "^0.5.6"
+    fp-ts "^2.8.2"
+    io-ts "^2.2.10"
+    io-ts-types "0.5.10"
 
-io-ts-types@^0.5.6:
+io-ts-types@0.5.10, io-ts-types@^0.5.10:
   version "0.5.10"
   resolved "https://registry.yarnpkg.com/io-ts-types/-/io-ts-types-0.5.10.tgz#54d2400c81de2a1bc97151b07faabc9ddd3ebb07"
   integrity sha512-QVkgEsW03wTSgZ/PCZyan0boHmkPWExQob4nZ3pOxX/YQ9iWXLGPHMqYxSV0OpE/ulJA01owqTvsvFv+SfmiGg==
 
-io-ts@2.2.2:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/io-ts/-/io-ts-2.2.2.tgz#82b9ef96d95a3fb27a1abf5f29f59b07cc9b8cca"
-  integrity sha512-cXXIL4CR5/sWfKw/Ssc/cbZJGG13J4pJv9/RN6SlWJyh+foAPEUE0I9sWTX1kG24dvhiCM9fpO4F+2AsP+WzaQ==
-
-io-ts@^2.2.2:
+io-ts@2.2.10, io-ts@^2.2.10:
   version "2.2.10"
   resolved "https://registry.yarnpkg.com/io-ts/-/io-ts-2.2.10.tgz#447d02df51717464a90712b146ec8dbc21b4a74b"
   integrity sha512-WHx5jJe7hPpc6JoSIVbD+Xn6tYqe3cRvNpX24d8Wi15/kxhRWa8apo0Gzag6Xg99sCNY9OHKylw/Vhv0JAbNPQ==
@@ -13233,6 +13231,11 @@ redux-logger@^3.0.6:
   dependencies:
     deep-diff "^0.3.5"
 
+redux-persist@*, redux-persist@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-6.0.0.tgz#b4d2972f9859597c130d40d4b146fecdab51b3a8"
+  integrity sha512-71LLMbUq2r02ng2We9S215LtPu3fY0KgaGE0k8WRgl6RkqxtGfl7HUozz1Dftwsb0D/5mZ8dwAaPbtnzfvbEwQ==
+
 redux-starter-kit@0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/redux-starter-kit/-/redux-starter-kit-0.5.1.tgz#8b11ef234624a20c9cd384892033f7772331e9e3"
@@ -15249,6 +15252,11 @@ use-callback-ref@^1.2.1:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/use-callback-ref/-/use-callback-ref-1.2.4.tgz#d86d1577bfd0b955b6e04aaf5971025f406bea3c"
   integrity sha512-rXpsyvOnqdScyied4Uglsp14qzag1JIemLeTWGKbwpotWht57hbP78aNT+Q4wdFKQfQibbUX4fb6Qb4y11aVOQ==
+
+use-reducer-logger@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/use-reducer-logger/-/use-reducer-logger-1.0.2.tgz#84b3531ebf269841b9c082fcbf154cb12516922e"
+  integrity sha512-i0SQtRrWqbgQ07V0Ty1Eznh9k37LCTp3eaSIAMLTdd6+mg3teREHMf10lk9cf5OzzT+woP0XS8E1FC4+hxcrJQ==
 
 use-sidecar@^1.0.1:
   version "1.0.3"
