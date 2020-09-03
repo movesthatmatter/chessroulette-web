@@ -62,11 +62,22 @@ export const GameRoomV2Container: React.FC<Props> = () => {
                 )}
                 <GameRoomV2
                   room={p.room}
-                  homeColor="white"
                   onMove={(nextMove) => {
                     socket.send({
                       kind: 'gameMoveRequest',
                       content: nextMove,
+                    });
+                  }}
+                  onOfferDraw={() => {
+                    socket.send({
+                      kind: 'gameDrawOfferingRequest',
+                      content: undefined,
+                    });
+                  }}
+                  onResign={(resigningColor) => {
+                    socket.send({
+                      kind: 'gameResignationRequest',
+                      content: { resigningColor },
                     });
                   }}
                 />

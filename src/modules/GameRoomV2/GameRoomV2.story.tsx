@@ -62,7 +62,6 @@ export const defaultStory = () => (
       return (
         <GameRoomV2
           room={publicRoom}
-          homeColor={homeColor}
           onMove={action('on move')}
         />
       );
@@ -92,7 +91,7 @@ export const withoutGame = () => (
       });
 
       return (
-        <GameRoomV2 room={publicRoom} homeColor="white" />
+        <GameRoomV2 room={publicRoom} />
       );
     })}
     />
@@ -139,7 +138,6 @@ export const asPage = () => (
         <Page>
           <GameRoomV2
             room={publicRoom}
-            homeColor={homeColor}
             onMove={(nextMove) => {
               setPublicRoom((prev) => ({
                 ...prev,
@@ -197,7 +195,6 @@ export const asPageWithSwitchingSides = () => (
         <Page>
           <GameRoomV2
             room={publicRoom}
-            homeColor={homeColor}
             onMove={(move) => {
               setPublicRoom((prev) => ({
                 ...prev,
@@ -256,7 +253,6 @@ export const asPageWithFinishedGame = () => (
           <GameRoomV2
             room={publicRoom}
             onMove={action('on move')}
-            homeColor={homeColor}
           />
         </Page>
       );
