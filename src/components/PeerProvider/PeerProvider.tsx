@@ -58,7 +58,10 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   useEffect(() => {
     setContextState((prev) => {
       if (!state.room) {
-        return prev;
+        return {
+          state: 'init',
+          showMyStream: noop,
+        };
       }
 
       return {
@@ -174,9 +177,6 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
                   navigator.mediaDevices
                     .getUserMedia({ video: true, audio: true })
                     .then((stream) => {
-                      // TODO: This could be smarter a bit
-                      dispatch(addMyStream({ stream }));
-
                       const call = sdk.call(namespacedPeerId, stream);
 
                       call.on('stream', (remoteStream) => {
@@ -222,7 +222,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
                   dispatch(
                     addPeerAction({
                       id: peerId,
-                      user: props.user,
+                      user: metadata.peer.user,
                     }),
                   );
                 },
@@ -262,7 +262,6 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
               .then((localStream) => {
                 call.answer(localStream);
                 call.on('stream', (remoteStream) => {
-                  dispatch(addMyStream({ stream: localStream }));
                   dispatch(
                     addPeerStream({
                       peerId,
@@ -287,13 +286,13 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           content: { userId: props.user.id },
         });
 
-        socketClient.send({
-          kind: 'joinRoomRequest',
-          content: {
-            roomId: props.roomCredentials.id,
-            code: props.roomCredentials.code,
-          },
-        });
+        // socketClient.send({
+        //   kind: 'joinRoomRequest',
+        //   content: {
+        //     roomId: props.roomCredentials.id,
+        //     code: props.roomCredentials.code,
+        //   },
+        // });
       }}
       render={() => (
         <PeerContext.Provider value={contextState}>
