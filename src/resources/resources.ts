@@ -17,9 +17,13 @@ import {
   RegisterPeerRequestPayload,
   RegisterPeerResponsePayload,
   registerPeerResponsePayload,
+  RoomStatsPayload,
+  RoomStatsRecord,
+  roomStatsRecord,
 } from 'dstnd-io';
 import config from 'src/config';
 import { Result, Err } from 'dstnd-io/dist/ts-results';
+import { isLeft } from 'fp-ts/lib/Either';
 
 type ApiError = 'BadRequest' | 'BadResponse';
 
@@ -59,7 +63,7 @@ export const getPublicRoom = async (
   id: string,
 ): Promise<Result<PublicRoomResponsePayload, ApiError>> => {
   try {
-    const { data } = await http.get(`/api/room?id=${id}`);
+    const { data } = await http.get(`/api/room/${id}`);
 
     return io
       .toResult(publicRoomResponsePayload.decode(data))
@@ -81,6 +85,26 @@ export const getPrivateRoom = async (
 
     return io
       .toResult(privateRoomResponsePayload.decode(data))
+      .mapErr(() => 'BadResponse');
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+};
+
+export const getRoomStats = async (
+  credentials: {roomId: string; code?: string},
+): Promise<Result<RoomStatsRecord, ApiError>> => {
+  try {
+    const { data } = await http.get('/api/room', {
+      params: credentials.code ? {
+        code: credentials.code,
+      } : {
+        id: credentials.roomId,
+      },
+    });
+
+    return io
+      .toResult(roomStatsRecord.decode(data))
       .mapErr(() => 'BadResponse');
   } catch (e) {
     return new Err('BadRequest');
