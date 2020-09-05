@@ -34,7 +34,7 @@ export const ClassRoomContainer: React.FC<Props> = (props) => {
       user={auth.user}
     >
       <PeerConsumer
-        render={(p) => <ClassRoom {...p} initialMode={props.initialClassroomMode} />}
+        renderRoomJoined={(p) => <ClassRoom {...p} initialMode={props.initialClassroomMode} />}
         renderFallback={() => <AwesomeLoaderPage />}
       />
     </PeerProvider>

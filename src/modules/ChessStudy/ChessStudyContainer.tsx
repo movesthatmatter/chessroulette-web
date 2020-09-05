@@ -9,7 +9,6 @@ import { moveAction, updateAction } from './reducer';
 import { StudyStateUpdatedPayload, studyStatePayload } from './records';
 import { selectChessStudy } from './selectors';
 
-
 type PeerRef = {
   room: Room;
   broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
@@ -47,11 +46,12 @@ export const ChessStudyContainer: React.FC<Props> = ({
 
   return (
     <PeerConsumer
-      onReady={(p) => {
-        peerRef.current = p;
-      }}
+      // NOTE: This was removed on Sept 6th 2020 when refactoring PeerProvider to RoomProvider
+      // onReady={(p) => {
+      //   peerRef.current = p;
+      // }}
       onPeerMsgReceived={handleMessages}
-      render={() => (
+      renderRoomJoined={() => (
         <ChessStudy
           playable
           history={state.history}

@@ -66,7 +66,7 @@ export const defaultStory = () => (
           user={userRecordMocker.withProps({ id: '1' })}
         >
           <PeerConsumer
-            render={(p) => (
+            renderRoomJoined={(p) => (
               <ClassRoom
                 {...p}
                 room={{
@@ -96,7 +96,7 @@ export const withPeerProvider = () => (
           user={userRecordMocker.withProps({ id: String(getRandomInt(1, 6)) })}
         >
           <PeerConsumer
-            render={(p) => <ClassRoom {...p} />}
+            renderRoomJoined={(p) => <ClassRoom {...p} />}
             renderFallback={() => <AwesomeLoaderPage />}
           />
         </PeerProvider>

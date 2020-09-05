@@ -83,7 +83,6 @@ export const ClassRoom: React.FC<ClassroomProps> = ({
   );
 };
 
-
 const useStyles = createUseStyles({
   container: {
     display: 'flex',

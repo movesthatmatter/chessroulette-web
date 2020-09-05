@@ -24,7 +24,7 @@ export const ChatContainer: React.FC<Props> = (chatProps) => {
     <PeerConsumer
       onPeerMsgSent={handleMessages}
       onPeerMsgReceived={handleMessages}
-      render={({ room, broadcastMessage }) => (
+      renderRoomJoined={({ room, broadcastMessage }) => (
         <Chat
           myId={room.me.id}
           messages={messages}
