@@ -24,7 +24,7 @@ export const defaultStory = () => (
       }}
     >
       <PeerConsumer
-        render={({ room }) => (
+        renderRoomJoined={({ room }) => (
           <>
             <div>
               {`Me: ${room.me.user.name}(${room.me.id})`}

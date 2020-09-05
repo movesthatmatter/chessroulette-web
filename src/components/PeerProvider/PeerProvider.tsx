@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useRef, useReducer, useState,
+  useEffect, useRef, useState,
 } from 'react';
 import PeerSDK from 'peerjs';
 import { logsy } from 'src/lib/logsy';
@@ -7,20 +7,19 @@ import config from 'src/config';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { isLeft } from 'fp-ts/lib/Either';
 import { eitherToResult } from 'src/lib/ioutil';
-import { UserRecord } from 'dstnd-io';
-import { noop } from 'src/lib/util';
+import { UserRecord, RoomStatsRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
-import reducerLogger from 'use-reducer-logger';
+import { useSelector, useDispatch } from 'react-redux';
+import { resources } from 'src/resources';
 import { SocketConsumer } from '../SocketProvider';
 import {
-  initialState,
-  reducer,
   createRoomAction,
   addPeerAction,
   addMyStream,
   addPeerStream,
   removePeerAction,
   updateRoomAction,
+  remmoveMyStream,
 } from './reducer';
 import { ActivePeerConnections } from './ActivePeerConnections';
 import { wNamespace, woNamespace } from './util';
@@ -32,6 +31,8 @@ import {
 } from './records';
 import { Proxy } from './Proxy';
 import { PeerContextProps, PeerContext } from './PeerContext';
+import { selectJoinedRoom } from './selectors';
+import { joinRoom } from './effects';
 
 export type PeerProviderProps = {
   roomCredentials: {
@@ -44,28 +45,66 @@ export type PeerProviderProps = {
 export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   const peerSDK = useRef<PeerSDK>();
   const activePeerConnections = useRef(new ActivePeerConnections()).current;
-  const [state, dispatch] = useReducer(
-    config.DEBUG ? reducerLogger(reducer) : reducer,
-    initialState,
-  );
+  const state = useSelector(selectJoinedRoom);
+  const dispatch = useDispatch();
+
+  const [roomStats, setRoomStats] = useState<RoomStatsRecord | undefined>();
+
+  // const [state, dispatch] = useReducer(
+  //   config.DEBUG ? reducerLogger(reducer) : reducer,
+  //   initialState,
+  // );
   const proxy = useRef(new Proxy()).current;
   const [contextState, setContextState] = useState<PeerContextProps>({
     state: 'init',
-    showMyStream: noop,
   });
   const [socket, setSocket] = useState<SocketClient | undefined>();
 
   useEffect(() => {
-    setContextState((prev) => {
-      if (!state.room) {
+    if (roomStats) {
+      return;
+    }
+
+    resources.getRoomStats({
+      roomId: props.roomCredentials.id,
+      code: props.roomCredentials.code,
+    }).then((roomResult) => {
+      roomResult.map(setRoomStats);
+    });
+  }, [props.roomCredentials]);
+
+  useEffect(() => {
+    setContextState(() => {
+      if (!roomStats) {
         return {
           state: 'init',
-          showMyStream: noop,
+        };
+      }
+
+      if (!state.room) {
+        return {
+          state: 'notJoined',
+          roomStats,
+          joinRoom: () => {
+            socket?.send({
+              kind: 'joinRoomRequest',
+              content: {
+                roomId: props.roomCredentials.id,
+                code: props.roomCredentials.code,
+              },
+            });
+          },
+          joinGame: () => {
+            socket?.send({
+              kind: 'gameJoinRequest',
+              content: undefined,
+            });
+          },
         };
       }
 
       return {
-        state: 'connected',
+        state: 'joined',
         proxy,
         room: state.room,
 
@@ -89,7 +128,14 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           proxy.publishOnPeerMessageSent(payload);
         },
 
-        showMyStream: () => {
+        joinGame: () => {
+          socket?.send({
+            kind: 'gameJoinRequest',
+            content: undefined,
+          });
+        },
+
+        startLocalStream: () => {
           if (!state.room?.me.connection.channels.streaming.on) {
             navigator.mediaDevices
               .getUserMedia({ video: true, audio: true })
@@ -98,9 +144,24 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
               });
           }
         },
+        stopLocalStream: () => {
+          if (!state.room?.me.connection.channels.streaming.on) {
+            return;
+          }
+
+          state.room?.me.connection.channels.streaming.stream
+            .getTracks()
+            .forEach((track) => {
+              if (state.room?.me.connection.channels.streaming.on) {
+                state.room?.me.connection.channels.streaming.stream.removeTrack(track);
+              }
+            });
+
+          remmoveMyStream();
+        },
       };
     });
-  }, [state.room]);
+  }, [state.room, roomStats]);
 
   useEffect(
     () => () => {
@@ -276,10 +337,10 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       onReady={(socketClient) => {
         setSocket(socketClient);
 
-        setContextState(() => ({
-          state: 'connecting',
-          showMyStream: noop,
-        }));
+        // setContextState(() => ({
+        //   state: '',
+        //   showMyStream: noop,
+        // }));
 
         socketClient.send({
           kind: 'userIdentification',

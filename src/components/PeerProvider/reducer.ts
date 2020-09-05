@@ -1,5 +1,6 @@
 import { createAction, createReducer } from 'deox';
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
+import { GenericStateSlice } from 'src/redux/types';
 import { Room, Peer } from '../RoomProvider';
 
 export const createRoomAction = createAction(
@@ -32,6 +33,10 @@ export const addMyStream = createAction(
   (resolve) => (p: {
     stream: MediaStream;
   }) => resolve(p),
+);
+
+export const remmoveMyStream = createAction(
+  'Remove My Stream',
 );
 
 export const addPeerStream = createAction(
@@ -225,6 +230,34 @@ export const reducer = createReducer(initialState, (handleAction) => ([
       },
     };
   }),
+  handleAction(remmoveMyStream, (state) => {
+    if (!state.room) {
+      return state;
+    }
+
+    const nextMe: Peer = {
+      ...state.room?.me,
+      connection: {
+        ...state.room.me.connection,
+        channels: {
+          ...state.room.me.connection.channels,
+          streaming: { on: false },
+        },
+      },
+    };
+
+    return {
+      ...state,
+      room: {
+        ...state.room,
+        me: nextMe,
+        peersIncludingMe: {
+          ...state.room.peersIncludingMe,
+          [nextMe.id]: nextMe,
+        },
+      },
+    };
+  }),
   handleAction(addPeerStream, (state, { payload }) => {
     if (!state.room) {
       return state;
@@ -258,3 +291,13 @@ export const reducer = createReducer(initialState, (handleAction) => ([
     };
   }),
 ]));
+
+export const stateSliceByKey = {
+  joinedRoom: reducer,
+};
+
+export type ModuleState = ReturnType<typeof reducer>;
+export type ModuleStateSlice = GenericStateSlice<
+  typeof stateSliceByKey,
+  typeof reducer
+>;
