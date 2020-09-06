@@ -20,7 +20,7 @@ import {
   removePeerAction,
   updateRoomAction,
   remmoveMyStream,
-} from './reducer';
+} from './actions';
 import { ActivePeerConnections } from './ActivePeerConnections';
 import { wNamespace, woNamespace } from './util';
 import {
