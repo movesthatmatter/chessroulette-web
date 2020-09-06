@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
-import { RoomStatsRecord } from 'dstnd-io';
+import { RoomStatsRecord, SocketPayload } from 'dstnd-io';
+import { SocketClient } from 'src/services/socket/SocketClient';
 import { PeerContext } from './PeerContext';
 import { Room } from '../RoomProvider';
 import { PeerMessageEnvelope } from './records';
@@ -8,6 +9,8 @@ type RenderJoinedProps = {
   state: 'joined';
   room: Room;
   broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
+  request: SocketClient['send'];
+
   startLocalStream: () => void;
   stopLocalStream: () => void;
 };
@@ -15,8 +18,8 @@ type RenderJoinedProps = {
 type RenderNotJoinedProps = {
   state: 'notJoined';
   roomStats: RoomStatsRecord;
+  request: SocketClient['send'];
   joinRoom: () => void;
-  joinGame: () => void;
 }
 
 type PeerConsumerProps = {

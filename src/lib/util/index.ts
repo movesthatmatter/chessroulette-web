@@ -1,5 +1,8 @@
 import humanizeDuration, { Humanizer } from 'humanize-duration';
 import { differenceInMilliseconds } from 'date-fns';
+import { CreateRoomResponse, CreateRoomRequest, JoinRoomRequestPayload } from 'dstnd-io';
+import UrlPattern from 'url-pattern';
+import { Result, Err, Ok } from 'ts-results';
 
 export const noop = () => {
   // do nothing
@@ -92,3 +95,21 @@ export const prettyCountdown = (
     options?: humanizeDuration.Options;
   },
 ) => format(ms, options);
+
+export const toRoomUrlPath = (room: CreateRoomResponse) =>
+  `${room.id}${room.type === 'private' ? `/${room.code}` : ''}`;
+
+export const urlPathToRoomCredentials = (
+  url: string,
+): Result<JoinRoomRequestPayload['content'], undefined> => {
+  const match = (new UrlPattern('/gameroom/:id(/:code)')).match(url);
+
+  if (!(match && match.id)) {
+    return new Err(undefined);
+  }
+
+  return new Ok({
+    roomId: match.id,
+    code: match ? match.code : undefined,
+  });
+};

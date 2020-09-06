@@ -47,7 +47,7 @@ export const withGame = () => (
           // This might not allow it to work with sockets
           user={userRecordMock.withProps({ id: '1' })}
         >
-          <PeerConsumer render={(p) => React.createElement(() => {
+          <PeerConsumer renderRoomJoined={(p) => React.createElement(() => {
             const me = peerMock.withProps(p.room.me);
 
             const opponent = peerMock.withChannels({

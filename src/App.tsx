@@ -2,7 +2,7 @@ import React from 'react';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Grommet, Box } from 'grommet';
-import { SocketProvider } from './components/SocketProvider';
+import { SocketProvider, SocketConsumer } from './components/SocketProvider';
 import { createUseStyles } from './lib/jss';
 import { GameRoomPage } from './modules/GameRoom';
 import { GA } from './services/Analytics';
@@ -26,9 +26,13 @@ function App() {
           <Grommet theme={defaultTheme} full>
             <Box className={cls.container}>
               <TransitionGroup component={null}>
-                { GA.init() && <GA.RouteTracker /> }
+                {GA.init() && <GA.RouteTracker />}
                 <Switch location={location}>
-                  <Route exact path="/gameroom/:id/:code?" key={location.key}>
+                  <Route
+                    exact
+                    path="/gameroom/:id/:code?"
+                    key={location.key}
+                  >
                     {({ match }) => (
                       <CSSTransition
                         in={match !== null}
@@ -40,7 +44,11 @@ function App() {
                       </CSSTransition>
                     )}
                   </Route>
-                  <Route exact path="/classroom/:id/:code?" key={location.key}>
+                  <Route
+                    exact
+                    path="/classroom/:id/:code?"
+                    key={location.key}
+                  >
                     {({ match }) => (
                       <CSSTransition
                         in={match !== null}
@@ -60,12 +68,10 @@ function App() {
                         timeout={600}
                         unmountOnExit
                       >
-
                         {/* <OnboardingPage /> */}
                         {/* <GameRoomV2Page /> */}
                         <LandingPageV2 />
                         {/* <LandingPage /> */}
-
                       </CSSTransition>
                     )}
                   </Route>

@@ -23,7 +23,7 @@ export const getOpponent = (
   userId: string,
   players: ChessGameState['players'],
 ) => {
-  const matched = players.find((p) => p.user.id === userId);
+  const matched = players.find((p) => p.user.id !== userId);
 
   if (matched) {
     return matched;

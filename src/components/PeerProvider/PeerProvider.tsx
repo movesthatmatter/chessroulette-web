@@ -32,7 +32,6 @@ import {
 import { Proxy } from './Proxy';
 import { PeerContextProps, PeerContext } from './PeerContext';
 import { selectJoinedRoom } from './selectors';
-import { joinRoom } from './effects';
 
 export type PeerProviderProps = {
   roomCredentials: {
@@ -94,12 +93,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
               },
             });
           },
-          joinGame: () => {
-            socket?.send({
-              kind: 'gameJoinRequest',
-              content: undefined,
-            });
-          },
+          request: (payload) => socket?.send(payload),
         };
       }
 
@@ -116,24 +110,13 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           };
 
           Object.keys(state.room?.peers ?? {}).forEach((peerId) => {
-            // activePeerConnections.get(peerId)?.data?.send(payload);
-
-            // Send it over Socket instead of RTC for reliability
-            socket?.send({
-              kind: 'peerMessage',
-              content: payload,
-            });
+            activePeerConnections.get(peerId)?.data?.send(payload);
           });
 
           proxy.publishOnPeerMessageSent(payload);
         },
 
-        joinGame: () => {
-          socket?.send({
-            kind: 'gameJoinRequest',
-            content: undefined,
-          });
-        },
+        request: (payload) => socket?.send(payload),
 
         startLocalStream: () => {
           if (!state.room?.me.connection.channels.streaming.on) {
