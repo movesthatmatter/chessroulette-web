@@ -19,6 +19,12 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   onMove?: (m: ChessMove, pgn: ChessGameStatePgn) => void;
   pgn: string;
 
+  // If true the move will be snappy since it doesn't wait
+  //  for the entire state to update (over the network) before
+  //  rendering the move. Instead it renders it on drag which is
+  //  much more natural!
+  maintainPositionLocally?: boolean;
+
   // The bottom side
   homeColor: 'white' | 'black';
 
@@ -30,6 +36,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
   pgn = '',
   playable = false,
   getBoardSize = getDefaultBoardSize,
+  maintainPositionLocally = true,
   ...props
 }) => {
   const cls = useStyles();
@@ -78,6 +85,10 @@ export const ChessGame: React.FunctionComponent<Props> = ({
     if (validMove !== null) {
       // onMove(gameInstance.pgn());
       onMove(nextMove, gameInstance.pgn());
+
+      if (maintainPositionLocally) {
+        setFen(gameInstance.fen());
+      }
     }
   };
 
@@ -97,6 +108,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
         onSquareClickMove={onMoveHandler}
         onDrop={onMoveHandler}
         inCheckSquare={inCheckSquare}
+
       />
     </div>
   );
