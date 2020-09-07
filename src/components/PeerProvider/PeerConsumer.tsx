@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { RoomStatsRecord, SocketPayload } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
+import { noop } from 'src/lib/util';
 import { PeerContext } from './PeerContext';
 import { Room } from '../RoomProvider';
 import { PeerMessageEnvelope } from './records';
@@ -20,12 +21,13 @@ type RenderNotJoinedProps = {
   roomStats: RoomStatsRecord;
   request: SocketClient['send'];
   joinRoom: () => void;
-}
+};
 
 type PeerConsumerProps = {
   renderRoomJoined: (p: RenderJoinedProps) => React.ReactNode;
   renderRoomNotJoined?: (p: RenderNotJoinedProps) => React.ReactNode;
   renderFallback?: () => React.ReactNode;
+  onUpdate?: (p: RenderJoinedProps | RenderNotJoinedProps) => void;
   onReady?: (p: RenderJoinedProps | RenderNotJoinedProps) => void;
 
   onPeerMsgReceived?: (msg: PeerMessageEnvelope) => void;
@@ -37,6 +39,8 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
   onPeerMsgSent,
   renderFallback = () => null,
   renderRoomNotJoined = () => null,
+  onUpdate = noop,
+  onReady = noop,
   ...props
 }) => {
   const contextState = useContext(PeerContext);
@@ -44,7 +48,8 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
   useEffect(() => {
     if (contextState.state === 'joined') {
       const unsubscribers = [
-        onPeerMsgReceived && contextState.proxy.onPeerMessageReceived(onPeerMsgReceived),
+        onPeerMsgReceived &&
+          contextState.proxy.onPeerMessageReceived(onPeerMsgReceived),
         onPeerMsgSent && contextState.proxy.onPeerMessageSent(onPeerMsgSent),
       ];
 
@@ -57,28 +62,28 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
   }, [contextState, onPeerMsgReceived, onPeerMsgSent]);
 
   useEffect(() => {
-    if (contextState.state !== 'init') {
-      props.onReady?.(contextState);
+    if (contextState.state === 'init') {
+      return;
     }
+
+    onUpdate(contextState);
   }, [contextState]);
 
+  useEffect(() => {
+    if (contextState.state === 'init') {
+      return;
+    }
+
+    onReady(contextState);
+  }, [contextState.state]);
+
   if (contextState.state === 'joined') {
-    return (
-      <>
-        {props.renderRoomJoined(contextState)}
-      </>
-    );
-  } if (contextState.state === 'notJoined') {
-    return (
-      <>
-        {renderRoomNotJoined(contextState)}
-      </>
-    );
+    return <>{props.renderRoomJoined(contextState)}</>;
   }
 
-  return (
-    <>
-      {renderFallback()}
-    </>
-  );
+  if (contextState.state === 'notJoined') {
+    return <>{renderRoomNotJoined(contextState)}</>;
+  }
+
+  return <>{renderFallback()}</>;
 };

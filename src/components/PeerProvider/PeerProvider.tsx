@@ -1,6 +1,4 @@
-import React, {
-  useEffect, useRef, useState,
-} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PeerSDK from 'peerjs';
 import { logsy } from 'src/lib/logsy';
 import config from 'src/config';
@@ -64,17 +62,19 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       return;
     }
 
-    resources.getRoomStats({
-      roomId: props.roomCredentials.id,
-      code: props.roomCredentials.code,
-    }).then((roomResult) => {
-      roomResult.map(setRoomStats);
-    });
+    resources
+      .getRoomStats({
+        roomId: props.roomCredentials.id,
+        code: props.roomCredentials.code,
+      })
+      .then((roomResult) => {
+        roomResult.map(setRoomStats);
+      });
   }, [props.roomCredentials]);
 
   useEffect(() => {
     setContextState(() => {
-      if (!roomStats) {
+      if (!(roomStats && socket)) {
         return {
           state: 'init',
         };
@@ -85,7 +85,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           state: 'notJoined',
           roomStats,
           joinRoom: () => {
-            socket?.send({
+            socket.send({
               kind: 'joinRoomRequest',
               content: {
                 roomId: props.roomCredentials.id,
@@ -136,7 +136,9 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
             .getTracks()
             .forEach((track) => {
               if (state.room?.me.connection.channels.streaming.on) {
-                state.room?.me.connection.channels.streaming.stream.removeTrack(track);
+                state.room?.me.connection.channels.streaming.stream.removeTrack(
+                  track
+                );
               }
             });
 
@@ -144,7 +146,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
         },
       };
     });
-  }, [state.room, roomStats]);
+  }, [state.room, roomStats, socket]);
 
   useEffect(
     () => () => {
@@ -153,7 +155,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       // Destroy the PeerJS Server connection as well
       peerSDK.current?.destroy();
     },
-    [],
+    []
   );
 
   const onDataHandler = (data: unknown) => {
@@ -162,7 +164,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
     if (isLeft(result)) {
       logsy.error(
         '[PeerProvider] onMessageHandler(): Message Decoding Error',
-        data,
+        data
       );
 
       return;
@@ -185,14 +187,14 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
             createRoomAction({
               room: msg.content.room,
               me: msg.content.me,
-            }),
+            })
           );
 
           // TODO: This should be in its own message handler and inside a UseEffect
           //  since we don't want to initialize it multiple times
           const sdk = new PeerSDK(
             wNamespace(msg.content.me.id),
-            config.SIGNALING_SERVER_CONFIG,
+            config.SIGNALING_SERVER_CONFIG
           );
           peerSDK.current = sdk;
 
@@ -228,7 +230,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
                           addPeerStream({
                             peerId: peer.id,
                             stream: remoteStream,
-                          }),
+                          })
                         );
                       });
 
@@ -267,9 +269,9 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
                     addPeerAction({
                       id: peerId,
                       user: metadata.peer.user,
-                    }),
+                    })
                   );
-                },
+                }
               );
             });
 
@@ -310,7 +312,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
                     addPeerStream({
                       peerId,
                       stream: remoteStream,
-                    }),
+                    })
                   );
                 });
               });
