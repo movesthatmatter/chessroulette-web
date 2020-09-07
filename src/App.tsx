@@ -14,6 +14,9 @@ import { GameRoomV2Page } from './modules/GameRoomV2/GameRoomV2Page';
 import { LandingPageV2 } from './modules/Landing/LandingPageV2';
 import { LandingPage } from './modules/Landing/LandingPage';
 import { AuthenticationProvider } from './services/Authentication';
+import config from './config';
+
+console.log('App config', config);
 
 function App() {
   const location = useLocation();
