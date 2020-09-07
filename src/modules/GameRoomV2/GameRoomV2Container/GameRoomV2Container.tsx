@@ -20,6 +20,8 @@ export const GameRoomV2Container: React.FC<Props> = () => {
   const [faceTimeOn, setFaceTimeOn] = useState(false);
   const authentication = useSelector(selectAuthentication);
 
+  // const [hasJoinedRoom, setHasJoinedRoom] = useSe
+
   // This should never actually occur!
   if (authentication.authenticationType === 'none') {
     return null;
@@ -31,7 +33,7 @@ export const GameRoomV2Container: React.FC<Props> = () => {
         const isMePlayer = isPlayer(p.room.me.user.id, p.room.game.players);
         const myPlayerColor = getPlayerColor(
           p.room.me.user.id,
-          p.room.game.players,
+          p.room.game.players
         );
 
         return (
@@ -64,12 +66,13 @@ export const GameRoomV2Container: React.FC<Props> = () => {
                     p.request(gameActions.offerRematch());
                   }}
                 />
-                {isMePlayer
-                  && p.room.gameOffer?.type === 'draw'
-                  && p.room.gameOffer.content.by === otherChessColor(myPlayerColor) && (
+                {isMePlayer &&
+                  p.room.gameOffer?.type === 'draw' &&
+                  p.room.gameOffer.content.by ===
+                    otherChessColor(myPlayerColor) && (
                   <Layer position="center">
                     <Box pad="medium" gap="small" width="medium">
-                      Your opponent is offering a Draw!
+                        Your opponent is offering a Draw!
                       <Button
                         onClick={() => p.request(gameActions.acceptDraw())}
                         label="Accept"
@@ -81,12 +84,13 @@ export const GameRoomV2Container: React.FC<Props> = () => {
                     </Box>
                   </Layer>
                 )}
-                {isMePlayer
-                  && p.room.gameOffer?.type === 'rematch'
-                  && p.room.gameOffer.content.by === otherChessColor(myPlayerColor) && (
+                {isMePlayer &&
+                  p.room.gameOffer?.type === 'rematch' &&
+                  p.room.gameOffer.content.by ===
+                    otherChessColor(myPlayerColor) && (
                   <Layer position="center">
                     <Box pad="medium" gap="small" width="medium">
-                      Your opponent wants a Rematch!
+                        Your opponent wants a Rematch!
                       <Button
                         onClick={() => p.request(gameActions.acceptRematch())}
                         label="Accept"
@@ -98,7 +102,6 @@ export const GameRoomV2Container: React.FC<Props> = () => {
                     </Box>
                   </Layer>
                 )}
-
               </>
             )}
           </>
@@ -149,13 +152,12 @@ export const GameRoomV2Container: React.FC<Props> = () => {
       onReady={(p) => {
         if (p.state === 'joined') {
           p.startLocalStream();
-        }
-
-        if (p.state === 'notJoined') {
+        } else if (
           // Join the Room right away if already part of the game!
-          if (isPlayer(authentication.user.id, p.roomStats.game.players)) {
-            p.joinRoom();
-          }
+          p.state === 'notJoined' &&
+          isPlayer(authentication.user.id, p.roomStats.game.players)
+        ) {
+          p.joinRoom();
         }
       }}
     />
