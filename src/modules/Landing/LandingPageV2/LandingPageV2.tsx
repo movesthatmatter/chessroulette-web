@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Page } from 'src/components/Page';
 import { PlayButtonWidget } from 'src/components/PlayButtonWidget';
 import { Box } from 'grommet';
@@ -7,11 +7,9 @@ import { SocketConsumer } from 'src/components/SocketProvider';
 import { PeerRecord, CreateRoomResponse } from 'dstnd-io';
 import { useHistory } from 'react-router-dom';
 import { AuthenticationConsumer } from 'src/services/Authentication';
+import { toRoomUrlPath, urlPathToRoomCredentials } from 'src/lib/util';
 
 type Props = {};
-
-const toRoomPath = (room: CreateRoomResponse) =>
-  `${room.id}${room.type === 'private' ? `/${room.code}` : ''}`;
 
 export const LandingPageV2: React.FC<Props> = () => {
   // TODO: All of this Peer Gather could be removed if
@@ -32,7 +30,7 @@ export const LandingPageV2: React.FC<Props> = () => {
                 setMe(msg.content);
               }
             }}
-            render={() => (
+            render={({ socket }) => (
               (me && (
                 <Box width="medium" alignSelf="center">
                   <PlayButtonWidget
@@ -42,20 +40,31 @@ export const LandingPageV2: React.FC<Props> = () => {
                         peerId: me.id,
                         game: {
                           // Don't hardcode
-                          timeLimit: 'rapid',
+                          timeLimit: 'bullet',
                         },
                       }))
                         .mapErr((e) => {
                           console.log('error', e);
                         })
                         .map((room) => {
-                          history.push(`/gameroom/${toRoomPath(room)}`);
+                          // socket.send({
+                          //   kind: 'joinRoomRequest',
+                          //   content: {
+                          //     roomId: room.id,
+                          //     code: room.type === 'private' ? room.code : undefined,
+                          //   },
+                          // });
+
+                          history.push(`/gameroom/${toRoomUrlPath(room)}`);
                         });
                     }}
                   />
                   <PlayButtonWidget
                     type="friendly"
                     onSubmit={async () => {
+                      const x = urlPathToRoomCredentials(window.location.href);
+
+                      console.log('x', x);
                       // (await resources.createChallenge({ peerId: me.id }))
                       //   .map((room) => {
                       //     history.push(`/gameroom/${toRoomPath(room)}`);

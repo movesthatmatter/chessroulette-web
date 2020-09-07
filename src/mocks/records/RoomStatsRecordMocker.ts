@@ -42,6 +42,7 @@ export class RoomStatsRecordMocker {
         timeLimit: 'blitz',
         players: [Object.values(peers)[0].user],
       }),
+      gameOffer: undefined,
     };
   }
 

@@ -15,10 +15,17 @@ import {
   UserIdentificationPayload,
   WhoAmIRequestPayload,
 
-  GameDrawOfferingRequestPayload,
+  // Game Logic
   GameResignationRequestPayload,
   GameMoveRequestPayload,
   GameJoinRequestPayload,
+  GameDrawOfferingRequestPayload,
+  GameDrawAcceptRequestPayload,
+  GameDrawDenyRequestPayload,
+  GameRematchOfferingRequestPayload,
+  GameRematchDenyRequestPayload,
+  GameRematchAcceptRequestPayload,
+  GameAbortionRequestPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/components/PeerProvider/records';
 
@@ -47,10 +54,16 @@ type SendableMessagesMap = {
   whoami: WhoAmIRequestPayload;
 
   // Game
-  gameDrawOfferingRequestPayload: GameDrawOfferingRequestPayload;
   gameResignationRequestPayload: GameResignationRequestPayload;
   gameMoveRequestPayload: GameMoveRequestPayload;
   gameJoinRequestPayload: GameJoinRequestPayload;
+  gameDrawOfferingRequestPayload: GameDrawOfferingRequestPayload;
+  gameDrawAcceptRequestPayload: GameDrawAcceptRequestPayload;
+  gameDrawDenyRequestPayload: GameDrawDenyRequestPayload;
+  gameRematchOfferingRequestPayload: GameRematchOfferingRequestPayload;
+  gameRematchDenyRequestPayload: GameRematchDenyRequestPayload;
+  gameRematchAcceptRequestPayload: GameRematchAcceptRequestPayload;
+  gameAbortionRequestPayload: GameAbortionRequestPayload;
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {

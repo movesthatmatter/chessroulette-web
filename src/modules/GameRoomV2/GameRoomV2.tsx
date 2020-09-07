@@ -20,6 +20,7 @@ type Props = {
   onResign?: (resigningColor: ChessGameColor) => void;
   onAbort?: () => void;
   onOfferDraw?: () => void;
+  onRematchOffer?: () => void;
 };
 
 export const GameRoomV2: React.FC<Props> = ({
@@ -27,6 +28,7 @@ export const GameRoomV2: React.FC<Props> = ({
   onResign = noop,
   onAbort = noop,
   onOfferDraw = noop,
+  onRematchOffer = noop,
   ...props
 }) => {
   const cls = useStyles();
@@ -92,21 +94,21 @@ export const GameRoomV2: React.FC<Props> = ({
               width={dimensions.width}
             />
             <div className={cls.sideBottom}>
-              {(game.state === 'started') && (
+              {game.state === 'started' && (
                 <>
                   <ConfirmationButton
                     label="Resign"
                     onSubmit={() => onResign(homeColor)}
-                    confirmationPopupContent={(
+                    confirmationPopupContent={
                       <>Are you sure you want to resign?</>
-                    )}
+                    }
                   />
                   <ConfirmationButton
                     label="Offer Draw"
                     onSubmit={onOfferDraw}
-                    confirmationPopupContent={(
+                    confirmationPopupContent={
                       <>Are you sure you want to offer draw?</>
-                    )}
+                    }
                   />
                 </>
               )}
@@ -114,9 +116,18 @@ export const GameRoomV2: React.FC<Props> = ({
                 <ConfirmationButton
                   label="Abort"
                   onSubmit={onAbort}
-                  confirmationPopupContent={(
+                  confirmationPopupContent={
                     <>Are you sure you want to abort?</>
-                  )}
+                  }
+                />
+              )}
+              {(game.state === 'finished'
+                || game.state === 'stopped'
+                || game.state === 'neverStarted') && (
+                <ConfirmationButton
+                  label="Rematch"
+                  onSubmit={onRematchOffer}
+                  confirmationPopupContent={<>Offering Rematch?</>}
                 />
               )}
 
@@ -141,9 +152,7 @@ export const GameRoomV2: React.FC<Props> = ({
           hasCloseButton
           onClose={() => setShowGameFinishedPopup(false)}
         >
-          <Box>
-            {`${game?.winner} won`}
-          </Box>
+          <Box>{`${game?.winner} won`}</Box>
         </PopupContent>
       </Modal>
     </div>

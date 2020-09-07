@@ -6,7 +6,6 @@ import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
 import { Coundtdown } from 'src/modules/GameRoom/components/Countdown';
 import { ChessGameState, ChessGameColor, ChessMove } from 'dstnd-io';
 import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
-import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Avatar } from 'src/components/Avatar';
 import { otherChessColor } from '../../util';
 import { ChessGame } from '../ChessGame/ChessGame';
@@ -50,10 +49,10 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
               <Avatar id={opponentPlayer.user.avatarId} width={40} className={cls.avatar} />
               {opponentPlayer.user.name}
             </div>
-
             <Coundtdown
+              key={String(game?.timeLeft[opponentPlayer.color])}
               className={cls.countdown}
-              timeLeft={game?.timeLeft?.[otherChessColor(props.homeColor)] ?? 0}
+              timeLeft={game?.timeLeft[opponentPlayer.color] ?? 0}
               paused={
                 !game
                 || game.state !== 'started'
@@ -83,8 +82,9 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
               {myPlayer.user.name}
             </div>
             <Coundtdown
+              key={String(game?.timeLeft[myPlayer.color])}
               className={cls.countdown}
-              timeLeft={game?.timeLeft?.[props.homeColor] ?? 0}
+              timeLeft={game?.timeLeft[myPlayer.color] ?? 0}
               paused={
                 !game
                 || game.state !== 'started'

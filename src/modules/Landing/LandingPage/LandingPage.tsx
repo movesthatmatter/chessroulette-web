@@ -30,7 +30,7 @@ export const LandingPage: React.FC<Props> = () => {
           setMe(msg.content.me);
         }
       }}
-      render={() => (
+      render={({ socket }) => (
         <div className={cls.container}>
           <PopupModal show={friendsPopup}>
             <PopupContent

@@ -51,6 +51,10 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
     );
   }, [clickedSquare]);
 
+  useEffect(() => {
+    console.log('fen board', boardProps.position);
+  }, [boardProps.position]);
+
   return (
     <Chessboard
       {...boardProps}

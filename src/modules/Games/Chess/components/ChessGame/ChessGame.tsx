@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
@@ -40,21 +40,29 @@ export const ChessGame: React.FunctionComponent<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
-  const [gameInstance] = useState(getNewChessGame());
-  const [fen, setFen] = useState(gameInstance.fen);
+  const gameInstance = useRef(getNewChessGame());
+  const [fen, setFen] = useState(gameInstance.current.fen);
   const [history, setHistory] = useState([] as Move[]);
   const [inCheckSquare, setInCheckSquare] = useState<Square | undefined>();
 
   useEffect(() => {
-    const validPgn = gameInstance.load_pgn(pgn);
-    setFen(gameInstance.fen());
-    setHistory(gameInstance.history({ verbose: true }));
+    if (!pgn) {
+      gameInstance.current = getNewChessGame();
+    }
+
+    const validPgn = gameInstance.current.load_pgn(pgn);
+
+    // console.log('')
+    setFen(gameInstance.current.fen());
+    setHistory(gameInstance.current.history({ verbose: true }));
 
     setInCheckSquare(undefined);
 
     // This shouldn't be here
-    if (gameInstance.in_check()) {
-      setInCheckSquare(getSquareForPiece(pgn, { color: gameInstance.turn(), type: 'k' }));
+    if (gameInstance.current.in_check()) {
+      setInCheckSquare(
+        getSquareForPiece(pgn, { color: gameInstance.current.turn(), type: 'k' }),
+      );
 
       inCheckAudio.play();
     } else if (validPgn) {
@@ -80,14 +88,14 @@ export const ChessGame: React.FunctionComponent<Props> = ({
     };
 
     // see if the move is legal
-    const validMove = gameInstance.move(nextMove);
+    const validMove = gameInstance.current.move(nextMove);
 
     if (validMove !== null) {
       // onMove(gameInstance.pgn());
-      onMove(nextMove, gameInstance.pgn());
+      onMove(nextMove, gameInstance.current.pgn());
 
       if (maintainPositionLocally) {
-        setFen(gameInstance.fen());
+        setFen(gameInstance.current.fen());
       }
     }
   };
@@ -108,7 +116,6 @@ export const ChessGame: React.FunctionComponent<Props> = ({
         onSquareClickMove={onMoveHandler}
         onDrop={onMoveHandler}
         inCheckSquare={inCheckSquare}
-
       />
     </div>
   );
