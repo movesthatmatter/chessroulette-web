@@ -33,7 +33,9 @@ const http = getHttpInstance({
   // transformResponse: [],
 });
 
-export const getIceURLS = async (): Promise<Result<IceServersResponse, ApiError>> => {
+export const getIceURLS = async (): Promise<
+  Result<IceServersResponse, ApiError>
+> => {
   try {
     const { data } = await http.get('api/iceurls');
 
@@ -46,7 +48,7 @@ export const getIceURLS = async (): Promise<Result<IceServersResponse, ApiError>
 };
 
 export const getPublicRooms = async (): Promise<
-Result<PublicRoomsResponsePayload, ApiError>
+  Result<PublicRoomsResponsePayload, ApiError>
 > => {
   try {
     const { data } = await http.get('api/rooms');
@@ -60,7 +62,7 @@ Result<PublicRoomsResponsePayload, ApiError>
 };
 
 export const getPublicRoom = async (
-  id: string,
+  id: string
 ): Promise<Result<PublicRoomResponsePayload, ApiError>> => {
   try {
     const { data } = await http.get(`/api/room/${id}`);
@@ -74,7 +76,7 @@ export const getPublicRoom = async (
 };
 
 export const getPrivateRoom = async (
-  code: string,
+  code: string
 ): Promise<Result<PrivateRoomResponsePayload, ApiError>> => {
   try {
     const { data } = await http.get('/api/room', {
@@ -91,16 +93,19 @@ export const getPrivateRoom = async (
   }
 };
 
-export const getRoomStats = async (
-  credentials: {roomId: string; code?: string},
-): Promise<Result<RoomStatsRecord, ApiError>> => {
+export const getRoomStats = async (credentials: {
+  roomId: string;
+  code?: string;
+}): Promise<Result<RoomStatsRecord, ApiError>> => {
   try {
     const { data } = await http.get('/api/room', {
-      params: credentials.code ? {
-        code: credentials.code,
-      } : {
-        id: credentials.roomId,
-      },
+      params: credentials.code
+        ? {
+            code: credentials.code,
+          }
+        : {
+            id: credentials.roomId,
+          },
     });
 
     return io
@@ -112,7 +117,7 @@ export const getRoomStats = async (
 };
 
 export const createRoom = async (
-  req: CreateRoomRequest,
+  req: CreateRoomRequest
 ): Promise<Result<CreateRoomResponse, ApiError>> => {
   try {
     const { data } = await http.post('api/rooms', req);
@@ -126,7 +131,7 @@ export const createRoom = async (
 };
 
 export const createChallenge = async (
-  req: CreateChallengeRequest,
+  req: CreateChallengeRequest
 ): Promise<Result<CreateRoomResponse, ApiError>> => {
   try {
     const { data } = await http.post('api/challenges', req);
@@ -140,7 +145,7 @@ export const createChallenge = async (
 };
 
 export const registerPeer = async (
-  req: RegisterPeerRequestPayload,
+  req: RegisterPeerRequestPayload
 ): Promise<Result<RegisterPeerResponsePayload, ApiError>> => {
   try {
     const { data } = await http.post('api/peers', req);
@@ -153,8 +158,9 @@ export const registerPeer = async (
   }
 };
 
-export const getGuestUserRegisteredAsPeer = async ():
-Promise<Result<RegisterPeerResponsePayload, ApiError>> => {
+export const getGuestUserRegisteredAsPeer = async (): Promise<
+  Result<RegisterPeerResponsePayload, ApiError>
+> => {
   try {
     const { data } = await http.post('api/peers/guest');
 

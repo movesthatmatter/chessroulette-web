@@ -1,4 +1,4 @@
-export class Pubsy<TChannelPayloadMap extends {[k: string]: unknown}> {
+export class Pubsy<TChannelPayloadMap extends { [k: string]: unknown }> {
   private subscribers: {
     [channel: string]: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -6,9 +6,10 @@ export class Pubsy<TChannelPayloadMap extends {[k: string]: unknown}> {
     };
   } = {};
 
-  subscribe<
-    TChannel extends keyof TChannelPayloadMap
-  >(channel: TChannel, fn: (data: TChannelPayloadMap[TChannel]) => void) {
+  subscribe<TChannel extends keyof TChannelPayloadMap>(
+    channel: TChannel,
+    fn: (data: TChannelPayloadMap[TChannel]) => void
+  ) {
     const subId = String(Math.random()).slice(2);
 
     const channelName = String(channel);
@@ -31,9 +32,10 @@ export class Pubsy<TChannelPayloadMap extends {[k: string]: unknown}> {
     };
   }
 
-  publish<
-    TChannel extends keyof TChannelPayloadMap
-  >(channel: TChannel, data: TChannelPayloadMap[TChannel]) {
+  publish<TChannel extends keyof TChannelPayloadMap>(
+    channel: TChannel,
+    data: TChannelPayloadMap[TChannel]
+  ) {
     const channelName = String(channel);
 
     if (!this.subscribers[channelName]) {

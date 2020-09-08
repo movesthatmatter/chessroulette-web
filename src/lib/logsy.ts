@@ -43,7 +43,7 @@ const sentryHandler = (...[messages, context]: Parameters<ILogHandler>) => {
 
   Sentry.captureMessage(
     msgsAsArray.join(' '),
-    (logsyToSentrySeverityMap as any)[level] || 'critical',
+    (logsyToSentrySeverityMap as any)[level] || 'critical'
   );
 };
 

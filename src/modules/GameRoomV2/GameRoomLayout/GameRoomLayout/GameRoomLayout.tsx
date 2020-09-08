@@ -9,25 +9,33 @@ type Props = {
   getSideComponent: (containerDimensions: Dimensions) => ReactElement;
 };
 
-const getLayoutSizes = (containerDimensions: Dimensions, ratios = {
-  gameArea: 1,
-  sideArea: 0.5,
-},
-offset = 0): {
+const getLayoutSizes = (
+  containerDimensions: Dimensions,
+  ratios = {
+    gameArea: 1,
+    sideArea: 0.5,
+  },
+  offset = 0
+): {
   gameArea: number;
   sideArea: number;
 } => {
-  const gameArea = Math.min(containerDimensions.height, containerDimensions.width) - offset;
-  const sideArea = (gameArea * ratios.sideArea);
+  const gameArea =
+    Math.min(containerDimensions.height, containerDimensions.width) - offset;
+  const sideArea = gameArea * ratios.sideArea;
 
   if (gameArea + sideArea <= containerDimensions.width) {
     return { gameArea, sideArea };
   }
 
-  return getLayoutSizes({
-    width: containerDimensions.width,
-    height: containerDimensions.height,
-  }, ratios, offset + (0.01 * containerDimensions.width));
+  return getLayoutSizes(
+    {
+      width: containerDimensions.width,
+      height: containerDimensions.height,
+    },
+    ratios,
+    offset + 0.01 * containerDimensions.width
+  );
 };
 
 export const GameRoomLayout: React.FC<Props> = (props) => {

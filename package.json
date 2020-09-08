@@ -93,7 +93,7 @@
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src --color",
-    "format": "prettier --write src/**/*.{ts,tsx,scss,css,json}",
+    "format": "prettier --config .prettierrc --write src/**/*.{ts,tsx}",
     "isready": "npm run format && npm run lint && npm run build"
   },
   "eslintConfig": {

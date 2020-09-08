@@ -1,24 +1,31 @@
 import React, { useState, useEffect, ReactNode } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
-import { PublicRoomsResponsePayload, PeerRecord, RoomStatsRecord } from 'dstnd-io';
-import { SocketConsumer, SocketConsumerProps } from 'src/components/SocketProvider';
+import {
+  PublicRoomsResponsePayload,
+  PeerRecord,
+  RoomStatsRecord,
+} from 'dstnd-io';
+import {
+  SocketConsumer,
+  SocketConsumerProps,
+} from 'src/components/SocketProvider';
 import { resources } from 'src/resources';
 
-type Props = Pick<SocketConsumerProps, 'autoDemandConnection' | 'fallbackRender'> & {
-  render: (props: {
-    room: RoomStatsRecord;
-    me: PeerRecord;
-  }) => ReactNode;
+type Props = Pick<
+  SocketConsumerProps,
+  'autoDemandConnection' | 'fallbackRender'
+> & {
+  render: (props: { room: RoomStatsRecord; me: PeerRecord }) => ReactNode;
 };
 
 export const JoinFirstAvailableRoomHelper: React.FC<Props> = (props) => {
   const [socket, setSocket] = useState<SocketClient | undefined>(undefined);
   // These need to be mocked but it's pretty impossible for now
   const [publicRooms, setPublicRooms] = useState<PublicRoomsResponsePayload>(
-    [],
+    []
   );
   const [joinedRoom, setJoinedRoom] = useState<RoomStatsRecord | undefined>(
-    undefined,
+    undefined
   );
   const [me, setMe] = useState<PeerRecord | undefined>(undefined);
 
@@ -54,15 +61,18 @@ export const JoinFirstAvailableRoomHelper: React.FC<Props> = (props) => {
         }
       }}
       autoDemandConnection={props.autoDemandConnection}
-      fallbackRender={props.fallbackRender || (() => (
-        <div>
-          No room available:
-          <ul>
-            <li>{'Make sure the <SocketProvider /> wraps your component'}</li>
-            <li>or Check the connection!</li>
-          </ul>
-        </div>
-      ))}
+      fallbackRender={
+        props.fallbackRender ||
+        (() => (
+          <div>
+            No room available:
+            <ul>
+              <li>{'Make sure the <SocketProvider /> wraps your component'}</li>
+              <li>or Check the connection!</li>
+            </ul>
+          </div>
+        ))
+      }
       render={() => (
         <>
           {joinedRoom && me && (

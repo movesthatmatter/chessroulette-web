@@ -53,18 +53,18 @@ export const GameRoomV2: React.FC<Props> = ({
           <StandaloneChessGame
             homeColor={homeColor}
             playable={
-              (game.state === 'pending' || game.state === 'started')
-              && isPlayer(props.room.me.id, game.players)
-              && game.lastMoveBy !== homeColor
+              (game.state === 'pending' || game.state === 'started') &&
+              isPlayer(props.room.me.id, game.players) &&
+              game.lastMoveBy !== homeColor
             }
             game={props.room.game}
             getBoardSize={() => dimensions.width}
             onMove={(nextMove) => {
               // don't move unless the game is pending or started
               if (
-                !game
-                || game.state === 'finished'
-                || game.state === 'neverStarted'
+                !game ||
+                game.state === 'finished' ||
+                game.state === 'neverStarted'
               ) {
                 return;
               }
@@ -121,9 +121,9 @@ export const GameRoomV2: React.FC<Props> = ({
                   }
                 />
               )}
-              {(game.state === 'finished'
-                || game.state === 'stopped'
-                || game.state === 'neverStarted') && (
+              {(game.state === 'finished' ||
+                game.state === 'stopped' ||
+                game.state === 'neverStarted') && (
                 <ConfirmationButton
                   label="Rematch"
                   onSubmit={onRematchOffer}
