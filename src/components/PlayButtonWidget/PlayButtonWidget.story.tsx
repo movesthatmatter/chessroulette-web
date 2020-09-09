@@ -2,6 +2,7 @@
 import React from 'react';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
+import { action } from '@storybook/addon-actions';
 import { PlayButtonWidget } from './PlayButtonWidget';
 
 export default {
@@ -12,8 +13,14 @@ export default {
 export const defaultStory = () => (
   <Grommet theme={defaultTheme}>
     <div style={{ width: '200px' }}>
-      <PlayButtonWidget type="friendly" />
-      <PlayButtonWidget type="challenge" />
+      <PlayButtonWidget
+        buttonLabel="Play a Friend"
+        onSubmit={action('on submit')}
+      />
+      <PlayButtonWidget
+        buttonLabel="Create Challenge"
+        onSubmit={action('on submit')}
+      />
     </div>
   </Grommet>
 );

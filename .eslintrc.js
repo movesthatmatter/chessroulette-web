@@ -4,8 +4,10 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:jest/recommended',
     'prettier',
+    'prettier/@typescript-eslint',
+    'prettier/react',
   ],
-  plugins: ['@typescript-eslint', 'prettier', 'jest', 'react-hooks', 'babel'],
+  plugins: ['@typescript-eslint', 'jest', 'react-hooks', 'babel', 'prettier'],
   settings: {
     'import/parsers': {
       '@typescript-eslint/parser': ['.ts', '.tsx'],
@@ -45,6 +47,8 @@ module.exports = {
     'class-methods-use-this': 'off',
     'array-callback-return': 'off', // Typescript will take are of this complain
 
+    'no-dupe-class-members': 'off', // This breaks method overloading when on
+
     // See https://github.com/babel/eslint-plugin-babel/issues/185#issuecomment-569996329
     'no-unused-expressions': 'off',
     'babel/no-unused-expressions': 'error',
@@ -59,14 +63,17 @@ module.exports = {
     // indent: 'off',
     // '@typescript-eslint/indent': [2, 2],
 
-    'react/jsx-one-expression-per-line': ['error', { allow: 'single-child' }],
+    'react/jsx-one-expression-per-line': 'off',
     'react/prop-types': 'off', // Disable prop types since we are using Typescript
     'react/destructuring-assignment': 'off', // This one doesn't make much sense to me as sometimes it creates extra code. i think it's not a big deal to access props in both ways
     'react/state-in-constructor': 'off',
     'react/static-property-placement': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react-hooks/rules-of-hooks': 'error',
+    'react/jsx-curly-newline': 'off',
     // "react-hooks/exhaustive-deps": 'warn',
+
+    // 'jsx-one-expression-per-line': 'off',
 
     // ACCESSIBILTY
     // TODO: Re-enable All of these when bringing in accessibilty

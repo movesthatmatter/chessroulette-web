@@ -1,73 +1,62 @@
 import React, { useState } from 'react';
-import { createUseStyles } from 'src/lib/jss';
 import { Box, Layer } from 'grommet';
 import { noop } from 'src/lib/util';
-import { Modal } from '../Modal/Modal';
-import { PopupContent } from '../PopupContent';
+import { ChessChallengeCreator } from 'src/modules/Games/Chess/components/ChessChallengeCreator';
+import { GameInitConfig } from 'dstnd-io';
 import { Button } from '../Button';
-import { FaceTime } from '../FaceTimeArea';
 import { FaceTimeSetup } from '../FaceTimeArea/FaceTimeSetup';
 
 type Props = {
-  type: 'friendly' | 'challenge';
-  onSubmit?: () => void;
+  onSubmit?: (gameInitConfig: GameInitConfig) => void;
+  buttonLabel: string;
 };
 
-type VisiblePopup = 'none' | 'friendly' | 'challenge';
-
 export const PlayButtonWidget: React.FC<Props> = ({
-  type,
   onSubmit = noop,
+  ...props
 }) => {
-  const cls = useStyles();
-  const [visiblePopup, setVisiblePopup] = useState<VisiblePopup>('none');
+  const [visiblePopup, setVisiblePopup] = useState<boolean>(false);
   const [faceTimeOn, setFaceTimeOn] = useState(false);
+  const [gameInitConfig, setGameInitConfig] = useState<
+    GameInitConfig | undefined
+  >(undefined);
+
+  const submit = () => {
+    if (!gameInitConfig) {
+      return;
+    }
+
+    onSubmit(gameInitConfig);
+  };
 
   return (
     <Box margin="small">
       <Button
-        onClick={() => { setVisiblePopup(type); }}
+        onClick={() => {
+          setVisiblePopup(true);
+        }}
         size="medium"
-        label={type === 'friendly' ? 'Play a Friend' : 'Challenge'}
+        label={props.buttonLabel}
       />
-      {visiblePopup === 'challenge' && (
+      {visiblePopup && (
         <Layer position="center">
           <Box pad="medium" gap="small" width="medium">
             <FaceTimeSetup onUpdated={(s) => setFaceTimeOn(s.on)} />
-            Create challenge
+            <Box>
+              <ChessChallengeCreator onUpdate={setGameInitConfig} />
+            </Box>
             <Button
               type="button"
-              label="Submit"
+              label="Create Challenge"
               primary
-              onClick={onSubmit}
-              disabled={!faceTimeOn}
+              onClick={submit}
+              disabled={!(faceTimeOn && gameInitConfig)}
+              // margin={{ bottom: 'small' }}
             />
             <Button
               type="button"
               label="Cancel"
-              onClick={() => setVisiblePopup('none')}
-            />
-          </Box>
-        </Layer>
-      )}
-
-      {visiblePopup === 'friendly' && (
-        <Layer position="center">
-          <Box pad="medium" gap="small" width="medium">
-            <FaceTimeSetup onUpdated={(s) => setFaceTimeOn(s.on)} />
-
-            Play a Friend
-            <Button
-              type="button"
-              label="Submit"
-              primary
-              onClick={onSubmit}
-              disabled={!faceTimeOn}
-            />
-            <Button
-              type="button"
-              label="Cancel"
-              onClick={() => setVisiblePopup('none')}
+              onClick={() => setVisiblePopup(false)}
             />
           </Box>
         </Layer>
@@ -75,7 +64,3 @@ export const PlayButtonWidget: React.FC<Props> = ({
     </Box>
   );
 };
-
-const useStyles = createUseStyles({
-  container: {},
-});

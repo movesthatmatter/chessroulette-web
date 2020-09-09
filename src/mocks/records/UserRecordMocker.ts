@@ -1,12 +1,17 @@
 import Chance from 'chance';
 import { UserRecord, GuestUserRecord, RegisteredUserRecord } from 'dstnd-io';
 import { getRandomInt } from 'src/lib/util';
-import { User } from '@sentry/browser';
 
 const chance = new Chance();
 
 export class UserRecordMocker {
-  record(isGuest = false): UserRecord {
+  public record(isGuest: false): RegisteredUserRecord;
+
+  public record(isGuest: true): GuestUserRecord;
+
+  public record(isGuest?: boolean): GuestUserRecord;
+
+  public record(isGuest = false): UserRecord {
     const id = chance.guid();
 
     if (isGuest) {

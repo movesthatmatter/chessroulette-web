@@ -33,10 +33,7 @@ export const LandingPage: React.FC<Props> = () => {
       render={({ socket }) => (
         <div className={cls.container}>
           <PopupModal show={friendsPopup}>
-            <PopupContent
-              hasCloseButton
-              onClose={() => setFriendsPopup(false)}
-            >
+            <PopupContent hasCloseButton onClose={() => setFriendsPopup(false)}>
               <>
                 {me && (
                   <PlayWithFriendsPopup
@@ -58,6 +55,7 @@ export const LandingPage: React.FC<Props> = () => {
                           type: 'private',
                           game: {
                             timeLimit: 'rapid',
+                            preferredColor: 'random',
                           },
                         })
                       ).map((room) => {
@@ -102,10 +100,7 @@ export const LandingPage: React.FC<Props> = () => {
                 />
               </div>
               <div className={cls.buttonWithMutunachiWrapper}>
-                <Mutunachi
-                  mid={12}
-                  className={cls.mutunachi}
-                />
+                <Mutunachi mid={12} className={cls.mutunachi} />
                 <ColoredButton
                   label="Play Open Challenge"
                   color="#54C4F2"
@@ -116,12 +111,15 @@ export const LandingPage: React.FC<Props> = () => {
                       return;
                     }
 
-                    (await resources.createChallenge({
-                      peerId: me.id,
-                      game: {
-                        timeLimit: 'rapid',
-                      },
-                    })).map((room) => {
+                    (
+                      await resources.createChallenge({
+                        peerId: me.id,
+                        game: {
+                          timeLimit: 'rapid',
+                          preferredColor: 'random',
+                        },
+                      })
+                    ).map((room) => {
                       history.push(`/gameroom/${toRoomPath(room)}`);
                     });
                   }}

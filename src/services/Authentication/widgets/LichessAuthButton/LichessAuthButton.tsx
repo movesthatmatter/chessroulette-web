@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Button } from 'src/components/Button';
 import { http } from 'src/lib/http';
-import WindowOpener from 'react-window-opener';
 import ReactPopout from 'react-popout';
 import {
   io,

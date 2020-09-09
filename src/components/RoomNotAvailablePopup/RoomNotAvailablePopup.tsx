@@ -7,8 +7,7 @@ import { SocketConsumer } from 'src/components/SocketProvider';
 import { PeerRecord, CreateRoomResponse } from 'dstnd-io';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 
-type Props = {
-};
+type Props = {};
 const toRoomPath = (room: CreateRoomResponse) =>
   `${room.id}${room.type === 'private' ? `/${room.code}` : ''}`;
 export const RoomNotAvailablePopup: React.FC<Props> = () => {
@@ -27,50 +26,42 @@ export const RoomNotAvailablePopup: React.FC<Props> = () => {
           <div className={cls.title}>
             This room is not available anymore.
             <br />
-            <Mutunachi
-              mid={2}
-              style={{ height: '60px' }}
-            />
+            <Mutunachi mid={2} style={{ height: '60px' }} />
             <br />
             <span style={{ color: '#08D183' }}>Create</span>
-            {' '}
-            a new room and invite your
-            friends
-            {' '}
+            a new room and invite your friends
             <br />
             or
-            <br />
-            {' '}
-            <span style={{ color: '#54C4F2' }}>Join</span>
-            {' '}
+            <br /> <span style={{ color: '#54C4F2' }}>Join</span>
             an open challenge.
           </div>
           <div className={cls.bottomPart}>
             <div style={{ marginBottom: '30px' }}>
-              {me
-                ? (
-                  <ColoredButton
-                    label="Create New Room"
-                    color="#08D183"
-                    fontSize="21px"
-                    padding="5px"
-                    onClickFunction={async () => {
-                      (
-                        await resources.createRoom({
-                          nickname: undefined,
-                          peerId: me.id,
-                          type: 'private',
-                          game: {
-                            timeLimit: 'blitz',
-                          },
-                        })
-                      ).map((room) => {
-                        history.push(`/gameroom/${toRoomPath(room)}`);
-                      });
-                    }}
-                  />
-                )
-                : <div>No connection detected!</div>}
+              {me ? (
+                <ColoredButton
+                  label="Create New Room"
+                  color="#08D183"
+                  fontSize="21px"
+                  padding="5px"
+                  onClickFunction={async () => {
+                    (
+                      await resources.createRoom({
+                        nickname: undefined,
+                        peerId: me.id,
+                        type: 'private',
+                        game: {
+                          timeLimit: 'blitz',
+                          preferredColor: 'random',
+                        },
+                      })
+                    ).map((room) => {
+                      history.push(`/gameroom/${toRoomPath(room)}`);
+                    });
+                  }}
+                />
+              ) : (
+                <div>No connection detected!</div>
+              )}
             </div>
             <div>
               <ColoredButton
@@ -83,13 +74,16 @@ export const RoomNotAvailablePopup: React.FC<Props> = () => {
                     return;
                   }
 
-                  (await resources.createChallenge({
-                    peerId: me.id,
-                    game: {
-                      // This should not be hardcoded
-                      timeLimit: 'rapid',
-                    },
-                  })).map((room) => {
+                  (
+                    await resources.createChallenge({
+                      peerId: me.id,
+                      game: {
+                        // This should not be hardcoded
+                        timeLimit: 'rapid',
+                        preferredColor: 'random',
+                      },
+                    })
+                  ).map((room) => {
                     history.push(`/gameroom/${toRoomPath(room)}`);
                   });
                 }}
@@ -118,6 +112,5 @@ const useStyle = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-
   },
 });
