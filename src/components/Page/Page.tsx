@@ -1,14 +1,21 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import logo from 'src/assets/logo.svg';
-import { AuthenticationConsumer } from 'src/services/Authentication';
+import {
+  AuthenticationConsumer,
+  authenticateAsGuest,
+} from 'src/services/Authentication';
 import { LichessAuthButton } from 'src/services/Authentication/widgets/LichessAuthButton/LichessAuthButton';
 import { LogoutButton } from 'src/services/Authentication/widgets/LogoutButton/LogoutButton';
+import { Menu, Text, Box } from 'grommet';
+import { noop } from 'src/lib/util';
+import { useDispatch } from 'react-redux';
 
 type Props = {};
 
 export const Page: React.FC<Props> = (props) => {
   const cls = useStyles();
+  const dispatch = useDispatch();
 
   return (
     <div className={cls.container}>
@@ -20,19 +27,27 @@ export const Page: React.FC<Props> = (props) => {
 
           <AuthenticationConsumer
             renderAuthenticated={(auth) => (
-              // <Box alignSelf="end" justify="end">
-              <>
-                <div className={cls.topRight}>
-                  <p>
-                    {'Welcome '}
-                    <strong>{auth.user.name}</strong>
-                  </p>
-                </div>
-                <LogoutButton />
-              </>
-              // </Box>
+              <Menu
+                plain
+                dropProps={{ align: { top: 'bottom', left: 'left' } }}
+                label={
+                  <Text>
+                    Welcome <strong>{auth.user.name}</strong>
+                  </Text>
+                }
+                items={[
+                  {
+                    label: 'Logout',
+                    onClick: () => dispatch(authenticateAsGuest()),
+                  },
+                ]}
+              />
             )}
-            renderNotAuthenticated={() => <LichessAuthButton />}
+            renderNotAuthenticated={() => (
+              <Box alignContent="center" justify="center">
+                <LichessAuthButton />
+              </Box>
+            )}
           />
         </div>
         <main className={cls.main}>{props.children}</main>

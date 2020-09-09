@@ -57,32 +57,30 @@ export const LichessAuthButton: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Box>
-        <Button
-          label="Lichess Login"
-          primary
-          size="small"
-          onClick={async () => {
-            const { data } = await http.get('api/auth/lichess/url');
+      <Button
+        label="Lichess Login"
+        primary
+        // size="small"
+        onClick={async () => {
+          const { data } = await http.get('api/auth/lichess/url');
 
-            io.deserialize(authenticationRedirectUrlResponsePayload, data).map(
-              ({ redirectUrl }) => {
-                setRedirectUri(redirectUrl);
-              }
-            );
+          io.deserialize(authenticationRedirectUrlResponsePayload, data).map(
+            ({ redirectUrl }) => {
+              setRedirectUri(redirectUrl);
+            }
+          );
+        }}
+        className={cls.container}
+      />
+      {redirectUri && (
+        <ReactPopout
+          url={redirectUri}
+          options={{
+            height: '700px',
+            width: '600px',
           }}
-          className={cls.container}
         />
-        {redirectUri && (
-          <ReactPopout
-            url={redirectUri}
-            options={{
-              height: '700px',
-              width: '600px',
-            }}
-          />
-        )}
-      </Box>
+      )}
     </>
   );
 };

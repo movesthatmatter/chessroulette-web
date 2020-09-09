@@ -1,19 +1,19 @@
 import React from 'react';
-import { createUseStyles } from 'src/lib/jss';
 import { Box } from 'grommet';
-import { Button } from 'src/components/Button';
+import { Button, ButtonProps } from 'src/components/Button';
 import { useDispatch } from 'react-redux';
 import { authenticateAsGuest } from '../../effects';
 
-type Props = {};
+type Props = Omit<ButtonProps, 'onClick' | 'label'> & {};
 
-export const LogoutButton: React.FC<Props> = () => {
+export const LogoutButton: React.FC<Props> = ({ ...buttonProps }) => {
   const dispatch = useDispatch();
 
   return (
     <Box>
       <Button
         label="Log out"
+        {...buttonProps}
         onClick={() => {
           dispatch(authenticateAsGuest());
         }}
@@ -21,7 +21,3 @@ export const LogoutButton: React.FC<Props> = () => {
     </Box>
   );
 };
-
-const useStyles = createUseStyles({
-  container: {},
-});
