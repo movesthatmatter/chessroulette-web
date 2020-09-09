@@ -18,9 +18,10 @@ export const AuthenticationConsumer: React.FC<Props> = ({
 
   return (
     <>
-      {contextState.authenticationType === 'none'
-        ? renderNotAuthenticated()
-        : props.renderAuthenticated(contextState)}
+      {contextState.authenticationType === 'user'
+        ? // Don't renderAuthneticated on Guest
+          props.renderAuthenticated(contextState)
+        : renderNotAuthenticated()}
     </>
   );
 };

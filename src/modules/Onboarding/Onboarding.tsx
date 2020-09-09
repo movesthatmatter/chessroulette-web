@@ -5,9 +5,8 @@ import { Result } from 'ts-results';
 import { OnboardingWidget } from './components/OnboardingWidget';
 
 type Props = {
-  onSetUser: (
-    userId: string,
-  ) => Promise<Result<UserInfoRecord, unknown>>;
+  // TO NOTE: Removed on Sep 8th when I worked on authentication
+  // onSetUser: (userId: string) => Promise<Result<UserInfoRecord, unknown>>;
 };
 
 export const Onboarding: React.FC<Props> = (props) => {
@@ -15,7 +14,8 @@ export const Onboarding: React.FC<Props> = (props) => {
 
   return (
     <div className={cls.container}>
-      <OnboardingWidget />
+      {/* TO NOTE: Removed on Sep 8th when I worked on authentication */}
+      {/* <OnboardingWidget /> */}
     </div>
   );
 };

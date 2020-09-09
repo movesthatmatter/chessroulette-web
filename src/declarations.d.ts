@@ -8,3 +8,5 @@
 declare module 'validatorjs/src/lang/en';
 
 declare module '*.wav';
+
+declare module 'react-popout';

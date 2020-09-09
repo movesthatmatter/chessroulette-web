@@ -17,17 +17,18 @@ export default {
 export const defaultStory = () => (
   <ReduxProvider>
     <Grommet theme={defaultTheme} full>
-      <Onboarding
-        onSetUser={(...args) => {
-          action('on set user')(...args);
+      <Onboarding />
+      {/* // TO NOTE: Removed on Sep 8th when I worked on authentication
+        // onSetUser={(...args) => {
+        //   action('on set user')(...args);
 
-          return Promise.resolve(new Ok({
-            id: '1',
-            name: 'Mock User',
-            avatarId: '1',
-          }));
-        }}
-      />
+        //   return Promise.resolve(new Ok({
+        //     id: '1',
+        //     name: 'Mock User',
+        //     avatarId: '1',
+        //   }));
+        // }}
+      // /> */}
     </Grommet>
   </ReduxProvider>
 );

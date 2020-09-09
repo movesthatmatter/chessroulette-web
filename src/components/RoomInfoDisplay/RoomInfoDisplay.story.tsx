@@ -7,7 +7,7 @@ import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import Chance from 'chance';
-import { UserInfoMocker } from 'src/mocks/records';
+import { UserInfoMocker, UserRecordMocker } from 'src/mocks/records';
 import { RoomInfoDisplay } from './RoomInfoDisplay';
 import { Peer } from '../RoomProvider';
 
@@ -21,14 +21,14 @@ const chance = new Chance();
 const roomMocker = new RoomMocker();
 const peerMocker = new PeerMocker();
 const userInfoMocker = new UserInfoMocker();
+const userRecordMocker = new UserRecordMocker();
 
 const me = peerMocker.withProps({
-  user: {
+  user: userRecordMocker.withProps({
     name: 'Aristotel',
     id: '1',
     avatarId: '1',
-    isGuest: false,
-  },
+  }),
 });
 const roomPeers = [
   // These could've been automted but I wanted to maintain the names :)
@@ -46,20 +46,26 @@ const playersById = {
 
 const publicRoom = roomMocker.withProps({
   me,
-  peers: roomPeers.reduce((accum, peer) => ({
-    ...accum,
-    [peer.id]: peer,
-  }), {}),
+  peers: roomPeers.reduce(
+    (accum, peer) => ({
+      ...accum,
+      [peer.id]: peer,
+    }),
+    {}
+  ),
   name: 'Valencia',
   type: 'public',
 });
 
 const privateRoom = roomMocker.withProps({
   me,
-  peers: roomPeers.reduce((accum, peer) => ({
-    ...accum,
-    [peer.id]: peer,
-  }), {}),
+  peers: roomPeers.reduce(
+    (accum, peer) => ({
+      ...accum,
+      [peer.id]: peer,
+    }),
+    {}
+  ),
   name: 'Valencia',
   type: 'private',
 });
@@ -86,13 +92,17 @@ const getPeerWithStream = (p: Peer, stream: MediaStream): Peer => ({
 
 const getPeersWithSomeStreams = (
   peersMap: Record<string, Peer>,
-  stream: MediaStream,
-): Record<string, Peer> => Object.values(peersMap).reduce((accum, peer) => ({
-  ...accum,
-  [peer.id]: chance.integer({ min: 0, max: 1 })
-    ? getPeerWithStream(peer, stream)
-    : peer,
-}), {});
+  stream: MediaStream
+): Record<string, Peer> =>
+  Object.values(peersMap).reduce(
+    (accum, peer) => ({
+      ...accum,
+      [peer.id]: chance.integer({ min: 0, max: 1 })
+        ? getPeerWithStream(peer, stream)
+        : peer,
+    }),
+    {}
+  );
 
 export const PublicRoom = () => (
   <WithLocalStream
@@ -148,41 +158,44 @@ export const RoomWithSomeVideosOnly = () => (
   />
 );
 
-export const NoVideo = () => React.createElement(() => (
-  <div style={{ display: 'flex', width: '350px' }}>
-    <RoomInfoDisplay
-      me={publicRoom.me}
-      room={publicRoom}
-      onLeaveRoom={action('leave room!')}
-      onInviteNewPeer={action('invite new one')}
-      playersById={playersById}
-      gameInProgress={false}
-    />
-  </div>
-));
+export const NoVideo = () =>
+  React.createElement(() => (
+    <div style={{ display: 'flex', width: '350px' }}>
+      <RoomInfoDisplay
+        me={publicRoom.me}
+        room={publicRoom}
+        onLeaveRoom={action('leave room!')}
+        onInviteNewPeer={action('invite new one')}
+        playersById={playersById}
+        gameInProgress={false}
+      />
+    </div>
+  ));
 
-export const NoVideoGameInProgress = () => React.createElement(() => (
-  <div style={{ display: 'flex', width: '350px' }}>
-    <RoomInfoDisplay
-      me={publicRoom.me}
-      room={publicRoom}
-      onLeaveRoom={action('leave room!')}
-      onInviteNewPeer={action('invite new one')}
-      playersById={playersById}
-      gameInProgress
-    />
-  </div>
-));
+export const NoVideoGameInProgress = () =>
+  React.createElement(() => (
+    <div style={{ display: 'flex', width: '350px' }}>
+      <RoomInfoDisplay
+        me={publicRoom.me}
+        room={publicRoom}
+        onLeaveRoom={action('leave room!')}
+        onInviteNewPeer={action('invite new one')}
+        playersById={playersById}
+        gameInProgress
+      />
+    </div>
+  ));
 
-export const NoPeersJoinedYet = () => React.createElement(() => (
-  <div style={{ display: 'flex', width: '350px' }}>
-    <RoomInfoDisplay
-      me={emptyRoom.me}
-      room={emptyRoom}
-      onLeaveRoom={action('leave room!')}
-      onInviteNewPeer={action('invite new one')}
-      playersById={{}}
-      gameInProgress={false}
-    />
-  </div>
-));
+export const NoPeersJoinedYet = () =>
+  React.createElement(() => (
+    <div style={{ display: 'flex', width: '350px' }}>
+      <RoomInfoDisplay
+        me={emptyRoom.me}
+        room={emptyRoom}
+        onLeaveRoom={action('leave room!')}
+        onInviteNewPeer={action('invite new one')}
+        playersById={{}}
+        gameInProgress={false}
+      />
+    </div>
+  ));

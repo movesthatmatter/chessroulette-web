@@ -2,7 +2,8 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import logo from 'src/assets/logo.svg';
 import { AuthenticationConsumer } from 'src/services/Authentication';
-import { Box } from 'grommet';
+import { LichessAuthButton } from 'src/services/Authentication/widgets/LichessAuthButton/LichessAuthButton';
+import { LogoutButton } from 'src/services/Authentication/widgets/LogoutButton/LogoutButton';
 
 type Props = {};
 
@@ -20,19 +21,21 @@ export const Page: React.FC<Props> = (props) => {
           <AuthenticationConsumer
             renderAuthenticated={(auth) => (
               // <Box alignSelf="end" justify="end">
-              <div className={cls.topRight}>
-                <p>
-                  {'Welcome '}
-                  <strong>{auth.user.name}</strong>
-                </p>
-              </div>
+              <>
+                <div className={cls.topRight}>
+                  <p>
+                    {'Welcome '}
+                    <strong>{auth.user.name}</strong>
+                  </p>
+                </div>
+                <LogoutButton />
+              </>
               // </Box>
             )}
+            renderNotAuthenticated={() => <LichessAuthButton />}
           />
         </div>
-        <main className={cls.main}>
-          {props.children}
-        </main>
+        <main className={cls.main}>{props.children}</main>
       </div>
     </div>
   );

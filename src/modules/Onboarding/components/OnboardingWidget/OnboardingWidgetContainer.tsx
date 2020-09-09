@@ -1,13 +1,18 @@
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
-import { setUser } from 'src/services/Authentication';
+import { noop } from 'src/lib/util';
 import { OnboardingWidget } from './OnboardingWidget';
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-  onSetUser: setUser,
-}, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators(
+    {
+      // TO NOTE: Removed on Sep 8th when I worked on authentication
+      // onSetUser: noop,
+    },
+    dispatch
+  );
 
 export const OnboardingWidgetContainer = connect(
   undefined,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(OnboardingWidget);

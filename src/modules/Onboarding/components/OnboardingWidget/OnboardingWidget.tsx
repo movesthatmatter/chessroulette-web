@@ -7,6 +7,8 @@ import { createRoom } from 'src/resources/resources';
 import { OnboardingForm, OnboardingFormProps } from '../OnboardingForm';
 
 type Props = Pick<OnboardingFormProps, 'mode'> & {
+  // TO NOTE: Removed on Sep 8th when I worked on authentication
+  // onSetUser: (userId: string) => Promise<Result<UserInfoRecord, unknown>>;
   onSetUser: (userId: string) => Promise<Result<UserInfoRecord, unknown>>;
 };
 
@@ -25,7 +27,6 @@ export const OnboardingWidget: React.FC<Props> = (props) => {
       mode={props.mode}
       onCreateClassroom={async (input) => {
         // TO NOTE: Removed on Aug 31 when I added the UserInfoRecord to PeerRecord
-
         // (await props.onSetUser({ name: input.userName }))
         //   .map((user) => createRoom({
         //     nickname: 'my room',

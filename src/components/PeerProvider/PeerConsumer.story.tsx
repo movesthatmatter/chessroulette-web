@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
+import { UserRecordMocker } from 'src/mocks/records';
 import { PeerProvider } from './PeerProvider';
 import { SocketProvider } from '../SocketProvider';
 import { FaceTime } from '../FaceTimeArea';
@@ -10,15 +11,16 @@ export default {
   title: 'Components/PeerConsumer',
 };
 
+const userRecordMocker = new UserRecordMocker();
+
 export const defaultStory = () => (
   <SocketProvider>
     <PeerProvider
-      user={{
+      user={userRecordMocker.withProps({
         id: '1',
         name: 'Kasparov',
         avatarId: '1',
-        isGuest: false,
-      }}
+      })}
       roomCredentials={{
         id: '1',
       }}

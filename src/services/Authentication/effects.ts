@@ -1,27 +1,35 @@
 import { Dispatch } from 'redux';
-import { resources } from 'src/resources';
-import { UserRecord } from 'dstnd-io';
+import {
+  UserRecord,
+  AuthenticationViaExternalAccountRequestPayload,
+} from 'dstnd-io';
 import { setUserAction } from './actions';
+import {
+  authenticateAsGuest as authenticateAsGuestResource,
+  authenticate as authenticateResource,
+} from './resources';
 
-// TODO: This needs to be revised in order to offer proper auth flow!
-export const setUser = (userId: UserRecord['id']) => async (dispatch: Dispatch) => (
-  await resources.registerPeer({ userId })
-)
-  .map(({ user }) => {
+export const authenticateExistentUser = (userId: UserRecord['id']) => async (
+  dispatch: Dispatch
+) =>
+  (await authenticateResource({ userId })).map(({ user }) => {
     dispatch(setUserAction(user));
 
     return user;
   });
 
-export const setGuest = () => async (dispatch: Dispatch) => (
-  await resources.getGuestUserRegisteredAsPeer()
-)
-  .mapErr((e) => {
-    console.log('set guest error', e);
-  })
-  .map((peer) => {
-    console.log('set guest success', peer.user);
-    dispatch(setUserAction(peer.user));
+export const authenticateViaExternalAccount = (
+  opts: AuthenticationViaExternalAccountRequestPayload
+) => async (dispatch: Dispatch) =>
+  (await authenticateResource(opts)).map(({ user }) => {
+    dispatch(setUserAction(user));
 
-    return peer.user;
+    return user;
+  });
+
+export const authenticateAsGuest = () => async (dispatch: Dispatch) =>
+  (await authenticateAsGuestResource()).map(({ guest }) => {
+    dispatch(setUserAction(guest));
+
+    return guest;
   });

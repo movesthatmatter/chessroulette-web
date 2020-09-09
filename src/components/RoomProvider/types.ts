@@ -5,11 +5,11 @@ export type Peer = PeerRecord & {
   connection: {
     channels: PeerConnectionStatus['channels'];
   };
-}
+};
 
 export type Room = RoomStatsRecord & {
   me: Peer;
   peers: Record<string, Peer>;
 
   peersIncludingMe: Record<string, Peer>;
-}
+};

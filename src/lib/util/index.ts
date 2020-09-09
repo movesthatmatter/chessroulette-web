@@ -1,6 +1,10 @@
 import humanizeDuration, { Humanizer } from 'humanize-duration';
 import { differenceInMilliseconds } from 'date-fns';
-import { CreateRoomResponse, CreateRoomRequest, JoinRoomRequestPayload } from 'dstnd-io';
+import {
+  CreateRoomResponse,
+  CreateRoomRequest,
+  JoinRoomRequestPayload,
+} from 'dstnd-io';
 import UrlPattern from 'url-pattern';
 import { Result, Err, Ok } from 'ts-results';
 
@@ -46,7 +50,7 @@ export function shuffle<T extends unknown>(a: T[]) {
 export const randomId = () => String(Math.random()).slice(2);
 
 export const complement = <T>(anySide: T, [sideA, sideB]: readonly [T, T]) =>
-  (sideA === anySide ? sideB : sideA);
+  sideA === anySide ? sideB : sideA;
 
 export const durationFormats = {
   minimal: humanizeDuration.humanizer({
@@ -56,18 +60,20 @@ export const durationFormats = {
 };
 
 export const prettyTimeDiff = (
-  dateLeft: Date, dateRight: Date,
+  dateLeft: Date,
+  dateRight: Date,
   {
     format = durationFormats.minimal,
     options = {},
   }: {
     format?: Humanizer;
     options?: humanizeDuration.Options;
-  } = {},
+  } = {}
 ) => format(differenceInMilliseconds(dateLeft, dateRight), options);
 
 export const prettyCountdown = (
-  ms: number, {
+  ms: number,
+  {
     format = humanizeDuration.humanizer({
       language: 'custom',
       languages: {
@@ -93,16 +99,16 @@ export const prettyCountdown = (
   }: {
     format?: Humanizer;
     options?: humanizeDuration.Options;
-  },
+  }
 ) => format(ms, options);
 
 export const toRoomUrlPath = (room: CreateRoomResponse) =>
   `${room.id}${room.type === 'private' ? `/${room.code}` : ''}`;
 
 export const urlPathToRoomCredentials = (
-  url: string,
+  url: string
 ): Result<JoinRoomRequestPayload['content'], undefined> => {
-  const match = (new UrlPattern('/gameroom/:id(/:code)')).match(url);
+  const match = new UrlPattern('/gameroom/:id(/:code)').match(url);
 
   if (!(match && match.id)) {
     return new Err(undefined);

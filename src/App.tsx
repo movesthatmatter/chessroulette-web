@@ -15,6 +15,7 @@ import { LandingPageV2 } from './modules/Landing/LandingPageV2';
 import { LandingPage } from './modules/Landing/LandingPage';
 import { AuthenticationProvider } from './services/Authentication';
 import config from './config';
+import { LichessAuthCallbackPage } from './services/Authentication/widgets/LichessAuthCallbackPage';
 
 console.log('App config', config);
 
@@ -32,10 +33,11 @@ function App() {
                 {GA.init() && <GA.RouteTracker />}
                 <Switch location={location}>
                   <Route
+                    path="/auth/lichess/callback"
                     exact
-                    path="/gameroom/:id/:code?"
-                    key={location.key}
-                  >
+                    component={LichessAuthCallbackPage}
+                  />
+                  <Route exact path="/gameroom/:id/:code?" key={location.key}>
                     {({ match }) => (
                       <CSSTransition
                         in={match !== null}
@@ -47,11 +49,7 @@ function App() {
                       </CSSTransition>
                     )}
                   </Route>
-                  <Route
-                    exact
-                    path="/classroom/:id/:code?"
-                    key={location.key}
-                  >
+                  <Route exact path="/classroom/:id/:code?" key={location.key}>
                     {({ match }) => (
                       <CSSTransition
                         in={match !== null}
