@@ -10,10 +10,14 @@ import { authenticateViaExternalAccountEffect } from '../../effects';
 
 type Props = {};
 
-export const LichessAuthButton: React.FC<Props> = (props) => {
+export const LichessAuthButton: React.FC<Props> = () => {
   const cls = useStyles();
   const [redirectUri, setRedirectUri] = useState<string | undefined>(undefined);
   const [token, setToken] = useState<string | undefined>(undefined);
+
+  // This is needed to trick the Popout to rerender
+  // Otherwise, if once opened, it won't reopen
+  const [popupWindowKey, setPopupWindowKey] = useState(Math.random());
 
   const dispatch = useDispatch();
 
@@ -37,6 +41,8 @@ export const LichessAuthButton: React.FC<Props> = (props) => {
       return;
     }
 
+    setRedirectUri(undefined);
+
     dispatch(
       authenticateViaExternalAccountEffect({
         externalAccountType: 'lichess',
@@ -53,6 +59,8 @@ export const LichessAuthButton: React.FC<Props> = (props) => {
         onClick={async () => {
           const { data } = await http.get('api/auth/lichess/url');
 
+          setPopupWindowKey(Math.random());
+
           io.deserialize(authenticationRedirectUrlResponsePayload, data).map(
             ({ redirectUrl }) => {
               setRedirectUri(redirectUrl);
@@ -63,6 +71,7 @@ export const LichessAuthButton: React.FC<Props> = (props) => {
       />
       {redirectUri && (
         <ReactPopout
+          key={popupWindowKey}
           url={redirectUri}
           options={{
             height: '700px',
