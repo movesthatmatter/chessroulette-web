@@ -2,33 +2,44 @@ import { Dispatch } from 'redux';
 import {
   UserRecord,
   AuthenticationViaExternalAccountRequestPayload,
+  GuestUserRecord,
 } from 'dstnd-io';
 import { setUserAction } from './actions';
 import {
-  authenticateAsGuest as authenticateAsGuestResource,
-  authenticate as authenticateResource,
+  authenticate,
+  authenticateAsGuest,
+  authenticateAsExistentGuest,
 } from './resources';
 
-export const authenticateExistentUser = (userId: UserRecord['id']) => async (
-  dispatch: Dispatch
-) =>
-  (await authenticateResource({ userId })).map(({ user }) => {
+export const authenticateExistentUserEffect = (
+  userId: UserRecord['id']
+) => async (dispatch: Dispatch) =>
+  (await authenticate({ userId })).map(({ user }) => {
     dispatch(setUserAction(user));
 
     return user;
   });
 
-export const authenticateViaExternalAccount = (
+export const authenticateViaExternalAccountEffect = (
   opts: AuthenticationViaExternalAccountRequestPayload
 ) => async (dispatch: Dispatch) =>
-  (await authenticateResource(opts)).map(({ user }) => {
+  (await authenticate(opts)).map(({ user }) => {
     dispatch(setUserAction(user));
 
     return user;
   });
 
-export const authenticateAsGuest = () => async (dispatch: Dispatch) =>
-  (await authenticateAsGuestResource()).map(({ guest }) => {
+export const authenticateAsGuestEffect = () => async (dispatch: Dispatch) =>
+  (await authenticateAsGuest()).map(({ guest }) => {
+    dispatch(setUserAction(guest));
+
+    return guest;
+  });
+
+export const authenticateAsExistentGuestEffect = (
+  guestUser: GuestUserRecord
+) => async (dispatch: Dispatch) =>
+  (await authenticateAsExistentGuest({ guestUser })).map(({ guest }) => {
     dispatch(setUserAction(guest));
 
     return guest;

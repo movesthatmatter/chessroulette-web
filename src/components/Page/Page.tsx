@@ -3,12 +3,10 @@ import { createUseStyles } from 'src/lib/jss';
 import logo from 'src/assets/logo.svg';
 import {
   AuthenticationConsumer,
-  authenticateAsGuest,
+  authenticateAsGuestEffect,
 } from 'src/services/Authentication';
-import { LichessAuthButton } from 'src/services/Authentication/widgets/LichessAuthButton/LichessAuthButton';
-import { LogoutButton } from 'src/services/Authentication/widgets/LogoutButton/LogoutButton';
+import { LichessAuthButton } from 'src/services/Authentication/widgets/LichessAuthButton';
 import { Menu, Text, Box } from 'grommet';
-import { noop } from 'src/lib/util';
 import { useDispatch } from 'react-redux';
 
 type Props = {};
@@ -38,7 +36,7 @@ export const Page: React.FC<Props> = (props) => {
                 items={[
                   {
                     label: 'Logout',
-                    onClick: () => dispatch(authenticateAsGuest()),
+                    onClick: () => dispatch(authenticateAsGuestEffect()),
                   },
                 ]}
               />

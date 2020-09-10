@@ -3,20 +3,10 @@ import { createUseStyles } from 'src/lib/jss';
 import { Button } from 'src/components/Button';
 import { http } from 'src/lib/http';
 import ReactPopout from 'react-popout';
-import {
-  io,
-  authenticationRedirectUrlResponsePayload,
-  getLichessUserRequestPayload,
-  getLichessUserResponsePayload,
-} from 'dstnd-io';
-import { noop } from 'src/lib/util';
+import { io, authenticationRedirectUrlResponsePayload } from 'dstnd-io';
 import { useDispatch } from 'react-redux';
-import { Box } from 'grommet';
 import { WindowWithOnTokenReceived } from '../types';
-import { authenticate } from '../../resources';
-// import { setUser } from '../../effects';
-import { setUserAction } from '../../actions';
-import { authenticateViaExternalAccount } from '../../effects';
+import { authenticateViaExternalAccountEffect } from '../../effects';
 
 type Props = {};
 
@@ -48,7 +38,7 @@ export const LichessAuthButton: React.FC<Props> = (props) => {
     }
 
     dispatch(
-      authenticateViaExternalAccount({
+      authenticateViaExternalAccountEffect({
         externalAccountType: 'lichess',
         externalAccountToken: token,
       })
@@ -60,7 +50,6 @@ export const LichessAuthButton: React.FC<Props> = (props) => {
       <Button
         label="Lichess Login"
         primary
-        // size="small"
         onClick={async () => {
           const { data } = await http.get('api/auth/lichess/url');
 

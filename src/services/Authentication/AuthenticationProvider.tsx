@@ -3,7 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 // import { createNewGuestUser } from './effects';
 import { selectAuthentication } from './selectors';
 import { AuthenticationContext } from './AuthenticationContext';
-import { authenticateAsGuest, authenticateExistentUser } from './effects';
+import {
+  authenticateAsGuestEffect,
+  authenticateExistentUserEffect,
+  authenticateAsExistentGuestEffect,
+} from './effects';
 
 type Props = {};
 
@@ -13,9 +17,11 @@ export const AuthenticationProvider: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (authentication.authenticationType === 'user') {
-      dispatch(authenticateExistentUser(authentication.user.id));
+      dispatch(authenticateExistentUserEffect(authentication.user.id));
+    } else if (authentication.authenticationType === 'guest') {
+      dispatch(authenticateAsExistentGuestEffect(authentication.user));
     } else {
-      dispatch(authenticateAsGuest());
+      dispatch(authenticateAsGuestEffect());
     }
   }, []);
 
