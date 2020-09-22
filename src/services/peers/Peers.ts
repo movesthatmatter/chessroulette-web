@@ -1,7 +1,7 @@
 import { Pubsy } from 'src/lib/Pubsy';
 import { logsy } from 'src/lib/logsy';
 import { RTCDataX } from 'src/lib/RTCDataX';
-import { Err } from 'dstnd-io/dist/ts-results';
+import { Err } from 'ts-results';
 import { DeepPartial } from 'src/lib/types';
 import { PeerMessageEnvelope } from './records/PeerMessagingEnvelopePayload';
 import { PeerConnectionStatus } from './types';

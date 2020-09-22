@@ -7,7 +7,7 @@ import { ConfirmationButton } from './ConfirmationButton';
 
 export default {
   component: ConfirmationButton,
-  title: 'modules/Games/Chess/components/GameActionsWidget',
+  title: 'components/ConfirmationButton',
 };
 
 export const defaultStory = () => (

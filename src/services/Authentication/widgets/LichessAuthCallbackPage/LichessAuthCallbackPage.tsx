@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import React, { useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import queryString from 'query-string';
@@ -12,7 +14,7 @@ export const LichessAuthCallbackPage: React.FC<Props> = (props) => {
     const { token } = queryString.parse(window.location.search);
 
     if (typeof token === 'string' && token.length > 0) {
-      (window.opener as WindowWithOnTokenReceived).onTokenReceived(token);
+      (window.opener as WindowWithOnTokenReceived).onTokenReceived?.(token);
       window.close();
     }
   }, []);

@@ -31,10 +31,7 @@ export const GameRoomV2Container: React.FC<Props> = () => {
     <PeerConsumer
       renderRoomJoined={(p) => {
         const isMePlayer = isPlayer(p.room.me.user.id, p.room.game.players);
-        const myPlayerColor = getPlayerColor(
-          p.room.me.user.id,
-          p.room.game.players
-        );
+        const myPlayerColor = getPlayerColor(p.room.me.user.id, p.room.game.players);
 
         return (
           <>
@@ -66,41 +63,33 @@ export const GameRoomV2Container: React.FC<Props> = () => {
                     p.request(gameActions.offerRematch());
                   }}
                 />
-                {isMePlayer &&
-                  p.room.gameOffer?.type === 'draw' &&
-                  p.room.gameOffer.content.by ===
-                    otherChessColor(myPlayerColor) && (
-                  <Layer position="center">
-                    <Box pad="medium" gap="small" width="medium">
+                {isMePlayer
+                  && p.room.gameOffer?.type === 'draw'
+                  && p.room.gameOffer.content.by === otherChessColor(myPlayerColor) && (
+                    <Layer position="center">
+                      <Box pad="medium" gap="small" width="medium">
                         Your opponent is offering a Draw!
-                      <Button
-                        onClick={() => p.request(gameActions.acceptDraw())}
-                        label="Accept"
-                      />
-                      <Button
-                        onClick={() => p.request(gameActions.denyDraw())}
-                        label="Deny"
-                      />
-                    </Box>
-                  </Layer>
+                        <Button
+                          onClick={() => p.request(gameActions.acceptDraw())}
+                          label="Accept"
+                        />
+                        <Button onClick={() => p.request(gameActions.denyDraw())} label="Deny" />
+                      </Box>
+                    </Layer>
                 )}
-                {isMePlayer &&
-                  p.room.gameOffer?.type === 'rematch' &&
-                  p.room.gameOffer.content.by ===
-                    otherChessColor(myPlayerColor) && (
-                  <Layer position="center">
-                    <Box pad="medium" gap="small" width="medium">
+                {isMePlayer
+                  && p.room.gameOffer?.type === 'rematch'
+                  && p.room.gameOffer.content.by === otherChessColor(myPlayerColor) && (
+                    <Layer position="center">
+                      <Box pad="medium" gap="small" width="medium">
                         Your opponent wants a Rematch!
-                      <Button
-                        onClick={() => p.request(gameActions.acceptRematch())}
-                        label="Accept"
-                      />
-                      <Button
-                        onClick={() => p.request(gameActions.denyRematch())}
-                        label="Deny"
-                      />
-                    </Box>
-                  </Layer>
+                        <Button
+                          onClick={() => p.request(gameActions.acceptRematch())}
+                          label="Accept"
+                        />
+                        <Button onClick={() => p.request(gameActions.denyRematch())} label="Deny" />
+                      </Box>
+                    </Layer>
                 )}
               </>
             )}
@@ -113,24 +102,28 @@ export const GameRoomV2Container: React.FC<Props> = () => {
             <FaceTimeSetup onUpdated={(s) => setFaceTimeOn(s.on)} />
             {roomStats.game.state === 'waitingForOpponent' ? (
               <>
-                There is an active challenge for this room. Do you want to join
-                the game?
-                <Button
-                  onClick={() => {
-                    // Join both the room and the game
-                    joinRoom();
-                    request(gameActions.join());
-                  }}
-                  primary
-                  label="Join Room and Accept the Challenge"
-                  disabled={!faceTimeOn}
-                />
-                <Button
-                  onClick={joinRoom}
-                  primary
-                  label="Join Room and and only Watch"
-                  disabled={!faceTimeOn}
-                />
+                {/* There is an active challenge for this room. Do you want to join
+                the game? */}
+                <Box direction="row" gap="small">
+                  <Button
+                    primary
+                    label="Join Game"
+                    disabled={!faceTimeOn}
+                    onClick={() => {
+                      // Join both the room and the game
+                      // joinRoom();
+                      request(gameActions.join(roomStats.id));
+                    }}
+                    fill="horizontal"
+                  />
+                  <Button
+                    primary
+                    label="Just Watch"
+                    disabled={!faceTimeOn}
+                    onClick={joinRoom}
+                    fill="horizontal"
+                  />
+                </Box>
               </>
             ) : (
               <>
@@ -154,8 +147,8 @@ export const GameRoomV2Container: React.FC<Props> = () => {
           p.startLocalStream();
         } else if (
           // Join the Room right away if already part of the game!
-          p.state === 'notJoined' &&
-          isPlayer(authentication.user.id, p.roomStats.game.players)
+          p.state === 'notJoined'
+          && isPlayer(authentication.user.id, p.roomStats.game.players)
         ) {
           p.joinRoom();
         }

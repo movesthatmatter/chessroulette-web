@@ -4,7 +4,7 @@ import { SocketProvider } from 'src/components/SocketProvider';
 import { action } from '@storybook/addon-actions';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerRecordMock } from 'src/mocks/records';
-import { range } from 'src/lib/util';
+import { range } from '../../lib/util';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { GameRoomContainer } from './GameRoomContainer';

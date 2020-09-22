@@ -47,7 +47,7 @@ export const RoomNotAvailablePopup: React.FC<Props> = () => {
                     (
                       await resources.createRoom({
                         nickname: undefined,
-                        peerId: me.id,
+                        userId: me.id,
                         type: 'private',
                         game: {
                           timeLimit: 'blitz',

@@ -7,7 +7,7 @@ import { noop } from 'src/lib/util';
 type Props = {
   onSubmit?: () => void;
   label: string;
-  buttonProps?: ButtonProps;
+  buttonProps?: Omit<ButtonProps, 'onClick'>;
   confirmationPopupContent: React.ReactElement;
   confirmationPopup?: React.ReactElement;
 };

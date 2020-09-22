@@ -3,9 +3,9 @@ module.exports = {
     'airbnb',
     'plugin:@typescript-eslint/recommended',
     'plugin:jest/recommended',
-    'prettier',
-    'prettier/@typescript-eslint',
-    'prettier/react',
+    // 'prettier',
+    // 'prettier/@typescript-eslint',
+    // 'prettier/react',
   ],
   plugins: ['@typescript-eslint', 'jest', 'react-hooks', 'babel', 'prettier'],
   settings: {
@@ -20,7 +20,8 @@ module.exports = {
     browser: true,
   },
   rules: {
-    'prettier/prettier': 2, // error
+    // 'prettier/prettier': 0, // error
+    'import/named': 0,
     'react/jsx-filename-extension': [
       2,
       { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
@@ -80,5 +81,8 @@ module.exports = {
     'jsx-a11y/aria-role': 'off',
     'jsx-a11y/no-static-element-interactions': 'off',
     'jsx-a11y/click-events-have-key-events': 'off',
+
+    "no-unused-expressions": 'off',
+    // "@typescript-eslint/no-unused-expressions": 1
   },
 };

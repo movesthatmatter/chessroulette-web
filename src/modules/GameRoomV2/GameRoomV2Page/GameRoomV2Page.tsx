@@ -9,7 +9,7 @@ import { GameRoomV2Container } from '../GameRoomV2Container/GameRoomV2Container'
 type Props = {};
 
 export const GameRoomV2Page: React.FC<Props> = () => {
-  const params = useParams<{id: string; code?: string}>();
+  const params = useParams<{ id: string; code?: string }>();
 
   const auth = useSelector(selectAuthentication);
 
@@ -20,10 +20,7 @@ export const GameRoomV2Page: React.FC<Props> = () => {
 
   return (
     <Page>
-      <PeerProvider
-        roomCredentials={params}
-        user={auth.user}
-      >
+      <PeerProvider roomCredentials={params} user={auth.user}>
         <GameRoomV2Container />
       </PeerProvider>
     </Page>

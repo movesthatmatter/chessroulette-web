@@ -17,13 +17,12 @@ import {
   RegisterPeerRequestPayload,
   RegisterPeerResponsePayload,
   registerPeerResponsePayload,
-  RoomStatsPayload,
   RoomStatsRecord,
   roomStatsRecord,
+  AsyncResultWrapper,
 } from 'dstnd-io';
 import config from 'src/config';
-import { Result, Err } from 'dstnd-io/dist/ts-results';
-import { isLeft } from 'fp-ts/lib/Either';
+import { Result, Err } from 'ts-results';
 
 type ApiError = 'BadRequest' | 'BadResponse';
 
@@ -62,7 +61,7 @@ export const getPublicRooms = async (): Promise<
 };
 
 export const getPublicRoom = async (
-  id: string
+  id: string,
 ): Promise<Result<PublicRoomResponsePayload, ApiError>> => {
   try {
     const { data } = await http.get(`/api/room/${id}`);
@@ -76,7 +75,7 @@ export const getPublicRoom = async (
 };
 
 export const getPrivateRoom = async (
-  code: string
+  code: string,
 ): Promise<Result<PrivateRoomResponsePayload, ApiError>> => {
   try {
     const { data } = await http.get('/api/room', {
@@ -98,14 +97,12 @@ export const getRoomStats = async (credentials: {
   code?: string;
 }): Promise<Result<RoomStatsRecord, ApiError>> => {
   try {
-    const { data } = await http.get('/api/room', {
-      params: credentials.code
-        ? {
-            code: credentials.code,
-          }
-        : {
-            id: credentials.roomId,
-          },
+    const { data } = await http.get(`/api/rooms/${credentials.roomId}`, {
+      params: {
+        ...credentials.code && {
+          code: credentials.code,
+        },
+      },
     });
 
     return io
@@ -116,22 +113,22 @@ export const getRoomStats = async (credentials: {
   }
 };
 
-export const createRoom = async (
-  req: CreateRoomRequest
-): Promise<Result<CreateRoomResponse, ApiError>> => {
+export const createRoom = (
+  req: CreateRoomRequest,
+) => new AsyncResultWrapper<CreateRoomResponse, ApiError>(async () => {
   try {
     const { data } = await http.post('api/rooms', req);
 
     return io
       .toResult(createRoomResponse.decode(data))
-      .mapErr(() => 'BadResponse');
+      .mapErr(() => 'BadResponse' as const);
   } catch (e) {
     return new Err('BadRequest');
   }
-};
+});
 
 export const createChallenge = async (
-  req: CreateChallengeRequest
+  req: CreateChallengeRequest,
 ): Promise<Result<CreateRoomResponse, ApiError>> => {
   try {
     const { data } = await http.post('api/challenges', req);
@@ -145,7 +142,7 @@ export const createChallenge = async (
 };
 
 export const registerPeer = async (
-  req: RegisterPeerRequestPayload
+  req: RegisterPeerRequestPayload,
 ): Promise<Result<RegisterPeerResponsePayload, ApiError>> => {
   try {
     const { data } = await http.post('api/peers', req);

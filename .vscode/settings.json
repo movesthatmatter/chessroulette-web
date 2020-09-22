@@ -1,5 +1,5 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.tsdk": "/Users/gabrieltroia/Projects/dstnd/chessroulette-web/node_modules/typescript/lib",
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": false
@@ -27,4 +27,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
+
+  // This is jsut temporary since I upgraded to typescript 4.0.2 
+  //  EVERY FUCKING THINKG just started to give Fallse Positives
+  "eslint.enable": false
 }

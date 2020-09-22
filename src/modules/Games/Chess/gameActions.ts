@@ -11,11 +11,17 @@ import {
   GameRematchAcceptRequestPayload,
   GameRematchDenyRequestPayload,
 } from 'dstnd-io';
+import { Room } from 'src/components/RoomProvider';
 
 export const gameActions = {
-  join: (): GameJoinRequestPayload => ({
+  join: (roomId: Room['id'], code?: string): GameJoinRequestPayload => ({
     kind: 'gameJoinRequest',
-    content: undefined,
+    content: {
+      roomCredentials: {
+        roomId,
+        code,
+      },
+    },
   }),
   abort: (): GameAbortionRequestPayload => ({
     kind: 'gameAbortionRequest',

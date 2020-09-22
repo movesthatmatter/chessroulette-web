@@ -1,5 +1,5 @@
-import humanizeDuration, { Humanizer } from 'humanize-duration';
 import { differenceInMilliseconds } from 'date-fns';
+import humanizeDuration, { Humanizer } from 'humanize-duration';
 import {
   CreateRoomResponse,
   CreateRoomRequest,
@@ -8,9 +8,11 @@ import {
 import UrlPattern from 'url-pattern';
 import { Result, Err, Ok } from 'ts-results';
 
-export const noop = () => {
+export const noop = () => { 
   // do nothing
 };
+
+console.log('lalala')
 
 export const range = (length: number, startAt = 0) =>
   Array.from({ length }, (_, i) => i + startAt);
@@ -38,10 +40,8 @@ export function getRandomInt(givenMin: number, givenMax: number) {
  * @param {Array} a items An array containing the items.
  */
 export function shuffle<T extends unknown>(a: T[]) {
-  // eslint-disable-next-line no-plusplus
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    // eslint-disable-next-line no-param-reassign
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;

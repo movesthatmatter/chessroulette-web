@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import React, { createContext, useState, useEffect } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { randomId } from 'src/lib/util';

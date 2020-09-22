@@ -7,8 +7,9 @@ import {
   guestAuthenticationResponsePayload,
   GuestAuthenticationRequestPayload,
   GuestUserRecord,
+  Result, 
+  Err,
 } from 'dstnd-io';
-import { Result, Err } from 'dstnd-io/dist/ts-results';
 import { getHttpInstance } from 'src/lib/http';
 import config from 'src/config';
 
@@ -19,7 +20,7 @@ const http = getHttpInstance({
 type ApiError = 'BadRequest' | 'BadResponse';
 
 export const authenticate = async (
-  req: AuthenticationRequestPayload
+  req: AuthenticationRequestPayload,
 ): Promise<Result<AuthenticationResponsePayload, ApiError>> => {
   try {
     const { data } = await http.post('/', req);
@@ -47,7 +48,7 @@ export const authenticateAsGuest = async (): Promise<
 };
 
 export const authenticateAsExistentGuest = async (
-  req: GuestAuthenticationRequestPayload
+  req: GuestAuthenticationRequestPayload,
 ): Promise<Result<GuestAuthenticationResponsePayload, ApiError>> => {
   try {
     const { data } = await http.post('/guest', req);

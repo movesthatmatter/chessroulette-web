@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import React, { useRef, useEffect } from 'react';
 import { PeerConsumer } from 'src/components/PeerProvider';
 import { PeerMessageEnvelope } from 'src/components/PeerProvider/records';

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { RoomStatsRecord, SocketPayload } from 'dstnd-io';
+import { RoomStatsRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { noop } from 'src/lib/util';
 import { PeerContext } from './PeerContext';
@@ -48,8 +48,8 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
   useEffect(() => {
     if (contextState.state === 'joined') {
       const unsubscribers = [
-        onPeerMsgReceived &&
-          contextState.proxy.onPeerMessageReceived(onPeerMsgReceived),
+        onPeerMsgReceived
+          && contextState.proxy.onPeerMessageReceived(onPeerMsgReceived),
         onPeerMsgSent && contextState.proxy.onPeerMessageSent(onPeerMsgSent),
       ];
 

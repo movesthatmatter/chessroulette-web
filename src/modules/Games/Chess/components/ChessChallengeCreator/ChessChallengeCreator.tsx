@@ -39,15 +39,16 @@ export const ChessChallengeCreator: React.FC<Props> = ({
         <Text size="small">Time Limit</Text>
         <Select
           size="small"
-          options={Object.keys(metadata.game.chessGameTimeLimitMsMap).map((k) =>
-            capitalize(k)
-          )}
+          options={Object
+            .keys(metadata.game.chessGameTimeLimitMsMap)
+            .map((k) => capitalize(k))
+          }
           value={capitalize(state.timeLimit)}
           onChange={({ option }) =>
             setState((prev) => ({
               ...prev,
               timeLimit: String(
-                option
+                option,
               ).toLocaleLowerCase() as ChessGameTimeLimit,
             }))
           }
@@ -58,14 +59,13 @@ export const ChessChallengeCreator: React.FC<Props> = ({
         <Select
           size="small"
           options={metadata.game.chessGamePrefferedColorOptionList.map((k) =>
-            capitalize(k)
-          )}
+            capitalize(k))}
           value={capitalize(state.preferredColor)}
           onChange={({ option }) =>
             setState((prev) => ({
               ...prev,
               preferredColor: String(
-                option
+                option,
               ).toLocaleLowerCase() as ChessPrefferedColorOption,
             }))
           }
