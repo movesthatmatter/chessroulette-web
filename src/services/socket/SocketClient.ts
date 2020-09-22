@@ -26,6 +26,7 @@ import {
   GameRematchDenyRequestPayload,
   GameRematchAcceptRequestPayload,
   GameAbortionRequestPayload,
+  StatsReaderIdentificationPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/components/PeerProvider/records';
 
@@ -50,6 +51,7 @@ type ReceivableMessagesMap = {
 type SendableMessagesMap = {
   joinRoomRequest: JoinRoomRequestPayload;
   userIdentification: UserIdentificationPayload;
+  statsReaderIdentification: StatsReaderIdentificationPayload;
   ping: PingPayload;
   whoami: WhoAmIRequestPayload;
 

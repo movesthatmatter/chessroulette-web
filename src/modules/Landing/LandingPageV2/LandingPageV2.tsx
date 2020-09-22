@@ -55,7 +55,7 @@ export const LandingPageV2: React.FC<Props> = () => {
                   },
                 })
                   .map((room) => {
-                    history.push(`/gameroom/${toRoomUrlPath(room)}`);
+                    history.push(`/room/${toRoomUrlPath(room)}`);
                   });
               }}
               confirmationPopupContent={(

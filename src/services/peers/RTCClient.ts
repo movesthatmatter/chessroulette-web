@@ -1,4 +1,6 @@
 /* eslint-disable no-param-reassign */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import { getRTCDataXConnection, RTCDataX } from 'src/lib/RTCDataX';
 import { logsy } from 'src/lib/logsy';
 import config from 'src/config';

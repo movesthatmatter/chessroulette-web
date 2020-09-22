@@ -83,6 +83,6 @@ module.exports = {
     'jsx-a11y/click-events-have-key-events': 'off',
 
     "no-unused-expressions": 'off',
-    // "@typescript-eslint/no-unused-expressions": 1
+    "@typescript-eslint/no-unused-expressions": 'off'
   },
 };

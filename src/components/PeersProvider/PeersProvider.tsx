@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import React, { ReactNode } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { RTCSignalingChannel } from 'src/services/socket/RTCSignalingChannel';

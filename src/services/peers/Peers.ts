@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import { Pubsy } from 'src/lib/Pubsy';
 import { logsy } from 'src/lib/logsy';
 import { RTCDataX } from 'src/lib/RTCDataX';

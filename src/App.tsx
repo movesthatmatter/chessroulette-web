@@ -16,6 +16,8 @@ import { LandingPage } from './modules/Landing/LandingPage';
 import { AuthenticationProvider } from './services/Authentication';
 import config from './config';
 import { LichessAuthCallbackPage } from './services/Authentication/widgets/LichessAuthCallbackPage';
+import { GenericRoomPage } from './modules/GenericRoom';
+import { StatsPage } from './modules/Stats';
 
 console.log('App config', config);
 
@@ -37,6 +39,18 @@ function App() {
                     exact
                     component={LichessAuthCallbackPage}
                   />
+                  <Route exact path="/room/:id/:code?" key={location.key}>
+                    {({ match }) => (
+                      <CSSTransition
+                        in={match !== null}
+                        key={location.key}
+                        timeout={600}
+                        unmountOnExit
+                      >
+                        <GenericRoomPage />
+                      </CSSTransition>
+                    )}
+                  </Route>
                   <Route exact path="/gameroom/:id/:code?" key={location.key}>
                     {({ match }) => (
                       <CSSTransition
@@ -58,6 +72,21 @@ function App() {
                         unmountOnExit
                       >
                         <ClassRoomPage />
+                      </CSSTransition>
+                    )}
+                  </Route>
+                  <Route exact strict path="/stats" key={location.key}>
+                    {({ match }) => (
+                      <CSSTransition
+                        in={match !== null}
+                        key={location.key}
+                        timeout={600}
+                        unmountOnExit
+                      >
+                        {/* <OnboardingPage /> */}
+                        {/* <GameRoomV2Page /> */}
+                        <StatsPage />
+                        {/* <LandingPage /> */}
                       </CSSTransition>
                     )}
                   </Route>

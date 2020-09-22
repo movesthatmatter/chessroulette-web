@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 export type AVStreamingConstraints = {
   video: boolean;
   audio: boolean;

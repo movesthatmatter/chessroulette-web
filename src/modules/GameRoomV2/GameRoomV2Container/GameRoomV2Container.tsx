@@ -112,7 +112,7 @@ export const GameRoomV2Container: React.FC<Props> = () => {
                     onClick={() => {
                       // Join both the room and the game
                       // joinRoom();
-                      request(gameActions.join(roomStats.id));
+                      request(gameActions.join(roomStats.id, ));
                     }}
                     fill="horizontal"
                   />

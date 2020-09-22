@@ -3,6 +3,7 @@ import { RoomStatsRecord, PeerRecord } from 'dstnd-io';
 import { range } from 'src/lib/util';
 import { prepareGameAction } from 'dstnd-io/dist/chessGame/chessGameStateReducer';
 import { PeerRecordMock } from './PeerRecordMock';
+import { toISODateTime } from 'src/lib/date/ISODateTime';
 
 const chance = new Chance();
 
@@ -36,6 +37,8 @@ export class RoomStatsRecordMocker {
       },
       peersCount: Object.keys(peers).length,
       peers,
+      createdAt: toISODateTime(new Date()),
+      createdBy: Object.values(peers)[0]?.id || '-1',
 
       // This is an opponentWaitingGame
       game: prepareGameAction({

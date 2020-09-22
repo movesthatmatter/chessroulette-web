@@ -23,7 +23,7 @@ export const Page: React.FC<Props> = (props) => {
             <img src={logo} alt="logo" className={cls.logo} />
           </div>
 
-          <AuthenticationConsumer
+          {/* <AuthenticationConsumer
             renderAuthenticated={(auth) => (
               <Menu
                 plain
@@ -46,7 +46,7 @@ export const Page: React.FC<Props> = (props) => {
                 <LichessAuthButton />
               </Box>
             )}
-          />
+          /> */}
         </div>
         <main className={cls.main}>{props.children}</main>
       </div>

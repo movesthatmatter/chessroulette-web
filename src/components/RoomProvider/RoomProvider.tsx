@@ -133,6 +133,9 @@ export const RoomProvider: React.FC<Props> = ({
           type: socketRecords.room.type,
         },
 
+        createdAt: socketRecords.room.createdAt,
+        createdBy: socketRecords.room.createdBy,
+
         // Updates from RTC (Peer Connections)
         me: nextMe,
         peers: nextPeers,
