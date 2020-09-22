@@ -118,8 +118,7 @@ export const reducer = createReducer(initialState, (handleAction) => ([
     const nextPeers = {
       ...state.room?.peers ?? {},
       [payload.id]: {
-        id: payload.id,
-        user: payload.user,
+        ...payload,
         connection: {
           channels: {
             // These could be passed in the action

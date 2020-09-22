@@ -1,18 +1,21 @@
 import Chance from 'chance';
 import { Peer } from 'src/components/RoomProvider';
-import { UserRecord } from 'dstnd-io';
+import { PeerRecord, UserRecord } from 'dstnd-io';
 import { UserRecordMocker } from './UserRecordMocker';
+import { PeerRecordMock } from './PeerRecordMock';
+import { ISODateTime, toISODateTime } from 'src/lib/date/ISODateTime';
 
 const chance = new Chance();
 
 const userRecordMocker = new UserRecordMocker();
+const peerRecordMocker = new PeerRecordMock();
 
 export class PeerMocker {
   record(): Peer {
-    const id = String(chance.integer({ min: 1 }));
+    const peerRecord = peerRecordMocker.record();
 
     return {
-      id,
+      ...peerRecord,
       user: userRecordMocker.record(),
       connection: {
         channels: {
@@ -27,6 +30,15 @@ export class PeerMocker {
     return {
       ...this.record(),
       ...props,
+      ...(props.hasJoinedRoom) ? {
+        hasJoinedRoom: true,
+        joinedRoomAt: props.joinedRoomAt || toISODateTime(new Date()),
+        joinedRoomId: props.joinedRoomId || String(chance.integer({ min: 1, max: 999 })),
+      } : {
+        hasJoinedRoom: false,
+        joinedRoomAt: null,
+        joinedRoomId: null,
+      }
     };
   }
 

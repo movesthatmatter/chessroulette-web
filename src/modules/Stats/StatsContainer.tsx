@@ -17,8 +17,6 @@ export const StatsContainer: React.FC<Props> = (props) => {
 
   const authentication = useSelector(selectAuthentication);
 
-  console.log('works');
-
   // This should never happen
   if (authentication.authenticationType === 'none') {
     return (

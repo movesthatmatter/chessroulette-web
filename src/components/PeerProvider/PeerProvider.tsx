@@ -268,10 +268,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
                   activePeerConnections.add(peerId, { data: pc });
 
                   dispatch(
-                    addPeerAction({
-                      id: peerId,
-                      user: metadata.peer.user,
-                    }),
+                    addPeerAction(metadata.peer),
                   );
                 },
               );

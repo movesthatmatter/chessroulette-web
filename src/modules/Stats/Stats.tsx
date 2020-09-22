@@ -50,13 +50,15 @@ export const Stats: React.FC<Props> = (props) => {
   };
 
   const peerColumnsMap: Partial<Record<
-    keyof PeerRecord['user'], 
+    keyof PeerRecord | keyof PeerRecord['user'],
     null | {format: (room: PeerRecord) => ReactNode}
   >> = {
     id: null,
     name: {
       format: (p) => p.user.name,
     },
+    joinedRoomId: null,
+    joinedRoomAt: null,
     isGuest: {
       format: (p) => (
         <>
