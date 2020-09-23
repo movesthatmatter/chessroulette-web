@@ -69,27 +69,15 @@ export const GameRoomV2: React.FC<Props> = ({
                 return;
               }
 
-              // props.onGameStateUpdate(chessGameActions.move(props.game, { pgn: nextPgn }));
               onMove(nextMove);
             }}
-            // onTimerFinished={() => {
-            //   if (
-            //     !props.game
-            //     || props.game.state === 'finished'
-            //     || props.game.state === 'neverStarted'
-            //   ) {
-            //     return;
-            //   }
-
-            //   props.onGameStateUpdate(chessGameActions.timerFinished(props.game));
-            // }}
           />
         )}
         getSideComponent={(dimensions) => (
           <div className={cls.side}>
             <StreamingBox
               room={props.room}
-              opponentPeerId={opponentPlayer?.user.id}
+              focusedPeerId={opponentPlayer?.user.id}
               // peer={opponent}
               width={dimensions.width}
             />

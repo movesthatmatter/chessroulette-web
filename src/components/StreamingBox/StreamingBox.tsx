@@ -1,37 +1,39 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { Text, Button } from 'grommet';
+import { Text, Button, Box } from 'grommet';
 import { FaceTime } from '../FaceTimeArea';
-import { Room } from '../RoomProvider';
+import { Peer, Room } from '../RoomProvider';
 import { AspectRatio } from '../AspectRatio';
 
 type Props = {
   room: Room;
   width: number;
-  opponentPeerId?: string;
+  focusedPeerId?: Peer['id'];
 };
 
 export const StreamingBox: React.FC<Props> = (props) => {
   const cls = useStyles();
 
   const peersList = Object.values(props.room.peers);
-  const opponentPeer = props.opponentPeerId && props.room.peers[props.opponentPeerId];
+  const peersById = Object.keys(props.room.peers);
+  const focusedPeer = (props.focusedPeerId && props.room.peers[props.focusedPeerId]) || 
+    props.room.peers[peersById[0]];
 
   // Only shows the 1st peer for now!
   return (
     <div className={cls.container} style={{ width: props.width }}>
-      {opponentPeer ? (
+      {focusedPeer ? (
         <>
           <FaceTime
-            streamConfig={opponentPeer.connection.channels.streaming}
+            streamConfig={focusedPeer.connection.channels.streaming}
             className={cls.fullFacetime}
           />
           <div className={cls.titleWrapper}>
-            <Text className={cls.title}>{opponentPeer.user.name}</Text>
+            <Text className={cls.title}>{focusedPeer.user.name}</Text>
           </div>
           <div className={cls.reel}>
             {peersList
-              .filter((p) => p.id !== opponentPeer.user.id)
+              .filter((p) => p.id !== focusedPeer.user.id)
               .map((peer) => (
                 <FaceTime
                   streamConfig={peer.connection.channels.streaming}
@@ -61,7 +63,9 @@ export const StreamingBox: React.FC<Props> = (props) => {
             </>
           ) : (
             <AspectRatio className={cls.noFacetime}>
-              <Button type="button">Start Streaming</Button>
+              <Box alignContent="center" justify="center">
+                <Button type="button">Start Streaming</Button>
+              </Box>
             </AspectRatio>
           )}
         </>
