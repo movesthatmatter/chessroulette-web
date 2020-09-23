@@ -4,6 +4,7 @@ import { Text, Button, Box } from 'grommet';
 import { FaceTime } from '../FaceTimeArea';
 import { Peer, Room } from '../RoomProvider';
 import { AspectRatio } from '../AspectRatio';
+import { MultiStreamingBox } from './MultiStreamingBox';
 
 type Props = {
   room: Room;
@@ -14,48 +15,42 @@ type Props = {
 export const StreamingBox: React.FC<Props> = (props) => {
   const cls = useStyles();
 
-  const peersList = Object.values(props.room.peers);
-  const peersById = Object.keys(props.room.peers);
-  const focusedPeer = (props.focusedPeerId && props.room.peers[props.focusedPeerId]) || 
-    props.room.peers[peersById[0]];
+  const peersOnStreamConfig = Object
+    .values(props.room.peers)
+    .reduce((prev, next) => {
+      if (!next.connection.channels.streaming.on) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        [next.id]: {
+          user: next.user,
+          streamingConfig: next.connection.channels.streaming,
+        }
+      }
+    }, {});
 
   // Only shows the 1st peer for now!
   return (
     <div className={cls.container} style={{ width: props.width }}>
-      {focusedPeer ? (
-        <>
-          <FaceTime
-            streamConfig={focusedPeer.connection.channels.streaming}
-            className={cls.fullFacetime}
-          />
-          <div className={cls.titleWrapper}>
-            <Text className={cls.title}>{focusedPeer.user.name}</Text>
-          </div>
-          <div className={cls.reel}>
-            {peersList
-              .filter((p) => p.id !== focusedPeer.user.id)
-              .map((peer) => (
-                <FaceTime
-                  streamConfig={peer.connection.channels.streaming}
-                  className={cls.smallFacetime}
-                  style={{
-                    width: props.width / 4,
-                  }}
-                />
-              ))}
-            <FaceTime
-              streamConfig={props.room.me.connection.channels.streaming}
-              className={cls.smallFacetime}
-              style={{
-                width: props.width / 4,
-              }}
-            />
-          </div>
-        </>
+      {(Object.keys(peersOnStreamConfig).length > 0) ? (
+        <MultiStreamingBox
+          focusOn={props.focusedPeerId}
+          peerStreamConfigsMap={peersOnStreamConfig}
+          myStreamConfig={{
+            streamingConfi: props.room.me.connection.channels.streaming,
+            user: props.room.me.user,
+          }}
+          reelFacetimeWidth={props.width / 4}
+        />
       ) : (
         <>
           {props.room.me.connection.channels.streaming.on ? (
             <>
+            <div className={cls.titleWrapper}>
+              <Text className={cls.title}>Me</Text>
+            </div>
               <FaceTime
                 streamConfig={props.room.me.connection.channels.streaming}
                 className={cls.fullFacetime}
@@ -79,13 +74,6 @@ const useStyles = createUseStyles({
     position: 'relative',
     overflow: 'hidden',
   },
-  // reel: {
-  //   backgroundColor: 'rgba(0, 0, 0, .3)',
-  //   position: 'absolute',
-  //   bottom: 0,
-  //   right: 0,
-  //   // width: '100%',
-  // },
   reel: {
     position: 'absolute',
     bottom: '15px',

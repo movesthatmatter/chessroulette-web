@@ -17,6 +17,7 @@ const roomMocker = new RoomMocker();
 
 export const defaultStory = () => (
   <WithLocalStream
+    constraints={{ audio: true, video: true }}
     render={(stream) => {
       const me = peerMock.withChannels({
         streaming: {
@@ -26,7 +27,15 @@ export const defaultStory = () => (
         },
       });
 
-      const opponent = peerMock.withChannels({
+      const peer1 = peerMock.withChannels({
+        streaming: {
+          on: true,
+          type: 'audio-video',
+          stream,
+        },
+      });
+
+      const peer2 = peerMock.withChannels({
         streaming: {
           on: true,
           type: 'audio-video',
@@ -37,7 +46,8 @@ export const defaultStory = () => (
       const publicRoom = roomMocker.withProps({
         me,
         peers: {
-          [opponent.id]: opponent,
+          [peer1.id]: peer1,
+          [peer2.id]: peer2,
         },
         name: 'Valencia',
         type: 'public',

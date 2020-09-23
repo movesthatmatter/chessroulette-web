@@ -4,13 +4,17 @@ export type PeerStream = {
   stream: MediaStream;
 }
 
-export type PeerStreamingConfig = {
-  on: false;
-} | {
+export type PeerStreamingConfigOn = {
   on: true;
   type: 'audio' | 'video' | 'audio-video';
   stream: MediaStream;
-};
+}
+
+export type PeerStreamingConfigOff = {
+  on: false;
+}
+
+export type PeerStreamingConfig = PeerStreamingConfigOn | PeerStreamingConfigOff;
 
 export type PeerConnectionStatus = {
   peerId: string;
