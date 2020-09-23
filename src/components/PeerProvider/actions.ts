@@ -16,6 +16,8 @@ export const updateRoomAction = createAction(
   }) => resolve(p),
 );
 
+export const removeRoomAction = createAction('Remove Room');
+
 export const addPeerAction = createAction(
   'Add Peer',
   (resolve) => (p: PeerRecord) => resolve(p),

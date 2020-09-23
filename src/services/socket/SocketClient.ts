@@ -79,6 +79,7 @@ export class SocketClient {
   {
     onReady: null;
     onMessage: SocketPayload;
+    onClose: null;
   } & ReceivableMessagesMap
   >();
 
@@ -86,6 +87,10 @@ export class SocketClient {
 
   constructor(url?: string) {
     this.connection = getSocketXConnection(url);
+
+    this.connection.addEventListener('close', () => {
+      this.pubsy.publish('onClose', null);
+    });
 
     this.connection.addEventListener('message', ({ data }) => {
       io.toResult(socketPayload.decode(JSON.parse(data)))
@@ -139,5 +144,9 @@ export class SocketClient {
 
   onMessage(fn: (msg: SocketPayload) => unknown) {
     return this.pubsy.subscribe('onMessage', fn);
+  }
+
+  onClose(fn: () => void) {
+    return this.pubsy.subscribe('onClose', fn);
   }
 }

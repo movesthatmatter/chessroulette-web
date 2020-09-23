@@ -20,6 +20,7 @@ import {
   removePeerAction,
   updateRoomAction,
   remmoveMyStream,
+  removeRoomAction,
 } from './actions';
 import { ActivePeerConnections } from './ActivePeerConnections';
 import { wNamespace, woNamespace } from './util';
@@ -48,11 +49,6 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   const dispatch = useDispatch();
 
   const [roomStats, setRoomStats] = useState<RoomStatsRecord | undefined>();
-
-  // const [state, dispatch] = useReducer(
-  //   config.DEBUG ? reducerLogger(reducer) : reducer,
-  //   initialState,
-  // );
   const proxy = useRef(new Proxy()).current;
   const [contextState, setContextState] = useState<PeerContextProps>({
     state: 'init',
@@ -321,23 +317,13 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       onReady={(socketClient) => {
         setSocket(socketClient);
 
-        // setContextState(() => ({
-        //   state: '',
-        //   showMyStream: noop,
-        // }));
-
         socketClient.send({
           kind: 'userIdentification',
           content: { userId: props.user.id },
         });
-
-        // socketClient.send({
-        //   kind: 'joinRoomRequest',
-        //   content: {
-        //     roomId: props.roomCredentials.id,
-        //     code: props.roomCredentials.code,
-        //   },
-        // });
+      }}
+      onClose={() => {
+        dispatch(removeRoomAction());
       }}
       render={() => (
         <PeerContext.Provider value={contextState}>

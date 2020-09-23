@@ -10,6 +10,7 @@ import {
   removePeerAction,
   updateRoomAction,
   remmoveMyStream,
+  removeRoomAction,
 } from './actions';
 
 type State = {
@@ -108,6 +109,13 @@ export const reducer = createReducer(initialState, (handleAction) => ([
         },
       },
     };
+  }),
+
+  handleAction(removeRoomAction, (state) => {
+    return {
+      ...state,
+      room: undefined,
+    }
   }),
 
   handleAction(addPeerAction, (state, { payload }) => {
