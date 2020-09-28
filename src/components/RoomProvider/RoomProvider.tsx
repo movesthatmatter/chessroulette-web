@@ -2,7 +2,7 @@ import React, {
   useState, ReactNode, useEffect, useRef,
 } from 'react';
 import {
-  PeerRecord, RoomStatsRecord, IceServerRecord,
+  PeerRecord, IceServerRecord, RoomRecord
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { AVStreamingConstraints, AVStreaming } from 'src/services/AVStreaming';
@@ -50,7 +50,7 @@ export const RoomProvider: React.FC<Props> = ({
   const [
     socketRecords,
     setSocketRecords,
-  ] = useState<{me: PeerRecord; room: RoomStatsRecord} | undefined>();
+  ] = useState<{me: PeerRecord; room: RoomRecord} | undefined>();
   const [rtcPeerConnections, setRtcPeerConnections] = useState<PeerConnections>({});
   const [meAndMyRoom, setMeAndMyRoom] = useState<{me: Peer; room: Room} | undefined>();
 
@@ -131,6 +131,7 @@ export const RoomProvider: React.FC<Props> = ({
           code: socketRecords.room.code,
         } : {
           type: socketRecords.room.type,
+          code: null,
         },
 
         createdAt: socketRecords.room.createdAt,
@@ -145,6 +146,8 @@ export const RoomProvider: React.FC<Props> = ({
           ...nextPeers,
           [nextMe.id]: nextMe,
         },
+
+        activity: socketRecords.room.activity,
 
         game: socketRecords.room.game,
         gameOffer: undefined,

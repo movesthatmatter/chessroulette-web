@@ -4,24 +4,32 @@ import { AuthenticationContext } from './AuthenticationContext';
 import { AuthenticationStateGuest, AuthenticationStateUser } from './reducer';
 
 type Props = {
-  renderAuthenticated: (
-    auth: AuthenticationStateGuest | AuthenticationStateUser
-  ) => React.ReactElement;
+  renderAuthenticated?: (user: AuthenticationStateUser['user']) => React.ReactElement;
+  renderGuest?: (guest: AuthenticationStateGuest['user']) => React.ReactElement;
   renderNotAuthenticated?: () => React.ReactElement;
 };
 
 export const AuthenticationConsumer: React.FC<Props> = ({
+  renderAuthenticated = noop,
   renderNotAuthenticated = noop,
-  ...props
+  renderGuest = noop,
 }) => {
   const contextState = useContext(AuthenticationContext);
+
+  if (contextState.authenticationType === 'none') {
+    return (
+      <>
+        {renderNotAuthenticated()}
+      </>
+    );
+  }
 
   return (
     <>
       {contextState.authenticationType === 'user'
-        ? // Don't renderAuthneticated on Guest
-          props.renderAuthenticated(contextState)
-        : renderNotAuthenticated()}
+        ? renderAuthenticated(contextState.user)
+        : renderGuest(contextState.user)
+      }
     </>
   );
 };

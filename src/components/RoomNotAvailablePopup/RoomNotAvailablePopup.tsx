@@ -46,13 +46,14 @@ export const RoomNotAvailablePopup: React.FC<Props> = () => {
                   onClickFunction={async () => {
                     (
                       await resources.createRoom({
-                        nickname: undefined,
+                        name: undefined,
                         userId: me.id,
                         type: 'private',
-                        game: {
-                          timeLimit: 'blitz',
-                          preferredColor: 'random',
-                        },
+                        // game: {
+                        //   timeLimit: 'blitz',
+                        //   preferredColor: 'random',
+                        // },
+                        activity: 'none',
                       })
                     ).map((room) => {
                       history.push(`/gameroom/${toRoomPath(room)}`);

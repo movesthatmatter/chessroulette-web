@@ -41,18 +41,52 @@ export const LandingPageV2: React.FC<Props> = () => {
           />
           <Box margin="small">
             <ConfirmationButton
+              label="Go Live"
+              onSubmit={() => {
+                resources.createRoom({
+                  userId: authentication.user.id,
+                  type: 'public',
+                  name: undefined,
+                  activity: 'none',
+
+                  // TODO: This shouldnt be here anymore
+                  // game: {
+                  //   timeLimit: 'untimed',
+                  //   preferredColor: 'random',
+                  // },
+                })
+                  .mapErr((e) => {
+                    console.log('e', e);
+                  })
+                  .map((room) => {
+                    history.push(`/room/${toRoomUrlPath(room)}`);
+                  });
+              }}
+              confirmationPopupContent={(
+                <>
+                  <FaceTimeSetup onUpdated={() => {
+                    console.log('Facetime Enabled');
+                  }}
+                  />
+                </>
+            )}
+            />
+          </Box>
+          <Box margin="small">
+            <ConfirmationButton
               label="Create Private Room"
               onSubmit={() => {
                 resources.createRoom({
                   userId: authentication.user.id,
                   type: 'private',
-                  nickname: undefined,
+                  name: undefined,
+                  activity: 'none',
 
                   // TODO: This shouldnt be here anymore
-                  game: {
-                    timeLimit: 'untimed',
-                    preferredColor: 'random',
-                  },
+                  // game: {
+                  //   timeLimit: 'untimed',
+                  //   preferredColor: 'random',
+                  // },
                 })
                   .map((room) => {
                     history.push(`/room/${toRoomUrlPath(room)}`);

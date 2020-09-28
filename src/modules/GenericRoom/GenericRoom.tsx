@@ -39,11 +39,24 @@ export const GenericRoom: React.FC<Props> = () => {
         <>room not joind</>
       )}
       renderFallback={() => <AwesomeLoaderPage />}
+      onUpdate={(p) => {
+        if (p.state === 'joined') {
+          p.startLocalStream();
+        }
+      }}
       onReady={(p) => {
-        console.log('on ready', p);
-        if (p.state === 'notJoined' && p.roomStats.createdBy === authentication.user.id) {
+        // console.log('on ready', p);
+        // if (p.state === 'notJoined' && p.roomStats.createdBy === authentication.user.id) {
+        //   p.joinRoom();
+        // }
+
+        if (p.state === 'notJoined') {
           p.joinRoom();
         }
+
+        
+
+        // console.log('on ready', p);
         // if (p.state === 'joined') {
         //   p.startLocalStream();
         // } else if (

@@ -4,6 +4,7 @@ import {
   PublicRoomsResponsePayload,
   PeerRecord,
   RoomStatsRecord,
+  RoomRecord,
 } from 'dstnd-io';
 import {
   SocketConsumer,
@@ -15,7 +16,7 @@ type Props = Pick<
   SocketConsumerProps,
   'autoDemandConnection' | 'fallbackRender'
 > & {
-  render: (props: { room: RoomStatsRecord; me: PeerRecord }) => ReactNode;
+  render: (props: { room: RoomRecord; me: PeerRecord }) => ReactNode;
 };
 
 export const JoinFirstAvailableRoomHelper: React.FC<Props> = (props) => {
@@ -24,7 +25,7 @@ export const JoinFirstAvailableRoomHelper: React.FC<Props> = (props) => {
   const [publicRooms, setPublicRooms] = useState<PublicRoomsResponsePayload>(
     []
   );
-  const [joinedRoom, setJoinedRoom] = useState<RoomStatsRecord | undefined>(
+  const [joinedRoom, setJoinedRoom] = useState<RoomRecord | undefined>(
     undefined
   );
   const [me, setMe] = useState<PeerRecord | undefined>(undefined);

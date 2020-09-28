@@ -50,13 +50,14 @@ export const LandingPage: React.FC<Props> = () => {
                     dispatchCreate={async () => {
                       (
                         await resources.createRoom({
-                          nickname: undefined,
+                          name: undefined,
                           userId: me.id,
                           type: 'private',
-                          game: {
-                            timeLimit: 'rapid',
-                            preferredColor: 'random',
-                          },
+                          activity: 'none',
+                          // game: {
+                          //   timeLimit: 'rapid',
+                          //   preferredColor: 'random',
+                          // },
                         })
                       ).map((room) => {
                         history.push(`/gameroom/${toRoomPath(room)}`);

@@ -21,6 +21,16 @@ export class RoomMocker {
 
     return {
       ...roomStatsRecord,
+      activity: {
+        type: 'none',
+      },
+      ...roomStatsRecord.type === 'private' ? {
+        code: roomStatsRecord.code,
+        type: 'private'
+      } : {
+        type: 'public',
+        code: null,
+      },
       me,
       peers,
       peersIncludingMe: {
@@ -48,6 +58,7 @@ export class RoomMocker {
         code: props.code || chance.hash({ length: 6 }),
       } : {
         type: 'public',
+        code: null,
       },
 
       // Update the count

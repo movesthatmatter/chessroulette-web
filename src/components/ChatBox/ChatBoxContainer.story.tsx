@@ -30,7 +30,7 @@ export const defaultStory = () => React.createElement(() => {
         render={({ room: socketRoom, me }) => (
           <RoomProvider
             id={socketRoom.id}
-            code={'code' in socketRoom ? socketRoom.code : undefined}
+            code={'code' in socketRoom ? socketRoom.code || undefined : undefined}
             onMessageReceived={handleMessages}
             onMessageSent={handleMessages}
             renderFallback={() => (

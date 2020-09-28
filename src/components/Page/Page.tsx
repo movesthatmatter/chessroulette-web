@@ -23,14 +23,14 @@ export const Page: React.FC<Props> = (props) => {
             <img src={logo} alt="logo" className={cls.logo} />
           </div>
 
-          {/* <AuthenticationConsumer
-            renderAuthenticated={(auth) => (
+          <AuthenticationConsumer
+            renderAuthenticated={(user) => (
               <Menu
                 plain
                 dropProps={{ align: { top: 'bottom', left: 'left' } }}
                 label={
                   <Text>
-                    Welcome <strong>{auth.user.name}</strong>
+                    Welcome <strong>{user.name}</strong>
                   </Text>
                 }
                 items={[
@@ -41,12 +41,17 @@ export const Page: React.FC<Props> = (props) => {
                 ]}
               />
             )}
+            renderGuest={(guest) => (
+              <Text>
+                Guest <strong>{guest.name}</strong>
+              </Text>
+            )}
             renderNotAuthenticated={() => (
               <Box alignContent="center" justify="center">
                 <LichessAuthButton />
               </Box>
             )}
-          /> */}
+          />
         </div>
         <main className={cls.main}>{props.children}</main>
       </div>

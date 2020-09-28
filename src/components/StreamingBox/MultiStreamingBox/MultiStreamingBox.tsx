@@ -29,8 +29,12 @@ export const MultiStreamingBox: React.FC<Props> = (props) => {
   );
 
   useEffect(() => {
-    const allHarkStoppers = Object
-      .keys(props.peerStreamConfigsMap)
+    const peerStreamConfigKeys = Object.keys(props.peerStreamConfigsMap);
+    if (peerStreamConfigKeys.length < 2) {
+      return () => {};
+    }
+
+    const allHarkStoppers = peerStreamConfigKeys
       .map((id) => {
         const speechEvents = hark(props.peerStreamConfigsMap[id].streamingConfig.stream);
 
@@ -58,8 +62,6 @@ export const MultiStreamingBox: React.FC<Props> = (props) => {
 
   return (
     <div className={cls.container}>
-      {props.peerStreamConfigsMap[focusOn].user.name}
-      {focusOn}
       <FaceTime streamConfig={props.peerStreamConfigsMap[focusOn].streamingConfig}/>
       <div className={cls.titleWrapper}>
         <Text className={cls.title}>{props.peerStreamConfigsMap[focusOn].user.name}</Text>
