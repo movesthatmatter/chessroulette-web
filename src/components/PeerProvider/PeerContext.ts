@@ -1,6 +1,6 @@
+import { RoomRecord } from 'dstnd-io';
 import { createContext } from 'react';
 import { PeerMessageEnvelope } from 'src/services/peers';
-import { RoomStatsRecord, SocketPayload } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { Room } from '../RoomProvider';
 import { Proxy } from './Proxy';
@@ -20,7 +20,7 @@ export type PeerContextProps =
   | {
       state: 'notJoined';
       proxy?: Proxy;
-      roomStats: RoomStatsRecord;
+      room: RoomRecord;
       request: SocketClient['send'];
 
       joinRoom: () => void;

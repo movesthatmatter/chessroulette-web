@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { StreamingBox } from 'src/components/StreamingBox';
-import { Room } from 'src/components/RoomProvider';
+import { Room, RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { StandaloneChessGame } from 'src/modules/Games/Chess/components/StandaloneChessGame';
 import { Box } from 'grommet';
 import { PopupContent } from 'src/components/PopupContent';
@@ -15,7 +15,7 @@ import { ChessGameColor } from '../Games/Chess';
 import { getOpponent, isPlayer, getPlayerColor } from './util';
 
 type Props = {
-  room: Room;
+  room: RoomWithPlayActivity;
   onMove?: (m: ChessMove) => void;
   onResign?: (resigningColor: ChessGameColor) => void;
   onAbort?: () => void;
@@ -34,17 +34,17 @@ export const GameRoomV2: React.FC<Props> = ({
   const cls = useStyles();
   const [showGameFinishedPopup, setShowGameFinishedPopup] = useState(false);
 
-  const homeColor = getPlayerColor(props.room.me.id, props.room.game.players);
+  const homeColor = getPlayerColor(props.room.me.id, props.room.activity.game.players);
 
-  const opponentPlayer = getOpponent(props.room.me.id, props.room.game.players);
+  const opponentPlayer = getOpponent(props.room.me.id, props.room.activity.game.players);
 
-  const { game } = props.room;
+  const { game } = props.room.activity;
 
   useEffect(() => {
-    if (props.room.game.state === 'finished') {
+    if (props.room.activity.game.state === 'finished') {
       setShowGameFinishedPopup(true);
     }
-  }, [props.room.game]);
+  }, [props.room.activity.game]);
 
   return (
     <div className={cls.container}>
@@ -57,7 +57,7 @@ export const GameRoomV2: React.FC<Props> = ({
               isPlayer(props.room.me.id, game.players) &&
               game.lastMoveBy !== homeColor
             }
-            game={props.room.game}
+            game={props.room.activity.game}
             getBoardSize={() => dimensions.width}
             onMove={(nextMove) => {
               // don't move unless the game is pending or started

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { RoomStatsRecord } from 'dstnd-io';
+import { RoomRecord, RoomStatsRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { noop } from 'src/lib/util';
 import { PeerContext } from './PeerContext';
@@ -18,7 +18,7 @@ type RenderJoinedProps = {
 
 type RenderNotJoinedProps = {
   state: 'notJoined';
-  roomStats: RoomStatsRecord;
+  room: RoomRecord;
   request: SocketClient['send'];
   joinRoom: () => void;
 };

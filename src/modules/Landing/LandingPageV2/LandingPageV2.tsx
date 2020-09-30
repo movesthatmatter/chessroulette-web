@@ -5,10 +5,9 @@ import { Box } from 'grommet';
 import { resources } from 'src/resources';
 import { useHistory } from 'react-router-dom';
 import { selectAuthentication } from 'src/services/Authentication';
-import { toRoomUrlPath, urlPathToRoomCredentials } from 'src/lib/util';
+import { toRoomUrlPath } from 'src/lib/util';
 import { useSelector } from 'react-redux';
 import { ConfirmationButton } from 'src/components/ConfirmationButton';
-import FaceTimeSetupStory from 'src/components/FaceTimeArea/FaceTimeSetup/FaceTimeSetup.story';
 import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
 
 type Props = {};
@@ -46,14 +45,6 @@ export const LandingPageV2: React.FC<Props> = () => {
                 resources.createRoom({
                   userId: authentication.user.id,
                   type: 'public',
-                  name: undefined,
-                  activity: 'none',
-
-                  // TODO: This shouldnt be here anymore
-                  // game: {
-                  //   timeLimit: 'untimed',
-                  //   preferredColor: 'random',
-                  // },
                 })
                   .mapErr((e) => {
                     console.log('e', e);
@@ -79,14 +70,6 @@ export const LandingPageV2: React.FC<Props> = () => {
                 resources.createRoom({
                   userId: authentication.user.id,
                   type: 'private',
-                  name: undefined,
-                  activity: 'none',
-
-                  // TODO: This shouldnt be here anymore
-                  // game: {
-                  //   timeLimit: 'untimed',
-                  //   preferredColor: 'random',
-                  // },
                 })
                   .map((room) => {
                     history.push(`/room/${toRoomUrlPath(room)}`);

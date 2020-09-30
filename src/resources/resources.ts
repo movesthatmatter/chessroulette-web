@@ -17,9 +17,9 @@ import {
   RegisterPeerRequestPayload,
   RegisterPeerResponsePayload,
   registerPeerResponsePayload,
-  RoomStatsRecord,
-  roomStatsRecord,
   AsyncResultWrapper,
+  RoomResponsePayload,
+  roomResponsePayload,
 } from 'dstnd-io';
 import config from 'src/config';
 import { Result, Err } from 'ts-results';
@@ -74,43 +74,49 @@ export const getPublicRoom = async (
   }
 };
 
-export const getPrivateRoom = async (
+export const getPrivateRoom = (
   code: string,
-): Promise<Result<PrivateRoomResponsePayload, ApiError>> => {
-  try {
-    const { data } = await http.get('/api/room', {
-      params: {
-        code,
-      },
-    });
-
-    return io
-      .toResult(privateRoomResponsePayload.decode(data))
-      .mapErr(() => 'BadResponse');
-  } catch (e) {
-    return new Err('BadRequest');
-  }
+) => {
+  return new AsyncResultWrapper<PrivateRoomResponsePayload, ApiError>(async () => {
+    try {
+      const { data } = await http.get(
+        '/api/room',
+        { params: { code }},
+      );
+  
+      return io
+        .toResult(privateRoomResponsePayload.decode(data))
+        .mapErr(() => 'BadResponse');
+    } catch (e) {
+      return new Err('BadRequest');
+    }
+  });
 };
 
-export const getRoomStats = async (credentials: {
+export const getRoom = (credentials: {
   roomId: string;
   code?: string;
-}): Promise<Result<RoomStatsRecord, ApiError>> => {
-  try {
-    const { data } = await http.get(`/api/rooms/${credentials.roomId}`, {
-      params: {
-        ...credentials.code && {
-          code: credentials.code,
+}) => {
+  return new AsyncResultWrapper<RoomResponsePayload, ApiError>(async () => {
+    try {
+      const { data } = await http.get(
+        `/api/rooms/${credentials.roomId}`,
+        { 
+          params: {
+            ...credentials.code && {
+              code: credentials.code,
+            },
+          },
         },
-      },
-    });
-
-    return io
-      .toResult(roomStatsRecord.decode(data))
-      .mapErr(() => 'BadResponse');
-  } catch (e) {
-    return new Err('BadRequest');
-  }
+      );
+  
+      return io
+        .toResult(roomResponsePayload.decode(data))
+        .mapErr(() => 'BadResponse');
+    } catch (e) {
+      return new Err('BadRequest');
+    }
+  });
 };
 
 export const createRoom = (

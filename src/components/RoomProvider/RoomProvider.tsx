@@ -148,9 +148,6 @@ export const RoomProvider: React.FC<Props> = ({
         },
 
         activity: socketRecords.room.activity,
-
-        game: socketRecords.room.game,
-        gameOffer: undefined,
       };
 
       return {

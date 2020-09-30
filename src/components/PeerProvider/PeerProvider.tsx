@@ -7,7 +7,7 @@ import config from 'src/config';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { isLeft } from 'fp-ts/lib/Either';
 import { eitherToResult } from 'src/lib/ioutil';
-import { UserRecord, RoomStatsRecord } from 'dstnd-io';
+import { UserRecord, RoomStatsRecord, RoomRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { useSelector, useDispatch } from 'react-redux';
 import { resources } from 'src/resources';
@@ -33,6 +33,7 @@ import {
 import { Proxy } from './Proxy';
 import { PeerContextProps, PeerContext } from './PeerContext';
 import { selectJoinedRoom } from './selectors';
+import { Room } from '../RoomProvider';
 
 export type PeerProviderProps = {
   roomCredentials: {
@@ -48,7 +49,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   const state = useSelector(selectJoinedRoom);
   const dispatch = useDispatch();
 
-  const [roomStats, setRoomStats] = useState<RoomStatsRecord | undefined>();
+  const [unjoinedRoom, setUnjoinedRoom] = useState<RoomRecord | undefined>();
   const proxy = useRef(new Proxy()).current;
   const [contextState, setContextState] = useState<PeerContextProps>({
     state: 'init',
@@ -56,23 +57,21 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   const [socket, setSocket] = useState<SocketClient | undefined>();
 
   useEffect(() => {
-    if (roomStats) {
+    if (unjoinedRoom) {
       return;
     }
 
     resources
-      .getRoomStats({
+      .getRoom({
         roomId: props.roomCredentials.id,
         code: props.roomCredentials.code,
       })
-      .then((roomResult) => {
-        roomResult.map(setRoomStats);
-      });
+      .map(setUnjoinedRoom);
   }, [props.roomCredentials]);
 
   useEffect(() => {
     setContextState(() => {
-      if (!(roomStats && socket)) {
+      if (!(unjoinedRoom && socket)) {
         return {
           state: 'init',
         };
@@ -81,7 +80,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       if (!state.room) {
         return {
           state: 'notJoined',
-          roomStats,
+          room: unjoinedRoom,
           joinRoom: () => {
             socket.send({
               kind: 'joinRoomRequest',
@@ -144,7 +143,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
         },
       };
     });
-  }, [state.room, roomStats, socket]);
+  }, [state.room, unjoinedRoom, socket]);
 
   useEffect(
     () => () => {

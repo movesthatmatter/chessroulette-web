@@ -9,9 +9,10 @@ import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
 import { selectAuthentication } from 'src/services/Authentication';
 import { useSelector } from 'react-redux';
 import { gameActions } from 'src/modules/Games/Chess/gameActions';
-import { otherChessColor } from 'src/modules/Games/Chess/util';
+import { otherChessColor } from 'src/modules/Games/Chess/util'
 import { GameRoomV2 } from '../GameRoomV2';
 import { isPlayer, getPlayerColor } from '../util';
+import { RoomWithPlayActivity } from 'src/components/RoomProvider';
 
 type Props = {};
 
@@ -29,13 +30,19 @@ export const GameRoomV2Container: React.FC<Props> = () => {
 
   return (
     <PeerConsumer
-      renderRoomJoined={(p) => {
-        const isMePlayer = isPlayer(p.room.me.user.id, p.room.game.players);
-        const myPlayerColor = getPlayerColor(p.room.me.user.id, p.room.game.players);
+      renderRoomJoined={({ room, request }) => {
+        if (room.activity.type !== 'play') {
+          return null;
+        }
+
+        const { game, offer } = room.activity;
+
+        const isMePlayer = isPlayer(room.me.user.id, game.players);
+        const myPlayerColor = getPlayerColor(room.me.user.id, game.players);
 
         return (
           <>
-            {isMePlayer && p.room.game.state === 'waitingForOpponent' ? (
+            {isMePlayer && game.state === 'waitingForOpponent' ? (
               <Layer position="center">
                 <Box pad="medium" gap="small" width="medium">
                   Waiting for Opponent
@@ -45,49 +52,51 @@ export const GameRoomV2Container: React.FC<Props> = () => {
               </Layer>
             ) : (
               <>
-                <GameRoomV2
-                  room={p.room}
-                  onMove={(nextMove) => {
-                    p.request(gameActions.move(nextMove));
-                  }}
-                  onOfferDraw={() => {
-                    p.request(gameActions.offerDraw());
-                  }}
-                  onResign={() => {
-                    p.request(gameActions.resign());
-                  }}
-                  onAbort={() => {
-                    p.request(gameActions.abort());
-                  }}
-                  onRematchOffer={() => {
-                    p.request(gameActions.offerRematch());
-                  }}
-                />
+                {room.activity.type === 'play' && (
+                  <GameRoomV2
+                    room={room as RoomWithPlayActivity}
+                    onMove={(nextMove) => {
+                      request(gameActions.move(nextMove));
+                    }}
+                    onOfferDraw={() => {
+                      request(gameActions.offerDraw());
+                    }}
+                    onResign={() => {
+                      request(gameActions.resign());
+                    }}
+                    onAbort={() => {
+                      request(gameActions.abort());
+                    }}
+                    onRematchOffer={() => {
+                      request(gameActions.offerRematch());
+                    }}
+                  />
+                )}
                 {isMePlayer
-                  && p.room.gameOffer?.type === 'draw'
-                  && p.room.gameOffer.content.by === otherChessColor(myPlayerColor) && (
+                  && offer?.type === 'draw'
+                  && offer?.content.by === otherChessColor(myPlayerColor) && (
                     <Layer position="center">
                       <Box pad="medium" gap="small" width="medium">
                         Your opponent is offering a Draw!
                         <Button
-                          onClick={() => p.request(gameActions.acceptDraw())}
+                          onClick={() => request(gameActions.acceptDraw())}
                           label="Accept"
                         />
-                        <Button onClick={() => p.request(gameActions.denyDraw())} label="Deny" />
+                        <Button onClick={() => request(gameActions.denyDraw())} label="Deny" />
                       </Box>
                     </Layer>
                 )}
                 {isMePlayer
-                  && p.room.gameOffer?.type === 'rematch'
-                  && p.room.gameOffer.content.by === otherChessColor(myPlayerColor) && (
+                  && offer?.type === 'rematch'
+                  && offer?.content.by === otherChessColor(myPlayerColor) && (
                     <Layer position="center">
                       <Box pad="medium" gap="small" width="medium">
                         Your opponent wants a Rematch!
                         <Button
-                          onClick={() => p.request(gameActions.acceptRematch())}
+                          onClick={() => request(gameActions.acceptRematch())}
                           label="Accept"
                         />
-                        <Button onClick={() => p.request(gameActions.denyRematch())} label="Deny" />
+                        <Button onClick={() => request(gameActions.denyRematch())} label="Deny" />
                       </Box>
                     </Layer>
                 )}
@@ -96,11 +105,16 @@ export const GameRoomV2Container: React.FC<Props> = () => {
           </>
         );
       }}
-      renderRoomNotJoined={({ joinRoom, roomStats, request }) => (
+      renderRoomNotJoined={({ joinRoom, room, request }) => {
+        if (room.activity.type === 'none') {
+          return null;
+        }
+        
+        return (
         <Layer position="center">
           <Box pad="medium" gap="small" width="medium">
             <FaceTimeSetup onUpdated={(s) => setFaceTimeOn(s.on)} />
-            {roomStats.game.state === 'waitingForOpponent' ? (
+            {room.activity.game.state === 'waitingForOpponent' ? (
               <>
                 {/* There is an active challenge for this room. Do you want to join
                 the game? */}
@@ -112,7 +126,7 @@ export const GameRoomV2Container: React.FC<Props> = () => {
                     onClick={() => {
                       // Join both the room and the game
                       // joinRoom();
-                      request(gameActions.join(roomStats.id, ));
+                      request(gameActions.join(room.id, ));
                     }}
                     fill="horizontal"
                   />
@@ -140,18 +154,18 @@ export const GameRoomV2Container: React.FC<Props> = () => {
             <Button onClick={() => history.goBack()} label="Cancel" />
           </Box>
         </Layer>
-      )}
+      )}}
       renderFallback={() => <AwesomeLoaderPage />}
       onReady={(p) => {
-        if (p.state === 'joined') {
-          p.startLocalStream();
-        } else if (
-          // Join the Room right away if already part of the game!
-          p.state === 'notJoined'
-          && isPlayer(authentication.user.id, p.roomStats.game.players)
-        ) {
-          p.joinRoom();
-        }
+        // if (p.state === 'joined') {
+        //   p.startLocalStream();
+        // } else if (
+        //   // Join the Room right away if already part of the game!
+        //   p.state === 'notJoined'
+        //   && isPlayer(authentication.user.id, p.room.activity.game.players)
+        // ) {
+        //   p.joinRoom();
+        // }
       }}
     />
   );

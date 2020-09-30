@@ -53,7 +53,7 @@ export const RoomNotAvailablePopup: React.FC<Props> = () => {
                         //   timeLimit: 'blitz',
                         //   preferredColor: 'random',
                         // },
-                        activity: 'none',
+                        // activity: 'none',
                       })
                     ).map((room) => {
                       history.push(`/gameroom/${toRoomPath(room)}`);

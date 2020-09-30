@@ -53,11 +53,6 @@ export const LandingPage: React.FC<Props> = () => {
                           name: undefined,
                           userId: me.id,
                           type: 'private',
-                          activity: 'none',
-                          // game: {
-                          //   timeLimit: 'rapid',
-                          //   preferredColor: 'random',
-                          // },
                         })
                       ).map((room) => {
                         history.push(`/gameroom/${toRoomPath(room)}`);

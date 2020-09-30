@@ -15,6 +15,7 @@ import {
 import { action } from '@storybook/addon-actions';
 import { GameRoomV2 } from './GameRoomV2';
 import { otherChessColor } from '../Games/Chess/util';
+import { RoomWithPlayActivity } from 'src/components/RoomProvider';
 
 export default {
   component: GameRoomV2,
@@ -63,8 +64,11 @@ export const defaultStory = () => (
             },
             name: 'Valencia',
             type: 'public',
-            game: currentGame,
-          });
+            activity: {
+              type: 'play',
+              game: currentGame,
+            }
+          }) as RoomWithPlayActivity;
 
           return <GameRoomV2 room={publicRoom} onMove={action('on move')} />;
         })
@@ -73,34 +77,38 @@ export const defaultStory = () => (
   </Grommet>
 );
 
-export const withoutGame = () => (
-  <Grommet theme={defaultTheme} full>
-    <WithLocalStream
-      render={(stream) =>
-        React.createElement(() => {
-          const me = peerMock.withChannels({
-            streaming: {
-              on: true,
-              type: 'audio-video',
-              stream,
-            },
-          });
+// export const withoutGame = () => (
+//   <Grommet theme={defaultTheme} full>
+//     <WithLocalStream
+//       render={(stream) =>
+//         React.createElement(() => {
+//           const me = peerMock.withChannels({
+//             streaming: {
+//               on: true,
+//               type: 'audio-video',
+//               stream,
+//             },
+//           });
 
-          const publicRoom = roomMocker.withProps({
-            me,
-            peers: {
-              [me.id]: me,
-            },
-            name: 'Valencia',
-            type: 'public',
-          });
+//           const publicRoom = roomMocker.withProps({
+//             me,
+//             peers: {
+//               [me.id]: me,
+//             },
+//             name: 'Valencia',
+//             type: 'public',
+//             activity: {
+//               type: 'play',
 
-          return <GameRoomV2 room={publicRoom} />;
-        })
-      }
-    />
-  </Grommet>
-);
+//             }
+//           });
+
+//           return <GameRoomV2 room={publicRoom} />;
+//         })
+//       }
+//     />
+//   </Grommet>
+// );
 
 export const asPage = () => (
   <Grommet theme={defaultTheme} full>
@@ -134,12 +142,15 @@ export const asPage = () => (
               },
               name: 'Valencia',
               type: 'public',
-              game: chessGameActions.prepareGame({
-                players: [me.user, opponent.user],
-                preferredColor: homeColor,
-                timeLimit: 'bullet',
-              }),
-            })
+              activity: {
+                type: 'play',
+                game: chessGameActions.prepareGame({
+                  players: [me.user, opponent.user],
+                  preferredColor: homeColor,
+                  timeLimit: 'bullet',
+                }),
+              }
+            }) as RoomWithPlayActivity
           );
 
           return (
@@ -150,7 +161,7 @@ export const asPage = () => (
                   setPublicRoom((prev) => ({
                     ...prev,
                     game: chessGameActions.move(
-                      prev.game as ChessGameStateStarted,
+                      prev.activity.game as ChessGameStateStarted,
                       { move: nextMove }
                     ),
                   }));
@@ -196,12 +207,15 @@ export const asPageWithSwitchingSides = () => (
               },
               name: 'Valencia',
               type: 'public',
-              game: chessGameActions.prepareGame({
-                players: [me.user, opponent.user],
-                preferredColor: homeColor,
-                timeLimit: 'bullet',
-              }),
-            })
+              activity: {
+                type: 'play',
+                game: chessGameActions.prepareGame({
+                  players: [me.user, opponent.user],
+                  preferredColor: homeColor,
+                  timeLimit: 'bullet',
+                }),
+              }
+            }) as RoomWithPlayActivity
           );
 
           return (
@@ -212,7 +226,7 @@ export const asPageWithSwitchingSides = () => (
                   setPublicRoom((prev) => ({
                     ...prev,
                     game: chessGameActions.move(
-                      prev.game as ChessGameStateStarted,
+                      prev.activity.game as ChessGameStateStarted,
                       { move }
                     ),
                   }));
@@ -260,13 +274,16 @@ export const asPageWithFinishedGame = () => (
               },
               name: 'Valencia',
               type: 'public',
-              game: chessGameActions.prepareGame({
-                players: [me.user, opponent.user],
-                preferredColor: homeColor,
-                timeLimit: 'bullet',
-                pgn: '1. e4 e5 2. Qf3 Na6 3. Bc4 h6 4. Qxf7#',
-              }),
-            })
+              activity: {
+                type: 'play',
+                game: chessGameActions.prepareGame({
+                  players: [me.user, opponent.user],
+                  preferredColor: homeColor,
+                  timeLimit: 'bullet',
+                  pgn: '1. e4 e5 2. Qf3 Na6 3. Bc4 h6 4. Qxf7#',
+                }),
+              },
+            }) as RoomWithPlayActivity
           );
 
           return (
