@@ -8,6 +8,7 @@ export type SocketConsumerProps = {
   autoDemandConnection?: boolean;
   render: (renderProps: {
     send: SocketClient['send'];
+    close: SocketClient['close'];
     socket: SocketClient;
   }) => React.ReactNode;
 
@@ -103,6 +104,7 @@ export const SocketConsumer: React.FC<SocketConsumerProps> = ({
       {props.render({
         socket,
         send: socket.send.bind(socket),
+        close: socket.close.bind(socket),
       })}
     </>
   );

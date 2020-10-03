@@ -20,9 +20,13 @@ import {
   AsyncResultWrapper,
   RoomResponsePayload,
   roomResponsePayload,
+  CreateChallengeResponse,
+  ChallengeRecord,
+  challengeRecord,
+  AcceptChallengeRequest,
 } from 'dstnd-io';
 import config from 'src/config';
-import { Result, Err } from 'ts-results';
+import { Result, Err, Ok } from 'ts-results';
 
 type ApiError = 'BadRequest' | 'BadResponse';
 
@@ -133,9 +137,9 @@ export const createRoom = (
   }
 });
 
-export const createChallenge = async (
+export const createChallenge = (
   req: CreateChallengeRequest,
-): Promise<Result<CreateRoomResponse, ApiError>> => {
+) => new AsyncResultWrapper<CreateChallengeResponse, ApiError>(async () => {
   try {
     const { data } = await http.post('api/challenges', req);
 
@@ -145,7 +149,50 @@ export const createChallenge = async (
   } catch (e) {
     return new Err('BadRequest');
   }
-};
+});
+
+export const getChallengeBySlug = (
+  slug: string,
+) => new AsyncResultWrapper<ChallengeRecord, ApiError>(async () => {
+  try {
+    const { data } = await http.get('api/challenges', { params: { slug } });
+
+    return io
+      .toResult(challengeRecord.decode(data))
+      .mapErr(() => 'BadResponse');
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+});
+
+export const acceptChallenge = (
+  req: AcceptChallengeRequest,
+) => new AsyncResultWrapper<CreateRoomResponse, ApiError>(async () => {
+  try {
+    const { data } = await http.post('api/challenges/accept', req);
+
+    return io
+      .toResult(createRoomResponse.decode(data))
+      .mapErr(() => 'BadResponse');
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+});
+
+// TODO: This needs to make sure the user is also the one that created it
+// Later through auth or smtg like that
+export const deleteChallenge = (
+  id: ChallengeRecord['id'],
+) => new AsyncResultWrapper<void, ApiError>(async () => {
+  try {
+    console.trace('delete challenge', id);
+    await http.delete(`api/challenges/${id}`);
+
+    return Ok.EMPTY;
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+});
 
 export const registerPeer = async (
   req: RegisterPeerRequestPayload,

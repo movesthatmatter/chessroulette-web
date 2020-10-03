@@ -3,23 +3,27 @@ import React from 'react';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
 import { action } from '@storybook/addon-actions';
-import { PlayButtonWidget } from './PlayButtonWidget';
+import { ChallengeButtonWidget } from './ChallengeButtonWidget';
 
 export default {
-  component: PlayButtonWidget,
-  title: 'components/PlayButtonWidget',
+  component: ChallengeButtonWidget,
+  title: 'components/ChallengeButtonWidget',
 };
 
 export const defaultStory = () => (
   <Grommet theme={defaultTheme}>
     <div style={{ width: '200px' }}>
-      <PlayButtonWidget
+      <ChallengeButtonWidget
         buttonLabel="Play a Friend"
-        onSubmit={action('on submit')}
+        userId="1"
+        type="private"
+        // onSubmit={action('on submit')}
       />
-      <PlayButtonWidget
+      <ChallengeButtonWidget
         buttonLabel="Create Challenge"
-        onSubmit={action('on submit')}
+        // onSubmit={action('on submit')}
+        userId="1"
+        type="public"
       />
     </div>
   </Grommet>

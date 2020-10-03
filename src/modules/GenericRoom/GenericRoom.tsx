@@ -42,10 +42,10 @@ export const GenericRoom: React.FC<Props> = () => {
             />
           )
         }
+
+        return 
       }}
-      renderRoomNotJoined={({ joinRoom, room, request }) => (
-        <>room not joind</>
-      )}
+      renderRoomNotJoined={() => <AwesomeLoaderPage />}
       renderFallback={() => <AwesomeLoaderPage />}
       onUpdate={(p) => {
         if (p.state === 'joined') {

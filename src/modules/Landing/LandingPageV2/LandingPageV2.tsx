@@ -1,6 +1,5 @@
 import React from 'react';
 import { Page } from 'src/components/Page';
-import { PlayButtonWidget } from 'src/components/PlayButtonWidget';
 import { Box } from 'grommet';
 import { resources } from 'src/resources';
 import { useHistory } from 'react-router-dom';
@@ -9,6 +8,7 @@ import { toRoomUrlPath } from 'src/lib/util';
 import { useSelector } from 'react-redux';
 import { ConfirmationButton } from 'src/components/ConfirmationButton';
 import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
+import { ChallengeButtonWidget } from 'src/modules/Games/Chess/components/ChallengeButtonWidget';
 
 type Props = {};
 
@@ -25,30 +25,20 @@ export const LandingPageV2: React.FC<Props> = () => {
     <Page>
       <Box>
         <Box width="medium" alignSelf="center">
-          <PlayButtonWidget
-            buttonLabel="Create a Challenge"
-            onSubmit={async (game) => {
-              (
-                await resources.createChallenge({
-                  peerId: authentication.user.id,
-                  game,
-                })
-              ).map((room) => {
-                history.push(`/gameroom/${toRoomUrlPath(room)}`);
-              });
-            }}
+          <ChallengeButtonWidget 
+            buttonLabel="Play a Friend"
+            userId={authentication.user.id}
+            type="private"
           />
-          <Box margin="small">
+          {/* <Box margin="small">
             <ConfirmationButton
-              label="Go Live"
+              label="Play A Friend"
               onSubmit={() => {
-                resources.createRoom({
+                resources.createChallenge({
                   userId: authentication.user.id,
+                  gameSpecs,
                   type: 'public',
                 })
-                  .mapErr((e) => {
-                    console.log('e', e);
-                  })
                   .map((room) => {
                     history.push(`/room/${toRoomUrlPath(room)}`);
                   });
@@ -60,7 +50,61 @@ export const LandingPageV2: React.FC<Props> = () => {
                   }}
                   />
                 </>
-            )}
+              )}
+            />
+          </Box> */}
+          {/* <PlayButtonWidget
+            buttonLabel="Create a Challenge"
+            onSubmit={(gameSpecs) => {
+              resources
+                .createChallenge({
+                  userId: authentication.user.id,
+                  gameSpecs,
+                  type: 'public',
+                })
+                .map((challenge) => {
+                  console.log('challenge created', challenge);
+                  // TODO: do something when the challenge is created
+                  // history.push(`/gameroom/${toRoomUrlPath(room)}`);
+                });
+            }}
+          /> */}
+          {/* <PlayButtonWidget
+            buttonLabel="Play a Friend"
+            onSubmit={async (gameSpecs) => {
+              (
+                await resources.createChallenge({
+                  userId: authentication.user.id,
+                  gameSpecs,
+                  type: 'private',
+                })
+              ).map((challenge) => {
+                console.log('challenge created', challenge);
+                // TODO: do something when the challenge is created
+                // history.push(`/gameroom/${toRoomUrlPath(room)}`);
+              });
+            }}
+          /> */}
+          <Box margin="small">
+            <ConfirmationButton
+              label="Go Live"
+              onSubmit={() => {
+                resources.createRoom({
+                  userId: authentication.user.id,
+                  type: 'public',
+                })
+                  .map((room) => {
+                    history.push(`/room/${toRoomUrlPath(room)}`);
+                  });
+              }}
+              confirmationPopupContent={(
+                <>
+                  <FaceTimeSetup onUpdated={() => {
+                    console.log('Facetime Enabled');
+                  }}
+                  />
+                </>
+              )}
             />
           </Box>
           <Box margin="small">

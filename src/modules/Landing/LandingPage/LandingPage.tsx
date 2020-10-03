@@ -103,21 +103,21 @@ export const LandingPage: React.FC<Props> = () => {
                   fontSize="21px"
                   padding="5px"
                   onClickFunction={async () => {
-                    if (!me) {
-                      return;
-                    }
+                    // if (!me) {
+                    //   return;
+                    // }
 
-                    (
-                      await resources.createChallenge({
-                        peerId: me.id,
-                        game: {
-                          timeLimit: 'rapid',
-                          preferredColor: 'random',
-                        },
-                      })
-                    ).map((room) => {
-                      history.push(`/gameroom/${toRoomPath(room)}`);
-                    });
+                    // (
+                    //   await resources.createChallenge({
+                    //     peerId: me.id,
+                    //     game: {
+                    //       timeLimit: 'rapid',
+                    //       preferredColor: 'random',
+                    //     },
+                    //   })
+                    // ).map((room) => {
+                    //   history.push(`/gameroom/${toRoomPath(room)}`);
+                    // });
                   }}
                 />
               </div>

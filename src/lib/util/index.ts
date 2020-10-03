@@ -4,9 +4,11 @@ import {
   CreateRoomResponse,
   CreateRoomRequest,
   JoinRoomRequestPayload,
+  RoomRecord,
 } from 'dstnd-io';
 import UrlPattern from 'url-pattern';
 import { Result, Err, Ok } from 'ts-results';
+import { Room } from 'src/components/RoomProvider';
 
 export const noop = () => { 
   // do nothing
@@ -100,8 +102,11 @@ export const prettyCountdown = (
   }
 ) => format(ms, options);
 
-export const toRoomUrlPath = (room: CreateRoomResponse) =>
-  `${room.id}${room.type === 'private' ? `/${room.code}` : ''}`;
+export const toRoomUrlPath = (room: {
+  id: RoomRecord['id'],
+  type: RoomRecord['type'],
+  code: RoomRecord['code'],
+}) => `/room/${room.id}${room.type === 'private' ? `/${room.code}` : ''}`;
 
 export const urlPathToRoomCredentials = (
   url: string

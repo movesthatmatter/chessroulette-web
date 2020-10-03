@@ -57,7 +57,7 @@ export const JoinFirstAvailableRoomHelper: React.FC<Props> = (props) => {
         if (msg.kind === 'joinRoomSuccess') {
           setJoinedRoom(msg.content.room);
           setMe(msg.content.me);
-        } else if (msg.kind === 'roomStats') {
+        } else if (msg.kind === 'joinedRoomUpdated') {
           setJoinedRoom(msg.content);
         }
       }}

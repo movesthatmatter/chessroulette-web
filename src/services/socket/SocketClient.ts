@@ -5,7 +5,7 @@ import {
   socketPayload,
   io,
   MyStatsPayload,
-  RoomStatsPayload,
+  JoinedRoomUpdatedPayload,
   ConnectionOpenedPayload,
   PeerJoinedRoomPayload,
   JoinRoomRequestPayload,
@@ -33,11 +33,11 @@ import { PeerMessageEnvelope } from 'src/components/PeerProvider/records';
 type ReceivableMessagesMap = {
   peerJoinedRoom: PeerJoinedRoomPayload;
   myStats: MyStatsPayload;
-  roomStats: RoomStatsPayload;
   connectionOpened: ConnectionOpenedPayload;
-
+  
   joinRoomSuccess: JoinRoomSuccessPayload;
   joinRoomFailure: JoinRoomFailurePayload;
+  joinedRoomUpdated: JoinedRoomUpdatedPayload;
 
   ping: PingPayload;
 
@@ -106,8 +106,8 @@ export class SocketClient {
             case 'peerJoinedRoom':
               this.pubsy.publish('peerJoinedRoom', msg);
               break;
-            case 'roomStats':
-              this.pubsy.publish('roomStats', msg);
+            case 'joinedRoomUpdated':
+              this.pubsy.publish('joinedRoomUpdated', msg);
               break;
             case 'myStats':
               this.pubsy.publish('myStats', msg);

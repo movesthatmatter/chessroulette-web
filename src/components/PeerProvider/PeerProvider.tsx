@@ -173,7 +173,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   return (
     <SocketConsumer
       onMessage={(msg) => {
-        if (msg.kind === 'roomStats') {
+        if (msg.kind === 'joinedRoomUpdated') {
           dispatch(updateRoomAction({ room: msg.content }));
 
           return;

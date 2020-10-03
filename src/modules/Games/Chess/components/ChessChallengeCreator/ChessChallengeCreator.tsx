@@ -5,11 +5,11 @@ import {
   ChessGameTimeLimit,
   metadata,
   ChessPrefferedColorOption,
-  GameInitConfig,
+  GameSpecsRecord,
 } from 'dstnd-io';
 import capitalize from 'capitalize';
 
-type State = GameInitConfig;
+type State = GameSpecsRecord;
 
 type Props = {
   onUpdate: (state: State) => void;

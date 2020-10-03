@@ -71,22 +71,23 @@ export const RoomNotAvailablePopup: React.FC<Props> = () => {
                 fontSize="19px"
                 padding="5px"
                 onClickFunction={async () => {
-                  if (!me) {
-                    return;
-                  }
+                  // if (!me) {
+                  //   return;
+                  // }
 
-                  (
-                    await resources.createChallenge({
-                      peerId: me.id,
-                      game: {
-                        // This should not be hardcoded
-                        timeLimit: 'rapid',
-                        preferredColor: 'random',
-                      },
-                    })
-                  ).map((room) => {
-                    history.push(`/gameroom/${toRoomPath(room)}`);
-                  });
+                  // (
+                  //   await resources.createChallenge({
+                  //     userId: me.id,
+                  //     gameSpecs: {
+                  //       // This should not be hardcoded
+                  //       timeLimit: 'rapid',
+                  //       preferredColor: 'random',
+                  //     },
+                  //     type: 'private',
+                  //   })
+                  // ).map((room) => {
+                  //   history.push(`/gameroom/${toRoomPath(room)}`);
+                  // });
                 }}
               />
             </div>

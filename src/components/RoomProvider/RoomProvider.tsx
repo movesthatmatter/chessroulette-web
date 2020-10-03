@@ -172,7 +172,7 @@ export const RoomProvider: React.FC<Props> = ({
           setSocketRecords(msg.content);
         } else if (msg.kind === 'joinRoomFailure') {
           setError('WrongCode');
-        } else if (msg.kind === 'roomStats') {
+        } else if (msg.kind === 'joinedRoomUpdated') {
           // This is needed because when there is a new Peer Joining the room
           //  The Peer Info comes from the socket
           setSocketRecords((prev) => (prev
