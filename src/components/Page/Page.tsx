@@ -20,7 +20,9 @@ export const Page: React.FC<Props> = (props) => {
       <div className={cls.paddingWrapper}>
         <div className={cls.top}>
           <div className={cls.topMain}>
-            <img src={logo} alt="logo" className={cls.logo} />
+            <a href="/">
+              <img src={logo} alt="logo" className={cls.logo} />
+            </a>
           </div>
 
           <AuthenticationConsumer

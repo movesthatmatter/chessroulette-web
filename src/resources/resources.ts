@@ -24,6 +24,9 @@ import {
   ChallengeRecord,
   challengeRecord,
   AcceptChallengeRequest,
+  QuickPairingRequest,
+  QuickPairingResponse,
+  quickPairingResponse,
 } from 'dstnd-io';
 import config from 'src/config';
 import { Result, Err, Ok } from 'ts-results';
@@ -185,10 +188,23 @@ export const deleteChallenge = (
   id: ChallengeRecord['id'],
 ) => new AsyncResultWrapper<void, ApiError>(async () => {
   try {
-    console.trace('delete challenge', id);
     await http.delete(`api/challenges/${id}`);
 
     return Ok.EMPTY;
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+});
+
+export const quickPair = (
+  req: QuickPairingRequest
+) => new AsyncResultWrapper<QuickPairingResponse, ApiError>(async () => {
+  try {
+    const { data } = await http.post(`api/challenges/quickpair`, req);
+
+    return io
+      .toResult(quickPairingResponse.decode(data))
+      .mapErr(() => 'BadResponse');
   } catch (e) {
     return new Err('BadRequest');
   }
