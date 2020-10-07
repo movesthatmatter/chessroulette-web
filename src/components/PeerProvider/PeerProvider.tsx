@@ -7,7 +7,7 @@ import config from 'src/config';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { isLeft } from 'fp-ts/lib/Either';
 import { eitherToResult } from 'src/lib/ioutil';
-import { UserRecord, RoomStatsRecord, RoomRecord } from 'dstnd-io';
+import { UserRecord, RoomStatsRecord, RoomRecord, IceServerRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { useSelector, useDispatch } from 'react-redux';
 import { resources } from 'src/resources';
@@ -55,6 +55,15 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
     state: 'init',
   });
   const [socket, setSocket] = useState<SocketClient | undefined>();
+  const [iceServers, setIceServers] = useState<IceServerRecord[] | undefined>();
+
+  useEffect(() => {
+    (async () => {
+      // Try to get and set the IceServers on mount
+      // TODO: This could be cached here and on the server as well
+      (await resources.getIceURLS()).map(setIceServers);
+    })();
+  }, []);
 
   useEffect(() => {
     if (unjoinedRoom) {
@@ -170,6 +179,10 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
     proxy.publishOnPeerMessageReceived(result.right);
   };
 
+  if (!iceServers) {
+    return null;
+  }
+
   return (
     <SocketConsumer
       onMessage={(msg) => {
@@ -191,7 +204,12 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           //  since we don't want to initialize it multiple times
           const sdk = new PeerSDK(
             wNamespace(msg.content.me.id),
-            config.SIGNALING_SERVER_CONFIG,
+            {
+              ...config.SIGNALING_SERVER_CONFIG,
+              config: {
+                iceServers,
+              },
+            }
           );
           peerSDK.current = sdk;
 
