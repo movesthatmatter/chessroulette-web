@@ -41,6 +41,14 @@ export const ChallengePage: React.FC<Props> = (props) => {
   return (
     <Page>
       <SocketConsumer
+        onReady={(socket) => {
+          socket.send({
+            kind: 'userIdentification',
+            content: {
+              userId: auth.user.id,
+            }
+          });
+        }}
         render={() => (
           <>
             {challenge.createdBy} challengeed you to a {challenge.gameSpecs.timeLimit} game!
