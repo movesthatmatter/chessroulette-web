@@ -15,7 +15,7 @@ type Props = {
     user: UserRecord;
   }>;
   myStreamConfig: {
-    streamingConfi: PeerStreamingConfig;
+    streamingConfig: PeerStreamingConfig;
     user: UserRecord;
   };
   focusOn?: StreamId;
@@ -89,11 +89,12 @@ export const MultiStreamingBox: React.FC<Props> = (props) => {
               <Text size="small" className={cls.title}>Me</Text>
             </div>
             <FaceTime
-              streamConfig={props.myStreamConfig.streamingConfi}
+              streamConfig={props.myStreamConfig.streamingConfig}
               className={cls.smallFacetime}
               style={{
                 width: props.reelFacetimeWidth,
               }}
+              muted
             />
           </div>
       </div>

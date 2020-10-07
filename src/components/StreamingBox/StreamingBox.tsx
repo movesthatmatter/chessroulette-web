@@ -39,7 +39,7 @@ export const StreamingBox: React.FC<Props> = (props) => {
           focusOn={props.focusedPeerId}
           peerStreamConfigsMap={peersOnStreamConfig}
           myStreamConfig={{
-            streamingConfi: props.room.me.connection.channels.streaming,
+            streamingConfig: props.room.me.connection.channels.streaming,
             user: props.room.me.user,
           }}
           reelFacetimeWidth={props.width / 4}
@@ -54,6 +54,7 @@ export const StreamingBox: React.FC<Props> = (props) => {
               <FaceTime
                 streamConfig={props.room.me.connection.channels.streaming}
                 className={cls.fullFacetime}
+                muted
               />
             </>
           ) : (
