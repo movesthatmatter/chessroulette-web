@@ -39,11 +39,11 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
   return (
     <div className={cls.container}>
       <FaceTime
+        muted
         streamConfig={streamingConfig}
         streamingOffFallback={(
           <AspectRatio className={cls.noFacetime}>
             <Box fill justify="center">
-
               <Button
                 onClick={showStream}
                 alignSelf="center"
@@ -52,7 +52,6 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
                 icon={<Video />}
                 primary
                 label="Start Camera"
-
               />
             </Box>
           </AspectRatio>
