@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
-import { JoinFirstAvailableRoomHelper } from 'src/storybook/JoinDefaultRoomHelper';
+import { JoinFirstAvailableRoomHelper } from 'src/storybook/JoinFirstAvailableRoomHelper';
 import { eitherToResult } from 'src/lib/ioutil';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { ChatBoxContainer } from './ChatBoxContainer';

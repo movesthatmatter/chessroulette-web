@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import React from 'react';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
@@ -44,6 +45,8 @@ export const defaultStory = () => (
         name: 'Valencia',
         type: 'public',
       });
+
+      publicRoom
 
       return (
         <div style={{ width: '100%', height: '100%' }}>

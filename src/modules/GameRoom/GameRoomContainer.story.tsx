@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { SocketProvider } from 'src/components/SocketProvider';
-import { JoinFirstAvailableRoomHelper } from 'src/storybook/JoinDefaultRoomHelper';
+import { JoinFirstAvailableRoomHelper } from 'src/storybook/JoinFirstAvailableRoomHelper';
 import { GameRoomContainer } from './GameRoomContainer';
 
 export default {
