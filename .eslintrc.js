@@ -52,7 +52,7 @@ module.exports = {
 
     // See https://github.com/babel/eslint-plugin-babel/issues/185#issuecomment-569996329
     'no-unused-expressions': 'off',
-    'babel/no-unused-expressions': 'error',
+    'babel/no-unused-expressions': 'warn',
 
     '@typescript-eslint/explicit-function-return-type': 'off', // This adds extra code and doesn't make use of inference
     '@typescript-eslint/no-use-before-define': [

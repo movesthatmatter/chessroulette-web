@@ -13,7 +13,7 @@ import {
   PingPayload,
   JoinRoomFailurePayload,
   UserIdentificationPayload,
-  WhoAmIRequestPayload,
+  WhoamiRequestPayload,
 
   // Game Logic
   GameResignationRequestPayload,
@@ -53,7 +53,7 @@ type SendableMessagesMap = {
   userIdentification: UserIdentificationPayload;
   statsReaderIdentification: StatsReaderIdentificationPayload;
   ping: PingPayload;
-  whoami: WhoAmIRequestPayload;
+  whoami: WhoamiRequestPayload;
 
   // Game
   gameResignationRequestPayload: GameResignationRequestPayload;
