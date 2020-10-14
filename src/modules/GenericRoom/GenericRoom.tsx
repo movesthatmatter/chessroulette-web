@@ -35,7 +35,13 @@ export const GenericRoom: React.FC<Props> = () => {
       renderRoomJoined={(p) => {
         if (p.room.activity.type === 'play') {
           return (
-            <GameRoomV2Container />
+            <>
+              {/* <small>
+                <pre>Room: <b>{p.room.name} ({p.room.id})</b></pre>
+                <pre>{JSON.stringify(p.room.peersIncludingMe, null, 2)}</pre>
+              </small> */}
+              <GameRoomV2Container />
+            </>
             // <GameRoomV2
             //   // The type assertion here is needed b/c as of nowTypescript (v4.0)
             //   //  doesn't support Nested Tagged Unions but these are coming soon (maybe v4.1)!
@@ -55,7 +61,6 @@ export const GenericRoom: React.FC<Props> = () => {
         }
       }}
       onReady={(p) => {
-        // console.log('on ready', p);
         // if (p.state === 'notJoined' && p.roomStats.createdBy === authentication.user.id) {
         //   p.joinRoom();
         // }

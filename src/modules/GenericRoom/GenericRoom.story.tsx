@@ -7,33 +7,28 @@ import { GuestUserRecord, PeerRecord, RoomRecord } from 'dstnd-io';
 import { quickPair } from 'src/resources/resources';
 import { SocketConsumer, SocketProvider } from 'src/components/SocketProvider';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
-import { AuthenticationProvider } from 'src/services/Authentication';
+import { AuthenticationProvider, selectAuthentication } from 'src/services/Authentication';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
 import { getRandomInt } from 'src/lib/util';
 import { Button } from 'src/components/Button';
+import { useSelector } from 'react-redux';
 
 export default {
   component: GenericRoom,
   title: 'modules/GenericRoom',
 };
 
-const ProvidedRoom: React.FC<{
-  guestUser: GuestUserRecord;
-}> = ({ guestUser, ...props }) => {
-  const [user, setUser] = useState<GuestUserRecord>();
+const RoomContainer: React.FC<{
+  // guestUser: GuestUserRecord;
+}> = ({ ...props }) => {
   const [peer, setPeer] = useState<PeerRecord>();
   const [challengeCreated, setChallengeCreated] = useState(false);
   const [room, setRoom] = useState<RoomRecord>();
-  const [uniqueKey, setUniqueKey] = useState(0)
+  const [uniqueKey, setUniqueKey] = useState(0);
+  const [show, setShow] = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      (await authenticateAsExistentGuest({ guestUser })).map((user) => {
-        setUser(user.guest);
-      });
-    })();
-  }, []);
+  const auth = useSelector(selectAuthentication);
 
   useEffect(() => {
     if (!peer || challengeCreated) {
@@ -57,79 +52,121 @@ const ProvidedRoom: React.FC<{
     }, getRandomInt(200, 1000));
   }, [peer]);
 
-  if (!user) {
+  if (auth.authenticationType === 'none') {
     return null;
   }
 
+  const { user } = auth;
+
+  if (!show) {
+    return (
+      <Button
+        label={show ? 'Simulate Exit' : 'Simulate Enter'}
+        onClick={() => {
+          setShow(!show);
+        }}
+      />
+    )
+  }
+
   return (
-    <StorybookReduxProvider
-      initialState={{
-        authentication: {
-          authenticationType: 'guest',
-          user,
-        } as const,
+    <SocketConsumer
+      onMessage={(msg) => {
+        if (msg.kind === 'iam') {
+          setPeer(msg.content);
+        } else if (msg.kind === 'challengeAccepted') {
+          // console.log('challenge accepted', user);
+          setRoom(msg.content.room);
+        }
       }}
-    >
-      <AuthenticationProvider>
-        <SocketProvider>
-          <SocketConsumer
-            onMessage={(msg) => {
-              if (msg.kind === 'iam') {
-                setPeer(msg.content);
-              } else if (msg.kind === 'challengeAccepted') {
-                console.log('challenge accepted', user);
-                setRoom(msg.content.room);
-              }
+      onReady={(s) => {
+        s.send({
+          kind: 'userIdentification',
+          content: {
+            userId: user.id,
+          },
+        });
+      }}
+      render={() => (
+        <>
+          <small>
+            <pre>
+              User:{' '}
+              <b>
+                {user.name} ({user.id})
+              </b>
+            </pre>
+            {/* <pre>{JSON.stringify(peer, null, 2)}</pre> */}
+          </small>
+          <Button
+            label="Simulate Refresh"
+            onClick={() => {
+              // setUniqueKey(getRandomInt(0, 9999));
+              setShow(false);
+              setTimeout(() => {
+                setShow(true)
+              }, 500);
             }}
-            onReady={(s) => {
-              s.send({
-                kind: 'userIdentification',
-                content: {
-                  userId: user.id,
-                },
-              });
-            }}
-            render={() => (
-              <>
-                <pre>
-                  User:{' '}
-                  <b>
-                    {user.name} ({user.id})
-                  </b>
-                </pre>
-                <Button
-                  label="Simulate Refresh" 
-                  onClick={() => {
-                    setUniqueKey(getRandomInt(0, 9999));
-                  }}
-                />
-                {room && (
-                  <PeerProvider
-                    key={uniqueKey}
-                    roomCredentials={{
-                      id: room.id,
-                      ...(room.type === 'private' && {
-                        code: room.code,
-                      }),
-                    }}
-                    user={user}
-                  >
-                    <GenericRoom />
-                  </PeerProvider>
-                )}
-              </>
-            )}
           />
-        </SocketProvider>
-      </AuthenticationProvider>
-    </StorybookReduxProvider>
+          <Button
+            label={show ? 'Simulate Exit' : 'Simulate Enter'}
+            onClick={() => {
+              setShow(!show);
+            }}
+          />
+          {room && (
+            <PeerProvider
+              roomCredentials={{
+                id: room.id,
+                ...(room.type === 'private' && {
+                  code: room.code,
+                }),
+              }}
+              user={user}
+            >
+              <GenericRoom />
+            </PeerProvider>
+          )}
+        </>
+      )}
+    />
   );
 };
 
 export const playRoomDualView = () =>
   React.createElement(() => {
-    const [roomAKey, setRoomAKey] = useState(getRandomInt(0, 9999));
-    const [roomBKey, setRoomBKey] = useState(getRandomInt(0, 9999));
+    const [userA, setUserA] = useState<GuestUserRecord>();
+    const [userB, setUserB] = useState<GuestUserRecord>();
+
+    const guestA = {
+      id: '1',
+      name: 'UserA',
+      isGuest: true,
+      avatarId: '3',
+    } as const;
+
+    const guestB = {
+      id: '2',
+      name: 'UserA',
+      isGuest: true,
+      avatarId: '3',
+    } as const;
+
+    useEffect(() => {
+      (async () => {
+        (await authenticateAsExistentGuest({ guestUser: guestA })).map((user) => {
+          setUserA(user.guest);
+        });
+
+        (await authenticateAsExistentGuest({ guestUser: guestB })).map((user) => {
+          setUserB(user.guest);
+        });
+      })();
+    }, []);
+
+    if (!(userA && userB)) {
+      return null;
+    }
 
     return (
       <Grommet theme={defaultTheme}>
@@ -142,38 +179,48 @@ export const playRoomDualView = () =>
         >
           <div
             style={{
-              // width: '500px',
               width: '100%',
               height: '500px',
               marginRight: '10px',
+              border: '1px solid #efefef',
             }}
           >
-            <ProvidedRoom
-              key={roomAKey}
-              guestUser={{
-                id: '1',
-                name: 'UserA',
-                isGuest: true,
-                avatarId: '3',
+            <StorybookReduxProvider
+              initialState={{
+                authentication: {
+                  authenticationType: 'guest',
+                  user: userA,
+                } as const,
               }}
-            />
+            >
+              <AuthenticationProvider>
+                <SocketProvider>
+                  <RoomContainer />
+                </SocketProvider>
+              </AuthenticationProvider>
+            </StorybookReduxProvider>
           </div>
           <div
             style={{
-              // width: '500px',
               width: '100%',
               height: '500px',
+              border: '1px solid #efefef',
             }}
           >
-            <ProvidedRoom
-              key={roomBKey}
-              guestUser={{
-                id: '2',
-                name: 'UserA',
-                isGuest: true,
-                avatarId: '3',
+            <StorybookReduxProvider
+              initialState={{
+                authentication: {
+                  authenticationType: 'guest',
+                  user: userB,
+                } as const,
               }}
-            />
+            >
+              <AuthenticationProvider>
+                <SocketProvider>
+                  <RoomContainer />
+                </SocketProvider>
+              </AuthenticationProvider>
+            </StorybookReduxProvider>
           </div>
         </div>
       </Grommet>
