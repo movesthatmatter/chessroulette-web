@@ -4,7 +4,7 @@ import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { Move, Square } from 'chess.js';
 import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
-import { ChessMove, ChessGameStatePgn } from 'dstnd-io';
+import { ChessMove, ChessGameStatePgn, ChessGameStateFen } from 'dstnd-io';
 import { ChessBoard } from '../ChessBoard';
 import { getNewChessGame } from '../../lib/sdk';
 import validMoveSound from '../../assets/sounds/valid_move.wav';
@@ -28,7 +28,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   // The bottom side
   homeColor: 'white' | 'black';
 
-  getBoardSize?: (p: {screenWidth: number; screenHeight: number}) => number;
+  getBoardSize?: (p: { screenWidth: number; screenHeight: number }) => number;
 };
 
 export const ChessGame: React.FunctionComponent<Props> = ({
@@ -41,7 +41,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
 }) => {
   const cls = useStyles();
   const gameInstance = useRef(getNewChessGame());
-  const [fen, setFen] = useState(gameInstance.current.fen);
+  const [fen, setFen] = useState<ChessGameStateFen>();
   const [history, setHistory] = useState([] as Move[]);
   const [inCheckSquare, setInCheckSquare] = useState<Square | undefined>();
 
@@ -52,7 +52,6 @@ export const ChessGame: React.FunctionComponent<Props> = ({
 
     const validPgn = gameInstance.current.load_pgn(pgn);
 
-    // console.log('')
     setFen(gameInstance.current.fen());
     setHistory(gameInstance.current.history({ verbose: true }));
 
@@ -60,9 +59,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
 
     // This shouldn't be here
     if (gameInstance.current.in_check()) {
-      setInCheckSquare(
-        getSquareForPiece(pgn, { color: gameInstance.current.turn(), type: 'k' }),
-      );
+      setInCheckSquare(getSquareForPiece(pgn, { color: gameInstance.current.turn(), type: 'k' }));
 
       inCheckAudio.play();
     } else if (validPgn) {
@@ -99,6 +96,10 @@ export const ChessGame: React.FunctionComponent<Props> = ({
       }
     }
   };
+
+  if (!fen) {
+    return null;
+  }
 
   return (
     <div className={cx([cls.container, props.className])}>
