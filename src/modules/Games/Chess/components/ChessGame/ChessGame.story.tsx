@@ -62,6 +62,28 @@ export const withLoggingOnMove = () => React.createElement(() => {
   );
 });
 
+export const playableOnBothSide = () => React.createElement(() => {
+    const [fen, setFen] = useState<string>('');
+    const [lastMoved, setLastMoved] = useState<ChessGameColor>('black');
+    const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
+
+    return (
+      <ChessGame
+        homeColor={homeColor}
+        orientation="white"
+        onMove={(_, pgn) => {
+          setFen(pgn);
+          setLastMoved((prev) => otherChessColor(prev));
+          setHomeColor((prev) => otherChessColor(prev));
+          action('onMove')(pgn);
+        }}
+        pgn={fen}
+        playable={homeColor !== lastMoved}
+
+      />
+    );
+  });
+
 export const withSwitchingSide = () => React.createElement(() => {
   const [fen, setFen] = useState<string>('');
   const [lastMoved, setLastMoved] = useState<ChessGameColor>('black');

@@ -4,12 +4,14 @@ import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { Move, Square } from 'chess.js';
 import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
-import { ChessMove, ChessGameStatePgn, ChessGameStateFen } from 'dstnd-io';
+import { ChessMove, ChessGameStatePgn, ChessGameStateFen, ChessGameColor } from 'dstnd-io';
 import { ChessBoard } from '../ChessBoard';
 import { getNewChessGame } from '../../lib/sdk';
 import validMoveSound from '../../assets/sounds/valid_move.wav';
 import inCheckSound from '../../assets/sounds/in_check.wav';
 import { getSquareForPiece } from '../../lib/util';
+import { CSSProperties } from 'src/lib/jss/types';
+import { toChessColor } from './util';
 
 const validMoveAudio = new Audio(validMoveSound);
 const inCheckAudio = new Audio(inCheckSound);
@@ -26,7 +28,8 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   maintainPositionLocally?: boolean;
 
   // The bottom side
-  homeColor: 'white' | 'black';
+  homeColor: ChessGameColor;
+  orientation?: ChessGameColor;
 
   getBoardSize?: (p: { screenWidth: number; screenHeight: number }) => number;
 };
@@ -43,7 +46,20 @@ export const ChessGame: React.FunctionComponent<Props> = ({
   const gameInstance = useRef(getNewChessGame());
   const [fen, setFen] = useState<ChessGameStateFen>();
   const [history, setHistory] = useState([] as Move[]);
-  const [inCheckSquare, setInCheckSquare] = useState<Square | undefined>();
+  const [inCheckSquare, setInCheckSquare] = useState<Square>();
+  const [focusedSquare, setFocusedSquare] = useState<Square>();
+  const [orientation, setOrientation] = useState(props.orientation || props.homeColor);
+  const [focusedSquareStyle, setFocusedSquareStyle] = useState(
+    {} as Partial<{ [sq in Square]: CSSProperties }>
+  );
+
+  useEffect(() => {
+    if (props.orientation) {
+      setOrientation(orientation);
+    } else {
+      setOrientation(props.homeColor);
+    }
+  }, [props.homeColor, props.orientation]);
 
   useEffect(() => {
     if (!pgn) {
@@ -59,13 +75,55 @@ export const ChessGame: React.FunctionComponent<Props> = ({
 
     // This shouldn't be here
     if (gameInstance.current.in_check()) {
-      setInCheckSquare(getSquareForPiece(pgn, { color: gameInstance.current.turn(), type: 'k' }));
+      setInCheckSquare(
+        getSquareForPiece(pgn, { color: gameInstance.current.turn(), type: 'k' })
+      );
 
       inCheckAudio.play();
     } else if (validPgn) {
       validMoveAudio.play();
     }
   }, [pgn]);
+
+  useEffect(() => {
+    setFocusedSquareStyle(
+      focusedSquare
+        ? {
+            [focusedSquare]: {
+              backgroundColor: 'rgba(255, 255, 0, .4)',
+            },
+          }
+        : {}
+    );
+  }, [focusedSquare]);
+
+  const onSquareClickHandler = (square: Square) => {
+    setFocusedSquare((prev) => {
+      const piece = gameInstance.current.get(square);
+
+      // Refocus on current square if there is piece of homecolor (mine)
+      if (piece && toChessColor(piece.color) === props.homeColor) {
+        return square;
+      }
+
+      // Toggle off if clicked on same square
+      if (prev === square) {
+        return undefined;
+      }
+
+      if (prev) {
+        // TODO: This probably shouldn't be here since it's inside a setState
+        onMoveHandler({
+          sourceSquare: prev,
+          targetSquare: square,
+        });
+
+        return undefined;
+      }
+
+      return prev;
+    });
+  };
 
   const onMoveHandler = ({
     sourceSquare,
@@ -88,7 +146,6 @@ export const ChessGame: React.FunctionComponent<Props> = ({
     const validMove = gameInstance.current.move(nextMove);
 
     if (validMove !== null) {
-      // onMove(gameInstance.pgn());
       onMove(nextMove, gameInstance.current.pgn());
 
       if (maintainPositionLocally) {
@@ -104,19 +161,20 @@ export const ChessGame: React.FunctionComponent<Props> = ({
   return (
     <div className={cx([cls.container, props.className])}>
       <ChessBoard
-        orientation={props.homeColor}
+        orientation={orientation}
         position={fen}
         history={history}
         calcWidth={getBoardSize}
+        onDrop={onMoveHandler}
+        inCheckSquare={inCheckSquare}
+        onSquareClick={onSquareClickHandler}
+        clickedSquareStyle={focusedSquareStyle}
         darkSquareStyle={{
           backgroundColor: '#6792B4',
         }}
         lightSquareStyle={{
           backgroundColor: '#D7D7D7',
         }}
-        onSquareClickMove={onMoveHandler}
-        onDrop={onMoveHandler}
-        inCheckSquare={inCheckSquare}
       />
     </div>
   );

@@ -8,4 +8,4 @@ export default {
   title: 'Modules/Games/Chess/components/Chess Board',
 };
 
-export const defaultStory = () => <ChessBoard history={[]} />;
+export const defaultStory = () => <ChessBoard history={[]} clickedSquareStyle={{}} />;
