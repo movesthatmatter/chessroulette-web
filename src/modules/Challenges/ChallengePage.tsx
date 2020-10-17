@@ -1,20 +1,20 @@
 import { ChallengeRecord } from 'dstnd-io';
+import { Box } from 'grommet';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
-import { Button } from 'src/components/Button';
 import { Page } from 'src/components/Page';
 import { SocketConsumer } from 'src/components/SocketProvider';
 import { createUseStyles } from 'src/lib/jss';
 import { toRoomUrlPath } from 'src/lib/util';
 import { resources } from 'src/resources';
 import { selectAuthentication } from 'src/services/Authentication';
+import { ChallengeInfo } from './ChallengeInfo';
 
 type Props = {};
 
 export const ChallengePage: React.FC<Props> = (props) => {
-  const cls = useStyles();
   const params = useParams<{ slug: string }>();
   const [challenge, setChallenge] = useState<ChallengeRecord | undefined>();
 
@@ -35,31 +35,29 @@ export const ChallengePage: React.FC<Props> = (props) => {
   }
 
   if (!challenge) {
-    return <AwesomeLoaderPage />
+    return <AwesomeLoaderPage />;
   }
 
   return (
     <Page>
       <SocketConsumer
         render={() => (
-          <>
-            {challenge.createdBy} challengeed you to a {challenge.gameSpecs.timeLimit} game!
-            <Button 
-              label="Accept Challenge"
-              onClick={() => {
-                resources.acceptChallenge({
-                  id: challenge.id,
-                  userId: auth.user.id,
-                })
-                .map((room) => {
-                  history.push(toRoomUrlPath(room));
-                })
-                .mapErr((e) => {
-                  console.log('challenge accept error', e);
-                })
+          <Box align="center" justify="center">
+            <ChallengeInfo
+              challenge={challenge}
+              user={auth.user}
+              onAccept={() => {
+                resources
+                  .acceptChallenge({
+                    id: challenge.id,
+                    userId: auth.user.id,
+                  })
+                  .map((room) => {
+                    history.push(toRoomUrlPath(room));
+                  });
               }}
             />
-          </>
+          </Box>
         )}
       />
     </Page>
