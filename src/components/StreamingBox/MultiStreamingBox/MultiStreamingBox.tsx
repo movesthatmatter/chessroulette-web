@@ -9,12 +9,14 @@ import cx from 'classnames';
 
 type StreamId = string;
 
+type PeerStreamingConfigWithUser = {
+  streamingConfig: PeerStreamingConfigOn;
+  user: UserRecord;
+};
+
 type Props = {
-  peerStreamConfigsMap: Record<StreamId, {
-    streamingConfig: PeerStreamingConfigOn;
-    user: UserRecord;
-  }>;
-  myStreamConfig: {
+  peerStreamingConfigMap: Record<StreamId, PeerStreamingConfigWithUser>;
+  myStreamingConfig: {
     streamingConfig: PeerStreamingConfig;
     user: UserRecord;
   };
@@ -24,24 +26,40 @@ type Props = {
 
 export const MultiStreamingBox: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const [focusOn, setFocusOn] = useState(
-    props.focusOn || Object.keys(props.peerStreamConfigsMap)[0]
-  );
+
+  const getPeerStreamingOrFallback = (id?: string, fallbackId?: string): PeerStreamingConfigWithUser => {
+    if (Object.keys(props.peerStreamingConfigMap).length === 0) {
+      throw new Error('MultiStreamingBox Empty Peer Streaming Config Map Error');
+    }
+
+    return (id && id in props.peerStreamingConfigMap)
+      ? props.peerStreamingConfigMap[id]
+      : getPeerStreamingOrFallback(fallbackId, Object.keys(props.peerStreamingConfigMap)[0])
+  }
+
+  const [focused, setFocused] = useState<PeerStreamingConfigWithUser>(getPeerStreamingOrFallback(props.focusOn));
 
   useEffect(() => {
-    const peerStreamConfigKeys = Object.keys(props.peerStreamConfigsMap);
+    // Make sure the focused is set anytime there are changes to the peers
+    //  If new peer added, stays the same
+    //  If not focused peer remove, stays the same
+    //  If focused peer removed, fallsback to 1st one or throws error if there are none left
+    //   atlhough at that point it shouldn't be rendered anymore
+    //  TODO: make sure that works correctly
+    setFocused((prev) => getPeerStreamingOrFallback(prev.user.id));
+
+    const peerStreamConfigKeys = Object.keys(props.peerStreamingConfigMap);
+
     if (peerStreamConfigKeys.length < 2) {
       return () => {};
     }
 
     const allHarkStoppers = peerStreamConfigKeys
       .map((id) => {
-        const speechEvents = hark(props.peerStreamConfigsMap[id].streamingConfig.stream);
+        const speechEvents = hark(props.peerStreamingConfigMap[id].streamingConfig.stream);
 
         speechEvents.on('speaking', () => {
-          console.log(id, 'started to speak');
-
-          setFocusOn(id);
+          setFocused((prev) => getPeerStreamingOrFallback(id, prev.user.id));
         });
       
         speechEvents.on('stopped_speaking', () => {
@@ -58,20 +76,26 @@ export const MultiStreamingBox: React.FC<Props> = (props) => {
     return () => {
       allHarkStoppers.forEach((stopHark) => stopHark());
     }
-  }, [props.peerStreamConfigsMap, props.focusOn]);
+  }, [props.peerStreamingConfigMap]);
 
   return (
     <div className={cls.container}>
-      <FaceTime streamConfig={props.peerStreamConfigsMap[focusOn].streamingConfig}/>
+      <FaceTime streamConfig={focused.streamingConfig}/>
       <div className={cls.titleWrapper}>
-        <Text className={cls.title}>{props.peerStreamConfigsMap[focusOn].user.name}</Text>
+        <Text className={cls.title}>{focused.user.name}</Text>
       </div>
       <div className={cls.reel}>
         {Object
-          .values(props.peerStreamConfigsMap)
-          .filter(({ user }) => user.id !== props.peerStreamConfigsMap[focusOn].user.id)
+          .values(props.peerStreamingConfigMap)
           .map(({ streamingConfig, user }) => (
-            <div className={cls.smallFacetimeWrapper}>
+            <div
+              className={cls.smallFacetimeWrapper}
+              key={user.id}
+              style={{
+                // Don't shpw the currently focused one
+                display: user.id === focused.user.id ? 'none' : 'block',
+              }}
+            >
               <div className={cx(cls.titleWrapper, cls.smallTitleWrapper)}>
                 <Text size="small" className={cls.title}>{user.name}</Text>
               </div>
@@ -89,7 +113,7 @@ export const MultiStreamingBox: React.FC<Props> = (props) => {
               <Text size="small" className={cls.title}>Me</Text>
             </div>
             <FaceTime
-              streamConfig={props.myStreamConfig.streamingConfig}
+              streamConfig={props.myStreamingConfig.streamingConfig}
               className={cls.smallFacetime}
               style={{
                 width: props.reelFacetimeWidth,

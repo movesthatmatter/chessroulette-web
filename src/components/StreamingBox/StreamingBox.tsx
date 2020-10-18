@@ -15,7 +15,7 @@ type Props = {
 export const StreamingBox: React.FC<Props> = (props) => {
   const cls = useStyles();
 
-  const peersOnStreamConfig = Object
+  const peersWithStreamConfigOn = Object
     .values(props.room.peers)
     .reduce((prev, next) => {
       if (!next.connection.channels.streaming.on) {
@@ -34,11 +34,11 @@ export const StreamingBox: React.FC<Props> = (props) => {
   // Only shows the 1st peer for now!
   return (
     <div className={cls.container} style={{ width: props.width }}>
-      {(Object.keys(peersOnStreamConfig).length > 0) ? (
+      {(Object.keys(peersWithStreamConfigOn).length > 0) ? (
         <MultiStreamingBox
           focusOn={props.focusedPeerId}
-          peerStreamConfigsMap={peersOnStreamConfig}
-          myStreamConfig={{
+          peerStreamingConfigMap={peersWithStreamConfigOn}
+          myStreamingConfig={{
             streamingConfig: props.room.me.connection.channels.streaming,
             user: props.room.me.user,
           }}

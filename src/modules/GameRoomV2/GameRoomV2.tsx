@@ -86,7 +86,7 @@ export const GameRoomV2: React.FC<Props> = ({
           <div className={cls.side}>
             <StreamingBox
               room={props.room}
-              focusedPeerId={opponentPlayer?.user.id}
+              focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
               width={dimensions.width}
             />
             <div className={cls.sideBottom}>
