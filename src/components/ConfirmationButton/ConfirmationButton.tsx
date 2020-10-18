@@ -10,10 +10,14 @@ type Props = {
   buttonProps?: Omit<ButtonProps, 'onClick'>;
   confirmationPopupContent: React.ReactElement;
   confirmationPopup?: React.ReactElement;
+  canSubmit?: boolean;
+  submitButtonLabel?: string;
+  cancelButtonLabel?: string;
 };
 
 export const ConfirmationButton: React.FC<Props> = ({
   onSubmit = noop,
+  canSubmit = true,
   ...props
 }) => {
   const cls = useStyles();
@@ -33,7 +37,8 @@ export const ConfirmationButton: React.FC<Props> = ({
         {props.confirmationPopupContent}
         <Button
           type="button"
-          label="Submit"
+          label={props.submitButtonLabel || 'Submit'}
+          disabled={!canSubmit}
           primary
           onClick={() => {
             setIsConfirmationPopupVisible(false);
@@ -42,7 +47,7 @@ export const ConfirmationButton: React.FC<Props> = ({
         />
         <Button
           type="button"
-          label="Cancel"
+          label={props.cancelButtonLabel || 'Cancel'}
           onClick={() => setIsConfirmationPopupVisible(false)}
         />
       </Box>
