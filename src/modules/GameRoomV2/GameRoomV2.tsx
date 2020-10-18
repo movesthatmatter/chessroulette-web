@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { StreamingBox } from 'src/components/StreamingBox';
-import { Room, RoomWithPlayActivity } from 'src/components/RoomProvider';
+import { RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { StandaloneChessGame } from 'src/modules/Games/Chess/components/StandaloneChessGame';
 import { Box } from 'grommet';
-import { PopupContent } from 'src/components/PopupContent';
 import { Modal } from 'src/components/Modal/Modal';
 import { ChessMove } from 'dstnd-io/dist/chessGame';
 import { noop } from 'src/lib/util';
@@ -13,14 +12,20 @@ import { ConfirmationButton } from 'src/components/ConfirmationButton';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
 import { ChessGameColor } from '../Games/Chess';
 import { getOpponent, isPlayer, getPlayerColor } from './util';
+import { otherChessColor } from '../Games/Chess/util';
+import capitalize from 'capitalize';
 
 type Props = {
   room: RoomWithPlayActivity;
-  onMove?: (m: ChessMove) => void;
-  onResign?: (resigningColor: ChessGameColor) => void;
-  onAbort?: () => void;
-  onOfferDraw?: () => void;
-  onRematchOffer?: () => void;
+  onMove: (m: ChessMove) => void;
+  onResign: (resigningColor: ChessGameColor) => void;
+  onAbort: () => void;
+  onOfferDraw: () => void;
+  onDrawAccepted: () => void;
+  onDrawDenied: () => void;
+  onRematchOffer: () => void;
+  onRematchAccepted: () => void;
+  onRematchDenied: () => void;
 };
 
 export const GameRoomV2: React.FC<Props> = ({
@@ -35,10 +40,14 @@ export const GameRoomV2: React.FC<Props> = ({
   const [showGameFinishedPopup, setShowGameFinishedPopup] = useState(false);
 
   const homeColor = getPlayerColor(props.room.me.id, props.room.activity.game.players);
-
   const opponentPlayer = getOpponent(props.room.me.id, props.room.activity.game.players);
 
-  const { game } = props.room.activity;
+  const { game, offer } = props.room.activity;
+
+  const isMePlayer = isPlayer(props.room.me.user.id, game.players);
+  const myPlayerColor = getPlayerColor(props.room.me.user.id, game.players);
+
+  console.log("room", props.room);
 
   useEffect(() => {
     if (props.room.activity.game.state === 'finished') {
@@ -78,7 +87,6 @@ export const GameRoomV2: React.FC<Props> = ({
             <StreamingBox
               room={props.room}
               focusedPeerId={opponentPlayer?.user.id}
-              // peer={opponent}
               width={dimensions.width}
             />
             <div className={cls.sideBottom}>
@@ -136,12 +144,42 @@ export const GameRoomV2: React.FC<Props> = ({
         onEsc={() => setShowGameFinishedPopup(false)}
         onClickOutside={() => setShowGameFinishedPopup(false)}
       >
-        <PopupContent
-          hasCloseButton
-          onClose={() => setShowGameFinishedPopup(false)}
-        >
-          <Box>{`${game?.winner} won`}</Box>
-        </PopupContent>
+        <Box pad="medium" gap="small" width="medium">
+          {`${capitalize(game?.winner || '')} is victorious!`}
+          <Button
+            label="Ok"
+            onClick={() => setShowGameFinishedPopup(false)}
+            primary
+          />
+          <Button
+            onClick={() => onRematchOffer()}
+            label="Rematch"
+          />
+        </Box>
+      </Modal>
+      <Modal
+        visible={isMePlayer &&
+          offer?.type === 'draw' &&
+          offer?.content.by === otherChessColor(myPlayerColor)
+        }
+      >
+        <Box pad="medium" gap="small" width="medium">
+          Your opponent is offering a Draw!
+          <Button onClick={() => props.onDrawAccepted()} label="Accept" />
+          <Button onClick={() => props.onDrawDenied()} label="Deny" />
+        </Box>
+      </Modal>
+      <Modal
+        visible={isMePlayer &&
+          offer?.type === 'rematch' &&
+          offer?.content.by === otherChessColor(myPlayerColor)
+        }
+      >
+        <Box pad="medium" gap="small" width="medium">
+          Your opponent wants a Rematch!
+          <Button onClick={() => props.onRematchAccepted()} label="Accept" />
+          <Button onClick={() => props.onRematchDenied()} label="Deny" />
+        </Box>
       </Modal>
     </div>
   );

@@ -63,6 +63,11 @@ export class RoomMocker {
       ...props,
     };
 
+    const peersIncludingMe = {
+      ...mergedRecord.peers,
+      [mergedRecord.me.id]: mergedRecord.me,
+    }
+
     return {
       ...mergedRecord,
       ...props.type === 'private' ? {
@@ -75,6 +80,7 @@ export class RoomMocker {
 
       // Update the count
       peersCount: Object.keys(mergedRecord.peers).length,
+      peersIncludingMe,
     };
   }
 

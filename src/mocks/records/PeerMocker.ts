@@ -12,11 +12,12 @@ const peerRecordMocker = new PeerRecordMock();
 
 export class PeerMocker {
   record(): Peer {
-    const peerRecord = peerRecordMocker.record();
+    const userRecord = userRecordMocker.record();
+    const peerRecord = peerRecordMocker.withProps({ id: userRecord.id });
 
     return {
       ...peerRecord,
-      user: userRecordMocker.record(),
+      user: userRecord,
       connection: {
         channels: {
           data: { on: false },
@@ -27,7 +28,7 @@ export class PeerMocker {
   }
 
   withProps(props: Partial<Peer>): Peer {
-    return {
+    const record = {
       ...this.record(),
       ...props,
       ...(props.hasJoinedRoom) ? {
@@ -40,6 +41,12 @@ export class PeerMocker {
         joinedRoomId: null,
       }
     };
+
+    return {
+      ...record,
+      // Ensure the peer id and user id stay the same
+      id: record.user.id,
+    } as Peer;
   }
 
   withChannels(channels: Partial<Peer['connection']['channels']>) {

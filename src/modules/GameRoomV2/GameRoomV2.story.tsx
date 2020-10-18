@@ -6,16 +6,12 @@ import { defaultTheme } from 'src/theme';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { Page } from 'src/components/Page';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
-import {
-  chessGameActions,
-  ChessGameState,
-  ChessGameStateStarted,
-  ChessGameColor,
-} from 'dstnd-io';
+import { chessGameActions, ChessGameState, ChessGameStateStarted, ChessGameColor } from 'dstnd-io';
 import { action } from '@storybook/addon-actions';
 import { GameRoomV2 } from './GameRoomV2';
 import { otherChessColor } from '../Games/Chess/util';
 import { RoomWithPlayActivity } from 'src/components/RoomProvider';
+import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 
 export default {
   component: GameRoomV2,
@@ -59,7 +55,6 @@ export const defaultStory = () => (
           const publicRoom = roomMocker.withProps({
             me,
             peers: {
-              [me.id]: me,
               [opponent.id]: opponent,
             },
             name: 'Valencia',
@@ -67,48 +62,28 @@ export const defaultStory = () => (
             activity: {
               type: 'play',
               game: currentGame,
-            }
+            },
           }) as RoomWithPlayActivity;
 
-          return <GameRoomV2 room={publicRoom} onMove={action('on move')} />;
+          return (
+            <GameRoomV2
+              room={publicRoom}
+              onMove={action('on move')}
+              onAbort={action('onAbort')}
+              onDrawAccepted={action('onDrawAccepted')}
+              onDrawDenied={action('onDrawDenied')}
+              onOfferDraw={action('onOfferDraw')}
+              onRematchAccepted={action('onRematchAccepted')}
+              onRematchDenied={action('onRematchDenied')}
+              onRematchOffer={action('onRematchOffer')}
+              onResign={action('onResign')}
+            />
+          );
         })
       }
     />
   </Grommet>
 );
-
-// export const withoutGame = () => (
-//   <Grommet theme={defaultTheme} full>
-//     <WithLocalStream
-//       render={(stream) =>
-//         React.createElement(() => {
-//           const me = peerMock.withChannels({
-//             streaming: {
-//               on: true,
-//               type: 'audio-video',
-//               stream,
-//             },
-//           });
-
-//           const publicRoom = roomMocker.withProps({
-//             me,
-//             peers: {
-//               [me.id]: me,
-//             },
-//             name: 'Valencia',
-//             type: 'public',
-//             activity: {
-//               type: 'play',
-
-//             }
-//           });
-
-//           return <GameRoomV2 room={publicRoom} />;
-//         })
-//       }
-//     />
-//   </Grommet>
-// );
 
 export const asPage = () => (
   <Grommet theme={defaultTheme} full>
@@ -137,7 +112,6 @@ export const asPage = () => (
             roomMocker.withProps({
               me,
               peers: {
-                [me.id]: me,
                 [opponent.id]: opponent,
               },
               name: 'Valencia',
@@ -149,25 +123,34 @@ export const asPage = () => (
                   preferredColor: homeColor,
                   timeLimit: 'bullet',
                 }),
-              }
+              },
             }) as RoomWithPlayActivity
           );
 
           return (
-            <Page>
-              <GameRoomV2
-                room={publicRoom}
-                onMove={(nextMove) => {
-                  setPublicRoom((prev) => ({
-                    ...prev,
-                    game: chessGameActions.move(
-                      prev.activity.game as ChessGameStateStarted,
-                      { move: nextMove }
-                    ),
-                  }));
-                }}
-              />
-            </Page>
+            <StorybookReduxProvider>
+              <Page>
+                <GameRoomV2
+                  room={publicRoom}
+                  onMove={(nextMove) => {
+                    setPublicRoom((prev) => ({
+                      ...prev,
+                      game: chessGameActions.move(prev.activity.game as ChessGameStateStarted, {
+                        move: nextMove,
+                      }),
+                    }));
+                  }}
+                  onAbort={action('onAbort')}
+                  onDrawAccepted={action('onDrawAccepted')}
+                  onDrawDenied={action('onDrawDenied')}
+                  onOfferDraw={action('onOfferDraw')}
+                  onRematchAccepted={action('onRematchAccepted')}
+                  onRematchDenied={action('onRematchDenied')}
+                  onRematchOffer={action('onRematchOffer')}
+                  onResign={action('onResign')}
+                />
+              </Page>
+            </StorybookReduxProvider>
           );
         })
       }
@@ -202,7 +185,6 @@ export const asPageWithSwitchingSides = () => (
             roomMocker.withProps({
               me,
               peers: {
-                [me.id]: me,
                 [opponent.id]: opponent,
               },
               name: 'Valencia',
@@ -214,27 +196,36 @@ export const asPageWithSwitchingSides = () => (
                   preferredColor: homeColor,
                   timeLimit: 'bullet',
                 }),
-              }
+              },
             }) as RoomWithPlayActivity
           );
 
           return (
-            <Page>
-              <GameRoomV2
-                room={publicRoom}
-                onMove={(move) => {
-                  setPublicRoom((prev) => ({
-                    ...prev,
-                    game: chessGameActions.move(
-                      prev.activity.game as ChessGameStateStarted,
-                      { move }
-                    ),
-                  }));
+            <StorybookReduxProvider>
+              <Page>
+                <GameRoomV2
+                  room={publicRoom}
+                  onMove={(move) => {
+                    setPublicRoom((prev) => ({
+                      ...prev,
+                      game: chessGameActions.move(prev.activity.game as ChessGameStateStarted, {
+                        move,
+                      }),
+                    }));
 
-                  setHomeColor((prev) => otherChessColor(prev));
-                }}
-              />
-            </Page>
+                    setHomeColor((prev) => otherChessColor(prev));
+                  }}
+                  onAbort={action('onAbort')}
+                  onDrawAccepted={action('onDrawAccepted')}
+                  onDrawDenied={action('onDrawDenied')}
+                  onOfferDraw={action('onOfferDraw')}
+                  onRematchAccepted={action('onRematchAccepted')}
+                  onRematchDenied={action('onRematchDenied')}
+                  onRematchOffer={action('onRematchOffer')}
+                  onResign={action('onResign')}
+                />
+              </Page>
+            </StorybookReduxProvider>
           );
         })
       }
@@ -269,7 +260,6 @@ export const asPageWithFinishedGame = () => (
             roomMocker.withProps({
               me,
               peers: {
-                [me.id]: me,
                 [opponent.id]: opponent,
               },
               name: 'Valencia',
@@ -287,9 +277,22 @@ export const asPageWithFinishedGame = () => (
           );
 
           return (
-            <Page>
-              <GameRoomV2 room={publicRoom} onMove={action('on move')} />
-            </Page>
+            <StorybookReduxProvider>
+              <Page>
+                <GameRoomV2
+                  room={publicRoom}
+                  onMove={action('on move')}
+                  onAbort={action('onAbort')}
+                  onDrawAccepted={action('onDrawAccepted')}
+                  onDrawDenied={action('onDrawDenied')}
+                  onOfferDraw={action('onOfferDraw')}
+                  onRematchAccepted={action('onRematchAccepted')}
+                  onRematchDenied={action('onRematchDenied')}
+                  onRematchOffer={action('onRematchOffer')}
+                  onResign={action('onResign')}
+                />
+              </Page>
+            </StorybookReduxProvider>
           );
         })
       }
