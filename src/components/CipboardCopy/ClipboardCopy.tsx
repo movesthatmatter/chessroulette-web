@@ -17,7 +17,10 @@ export const ClipboardCopy: React.FC<Props> = (props) => {
         value={props.value}
         plain
         size="small"
-        className={cls.textInput}
+        style={{
+          fontSize: '13px',
+          fontWeight: 'normal',
+        }}
       />
       <Button
         icon={<Clipboard color="light-1" />}
@@ -39,9 +42,6 @@ const useStyles = createUseStyles({
     border: '1px solid grey',
     borderRadius: '40px',
     overflow: 'hidden',
-  },
-  textInput: {
-
   },
   copyButton: {
     background: 'grey !important',
