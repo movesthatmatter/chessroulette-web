@@ -175,6 +175,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
         lightSquareStyle={{
           backgroundColor: '#D7D7D7',
         }}
+        transitionDuration={20}
       />
     </div>
   );
