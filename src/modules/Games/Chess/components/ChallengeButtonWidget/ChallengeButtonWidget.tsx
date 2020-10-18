@@ -6,13 +6,13 @@ import { Button } from 'src/components/Button';
 import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
 import { resources } from 'src/resources';
 import { SocketConsumer } from 'src/components/SocketProvider';
-import { PendingChallenge } from './PendingChallenge';
+import { PendingChallenge, PendingChallengeProps } from './PendingChallenge';
 import { useHistory } from 'react-router-dom';
 import { toRoomUrlPath } from 'src/lib/util';
 
 type Props = {
   buttonLabel: string;
-  type: 'challenge' | 'quickPairing';
+  type: PendingChallengeProps['type'];
   userId: UserRecord['id'];
 };
 
@@ -63,6 +63,7 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                 {challengeState.state === 'pending' ? (
                   <PendingChallenge
                     challenge={challengeState.challenge}
+                    type={props.type}
                     onCancel={() => {
                       resources
                         .deleteChallenge(challengeState.challenge.id)

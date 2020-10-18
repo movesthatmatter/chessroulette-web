@@ -1,5 +1,5 @@
 import { ChallengeAcceptedPayload, ChallengeRecord, RoomRecord } from 'dstnd-io';
-import { Box } from 'grommet';
+import { Box, Text } from 'grommet';
 import React, { useEffect, useState } from 'react';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { Button } from 'src/components/Button';
@@ -8,17 +8,34 @@ import { SocketConsumer } from 'src/components/SocketProvider';
 import { createUseStyles } from 'src/lib/jss';
 import { resources } from 'src/resources';
 
-type Props = {
+export type PendingChallengeProps = {
   onCancel: () => void;
   challenge: ChallengeRecord;
+  type: 'challenge' | 'quickPairing';
 };
 
-export const PendingChallenge: React.FC<Props> = (props) => {
+export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
   const cls = useStyles();
 
   return (
-    <Box pad="medium" gap="small" width="medium">
-      Send this url to a friend
+    <Box pad="medium" gap="small" width="medium" className={cls.container}>
+      {props.type === 'quickPairing' ? (
+        <>
+          <Box margin={{
+            bottom: 'medium',
+          }}>
+            <Text>Waiting for opponent...</Text>
+              <AwesomeLoader minimal />
+          </Box>
+          <Box>
+            <Text size="small">But in the meantime, you can send this link to a friend</Text>
+          </Box>
+        </>
+      ) : (
+        <Box>
+          <Text>Send this link to a friend</Text>
+        </Box>
+      )}
       <ClipboardCopy value={`${window.location.origin}/challenges/${props.challenge.slug}`} />
       <Button
         type="button"
@@ -30,5 +47,7 @@ export const PendingChallenge: React.FC<Props> = (props) => {
 };
 
 const useStyles = createUseStyles({
-  container: {},
+  container: {
+    textAlign: 'center',
+  },
 });
