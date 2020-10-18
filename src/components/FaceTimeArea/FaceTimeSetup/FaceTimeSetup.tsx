@@ -3,10 +3,10 @@ import { createUseStyles } from 'src/lib/jss';
 import { PeerStreamingConfig } from 'src/services/peers';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { Button } from 'src/components/Button';
-import { noop } from 'src/lib/util';
 import { Box } from 'grommet';
 import { Video } from 'grommet-icons';
 import { FaceTime } from '../FaceTime';
+import { getAVStream, removeAVStream } from 'src/services/AVStreaming';
 
 type Props = {
   onUpdated: (streamingConfig: PeerStreamingConfig) => void;
@@ -21,19 +21,23 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
   const [streamingConfig, setStreamingConfig] = useState<PeerStreamingConfig>({ on: false });
 
   const showStream = () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setStreamingConfig({
-          on: true,
-          type: 'audio-video',
-          stream,
-        });
+    getAVStream().then((stream) => {
+      setStreamingConfig({
+        on: true,
+        type: 'audio-video',
+        stream,
       });
+    });
   };
 
   useEffect(() => {
     props.onUpdated(streamingConfig);
+
+    return () => {
+      if (streamingConfig.on) {
+        removeAVStream(streamingConfig.stream);
+      }
+    }
   }, [streamingConfig]);
 
   return (
@@ -47,8 +51,6 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
               <Button
                 onClick={showStream}
                 alignSelf="center"
-                // primary
-                // hoverIndicator
                 icon={<Video />}
                 primary
                 label="Start Camera"

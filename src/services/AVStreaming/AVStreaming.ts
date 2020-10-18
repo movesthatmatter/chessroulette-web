@@ -21,3 +21,16 @@ export class AVStreaming {
     });
   }
 }
+
+export const getAVStream = (constraints: AVStreamingConstraints = {
+  video: true,
+  audio: true,
+}) => {
+  return navigator.mediaDevices.getUserMedia(constraints);
+}
+
+export const removeAVStream = (stream: MediaStream) => {
+  stream.getTracks().forEach((track) => {
+    track.stop();
+  });
+}
