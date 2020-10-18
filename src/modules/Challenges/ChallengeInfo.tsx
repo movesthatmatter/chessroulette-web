@@ -1,9 +1,9 @@
-import { ChallengeRecord, RoomRecord, UserInfoRecord } from 'dstnd-io';
+import { ChallengeRecord, UserInfoRecord } from 'dstnd-io';
 import { Box, Text } from 'grommet';
-import React from 'react';
-import { Button } from 'src/components/Button';
+import React, { useState } from 'react';
+import { ConfirmationButton } from 'src/components/ConfirmationButton';
+import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
 import { createUseStyles } from 'src/lib/jss';
-import { resources } from 'src/resources';
 
 type Props = {
   challenge: ChallengeRecord;
@@ -13,15 +13,21 @@ type Props = {
 
 export const ChallengeInfo: React.FC<Props> = (props) => {
   const cls = useStyles();
+  const [faceTimeOn, setFaceTimeOn] = useState(false);
 
   return (
     <Box className={cls.container} pad="medium">
       <Text margin={{  bottom: 'small' }}>
         You've been challenged to a <b>{props.challenge.gameSpecs.timeLimit}</b> game!
       </Text>
-      <Button 
+      <ConfirmationButton
         label="Accept Challenge"
-        onClick={() => props.onAccept()}
+        onSubmit={() => props.onAccept()}
+        canSubmit={faceTimeOn}
+        submitButtonLabel="Start"
+        confirmationPopupContent={(
+          <FaceTimeSetup onUpdated={(s) => setFaceTimeOn(s.on)} />
+        )}
       />
     </Box>
   );
