@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { ContainerWithDimensions } from 'src/components/ContainerWithDimensions';
+import cx from 'classnames';
 
 type Dimensions = { width: number; height: number };
 
@@ -50,7 +51,7 @@ export const GameRoomLayout: React.FC<Props> = (props) => {
 
           return (
             <div
-              className={cls.content}
+              className={cx(cls.content, cls.animated)}
               style={{
                 width: layout.gameArea + layout.sideArea,
               }}
@@ -109,4 +110,8 @@ const useStyles = createUseStyles({
   side: {},
   streamingBox: {},
   chatBox: {},
+
+  animated: {
+    transition: 'width 100ms linear',
+  }
 });
