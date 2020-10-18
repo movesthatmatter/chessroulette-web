@@ -102,11 +102,7 @@ export const prettyCountdown = (
   }
 ) => format(ms, options);
 
-export const toRoomUrlPath = (room: {
-  id: RoomRecord['id'],
-  type: RoomRecord['type'],
-  code: RoomRecord['code'],
-}) => `/room/${room.id}${room.type === 'private' ? `/${room.code}` : ''}`;
+export const toRoomUrlPath = (room: RoomRecord) => `${room.slug}`;
 
 export const urlPathToRoomCredentials = (
   url: string

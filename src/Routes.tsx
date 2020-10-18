@@ -22,7 +22,7 @@ export const Routes: React.FC<Props> = (props) => {
   }
 
   return (
-    <SocketConsumer 
+    <SocketConsumer
       onReady={(s) => {
         s.send({
           kind: 'userIdentification',
@@ -48,7 +48,7 @@ export const Routes: React.FC<Props> = (props) => {
                 </CSSTransition>
               )}
             </Route>
-            <Route exact strict path="/challenges/:slug" key={location.key}>
+            <Route exact strict path="/:slug" key={location.key}>
               {({ match }) => (
                 <CSSTransition
                   in={match !== null}
@@ -57,18 +57,6 @@ export const Routes: React.FC<Props> = (props) => {
                   unmountOnExit={false}
                 >
                   <ChallengePage />
-                </CSSTransition>
-              )}
-            </Route>
-            <Route exact path="/room/:id/:code?" key={location.key}>
-              {({ match }) => (
-                <CSSTransition
-                  in={match !== null}
-                  key={location.key}
-                  timeout={600}
-                  unmountOnExit={false}
-                >
-                  <GenericRoomPage />
                 </CSSTransition>
               )}
             </Route>

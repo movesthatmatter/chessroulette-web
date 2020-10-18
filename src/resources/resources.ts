@@ -126,6 +126,20 @@ export const getRoom = (credentials: {
   });
 };
 
+export const getRoomBySlug = (slug: string) => {
+  return new AsyncResultWrapper<RoomResponsePayload, ApiError>(async () => {
+    try {
+      const { data } = await http.get(`/api/rooms/slug/${slug}`);
+
+      return io
+        .toResult(roomResponsePayload.decode(data))
+        .mapErr(() => 'BadResponse');
+    } catch (e) {
+      return new Err('BadRequest');
+    }
+  });
+}
+
 export const createRoom = (
   req: CreateRoomRequest,
 ) => new AsyncResultWrapper<CreateRoomResponse, ApiError>(async () => {

@@ -30,6 +30,7 @@ export class RoomMocker {
     return {
       id: String(chance.integer({ min: 1 })),
       name: String(chance.city()),
+      slug: chance.hash({ length: 8 }),
       createdAt: toISODateTime(new Date()),
       createdBy: Object.values(peers)[0]?.id || '-1',
       ...type === 'private' ? {

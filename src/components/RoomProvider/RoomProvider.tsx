@@ -133,6 +133,7 @@ export const RoomProvider: React.FC<Props> = ({
           type: socketRecords.room.type,
           code: null,
         },
+        slug: socketRecords.room.slug,
 
         createdAt: socketRecords.room.createdAt,
         createdBy: socketRecords.room.createdBy,

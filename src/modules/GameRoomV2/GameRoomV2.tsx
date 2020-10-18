@@ -47,8 +47,6 @@ export const GameRoomV2: React.FC<Props> = ({
   const isMePlayer = isPlayer(props.room.me.user.id, game.players);
   const myPlayerColor = getPlayerColor(props.room.me.user.id, game.players);
 
-  console.log("room", props.room);
-
   useEffect(() => {
     if (props.room.activity.game.state === 'finished') {
       setShowGameFinishedPopup(true);
