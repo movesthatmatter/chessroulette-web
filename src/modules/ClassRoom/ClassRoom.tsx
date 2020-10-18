@@ -62,6 +62,7 @@ export const ClassRoom: React.FC<ClassroomProps> = ({
               className={cls.studyContainer}
               paddingTop={60}
               paddingBottom={200}
+              clickedSquareStyle={{}}
             />
           )}
         />
