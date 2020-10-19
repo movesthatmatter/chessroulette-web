@@ -12,7 +12,7 @@ import { ChessGame } from '../ChessGame/ChessGame';
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   playable: boolean;
-  game: ChessGameState | undefined;
+  game: ChessGameState;
 
   // The bottom side
   homeColor: ChessGameColor;
@@ -40,9 +40,17 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
     ? getPlayerByColor(otherChessColor(props.homeColor), game.players)
     : undefined;
 
+  const now = new Date();
+  const myTimeLeft = game.state === 'started' && game.lastMoveBy !== props.homeColor
+    ? game.timeLeft[props.homeColor] - (now.getTime() - new Date(game.lastMoveAt).getTime())
+    : game.timeLeft[props.homeColor];
+  const opponentTimeLeft = game.state === 'started' && game.lastMoveBy === props.homeColor
+    ? game.timeLeft[otherChessColor(props.homeColor)] - (now.getTime() - new Date(game.lastMoveAt).getTime())
+    : game.timeLeft[otherChessColor(props.homeColor)];
+
   return (
     <div className={cx([cls.container, props.className])}>
-      {opponentPlayer && (
+      {opponentPlayer && game && (
         <div className={cx([cls.playerBar, cls.playerBarTop])}>
           <div className={cls.playerBarContent}>
             <div className={cls.playerInfo}>
@@ -50,9 +58,9 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
               {opponentPlayer.user.name}
             </div>
             <Coundtdown
-              key={String(game?.timeLeft[opponentPlayer.color])}
+              key={String(game.timeLeft[opponentPlayer.color])}
               className={cls.countdown}
-              timeLeft={game?.timeLeft[opponentPlayer.color] ?? 0}
+              timeLeft={opponentTimeLeft}
               paused={
                 !game
                 || game.state !== 'started'
@@ -82,9 +90,9 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
               {myPlayer.user.name}
             </div>
             <Coundtdown
-              key={String(game?.timeLeft[myPlayer.color])}
+              key={String(game.timeLeft[myPlayer.color])}
               className={cls.countdown}
-              timeLeft={game?.timeLeft[myPlayer.color] ?? 0}
+              timeLeft={myTimeLeft}
               paused={
                 !game
                 || game.state !== 'started'
