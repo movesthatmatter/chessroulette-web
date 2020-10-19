@@ -15,7 +15,6 @@ type Props = {};
 export const LandingPageV2: React.FC<Props> = () => {
   const cls = useStyles();
   const authentication = useSelector(selectAuthentication);
-  const history = useHistory();
 
   // This should never happen
   if (authentication.authenticationType === 'none') {

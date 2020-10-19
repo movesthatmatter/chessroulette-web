@@ -6,6 +6,7 @@ import { Button } from 'src/components/Button';
 import { ClipboardCopy } from 'src/components/CipboardCopy'
 import { SocketConsumer } from 'src/components/SocketProvider';
 import { createUseStyles } from 'src/lib/jss';
+import { toChallengeUrlPath } from 'src/lib/util';
 import { resources } from 'src/resources';
 
 export type PendingChallengeProps = {
@@ -36,7 +37,7 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
           <Text>Send this link to a friend</Text>
         </Box>
       )}
-      <ClipboardCopy value={`${window.location.origin}/challenges/${props.challenge.slug}`} />
+      <ClipboardCopy value={`${window.location.origin}/${toChallengeUrlPath(props.challenge)}`} />
       <Button
         type="button"
         label="Cancel"

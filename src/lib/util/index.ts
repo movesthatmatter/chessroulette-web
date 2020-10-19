@@ -1,10 +1,9 @@
 import { differenceInMilliseconds } from 'date-fns';
 import humanizeDuration, { Humanizer } from 'humanize-duration';
 import {
-  CreateRoomResponse,
-  CreateRoomRequest,
   JoinRoomRequestPayload,
   RoomRecord,
+  ChallengeRecord,
 } from 'dstnd-io';
 import UrlPattern from 'url-pattern';
 import { Result, Err, Ok } from 'ts-results';
@@ -102,7 +101,8 @@ export const prettyCountdown = (
   }
 ) => format(ms, options);
 
-export const toRoomUrlPath = (room: RoomRecord) => `${room.slug}`;
+export const toRoomUrlPath = (room: RoomRecord) => room.slug;
+export const toChallengeUrlPath = (challenge: ChallengeRecord) => challenge.slug; 
 
 export const urlPathToRoomCredentials = (
   url: string
