@@ -6,6 +6,14 @@ export class Pubsy<TChannelPayloadMap extends { [k: string]: unknown }> {
     };
   } = {};
 
+  constructor(
+    private channelDemands: {
+      [channel in keyof TChannelPayloadMap]?: {
+        onDemanded: (instance: Pubsy<TChannelPayloadMap>) => () => void;
+      }
+    } = {}
+  ) {}
+
   subscribe<TChannel extends keyof TChannelPayloadMap>(
     channel: TChannel,
     fn: (data: TChannelPayloadMap[TChannel]) => void
@@ -18,6 +26,13 @@ export class Pubsy<TChannelPayloadMap extends { [k: string]: unknown }> {
 
     this.subscribers[channelName][subId] = fn;
 
+    // Run the onDemanded on the first subscription only
+    let onDemandCleanup = () => {};
+    const channelDemands = this.channelDemands[channel];
+    if (this.getSubscribersCount(channel) === 1 && channelDemands) {
+      onDemandCleanup = channelDemands.onDemanded(this);
+    }
+
     // Unsubscriber
     return () => {
       if (this.subscribers[channelName]) {
@@ -28,6 +43,9 @@ export class Pubsy<TChannelPayloadMap extends { [k: string]: unknown }> {
 
       if (Object.keys(this.subscribers[channelName]).length === 0) {
         delete this.subscribers[channelName];
+
+        // Run the onDemandCleanup if all the subscribers have been removed
+        onDemandCleanup();
       }
     };
   }
@@ -37,7 +55,6 @@ export class Pubsy<TChannelPayloadMap extends { [k: string]: unknown }> {
     data: TChannelPayloadMap[TChannel]
   ) {
     const channelName = String(channel);
-
     if (!this.subscribers[channelName]) {
       // If no subscribers return early
       return;
@@ -47,4 +64,14 @@ export class Pubsy<TChannelPayloadMap extends { [k: string]: unknown }> {
       sub(data);
     });
   }
+
+  private getSubscribersCount<TChannel extends keyof TChannelPayloadMap>(channel: TChannel) {
+    const channelName = String(channel);
+
+    return Object.keys(this.subscribers[channelName] || {}).length;
+  }
+
+  // unsubscribeFromAll() {
+  //   this.
+  // }
 }
