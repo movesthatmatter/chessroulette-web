@@ -59,11 +59,9 @@ export const defaultStory = () => (
     <WithLocalStream render={(stream) => (
       <SocketProvider>
         <PeerProvider
-          roomCredentials={{
-            id: '1',
-          }}
           // This might not allow it to work with sockets
           user={userRecordMocker.withProps({ id: '1' })}
+          iceServers={[]}
         >
           <PeerConsumer
             renderRoomJoined={(p) => (
@@ -91,9 +89,9 @@ export const withPeerProvider = () => (
     <Grommet theme={defaultTheme} full>
       <SocketProvider>
         <PeerProvider
-          roomCredentials={{ id: '1' }}
           // This might not allow it to work with sockets
           user={userRecordMocker.withProps({ id: String(getRandomInt(1, 6)) })}
+          iceServers={[]}
         >
           <PeerConsumer
             renderRoomJoined={(p) => <ClassRoom {...p} />}

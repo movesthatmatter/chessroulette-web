@@ -1,24 +1,17 @@
 import React from 'react';
 import { PeerConsumer } from 'src/components/PeerProvider';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
-import { selectAuthentication } from 'src/services/Authentication';
-import { useSelector } from 'react-redux';
 import { gameActions } from 'src/modules/Games/Chess/gameActions';
 import { GameRoomV2 } from '../GameRoomV2/GameRoomV2';
 import { RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { FaceTimeSetupWidget } from 'src/components/FaceTimeArea/FaceTimeSetupWidget';
-import { FaceTime } from 'src/components/FaceTimeArea';
+import { RoomCredentials } from 'src/components/PeerProvider/util';
 
-type Props = {};
+type Props = {
+  roomCredentials: RoomCredentials;
+};
 
-export const GenericRoom: React.FC<Props> = () => {
-  const authentication = useSelector(selectAuthentication);
-
-  // This should never actually occur!
-  if (authentication.authenticationType === 'none') {
-    return null;
-  }
-
+export const GenericRoom: React.FC<Props> = (props) => {
   return (
     <PeerConsumer
       renderRoomJoined={(p) => {
@@ -43,7 +36,7 @@ export const GenericRoom: React.FC<Props> = () => {
           );
         }
 
-        return;
+        return null;
       }}
       renderRoomNotJoined={() => <AwesomeLoaderPage />}
       renderFallback={() => <AwesomeLoaderPage />}
@@ -55,7 +48,14 @@ export const GenericRoom: React.FC<Props> = () => {
       onReady={(p) => {
         // Join the Room right away if already part of the game!
         if (p.state === 'notJoined') {
-          p.joinRoom();
+          p.joinRoom(props.roomCredentials);
+        }
+      }}
+      // TODO: Add an onClose callback to leave the room as well. MAYBE!
+      // Normally when closing the socket connection the room is updated!
+      onUnmounted={(p) => {
+        if (p.state === 'joined') {
+          p.leaveRoom();
         }
       }}
     />

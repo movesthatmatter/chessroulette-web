@@ -9,21 +9,17 @@ import { AuthenticationProvider } from './services/Authentication';
 import config from './config';
 import { Routes } from './Routes';
 
-console.log('App config', config);
-
 function App() {
   const cls = useStyles();
 
   return (
     <ReduxProvider>
       <AuthenticationProvider>
-        <SocketProvider>
-          <Grommet theme={defaultTheme} full>
-            <Box className={cls.container}>
-              <Routes />
-            </Box>
-          </Grommet>
-        </SocketProvider>
+        <Grommet theme={defaultTheme} full>
+          <Box className={cls.container}>
+            <Routes />
+          </Box>
+        </Grommet>
       </AuthenticationProvider>
     </ReduxProvider>
   );

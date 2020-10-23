@@ -1,9 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useState } from 'react';
 import { GenericRoom } from './GenericRoom';
-import { PeerProvider } from 'src/components/PeerProvider';
+import { PeerConsumer, PeerProvider } from 'src/components/PeerProvider';
 import { authenticateAsExistentGuest } from 'src/services/Authentication/resources';
-import { GuestUserRecord, PeerRecord, RoomRecord } from 'dstnd-io';
+import { GuestUserRecord, PeerRecord } from 'dstnd-io';
 import { quickPair } from 'src/resources/resources';
 import { SocketConsumer, SocketProvider } from 'src/components/SocketProvider';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
@@ -13,21 +13,19 @@ import { defaultTheme } from 'src/theme';
 import { getRandomInt } from 'src/lib/util';
 import { Button } from 'src/components/Button';
 import { useSelector } from 'react-redux';
+import { RoomCredentials } from 'src/components/PeerProvider/util';
 
 export default {
   component: GenericRoom,
   title: 'modules/GenericRoom',
 };
 
-const RoomContainer: React.FC<{
-  // guestUser: GuestUserRecord;
-}> = ({ ...props }) => {
+const RoomContainer: React.FC<{}> = () => {
   const [peer, setPeer] = useState<PeerRecord>();
   const [challengeCreated, setChallengeCreated] = useState(false);
-  const [room, setRoom] = useState<RoomRecord>();
-  const [uniqueKey, setUniqueKey] = useState(0);
   const [show, setShow] = useState(true);
-
+  const [showRoom, setShowRoom] = useState(true);
+  const [roomCredentials, setRoomCredentials] = useState<RoomCredentials>();
   const auth = useSelector(selectAuthentication);
 
   useEffect(() => {
@@ -44,7 +42,12 @@ const RoomContainer: React.FC<{
         },
       }).map((r) => {
         if (r.matched) {
-          setRoom(r.room);
+          setRoomCredentials({
+            id: r.room.id,
+            ...r.room.type === 'private' && {
+              code: r.room.code,
+            }
+          })
         }
 
         setChallengeCreated(true);
@@ -61,7 +64,7 @@ const RoomContainer: React.FC<{
   if (!show) {
     return (
       <Button
-        label={show ? 'Simulate Exit' : 'Simulate Enter'}
+        label={show ? 'Simulate Exit Window' : 'Simulate Enter Window'}
         onClick={() => {
           setShow(!show);
         }}
@@ -72,20 +75,14 @@ const RoomContainer: React.FC<{
   return (
     <SocketConsumer
       onMessage={(msg) => {
-        if (msg.kind === 'iam') {
-          setPeer(msg.content);
-        } else if (msg.kind === 'challengeAccepted') {
-          // console.log('challenge accepted', user);
-          setRoom(msg.content.room);
+        if (msg.kind === 'challengeAccepted') {
+          setRoomCredentials({
+            id: msg.content.room.id,
+            ...msg.content.room.type === 'private' && {
+              code: msg.content.room.code,
+            }
+          })
         }
-      }}
-      onReady={(s) => {
-        s.send({
-          kind: 'userIdentification',
-          content: {
-            userId: user.id,
-          },
-        });
       }}
       render={() => (
         <>
@@ -96,12 +93,10 @@ const RoomContainer: React.FC<{
                 {user.name} ({user.id})
               </b>
             </pre>
-            {/* <pre>{JSON.stringify(peer, null, 2)}</pre> */}
           </small>
           <Button
             label="Simulate Refresh"
             onClick={() => {
-              // setUniqueKey(getRandomInt(0, 9999));
               setShow(false);
               setTimeout(() => {
                 setShow(true)
@@ -109,24 +104,33 @@ const RoomContainer: React.FC<{
             }}
           />
           <Button
-            label={show ? 'Simulate Exit' : 'Simulate Enter'}
+            label={show ? 'Simulate Exit Window' : 'Simulate Enter Window'}
             onClick={() => {
               setShow(!show);
             }}
           />
-          {room && (
-            <PeerProvider
-              roomCredentials={{
-                id: room.id,
-                ...(room.type === 'private' && {
-                  code: room.code,
-                }),
+          <Button
+            label={showRoom ? 'Simulate Leave Room' : 'Simulate Enter Room'}
+            onClick={() => {
+              setShowRoom(!showRoom);
+            }}
+          />
+          <PeerProvider user={user} iceServers={[]}>
+            <PeerConsumer
+              onReady={(p) => {
+                setPeer(p.me);
               }}
-              user={user}
-            >
-              <GenericRoom />
-            </PeerProvider>
-          )}
+              render={() => (
+                <>
+                  <pre>roomCredentials: {JSON.stringify(roomCredentials, null, 2) || '{}'}</pre>
+                  <pre>{JSON.stringify(user, null, 2)}</pre>
+                  {showRoom && roomCredentials && (
+                    <GenericRoom roomCredentials={roomCredentials} />
+                  )}
+                </>
+              )}
+            />
+          </PeerProvider>
         </>
       )}
     />
@@ -159,14 +163,13 @@ export const playRoomDualView = () =>
         });
 
         (await authenticateAsExistentGuest({ guestUser: guestB })).map((user) => {
-          setUserB(user.guest);
+          // Simulate a delay in joining the room as 2nd Peer
+          setTimeout(() => {
+            setUserB(user.guest);
+          }, 100);
         });
       })();
     }, []);
-
-    if (!(userA && userB)) {
-      return null;
-    }
 
     return (
       <Grommet theme={defaultTheme}>
@@ -185,20 +188,22 @@ export const playRoomDualView = () =>
               border: '1px solid #efefef',
             }}
           >
-            <StorybookReduxProvider
-              initialState={{
-                authentication: {
-                  authenticationType: 'guest',
-                  user: userA,
-                } as const,
-              }}
-            >
-              <AuthenticationProvider>
-                <SocketProvider>
-                  <RoomContainer />
-                </SocketProvider>
-              </AuthenticationProvider>
-            </StorybookReduxProvider>
+            {userA && (
+              <StorybookReduxProvider
+                initialState={{
+                  authentication: {
+                    authenticationType: 'guest',
+                    user: userA,
+                  } as const,
+                }}
+              >
+                <AuthenticationProvider>
+                  <SocketProvider>
+                    <RoomContainer />
+                  </SocketProvider>
+                </AuthenticationProvider>
+              </StorybookReduxProvider>
+            )}
           </div>
           <div
             style={{
@@ -207,20 +212,22 @@ export const playRoomDualView = () =>
               border: '1px solid #efefef',
             }}
           >
-            <StorybookReduxProvider
-              initialState={{
-                authentication: {
-                  authenticationType: 'guest',
-                  user: userB,
-                } as const,
-              }}
-            >
-              <AuthenticationProvider>
-                <SocketProvider>
-                  <RoomContainer />
-                </SocketProvider>
-              </AuthenticationProvider>
-            </StorybookReduxProvider>
+            {userB && (  
+              <StorybookReduxProvider
+                initialState={{
+                  authentication: {
+                    authenticationType: 'guest',
+                    user: userB,
+                  } as const,
+                }}
+              >
+                <AuthenticationProvider>
+                  <SocketProvider>
+                    <RoomContainer />
+                  </SocketProvider>
+                </AuthenticationProvider>
+              </StorybookReduxProvider>
+            )}
           </div>
         </div>
       </Grommet>

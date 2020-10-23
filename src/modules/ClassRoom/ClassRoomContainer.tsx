@@ -12,7 +12,7 @@ import { OnboardingWidget } from 'src/modules/Onboarding/components/OnboardingWi
 import { ClassRoom, ClassroomProps } from './ClassRoom';
 
 type Props = {
-  roomCredentials: PeerProviderProps['roomCredentials'];
+  roomCredentials: any;
   initialClassroomMode?: ClassroomProps['initialMode'];
 };
 
@@ -30,17 +30,19 @@ export const ClassRoomContainer: React.FC<Props> = (props) => {
     );
   }
 
-  return (
-    // having the PeerProvider here is probably not the best but it's OK for now
-    //  The point of the splitting it so the consumer can be used further down
-    //  in the chat, study, game, etc., so the state can pe managed locally
-    <PeerProvider roomCredentials={props.roomCredentials} user={auth.user}>
-      <PeerConsumer
-        renderRoomJoined={(p) => (
-          <ClassRoom {...p} initialMode={props.initialClassroomMode} />
-        )}
-        renderFallback={() => <AwesomeLoaderPage />}
-      />
-    </PeerProvider>
-  );
+  return null;
+  // NOTE: Taken out during a refactoring of PeerProvider
+  // return (
+  //   // having the PeerProvider here is probably not the best but it's OK for now
+  //   //  The point of the splitting it so the consumer can be used further down
+  //   //  in the chat, study, game, etc., so the state can pe managed locally
+  //   <PeerProvider roomCredentials={props.roomCredentials} user={auth.user}>
+  //     <PeerConsumer
+  //       renderRoomJoined={(p) => (
+  //         <ClassRoom {...p} initialMode={props.initialClassroomMode} />
+  //       )}
+  //       renderFallback={() => <AwesomeLoaderPage />}
+  //     />
+  //   </PeerProvider>
+  // );
 };
