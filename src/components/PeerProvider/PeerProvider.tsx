@@ -1,101 +1,97 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
 import React, { useEffect, useRef, useState } from 'react';
-import PeerSDK from 'peerjs';
-import { logsy } from 'src/lib/logsy';
-import config from 'src/config';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
-import { isLeft } from 'fp-ts/lib/Either';
-import { eitherToResult } from 'src/lib/ioutil';
-import { UserRecord, RoomStatsRecord, RoomRecord, IceServerRecord } from 'dstnd-io';
+import { UserRecord, IceServerRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { useSelector, useDispatch } from 'react-redux';
-import { resources } from 'src/resources';
 import { SocketConsumer } from '../SocketProvider';
 import {
   createRoomAction,
-  addPeerAction,
   addMyStream,
   addPeerStream,
-  removePeerAction,
   updateRoomAction,
   remmoveMyStream,
-  removeRoomAction,
+  createMeAction,
+  updateMeAction,
+  removeMeAction,
 } from './actions';
-import { ActivePeerConnections } from './ActivePeerConnections';
-import { wNamespace, woNamespace } from './util';
-import {
-  peerMessageEnvelope,
-  PeerMessageEnvelope,
-  peerConnectionMetadata,
-  PeerConnectionMetadata,
-} from './records';
+import { RoomCredentials } from './util';
+import { PeerMessageEnvelope } from './records';
 import { Proxy } from './Proxy';
 import { PeerContextProps, PeerContext } from './PeerContext';
-import { selectJoinedRoom } from './selectors';
-import { Room } from '../RoomProvider';
+import { selectPeerProviderState } from './selectors';
+import { PeerConnections } from './PeerConnections';
 
 export type PeerProviderProps = {
-  roomCredentials: {
-    id: string;
-    code?: string;
-  };
   user: UserRecord;
+  iceServers: IceServerRecord[];
 };
 
-export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
-  const peerSDK = useRef<PeerSDK>();
-  const activePeerConnections = useRef(new ActivePeerConnections()).current;
-  const state = useSelector(selectJoinedRoom);
+export const PeerProvider: React.FC<PeerProviderProps> = ({
+  user,
+  iceServers,
+  ...props
+}) => {
+  const proxy = useRef(new Proxy()).current;
+  const peerConnections = useRef<PeerConnections>();
+  const [contextState, setContextState] = useState<PeerContextProps>({ state: 'init' });
+  const [socket, setSocket] = useState<SocketClient | undefined>();
+
+  const state = useSelector(selectPeerProviderState);
   const dispatch = useDispatch();
 
-  const [unjoinedRoom, setUnjoinedRoom] = useState<RoomRecord | undefined>();
-  const proxy = useRef(new Proxy()).current;
-  const [contextState, setContextState] = useState<PeerContextProps>({
-    state: 'init',
-  });
-  const [socket, setSocket] = useState<SocketClient | undefined>();
-  const [iceServers, setIceServers] = useState<IceServerRecord[] | undefined>();
-
+  // PeerConnections Setup
   useEffect(() => {
-    (async () => {
-      // Try to get and set the IceServers on mount
-      // TODO: This could be cached here and on the server as well
-      (await resources.getIceURLS()).map(setIceServers);
-    })();
+    const peerConnectionsInstance = new PeerConnections({
+      user,
+      iceServers,
+    });
+
+    const unsubscribeFromOnPeerStream = peerConnectionsInstance.onPeerStream(({ peerId, stream }) => {
+      dispatch(addPeerStream({ peerId, stream }));
+    });
+
+    peerConnections.current = peerConnectionsInstance;
+
+    return () => {
+      unsubscribeFromOnPeerStream();
+      peerConnectionsInstance.destroy();
+    }
   }, []);
 
+  // Clean up the peerConnections if there is no more room
   useEffect(() => {
-    if (unjoinedRoom) {
-      return;
+    if (!state.room && peerConnections.current) {
+      peerConnections.current.disconnect();
     }
+  }, [state.room, peerConnections.current]);
 
-    resources
-      .getRoom({
-        roomId: props.roomCredentials.id,
-        code: props.roomCredentials.code,
-      })
-      .map(setUnjoinedRoom);
-  }, [props.roomCredentials]);
+  useEffect(() => {
+    console.group('state room changed to', state.room);
+    console.log('peerConnections', peerConnections.current);
+    console.groupEnd();
+  }, [state.room, peerConnections.current]);
 
+  // Context State Management
   useEffect(() => {
     setContextState(() => {
-      if (!(unjoinedRoom && socket)) {
+      if (!(state.me && socket)) {
         return {
           state: 'init',
-        };
+        }
       }
 
       if (!state.room) {
         return {
           state: 'notJoined',
-          room: unjoinedRoom,
-          joinRoom: () => {
+          me: state.me,
+          joinRoom: (credentials: RoomCredentials) => {
             socket.send({
               kind: 'joinRoomRequest',
               content: {
-                roomId: props.roomCredentials.id,
-                code: props.roomCredentials.code,
+                roomId: credentials.id,
+                code: credentials.code,
               },
             });
           },
@@ -106,7 +102,14 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       return {
         state: 'joined',
         proxy,
+        me: state.me,
         room: state.room,
+        leaveRoom: () => {
+          socket.send({
+            kind: 'leaveRoomRequest',
+            content: undefined,
+          });
+        },
 
         // this is needed here as otherwise the old state is used
         broadcastMessage: (message) => {
@@ -115,9 +118,11 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
             timestamp: toISODateTime(new Date()),
           };
 
-          Object.keys(state.room?.peers ?? {}).forEach((peerId) => {
-            activePeerConnections.get(peerId)?.data?.send(payload);
-          });
+          Object
+            .values(peerConnections.current?.connections ?? {})
+            .forEach((apc) => {
+              apc.sendMessage(payload);
+            });
 
           proxy.publishOnPeerMessageSent(payload);
         },
@@ -152,32 +157,47 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
         },
       };
     });
-  }, [state.room, unjoinedRoom, socket]);
+  }, [state.room, state.me, socket]);
 
-  useEffect(
-    () => () => {
-      activePeerConnections.removeAll();
-
-      // Destroy the PeerJS Server connection as well
-      peerSDK.current?.destroy();
-    },
-    [],
-  );
-
-  const onDataHandler = (data: unknown) => {
-    const result = peerMessageEnvelope.decode(data);
-
-    if (isLeft(result)) {
-      logsy.error(
-        '[PeerProvider] onMessageHandler(): Message Decoding Error',
-        data,
-      );
-
+  // Socket Message Handler
+  useEffect(() => {
+    if (!socket) {
       return;
     }
 
-    proxy.publishOnPeerMessageReceived(result.right);
-  };
+    const onMessageUnsubscriber = socket.onMessage((msg) => {
+      if (msg.kind === 'iam') {
+        if (!state.me) {
+          dispatch(createMeAction(msg.content));
+        } else {
+          dispatch(updateMeAction(msg.content));
+        }
+      }
+
+      else if (msg.kind === 'joinedRoomUpdated') {
+        dispatch(updateRoomAction({ room: msg.content }));
+
+        return;
+      }
+
+      else if (msg.kind === 'joinRoomSuccess') {
+        dispatch(
+          createRoomAction({
+            room: msg.content.room,
+            me: msg.content.me,
+          }),
+        );
+
+        // This should probably be in an effect but keeping it in sync it's too tedious that way
+        peerConnections.current?.connect(msg.content.room.peers);
+      }
+    });
+
+    return () => {
+      onMessageUnsubscriber();
+    }
+  }, [socket, state]);
+
 
   if (!iceServers) {
     return null;
@@ -185,162 +205,21 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
 
   return (
     <SocketConsumer
-      onMessage={(msg) => {
-        if (msg.kind === 'joinedRoomUpdated') {
-          dispatch(updateRoomAction({ room: msg.content }));
-
-          return;
-        }
-
-        if (msg.kind === 'joinRoomSuccess') {
-          dispatch(
-            createRoomAction({
-              room: msg.content.room,
-              me: msg.content.me,
-            }),
-          );
-
-          // TODO: This should be in its own message handler and inside a UseEffect
-          //  since we don't want to initialize it multiple times
-          const sdk = new PeerSDK(
-            wNamespace(msg.content.me.id),
-            {
-              ...config.SIGNALING_SERVER_CONFIG,
-              config: {
-                iceServers,
-              },
-            }
-          );
-          peerSDK.current = sdk;
-
-          sdk.on('error', logsy.error);
-
-          sdk.on('open', () => {
-            // Connect to all Peers
-            Object.values(msg.content.room.peers)
-              .filter(({ id }) => id !== msg.content.me.id)
-              .forEach((peer) => {
-                const namespacedPeerId = wNamespace(peer.id);
-
-                const metadata: PeerConnectionMetadata = {
-                  peer: msg.content.me,
-                };
-
-                const pc = sdk.connect(namespacedPeerId, { metadata });
-
-                pc.on('error', logsy.error);
-
-                pc.on('open', () => {
-                  activePeerConnections.add(peer.id, { data: pc });
-
-                  dispatch(addPeerAction(msg.content.room.peers[peer.id]));
-
-                  navigator.mediaDevices
-                    .getUserMedia({ video: true, audio: true })
-                    .then((stream) => {
-                      const call = sdk.call(namespacedPeerId, stream);
-
-                      call.on('stream', (remoteStream) => {
-                        dispatch(
-                          addPeerStream({
-                            peerId: peer.id,
-                            stream: remoteStream,
-                          }),
-                        );
-                      });
-
-                      activePeerConnections.add(peer.id, {
-                        media: {
-                          connection: call,
-                          localStream: stream,
-                        },
-                      });
-                    });
-                });
-
-                pc.on('data', onDataHandler);
-
-                pc.on('close', () => {
-                  dispatch(removePeerAction({ peerId: peer.id }));
-
-                  activePeerConnections.remove(peer.id);
-                });
-              });
-          });
-
-          sdk.on('connection', (pc) => {
-            const peerId = woNamespace(pc.peer);
-
-            pc.on('error', logsy.error);
-
-            pc.on('data', onDataHandler);
-
-            pc.on('open', () => {
-              eitherToResult(peerConnectionMetadata.decode(pc.metadata)).map(
-                (metadata) => {
-                  activePeerConnections.add(peerId, { data: pc });
-
-                  dispatch(
-                    addPeerAction(metadata.peer),
-                  );
-                },
-              );
-            });
-
-            pc.on('close', () => {
-              activePeerConnections.remove(peerId);
-
-              dispatch(removePeerAction({ peerId }));
-            });
-          });
-
-          sdk.on('close', () => {
-            console.log('SDK on close');
-          });
-
-          sdk.on('disconnected', () => {
-            console.log('SDK on disconnected');
-          });
-
-          sdk.on('call', (call) => {
-            const peerId = woNamespace(call.peer);
-
-            navigator.mediaDevices
-              .getUserMedia({ video: true, audio: true })
-              .then((localStream) => {
-                activePeerConnections.add(peerId, {
-                  media: {
-                    connection: call,
-                    localStream,
-                  },
-                });
-
-                return localStream;
-              })
-              .then((localStream) => {
-                call.answer(localStream);
-                call.on('stream', (remoteStream) => {
-                  dispatch(
-                    addPeerStream({
-                      peerId,
-                      stream: remoteStream,
-                    }),
-                  );
-                });
-              });
-          });
-        }
-      }}
       onReady={(socketClient) => {
         setSocket(socketClient);
 
         socketClient.send({
           kind: 'userIdentification',
-          content: { userId: props.user.id },
+          content: { userId: user.id },
         });
       }}
       onClose={() => {
-        dispatch(removeRoomAction());
+        // TODO: This could be changed at some point - when I'm redoing
+        //  the strategy for Peer Removal.
+        dispatch(removeMeAction());
+
+        // Once the socket fails destroy the PeerConnection as well
+        peerConnections.current?.destroy();
       }}
       render={() => (
         <PeerContext.Provider value={contextState}>

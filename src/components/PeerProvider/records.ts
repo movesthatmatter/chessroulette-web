@@ -1,6 +1,6 @@
 import * as io from 'io-ts';
 import { isoDateTimeFromISOString } from 'src/lib/date';
-import { peerRecord } from 'dstnd-io';
+import { peerRecord, userRecord } from 'dstnd-io';
 
 export const peerMessageEnvelope = io.type({
   // This stays unknown at this level
@@ -13,6 +13,6 @@ export type PeerMessageEnvelope<
 > = io.TypeOf<typeof peerMessageEnvelope> & {message: TMessage};
 
 export const peerConnectionMetadata = io.type({
-  peer: peerRecord,
+  user: userRecord,
 });
 export type PeerConnectionMetadata = io.TypeOf<typeof peerConnectionMetadata>;

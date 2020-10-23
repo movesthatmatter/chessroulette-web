@@ -1,5 +1,5 @@
-import { createAction, createReducer } from 'deox';
-import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
+import { createReducer } from 'deox';
+import { PeerRecord } from 'dstnd-io';
 import { GenericStateSlice } from 'src/redux/types';
 import { Room, Peer } from '../RoomProvider';
 import {
@@ -11,51 +11,191 @@ import {
   updateRoomAction,
   remmoveMyStream,
   removeRoomAction,
+  createMeAction,
+  updateMeAction,
+  removeMeAction,
 } from './actions';
 
 type State = {
+  me: undefined;
+  room: undefined;
+} | {
+  me: Peer;
   room: undefined | Room;
 }
 
 export const initialState: State = {
+  me: undefined,
   room: undefined,
 };
 
+const peerRecordToPeer = (p: PeerRecord): Peer => {
+  return {
+    ...p,
+    connection: {
+      // This shouldn't be so
+      // there's no connetion with myself :)
+      channels: {
+        data: { on: true },
+        streaming: { on: false },
+      },
+    },
+  };
+}
+
 // const roomWithPeers = (room: RoomStatsRecord): Room =>
 
-export const reducer = createReducer(initialState, (handleAction) => ([
-  // handleAction(createRoomAction, (state) => state),
-  handleAction(createRoomAction, (state, { payload }) => {
+export const reducer = createReducer(initialState as State, (handleAction) => ([
+  handleAction(createMeAction, (state, { payload }) => {
+    return {
+      ...state,
+      me: peerRecordToPeer(payload),
+    }
+  }),
+
+  handleAction(updateMeAction, (state, { payload }) => {
+    if (!state.me) {
+      return state;
+    }
+
     const nextMe = {
-      ...payload.me,
-      user: {
-        ...payload.me.user,
-        avatarId: payload.me.id.slice(-1)[0],
-      },
+      ...state.me,
+      ...payload,
+    };
+
+    const nextRoom = (nextMe.hasJoinedRoom && state.room)
+      ? {
+        ...state.room,
+        me: nextMe,
+        peersIncludingMe: {
+          ...state.room.peersIncludingMe,
+          [nextMe.id]: nextMe,
+        }
+      }
+      : undefined;
+
+    const next = {
+      ...state,
+      me: nextMe,
+      room: nextRoom,
+    }
+
+    return next;
+  }),
+
+  handleAction(removeMeAction, () => {
+    return {
+      me: undefined,
+      room: undefined,
+    }
+  }),
+
+  handleAction(addMyStream, (state, { payload }) => {
+    if (!state.me) {
+      return state;
+    }
+
+    const nextMe: Peer = {
+      ...state.me,
       connection: {
-        // This shouldn't be so
-        // there's no connetion with myself :)
+        ...state.me.connection,
         channels: {
-          data: { on: true },
-          streaming: { on: false },
+          ...state.me.connection.channels,
+          streaming: {
+            on: true,
+            stream: payload.stream,
+            type: 'audio-video',
+          },
         },
       },
-    } as const;
-
-    const nextPeers = state.room?.peers ?? {};
+    };
 
     return {
       ...state,
-      room: {
-        ...payload.room,
-        me: nextMe,
-        peers: nextPeers,
-        peersIncludingMe: {
-          ...state.room?.peersIncludingMe,
-          [payload.me.id]: nextMe,
+      me: nextMe,
+      ...state.room && {
+        room: {
+          ...state.room,
+          me: nextMe,
+          peersIncludingMe: {
+            ...state.room.peersIncludingMe,
+            [nextMe.id]: nextMe,
+          },
         },
-        peersCount: Object.keys(nextPeers).length,
       },
+    };
+  }),
+
+  handleAction(remmoveMyStream, (state) => {
+    if (!state.me) {
+      return state;
+    }
+
+    const nextMe: Peer = {
+      ...state.me,
+      connection: {
+        ...state.me.connection,
+        channels: {
+          ...state.me.connection.channels,
+          streaming: { on: false },
+        },
+      },
+    };
+
+    return {
+      ...state,
+      me: nextMe,
+      ...state.room && {
+        room: {
+          ...state.room,
+          me: nextMe,
+          peersIncludingMe: {
+            ...state.room.peersIncludingMe,
+            [nextMe.id]: nextMe,
+          },
+        },
+      }
+    };
+  }),
+
+  handleAction(createRoomAction, (state, { payload }) => {
+    if (!state.me) {
+      return state;
+    }
+
+    const {
+      [state.me.id]: removedMyPeer,
+      ...peersWithoutMe
+    } = payload.room.peers;
+
+    const nextPeers = Object
+      .values(peersWithoutMe)
+      .map(peerRecordToPeer)
+      .reduce((prev, next) => ({
+        ...prev,
+        [next.id]: next,
+      }), {});
+
+    const nextMe = {
+      ...state.me,
+      ...payload.me,
+    };
+
+    const nextRoom: Room = {
+      ...payload.room,
+      me: nextMe,
+      peers: nextPeers,
+      peersIncludingMe: {
+        ...nextPeers,
+        [payload.me.id]: nextMe,
+      },
+      peersCount: Object.keys(nextPeers).length,
+    }
+
+    return {
+      ...state,
+      me: nextMe,
+      room: nextRoom,
     };
   }),
   handleAction(updateRoomAction, (state, { payload }) => {
@@ -63,38 +203,26 @@ export const reducer = createReducer(initialState, (handleAction) => ([
       return state;
     }
 
-    const nextPeers = Object
-      .keys(payload.room.peers)
-      .filter((peerId) => state.room?.me.id !== peerId) // Takes me out
-      .reduce((res, nextPeerId) => {
-        // Create new peer if not existent
-        if (!state.room?.peers[nextPeerId]) {
-          return {
-            ...res,
-            [nextPeerId]: {
-              ...payload.room.peers[nextPeerId],
+    const {
+      [state.me.id]: removedMyPeer,
+      ...peersWithoutMe
+    } = payload.room.peers;
 
-              // Simply add the connection
-              connection: {
-                channels: {
-                  // These could be passed in the action
-                  data: { on: true },
-                  streaming: { on: false },
-                },
-              },
-            } as const,
-          };
+    const nextPeers = Object
+      .values(peersWithoutMe)
+      .map((peer) => {
+        // If already present use it
+        if (state.room?.peers[peer.id]) {
+          return state.room?.peers[peer.id];
         }
 
-        // Otherwise merge them - this also removes lingering peers
-        return {
-          ...res,
-          [nextPeerId]: {
-            ...state.room.peers[nextPeerId],
-            ...state.room?.peers[nextPeerId],
-          },
-        };
-      }, {} as Room['peers']);
+        // Otherwise add the new one
+        return peerRecordToPeer(peer);
+      })
+      .reduce((prev, next) => ({
+        ...prev,
+        [next.id]: next,
+      }), {});
 
     return {
       ...state,
@@ -124,17 +252,8 @@ export const reducer = createReducer(initialState, (handleAction) => ([
     }
 
     const nextPeers = {
-      ...state.room?.peers ?? {},
-      [payload.id]: {
-        ...payload,
-        connection: {
-          channels: {
-            // These could be passed in the action
-            data: { on: true },
-            streaming: { on: false },
-          },
-        },
-      },
+      ...state.room.peers,
+      [payload.id]: peerRecordToPeer(payload),
     } as const;
 
     return {
@@ -144,7 +263,7 @@ export const reducer = createReducer(initialState, (handleAction) => ([
         peers: nextPeers,
         peersCount: Object.keys(nextPeers).length,
         peersIncludingMe: {
-          ...state.room?.peersIncludingMe ?? {},
+          [state.room.me.id]: state.room.me,
           ...nextPeers,
         },
       },
@@ -163,24 +282,28 @@ export const reducer = createReducer(initialState, (handleAction) => ([
         ...state.room,
         peers: restPeers,
         peersIncludingMe: {
-          ...restPeers,
           [state.room.me.id]: state.room.me,
+          ...restPeers,
         },
       },
     };
   }),
 
-  handleAction(addMyStream, (state, { payload }) => {
+  handleAction(addPeerStream, (state, { payload }) => {
     if (!state.room) {
       return state;
     }
 
-    const nextMe: Peer = {
-      ...state.room.me,
+    if (!state.room.peers[payload.peerId]) {
+      return state;
+    }
+
+    const nextPeer: Peer = {
+      ...state.room.peers[payload.peerId],
       connection: {
-        ...state.room.me.connection,
+        ...state.room.peers[payload.peerId].connection,
         channels: {
-          ...state.room.me.connection.channels,
+          ...state.room.peers[payload.peerId].connection.channels,
           streaming: {
             on: true,
             stream: payload.stream,
@@ -194,78 +317,21 @@ export const reducer = createReducer(initialState, (handleAction) => ([
       ...state,
       room: {
         ...state.room,
-        me: nextMe,
-        peersIncludingMe: {
-          ...state.room.peersIncludingMe,
-          [nextMe.id]: nextMe,
-        },
-      },
-    };
-  }),
-  handleAction(remmoveMyStream, (state) => {
-    if (!state.room) {
-      return state;
-    }
-
-    const nextMe: Peer = {
-      ...state.room?.me,
-      connection: {
-        ...state.room.me.connection,
-        channels: {
-          ...state.room.me.connection.channels,
-          streaming: { on: false },
-        },
-      },
-    };
-
-    return {
-      ...state,
-      room: {
-        ...state.room,
-        me: nextMe,
-        peersIncludingMe: {
-          ...state.room.peersIncludingMe,
-          [nextMe.id]: nextMe,
-        },
-      },
-    };
-  }),
-  handleAction(addPeerStream, (state, { payload }) => {
-    if (!state.room) {
-      return state;
-    }
-
-    if (!state.room.peers[payload.peerId]) {
-      return state;
-    }
-
-    return {
-      ...state,
-      room: {
-        ...state.room,
         peers: {
           ...state.room.peers,
-          [payload.peerId]: {
-            ...state.room.peers[payload.peerId],
-            connection: {
-              channels: {
-                ...state.room.peers[payload.peerId].connection.channels,
-                streaming: {
-                  on: true,
-                  stream: payload.stream,
-                  type: 'audio-video',
-                },
-              },
-            },
-          },
+          [payload.peerId]: nextPeer,
         },
+        peersIncludingMe: {
+          ...state.room.peersIncludingMe,
+          [payload.peerId]: nextPeer,
+        }
       },
     };
   }),
 ]));
 
 export const stateSliceByKey = {
-  joinedRoom: reducer,
+  peerProvider: reducer,
 };
 
 export type ModuleState = ReturnType<typeof reducer>;

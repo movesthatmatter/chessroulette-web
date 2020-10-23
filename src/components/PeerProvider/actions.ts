@@ -1,5 +1,20 @@
 import { createAction } from 'deox';
-import { PeerRecord, RoomRecord, RoomStatsRecord } from 'dstnd-io';
+import { PeerRecord, RoomRecord } from 'dstnd-io';
+
+export const createMeAction = createAction(
+  'Create Me',
+  (resolve) => (me: PeerRecord) => resolve(me),
+);
+
+export const updateMeAction = createAction(
+  'Update Me',
+  (resolve) => (me: PeerRecord) => resolve(me),
+);
+
+export const removeMeAction = createAction(
+  'Remove Me',
+  (resolve) => () => resolve(),
+);
 
 export const createRoomAction = createAction(
   'Create Room',

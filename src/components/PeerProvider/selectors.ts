@@ -1,3 +1,3 @@
 import { ModuleStateSlice } from './reducer';
 
-export const selectJoinedRoom = (state: ModuleStateSlice) => state.joinedRoom;
+export const selectPeerProviderState = (state: ModuleStateSlice) => state.peerProvider;

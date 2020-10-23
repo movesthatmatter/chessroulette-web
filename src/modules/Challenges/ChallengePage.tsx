@@ -5,9 +5,7 @@ import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { Page } from 'src/components/Page';
-import { PeerProvider } from 'src/components/PeerProvider';
 import { SocketConsumer } from 'src/components/SocketProvider';
-import { createUseStyles } from 'src/lib/jss';
 import { toRoomUrlPath } from 'src/lib/util';
 import { resources } from 'src/resources';
 import { selectAuthentication } from 'src/services/Authentication';
@@ -38,15 +36,12 @@ export const ChallengePage: React.FC<Props> = (props) => {
   if (room) {
     return (
       <Page>
-        <PeerProvider
+        <GenericRoom
           roomCredentials={{
             id: room.id,
             code: room.code || undefined,
           }}
-          user={auth.user}
-        >
-          <GenericRoom />
-        </PeerProvider>
+        />
       </Page>
     );
   } else if (challenge) {

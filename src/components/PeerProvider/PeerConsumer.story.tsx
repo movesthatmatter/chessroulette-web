@@ -21,11 +21,16 @@ export const defaultStory = () => (
         name: 'Kasparov',
         avatarId: '1',
       })}
-      roomCredentials={{
-        id: '1',
-      }}
+      iceServers={[]}
     >
       <PeerConsumer
+        onReady={(p) => {
+          if (p.state === 'notJoined') {
+            p.joinRoom({
+              id: '1',
+            });
+          }
+        }}
         renderRoomJoined={({ room }) => (
           <>
             <div>
