@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useReducer, useRef } from 'react';
 import { RoomRecord, RoomStatsRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { noop } from 'src/lib/util';
@@ -7,12 +7,14 @@ import { Peer, Room } from '../RoomProvider';
 import { PeerMessageEnvelope } from './records';
 import { RoomCredentials } from './util';
 
+// TODO: Make use of the ContextProps with Omit or Pick since 95% of the fields are the same
 type RenderJoinedProps = {
   state: 'joined';
   me: Peer;
   room: Room;
   broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
   request: SocketClient['send'];
+  leaveRoom: () => void;
 
   startLocalStream: () => void;
   stopLocalStream: () => void;
@@ -31,6 +33,7 @@ type PeerConsumerProps = {
 
   onUpdate?: (p: RenderJoinedProps | RenderNotJoinedProps) => void;
   onReady?: (p: RenderJoinedProps | RenderNotJoinedProps) => void;
+  onUnmounted?: (p: RenderJoinedProps | RenderNotJoinedProps | { state: 'init' }) => void;
 
   onPeerMsgReceived?: (msg: PeerMessageEnvelope) => void;
   onPeerMsgSent?: (msg: PeerMessageEnvelope) => void;
@@ -48,9 +51,18 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
   renderFallback = () => null,
   onUpdate = noop,
   onReady = noop,
+  onUnmounted = noop,
   ...props
 }) => {
   const contextState = useContext(PeerContext);
+
+  // This is needed to be able to get the latest contextState 
+  /// in the unmounting useEffect
+  const contextStateRef = useRef(contextState);
+
+  useEffect(() => {
+    contextStateRef.current = contextState;
+  }, [contextState]);
 
   useEffect(() => {
     if (contextState.state === 'joined') {
@@ -83,6 +95,12 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
 
     onReady(contextState);
   }, [contextState.state]);
+
+  useEffect(() => {
+    return () => {
+      onUnmounted(contextStateRef.current);
+    }
+  }, []);
 
   if (contextState.state !== 'init' && 'render' in props) {
     return <>{props.render(contextState)}</>

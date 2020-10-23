@@ -104,6 +104,12 @@ export const PeerProvider: React.FC<PeerProviderProps> = ({
         proxy,
         me: state.me,
         room: state.room,
+        leaveRoom: () => {
+          socket.send({
+            kind: 'leaveRoomRequest',
+            content: undefined,
+          });
+        },
 
         // this is needed here as otherwise the old state is used
         broadcastMessage: (message) => {

@@ -5,15 +5,18 @@ import {
   socketPayload,
   io,
   MyStatsPayload,
-  JoinedRoomUpdatedPayload,
   ConnectionOpenedPayload,
   PeerJoinedRoomPayload,
-  JoinRoomRequestPayload,
-  JoinRoomSuccessPayload,
   PingPayload,
-  JoinRoomFailurePayload,
   UserIdentificationPayload,
   WhoamiRequestPayload,
+
+  // Room
+  JoinRoomRequestPayload,
+  JoinRoomSuccessPayload,
+  JoinedRoomUpdatedPayload,
+  JoinRoomFailurePayload,
+  LeaveRoomRequestPayload,
 
   // Game Logic
   GameResignationRequestPayload,
@@ -49,11 +52,14 @@ type ReceivableMessagesMap = {
 };
 
 type SendableMessagesMap = {
-  joinRoomRequest: JoinRoomRequestPayload;
   userIdentification: UserIdentificationPayload;
   statsReaderIdentification: StatsReaderIdentificationPayload;
   ping: PingPayload;
   whoami: WhoamiRequestPayload;
+
+  // Room
+  joinRoomRequest: JoinRoomRequestPayload;
+  leaveRoomRequest: LeaveRoomRequestPayload;
 
   // Game
   gameResignationRequestPayload: GameResignationRequestPayload;

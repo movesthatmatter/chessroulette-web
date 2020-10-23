@@ -63,19 +63,21 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
       ...payload,
     };
 
+    const nextRoom = (nextMe.hasJoinedRoom && state.room)
+      ? {
+        ...state.room,
+        me: nextMe,
+        peersIncludingMe: {
+          ...state.room.peersIncludingMe,
+          [nextMe.id]: nextMe,
+        }
+      }
+      : undefined;
+
     const next = {
       ...state,
       me: nextMe,
-      ...(state.room) && {
-        room: {
-          ...state.room,
-          me: nextMe,
-          peersIncludingMe: {
-            ...state.room.peersIncludingMe,
-            [nextMe.id]: nextMe,
-          }
-        }
-      }
+      room: nextRoom,
     }
 
     return next;
@@ -192,6 +194,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
 
     return {
       ...state,
+      me: nextMe,
       room: nextRoom,
     };
   }),
