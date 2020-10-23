@@ -1,15 +1,16 @@
-import { RoomRecord } from 'dstnd-io';
 import { createContext } from 'react';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { SocketClient } from 'src/services/socket/SocketClient';
-import { Room } from '../RoomProvider';
+import { Peer, Room } from '../RoomProvider';
 import { Proxy } from './Proxy';
+import { RoomCredentials } from './util';
 
 export type PeerContextProps =
   | {
       state: 'joined';
       proxy: Proxy;
       room: Room;
+      me: Peer;
       broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
       request: SocketClient['send'];
 
@@ -20,10 +21,11 @@ export type PeerContextProps =
   | {
       state: 'notJoined';
       proxy?: Proxy;
-      room: RoomRecord;
+      // room: RoomRecord;
+      me: Peer;
       request: SocketClient['send'];
 
-      joinRoom: () => void;
+      joinRoom: (c: RoomCredentials) => void;
     }
   | {
       state: 'init';

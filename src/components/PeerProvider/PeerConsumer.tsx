@@ -3,11 +3,13 @@ import { RoomRecord, RoomStatsRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { noop } from 'src/lib/util';
 import { PeerContext } from './PeerContext';
-import { Room } from '../RoomProvider';
+import { Peer, Room } from '../RoomProvider';
 import { PeerMessageEnvelope } from './records';
+import { RoomCredentials } from './util';
 
 type RenderJoinedProps = {
   state: 'joined';
+  me: Peer;
   room: Room;
   broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
   request: SocketClient['send'];
@@ -18,27 +20,32 @@ type RenderJoinedProps = {
 
 type RenderNotJoinedProps = {
   state: 'notJoined';
-  room: RoomRecord;
+  me: Peer;
+  // room: RoomRecord;
   request: SocketClient['send'];
-  joinRoom: () => void;
+  joinRoom: (c: RoomCredentials) => void;
 };
 
 type PeerConsumerProps = {
-  renderRoomJoined: (p: RenderJoinedProps) => React.ReactNode;
-  renderRoomNotJoined?: (p: RenderNotJoinedProps) => React.ReactNode;
   renderFallback?: () => React.ReactNode;
+
   onUpdate?: (p: RenderJoinedProps | RenderNotJoinedProps) => void;
   onReady?: (p: RenderJoinedProps | RenderNotJoinedProps) => void;
 
   onPeerMsgReceived?: (msg: PeerMessageEnvelope) => void;
   onPeerMsgSent?: (msg: PeerMessageEnvelope) => void;
-};
+} & ({
+  render: (p: RenderNotJoinedProps | RenderJoinedProps) => React.ReactNode;
+} | {
+  // TODO: Look into this being needed anymore, now that we have a generic render
+  renderRoomJoined: (p: RenderJoinedProps) => React.ReactNode;
+  renderRoomNotJoined?: (p: RenderNotJoinedProps) => React.ReactNode;
+});
 
 export const PeerConsumer: React.FC<PeerConsumerProps> = ({
   onPeerMsgReceived,
   onPeerMsgSent,
   renderFallback = () => null,
-  renderRoomNotJoined = () => null,
   onUpdate = noop,
   onReady = noop,
   ...props
@@ -77,12 +84,16 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
     onReady(contextState);
   }, [contextState.state]);
 
-  if (contextState.state === 'joined') {
+  if (contextState.state !== 'init' && 'render' in props) {
+    return <>{props.render(contextState)}</>
+  }
+
+  if (contextState.state === 'joined' && 'renderRoomJoined' in props) {
     return <>{props.renderRoomJoined(contextState)}</>;
   }
 
-  if (contextState.state === 'notJoined') {
-    return <>{renderRoomNotJoined(contextState)}</>;
+  if (contextState.state === 'notJoined' && 'renderRoomNotJoined' in props && props.renderRoomNotJoined) {
+    return <>{props.renderRoomNotJoined(contextState)}</>;
   }
 
   return <>{renderFallback()}</>;
