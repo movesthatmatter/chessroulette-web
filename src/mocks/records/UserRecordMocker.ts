@@ -20,6 +20,7 @@ export class UserRecordMocker {
         name: chance.name(),
         avatarId: String(id.slice(-1)[0]),
         isGuest: true,
+        sid: String((new Date().getTime())),
       };
     }
 
@@ -57,13 +58,13 @@ export class UserRecordMocker {
     };
   }
 
-  withProps(
+  withProps<TIsGuest extends boolean = false>(
     props: Partial<Omit<UserRecord, 'isGuest'>>,
-    isGuest = false
-  ): UserRecord {
+    isGuest: TIsGuest = false as TIsGuest,
+  ): TIsGuest extends false ? RegisteredUserRecord: GuestUserRecord  {
     return {
       ...this.record(isGuest),
       ...props,
-    };
+    } as any;
   }
 }

@@ -14,11 +14,14 @@ import { getRandomInt } from 'src/lib/util';
 import { Button } from 'src/components/Button';
 import { useSelector } from 'react-redux';
 import { RoomCredentials } from 'src/components/PeerProvider/util';
+import { UserRecordMocker } from 'src/mocks/records';
 
 export default {
   component: GenericRoom,
   title: 'modules/GenericRoom',
 };
+
+const userMocker = new UserRecordMocker();
 
 const RoomContainer: React.FC<{}> = () => {
   const [peer, setPeer] = useState<PeerRecord>();
@@ -142,19 +145,15 @@ export const playRoomDualView = () =>
     const [userA, setUserA] = useState<GuestUserRecord>();
     const [userB, setUserB] = useState<GuestUserRecord>();
 
-    const guestA = {
-      id: '1',
+    const guestA = userMocker.withProps({
       name: 'UserA',
-      isGuest: true,
-      avatarId: '3',
-    } as const;
+      id: '1'
+    }, true);
 
-    const guestB = {
-      id: '2',
-      name: 'UserA',
-      isGuest: true,
-      avatarId: '3',
-    } as const;
+    const guestB = userMocker.withProps({
+      name: 'UserB',
+      id: '2'
+    }, true);;
 
     useEffect(() => {
       (async () => {
