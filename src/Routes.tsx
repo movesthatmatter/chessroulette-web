@@ -13,6 +13,8 @@ import { selectAuthentication } from './services/Authentication';
 import { PeerConsumer, PeerProvider } from './components/PeerProvider';
 import { IceServerRecord } from 'dstnd-io';
 import { resources } from './resources';
+import { AwesomeLoaderPage } from './components/AwesomeLoader';
+import { AwesomeErrorPage } from './components/AwesomeError';
 
 type Props = {};
 
@@ -39,6 +41,13 @@ export const Routes: React.FC<Props> = (props) => {
     <SocketProvider>
       <PeerProvider user={auth.user} iceServers={iceServers}>
         <PeerConsumer
+          renderFallback={(c) => {
+            if (c.state === 'loading') {
+              return <AwesomeLoaderPage />
+            }
+
+            return <AwesomeErrorPage errorType="genericError" />
+          }}
           render={() => (
             <TransitionGroup component={null}>
               {GA.init() && <GA.RouteTracker />}
