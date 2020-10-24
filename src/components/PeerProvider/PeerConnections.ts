@@ -3,18 +3,22 @@ import PeerSDK from 'peerjs';
 import { logsy } from 'src/lib/logsy';
 import config from 'src/config';
 import { wNamespace, woNamespace } from './util';
-import { PeerConnectionMetadata } from './records';
 import { Pubsy } from 'src/lib/Pubsy';
 import { ActivePeerConnection } from './ActivePeerConnection';
+
+export type PeerConnectionsErrors =
+  | 'PEER_ID_TAKEN'
+  | 'GENERIC_ERROR';
 
 export class PeerConnections {
   private user: PeerRecord['user'];
 
   private pubsy = new Pubsy<{
+    onError: PeerConnectionsErrors,
     onPeerStream: {
       peerId: PeerRecord['id'],
       stream: MediaStream;
-    }
+    },
   }>();
 
   private sdk: PeerSDK;
@@ -40,7 +44,17 @@ export class PeerConnections {
     });
 
     // On Error Event
-    const onErrorHandler = logsy.error;
+    const onErrorHandler = (e: unknown) => {
+      // The pattern matching is not the safest since it depends on runtime strings
+      //  rather than a type but it's the best we can do atm.
+      // TOOD: Need to keep an eye as the library might change it without noticing!
+      // TODO: A test should be added around this!
+      if (e instanceof Error  && e.message.match(/ID "\w+" is taken/g)) {
+        this.pubsy.publish('onError', 'PEER_ID_TAKEN');
+      } else {
+        this.pubsy.publish('onError', 'GENERIC_ERROR');
+      }
+    };
     this.sdk.on('error', onErrorHandler);
 
     this.unsubscribers.push(() => this.sdk.off('error', onErrorHandler))
@@ -99,6 +113,10 @@ export class PeerConnections {
     stream: MediaStream,
   }) => void) {
     return this.pubsy.subscribe('onPeerStream', fn);
+  }
+
+  onError(fn: (e: PeerConnectionsErrors) => void) {
+    return this.pubsy.subscribe('onError', fn);
   }
 
   connect(peers: Record<PeerRecord['id'], PeerRecord>) {

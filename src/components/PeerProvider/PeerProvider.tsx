@@ -22,6 +22,7 @@ import { Proxy } from './Proxy';
 import { PeerContextProps, PeerContext } from './PeerContext';
 import { selectPeerProviderState } from './selectors';
 import { PeerConnections } from './PeerConnections';
+import { logsy } from 'src/lib/logsy';
 
 export type PeerProviderProps = {
   user: UserRecord;
@@ -52,10 +53,19 @@ export const PeerProvider: React.FC<PeerProviderProps> = ({
       dispatch(addPeerStream({ peerId, stream }));
     });
 
+    const unsubscribeFromOnError = peerConnectionsInstance.onError((error) => {
+      logsy.error('[PeerProvider]', error);
+      setContextState({
+        state: 'error',
+        error,
+      });
+    });
+
     peerConnections.current = peerConnectionsInstance;
 
     return () => {
       unsubscribeFromOnPeerStream();
+      unsubscribeFromOnError();
       peerConnectionsInstance.destroy();
     }
   }, []);
@@ -65,12 +75,6 @@ export const PeerProvider: React.FC<PeerProviderProps> = ({
     if (!state.room && peerConnections.current) {
       peerConnections.current.disconnect();
     }
-  }, [state.room, peerConnections.current]);
-
-  useEffect(() => {
-    console.group('state room changed to', state.room);
-    console.log('peerConnections', peerConnections.current);
-    console.groupEnd();
   }, [state.room, peerConnections.current]);
 
   // Context State Management

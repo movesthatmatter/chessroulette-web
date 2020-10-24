@@ -2,6 +2,7 @@ import { createContext } from 'react';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { Peer, Room } from '../RoomProvider';
+import { PeerConnectionsErrors } from './PeerConnections';
 import { Proxy } from './Proxy';
 import { RoomCredentials } from './util';
 
@@ -30,7 +31,11 @@ export type PeerContextProps =
     }
   | {
       state: 'init';
-    };
+    }
+  | {
+    state: 'error';
+    error: PeerConnectionsErrors;
+  }
 
 export const PeerContext = createContext<PeerContextProps>({
   state: 'init',

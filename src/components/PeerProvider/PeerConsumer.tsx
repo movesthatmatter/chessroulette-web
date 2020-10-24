@@ -6,6 +6,7 @@ import { PeerContext } from './PeerContext';
 import { Peer, Room } from '../RoomProvider';
 import { PeerMessageEnvelope } from './records';
 import { RoomCredentials } from './util';
+import { PeerConnectionsErrors } from './PeerConnections';
 
 // TODO: Make use of the ContextProps with Omit or Pick since 95% of the fields are the same
 type RenderJoinedProps = {
@@ -29,11 +30,16 @@ type RenderNotJoinedProps = {
 };
 
 type PeerConsumerProps = {
-  renderFallback?: () => React.ReactNode;
+  renderFallback?: (state: {
+    state: 'loading'
+  } | {
+    state: 'error';
+    error: PeerConnectionsErrors;
+  }) => React.ReactNode;
 
   onUpdate?: (p: RenderJoinedProps | RenderNotJoinedProps) => void;
   onReady?: (p: RenderJoinedProps | RenderNotJoinedProps) => void;
-  onUnmounted?: (p: RenderJoinedProps | RenderNotJoinedProps | { state: 'init' }) => void;
+  onUnmounted?: (p: RenderJoinedProps | RenderNotJoinedProps | { state: 'init' | 'error' }) => void;
 
   onPeerMsgReceived?: (msg: PeerMessageEnvelope) => void;
   onPeerMsgSent?: (msg: PeerMessageEnvelope) => void;
@@ -67,8 +73,7 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
   useEffect(() => {
     if (contextState.state === 'joined') {
       const unsubscribers = [
-        onPeerMsgReceived
-          && contextState.proxy.onPeerMessageReceived(onPeerMsgReceived),
+        onPeerMsgReceived && contextState.proxy.onPeerMessageReceived(onPeerMsgReceived),
         onPeerMsgSent && contextState.proxy.onPeerMessageSent(onPeerMsgSent),
       ];
 
@@ -81,7 +86,7 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
   }, [contextState, onPeerMsgReceived, onPeerMsgSent]);
 
   useEffect(() => {
-    if (contextState.state === 'init') {
+    if (contextState.state === 'init' || contextState.state === 'error') {
       return;
     }
 
@@ -89,7 +94,7 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
   }, [contextState]);
 
   useEffect(() => {
-    if (contextState.state === 'init') {
+    if (contextState.state === 'init' || contextState.state === 'error') {
       return;
     }
 
@@ -101,6 +106,10 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
       onUnmounted(contextStateRef.current);
     }
   }, []);
+
+  if (contextState.state === 'error') {
+    return <>{renderFallback(contextState)}</>
+  }
 
   if (contextState.state !== 'init' && 'render' in props) {
     return <>{props.render(contextState)}</>
@@ -114,5 +123,5 @@ export const PeerConsumer: React.FC<PeerConsumerProps> = ({
     return <>{props.renderRoomNotJoined(contextState)}</>;
   }
 
-  return <>{renderFallback()}</>;
+  return <>{renderFallback({ state: 'loading' })}</>;
 };
