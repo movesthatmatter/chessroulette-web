@@ -9,3 +9,14 @@ export default {
 };
 
 export const defaultStory = () => <ChessBoard history={[]} clickedSquareStyle={{}} />;
+
+export const styled = () => <ChessBoard 
+  history={[]}
+  clickedSquareStyle={{}}
+  darkSquareStyle={{
+    backgroundColor: '#7D9AC7',
+  }}
+  lightSquareStyle={{
+    backgroundColor: '#DEE5F0',
+  }}
+/>;
