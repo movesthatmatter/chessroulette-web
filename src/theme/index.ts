@@ -11,7 +11,8 @@ const customTheme: ThemeType = {
       },
     },
     font: {
-      family: 'Roboto, Open Sans, Roboto Slab, sans-serif',
+      // family: 'Roboto, Open Sans, Roboto Slab, sans-serif',
+      family: 'Lato, Open Sans, Roboto Slab, sans-serif',
     },
   },
   button: {
