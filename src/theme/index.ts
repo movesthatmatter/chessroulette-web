@@ -1,5 +1,6 @@
 import { deepMerge } from 'grommet/utils';
 import { grommet, ThemeType } from 'grommet';
+import { text } from './text';
 
 const customTheme: ThemeType = {
   global: {
@@ -7,7 +8,7 @@ const customTheme: ThemeType = {
       brand: 'rgb(84, 196, 242)',
       text: {
         dark: '#f8f8f8',
-        light: '#444444',
+        light: text.primaryColor,
       },
     },
     font: {
@@ -37,3 +38,7 @@ const customTheme: ThemeType = {
 };
 
 export const defaultTheme = deepMerge(grommet, customTheme);
+
+export * from './colors';
+export * from './effects';
+export * from './fonts';
