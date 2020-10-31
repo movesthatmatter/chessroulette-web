@@ -12,13 +12,13 @@ export class UserRecordMocker {
   public record(isGuest?: boolean): GuestUserRecord;
 
   public record(isGuest = false): UserRecord {
-    const id = chance.guid();
+    const id = chance.guid().slice(0, 4);
 
     if (isGuest) {
       return {
         id,
         name: chance.name(),
-        avatarId: String(id.slice(-1)[0]),
+        avatarId: String(getRandomInt(1, 18)),
         isGuest: true,
         sid: String((new Date().getTime())),
       };
@@ -32,7 +32,7 @@ export class UserRecordMocker {
       isGuest: false,
       email,
       name: chance.name(),
-      avatarId: String(id.slice(-1)[0]),
+      avatarId: String(getRandomInt(1, 18)),
       externalAccountId,
       externalAccountType: 'lichess',
       externalAccountInfo: {

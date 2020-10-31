@@ -1,5 +1,6 @@
 import Chance from 'chance';
 import { UserInfoRecord } from 'dstnd-io';
+import { getRandomInt } from 'src/lib/util';
 
 const chance = new Chance();
 
@@ -10,7 +11,7 @@ export class UserInfoMocker {
     return {
       id,
       name: chance.name(),
-      avatarId: String(id.slice(-1)[0]),
+      avatarId: String(getRandomInt(0, 18)),
     };
   }
 
