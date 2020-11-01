@@ -1,11 +1,14 @@
 import * as css from 'csstype';
 
+export type NestedCSSElement = {[k: string]: CSSProperties};
+
 export type CSSProperties = css.Properties & {
   '&'?: css.Properties;
   '&:hover'?: css.Properties;
   '&:focus'?: css.Properties;
   '&:blur'?: css.Properties;
   '&:active'?: css.Properties;
+  '&:disabled'?: css.Properties;
   '&:first-child'?: css.Properties;
   '&:last-child'?: css.Properties;
 
@@ -30,4 +33,6 @@ export type CSSProperties = css.Properties & {
   '90%'?: css.Properties;
   '95%'?: css.Properties;
   '100%'?: css.Properties;
+
+  nestedKey?: NestedCSSElement;
 }
