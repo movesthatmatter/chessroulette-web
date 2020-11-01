@@ -14,15 +14,24 @@ const getPieceRender = (pieceName: keyof typeof pieces, imageSrc: string) => (ob
   sourceSquare: Square
 }) => (
   <img
-    style={{
-      width: obj.squareWidth * 0.8,
-      height: obj.squareWidth * 0.8,
-      marginTop: obj.squareWidth * 0.1,
-    }}
+    style={isWhite(pieceName)
+      ? {
+        width: obj.squareWidth * 0.8,
+        height: obj.squareWidth * 0.8,
+        marginTop: obj.squareWidth * 0.1,
+      }
+      : {
+        width: obj.squareWidth * 0.72,
+        height: obj.squareWidth * 0.72,
+        marginTop: obj.squareWidth * 0.16,
+      }
+    }
     src={imageSrc}
     alt={pieceName}
   />
 );
+
+const isWhite = (p: keyof typeof pieces) => p[0] === 'w';
 
 const toShortHandPiece = (p: keyof typeof pieces): Piece => {
   const shortColor = p[0].toLowerCase();

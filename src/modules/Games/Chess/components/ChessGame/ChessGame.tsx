@@ -170,10 +170,10 @@ export const ChessGame: React.FunctionComponent<Props> = ({
         onSquareClick={onSquareClickHandler}
         clickedSquareStyle={focusedSquareStyle}
         darkSquareStyle={{
-          backgroundColor: '#6792B4',
+          backgroundColor: '#7D9AC7',
         }}
         lightSquareStyle={{
-          backgroundColor: '#D7D7D7',
+          backgroundColor: '#DEE5F0',
         }}
         transitionDuration={20}
       />
@@ -182,12 +182,5 @@ export const ChessGame: React.FunctionComponent<Props> = ({
 };
 
 const useStyles = createUseStyles({
-  container: {
-    backgroundColor: '#272729',
-    boxShadow: '1px 1px 20px rgba(20, 20, 20, 0.27)',
-    borderRadius: '3px',
-    display: 'flex',
-    flexDirection: 'column',
-    width: 'fit-content',
-  },
+  container: {},
 });
