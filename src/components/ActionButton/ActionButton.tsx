@@ -3,20 +3,21 @@ import { createUseStyles } from 'src/lib/jss';
 import { colors } from 'src/theme/colors';
 import { Text } from 'grommet';
 import cx from 'classnames';
-import { Icon } from 'grommet-icons';
+import { Icon as GIcon } from 'grommet-icons';
 import { borderRadius } from 'src/theme/effects';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { hasOwnProperty } from 'src/lib/util';
+import { buttonEffects } from '../IconButton/effects';
 
-type ButtonType = 
+export type ButtonType = 
   | 'primary'
   | 'positive'
   | 'negative'
   | 'attention';
 
-type Props = {
+export type ActionButtonProps = {
   type: ButtonType;
-  icon: Icon;
+  icon: GIcon;
   label: string;
   reverse?: boolean;
   actionType: 'positive' | 'negative',
@@ -24,7 +25,7 @@ type Props = {
   onSubmit: () => void;
 };
 
-export const ActionButton: React.FC<Props> = (props) => {
+export const ActionButton: React.FC<ActionButtonProps> = (props) => {
   const Icon = props.icon;
 
   const confirmation = hasOwnProperty(props, 'confirmation')
@@ -65,7 +66,7 @@ export const ActionButton: React.FC<Props> = (props) => {
         });
       }}
       style={{
-        backgroundColor: colors[props.type],
+        // backgroundColor: colors[props.type],
        ...props.reverse && {
          flexDirection: 'row-reverse',
        } 
@@ -75,7 +76,18 @@ export const ActionButton: React.FC<Props> = (props) => {
         <Icon className={cls.icon}/>
       </div>
       {(hovered || focused) && (
-        <div className={cls.labelWrapper}>
+        <div 
+          className={cls.labelWrapper}
+          style={{
+            ...props.reverse ? {
+              paddingLeft: '16px',
+              paddingRight: '8px',
+            } : {
+              paddingLeft: '8px',
+              paddingRight: '16px',
+            }
+          }}
+        >
           <Text className={cls.label}>
             {focused ? confirmation : props.label}
           </Text>
@@ -103,18 +115,26 @@ const useStyles = createUseStyles({
       outline: 'none',
     },
   },
-  circle: {
-
-  },
+  circle: {},
   primary: {
     background: colors.primary,
+    ...buttonEffects.primaryButtonShadow,
   },
-  positive: {},
-  negative: {},
-  attention: {},
+  positive: {
+    background: colors.positive,
+    ...buttonEffects.positiveButtonShadow,
+  },
+  negative: {
+    background: colors.negative,
+    ...buttonEffects.negativeButtonShadow,
+  },
+  attention: {
+    background: colors.attention,
+    ...buttonEffects.attentionButtonShadow,
+  },
   closed: {},
   labelWrapper: {
-    padding: '0 12px 0 16px',
+    // padding: '0 12px 0 16px',
   },
   label: {
     color: colors.white,
@@ -141,8 +161,10 @@ const useStyles = createUseStyles({
 
   confirmPositive: {
     backgroundColor: `${colors.positive} !important`,
+    ...buttonEffects.positiveButtonShadow,
   },
   confirmNegative: {
     backgroundColor: `${colors.negative} !important`,
+    ...buttonEffects.negativeButtonShadow,
   },
 });
