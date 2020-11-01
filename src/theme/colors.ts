@@ -1,22 +1,24 @@
-export const primary = '#558EFF';
-export const primaryHover = '#74A3FE';
-export const primaryLight = '#A9C1FD';
-export const primaryLightest = '#EBF0FF';
-export const primaryDark = '#366BEF';
+const primary = '#558EFF';
+const primaryHover = '#74A3FE';
+const primaryLight = '#A9C1FD';
+const primaryLightest = '#EBF0FF';
+const primaryDark = '#366BEF';
 
-export const attention = '#FAC032';
-export const attentionLight = '#FCDF98';
-export const attentionDarker = '#EFAD0A';
+const attention = '#FAC032';
+const attentionLight = '#FCDF98';
+const attentionDarker = '#EFAD0A';
 
-export const negative = '#FF6760';
-export const negativeLight = '#FF7E77';
-export const negativeDarker = '#E74F48';
+const negative = '#FF6760';
+const negativeLight = '#FF7E77';
+const negativeDarker = '#E74F48';
 
-export const positive = '#16D090';
-export const positiveLight = '#34EEAE';
-export const positiveDarker = '#03B575';
+const positive = '#16D090';
+const positiveLight = '#34EEAE';
+const positiveDarker = '#03B575';
 
-export const white = '#fff';
+const white = '#fff';
+
+const neutral = '#DFE5EF';
 
 export const colors = {
   primary,
@@ -38,4 +40,6 @@ export const colors = {
   positiveDarker,
 
   white,
+
+  neutral,
 }
