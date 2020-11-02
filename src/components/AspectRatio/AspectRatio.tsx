@@ -34,7 +34,7 @@ export const AspectRatio: React.FC<AspectRatioProps> = ({
       className={props.className}
     >
       <div
-        className={cx(cls.container, props.className)}
+        className={cx(cls.inner, props.className)}
         style={{ paddingBottom: `${100 / (aspectRatio.width / aspectRatio.height)}%` }}
       >
         <div className={cls.content}>
@@ -46,10 +46,9 @@ export const AspectRatio: React.FC<AspectRatioProps> = ({
 };
 
 const useStyles = createUseStyles({
-  container: {
+  inner: {
     width: '100%',
     position: 'relative',
-    overflow: 'hidden',
   },
   content: {
     width: '100%',
