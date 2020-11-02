@@ -10,3 +10,7 @@ declare module 'validatorjs/src/lang/en';
 declare module '*.wav';
 
 declare module 'react-popout';
+
+declare module 'split-every';
+
+declare module 'react-scroll-to-bottom';
