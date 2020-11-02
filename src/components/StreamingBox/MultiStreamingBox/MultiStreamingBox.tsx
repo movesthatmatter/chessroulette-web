@@ -1,160 +1,108 @@
-import { UserRecord } from 'dstnd-io';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { FaceTime } from 'src/components/FaceTimeArea';
 import { createUseStyles } from 'src/lib/jss';
-import hark from 'hark';
-import { PeerStreamingConfig, PeerStreamingConfigOn } from 'src/services/peers';
-import { Text } from 'grommet';
-import cx from 'classnames';
-
-type StreamId = string;
-
-type PeerStreamingConfigWithUser = {
-  streamingConfig: PeerStreamingConfigOn;
-  user: UserRecord;
-};
+import { fonts, softBorderRadius } from 'src/theme';
+import { Streamer, StreamersMap } from '../types';
+import { Reel } from './components/Reel/Reel';
+import { reducer, initialState, initAction, focusAction, updateAction } from './reducer';
 
 type Props = {
-  peerStreamingConfigMap: Record<StreamId, PeerStreamingConfigWithUser>;
-  myStreamingConfig: {
-    streamingConfig: PeerStreamingConfig;
-    user: UserRecord;
-  };
-  focusOn?: StreamId;
-  reelFacetimeWidth: number;
+  streamersMap: StreamersMap;
+  myStreamingConfig: Streamer;
+  focusedUserId?: Streamer['user']['id'];
 };
 
 export const MultiStreamingBox: React.FC<Props> = (props) => {
   const cls = useStyles();
-
-  const getPeerStreamingOrFallback = (id?: string, fallbackId?: string): PeerStreamingConfigWithUser => {
-    if (Object.keys(props.peerStreamingConfigMap).length === 0) {
-      throw new Error('MultiStreamingBox Empty Peer Streaming Config Map Error');
-    }
-
-    return (id && id in props.peerStreamingConfigMap)
-      ? props.peerStreamingConfigMap[id]
-      : getPeerStreamingOrFallback(fallbackId, Object.keys(props.peerStreamingConfigMap)[0])
-  }
-
-  const [focused, setFocused] = useState<PeerStreamingConfigWithUser>(getPeerStreamingOrFallback(props.focusOn));
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    // Make sure the focused is set anytime there are changes to the peers
-    //  If new peer added, stays the same
-    //  If not focused peer remove, stays the same
-    //  If focused peer removed, fallsback to 1st one or throws error if there are none left
-    //   atlhough at that point it shouldn't be rendered anymore
-    //  TODO: make sure that works correctly
-    setFocused((prev) => getPeerStreamingOrFallback(prev.user.id));
+    dispatch(
+      initAction({
+        streamersMap: props.streamersMap,
+        focusedUserId: props.focusedUserId,
+      })
+    );
+  }, []);
 
-    const peerStreamConfigKeys = Object.keys(props.peerStreamingConfigMap);
-
-    if (peerStreamConfigKeys.length < 2) {
-      return () => {};
+  useEffect(() => {
+    if (props.focusedUserId) {
+      dispatch(focusAction({
+        userId: props.focusedUserId,
+      }))
     }
+  }, [props.focusedUserId]);
 
-    const allHarkStoppers = peerStreamConfigKeys
-      .map((id) => {
-        const speechEvents = hark(props.peerStreamingConfigMap[id].streamingConfig.stream);
+  useEffect(() => {
+    dispatch(updateAction({
+      streamersMap: props.streamersMap,
+    }))
+  }, [props.streamersMap])
 
-        speechEvents.on('speaking', () => {
-          setFocused((prev) => getPeerStreamingOrFallback(id, prev.user.id));
-        });
-      
-        speechEvents.on('stopped_speaking', () => {
-          console.log(id, 'stopped speaking');
-        });
-      
-        speechEvents.on('state_change', (e) => {
-          console.log(id, 'stream state changed', e);
-        });
-
-        return () => speechEvents.stop();
-      });
-
-    return () => {
-      allHarkStoppers.forEach((stopHark) => stopHark());
-    }
-  }, [props.peerStreamingConfigMap]);
+  if (!state.ready) {
+    return null;
+  }
 
   return (
     <div className={cls.container}>
-      <FaceTime streamConfig={focused.streamingConfig}/>
-      <div className={cls.titleWrapper}>
-        <Text className={cls.title}>{focused.user.name}</Text>
-      </div>
-      <div className={cls.reel}>
-        {Object
-          .values(props.peerStreamingConfigMap)
-          .map(({ streamingConfig, user }) => (
-            <div
-              className={cls.smallFacetimeWrapper}
-              key={user.id}
-              style={{
-                // Don't shpw the currently focused one
-                display: user.id === focused.user.id ? 'none' : 'block',
-              }}
-            >
-              <div className={cx(cls.titleWrapper, cls.smallTitleWrapper)}>
-                <Text size="small" className={cls.title}>{user.name}</Text>
-              </div>
-              <FaceTime
-                streamConfig={streamingConfig}
-                className={cls.smallFacetime}
-                style={{
-                  width: props.reelFacetimeWidth,
-                }}
-              />
-            </div>
-          ))}
-          <div className={cls.smallFacetimeWrapper}>
-            <div className={cx(cls.titleWrapper, cls.smallTitleWrapper)}>
-              <Text size="small" className={cls.title}>Me</Text>
-            </div>
-            <FaceTime
-              streamConfig={props.myStreamingConfig.streamingConfig}
-              className={cls.smallFacetime}
-              style={{
-                width: props.reelFacetimeWidth,
-              }}
-              muted
-            />
-          </div>
+      <FaceTime
+        streamConfig={state.inFocus.streamingConfig}
+        label={state.inFocus.user.name}
+        labelPosition="bottom-left"
+        aspectRatio={{
+          width: 4,
+          height: 3,
+        }}
+      />
+      <div className={cls.reelWrapper}>
+        <Reel
+          reel={state.reel}
+          myStreamingConfig={props.myStreamingConfig}
+          onClick={(userId) => {
+            dispatch(focusAction({ userId }));
+          }}
+        />
       </div>
     </div>
   );
 };
 
 const useStyles = createUseStyles({
-  container: {},
-  titleWrapper: {
+  container: {
+    ...softBorderRadius,
+    overflow: 'hidden',
+  },
+  reelWrapper: {
+    width: '22.2%',
     position: 'absolute',
-    top: '20px',
-    left: 0,
-    right: 0,
-    textAlign: 'center',
+    top: '2%',
+    bottom: '2%',
+    right: '2%',
+    overflowY: 'scroll',
+    display: 'flex',
+    flexDirection: 'column-reverse',
   },
-  smallTitleWrapper: {
-    top: '10px',
+  faceTimeAsButton: {
+    cursor: 'pointer',
   },
-  title: {
-    background: 'rgba(255, 255, 255, .8)',
-    textAlign: 'center',
-    padding: '5px',
-    borderRadius: '5px',
-  },
-  reel: {
-    position: 'absolute',
-    bottom: '15px',
-    right: '10px',
-  },
+  reel: {},
   smallFacetimeWrapper: {
+    marginTop: '8%',
+    ...softBorderRadius,
+    overflow: 'hidden',
     position: 'relative',
   },
-  smallFacetime: {
-    // position: 'absolute',
-    border: '2px solid rgba(0, 0, 0, .3)',
-    // opacity: 0.95,
+  smallFacetime: {},
+  smallFacetimeBorder: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    boxShadow: 'inset 0 0 1px 1px white',
+    ...softBorderRadius,
+  },
+  smallFacetimeLabel: {
+    ...fonts.small3,
   },
 });

@@ -1,21 +1,22 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { Text, Button, Box } from 'grommet';
+import { Button, Box } from 'grommet';
 import { FaceTime } from '../FaceTimeArea';
 import { Peer, Room } from '../RoomProvider';
 import { AspectRatio } from '../AspectRatio';
 import { MultiStreamingBox } from './MultiStreamingBox';
+import { Streamer } from './types';
 
 type Props = {
   room: Room;
-  width: number;
+  width?: number;
   focusedPeerId?: Peer['id'];
 };
 
 export const StreamingBox: React.FC<Props> = (props) => {
   const cls = useStyles();
 
-  const peersWithStreamConfigOn = Object
+  const activeStreamers = Object
     .values(props.room.peers)
     .reduce((prev, next) => {
       if (!next.connection.channels.streaming.on) {
@@ -31,32 +32,25 @@ export const StreamingBox: React.FC<Props> = (props) => {
       }
     }, {});
 
-  // Only shows the 1st peer for now!
   return (
-    <div className={cls.container} style={{ width: props.width }}>
-      {(Object.keys(peersWithStreamConfigOn).length > 0) ? (
+    <div className={cls.container} style={{ width: props.width || '100%' }}>
+      {(Object.keys(activeStreamers).length > 0) ? (
         <MultiStreamingBox
-          focusOn={props.focusedPeerId}
-          peerStreamingConfigMap={peersWithStreamConfigOn}
+          focusedUserId={props.focusedPeerId}
+          streamersMap={activeStreamers}
           myStreamingConfig={{
             streamingConfig: props.room.me.connection.channels.streaming,
             user: props.room.me.user,
-          }}
-          reelFacetimeWidth={props.width / 4}
+          } as Streamer}
         />
       ) : (
         <>
           {props.room.me.connection.channels.streaming.on ? (
-            <>
-            <div className={cls.titleWrapper}>
-              <Text className={cls.title}>Me</Text>
-            </div>
-              <FaceTime
-                streamConfig={props.room.me.connection.channels.streaming}
-                className={cls.fullFacetime}
-                muted
-              />
-            </>
+            <FaceTime
+              streamConfig={props.room.me.connection.channels.streaming}
+              className={cls.fullFacetime}
+              muted
+            />
           ) : (
             <AspectRatio className={cls.noFacetime}>
               <Box alignContent="center" justify="center">
@@ -73,7 +67,6 @@ export const StreamingBox: React.FC<Props> = (props) => {
 const useStyles = createUseStyles({
   container: {
     position: 'relative',
-    overflow: 'hidden',
   },
   reel: {
     position: 'absolute',
@@ -81,14 +74,9 @@ const useStyles = createUseStyles({
     right: '10px',
   },
   smallFacetime: {
-    // position: 'absolute',
     border: '2px solid rgba(0, 0, 0, .3)',
-    // opacity: 0.95,
   },
-  fullFacetime: {
-    // width: '100%',
-    // height: 'auto', // to make sure it maintains the aspect ratio
-  },
+  fullFacetime: {},
   noFacetime: {
     background: '#ededed',
   },
