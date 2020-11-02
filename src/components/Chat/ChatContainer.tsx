@@ -9,7 +9,7 @@ import { PeerMessageEnvelope } from 'src/components/PeerProvider/records';
 import { Chat, ChatProps } from './Chat';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
-import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
+import { AwesomeLoader } from 'src/components/AwesomeLoader';
 
 type Props = Omit<ChatProps, 'onSend' | 'messages' | 'myId'>;
 
@@ -32,7 +32,7 @@ export const ChatContainer: React.FC<Props> = (chatProps) => {
           return (<AwesomeErrorPage />);
         }
 
-        return <AwesomeLoaderPage />
+        return <AwesomeLoader />
       }}
       renderRoomJoined={({ room, broadcastMessage }) => (
         <Chat
