@@ -15,6 +15,7 @@ import { Button } from 'src/components/Button';
 import { useSelector } from 'react-redux';
 import { RoomCredentials } from 'src/components/PeerProvider/util';
 import { UserRecordMocker } from 'src/mocks/records';
+import { Page } from 'src/components/Page';
 
 export default {
   component: GenericRoom,
@@ -23,7 +24,11 @@ export default {
 
 const userMocker = new UserRecordMocker();
 
-const RoomContainer: React.FC<{}> = () => {
+const RoomContainer: React.FC<{
+  withControls?: boolean;
+}> = ({
+  withControls = false,
+}) => {
   const [peer, setPeer] = useState<PeerRecord>();
   const [challengeCreated, setChallengeCreated] = useState(false);
   const [show, setShow] = useState(true);
@@ -40,17 +45,17 @@ const RoomContainer: React.FC<{}> = () => {
       quickPair({
         userId: peer.user.id,
         gameSpecs: {
-          timeLimit: 'bullet',
+          timeLimit: 'blitz',
           preferredColor: 'white',
         },
       }).map((r) => {
         if (r.matched) {
           setRoomCredentials({
             id: r.room.id,
-            ...r.room.type === 'private' && {
+            ...(r.room.type === 'private' && {
               code: r.room.code,
-            }
-          })
+            }),
+          });
         }
 
         setChallengeCreated(true);
@@ -72,7 +77,7 @@ const RoomContainer: React.FC<{}> = () => {
           setShow(!show);
         }}
       />
-    )
+    );
   }
 
   return (
@@ -81,43 +86,47 @@ const RoomContainer: React.FC<{}> = () => {
         if (msg.kind === 'challengeAccepted') {
           setRoomCredentials({
             id: msg.content.room.id,
-            ...msg.content.room.type === 'private' && {
+            ...(msg.content.room.type === 'private' && {
               code: msg.content.room.code,
-            }
-          })
+            }),
+          });
         }
       }}
       render={() => (
         <>
-          <small>
+          {/* <small>
             <pre>
               User:{' '}
               <b>
                 {user.name} ({user.id})
               </b>
             </pre>
-          </small>
-          <Button
-            label="Simulate Refresh"
-            onClick={() => {
-              setShow(false);
-              setTimeout(() => {
-                setShow(true)
-              }, 500);
-            }}
-          />
-          <Button
-            label={show ? 'Simulate Exit Window' : 'Simulate Enter Window'}
-            onClick={() => {
-              setShow(!show);
-            }}
-          />
-          <Button
-            label={showRoom ? 'Simulate Leave Room' : 'Simulate Enter Room'}
-            onClick={() => {
-              setShowRoom(!showRoom);
-            }}
-          />
+          </small> */}
+          {withControls && (
+            <>
+              <Button
+                label="Simulate Refresh"
+                onClick={() => {
+                  setShow(false);
+                  setTimeout(() => {
+                    setShow(true);
+                  }, 500);
+                }}
+              />
+              <Button
+                label={show ? 'Simulate Exit Window' : 'Simulate Enter Window'}
+                onClick={() => {
+                  setShow(!show);
+                }}
+              />
+              <Button
+                label={showRoom ? 'Simulate Leave Room' : 'Simulate Enter Room'}
+                onClick={() => {
+                  setShowRoom(!showRoom);
+                }}
+              />
+            </>
+          )}
           <PeerProvider user={user} iceServers={[]}>
             <PeerConsumer
               onReady={(p) => {
@@ -125,11 +134,9 @@ const RoomContainer: React.FC<{}> = () => {
               }}
               render={() => (
                 <>
-                  <pre>roomCredentials: {JSON.stringify(roomCredentials, null, 2) || '{}'}</pre>
-                  <pre>{JSON.stringify(user, null, 2)}</pre>
-                  {showRoom && roomCredentials && (
-                    <GenericRoom roomCredentials={roomCredentials} />
-                  )}
+                  {/* <pre>roomCredentials: {JSON.stringify(roomCredentials, null, 2) || '{}'}</pre>
+                  <pre>{JSON.stringify(user, null, 2)}</pre> */}
+                  {showRoom && roomCredentials && <GenericRoom roomCredentials={roomCredentials} />}
                 </>
               )}
             />
@@ -140,20 +147,103 @@ const RoomContainer: React.FC<{}> = () => {
   );
 };
 
+export const defaultStory = () =>
+  React.createElement(() => {
+    const [userA, setUserA] = useState<GuestUserRecord>();
+    const [userB, setUserB] = useState<GuestUserRecord>();
+
+    const guestA = userMocker.withProps(
+      {
+        name: 'UserA',
+        id: '1',
+      },
+      true
+    );
+
+    const guestB = userMocker.withProps(
+      {
+        name: 'UserB',
+        id: '2',
+      },
+      true
+    );
+
+    useEffect(() => {
+      (async () => {
+        (await authenticateAsExistentGuest({ guestUser: guestA })).map((user) => {
+          setUserA(user.guest);
+        });
+
+        (await authenticateAsExistentGuest({ guestUser: guestB })).map((user) => {
+          // Simulate a delay in joining the room as 2nd Peer
+          setTimeout(() => {
+            setUserB(user.guest);
+          }, 100);
+        });
+      })();
+    }, []);
+
+    return (
+      <Grommet theme={defaultTheme} full>
+        {userA && (
+          <StorybookReduxProvider
+            initialState={{
+              authentication: {
+                authenticationType: 'guest',
+                user: userA,
+              } as const,
+            }}
+          >
+            <AuthenticationProvider>
+              <SocketProvider>
+                <RoomContainer />
+              </SocketProvider>
+            </AuthenticationProvider>
+          </StorybookReduxProvider>
+        )}
+        <div style={{ display: 'none' }}>
+          {/* This is needed in order to have a joined rooom */}
+            {userB && (
+              <StorybookReduxProvider
+                initialState={{
+                  authentication: {
+                    authenticationType: 'guest',
+                    user: userB,
+                  } as const,
+                }}
+              >
+                <AuthenticationProvider>
+                  <SocketProvider>
+                    <RoomContainer />
+                  </SocketProvider>
+                </AuthenticationProvider>
+              </StorybookReduxProvider>
+            )}
+          </div>
+      </Grommet>
+    );
+  });
+
 export const playRoomDualView = () =>
   React.createElement(() => {
     const [userA, setUserA] = useState<GuestUserRecord>();
     const [userB, setUserB] = useState<GuestUserRecord>();
 
-    const guestA = userMocker.withProps({
-      name: 'UserA',
-      id: '1'
-    }, true);
+    const guestA = userMocker.withProps(
+      {
+        name: 'UserA',
+        id: '1',
+      },
+      true
+    );
 
-    const guestB = userMocker.withProps({
-      name: 'UserB',
-      id: '2'
-    }, true);;
+    const guestB = userMocker.withProps(
+      {
+        name: 'UserB',
+        id: '2',
+      },
+      true
+    );
 
     useEffect(() => {
       (async () => {
@@ -198,7 +288,7 @@ export const playRoomDualView = () =>
               >
                 <AuthenticationProvider>
                   <SocketProvider>
-                    <RoomContainer />
+                    <RoomContainer withControls/>
                   </SocketProvider>
                 </AuthenticationProvider>
               </StorybookReduxProvider>
@@ -211,7 +301,7 @@ export const playRoomDualView = () =>
               border: '1px solid #efefef',
             }}
           >
-            {userB && (  
+            {userB && (
               <StorybookReduxProvider
                 initialState={{
                   authentication: {
@@ -222,7 +312,7 @@ export const playRoomDualView = () =>
               >
                 <AuthenticationProvider>
                   <SocketProvider>
-                    <RoomContainer />
+                    <RoomContainer withControls/>
                   </SocketProvider>
                 </AuthenticationProvider>
               </StorybookReduxProvider>
