@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import logo from 'src/assets/logo.svg';
+import logo from 'src/assets/logo_v2.svg';
 import {
   AuthenticationConsumer,
   authenticateAsGuestEffect,
@@ -43,11 +43,6 @@ export const Page: React.FC<Props> = (props) => {
                 ]}
               />
             )}
-            renderGuest={(guest) => (
-              <Text>
-                Guest <strong>{guest.name}</strong>
-              </Text>
-            )}
             renderNotAuthenticated={() => (
               <Box alignContent="center" justify="center">
                 <LichessAuthButton />
@@ -67,13 +62,11 @@ const useStyles = createUseStyles({
   container: {
     width: '100%',
     height: '100%',
-    background: '#F1F1F1',
-    // flex: 1,
+    background: '#F6F8FB',
   },
   paddingWrapper: {
     padding: '4px 16px',
     height: 'calc(100% - 32px)',
-    // height: '100%',
   },
   top: {
     paddingTop: '.6em',
@@ -81,15 +74,12 @@ const useStyles = createUseStyles({
     height: `${topHeightPx}px`,
     display: 'flex',
     flexDirection: 'row',
-    // alignItems: 'space-around',
     alignContent: 'space-between',
   },
   topMain: {
     flex: 1,
   },
   topRight: {
-    // just
-    // alignSelf: 'flex-end',
     justifySelf: 'flex-end',
   },
   logo: {
