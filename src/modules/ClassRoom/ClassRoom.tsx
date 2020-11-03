@@ -6,7 +6,7 @@ import { FaceTime } from 'src/components/FaceTimeArea';
 import { Workshop, View } from 'grommet-icons';
 import { MemberList } from './components/MemberList';
 import { MemberStreamingReel } from './components/MemberStreamingReel/MemberStreamingReel';
-import { ChatContainer } from './components/Chat';
+import { ChatContainer } from '../../components/Chat';
 import { BlackBoard, BlackBoardProps } from './components/BlackBoard';
 import { ChessStudyContainer } from '../ChessStudy/ChessStudyContainer';
 
