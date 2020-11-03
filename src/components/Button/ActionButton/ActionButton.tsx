@@ -7,8 +7,9 @@ import { Icon as GIcon } from 'grommet-icons';
 import { borderRadius } from 'src/theme/effects';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { hasOwnProperty } from 'src/lib/util';
-import { buttonEffects } from '../IconButton/effects';
+import { buttonEffects } from '../effects';
 import { ButtonType } from '../type';
+import { buttonStyles } from '../styles';
 
 export type ActionButtonProps = {
   type: ButtonType;
@@ -93,44 +94,17 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
 };
 
 const useStyles = createUseStyles({
+  ...buttonStyles,
   button: {
-    cursor: 'pointer',
-    width: 'auto',
-    border: 0,
-    padding: 0,
-    margin: 0,
-    
-    ...borderRadius,
-    height: '32px',
-    lineHeight: '32px',
+    ...buttonStyles.button,
     display: 'flex',
     flexDirection: 'row',
-
-    '&:focus': {
-      outline: 'none',
-    },
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   circle: {},
-  primary: {
-    background: colors.primary,
-    ...buttonEffects.primaryButtonShadow,
-  },
-  positive: {
-    background: colors.positive,
-    ...buttonEffects.positiveButtonShadow,
-  },
-  negative: {
-    background: colors.negative,
-    ...buttonEffects.negativeButtonShadow,
-  },
-  attention: {
-    background: colors.attention,
-    ...buttonEffects.attentionButtonShadow,
-  },
   closed: {},
-  labelWrapper: {
-    // padding: '0 12px 0 16px',
-  },
+  labelWrapper: {},
   label: {
     color: colors.white,
     fontWeight: 600, // TODO: Make it SemiBold

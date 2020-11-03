@@ -8,7 +8,7 @@ import { defaultTheme } from 'src/theme';
 
 export default {
   component: IconButton,
-  title: 'components/IconButton',
+  title: 'components/Button/IconButton',
 };
 
 export const defaultStory = () => (

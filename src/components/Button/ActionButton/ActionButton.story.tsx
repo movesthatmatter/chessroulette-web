@@ -8,7 +8,7 @@ import { action, actions } from '@storybook/addon-actions';
 
 export default {
   component: ActionButton,
-  title: 'components/ActionButton',
+  title: 'components/Button/ActionButton',
 };
 
 export const defaultStory = () => (

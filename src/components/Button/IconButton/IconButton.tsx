@@ -4,9 +4,10 @@ import { Icon as GIcon } from 'grommet-icons';
 import { borderRadius, colors } from 'src/theme';
 import cx from 'classnames';
 import { CSSProperties } from 'src/lib/jss/types';
-import { buttonEffects } from './effects';
+import { buttonEffects } from '../effects';
 import hexToRGBA from 'hex-to-rgba';
 import { ButtonType } from '../type';
+import { buttonStyles } from '../styles';
 
 type Props = {
   icon: GIcon;
@@ -24,7 +25,7 @@ export const IconButton: React.FC<Props> = (props) => {
       disabled={props.disabled}
       type="submit"
       className={cx(
-        cls.container,
+        cls.button,
         props.disabled || cls[props.type],
       )}
       onClick={() => props.onSubmit()}
@@ -37,34 +38,10 @@ export const IconButton: React.FC<Props> = (props) => {
 };
 
 const useStyles = createUseStyles({
-  container: {
-    ...borderRadius,
-    width: '32px',
-    height:'32px',
-    // overflow: 'hidden',
-    outline: 'none',
-    border: 'none',
-    padding: 0,
-
-    cursor: 'pointer',
-
-    background: colors.neutral,
-    ...buttonEffects.neutralButtonShadow,
-
-    // ...floatingShadow,
-    transition: 'all 100ms linear',
-
-    '&:active': {
-      transform: 'scale(.9)',
-    },
-    '&:disabled': {
-      transform: 'scale(1) !important',
-      cursor: 'auto',
-    }
-  },
+  ...buttonStyles,
   iconWrapper: {
-    width: '100%',
-    height: '100%',
+    width: '32px',
+    height: '32px',
 
     ...borderRadius,
 
@@ -81,53 +58,5 @@ const useStyles = createUseStyles({
     stroke: `${colors.white} !important`,
     width: '16px !important',
     height: '16px !important',
-  },
-  primary: {
-    background: colors.primary,
-    ...buttonEffects.primaryButtonShadow,
-
-    '&:active': {
-      ...{
-        '& $iconWrapper': {
-          boxShadow: `0 3px 6px 0 ${hexToRGBA(colors.primary, 0.36)}`
-        },
-      } as CSSProperties['nestedKey'],
-    }
-  },
-  positive: {
-    background: colors.positive,
-    ...buttonEffects.positiveButtonShadow,
-
-    '&:active': {
-      ...{
-        '& $iconWrapper': {
-          boxShadow: `0 3px 6px 0 ${hexToRGBA(colors.positive, 0.36)}`
-        },
-      } as CSSProperties['nestedKey'],
-    }
-  },
-  negative: {
-    background: colors.negative,
-    ...buttonEffects.negativeButtonShadow,
-
-    '&:active': {
-      ...{
-        '& $iconWrapper': {
-          boxShadow: `0 3px 6px 0 ${hexToRGBA(colors.negative, 0.36)}`
-        },
-      } as CSSProperties['nestedKey'],
-    }
-  },
-  attention: {
-    background: colors.attention,
-    ...buttonEffects.attentionButtonShadow,
-
-    '&:active': {
-      ...{
-        '& $iconWrapper': {
-          boxShadow: `0 3px 6px 0 ${hexToRGBA(colors.attention, 0.36)}`
-        },
-      } as CSSProperties['nestedKey'],
-    }
   },
 });
