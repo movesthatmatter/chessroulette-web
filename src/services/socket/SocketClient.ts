@@ -18,6 +18,9 @@ import {
   JoinRoomFailurePayload,
   LeaveRoomRequestPayload,
 
+  // Chat
+  BroadcastChatMessagePayload,
+
   // Game Logic
   GameResignationRequestPayload,
   GameMoveRequestPayload,
@@ -60,6 +63,9 @@ type SendableMessagesMap = {
   // Room
   joinRoomRequest: JoinRoomRequestPayload;
   leaveRoomRequest: LeaveRoomRequestPayload;
+
+  //Chat
+  broadcastChatMessage: BroadcastChatMessagePayload;
 
   // Game
   gameResignationRequestPayload: GameResignationRequestPayload;

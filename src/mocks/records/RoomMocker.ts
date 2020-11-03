@@ -52,6 +52,11 @@ export class RoomMocker {
           [me.id]: me,
         },
       },
+      chatHistory: {
+        id: String(chance.integer({min: 1})),
+        usersInfo: {},
+        messages: [],
+      }
     };
   }
 

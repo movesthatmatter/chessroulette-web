@@ -1,51 +1,38 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { PeerConsumer } from 'src/components/PeerProvider';
-import { eitherToResult } from 'src/lib/ioutil';
-import {
-  ChatMessageRecord,
-  chatMessageRecord,
-} from 'dstnd-io';
-import { PeerMessageEnvelope } from 'src/components/PeerProvider/records';
+import { ChatMessageRecord } from 'dstnd-io';
 import { Chat, ChatProps } from './Chat';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 
-type Props = Omit<ChatProps, 'onSend' | 'messages' | 'myId'>;
+type Props = Omit<ChatProps, 'onSend' | 'messages' | 'myId' | 'history'>;
 
 export const ChatContainer: React.FC<Props> = (chatProps) => {
-  const [messages, setMessages] = useState<ChatMessageRecord[]>([]);
-
-  const handleMessages = ({ message }: PeerMessageEnvelope) => {
-    eitherToResult(chatMessageRecord.decode(message))
-      .map((msg) => {
-        setMessages((prev) => [...prev, msg]);
-      });
-  };
-
   return (
     <PeerConsumer
-      onPeerMsgSent={handleMessages}
-      onPeerMsgReceived={handleMessages}
       renderFallback={(r) => {
         if (r.state === 'error') {
-          return (<AwesomeErrorPage />);
+          return <AwesomeErrorPage />;
         }
 
-        return <AwesomeLoader />
+        return <AwesomeLoader />;
       }}
-      renderRoomJoined={({ room, broadcastMessage }) => (
+      renderRoomJoined={({ room, request }) => (
         <Chat
           myId={room.me.id}
-          messages={messages}
+          history={room.chatHistory}
           onSend={(content) => {
             const payload: ChatMessageRecord = {
               content,
-              from: room.me.user,
+              fromUserId: room.me.user.id,
               sentAt: toISODateTime(new Date()),
             };
 
-            broadcastMessage(payload);
+            request({
+              kind: 'broadcastChatMessage',
+              content: payload,
+            });
           }}
           {...chatProps}
         />

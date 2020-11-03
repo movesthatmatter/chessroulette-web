@@ -1,43 +1,45 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { ChatMessageRecord, UserRecord } from 'dstnd-io';
+import { ChatMessageRecord, UserInfoRecord, UserRecord } from 'dstnd-io';
 import { colors, fonts } from 'src/theme';
 import { Text } from 'grommet';
 
 type Props = {
   myId: UserRecord['id'];
   message: ChatMessageRecord;
+  user: UserInfoRecord;
 };
 
 export const Message: React.FC<Props> = ({
   myId,
   message,
+  user,
 }) => {
   const cls = useStyles();
 
   return (
     <div
       className={cx(cls.message, {
-        [cls.myMessage]: message.from.id === myId,
+        [cls.myMessage]: message.fromUserId=== myId,
       })}
     >
       <div className={cx(cls.messageContentWrapper, {
-        [cls.myMessageContentWrapper]: message.from.id === myId,
-        [cls.otherMessageContentWrapper]: message.from.id !== myId,
+        [cls.myMessageContentWrapper]: message.fromUserId === myId,
+        [cls.otherMessageContentWrapper]: message.fromUserId !== myId,
       })}>
         <Text
           className={cx(cls.messageContent, {
-            [cls.myMessageContent]: message.from.id === myId,
-            [cls.otherMessageContent]: message.from.id !== myId,
+            [cls.myMessageContent]: message.fromUserId === myId,
+            [cls.otherMessageContent]: message.fromUserId !== myId,
           })}
         >
           {message.content}
         </Text>
       </div>
-      {message.from.id !== myId && (
+      {message.fromUserId !== myId && (
         <Text className={cls.messageSender}>
-          {message.from.name}
+          {user.name}
         </Text>
       )}
     </div>

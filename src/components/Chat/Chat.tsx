@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
-import { ChatMessageRecord } from 'dstnd-io';
+import { ChatHistoryRecord, ChatMessageRecord } from 'dstnd-io';
 import { arrReverse } from 'src/lib/util';
 import { Message } from './components';
 import { colors } from 'src/theme';
@@ -11,7 +11,8 @@ import { CSSProperties } from 'src/lib/jss/types';
 
 export type ChatProps = {
   myId: string;
-  messages: ChatMessageRecord[];
+  // messages: ChatMessageRecord[];
+  history: ChatHistoryRecord;
   onSend: (msg: string) => void;
 
   className?: string;
@@ -21,21 +22,27 @@ export type ChatProps = {
   inputContainerStyle?: CSSProperties;
 };
 
-export const Chat: React.FC<ChatProps> = ({ onSend, myId, messages, ...props }) => {
+export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) => {
   const cls = useStyles();
 
   const [input, setInput] = useState('');
-  const [reversedHistory, setReversedHistory] = useState<ChatMessageRecord[]>([]);
+  // const [messages, setMessages] = useState<ChatMessageRecord[]>([]);
 
-  useEffect(() => {
-    setReversedHistory(arrReverse(messages));
-  }, [messages]);
+  // useEffect(() => {
+  //   console.log('messages updated for:', myId, history);
+  //   setReversedHistory(arrReverse(history.messages));
+  // }, [history]);
 
   return (
     <div className={cx(cls.container, props.className)} style={props.style}>
       <div className={cls.messageHistory}>
-        {reversedHistory.map((msg) => (
-          <Message key={String(msg.sentAt)} message={msg} myId={myId} />
+        {history.messages.map((msg) => (
+          <Message
+            key={`${msg.fromUserId}-${msg.sentAt}`}
+            message={msg}
+            myId={myId}
+            user={history.usersInfo[msg.fromUserId]}
+          />
         ))}
       </div>
       <div style={props.inputContainerStyle}>

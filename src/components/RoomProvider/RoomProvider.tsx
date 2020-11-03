@@ -149,6 +149,7 @@ export const RoomProvider: React.FC<Props> = ({
         },
 
         activity: socketRecords.room.activity,
+        chatHistory: socketRecords.room.chatHistory,
       };
 
       return {
