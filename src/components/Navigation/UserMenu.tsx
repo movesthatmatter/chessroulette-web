@@ -1,4 +1,4 @@
-import { Avatar, Box, Text } from 'grommet';
+import { Avatar, Box, Menu, Text } from 'grommet';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { AuthenticationConsumer } from 'src/services/Authentication';

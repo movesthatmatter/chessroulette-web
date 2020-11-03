@@ -8,12 +8,7 @@ import { borderRadius } from 'src/theme/effects';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { hasOwnProperty } from 'src/lib/util';
 import { buttonEffects } from '../IconButton/effects';
-
-export type ButtonType = 
-  | 'primary'
-  | 'positive'
-  | 'negative'
-  | 'attention';
+import { ButtonType } from '../type';
 
 export type ActionButtonProps = {
   type: ButtonType;

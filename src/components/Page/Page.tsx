@@ -1,19 +1,12 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import logo from 'src/assets/logo_v2.svg';
-import {
-  AuthenticationConsumer,
-  authenticateAsGuestEffect,
-} from 'src/services/Authentication';
-import { LichessAuthButton } from 'src/services/Authentication/widgets/LichessAuthButton';
-import { Menu, Text, Box } from 'grommet';
-import { useDispatch } from 'react-redux';
+import { UserMenu } from '../Navigation';
 
 type Props = {};
 
 export const Page: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const dispatch = useDispatch();
 
   return (
     <div className={cls.container}>
@@ -24,31 +17,9 @@ export const Page: React.FC<Props> = (props) => {
               <img src={logo} alt="logo" className={cls.logo} />
             </a>
           </div>
-
-          <AuthenticationConsumer
-            renderAuthenticated={(user) => (
-              <Menu
-                plain
-                dropProps={{ align: { top: 'bottom', left: 'left' } }}
-                label={
-                  <Text>
-                    Welcome <strong>{user.name}</strong>
-                  </Text>
-                }
-                items={[
-                  {
-                    label: 'Logout',
-                    onClick: () => dispatch(authenticateAsGuestEffect()),
-                  },
-                ]}
-              />
-            )}
-            renderNotAuthenticated={() => (
-              <Box alignContent="center" justify="center">
-                <LichessAuthButton />
-              </Box>
-            )}
-          />
+          <div className={cls.userMenuWrapper}>
+            <UserMenu />
+          </div>
         </div>
         <main className={cls.main}>{props.children}</main>
       </div>
@@ -88,5 +59,8 @@ const useStyles = createUseStyles({
   main: {
     width: '100%',
     height: `calc(100% - ${topHeightPx}px)`,
+  },
+  userMenuWrapper: {
+    // width: '250px',
   },
 });

@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { ChatMessageRecord } from 'dstnd-io';
 import { arrReverse } from 'src/lib/util';
 import { Message } from './components';
-import { colors, fonts } from 'src/theme';
-import { IconButton } from 'src/components/IconButton';
+import { colors } from 'src/theme';
+import { IconButton } from 'src/components/Button';
 import { Send } from 'grommet-icons';
 import { CSSProperties } from 'src/lib/jss/types';
 
@@ -77,7 +75,6 @@ const useStyles = createUseStyles({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    // flex: 1,
     height: '100%',
   },
   messageHistory: {
@@ -87,7 +84,6 @@ const useStyles = createUseStyles({
     paddingLeft: '8px',
     paddingRight: '8px',
     overflowY: 'scroll',
-    // overflowX: 'hidden',
     marginTop: '10px',
     scrollBehavior: 'smooth',
   },
@@ -97,7 +93,6 @@ const useStyles = createUseStyles({
     paddingTop: '16px',
     display: 'flex',
     flex: 1,
-    // background: 'red',
     height: 'calc(100% - 16px)',
   },
   inputBoxWrapper: {
@@ -106,13 +101,11 @@ const useStyles = createUseStyles({
     display: 'flex',
     alignItems: 'center',
     height: '100%',
-    // background: 'green',
   },
   inputBox: {
     flex: 1,
     fontFamily: 'Lato, Open Sans, Roboto Slab, sans-serif',
     fontSize: '13px',
-    // height: '32px',
     fontWeight: 400,
     padding: 0,
     border: 0,
@@ -120,7 +113,5 @@ const useStyles = createUseStyles({
     resize: 'none',
     width: '100%',
     height: '100%',
-    // background: 'transparent',
-    // background: 'yellow',
   },
 });

@@ -14,7 +14,7 @@ import { otherChessColor } from '../Games/Chess/util';
 import { floatingShadow, softBorderRadius } from 'src/theme/effects';
 import cx from 'classnames';
 import { GameStateWidget } from '../Games/Chess/components/GameStateWidget/GameStateWidget';
-import { ActionButton } from 'src/components/ActionButton/ActionButton';
+import { ActionButton } from 'src/components/Button';
 import { Refresh, Halt, Flag, Split } from 'grommet-icons';
 import { colors, fonts } from 'src/theme';
 import { ChatContainer } from 'src/components/Chat';

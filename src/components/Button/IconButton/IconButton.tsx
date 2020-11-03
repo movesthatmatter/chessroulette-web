@@ -1,12 +1,12 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Icon as GIcon } from 'grommet-icons';
-import { borderRadius, colors, floatingShadow } from 'src/theme';
-import { ButtonType } from 'src/components/ActionButton';
+import { borderRadius, colors } from 'src/theme';
 import cx from 'classnames';
 import { CSSProperties } from 'src/lib/jss/types';
 import { buttonEffects } from './effects';
 import hexToRGBA from 'hex-to-rgba';
+import { ButtonType } from '../type';
 
 type Props = {
   icon: GIcon;
