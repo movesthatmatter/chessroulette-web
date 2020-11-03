@@ -18,7 +18,45 @@ export default {
 const peerMock = new PeerMocker();
 const roomMocker = new RoomMocker();
 
-export const defaultStory = () => (
+export const empty = () => (
+  <Grommet theme={defaultTheme} full>
+    <div style={{
+      width: '100%',
+      height: '100%',
+      background: '#ededed',
+    }}>
+      <GameRoomLayout
+        topHeight={0}
+        getTopComponent={() => null}
+        bottomHeight={0}
+        getBottomComponent={() => null}
+        getGameComponent={(dimensions) => (
+          <div style={{
+            width: dimensions.width,
+            height: dimensions.height,
+            backgroundColor: 'red',
+          }}/>
+        )}
+        getLeftSideComponent={(dimensions) => (
+          <div style={{
+            width: dimensions.width,
+            height: dimensions.height,
+            backgroundColor: 'blue',
+          }}/>
+        )}
+        getRightSideComponent={(dimensions) => (
+          <div style={{
+            width: dimensions.width,
+            height: dimensions.height + dimensions.verticalPadding,
+            backgroundColor: 'green',
+          }}/>
+        )}
+      />
+    </div>
+  </Grommet>
+)
+
+export const withChessGame = () => (
   <Grommet theme={defaultTheme} full>
     <WithLocalStream render={(stream) => {
       const me = peerMock.withChannels({
@@ -51,6 +89,10 @@ export const defaultStory = () => (
       return (
         <div style={{ width: '100%', height: '100%' }}>
           <GameRoomLayout
+            topHeight={0}
+            getTopComponent={() => null}
+            bottomHeight={0}
+            getBottomComponent={() => null}
             getGameComponent={(dimensions) => (
               <ChessGame
                 homeColor="black"
@@ -59,7 +101,8 @@ export const defaultStory = () => (
                 getBoardSize={() => dimensions.width - 100}
               />
             )}
-            getSideComponent={(dimensions) => (
+            getLeftSideComponent={() => (<></>)}
+            getRightSideComponent={(dimensions) => (
               <StreamingBox
                 room={publicRoom}
                 width={dimensions.width}

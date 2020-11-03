@@ -35,14 +35,12 @@ export const ChallengePage: React.FC<Props> = (props) => {
 
   if (room) {
     return (
-      <Page>
-        <GenericRoom
-          roomCredentials={{
-            id: room.id,
-            code: room.code || undefined,
-          }}
-        />
-      </Page>
+      <GenericRoom
+        roomCredentials={{
+          id: room.id,
+          code: room.code || undefined,
+        }}
+      />
     );
   } else if (challenge) {
     return (

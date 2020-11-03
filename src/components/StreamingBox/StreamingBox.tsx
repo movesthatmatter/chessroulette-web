@@ -6,6 +6,7 @@ import { Peer, Room } from '../RoomProvider';
 import { AspectRatio } from '../AspectRatio';
 import { MultiStreamingBox } from './MultiStreamingBox';
 import { Streamer } from './types';
+import { softBorderRadius } from 'src/theme';
 
 type Props = {
   room: Room;
@@ -76,7 +77,9 @@ const useStyles = createUseStyles({
   smallFacetime: {
     border: '2px solid rgba(0, 0, 0, .3)',
   },
-  fullFacetime: {},
+  fullFacetime: {
+    ...softBorderRadius,
+  },
   noFacetime: {
     background: '#ededed',
   },

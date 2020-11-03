@@ -100,6 +100,10 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
         ...inCheckStyle,
       }}
       pieces={piecesToBoardMap}
+      boardStyle={{
+        ...boardProps.boardStyle,
+        position: 'relative',
+      }}
     />
   );
 };
