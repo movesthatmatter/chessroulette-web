@@ -17,7 +17,6 @@ export const asPrivateChallenge = () => (
   <Grommet theme={defaultTheme}>
     <PendingChallenge
       challenge={challengeMocker.record()}
-      onCancel={action('on cancel')}
       type={'challenge'}
     />
   </Grommet>
@@ -27,7 +26,6 @@ export const asQuickPairing = () => (
   <Grommet theme={defaultTheme}>
     <PendingChallenge
       challenge={challengeMocker.record()}
-      onCancel={action('on cancel')}
       type={'quickPairing'}
     />
   </Grommet>

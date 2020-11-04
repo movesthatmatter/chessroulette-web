@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Box, Layer } from 'grommet';
+import React, { useEffect, useState } from 'react';
+import { Box } from 'grommet';
 import { ChessChallengeCreator } from 'src/modules/Games/Chess/components/ChessChallengeCreator';
-import { ChallengeRecord, GameSpecsRecord, RoomRecord, UserRecord } from 'dstnd-io';
+import { ChallengeRecord, GameSpecsRecord, RoomRecord } from 'dstnd-io';
 import { Button, ButtonProps } from 'src/components/Button';
 import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
 import { resources } from 'src/resources';
@@ -40,10 +40,24 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
   const [gameSpecs, setGameSpecs] = useState<GameSpecsRecord | undefined>(undefined);
   const [challengeState, setChallengeState] = useState<ChallengeState>({ state: 'none' });
   const history = useHistory();
-
   const authentication = useSelector(selectAuthentication);
 
-  // This should never happen
+  useEffect(() => {
+    if (!visiblePopup) {
+      setChallengeState({ state: 'none' });
+    }
+  }, [visiblePopup]);
+
+  const cancel = () => {
+    if (challengeState.state === 'pending') {
+      return resources.deleteChallenge(challengeState.challenge.id).map(() => {
+        setVisiblePopup(false);
+      });
+    };
+
+    setVisiblePopup(false);
+  }
+
   if (authentication.authenticationType === 'none') {
     return null;
   }
@@ -82,17 +96,13 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                   <PendingChallenge
                     challenge={challengeState.challenge}
                     type={challengeType}
-                    onCancel={() => {
-                      resources.deleteChallenge(challengeState.challenge.id).map(() => {
-                        setChallengeState({ state: 'none' });
-                        setVisiblePopup(false);
-                      });
-                    }}
                   />
                 ) : (
                   <>
                     <FaceTimeSetup onUpdated={(s) => setFaceTimeOn(s.on)} />
-                    <Box>
+                    <Box margin={{
+                      top: 'medium',
+                    }}>
                       <ChessChallengeCreator onUpdate={setGameSpecs} />
                     </Box>
                   </>
@@ -101,16 +111,15 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
             )}
           />
         }
-        onClose={() => setVisiblePopup(false)}
+        onClose={cancel}
         buttons={[
           {
             label: 'Cancel',
             type: 'secondary',
-            onClick: () => setVisiblePopup(false),
+            onClick: cancel,
           },
-          {
-            label: 'Create Challenge',
-            // full
+          challengeState.state === 'none' && {
+            label: 'Play',
             type: 'primary',
             onClick: () => {
               if (!gameSpecs) {

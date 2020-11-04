@@ -9,7 +9,6 @@ import { createUseStyles } from 'src/lib/jss';
 import { toChallengeUrlPath } from 'src/lib/util';
 
 export type PendingChallengeProps = {
-  onCancel: () => void;
   challenge: ChallengeRecord;
   type: 'challenge' | 'quickPairing';
 };
@@ -21,11 +20,9 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
     <Box pad="medium" gap="small" width="medium" className={cls.container}>
       {props.type === 'quickPairing' ? (
         <>
-          <Box margin={{
-            bottom: 'medium',
-          }}>
+          <Box margin={{ bottom: 'medium' }}>
             <Text>Waiting for opponent...</Text>
-              <AwesomeLoader minimal />
+            <AwesomeLoader minimal />
           </Box>
           <Box>
             <Text size="small1">But in the meantime, you can send this link to a friend</Text>
@@ -37,10 +34,6 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
         </Box>
       )}
       <ClipboardCopy value={`${window.location.origin}/${toChallengeUrlPath(props.challenge)}`} />
-      <Button
-        label="Cancel"
-        onClick={props.onCancel}
-      />
     </Box>
   );
 };
