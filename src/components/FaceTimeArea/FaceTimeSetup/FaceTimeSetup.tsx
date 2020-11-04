@@ -6,7 +6,7 @@ import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
 import { FaceTime } from '../FaceTime';
 import { getAVStream, removeAVStream } from 'src/services/AVStreaming';
-import { softBorderRadius } from 'src/theme';
+import { colors, softBorderRadius } from 'src/theme';
 
 type Props = {
   onUpdated: (streamingConfig: PeerStreamingConfig) => void;
@@ -16,22 +16,25 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
   const cls = useStyles();
 
   const [streamingConfig, setStreamingConfig] = useState<PeerStreamingConfig>({ on: false });
-  const [permissionState, setPermissionState] = useState<'none' | 'pending' | 'granted' | 'denied'>('none');
+  const [permissionState, setPermissionState] = useState<'none' | 'pending' | 'granted' | 'denied'>(
+    'none'
+  );
 
   const showStream = () => {
     setPermissionState('pending');
 
-    getAVStream().then((stream) => {
-      setStreamingConfig({
-        on: true,
-        type: 'audio-video',
-        stream,
+    getAVStream()
+      .then((stream) => {
+        setStreamingConfig({
+          on: true,
+          type: 'audio-video',
+          stream,
+        });
+        setPermissionState('granted');
+      })
+      .catch(() => {
+        setPermissionState('denied');
       });
-      setPermissionState('granted');
-    })
-    .catch(() => {
-      setPermissionState('denied');
-    })
   };
 
   useEffect(() => {
@@ -45,7 +48,7 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
       if (streamingConfig.on) {
         removeAVStream(streamingConfig.stream);
       }
-    }
+    };
   }, [streamingConfig]);
 
   return (
@@ -53,18 +56,38 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
       <FaceTime
         muted
         streamConfig={streamingConfig}
-        streamingOffFallback={(
-          <AspectRatio className={cls.noFacetime}>
-            <Box fill justify="center" alignContent="center" align="center" pad="medium">
+        streamingOffFallback={
+          <AspectRatio
+            className={cls.noFacetime}
+            aspectRatio={{
+              width: 4,
+              height: 3,
+            }}
+          >
+            <Box
+              fill
+              justify="center"
+              alignContent="center"
+              align="center"
+              pad="medium"
+              style={{
+                textAlign: 'center',
+              }}
+            >
               {permissionState === 'pending' && (
-                <Text>Waiting for Camera & Microphone Permissions...</Text>
+                <Text size="small1">
+                  Waiting for Camera & Microphone Permissions...
+                </Text>
               )}
               {permissionState === 'denied' && (
-                <Text>Your Camera & Microphone permissions seem to be off. Please allow them in order to proceed.</Text>
+                <Text size="small1">
+                  Your Camera & Microphone permissions seem to be off. Please allow them in order to
+                  proceed.
+                </Text>
               )}
             </Box>
           </AspectRatio>
-        )}
+        }
       />
     </div>
   );
@@ -76,6 +99,6 @@ const useStyles = createUseStyles({
     overflow: 'hidden',
   },
   noFacetime: {
-    background: '#ededed',
+    background: colors.neutral,
   },
 });
