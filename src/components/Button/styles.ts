@@ -52,6 +52,7 @@ const clear: CSSProperties = {
 
 const full: CSSProperties = {
   width: '100%',
+  flex: 1,
   textAlign: 'center',
 };
 

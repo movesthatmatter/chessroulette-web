@@ -37,7 +37,11 @@ export const Button: React.FC<ButtonProps> = ({
   const Icon = props.icon;
 
   return (
-    <div className={cx(cls.container, props.containerClassName)}>
+    <div className={cx(
+      cls.container,
+      props.containerClassName,
+      full && cls.containerFull,
+    )}>
       <button
         disabled={props.disabled}
         type="submit"
@@ -70,10 +74,12 @@ export const Button: React.FC<ButtonProps> = ({
 const useStyles = createUseStyles({
   ...buttonStyles,
   container: {},
+  containerFull: {
+    flex: 1,
+  },
   withIcon: {
     display: 'flex',
     flexDirection: 'row',
-    // paddingRight: `0 !important`,
   },
   reverse: {
     flexDirection: 'row-reverse',
