@@ -82,14 +82,17 @@ export const GameRoomLayout: React.FC<Props> = ({
           gameAreaWidth: layout.gameArea,
         })}
       </div>
-      <div className={cls.contentContainer} ref={containerRef}>
-        <div className={cls.content} style={{
+      <div className={cls.contentContainer} ref={containerRef} style={{
+          // This is needed so the flex works correctly on the content children
+          height: `calc(100% - ${props.topHeight + props.bottomHeight}px)`,
         }}>
+        <div className={cls.content}>
           <aside
             className={cls.side}
             style={{
               width: `${layout.leftSide}px`,
               marginRight: minSpaceBetween,
+              height: `100%`,
             }}
           >
             {props.getLeftSideComponent({

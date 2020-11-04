@@ -22,7 +22,7 @@ const peerB = peerMocker.record();
 
 const now = new Date().getTime();
 
-const initHistory: ChatHistoryRecord = {
+export const initHistory: ChatHistoryRecord = {
   id: '0',
   usersInfo: {
     [peerA.id]: peerA.user,

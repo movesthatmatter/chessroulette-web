@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
-import { ChatHistoryRecord, ChatMessageRecord } from 'dstnd-io';
-import { arrReverse } from 'src/lib/util';
+import { ChatHistoryRecord } from 'dstnd-io';
 import { Message } from './components';
 import { colors } from 'src/theme';
 import { IconButton } from 'src/components/Button';
@@ -11,7 +10,6 @@ import { CSSProperties } from 'src/lib/jss/types';
 
 export type ChatProps = {
   myId: string;
-  // messages: ChatMessageRecord[];
   history: ChatHistoryRecord;
   onSend: (msg: string) => void;
 
@@ -26,12 +24,6 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
   const cls = useStyles();
 
   const [input, setInput] = useState('');
-  // const [messages, setMessages] = useState<ChatMessageRecord[]>([]);
-
-  // useEffect(() => {
-  //   console.log('messages updated for:', myId, history);
-  //   setReversedHistory(arrReverse(history.messages));
-  // }, [history]);
 
   return (
     <div className={cx(cls.container, props.className)} style={props.style}>
