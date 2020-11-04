@@ -1,10 +1,9 @@
-import { Box, Layer, Text } from 'grommet';
+import { Box, Layer } from 'grommet';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { colors, floatingShadow, fonts, softBorderRadius } from 'src/theme';
 import { Button, ButtonProps } from '../Button';
-import cx from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Text } from 'src/components/Text';
 import { noop } from 'src/lib/util';
 import { FormClose } from 'grommet-icons';
 
@@ -66,10 +65,11 @@ const useStyles = createUseStyles({
   container: {
     ...floatingShadow,
     ...softBorderRadius,
-    minWidth: '200px',
-    maxWidth: '400px',
-    width: '50%',
-    paddingBottom: '16px',
+    borderRadius: '8px !important',
+    minWidth: '200px !important',
+    maxWidth: '400px !important',
+    width: '50% !important',
+    paddingBottom: '16px !important',
     position: 'relative',
   },
   top: {
