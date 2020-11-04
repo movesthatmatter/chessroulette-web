@@ -39,7 +39,6 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
       )}
       <ClipboardCopy value={`${window.location.origin}/${toChallengeUrlPath(props.challenge)}`} />
       <Button
-        type="button"
         label="Cancel"
         onClick={props.onCancel}
       />

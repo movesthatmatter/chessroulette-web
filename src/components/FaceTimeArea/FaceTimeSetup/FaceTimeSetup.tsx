@@ -5,6 +5,7 @@ import { AspectRatio } from 'src/components/AspectRatio';
 import { Box, Text } from 'grommet';
 import { FaceTime } from '../FaceTime';
 import { getAVStream, removeAVStream } from 'src/services/AVStreaming';
+import { softBorderRadius } from 'src/theme';
 
 type Props = {
   onUpdated: (streamingConfig: PeerStreamingConfig) => void;
@@ -69,7 +70,10 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
 };
 
 const useStyles = createUseStyles({
-  container: {},
+  container: {
+    ...softBorderRadius,
+    overflow: 'hidden',
+  },
   noFacetime: {
     background: '#ededed',
   },

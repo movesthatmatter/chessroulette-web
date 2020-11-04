@@ -36,18 +36,17 @@ export const ConfirmationButton: React.FC<Props> = ({
       <Box pad="medium" gap="small" width="medium">
         {props.confirmationPopupContent}
         <Button
-          type="button"
           label={props.submitButtonLabel || 'Submit'}
           disabled={!canSubmit}
-          primary
+          type="primary"
           onClick={() => {
             setIsConfirmationPopupVisible(false);
             onSubmit();
           }}
         />
         <Button
-          type="button"
           label={props.cancelButtonLabel || 'Cancel'}
+          clear
           onClick={() => setIsConfirmationPopupVisible(false)}
         />
       </Box>
@@ -59,7 +58,6 @@ export const ConfirmationButton: React.FC<Props> = ({
       <Button
         {...props.buttonProps}
         onClick={() => setIsConfirmationPopupVisible(true)}
-        size="medium"
         label={props.label}
       />
       {isConfirmationPopupVisible && popup}

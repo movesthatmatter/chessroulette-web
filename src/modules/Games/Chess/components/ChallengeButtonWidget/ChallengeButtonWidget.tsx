@@ -9,6 +9,7 @@ import { SocketConsumer } from 'src/components/SocketProvider';
 import { PendingChallenge, PendingChallengeProps } from './PendingChallenge';
 import { useHistory } from 'react-router-dom';
 import { toRoomUrlPath } from 'src/lib/util';
+import { Dialog } from 'src/components/Dialog/Dialog';
 
 type Props = {
   buttonLabel: string;
@@ -16,19 +17,20 @@ type Props = {
   userId: UserRecord['id'];
 };
 
-type ChallengeState = {
-  state: 'none',
-} | {
-  state: 'pending',
-  challenge: ChallengeRecord,
-} | {
-  state: 'accepted',
-  room: RoomRecord,
-};
+type ChallengeState =
+  | {
+      state: 'none';
+    }
+  | {
+      state: 'pending';
+      challenge: ChallengeRecord;
+    }
+  | {
+      state: 'accepted';
+      room: RoomRecord;
+    };
 
-export const ChallengeButtonWidget: React.FC<Props> = ({
-  ...props
-}) => {
+export const ChallengeButtonWidget: React.FC<Props> = ({ ...props }) => {
   const [visiblePopup, setVisiblePopup] = useState<boolean>(false);
   const [faceTimeOn, setFaceTimeOn] = useState(false);
   const [gameSpecs, setGameSpecs] = useState<GameSpecsRecord | undefined>(undefined);
@@ -54,23 +56,21 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
               setChallengeState({ state: 'none' });
               setVisiblePopup(true);
             }}
-            size="medium"
             label={props.buttonLabel}
           />
-          {visiblePopup && (
-            <Layer position="center">
-              <Box pad="medium" gap="small" width="medium">
+          <Dialog
+            visible={visiblePopup}
+            content={
+              <Box>
                 {challengeState.state === 'pending' ? (
                   <PendingChallenge
                     challenge={challengeState.challenge}
                     type={props.type}
                     onCancel={() => {
-                      resources
-                        .deleteChallenge(challengeState.challenge.id)
-                        .map(() => {
-                          setChallengeState({ state: 'none' });
-                          setVisiblePopup(false);
-                        });
+                      resources.deleteChallenge(challengeState.challenge.id).map(() => {
+                        setChallengeState({ state: 'none' });
+                        setVisiblePopup(false);
+                      });
                     }}
                   />
                 ) : (
@@ -79,60 +79,61 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                     <Box>
                       <ChessChallengeCreator onUpdate={setGameSpecs} />
                     </Box>
-                    <Button
-                      type="button"
-                      label="Create Challenge"
-                      primary
-                      onClick={() => {
-                        if (!gameSpecs) {
-                          return;
-                        }
-
-                        if (props.type === 'challenge') {
-                          resources
-                            .createChallenge({
-                              type: 'private',
-                              gameSpecs,
-                              userId: props.userId,
-                            })
-                            .map((challenge) => {
-                              setChallengeState({
-                                state: 'pending',
-                                challenge,
-                              });
-                            });
-                        } else {
-                          resources
-                            .quickPair({
-                              userId: props.userId,
-                              gameSpecs,
-                            })
-                            .map((r) => {
-                              if (r.matched) {
-                                history.push(toRoomUrlPath(r.room));
-                              } else {
-                                setChallengeState({
-                                  state: 'pending',
-                                  challenge: r.challenge,
-                                });
-                              }
-                            });
-                        }
-                      }}
-                      disabled={!(faceTimeOn && gameSpecs)}
-                      // margin={{ bottom: 'small' }}
-                    />
-                    <Button
-                      type="button"
-                      label="Cancel"
-                      onClick={() => setVisiblePopup(false)}
-                      margin={{ top: 'small' }}
-                    />
                   </>
                 )}
               </Box>
-            </Layer>
-          )}
+            }
+            onClose={() => setVisiblePopup(false)}
+            buttons={[
+              {
+                label: 'Cancel',
+                type: 'secondary',
+                onClick: () => setVisiblePopup(false),
+              },
+              {
+                label: 'Create Challenge',
+                // full
+                type: 'primary',
+                onClick: () => {
+                  if (!gameSpecs) {
+                    return;
+                  }
+
+                  if (props.type === 'challenge') {
+                    resources
+                      .createChallenge({
+                        type: 'private',
+                        gameSpecs,
+                        userId: props.userId,
+                      })
+                      .map((challenge) => {
+                        setChallengeState({
+                          state: 'pending',
+                          challenge,
+                        });
+                      });
+                  } else {
+                    resources
+                      .quickPair({
+                        userId: props.userId,
+                        gameSpecs,
+                      })
+                      .map((r) => {
+                        if (r.matched) {
+                          history.push(toRoomUrlPath(r.room));
+                        } else {
+                          setChallengeState({
+                            state: 'pending',
+                            challenge: r.challenge,
+                          });
+                        }
+                      });
+                  }
+                },
+                disabled: !(faceTimeOn && gameSpecs),
+              },
+            ]}
+          />
         </Box>
       )}
     />

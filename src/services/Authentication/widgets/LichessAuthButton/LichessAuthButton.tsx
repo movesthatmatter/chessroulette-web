@@ -55,7 +55,6 @@ export const LichessAuthButton: React.FC<Props> = () => {
     <>
       <Button
         label="Lichess Login"
-        primary
         onClick={async () => {
           const { data } = await http.get('api/auth/lichess/url');
 
@@ -67,7 +66,6 @@ export const LichessAuthButton: React.FC<Props> = () => {
             }
           );
         }}
-        className={cls.container}
       />
       {redirectUri && (
         <ReactPopout

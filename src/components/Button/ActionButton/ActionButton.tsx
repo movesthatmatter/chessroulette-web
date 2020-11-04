@@ -65,7 +65,7 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
         // backgroundColor: colors[props.type],
        ...props.reverse && {
          flexDirection: 'row-reverse',
-       } 
+       }
       }}
     >
       <div className={cls.iconWrapper}>
