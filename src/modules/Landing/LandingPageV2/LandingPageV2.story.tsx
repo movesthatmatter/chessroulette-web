@@ -4,7 +4,6 @@ import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 import { UserRecordMocker } from 'src/mocks/records';
-import { AuthenticationProvider } from 'src/services/Authentication';
 import { LandingPageV2 } from './LandingPageV2';
 
 export default {
@@ -14,19 +13,19 @@ export default {
 
 const userRecordMocker = new UserRecordMocker();
 
+const userA = userRecordMocker.record(false);
+
 export const defaultStory = () => (
   <StorybookReduxProvider
     initialState={{
       authentication: {
         authenticationType: 'user',
-        user: userRecordMocker.record(false),
+        user: userA,
       },
     }}
   >
     <Grommet theme={defaultTheme} full>
-      <AuthenticationProvider>
-        <LandingPageV2 />
-      </AuthenticationProvider>
+      <LandingPageV2 />
     </Grommet>
   </StorybookReduxProvider>
 );

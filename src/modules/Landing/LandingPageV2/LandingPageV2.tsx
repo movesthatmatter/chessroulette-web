@@ -1,73 +1,74 @@
 import React from 'react';
 import { Page } from 'src/components/Page';
-import { Box, Text } from 'grommet';
-import { useHistory } from 'react-router-dom';
-import { selectAuthentication } from 'src/services/Authentication';
-import { useSelector } from 'react-redux';
+import { Box } from 'grommet';
+import { Text } from 'src/components/Text';
 import { ChallengeButtonWidget } from 'src/modules/Games/Chess/components/ChallengeButtonWidget';
 import chessBackground from '../LandingPage/assets/chess_icons.png';
-import logo from 'src/assets/logo.svg';
 import { createUseStyles } from 'src/lib/jss';
-import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import { colors } from 'src/theme';
 
 type Props = {};
 
 export const LandingPageV2: React.FC<Props> = () => {
   const cls = useStyles();
-  const authentication = useSelector(selectAuthentication);
-
-  // This should never happen
-  if (authentication.authenticationType === 'none') {
-    return null;
-  }
 
   return (
     <Page>
-      <Box
-        alignContent="center"
-        justify="center"
-        style={{
-          height: '100%',
-        }}
-      >
-        <Box
-          alignSelf="center"
-          justify="center"
-          style={{
-            margin: '0 auto',
-            width: '60%',
-            minWidth: '850px',
-            maxWidth: '850px',
-            paddingBottom: '50px',
-          }}
-        >
-          <h3 className={cls.headerText}>Play chess online with video streaming</h3>
-          <Box direction="row-responsive" alignContent="between">
-            <Box margin={{ top: '60px' }} flex="grow">
-              <Text>No account needed.</Text>
-              <Text>Game hosting and video chat.</Text>
-              <Text>Play with friends in a private lobby</Text>
-              <Text>or start a quick game.</Text>
-            </Box>
-            <Box alignContent="end" alignSelf="end">
-              <Mutunachi mid={12} className={cls.mutunachi} />
-            </Box>
-            <Box align="end" alignSelf="end" margin={{ bottom: '-30px' }}>
-              <div className={cls.chessboard} />
+      <Box alignContent="center" justify="center" style={{ height: '100%' }}>
+        <Box width="xlarge" alignSelf="center" direction="row-responsive">
+          <Box
+            style={{
+              flex: 1,
+              alignItems: 'flex-end',
+              display: 'flex',
+              flexDirection: 'row',
+            }}
+          >
+            <img
+              src={chessBackground}
+              style={{
+                width: '100%',
+                maxWidth: '500px',
+              }}
+            />
+          </Box>
+          <div style={{ paddingRight: '32px' }} />
+          <Box
+            style={{
+              flex: 1,
+              alignSelf: 'center',
+            }}
+          >
+            <h2 className={cls.headerText}>
+              Online Chess +<br /> 
+              Video Streaming
+            </h2>
+            <Text className={cls.text}>No account needed.</Text>
+            <Text className={cls.text}>Game hosting and video chat.</Text>
+            <Text className={cls.text}>Play with friends in a private lobby or start a quick game.</Text>
+            <Box
+              width="small"
+              margin={{ top: 'large' }}
+              alignSelf="center"
+              fill
+              direction="row"
+            >
+              <ChallengeButtonWidget
+                label="Play a Friend"
+                challengeType="challenge"
+                size="medium"
+                style={{
+                  marginRight: '16px',
+                }}
+              />
+              <ChallengeButtonWidget
+                label="Quick Game"
+                challengeType="quickPairing"
+                size="medium"
+                type="secondary"
+              />
             </Box>
           </Box>
-        </Box>
-        <Box width="medium" alignSelf="center">
-          <ChallengeButtonWidget
-            buttonLabel="Play a Friend"
-            userId={authentication.user.id}
-            type="challenge"
-          />
-          <ChallengeButtonWidget
-            buttonLabel="Quick Game"
-            userId={authentication.user.id}
-            type="quickPairing"
-          />
         </Box>
       </Box>
     </Page>
@@ -75,72 +76,15 @@ export const LandingPageV2: React.FC<Props> = () => {
 };
 
 const useStyles = createUseStyles({
-  container: {
-    fontFamily: 'Open Sans, sans-serif',
-  },
-  chessboard: {
-    width: '360px',
-    height: '321px',
-    background: ` url(${chessBackground})`,
-  },
   headerText: {
-    fontFamily: 'Roboto Slab',
-    fontWeight: 'bold',
+    marginTop: 0,
     fontSize: '48px',
-    lineHeight: '63px',
-    margin: '0 auto',
-    color: '#262626',
-    position: 'relative',
-    zIndex: 2,
-  },
-  buttonsContainer: {
-    marginTop: '80px',
-    marginLeft: '100px',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'spaced-around',
-  },
-  logo: {
-    marginBottom: '20px',
-    width: '357px',
+    lineHeight: '140%',
   },
   text: {
     fontFamily: 'Roboto Slab',
     fontSize: '18px',
-  },
-  link: {
-    margin: '0px',
-    maxWidth: '100px',
-    borderRadius: '15px',
-    backgroundColor: '#e9685a',
-    textAlign: 'center',
-    color: 'white',
-    textDecoration: 'none',
-
-    '&:hover': {
-      transform: 'scale(1.05)',
-      textDecoration: 'none',
-      cursor: 'pointer',
-      backgroundColor: '#e9685a',
-    },
-  },
-  linkContent: {
-    padding: '10px',
-  },
-  leftSideContainer: {
-    display: 'flex',
-    width: '575px',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-  },
-  buttonWithMutunachiWrapper: {
-    position: 'relative',
-  },
-  mutunachi: {
-    // position: 'absolute',
-    // zIndex: 1,
-    // top: `-${171 + 50}px`,
-    // left: '12%',
-    height: '220px',
+    lineHeight: '1.6em',
+    color: colors.neutralDarkest,
   },
 });

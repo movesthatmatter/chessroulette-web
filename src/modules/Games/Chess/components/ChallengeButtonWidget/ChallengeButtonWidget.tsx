@@ -11,10 +11,11 @@ import { useHistory } from 'react-router-dom';
 import { toRoomUrlPath } from 'src/lib/util';
 import { Dialog } from 'src/components/Dialog/Dialog';
 import { AwesomeError } from 'src/components/AwesomeError';
+import { selectAuthentication } from 'src/services/Authentication';
+import { useSelector } from 'react-redux';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   challengeType: PendingChallengeProps['type'];
-  userId: UserRecord['id'];
 };
 
 type ChallengeState =
@@ -32,7 +33,6 @@ type ChallengeState =
 
 export const ChallengeButtonWidget: React.FC<Props> = ({
   challengeType,
-  userId,
   ...buttonProps
 }) => {
   const [visiblePopup, setVisiblePopup] = useState<boolean>(false);
@@ -40,6 +40,15 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
   const [gameSpecs, setGameSpecs] = useState<GameSpecsRecord | undefined>(undefined);
   const [challengeState, setChallengeState] = useState<ChallengeState>({ state: 'none' });
   const history = useHistory();
+
+  const authentication = useSelector(selectAuthentication);
+
+  // This should never happen
+  if (authentication.authenticationType === 'none') {
+    return null;
+  }
+
+  const userId = authentication.user.id;
 
   return (
     <>

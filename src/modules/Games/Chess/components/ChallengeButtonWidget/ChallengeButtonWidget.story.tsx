@@ -2,17 +2,19 @@
 import React from 'react';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
-import { action } from '@storybook/addon-actions';
 import { ChallengeButtonWidget } from './ChallengeButtonWidget';
 import { SocketConsumer, SocketProvider } from 'src/components/SocketProvider';
+import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
+import { UserRecordMocker } from 'src/mocks/records';
 
 export default {
   component: ChallengeButtonWidget,
   title: 'components/ChallengeButtonWidget',
 };
 
-// This could fail if it's not authenticated
-const userId = 'g-1'; 
+const userMocker = new UserRecordMocker();
+
+const user = userMocker.record();
 
 export const defaultStory = () => (
   <SocketProvider>
@@ -21,23 +23,28 @@ export const defaultStory = () => (
         socket.send({
           kind: 'userIdentification',
           content: {
-            userId,
-          }
+            userId: user.id,
+          },
         })
       }}
       render={() => (
         <Grommet theme={defaultTheme}>
           <div style={{ width: '200px' }}>
-            <ChallengeButtonWidget
-              label="Play a Friend"
-              userId="g-1"
-              challengeType='challenge'
-            />
-            <ChallengeButtonWidget
-              label="Quickpair"
-              userId="g-1"
-              challengeType='quickPairing'
-            />
+            <StorybookReduxProvider initialState={{
+              authentication: {
+                authenticationType: 'guest',
+                user: user,
+              }
+            }}>
+              <ChallengeButtonWidget
+                label="Play a Friend"
+                challengeType='challenge'
+              />
+              <ChallengeButtonWidget
+                label="Quickpair"
+                challengeType='quickPairing'
+              />
+            </StorybookReduxProvider>
           </div>
         </Grommet>
       )}
