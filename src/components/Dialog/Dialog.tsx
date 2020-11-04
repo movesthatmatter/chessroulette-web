@@ -12,7 +12,7 @@ type Props = {
   title?: string;
   content: string | React.ReactNode;
   graphic?: React.ReactNode;
-  buttons: ButtonProps[];
+  buttons: (ButtonProps | boolean | undefined)[];
   hasCloseButton?: boolean;
   onClose?: () => void;
 };
@@ -28,6 +28,7 @@ export const Dialog: React.FC<Props> = ({ hasCloseButton = true, onClose = noop,
     <Layer
       className={cls.container}
       position="center"
+      animation="slide"
     >
         <div className={cls.top}>
           <div style={{ flex: 1 }} />
@@ -49,13 +50,22 @@ export const Dialog: React.FC<Props> = ({ hasCloseButton = true, onClose = noop,
           )}
         </div>
         <div className={cls.buttonsWrapper}>
-          {props.buttons.map((buttonProps) => (
-            <Button 
-              className={cls.button}
-              containerClassName={cls.buttonContainer}
-              {...buttonProps} 
-            />
-          ))}
+          {props.buttons.map((buttonProps, i) => {
+            if (typeof buttonProps !== 'object') {
+              return null;
+            }
+
+            return (
+              <Button
+                key={i}
+                className={cls.button}
+                containerClassName={cls.buttonContainer}
+                // size="medium"
+                full
+                {...buttonProps} 
+              />
+            )
+          })}
         </div>
     </Layer>
   );
@@ -67,27 +77,28 @@ const useStyles = createUseStyles({
     ...softBorderRadius,
     borderRadius: '8px !important',
     minWidth: '200px !important',
-    maxWidth: '400px !important',
+    maxWidth: '360px !important',
     width: '50% !important',
-    paddingBottom: '16px !important',
+    padding: 0,
+    paddingBottom: '24px !important',
     position: 'relative',
   },
   top: {
     height: '32px',
     display: 'flex',
     flexDirection: 'row',
-    paddingLeft: '8px',
-    paddingRight: '8px',
+    paddingLeft: '4px',
+    paddingRight: '4px',
   },
   exitButton: {
+    display: 'flex',
     cursor: 'pointer',
-    justifySelf: 'flex-end',
-    alignSelf: 'flex-end',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   exitIcon: {
-    color: 'red',
-    fill: colors.neutralDark,
-    stroke: colors.neutralDark,
+    fill: `${colors.neutralDark} !important`,
+    stroke: `${colors.neutralDark} !important`,
   },
   title: {
     ...fonts.subtitle1,
