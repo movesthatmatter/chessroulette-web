@@ -3,20 +3,21 @@ import { createUseStyles } from 'src/lib/jss';
 import { Icon as GIcon } from 'grommet-icons';
 import { borderRadius, colors } from 'src/theme';
 import cx from 'classnames';
-import { CSSProperties } from 'src/lib/jss/types';
-import { buttonEffects } from '../effects';
-import hexToRGBA from 'hex-to-rgba';
 import { ButtonType } from '../type';
 import { buttonStyles } from '../styles';
 
 type Props = {
   icon: GIcon;
   onSubmit: () => void;
-  type: ButtonType;
+  type?: ButtonType;
   disabled?: boolean;
+  className?: string;
 };
 
-export const IconButton: React.FC<Props> = (props) => {
+export const IconButton: React.FC<Props> = ({
+  type = 'primary',
+  ...props
+}) => {
   const cls = useStyles();
   const Icon = props.icon;
 
@@ -26,7 +27,8 @@ export const IconButton: React.FC<Props> = (props) => {
       type="submit"
       className={cx(
         cls.button,
-        props.disabled || cls[props.type],
+        props.disabled || cls[type],
+        props.className,
       )}
       onClick={() => props.onSubmit()}
     >

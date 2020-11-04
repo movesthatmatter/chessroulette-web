@@ -5,8 +5,9 @@ import { Icon as GIcon } from 'grommet-icons';
 import cx from 'classnames';
 import { buttonStyles } from '../styles';
 import { borderRadius, colors } from 'src/theme';
-import { Text } from 'grommet';
 import { buttonEffects } from '../effects';
+import { Text } from 'src/components/Text';
+import { CSSProperties } from 'src/lib/jss/types';
 
 
 export type ButtonProps = {
@@ -21,6 +22,7 @@ export type ButtonProps = {
   containerClassName?: string;
   className?: string;
   size?: 'auto' | 'small' | 'medium' | 'large';
+  style?: CSSProperties;
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -49,6 +51,7 @@ export const Button: React.FC<ButtonProps> = ({
           size !== 'auto' && cls[size],
           props.className,
         )}
+        style={props.style}
         onClick={() => props.onClick()}
       >
         <Text className={cls.label}>
@@ -66,9 +69,7 @@ export const Button: React.FC<ButtonProps> = ({
 
 const useStyles = createUseStyles({
   ...buttonStyles,
-  container: {
-
-  },
+  container: {},
   withIcon: {
     display: 'flex',
     flexDirection: 'row',

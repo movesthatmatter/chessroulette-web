@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { colors } from 'src/theme/colors';
-import { Text } from 'grommet';
+import { Text } from 'src/components/Text';
 import cx from 'classnames';
 import { Icon as GIcon } from 'grommet-icons';
 import { borderRadius } from 'src/theme/effects';
@@ -122,10 +122,10 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
   },
   icon: {
-    fill: colors.white,
-    stroke: colors.white,
-    width: '16px',
-    height: '16px',
+    fill: `${colors.white} !important`,
+    stroke: `${colors.white} !important`,
+    width: '16px !important',
+    height: '16px !important',
   },
 
   confirmPositive: {

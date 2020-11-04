@@ -20,20 +20,23 @@ const button: CSSProperties = {
     outline: 'none',
   },
 
+  display: 'flex',
+  flexDirection: 'row',
+
   ...borderRadius,
   ...buttonEffects.onClickTransition,
 };
 
 const clear: CSSProperties = {
-  borderWidth: '2px !important',
+  borderWidth: '1px !important',
   borderStyle: 'solid !important',
   borderColor: colors.neutral,
   background: 'transparent !important',
 
   ...({
     '& $label': {
-      color: `${colors.black} !important`,
-      fontWeight: 200,
+      color: `${colors.neutralDarkest} !important`,
+      // fontWeight: 200,
       lineHeight: '28px',
     },
     '& $iconWrapper': {
