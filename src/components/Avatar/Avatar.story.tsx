@@ -2,6 +2,7 @@
 import React from 'react';
 import { Box } from 'grommet';
 import { Avatar } from './Avatar';
+import { Mutunachi } from '../Mutunachi/Mutunachi';
 
 export default {
   component: Avatar,
@@ -10,10 +11,20 @@ export default {
 
 export const defaultStory = () => (
   <Box>
-    <Avatar id="2" width={50} />
-    <Avatar id="4" width={50} />
-    <Avatar id="5" width={50} />
-    <Avatar id="1" width={50} />
-    <Avatar id="9" width={50} />
+    <Avatar>
+      <Mutunachi mid="2"/>
+    </Avatar>
+    <Avatar>
+      <Mutunachi mid="4"/>
+    </Avatar>
+    <Avatar>
+      <Mutunachi mid="5"/>
+    </Avatar>
+    <Avatar>
+      <Mutunachi mid="1"/>
+    </Avatar>
+    <Avatar>
+      <Mutunachi mid="9"/>
+    </Avatar>
   </Box>
 );

@@ -1,35 +1,38 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { Mutunachi } from '../Mutunachi/Mutunachi';
-import { AspectRatio, AspectRatioProps } from '../AspectRatio';
+import { Avatar as GAvatar, AvatarProps as GAvatarProps } from 'grommet';
+import { floatingShadow } from 'src/theme';
 
-type Props = AspectRatioProps & {
-  id: string;
+type Props = GAvatarProps & {
   className?: string;
 };
 
 export const Avatar: React.FC<Props> = ({
-  id,
-  aspectRatio = { width: 1, height: 1 },
   className,
   ...props
 }) => {
   const cls = useStyles();
 
   return (
-    <AspectRatio
-      {...props}
-      aspectRatio={aspectRatio}
+    <GAvatar
+      size="medium"
+      round="large"
+      margin={{
+        right: 'small'
+      }}
       className={cx(cls.container, className)}
+      {...props}
     >
-      <Mutunachi mid={id} />
-    </AspectRatio>
+      {props.children}
+    </GAvatar>
   );
 };
 
 const useStyles = createUseStyles({
   container: {
-    // border: '1px solid #ededed',
+    height: '32px !important',
+    width: '32px !important',
+    ...floatingShadow,
   },
 });
