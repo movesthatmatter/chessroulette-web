@@ -51,6 +51,9 @@ export const ChallengePage: React.FC<Props> = (props) => {
               <ChallengeInfo
                 challenge={challenge}
                 user={auth.user}
+                onDeny={() => {
+                  history.replace('/');
+                }}
                 onAccept={() => {
                   resources
                     .acceptChallenge({

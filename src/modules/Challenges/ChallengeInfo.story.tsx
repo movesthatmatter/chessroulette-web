@@ -35,6 +35,7 @@ export const defaultStory = () => (
         name: 'Gari Kasparov',
         avatarId: '2',
       }}
+      onDeny={action('on deny')}
       onAccept={action('on accept')}
     />
   </Grommet>
@@ -68,6 +69,7 @@ export const asPage = () => (
                 name: 'Gari Kasparov',
                 avatarId: '2',
               }}
+              onDeny={action('on deny')}
               onAccept={action('on accept')}
             />
           </Box>
