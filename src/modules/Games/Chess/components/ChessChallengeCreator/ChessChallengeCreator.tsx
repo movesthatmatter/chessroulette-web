@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { Select, Box, Text } from 'grommet';
+import { Select, Box } from 'grommet';
+import { Text } from 'src/components/Text';
 import {
   ChessGameTimeLimit,
   metadata,
@@ -36,7 +37,7 @@ export const ChessChallengeCreator: React.FC<Props> = ({
   return (
     <div className={cls.container}>
       <Box margin={{ bottom: 'small' }}>
-        <Text size="small">Time Limit</Text>
+        <Text size="small1">Time Limit</Text>
         <Select
           size="small"
           options={Object
@@ -55,7 +56,7 @@ export const ChessChallengeCreator: React.FC<Props> = ({
         />
       </Box>
       <Box margin={{ bottom: 'small' }}>
-        <Text size="small">Preffered Color</Text>
+        <Text size="small1">Preffered Color</Text>
         <Select
           size="small"
           options={metadata.game.chessGamePrefferedColorOptionList.map((k) =>

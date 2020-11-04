@@ -3,7 +3,7 @@ import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { ChatMessageRecord, UserInfoRecord, UserRecord } from 'dstnd-io';
 import { colors, fonts } from 'src/theme';
-import { Text } from 'grommet';
+import { Text } from 'src/components/Text';
 
 type Props = {
   myId: UserRecord['id'];

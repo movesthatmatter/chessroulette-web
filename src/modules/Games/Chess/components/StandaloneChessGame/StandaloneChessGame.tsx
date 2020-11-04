@@ -9,6 +9,7 @@ import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
 import { Avatar } from 'src/components/Avatar';
 import { otherChessColor } from '../../util';
 import { ChessGame } from '../ChessGame/ChessGame';
+import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   playable: boolean;
@@ -54,7 +55,10 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
         <div className={cx([cls.playerBar, cls.playerBarTop])}>
           <div className={cls.playerBarContent}>
             <div className={cls.playerInfo}>
-              <Avatar id={opponentPlayer.user.avatarId} width={40} className={cls.avatar} />
+              <Avatar className={cls.avatar}>
+                <Mutunachi mid={opponentPlayer.user.avatarId} />
+              </Avatar>
+
               {opponentPlayer.user.name}
             </div>
             <Coundtdown
@@ -86,7 +90,9 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
         <div className={cx([cls.playerBar, cls.playerBarBottom])}>
           <div className={cls.playerBarContent}>
             <div className={cls.playerInfo}>
-              <Avatar id={myPlayer.user.avatarId} width={40} className={cls.avatar} />
+              <Avatar className={cls.avatar}>
+                <Mutunachi mid={myPlayer.user.avatarId} />
+              </Avatar>
               {myPlayer.user.name}
             </div>
             <Coundtdown

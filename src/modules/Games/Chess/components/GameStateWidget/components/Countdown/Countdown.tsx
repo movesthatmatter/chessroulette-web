@@ -4,7 +4,7 @@ import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import dateFormat from 'dateformat';
 import { useInterval } from 'src/lib/hooks';
-import { Text } from 'grommet';
+import { Text } from 'src/components/Text';
 import { timeLeftToFormatMajor, timeLeftToFormatMinor, timeLeftToInterval } from './util';
 import { text } from 'src/theme/text';
 

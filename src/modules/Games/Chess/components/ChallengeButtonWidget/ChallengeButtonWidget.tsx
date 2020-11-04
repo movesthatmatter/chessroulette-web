@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Layer } from 'grommet';
 import { ChessChallengeCreator } from 'src/modules/Games/Chess/components/ChessChallengeCreator';
 import { ChallengeRecord, GameSpecsRecord, RoomRecord, UserRecord } from 'dstnd-io';
-import { Button } from 'src/components/Button';
+import { Button, ButtonProps } from 'src/components/Button';
 import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
 import { resources } from 'src/resources';
 import { SocketConsumer } from 'src/components/SocketProvider';
@@ -10,10 +10,10 @@ import { PendingChallenge, PendingChallengeProps } from './PendingChallenge';
 import { useHistory } from 'react-router-dom';
 import { toRoomUrlPath } from 'src/lib/util';
 import { Dialog } from 'src/components/Dialog/Dialog';
+import { AwesomeError } from 'src/components/AwesomeError';
 
-type Props = {
-  buttonLabel: string;
-  type: PendingChallengeProps['type'];
+type Props = Omit<ButtonProps, 'onClick'> & {
+  challengeType: PendingChallengeProps['type'];
   userId: UserRecord['id'];
 };
 
@@ -30,7 +30,11 @@ type ChallengeState =
       room: RoomRecord;
     };
 
-export const ChallengeButtonWidget: React.FC<Props> = ({ ...props }) => {
+export const ChallengeButtonWidget: React.FC<Props> = ({
+  challengeType,
+  userId,
+  ...buttonProps
+}) => {
   const [visiblePopup, setVisiblePopup] = useState<boolean>(false);
   const [faceTimeOn, setFaceTimeOn] = useState(false);
   const [gameSpecs, setGameSpecs] = useState<GameSpecsRecord | undefined>(undefined);
@@ -38,34 +42,37 @@ export const ChallengeButtonWidget: React.FC<Props> = ({ ...props }) => {
   const history = useHistory();
 
   return (
-    <SocketConsumer
-      onMessage={(msg) => {
-        if (msg.kind === 'challengeAccepted') {
-          setChallengeState({
-            state: 'accepted',
-            room: msg.content.room,
-          });
+    <>
+      <Button
+        onClick={() => {
+          setChallengeState({ state: 'none' });
+          setVisiblePopup(true);
+        }}
+        {...buttonProps}
+      />
+      <Dialog
+        visible={visiblePopup}
+        content={
+          <SocketConsumer
+            onMessage={(msg) => {
+              if (msg.kind === 'challengeAccepted') {
+                setChallengeState({
+                  state: 'accepted',
+                  room: msg.content.room,
+                });
 
-          history.push(toRoomUrlPath(msg.content.room));
-        }
-      }}
-      render={() => (
-        <Box margin="small">
-          <Button
-            onClick={() => {
-              setChallengeState({ state: 'none' });
-              setVisiblePopup(true);
+                history.push(toRoomUrlPath(msg.content.room));
+              }
             }}
-            label={props.buttonLabel}
-          />
-          <Dialog
-            visible={visiblePopup}
-            content={
+            fallbackRender={() => (
+              <AwesomeError />
+            )}
+            render={() => (
               <Box>
                 {challengeState.state === 'pending' ? (
                   <PendingChallenge
                     challenge={challengeState.challenge}
-                    type={props.type}
+                    type={challengeType}
                     onCancel={() => {
                       resources.deleteChallenge(challengeState.challenge.id).map(() => {
                         setChallengeState({ state: 'none' });
@@ -82,60 +89,60 @@ export const ChallengeButtonWidget: React.FC<Props> = ({ ...props }) => {
                   </>
                 )}
               </Box>
-            }
-            onClose={() => setVisiblePopup(false)}
-            buttons={[
-              {
-                label: 'Cancel',
-                type: 'secondary',
-                onClick: () => setVisiblePopup(false),
-              },
-              {
-                label: 'Create Challenge',
-                // full
-                type: 'primary',
-                onClick: () => {
-                  if (!gameSpecs) {
-                    return;
-                  }
-
-                  if (props.type === 'challenge') {
-                    resources
-                      .createChallenge({
-                        type: 'private',
-                        gameSpecs,
-                        userId: props.userId,
-                      })
-                      .map((challenge) => {
-                        setChallengeState({
-                          state: 'pending',
-                          challenge,
-                        });
-                      });
-                  } else {
-                    resources
-                      .quickPair({
-                        userId: props.userId,
-                        gameSpecs,
-                      })
-                      .map((r) => {
-                        if (r.matched) {
-                          history.push(toRoomUrlPath(r.room));
-                        } else {
-                          setChallengeState({
-                            state: 'pending',
-                            challenge: r.challenge,
-                          });
-                        }
-                      });
-                  }
-                },
-                disabled: !(faceTimeOn && gameSpecs),
-              },
-            ]}
+            )}
           />
-        </Box>
-      )}
-    />
+        }
+        onClose={() => setVisiblePopup(false)}
+        buttons={[
+          {
+            label: 'Cancel',
+            type: 'secondary',
+            onClick: () => setVisiblePopup(false),
+          },
+          {
+            label: 'Create Challenge',
+            // full
+            type: 'primary',
+            onClick: () => {
+              if (!gameSpecs) {
+                return;
+              }
+
+              if (challengeType === 'challenge') {
+                resources
+                  .createChallenge({
+                    type: 'private',
+                    gameSpecs,
+                    userId,
+                  })
+                  .map((challenge) => {
+                    setChallengeState({
+                      state: 'pending',
+                      challenge,
+                    });
+                  });
+              } else {
+                resources
+                  .quickPair({
+                    gameSpecs,
+                    userId,
+                  })
+                  .map((r) => {
+                    if (r.matched) {
+                      history.push(toRoomUrlPath(r.room));
+                    } else {
+                      setChallengeState({
+                        state: 'pending',
+                        challenge: r.challenge,
+                      });
+                    }
+                  });
+              }
+            },
+            disabled: !(faceTimeOn && gameSpecs),
+          },
+        ]}
+      />
+    </>
   );
 };

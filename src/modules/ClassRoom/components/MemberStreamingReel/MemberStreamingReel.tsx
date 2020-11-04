@@ -1,7 +1,8 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { Box, Text } from 'grommet';
+import { Box } from 'grommet';
+import { Text } from 'src/components/Text';
 import { Peer } from 'src/components/RoomProvider';
 import { FaceTime } from 'src/components/FaceTimeArea';
 
@@ -47,7 +48,7 @@ export const MemberStreamingReel: React.FC<Props> = ({
                 streamConfig={peer.connection.channels.streaming}
               />
               <div className={cls.textContainer}>
-                <Text size="small">{peer.user.name}</Text>
+                <Text size="small1">{peer.user.name}</Text>
               </div>
             </Box>
           ))}

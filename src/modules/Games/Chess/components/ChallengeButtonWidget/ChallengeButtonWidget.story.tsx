@@ -29,16 +29,14 @@ export const defaultStory = () => (
         <Grommet theme={defaultTheme}>
           <div style={{ width: '200px' }}>
             <ChallengeButtonWidget
-              buttonLabel="Play a Friend"
+              label="Play a Friend"
               userId="g-1"
-              type='challenge'
-              // onSubmit={action('on submit')}
+              challengeType='challenge'
             />
             <ChallengeButtonWidget
-              buttonLabel="Quickpair"
-              // onSubmit={action('on submit')}
+              label="Quickpair"
               userId="g-1"
-              type='quickPairing'
+              challengeType='quickPairing'
             />
           </div>
         </Grommet>

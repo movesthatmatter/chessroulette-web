@@ -2,7 +2,8 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { AspectRatio, AspectRatioProps } from '../AspectRatio';
-import { Box, Text } from 'grommet';
+import { Box } from 'grommet';
+import { Text } from 'src/components/Text';
 
 const errorsMap = {
   resourceNotFound: {

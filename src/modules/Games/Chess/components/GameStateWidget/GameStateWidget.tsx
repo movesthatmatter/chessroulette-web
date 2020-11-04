@@ -1,5 +1,6 @@
 import { ChessGameColor, ChessGameState } from 'dstnd-io';
-import { Box, Text } from 'grommet';
+import { Box } from 'grommet';
+import { Text } from 'src/components/Text';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
@@ -72,7 +73,7 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
               flex: 1,
             }}
           >
-            <Text size="small" className={cls.gameStatus} textAlign="center">
+            <Text size="small1" className={cls.gameStatus}>
               {game.state === 'finished' && (
                 <>
                   {game.winner === '1/2' ? (
@@ -80,7 +81,7 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
                   ) : (
                     <>
                       {`${capitalize(game.winner)} won! `}
-                      <Text size="medium">
+                      <Text>
                         <Emoji symbol="🎉" />
                       </Text>
                     </>

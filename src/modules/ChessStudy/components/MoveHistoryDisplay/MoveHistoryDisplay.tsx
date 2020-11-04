@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { Text } from 'grommet';
+import { Text } from 'src/components/Text';
 import { MoveHistory } from '../../types';
 
 type Props = {

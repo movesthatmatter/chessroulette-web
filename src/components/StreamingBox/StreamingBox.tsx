@@ -1,12 +1,13 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { Button, Box } from 'grommet';
+import { Box } from 'grommet';
 import { FaceTime } from '../FaceTimeArea';
 import { Peer, Room } from '../RoomProvider';
 import { AspectRatio } from '../AspectRatio';
 import { MultiStreamingBox } from './MultiStreamingBox';
 import { Streamer } from './types';
 import { softBorderRadius } from 'src/theme';
+import { Button } from 'src/components/Button';
 
 type Props = {
   room: Room;
@@ -55,7 +56,10 @@ export const StreamingBox: React.FC<Props> = (props) => {
           ) : (
             <AspectRatio className={cls.noFacetime}>
               <Box alignContent="center" justify="center">
-                <Button type="button">Start Streaming</Button>
+                <Button
+                  label="Start Streaming"
+                  onClick={() => {}} 
+                />
               </Box>
             </AspectRatio>
           )}

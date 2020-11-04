@@ -4,7 +4,7 @@ import cx from 'classnames';
 import { PeerStreamingConfig } from 'src/services/peers';
 import { AVStream, AVStreamProps } from '../AVStream';
 import { colors, fonts } from 'src/theme';
-import { Text } from 'grommet';
+import { Text } from 'src/components/Text';
 import { AspectRatio } from '../AspectRatio';
 
 export type FaceTimeProps = Omit<AVStreamProps, 'stream'> & {

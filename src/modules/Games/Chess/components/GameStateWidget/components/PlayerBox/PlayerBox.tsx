@@ -1,7 +1,10 @@
 import { ChessPlayer } from 'dstnd-io';
-import { Avatar, Box, Text } from 'grommet';
+import { Box } from 'grommet';
+
 import React from 'react';
+import { Avatar } from 'src/components/Avatar';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { ChessGameState } from 'src/modules/Games/Chess/records';
 import { floatingShadow, fonts } from 'src/theme';
@@ -23,14 +26,7 @@ export const PlayerBox: React.FC<Props> = ({
   return (
     <Box fill className={cls.container} direction="row">
       <Box className={cls.playerInfo} fill direction="row">
-        <Avatar
-          size="medium"
-          round="large"
-          margin={{
-            right: 'small'
-          }}
-          className={cls.avatar}
-        >
+        <Avatar>
           <Mutunachi mid={player.user.avatarId} />
         </Avatar>
         <Text className={cls.playerNameText}>

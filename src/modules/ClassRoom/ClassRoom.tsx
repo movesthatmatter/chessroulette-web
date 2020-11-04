@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Room } from 'src/components/RoomProvider';
-import { Button } from 'grommet';
+import { IconButton } from 'src/components/Button';
 import { FaceTime } from 'src/components/FaceTimeArea';
 import { Workshop, View } from 'grommet-icons';
 import { MemberList } from './components/MemberList';
-import { MemberStreamingReel } from './components/MemberStreamingReel/MemberStreamingReel';
+import { MemberStreamingReel } from './components/MemberStreamingReel';
 import { ChatContainer } from '../../components/Chat';
 import { BlackBoard, BlackBoardProps } from './components/BlackBoard';
 import { ChessStudyContainer } from '../ChessStudy/ChessStudyContainer';
@@ -27,20 +27,20 @@ export const ClassRoom: React.FC<ClassroomProps> = ({
       <main className={cls.main}>
         <header className={cls.header}>
           {mode === 'facetime' ? (
-            <Button
-              icon={<Workshop />}
-              onClick={() => {
+            <IconButton
+              icon={Workshop}
+              onSubmit={() => {
                 setMode('study');
               }}
               className={cls.topButton}
             />
           ) : (
-            <Button
-              icon={<View />}
-              onClick={() => {
+            <IconButton
+              icon={View}
+              onSubmit={() => {
                 setMode('facetime');
               }}
-              primary
+              type="primary"
             />
           )}
 

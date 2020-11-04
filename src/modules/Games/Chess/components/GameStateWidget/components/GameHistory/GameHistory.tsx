@@ -1,5 +1,5 @@
 import { ChessGameState } from 'dstnd-io';
-import { Text } from 'grommet';
+import { Text } from 'src/components/Text';
 import React, { useEffect, useRef, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { getNewChessGame } from 'src/modules/Games/Chess/lib/sdk';

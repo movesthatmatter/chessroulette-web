@@ -1,9 +1,11 @@
-import { Avatar, Box, Menu, Text } from 'grommet';
+import { Box } from 'grommet';
+import { Text } from 'src/components/Text';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { AuthenticationConsumer } from 'src/services/Authentication';
 import { floatingShadow, fonts } from 'src/theme';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
+import { Avatar } from 'src/components/Avatar';
 
 type Props = {};
 
@@ -16,11 +18,7 @@ export const UserMenu: React.FC<Props> = (props) => {
         <Box fill className={cls.container} direction="row">
           <Box fill direction="row">
             <Avatar
-              size="medium"
-              round="large"
-              margin={{
-                right: 'small',
-              }}
+              // size="medium"
               className={cls.avatar}
             >
               <Mutunachi mid={user.avatarId} />

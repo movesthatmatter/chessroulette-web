@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { PeerStreamingConfig } from 'src/services/peers';
 import { AspectRatio } from 'src/components/AspectRatio';
-import { Box, Text } from 'grommet';
+import { Box } from 'grommet';
+import { Text } from 'src/components/Text';
 import { FaceTime } from '../FaceTime';
 import { getAVStream, removeAVStream } from 'src/services/AVStreaming';
 import { softBorderRadius } from 'src/theme';
@@ -56,10 +57,10 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
           <AspectRatio className={cls.noFacetime}>
             <Box fill justify="center" alignContent="center" align="center" pad="medium">
               {permissionState === 'pending' && (
-                <Text textAlign="center">Waiting for Camera & Microphone Permissions...</Text>
+                <Text>Waiting for Camera & Microphone Permissions...</Text>
               )}
               {permissionState === 'denied' && (
-                <Text textAlign="center">Your Camera & Microphone permissions seem to be off. Please allow them in order to proceed.</Text>
+                <Text>Your Camera & Microphone permissions seem to be off. Please allow them in order to proceed.</Text>
               )}
             </Box>
           </AspectRatio>

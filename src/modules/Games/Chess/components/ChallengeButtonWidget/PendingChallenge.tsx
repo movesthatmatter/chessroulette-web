@@ -1,13 +1,12 @@
-import { ChallengeAcceptedPayload, ChallengeRecord, RoomRecord } from 'dstnd-io';
-import { Box, Text } from 'grommet';
-import React, { useEffect, useState } from 'react';
+import { ChallengeRecord } from 'dstnd-io';
+import { Box } from 'grommet';
+import { Text } from 'src/components/Text';
+import React from 'react';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { Button } from 'src/components/Button';
 import { ClipboardCopy } from 'src/components/CipboardCopy'
-import { SocketConsumer } from 'src/components/SocketProvider';
 import { createUseStyles } from 'src/lib/jss';
 import { toChallengeUrlPath } from 'src/lib/util';
-import { resources } from 'src/resources';
 
 export type PendingChallengeProps = {
   onCancel: () => void;
@@ -29,7 +28,7 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
               <AwesomeLoader minimal />
           </Box>
           <Box>
-            <Text size="small">But in the meantime, you can send this link to a friend</Text>
+            <Text size="small1">But in the meantime, you can send this link to a friend</Text>
           </Box>
         </>
       ) : (

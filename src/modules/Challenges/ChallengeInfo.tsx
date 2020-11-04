@@ -1,5 +1,6 @@
 import { ChallengeRecord, UserInfoRecord } from 'dstnd-io';
-import { Box, Text } from 'grommet';
+import { Box } from 'grommet';
+import { Text } from 'src/components/Text';
 import React, { useState } from 'react';
 import { ConfirmationButton } from 'src/components/ConfirmationButton';
 import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
@@ -17,7 +18,7 @@ export const ChallengeInfo: React.FC<Props> = (props) => {
 
   return (
     <Box className={cls.container} pad="medium">
-      <Text margin={{  bottom: 'small' }}>
+      <Text>
         You've been challenged to a <b>{props.challenge.gameSpecs.timeLimit}</b> game!
       </Text>
       <ConfirmationButton
