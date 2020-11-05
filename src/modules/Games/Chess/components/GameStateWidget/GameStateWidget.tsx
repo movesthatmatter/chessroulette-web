@@ -8,6 +8,7 @@ import { colors, fonts } from 'src/theme';
 import { PlayerBox } from './components/PlayerBox/PlayerBox';
 import { GameHistory } from './components/GameHistory';
 import cx from 'classnames';
+import { getRelativeMaterialScore } from './util';
 
 type Props = {
   game: ChessGameState;
@@ -33,6 +34,8 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
         (now.getTime() - new Date(game.lastMoveAt).getTime())
       : game.timeLeft[otherChessColor(homeColor)];
 
+  const materialScore = getRelativeMaterialScore(game.captured);
+
   // TODO: Oct 29th
   //  The GameState shouldn't have a timeLeft anymore since now those calcs happen on the client (above)!
 
@@ -46,6 +49,7 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
               timeLeft={opponentTimeLeft}
               active={game.state === 'started' && game.lastMoved !== opponentPlayer.color}
               gameTimeLimit={game.timeLimit}
+              material={materialScore[opponentPlayer.color]}
             />
             <div className={cls.spacer} />
           </>
@@ -63,6 +67,7 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
               timeLeft={myTimeLeft}
               active={game.state === 'started' && game.lastMoved !== myPlayer.color}
               gameTimeLimit={game.timeLimit}
+              material={materialScore[myPlayer.color]}
             />
           </>
         )}

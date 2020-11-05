@@ -26,4 +26,19 @@ export const pieces = {
   whiteKnight: WhiteKnight,
   whiteBishop: WhiteBishop,
   whitePawn: WhitePawn,
+
+  bK: BlackKing,
+  bQ: BlackQueen,
+  bR: BlackRook,
+  bN: BlackKnight,
+  bB: BlackBishop,
+  bP: BlackPawn,
+
+  wK: WhiteKing,
+  wQ: WhiteQueen,
+  wR: WhiteRook,
+  wN: WhiteKnight,
+  wB: WhiteBishop,
+  wP: WhitePawn,
+
 };

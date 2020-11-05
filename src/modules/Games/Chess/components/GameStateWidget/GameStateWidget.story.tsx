@@ -51,6 +51,7 @@ export const defaultStory = () => (
           lastMoveBy: undefined,
           lastMoveAt: undefined,
           lastMoved: undefined,
+          captured: undefined,
         }}
       />
     </div>
@@ -100,6 +101,22 @@ export const withTimeFinished = () => (
             lastMoveBy: 'black',
             lastMoveAt: toISODateTime(new Date()),
             lastMoved: 'white',
+            captured: {
+              white: {
+                p: 0,
+                n: 0,
+                q: 0,
+                r: 0,
+                b: 0,
+              },
+              black: {
+                p: 0,
+                n: 0,
+                q: 0,
+                r: 0,
+                b: 0,
+              },
+            },
           }}
         />
         </div>
@@ -142,6 +159,22 @@ export const withGameStarted = () => (
           lastMoveBy: 'white',
           lastMoveAt: toISODateTime(new Date()),
           lastMoved: 'white',
+          captured: {
+            white: {
+              p: 0,
+              n: 0,
+              q: 0,
+              r: 0,
+              b: 0,
+            },
+            black: {
+              p: 0,
+              n: 0,
+              q: 0,
+              r: 0,
+              b: 0,
+            },
+          },
         }}
       />
     </div>

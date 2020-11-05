@@ -15,6 +15,7 @@ type Props = {
   timeLeft: ChessGameState['timeLeft']['black'] | ChessGameState['timeLeft']['white'];
   active: boolean,
   gameTimeLimit: ChessGameState['timeLimit'];
+  material?: number;
 };
 
 export const PlayerBox: React.FC<Props> = ({
@@ -22,6 +23,7 @@ export const PlayerBox: React.FC<Props> = ({
   timeLeft,
   active,
   gameTimeLimit,
+  material = 0,
 }) => {
   const cls = useStyles();
 
@@ -31,9 +33,19 @@ export const PlayerBox: React.FC<Props> = ({
         <Avatar>
           <Mutunachi mid={player.user.avatarId} />
         </Avatar>
-        <Text className={cls.playerNameText}>
-          {player.user.name}
-        </Text>
+        <Box>
+          <Text className={cls.playerNameText}>
+            {player.user.name}
+          </Text>
+          <div style={{
+            flex: 1,
+            display: 'flex',
+          }}>
+            <Text size="small1">
+              {material > 0 && `+${material}`}
+            </Text>
+          </div>
+        </Box>
       </Box>
       {gameTimeLimit !== 'untimed' && (
         <Coundtdown
@@ -56,5 +68,8 @@ const useStyles = createUseStyles({
   },
   playerNameText: {
     ...fonts.small2,
-  }
+  },
+  piece: {
+    marginRight: '3px',
+  },
 });
