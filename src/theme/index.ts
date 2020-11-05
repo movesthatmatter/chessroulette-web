@@ -12,7 +12,6 @@ const customTheme: ThemeType = {
       },
     },
     font: {
-      // family: 'Roboto, Open Sans, Roboto Slab, sans-serif',
       family: 'Lato, Open Sans, Roboto Slab, sans-serif',
     },
   },
@@ -42,3 +41,4 @@ export const defaultTheme = deepMerge(grommet, customTheme);
 export * from './colors';
 export * from './effects';
 export * from './fonts';
+export * from './text';

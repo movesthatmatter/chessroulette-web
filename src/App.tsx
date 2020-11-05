@@ -1,13 +1,11 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-import { Grommet, Box } from 'grommet';
-import { SocketProvider } from './components/SocketProvider';
+import { Box } from 'grommet';
 import { createUseStyles } from './lib/jss';
 import { defaultTheme } from './theme';
 import { ReduxProvider } from './redux/Provider';
 import { AuthenticationProvider } from './services/Authentication';
-import config from './config';
 import { Routes } from './Routes';
+import { ThemeProvider } from 'react-jss';
 
 function App() {
   const cls = useStyles();
@@ -15,11 +13,11 @@ function App() {
   return (
     <ReduxProvider>
       <AuthenticationProvider>
-        <Grommet theme={defaultTheme} full>
+        <ThemeProvider theme={defaultTheme}>
           <Box className={cls.container}>
             <Routes />
           </Box>
-        </Grommet>
+        </ThemeProvider>
       </AuthenticationProvider>
     </ReduxProvider>
   );
@@ -30,7 +28,8 @@ const useStyles = createUseStyles({
     width: '100%',
     height: '100%',
 
-    fontFamily: 'Roboto',
+    fontFamily: 'Lato, Open Sans, Roboto Slab, sans-serif',
+    // fontFamily: 'Roboto',s
   },
 });
 
