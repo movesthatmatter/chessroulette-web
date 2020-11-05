@@ -12,7 +12,7 @@ export const ClipboardCopy: React.FC<Props> = (props) => {
   const cls = useStyles();
 
   return (
-    <Box direction="row" className={cls.container}>
+    <Box direction="row" className={cls.container} fill>
       <TextInput
         value={props.value}
         plain
@@ -20,10 +20,11 @@ export const ClipboardCopy: React.FC<Props> = (props) => {
         style={{
           fontSize: '13px',
           fontWeight: 'normal',
+          height: '32px',
         }}
       />
       <Button
-        icon={<Clipboard color="light-1" />}
+        icon={<Clipboard color="light-1"/>}
         className={cls.copyButton}
         size="small"
         plain
@@ -31,6 +32,9 @@ export const ClipboardCopy: React.FC<Props> = (props) => {
         color="dark-1"
         onClick={() => {
           navigator.clipboard.writeText(props.value);
+        }}
+        style={{
+          height: '32px',
         }}
       />
     </Box>

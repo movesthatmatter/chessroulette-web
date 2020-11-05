@@ -11,7 +11,7 @@ export default {
 
 export const defaultStory = () => (
   <Grommet theme={defaultTheme} full>
-    <Box width="medium">
+    <Box width="large">
       <ClipboardCopy
         value="Press on the button to copy me"
       />

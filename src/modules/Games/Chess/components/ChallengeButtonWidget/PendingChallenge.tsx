@@ -17,7 +17,7 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
   const cls = useStyles();
 
   return (
-    <Box pad="medium" gap="small" width="medium" className={cls.container}>
+    <Box gap="small" width="medium" className={cls.container}>
       {props.type === 'quickPairing' ? (
         <>
           <Box margin={{ bottom: 'medium' }}>
@@ -25,12 +25,12 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
             <AwesomeLoader minimal />
           </Box>
           <Box>
-            <Text size="small1">But in the meantime, you can send this link to a friend</Text>
+            <Text size="small1">But in the meantime, you can send the Magic Link to a friend</Text>
           </Box>
         </>
       ) : (
         <Box>
-          <Text>Send this link to a friend</Text>
+          <Text>Send Magic Link to a friend</Text>
         </Box>
       )}
       <ClipboardCopy value={`${window.location.origin}/${toChallengeUrlPath(props.challenge)}`} />
