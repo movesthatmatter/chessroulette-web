@@ -1,17 +1,13 @@
 import { ChessGameColor, ChessGameState } from 'dstnd-io';
-import { Box } from 'grommet';
-import { Text } from 'src/components/Text';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
 import { floatingShadow, softBorderRadius } from 'src/theme/effects';
 import { otherChessColor } from '../../util';
-import { fonts } from 'src/theme';
+import { colors, fonts } from 'src/theme';
 import { PlayerBox } from './components/PlayerBox/PlayerBox';
 import { GameHistory } from './components/GameHistory';
-import capitalize from 'capitalize';
 import cx from 'classnames';
-import { Emoji } from 'src/components/Emoji';
 
 type Props = {
   game: ChessGameState;
@@ -41,95 +37,59 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
   //  The GameState shouldn't have a timeLeft anymore since now those calcs happen on the client (above)!
 
   return (
-    <Box className={cls.container}>
-      <Box className={cx(cls.player, cls.playerTop)}>
+    <div className={cls.container}>
+      <div className={cx(cls.player, cls.playerTop)}>
         {opponentPlayer && (
-          <PlayerBox
-            player={opponentPlayer}
-            timeLeft={opponentTimeLeft}
-            active={game.state === 'started' && game.lastMoved !== opponentPlayer.color}
-            gameTimeLimit={game.timeLimit}
-          />
+          <>
+            <PlayerBox
+              player={opponentPlayer}
+              timeLeft={opponentTimeLeft}
+              active={game.state === 'started' && game.lastMoved !== opponentPlayer.color}
+              gameTimeLimit={game.timeLimit}
+            />
+            <div className={cls.spacer} />
+          </>
         )}
-      </Box>
-      <Box
-        className={cls.gameStateContainer}
-        fill
-        pad={{
-          vertical: 'small',
-          horizontal: 'medium',
-        }}
-      >
-        {(game.state === 'started' || game.state === 'finished' || game.state === 'stopped') && (
-          <GameHistory game={game} />
-        )}
-        {(game.state === 'finished' ||
-          game.state === 'stopped' ||
-          game.state === 'neverStarted' ||
-          game.state === 'pending') && (
-          <Box
-            alignContent="center"
-            justify="center"
-            style={{
-              flex: 1,
-            }}
-          >
-            <Text size="small1" className={cls.gameStatus}>
-              {game.state === 'finished' && (
-                <>
-                  {game.winner === '1/2' ? (
-                    'Game Ended in a Draw by Stalemate!'
-                  ) : (
-                    <>
-                      {`${capitalize(game.winner)} won! `}
-                      <Text>
-                        <Emoji symbol="🎉" />
-                      </Text>
-                    </>
-                  )}
-                </>
-              )}
-              {game.state === 'stopped' && (
-                <>
-                  {game.winner === '1/2'
-                    ? 'Game Ended in a Draw!'
-                    : `${capitalize(otherChessColor(game.winner))} resigned!`}
-                </>
-              )}
-              {game.state === 'neverStarted' && 'Game Aborted!'}
-              {game.state === 'pending' && 'Game Not Started!'}
-            </Text>
-          </Box>
-        )}
-      </Box>
-      <Box className={cls.player}>
+      </div>
+      <div className={cls.gameStateContainer}>
+        <GameHistory game={game} />
+      </div>
+      <div className={cls.player}>
         {myPlayer && (
-          <PlayerBox
-            player={myPlayer}
-            timeLeft={myTimeLeft}
-            active={game.state === 'started' && game.lastMoved !== myPlayer.color}
-            gameTimeLimit={game.timeLimit}
-          />
+          <>
+            <div className={cls.spacer} />
+            <PlayerBox
+              player={myPlayer}
+              timeLeft={myTimeLeft}
+              active={game.state === 'started' && game.lastMoved !== myPlayer.color}
+              gameTimeLimit={game.timeLimit}
+            />
+          </>
         )}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 
 const useStyles = createUseStyles({
   container: {
     height: '100%',
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
   },
   gameStateContainer: {
-    background: 'white',
+    background: colors.white,
     ...floatingShadow,
     ...softBorderRadius,
-    marginTop: '16px',
-    marginBottom: '16px',
+    height: 'calc(100% - 80px)',
   },
   player: {},
   playerTop: {},
   gameStatus: {
     ...fonts.small2,
+  },
+  spacer: {
+    height: '8px',
   },
 });

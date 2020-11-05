@@ -7,7 +7,6 @@ import { UserRecordMocker } from 'src/mocks/records';
 import { defaultTheme } from 'src/theme';
 import { GameStateWidget } from './GameStateWidget';
 
-
 export default {
   component: GameStateWidget,
   title: 'modules/Games/Chess/components/GameStateWidget',
@@ -18,11 +17,17 @@ const playerA = userMocker.record();
 const playerB = userMocker.record();
 
 export const defaultStory = () => (
-  <div style={{
-    width: '300px',
-  }}>
-    <Grommet theme={defaultTheme}>
-      <GameStateWidget 
+  <Grommet theme={defaultTheme}>
+    <div
+      style={{
+        width: '300px',
+        height: '200px',
+        // background: 'grey',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <GameStateWidget
         homeColor="black"
         game={{
           state: 'pending',
@@ -35,7 +40,7 @@ export const defaultStory = () => (
             {
               color: 'black',
               user: playerB,
-            }
+            },
           ],
           timeLeft: {
             white: minutes(5),
@@ -48,51 +53,72 @@ export const defaultStory = () => (
           lastMoved: undefined,
         }}
       />
-    </Grommet>
-  </div>
+    </div>
+  </Grommet>
 );
 
 export const withTimeFinished = () => (
-  <div style={{
-    width: '300px',
-  }}>
-    <Grommet theme={defaultTheme}>
-      <GameStateWidget 
-        homeColor="black"
-        game={{
-          state: 'stopped',
-          timeLimit: 'blitz',
-          players: [
-            {
-              color: 'white',
-              user: playerA,
+  <Grommet theme={defaultTheme}>
+    <div
+      style={{
+        width: '300px',
+        height: '500px',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <div style={{
+        flex: 1,
+      }}/>
+      <div style={{
+        flex: .2,
+      }}>
+        <div style={{
+          height: '300px',
+        }}>
+        <GameStateWidget
+          homeColor="black"
+          game={{
+            state: 'stopped',
+            timeLimit: 'blitz',
+            players: [
+              {
+                color: 'white',
+                user: playerA,
+              },
+              {
+                color: 'black',
+                user: playerB,
+              },
+            ],
+            timeLeft: {
+              white: seconds(5),
+              black: 0,
             },
-            {
-              color: 'black',
-              user: playerB,
-            }
-          ],
-          timeLeft: {
-            white: seconds(5),
-            black: 0,
-          },
-          pgn: '1. e4 c5 2. Nf3 d6 3. Bb5+ Nc6 4. O-O Bd7 5. Re1 Nf6 6. c3 a6 7. Ba4 b5 8. Bc2',
-          winner: 'white',
-          lastMoveBy: 'black',
-          lastMoveAt: toISODateTime(new Date()),
-          lastMoved: 'white',
-        }}
-      />
-    </Grommet>
-  </div>
+            pgn: '1. e4 c5 2. Nf3 d6 3. Bb5+ Nc6 4. O-O Bd7 5. Re1 Nf6 6. c3 a6 7. Ba4 b5 8. Bc2',
+            winner: 'white',
+            lastMoveBy: 'black',
+            lastMoveAt: toISODateTime(new Date()),
+            lastMoved: 'white',
+          }}
+        />
+        </div>
+      </div>
+      <div style={{
+        flex: 1,
+      }}/>
+    </div>
+  </Grommet>
 );
 
 export const withGameStarted = () => (
-  <div style={{
-    width: '300px',
-  }}>
-    <Grommet theme={defaultTheme}>
-      <GameStateWidget 
+  <Grommet theme={defaultTheme}>
+    <div
+      style={{
+        width: '300px',
+      }}
+    >
+      <GameStateWidget
         homeColor="black"
         game={{
           state: 'started',
@@ -105,7 +131,7 @@ export const withGameStarted = () => (
             {
               color: 'black',
               user: playerB,
-            }
+            },
           ],
           timeLeft: {
             white: seconds(5),
@@ -118,6 +144,6 @@ export const withGameStarted = () => (
           lastMoved: 'white',
         }}
       />
-    </Grommet>
-  </div>
+    </div>
+  </Grommet>
 );

@@ -245,20 +245,18 @@ export const asPageWithStartedGame = () => (
 
           return (
             <StorybookReduxProvider>
-              <Page>
-                <GameRoomV2
-                  room={publicRoom}
-                  onMove={action('on move')}
-                  onAbort={action('onAbort')}
-                  onDrawAccepted={action('onDrawAccepted')}
-                  onDrawDenied={action('onDrawDenied')}
-                  onOfferDraw={action('onOfferDraw')}
-                  onRematchAccepted={action('onRematchAccepted')}
-                  onRematchDenied={action('onRematchDenied')}
-                  onRematchOffer={action('onRematchOffer')}
-                  onResign={action('onResign')}
-                />
-              </Page>
+              <GameRoomV2
+                room={publicRoom}
+                onMove={action('on move')}
+                onAbort={action('onAbort')}
+                onDrawAccepted={action('onDrawAccepted')}
+                onDrawDenied={action('onDrawDenied')}
+                onOfferDraw={action('onOfferDraw')}
+                onRematchAccepted={action('onRematchAccepted')}
+                onRematchDenied={action('onRematchDenied')}
+                onRematchOffer={action('onRematchOffer')}
+                onResign={action('onResign')}
+              />
             </StorybookReduxProvider>
           );
         })
@@ -312,20 +310,18 @@ export const asPageWithFinishedGame = () => (
 
           return (
             <StorybookReduxProvider>
-              <Page>
-                <GameRoomV2
-                  room={publicRoom}
-                  onMove={action('on move')}
-                  onAbort={action('onAbort')}
-                  onDrawAccepted={action('onDrawAccepted')}
-                  onDrawDenied={action('onDrawDenied')}
-                  onOfferDraw={action('onOfferDraw')}
-                  onRematchAccepted={action('onRematchAccepted')}
-                  onRematchDenied={action('onRematchDenied')}
-                  onRematchOffer={action('onRematchOffer')}
-                  onResign={action('onResign')}
-                />
-              </Page>
+              <GameRoomV2
+                room={publicRoom}
+                onMove={action('on move')}
+                onAbort={action('onAbort')}
+                onDrawAccepted={action('onDrawAccepted')}
+                onDrawDenied={action('onDrawDenied')}
+                onOfferDraw={action('onOfferDraw')}
+                onRematchAccepted={action('onRematchAccepted')}
+                onRematchDenied={action('onRematchDenied')}
+                onRematchOffer={action('onRematchOffer')}
+                onResign={action('onResign')}
+              />
             </StorybookReduxProvider>
           );
         })

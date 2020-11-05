@@ -6,6 +6,11 @@ import { getNewChessGame } from 'src/modules/Games/Chess/lib/sdk';
 import splitEvery from 'split-every';
 import cx from 'classnames';
 import { arrReverse } from 'src/lib/util';
+import { Emoji } from 'src/components/Emoji';
+import capitalize from 'capitalize';
+import { otherChessColor } from 'src/modules/Games/Chess/util';
+import { Box } from 'grommet';
+import { CSSProperties } from 'src/lib/jss/types';
 
 type Props = {
   game: ChessGameState;
@@ -25,14 +30,14 @@ const toHistory = (moves: string[]): ReadableHistory =>
     index: index + 1,
   }));
 
-export const GameHistory: React.FC<Props> = ({ showRows = 4, ...props }) => {
+export const GameHistory: React.FC<Props> = ({ showRows = 4, game, ...props }) => {
   const cls = useStyles();
   const gameInstance = useRef(getNewChessGame()).current;
   const [history, setHistory] = useState<ReadableHistory>([]);
 
   useEffect(() => {
-    if (props.game.pgn) {
-      gameInstance.load_pgn(props.game.pgn);
+    if (game.pgn) {
+      gameInstance.load_pgn(game.pgn);
 
       const history = toHistory(gameInstance.history());
 
@@ -42,18 +47,52 @@ export const GameHistory: React.FC<Props> = ({ showRows = 4, ...props }) => {
 
       setHistory(historyInReverse);
     }
-  }, [props.game.pgn]);
+  }, [game.pgn]);
 
   return (
     <div className={cx(cls.container, props.className)}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column-reverse',
-          overflow: 'scroll',
-          height: showRows * ROW_HEIGHT,
-        }}
-      >
+      <div className={cls.spacer} />
+      <div className={cls.content}>
+        {game.state !== 'started' ? (
+          <div className={cx(cls.row, game.state === 'pending' ? cls.initStateRow : cls.resultRow)}>
+            <Box alignContent="center" align="center" justify="center" fill pad="small">
+              <Text size="small1" className={cls.text}>
+                {game.state === 'finished' && (
+                  <>
+                    {game.winner === '1/2' ? (
+                      'Game Ended in a Draw by Stalemate!'
+                    ) : (
+                      <>
+                        {`${capitalize(game.winner)} won! `}
+                        <Text>
+                          <Emoji symbol="🎉" />
+                        </Text>
+                      </>
+                    )}
+                  </>
+                )}
+                {game.state === 'stopped' && (
+                  <>
+                    {game.winner === '1/2'
+                      ? 'Game Ended in a Draw!'
+                      : `${capitalize(otherChessColor(game.winner))} resigned!`}
+                  </>
+                )}
+                {game.state === 'neverStarted' && 'Game Aborted!'}
+                {game.state === 'pending' && 'Game Not Started!'}
+              </Text>
+            </Box>
+          </div>
+        ) : (
+          <Box
+            className={cls.row}
+            alignContent="center"
+            align="center"
+            justify="center"
+            fill
+            pad="small"
+          />
+        )}
         {history.map((pastMove) => (
           <div className={cls.row} key={pastMove.index}>
             <Text className={cx(cls.text, cls.rowIndex)}>{`${pastMove.index}.`}</Text>
@@ -62,6 +101,7 @@ export const GameHistory: React.FC<Props> = ({ showRows = 4, ...props }) => {
           </div>
         ))}
       </div>
+      <div className={cls.spacer} />
     </div>
   );
 };
@@ -70,7 +110,21 @@ const ROW_HEIGHT = 33;
 
 const useStyles = createUseStyles({
   container: {
+    display: 'flex',
+    height: '100%',
+
+    paddingLeft: '16px',
+    paddingRight: '16px',
+    flexDirection: 'column',
+  },
+  spacer: {
+    height: '16px',
+  },
+  content: {
+    display: 'flex',
     flex: 1,
+    flexDirection: 'column-reverse',
+    overflowY: 'scroll',
   },
   row: {
     borderWidth: 0,
@@ -80,10 +134,24 @@ const useStyles = createUseStyles({
     padding: '4px 8px',
     display: 'flex',
 
-    '&:first-child': {
-      borderBottomWidth: 0,
-    },
+    ...{
+      '&:first-child': {
+        borderBottomWidth: 0,
+        paddingBottom: 0,
+      },
+      '&:nth-child(2)': {
+        borderBottomWidth: 0,
+        paddingBottom: 0,
+      },
+      '&:last-child': {
+        paddingTop: 0,
+      },
+    } as CSSProperties,
   },
+  initStateRow: {
+    flex: 1,
+  },
+  resultRow: {},
   text: {
     fontSize: '14px',
   },

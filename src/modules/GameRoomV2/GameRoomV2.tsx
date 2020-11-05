@@ -82,9 +82,7 @@ export const GameRoomV2: React.FC<Props> = ({
           <Box
             fill
             direction="row"
-            style={{
-              height: '100%',
-            }}
+            style={{ height: '100%' }}
           >
             <div
               style={{
@@ -149,74 +147,64 @@ export const GameRoomV2: React.FC<Props> = ({
         )}
         getLeftSideComponent={(dimensions) => (
           <div
+            className={cx(cls.side, cls.leftSide)}
             style={{
-              height: '100%',
+              flex: 1,
+              height: dimensions.height,
             }}
           >
-            <div
-              className={cx(cls.side, cls.leftSide)}
-              style={{
-                flex: 1,
-                height: dimensions.height,
-              }}
-            >
-              <div
-                style={{
-                  flex: 1,
-                }}
-              />
-              <div style={{ flex: 1.2 }}>
-                <GameStateWidget game={props.room.activity.game} homeColor={homeColor} />
-              </div>
-              <div className={cls.gameActionsContainer}>
-                <div className={cls.gameActionButtonsContainer}>
-                  {(game.state === 'finished' ||
-                    game.state === 'stopped' ||
-                    game.state === 'neverStarted') && (
+            <div style={{ height: '30%' }} />
+            <div style={{ height: '40%' }}>
+              <GameStateWidget game={props.room.activity.game} homeColor={homeColor} />
+            </div>
+            <div className={cls.gameActionsContainer} style={{ height: '30%' }}>
+              <div className={cls.gameActionButtonsContainer}>
+                {(game.state === 'finished' ||
+                  game.state === 'stopped' ||
+                  game.state === 'neverStarted') && (
+                  <ActionButton
+                    type="primary"
+                    label="Rematch"
+                    actionType="positive"
+                    icon={Refresh}
+                    reverse
+                    onSubmit={() => onRematchOffer()}
+                    className={cls.gameActionButton}
+                  />
+                )}
+                {game.state === 'pending' && (
+                  <ActionButton
+                    type="primary"
+                    label="Abort"
+                    actionType="negative"
+                    icon={Halt}
+                    reverse
+                    onSubmit={() => onAbort()}
+                    className={cls.gameActionButton}
+                  />
+                )}
+                {game.state === 'started' && (
+                  <>
                     <ActionButton
                       type="primary"
-                      label="Rematch"
-                      actionType="positive"
-                      icon={Refresh}
-                      reverse
-                      onSubmit={() => onRematchOffer()}
-                      className={cls.gameActionButton}
-                    />
-                  )}
-                  {game.state === 'pending' && (
-                    <ActionButton
-                      type="primary"
-                      label="Abort"
+                      label="Resign"
                       actionType="negative"
-                      icon={Halt}
+                      icon={Flag}
                       reverse
-                      onSubmit={() => onAbort()}
+                      onSubmit={() => onResign(homeColor)}
                       className={cls.gameActionButton}
                     />
-                  )}
-                  {game.state === 'started' && (
-                    <>
-                      <ActionButton
-                        type="primary"
-                        label="Resign"
-                        actionType="negative"
-                        icon={Flag}
-                        reverse
-                        onSubmit={() => onResign(homeColor)}
-                        className={cls.gameActionButton}
-                      />
-                      <ActionButton
-                        type="primary"
-                        label="Offer Draw"
-                        actionType="positive"
-                        icon={Split}
-                        reverse
-                        onSubmit={() => onOfferDraw()}
-                        className={cls.gameActionButton}
-                      />
-                    </>
-                  )}
-                </div>
+                    <ActionButton
+                      type="primary"
+                      label="Offer Draw"
+                      actionType="positive"
+                      icon={Split}
+                      reverse
+                      onSubmit={() => onOfferDraw()}
+                      className={cls.gameActionButton}
+                    />
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -331,6 +319,7 @@ const useStyles = createUseStyles({
 
     display: 'flex',
     flexDirection: 'column',
+    background: '#F6F8FB',
   },
   layout: {},
   board: {
@@ -348,7 +337,7 @@ const useStyles = createUseStyles({
   },
   sideContent: {},
   leftSide: {
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
   rightSide: {
     background: colors.white,
@@ -363,7 +352,6 @@ const useStyles = createUseStyles({
     background: 'white',
   },
   gameActionsContainer: {
-    flex: 1,
     display: 'flex',
   },
   gameActionButtonsContainer: {
