@@ -19,9 +19,13 @@ export type ActionButtonProps = {
   actionType: 'positive' | 'negative',
   confirmation?: string,
   onSubmit: () => void;
+  className?: string;
 };
 
-export const ActionButton: React.FC<ActionButtonProps> = (props) => {
+export const ActionButton: React.FC<ActionButtonProps> = ({
+  className,
+  ...props
+}) => {
   const Icon = props.icon;
 
   const confirmation = hasOwnProperty(props, 'confirmation')
@@ -47,7 +51,8 @@ export const ActionButton: React.FC<ActionButtonProps> = (props) => {
       className={cx(
         cls.button,
         cls[props.type],
-        focused && (props.actionType === 'negative' ? cls.confirmNegative : cls.confirmPositive)
+        focused && (props.actionType === 'negative' ? cls.confirmNegative : cls.confirmPositive),
+        className,
       )}
       type="submit"
       onMouseEnter={() => setHovered(true)}
