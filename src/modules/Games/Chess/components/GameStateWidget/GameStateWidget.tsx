@@ -48,6 +48,7 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
             player={opponentPlayer}
             timeLeft={opponentTimeLeft}
             active={game.state === 'started' && game.lastMoved !== opponentPlayer.color}
+            gameTimeLimit={game.timeLimit}
           />
         )}
       </Box>
@@ -107,6 +108,7 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
             player={myPlayer}
             timeLeft={myTimeLeft}
             active={game.state === 'started' && game.lastMoved !== myPlayer.color}
+            gameTimeLimit={game.timeLimit}
           />
         )}
       </Box>

@@ -14,12 +14,14 @@ type Props = {
   player: ChessPlayer;
   timeLeft: ChessGameState['timeLeft']['black'] | ChessGameState['timeLeft']['white'];
   active: boolean,
+  gameTimeLimit: ChessGameState['timeLimit'];
 };
 
 export const PlayerBox: React.FC<Props> = ({
   player,
   timeLeft,
   active,
+  gameTimeLimit,
 }) => {
   const cls = useStyles();
 
@@ -33,10 +35,12 @@ export const PlayerBox: React.FC<Props> = ({
           {player.user.name}
         </Text>
       </Box>
-      <Coundtdown
-        timeLeft={timeLeft}
-        active={active}
-      />
+      {gameTimeLimit !== 'untimed' && (
+        <Coundtdown
+          timeLeft={timeLeft}
+          active={active}
+        />
+      )}
     </Box>
   );
 };

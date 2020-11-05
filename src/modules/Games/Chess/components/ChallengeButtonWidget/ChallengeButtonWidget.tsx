@@ -101,7 +101,7 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                   <>
                     <FaceTimeSetup onUpdated={(s) => setFaceTimeOn(s.on)} />
                     <Box margin={{
-                      top: 'medium',
+                      top: '28px',
                     }}>
                       <ChessChallengeCreator onUpdate={setGameSpecs} />
                     </Box>

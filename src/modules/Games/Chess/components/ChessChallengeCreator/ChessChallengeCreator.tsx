@@ -2,13 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Select, Box } from 'grommet';
 import { Text } from 'src/components/Text';
-import {
-  ChessGameTimeLimit,
-  metadata,
-  ChessPrefferedColorOption,
-  GameSpecsRecord,
-} from 'dstnd-io';
+import { ChessGameTimeLimit, metadata, ChessPrefferedColorOption, GameSpecsRecord } from 'dstnd-io';
 import capitalize from 'capitalize';
+import { SelectInput } from 'src/components/Input/SelectInput';
 
 type State = GameSpecsRecord;
 
@@ -37,37 +33,43 @@ export const ChessChallengeCreator: React.FC<Props> = ({
   return (
     <div className={cls.container}>
       <Box margin={{ bottom: 'small' }}>
-        <Text size="small1">Time Limit</Text>
-        <Select
-          size="small"
-          options={Object
-            .keys(metadata.game.chessGameTimeLimitMsMap)
-            .map((k) => capitalize(k))
-          }
-          value={capitalize(state.timeLimit)}
-          onChange={({ option }) =>
+        <Text size="small1" className={cls.label}>
+          Time Limit
+        </Text>
+        <SelectInput
+          options={Object.keys(metadata.game.chessGameTimeLimitMsMap).map((k) => ({
+            value: k,
+            label: capitalize(k),
+          }))}
+          value={{
+            label: capitalize(state.timeLimit),
+            value: state.timeLimit,
+          }}
+          onSelect={({ value }) => {
             setState((prev) => ({
               ...prev,
-              timeLimit: String(
-                option,
-              ).toLocaleLowerCase() as ChessGameTimeLimit,
-            }))
-          }
+              timeLimit: value as ChessGameTimeLimit,
+            }));
+          }}
         />
       </Box>
-      <Box margin={{ bottom: 'small' }}>
-        <Text size="small1">Preffered Color</Text>
-        <Select
-          size="small"
-          options={metadata.game.chessGamePrefferedColorOptionList.map((k) =>
-            capitalize(k))}
-          value={capitalize(state.preferredColor)}
-          onChange={({ option }) =>
+      <Box>
+        <Text size="small1" className={cls.label}>
+          Preffered Color
+        </Text>
+        <SelectInput
+          options={metadata.game.chessGamePrefferedColorOptionList.map((k) => ({
+            value: k,
+            label: capitalize(k),
+          }))}
+          value={{
+            label: capitalize(state.preferredColor),
+            value: state.preferredColor,
+          }}
+          onSelect={({ value }) =>
             setState((prev) => ({
               ...prev,
-              preferredColor: String(
-                option,
-              ).toLocaleLowerCase() as ChessPrefferedColorOption,
+              preferredColor: value as ChessPrefferedColorOption,
             }))
           }
         />
@@ -78,4 +80,7 @@ export const ChessChallengeCreator: React.FC<Props> = ({
 
 const useStyles = createUseStyles({
   container: {},
+  label: {
+    marginBottom: '8px',
+  },
 });
