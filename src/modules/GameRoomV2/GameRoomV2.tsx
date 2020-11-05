@@ -22,6 +22,7 @@ import { ChatContainer } from 'src/components/Chat';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
+import { CSSProperties } from 'src/lib/jss/types';
 
 type Props = {
   room: RoomWithPlayActivity;
@@ -172,51 +173,47 @@ export const GameRoomV2: React.FC<Props> = ({
                   {(game.state === 'finished' ||
                     game.state === 'stopped' ||
                     game.state === 'neverStarted') && (
-                    <div className={cls.gameActionButtonWrapper}>
-                      <ActionButton
-                        type="primary"
-                        label="Rematch"
-                        actionType="positive"
-                        icon={Refresh}
-                        reverse
-                        onSubmit={() => onRematchOffer()}
-                      />
-                    </div>
+                    <ActionButton
+                      type="primary"
+                      label="Rematch"
+                      actionType="positive"
+                      icon={Refresh}
+                      reverse
+                      onSubmit={() => onRematchOffer()}
+                      className={cls.gameActionButton}
+                    />
                   )}
                   {game.state === 'pending' && (
-                    <div className={cls.gameActionButtonWrapper}>
-                      <ActionButton
-                        type="primary"
-                        label="Abort"
-                        actionType="negative"
-                        icon={Halt}
-                        reverse
-                        onSubmit={() => onAbort()}
-                      />
-                    </div>
+                    <ActionButton
+                      type="primary"
+                      label="Abort"
+                      actionType="negative"
+                      icon={Halt}
+                      reverse
+                      onSubmit={() => onAbort()}
+                      className={cls.gameActionButton}
+                    />
                   )}
                   {game.state === 'started' && (
                     <>
-                      <div className={cls.gameActionButtonWrapper}>
-                        <ActionButton
-                          type="primary"
-                          label="Resign"
-                          actionType="negative"
-                          icon={Flag}
-                          reverse
-                          onSubmit={() => onResign(homeColor)}
-                        />
-                      </div>
-                      <div className={cls.gameActionButtonWrapper}>
-                        <ActionButton
-                          type="primary"
-                          label="Offer Draw"
-                          actionType="positive"
-                          icon={Split}
-                          reverse
-                          onSubmit={() => onOfferDraw()}
-                        />
-                      </div>
+                      <ActionButton
+                        type="primary"
+                        label="Resign"
+                        actionType="negative"
+                        icon={Flag}
+                        reverse
+                        onSubmit={() => onResign(homeColor)}
+                        className={cls.gameActionButton}
+                      />
+                      <ActionButton
+                        type="primary"
+                        label="Offer Draw"
+                        actionType="positive"
+                        icon={Split}
+                        reverse
+                        onSubmit={() => onOfferDraw()}
+                        className={cls.gameActionButton}
+                      />
                     </>
                   )}
                 </div>
@@ -376,7 +373,11 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
   },
-  gameActionButtonWrapper: {
-    marginTop: '8px',
+  gameActionButton: {
+    ...({
+      '&:last-of-type': {
+        marginBottom: '0px !important',
+      },
+    } as CSSProperties),
   },
 });
