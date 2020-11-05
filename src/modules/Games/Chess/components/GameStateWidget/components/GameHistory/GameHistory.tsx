@@ -46,6 +46,8 @@ export const GameHistory: React.FC<Props> = ({ showRows = 4, game, ...props }) =
       const historyInReverse = arrReverse(history);
 
       setHistory(historyInReverse);
+    } else {
+      setHistory([]);
     }
   }, [game.pgn]);
 
@@ -53,45 +55,44 @@ export const GameHistory: React.FC<Props> = ({ showRows = 4, game, ...props }) =
     <div className={cx(cls.container, props.className)}>
       <div className={cls.spacer} />
       <div className={cls.content}>
+
         {game.state !== 'started' ? (
-          <div className={cx(cls.row, game.state === 'pending' ? cls.initStateRow : cls.resultRow)}>
-            <Box alignContent="center" align="center" justify="center" fill pad="small">
-              <Text size="small1" className={cls.text}>
-                {game.state === 'finished' && (
-                  <>
-                    {game.winner === '1/2' ? (
-                      'Game Ended in a Draw by Stalemate!'
-                    ) : (
-                      <>
-                        {`${capitalize(game.winner)} won! `}
-                        <Text>
-                          <Emoji symbol="🎉" />
-                        </Text>
-                      </>
-                    )}
-                  </>
-                )}
-                {game.state === 'stopped' && (
-                  <>
-                    {game.winner === '1/2'
-                      ? 'Game Ended in a Draw!'
-                      : `${capitalize(otherChessColor(game.winner))} resigned!`}
-                  </>
-                )}
-                {game.state === 'neverStarted' && 'Game Aborted!'}
-                {game.state === 'pending' && 'Game Not Started!'}
-              </Text>
-            </Box>
-          </div>
+          <>
+            <div className={cx(cls.row, game.state === 'pending' ? cls.initStateRow : cls.resultRow)}>
+              <Box alignContent="center" align="center" justify="center" fill pad="small">
+                <Text size="small1" className={cls.text}>
+                  {game.state === 'finished' && (
+                    <>
+                      {game.winner === '1/2' ? (
+                        'Game Ended in a Draw by Stalemate!'
+                      ) : (
+                        <>
+                          {`${capitalize(game.winner)} won! `}
+                          <Text>
+                            <Emoji symbol="🎉" />
+                          </Text>
+                        </>
+                      )}
+                    </>
+                  )}
+                  {game.state === 'stopped' && (
+                    <>
+                      {game.winner === '1/2'
+                        ? 'Game Ended in a Draw!'
+                        : `${capitalize(otherChessColor(game.winner))} resigned!`}
+                    </>
+                  )}
+                  {game.state === 'neverStarted' && 'Game Aborted!'}
+                  {game.state === 'pending' && 'Game Not Started!'}
+                </Text>
+              </Box>
+            </div>
+            {game.state !== 'pending' && (
+              <div className={cls.filler} />
+            )}
+          </>
         ) : (
-          <Box
-            className={cls.row}
-            alignContent="center"
-            align="center"
-            justify="center"
-            fill
-            pad="small"
-          />
+          <div className={cls.filler} />
         )}
         {history.map((pastMove) => (
           <div className={cls.row} key={pastMove.index}>
@@ -165,5 +166,8 @@ const useStyles = createUseStyles({
   blackMove: {
     flex: 1,
     fontWeight: 300,
+  },
+  filler: {
+    flex: 1,
   },
 });
