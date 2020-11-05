@@ -81,6 +81,7 @@ export const defaultStory = () => (
                     onRematchDenied={action('onRematchDenied')}
                     onRematchOffer={action('onRematchOffer')}
                     onResign={action('onResign')}
+                    onOfferCanceled={action('onOfferCancel')}
                   />
                 </PeerProvider>
               </SocketProvider>
@@ -166,6 +167,7 @@ export const withSwitchingSides = () => (
                 onRematchDenied={action('onRematchDenied')}
                 onRematchOffer={action('onRematchOffer')}
                 onResign={action('onResign')}
+                onOfferCanceled={action('onOfferCancel')}
               />
               {/* </Page> */}
             </StorybookReduxProvider>
@@ -256,6 +258,7 @@ export const asPageWithStartedGame = () => (
                 onRematchDenied={action('onRematchDenied')}
                 onRematchOffer={action('onRematchOffer')}
                 onResign={action('onResign')}
+                onOfferCanceled={action('onOfferCancel')}
               />
             </StorybookReduxProvider>
           );
@@ -321,6 +324,7 @@ export const asPageWithFinishedGame = () => (
                 onRematchDenied={action('onRematchDenied')}
                 onRematchOffer={action('onRematchOffer')}
                 onResign={action('onResign')}
+                onOfferCanceled={action('onOfferCancel')}
               />
             </StorybookReduxProvider>
           );

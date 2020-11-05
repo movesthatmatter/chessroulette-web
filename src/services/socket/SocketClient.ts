@@ -33,6 +33,7 @@ import {
   GameRematchAcceptRequestPayload,
   GameAbortionRequestPayload,
   StatsReaderIdentificationPayload,
+  GameOfferingCancelRequestPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/components/PeerProvider/records';
 
@@ -78,6 +79,7 @@ type SendableMessagesMap = {
   gameRematchDenyRequestPayload: GameRematchDenyRequestPayload;
   gameRematchAcceptRequestPayload: GameRematchAcceptRequestPayload;
   gameAbortionRequestPayload: GameAbortionRequestPayload;
+  gameOfferingCancelRequestPayload: GameOfferingCancelRequestPayload;
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {

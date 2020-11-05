@@ -10,6 +10,7 @@ import {
   GameRematchOfferingRequestPayload,
   GameRematchAcceptRequestPayload,
   GameRematchDenyRequestPayload,
+  GameOfferingCancelRequestPayload,
 } from 'dstnd-io';
 import { Room } from 'src/components/RoomProvider';
 
@@ -58,6 +59,10 @@ export const gameActions = {
   }),
   denyRematch: (): GameRematchDenyRequestPayload => ({
     kind: 'gameRematchDenyRequest',
+    content: undefined,
+  }),
+  cancelOffer: (): GameOfferingCancelRequestPayload => ({
+    kind: 'gameOfferingCancelRequest',
     content: undefined,
   }),
 };

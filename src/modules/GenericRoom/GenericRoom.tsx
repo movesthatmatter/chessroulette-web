@@ -33,6 +33,7 @@ export const GenericRoom: React.FC<Props> = (props) => {
                     onRematchOffer={() => p.request(gameActions.offerRematch())}
                     onRematchAccepted={() => p.request(gameActions.acceptRematch())}
                     onRematchDenied={() => p.request(gameActions.denyRematch())}
+                    onOfferCanceled={() => p.request(gameActions.cancelOffer())}
                   />
                 )}
               />

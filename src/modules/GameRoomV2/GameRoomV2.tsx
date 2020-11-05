@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, LegacyRef } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
-import { Modal } from 'src/components/Modal/Modal';
 import { ChessMove } from 'dstnd-io/dist/chessGame';
 import { noop } from 'src/lib/util';
-import { Button } from 'src/components/Button';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
 import { ChessGame, ChessGameColor } from '../Games/Chess';
-import { getOpponent, isPlayer, getPlayerColor } from './util';
-import { otherChessColor } from '../Games/Chess/util';
+import { getPlayerColor, getPlayer, getOppositePlayer } from './util';
 import { floatingShadow, softBorderRadius } from 'src/theme/effects';
 import cx from 'classnames';
 import { GameStateWidget } from '../Games/Chess/components/GameStateWidget/GameStateWidget';
@@ -23,6 +20,7 @@ import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
 import { CSSProperties } from 'src/lib/jss/types';
+import { GameStateDialog } from './components/GameStateDialog';
 
 type Props = {
   room: RoomWithPlayActivity;
@@ -35,6 +33,7 @@ type Props = {
   onRematchOffer: () => void;
   onRematchAccepted: () => void;
   onRematchDenied: () => void;
+  onOfferCanceled: () => void;
 };
 
 export const GameRoomV2: React.FC<Props> = ({
@@ -46,29 +45,25 @@ export const GameRoomV2: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
-  const [showGameFinishedPopup, setShowGameFinishedPopup] = useState(false);
-
   const homeColor = getPlayerColor(props.room.me.id, props.room.activity.game.players);
-  const opponentPlayer = getOpponent(props.room.me.id, props.room.activity.game.players);
 
-  const { game, offer } = props.room.activity;
+  const { game } = props.room.activity;
 
-  const isMePlayer = isPlayer(props.room.me.user.id, game.players);
-  const myPlayerColor = getPlayerColor(props.room.me.user.id, game.players);
+  const myPlayer = getPlayer(props.room.me.user.id, game.players);
+  const isMePlayer = !!myPlayer;
+  const opponentPlayer = myPlayer
+    ? getOppositePlayer(myPlayer, props.room.activity.game.players)
+    : undefined;
 
   const canIPlay =
-    (game.state === 'pending' || game.state === 'started') && // game must should be in payable mode
     isMePlayer && // I must be a player
+    (game.state === 'pending' || game.state === 'started') && // game must be in playable mode
     game.lastMoveBy !== homeColor; // It must be my turn
 
-  useEffect(() => {
-    if (props.room.activity.game.state === 'finished') {
-      setShowGameFinishedPopup(true);
-    }
-  }, [props.room.activity.game]);
+  const dialogTarget = useRef();
 
   return (
-    <div className={cls.container}>
+    <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
       <GameRoomLayout
         className={cls.layout}
         ratios={{
@@ -79,11 +74,7 @@ export const GameRoomV2: React.FC<Props> = ({
         minSpaceBetween={30}
         topHeight={80}
         getTopComponent={(dimensions) => (
-          <Box
-            fill
-            direction="row"
-            style={{ height: '100%' }}
-          >
+          <Box fill direction="row" style={{ height: '100%' }}>
             <div
               style={{
                 flex: 1,
@@ -282,32 +273,16 @@ export const GameRoomV2: React.FC<Props> = ({
           </div>
         )}
       />
-      <Modal
-        visible={
-          isMePlayer &&
-          offer?.type === 'draw' &&
-          offer?.content.by === otherChessColor(myPlayerColor)
-        }
-      >
-        <Box pad="medium" gap="small" width="medium">
-          Your opponent is offering a Draw!
-          <Button onClick={() => props.onDrawAccepted()} label="Accept" />
-          <Button onClick={() => props.onDrawDenied()} label="Deny" />
-        </Box>
-      </Modal>
-      <Modal
-        visible={
-          isMePlayer &&
-          offer?.type === 'rematch' &&
-          offer?.content.by === otherChessColor(myPlayerColor)
-        }
-      >
-        <Box pad="medium" gap="small" width="medium">
-          Your opponent wants a Rematch!
-          <Button onClick={() => props.onRematchAccepted()} label="Accept" />
-          <Button onClick={() => props.onRematchDenied()} label="Deny" />
-        </Box>
-      </Modal>
+      <GameStateDialog
+        roomActivity={props.room.activity}
+        onOfferCanceled={props.onOfferCanceled}
+        onDrawAccepted={props.onDrawAccepted}
+        onDrawDenied={props.onDrawDenied}
+        onRematchAccepted={props.onRematchAccepted}
+        onRematchDenied={props.onRematchDenied}
+        myPlayer={myPlayer}
+        target={dialogTarget.current}
+      />
     </div>
   );
 };
@@ -336,9 +311,7 @@ const useStyles = createUseStyles({
     flexDirection: 'column',
   },
   sideContent: {},
-  leftSide: {
-    // justifyContent: 'center',
-  },
+  leftSide: {},
   rightSide: {
     background: colors.white,
     paddingLeft: '30px',

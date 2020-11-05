@@ -1,4 +1,4 @@
-import { Box, Layer } from 'grommet';
+import { Box, Layer, LayerProps } from 'grommet';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { colors, floatingShadow, fonts, softBorderRadius } from 'src/theme';
@@ -7,17 +7,18 @@ import { Text } from 'src/components/Text';
 import { noop } from 'src/lib/util';
 import { FormClose } from 'grommet-icons';
 
-type Props = {
+export type DialogProps = {
   visible: boolean;
   title?: string;
   content: string | React.ReactNode;
   graphic?: React.ReactNode;
-  buttons: (ButtonProps | boolean | undefined)[];
+  buttons?: (ButtonProps | boolean | undefined)[];
   hasCloseButton?: boolean;
   onClose?: () => void;
+  target?: LayerProps['target'];
 };
 
-export const Dialog: React.FC<Props> = ({ hasCloseButton = true, onClose = noop, ...props }) => {
+export const Dialog: React.FC<DialogProps> = ({ hasCloseButton = true, onClose = noop, ...props }) => {
   const cls = useStyles();
 
   if (!props.visible) {
@@ -29,26 +30,28 @@ export const Dialog: React.FC<Props> = ({ hasCloseButton = true, onClose = noop,
       className={cls.container}
       position="center"
       animation="slide"
+      target={props.target}
     >
-        <div className={cls.top}>
-          <div style={{ flex: 1 }} />
-          {hasCloseButton && (
-            <div onClick={() => onClose()} className={cls.exitButton}>
-              <FormClose className={cls.exitIcon} />
-            </div>
-          )}
-        </div>
-        {props.graphic}
-        {props.title && <div className={cls.title}>{props.title}</div>}
-        <div className={cls.contentWrapper}>
-          {typeof props.content === 'string' ? (
-            <div className={cls.contentTextWrapper}>
-              <Text className={cls.contentText}>{props.content}</Text>
-            </div>
-          ) : (
-            <>{props.content}</>
-          )}
-        </div>
+      <div className={cls.top}>
+        <div style={{ flex: 1 }} />
+        {hasCloseButton && (
+          <div onClick={() => onClose()} className={cls.exitButton}>
+            <FormClose className={cls.exitIcon} />
+          </div>
+        )}
+      </div>
+      {props.graphic}
+      {props.title && <div className={cls.title}>{props.title}</div>}
+      <div className={cls.contentWrapper}>
+        {typeof props.content === 'string' ? (
+          <div className={cls.contentTextWrapper}>
+            <Text className={cls.contentText}>{props.content}</Text>
+          </div>
+        ) : (
+          <>{props.content}</>
+        )}
+      </div>
+      {props.buttons && (
         <div className={cls.buttonsWrapper}>
           {props.buttons.map((buttonProps, i) => {
             if (typeof buttonProps !== 'object') {
@@ -62,11 +65,12 @@ export const Dialog: React.FC<Props> = ({ hasCloseButton = true, onClose = noop,
                 containerClassName={cls.buttonContainer}
                 // size="medium"
                 full
-                {...buttonProps} 
+                {...buttonProps}
               />
-            )
+            );
           })}
         </div>
+      )}
     </Layer>
   );
 };
@@ -130,7 +134,6 @@ const useStyles = createUseStyles({
     },
   },
   button: {
-    
     paddingBottom: 0,
     marginBottom: 0,
   },
