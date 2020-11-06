@@ -1,6 +1,7 @@
 import config from 'src/config';
 import {
-  getWebDataEventChannel, WebDataEventChannelFrom,
+  getWebDataEventChannel,
+  WebDataEventChannelFrom,
 } from './WebDataEventChannel/WebDataEventChannel';
 import {
   addLoggingInterceptors,

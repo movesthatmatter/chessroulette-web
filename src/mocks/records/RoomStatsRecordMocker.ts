@@ -1,46 +1,25 @@
 import Chance from 'chance';
-import { RoomStatsRecord, PeerRecord } from 'dstnd-io';
-import { range } from 'src/lib/util';
-import { PeerRecordMock } from './PeerRecordMock';
+import { RoomStatsRecord } from 'dstnd-io';
+import { RoomMocker } from './RoomMocker';
+import { Peer } from 'src/components/RoomProvider';
 
 const chance = new Chance();
-
-const types = ['public', 'private'];
-
-const peerMock = new PeerRecordMock();
-
-const getPeersMap = (count: number) =>
-  range(count)
-    .map(() => peerMock.record())
-    .reduce((r, next) => ({ ...r, [next.id]: next }), {});
+const roomMocker = new RoomMocker();
 
 export class RoomStatsRecordMocker {
   record(
-    peersMapOrPeersCount: Record<string, PeerRecord> | number = 4,
+    peersMapOrPeersCount: Record<string, Peer> | number = 4,
   ): RoomStatsRecord {
-    const peers = typeof peersMapOrPeersCount === 'number'
-      ? getPeersMap(peersMapOrPeersCount)
-      : peersMapOrPeersCount;
-
-    const type = types[chance.integer({ min: 0, max: 1 })] as 'public' | 'private';
-
-    return {
-      id: String(chance.integer({ min: 1 })),
-      name: String(chance.city()),
-      ...type === 'private' ? {
-        type,
-        code: chance.hash({ length: 6 }),
-      } : {
-        type,
-      },
-      peersCount: Object.keys(peers).length,
-      peers,
-    };
+    // At this point the RoomStatsRecord is a subset of Room,
+    // using PeerRecord instead of Peers and not having a bunch 
+    // of client side props, but for the purpose of mocking is ok
+    // to not have to deal with removing them
+    return roomMocker.record(peersMapOrPeersCount);
   }
 
   withProps(
     props: Partial<RoomStatsRecord>,
-    peersMapOrPeersCount: Record<string, PeerRecord> | number = 4,
+    peersMapOrPeersCount: Record<string, Peer> | number = 4,
   ): RoomStatsRecord {
     const mergedRecord = {
       ...this.record(peersMapOrPeersCount),
@@ -54,11 +33,9 @@ export class RoomStatsRecordMocker {
         code: props.code || chance.hash({ length: 6 }),
       } : {
         type: 'public',
+        code: null,
       },
-
-      // Update the count
-      peersCount: Object.keys(mergedRecord.peers).length,
-    };
+    }
   }
 
   get private() {

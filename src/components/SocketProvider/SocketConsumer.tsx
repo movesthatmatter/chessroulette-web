@@ -8,6 +8,7 @@ export type SocketConsumerProps = {
   autoDemandConnection?: boolean;
   render: (renderProps: {
     send: SocketClient['send'];
+    close: SocketClient['close'];
     socket: SocketClient;
   }) => React.ReactNode;
 
@@ -17,11 +18,13 @@ export type SocketConsumerProps = {
 
   onReady?: (socket: SocketClient) => void;
   onMessage?: Parameters<SocketClient['onMessage']>[0];
+  onClose?: () => void;
 };
 
 export const SocketConsumer: React.FC<SocketConsumerProps> = ({
   onReady = noop,
   onMessage = noop,
+  onClose = noop,
   autoDemandConnection = true,
   ...props
 }) => {
@@ -42,6 +45,10 @@ export const SocketConsumer: React.FC<SocketConsumerProps> = ({
         }
       };
 
+      const onCloseHandler = () => {
+        onClose();
+      }
+
       // Save the remove fn at this point because if I leave inside the unsubscrier handler
       //  the contextState.socket might not be available anymore!
       const socketListenerRemover = contextState.socket.connection.removeEventListener;
@@ -54,10 +61,13 @@ export const SocketConsumer: React.FC<SocketConsumerProps> = ({
         contextState.socket.connection.addEventListener('open', onOpenHandler);
       }
 
+      contextState.socket.connection.addEventListener('close', onCloseHandler);
+
       const unsubscribeOnmessage = contextState.socket.onMessage(onMessage);
 
       return () => {
         socketListenerRemover('open', onOpenHandler);
+        socketListenerRemover('close', onCloseHandler);
         unsubscribeOnmessage();
       };
     }
@@ -94,6 +104,7 @@ export const SocketConsumer: React.FC<SocketConsumerProps> = ({
       {props.render({
         socket,
         send: socket.send.bind(socket),
+        close: socket.close.bind(socket),
       })}
     </>
   );

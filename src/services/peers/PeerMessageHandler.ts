@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import { RTCDataX } from 'src/lib/RTCDataX';
 import { Result, Err, Ok } from 'ts-results';
 import { isLeft } from 'fp-ts/lib/Either';

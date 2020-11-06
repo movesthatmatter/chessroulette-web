@@ -4,7 +4,7 @@ import { SocketProvider } from 'src/components/SocketProvider';
 import { action } from '@storybook/addon-actions';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerRecordMock } from 'src/mocks/records';
-import { range } from 'src/lib/util';
+import { range } from '../../lib/util';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { GameRoomContainer } from './GameRoomContainer';
@@ -52,8 +52,8 @@ export const publicRoom = () => (
 
 const peerMock = new PeerRecordMock();
 const playersBySide: GamePlayersBySide = {
-  home: peerMock.withProps({ id: roomWithNoConnections.me.id }),
-  away: peerMock.withProps({ id: roomWithNoConnectionsPeers[0].id }),
+  home: peerMock.withProps({ id: roomWithNoConnections.me.id }).user,
+  away: peerMock.withProps({ id: roomWithNoConnectionsPeers[0].id }).user,
 };
 
 export const roomWithPlayers = () =>
@@ -121,7 +121,7 @@ export const roomWithPlayersAndSpectators = () =>
     const [currentGame, setCurrentGame] = useState<ChessGameState>(reduceChessGame.prepareGame({
       playersBySide: {
         ...playersBySide,
-        away: roomWithNoConnectionsPeers[0],
+        away: roomWithNoConnectionsPeers[0].user,
       },
       homeColor: 'white',
       timeLimit: 'rapid',

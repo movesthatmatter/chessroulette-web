@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import React, { ReactNode } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { RTCSignalingChannel } from 'src/services/socket/RTCSignalingChannel';
@@ -53,6 +55,7 @@ type State = {
   peerConnections: PeerConnections;
 };
 
+// @depreacated in favor of PeerProvider which uses Peer.js
 export class PeersProvider extends React.Component<Props, State> {
   private peersClient?: Peers;
 

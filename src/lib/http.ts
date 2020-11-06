@@ -1,6 +1,9 @@
-import axios, { AxiosRequestConfig, AxiosInterceptorManager, AxiosResponse } from 'axios';
+import axios, {
+  AxiosRequestConfig,
+  AxiosInterceptorManager,
+  AxiosResponse,
+} from 'axios';
 import config from 'src/config';
-
 
 export const getHttpInstance = (opts?: AxiosRequestConfig) => {
   const instance = axios.create(opts);
@@ -17,7 +20,7 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
       '%cHttp %cRequest:',
       logUnimportantStyle,
       logImportantStyle,
-      request.url,
+      request.url
     );
     console.log('Options:    ', {
       ...request.params,
@@ -38,7 +41,7 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
       logUnimportantStyle,
       logImportantStyle,
       logSuccessStyle,
-      response.config.url,
+      response.config.url
     );
 
     console.log('Response: ', response);
@@ -52,7 +55,6 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
     return response;
   };
 
-
   if (config.DEBUG) {
     instance.interceptors.request.use(requestInterceptor);
 
@@ -61,7 +63,7 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
         '%cHttp %cResponse %cError:',
         logUnimportantStyle,
         logImportantStyle,
-        logErrorStyle,
+        logErrorStyle
       );
 
       console.log('Error: ', e);
@@ -70,7 +72,6 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
       return Promise.reject(e);
     });
   }
-
 
   return instance;
 };

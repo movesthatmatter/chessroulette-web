@@ -7,7 +7,6 @@ import { RoomInfoDisplay } from '../RoomInfoDisplay';
 import { RoomStats } from '../RoomStats';
 import { AwesomeLoaderPage } from '../AwesomeLoader';
 
-
 export default {
   component: RoomProvider,
   title: 'Components/RoomProvider',
@@ -55,7 +54,7 @@ export const withStreaming = () => (
                     width={100}
                     streamConfig={peer.connection.channels.streaming}
                   />
-                  <div>{peer.name}</div>
+                  <div>{peer.user.name}</div>
                 </li>
               ))}
             </ul>

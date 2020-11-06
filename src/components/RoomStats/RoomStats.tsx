@@ -16,14 +16,14 @@ export const RoomStats: React.FC<Props> = (props) => {
         {`Room: ${props.room.name}(${props.room.id}) - ${props.room.peersCount} Peers`}
       </div>
       <div>
-        {`Me: ${props.room.me.name}(${props.room.me.id})`}
+        {`Me: ${props.room.me.user.name}(${props.room.me.id})`}
       </div>
       <div>
         <div>Peers:</div>
         {Object.values(props.room.peers).map(
-          ({ id, name, connection }) => (
+          ({ id, user, connection }) => (
             <div key={id}>
-              <span>{`Peer: ${name}(${id})`}</span>
+              <span>{`Peer: ${user.name}(${id})`}</span>
               <div>
                 <small>
                   {/* <span>

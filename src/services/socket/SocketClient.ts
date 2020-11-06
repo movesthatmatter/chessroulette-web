@@ -5,30 +5,87 @@ import {
   socketPayload,
   io,
   MyStatsPayload,
-  RoomStatsPayload,
   ConnectionOpenedPayload,
   PeerJoinedRoomPayload,
+  PingPayload,
+  UserIdentificationPayload,
+  WhoamiRequestPayload,
+
+  // Room
   JoinRoomRequestPayload,
   JoinRoomSuccessPayload,
-  PingPayload,
+  JoinedRoomUpdatedPayload,
   JoinRoomFailurePayload,
+  LeaveRoomRequestPayload,
+
+  // Chat
+  BroadcastChatMessagePayload,
+
+  // Game Logic
+  GameResignationRequestPayload,
+  GameMoveRequestPayload,
+  GameJoinRequestPayload,
+  GameDrawOfferingRequestPayload,
+  GameDrawAcceptRequestPayload,
+  GameDrawDenyRequestPayload,
+  GameRematchOfferingRequestPayload,
+  GameRematchDenyRequestPayload,
+  GameRematchAcceptRequestPayload,
+  GameAbortionRequestPayload,
+  StatsReaderIdentificationPayload,
+  GameOfferingCancelRequestPayload,
 } from 'dstnd-io';
+import { PeerMessageEnvelope } from 'src/components/PeerProvider/records';
 
 type ReceivableMessagesMap = {
   peerJoinedRoom: PeerJoinedRoomPayload;
   myStats: MyStatsPayload;
-  roomStats: RoomStatsPayload;
   connectionOpened: ConnectionOpenedPayload;
-
+  
   joinRoomSuccess: JoinRoomSuccessPayload;
   joinRoomFailure: JoinRoomFailurePayload;
+  joinedRoomUpdated: JoinedRoomUpdatedPayload;
 
   ping: PingPayload;
+
+  // This is the same as RTC Data, but over Socket for reliability
+  peerMessage: {
+    kind: 'peerMessage';
+    content: PeerMessageEnvelope;
+  };
 };
 
 type SendableMessagesMap = {
-  joinRoomRequest: JoinRoomRequestPayload;
+  userIdentification: UserIdentificationPayload;
+  statsReaderIdentification: StatsReaderIdentificationPayload;
   ping: PingPayload;
+  whoami: WhoamiRequestPayload;
+
+  // Room
+  joinRoomRequest: JoinRoomRequestPayload;
+  leaveRoomRequest: LeaveRoomRequestPayload;
+
+  //Chat
+  broadcastChatMessage: BroadcastChatMessagePayload;
+
+  // Game
+  gameResignationRequestPayload: GameResignationRequestPayload;
+  gameMoveRequestPayload: GameMoveRequestPayload;
+  gameJoinRequestPayload: GameJoinRequestPayload;
+  gameDrawOfferingRequestPayload: GameDrawOfferingRequestPayload;
+  gameDrawAcceptRequestPayload: GameDrawAcceptRequestPayload;
+  gameDrawDenyRequestPayload: GameDrawDenyRequestPayload;
+  gameRematchOfferingRequestPayload: GameRematchOfferingRequestPayload;
+  gameRematchDenyRequestPayload: GameRematchDenyRequestPayload;
+  gameRematchAcceptRequestPayload: GameRematchAcceptRequestPayload;
+  gameAbortionRequestPayload: GameAbortionRequestPayload;
+  gameOfferingCancelRequestPayload: GameOfferingCancelRequestPayload;
+
+  // This is the same as RTC Data, but over Socket for reliability
+  peerMessage: {
+    kind: 'peerMessage';
+    content: PeerMessageEnvelope;
+  };
 };
 
 export class SocketClient {
@@ -36,6 +93,7 @@ export class SocketClient {
   {
     onReady: null;
     onMessage: SocketPayload;
+    onClose: null;
   } & ReceivableMessagesMap
   >();
 
@@ -43,6 +101,10 @@ export class SocketClient {
 
   constructor(url?: string) {
     this.connection = getSocketXConnection(url);
+
+    this.connection.addEventListener('close', () => {
+      this.pubsy.publish('onClose', null);
+    });
 
     this.connection.addEventListener('message', ({ data }) => {
       io.toResult(socketPayload.decode(JSON.parse(data)))
@@ -58,8 +120,8 @@ export class SocketClient {
             case 'peerJoinedRoom':
               this.pubsy.publish('peerJoinedRoom', msg);
               break;
-            case 'roomStats':
-              this.pubsy.publish('roomStats', msg);
+            case 'joinedRoomUpdated':
+              this.pubsy.publish('joinedRoomUpdated', msg);
               break;
             case 'myStats':
               this.pubsy.publish('myStats', msg);
@@ -96,5 +158,9 @@ export class SocketClient {
 
   onMessage(fn: (msg: SocketPayload) => unknown) {
     return this.pubsy.subscribe('onMessage', fn);
+  }
+
+  onClose(fn: () => void) {
+    return this.pubsy.subscribe('onClose', fn);
   }
 }

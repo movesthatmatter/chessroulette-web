@@ -14,6 +14,7 @@ type Props = {
 
   className?: string;
   activeClassName?: string;
+  finishedClassName?: string;
 
   onFinished?: () => void;
 };
@@ -72,7 +73,8 @@ export const Coundtdown: React.FC<Props> = ({
 
   return (
     <div className={cx(cls.container, props.className, {
-      [props.activeClassName || '']: !props.paused,
+      [props.activeClassName || '']: !(props.paused || finished),
+      [props.finishedClassName || '']: finished,
     })}
     >
       <span>{timeLeft > 0 ? dateFormat(timeLeft, timeLeftToFormat(timeLeft)) : '0:00'}</span>

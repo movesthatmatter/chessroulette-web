@@ -24,7 +24,7 @@ type Unsubscriber = () => void;
 type Receiver<TEvent> = (fn: (event: TEvent) => void) => Unsubscriber;
 
 export const forward = <TEvent>(
-  receiver: Receiver<TEvent>,
+  receiver: Receiver<TEvent>
   // predicate?: ()
 ) => {
   let unsubscribeFromReceiver: Unsubscriber | undefined;
@@ -59,7 +59,9 @@ export const forward = <TEvent>(
   return proxy;
 };
 
-export type Forwarded<TEvent = unknown> = (sub: (event: TEvent) => void) => Unsubscriber;
+export type Forwarded<TEvent = unknown> = (
+  sub: (event: TEvent) => void
+) => Unsubscriber;
 
 export const forwardMultiple = <TEvent>(receivers: Receiver<TEvent>[]) => {
   const proxy = (sub: (event: TEvent) => unknown) => {

@@ -1,17 +1,24 @@
-import { RoomStatsRecord, PeerRecord } from 'dstnd-io';
+import { 
+  PeerRecord,
+  RoomRecord,
+  RoomWithPlayActivityRecord,
+  RoomWithNoActivityRecord,
+} from 'dstnd-io';
 import { PeerConnectionStatus } from 'src/services/peers';
 
-
 export type Peer = PeerRecord & {
-  avatarId: string;
   connection: {
     channels: PeerConnectionStatus['channels'];
   };
-}
+};
 
-export type Room = RoomStatsRecord & {
+export type Room = RoomRecord & {
   me: Peer;
   peers: Record<string, Peer>;
+  peersCount: number;
 
   peersIncludingMe: Record<string, Peer>;
-}
+};
+
+export type RoomWithNoActivity = Room & Pick<RoomWithNoActivityRecord, 'activity'>;
+export type RoomWithPlayActivity = Room & Pick<RoomWithPlayActivityRecord, 'activity'>;

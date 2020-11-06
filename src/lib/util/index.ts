@@ -1,7 +1,15 @@
-import humanizeDuration, { Humanizer } from 'humanize-duration';
 import { differenceInMilliseconds } from 'date-fns';
+import humanizeDuration, { Humanizer } from 'humanize-duration';
+import {
+  JoinRoomRequestPayload,
+  RoomRecord,
+  ChallengeRecord,
+} from 'dstnd-io';
+import UrlPattern from 'url-pattern';
+import { Result, Err, Ok } from 'ts-results';
+import { Room } from 'src/components/RoomProvider';
 
-export const noop = () => {
+export const noop = () => { 
   // do nothing
 };
 
@@ -31,10 +39,8 @@ export function getRandomInt(givenMin: number, givenMax: number) {
  * @param {Array} a items An array containing the items.
  */
 export function shuffle<T extends unknown>(a: T[]) {
-  // eslint-disable-next-line no-plusplus
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    // eslint-disable-next-line no-param-reassign
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
@@ -43,7 +49,7 @@ export function shuffle<T extends unknown>(a: T[]) {
 export const randomId = () => String(Math.random()).slice(2);
 
 export const complement = <T>(anySide: T, [sideA, sideB]: readonly [T, T]) =>
-  (sideA === anySide ? sideB : sideA);
+  sideA === anySide ? sideB : sideA;
 
 export const durationFormats = {
   minimal: humanizeDuration.humanizer({
@@ -53,18 +59,20 @@ export const durationFormats = {
 };
 
 export const prettyTimeDiff = (
-  dateLeft: Date, dateRight: Date,
+  dateLeft: Date,
+  dateRight: Date,
   {
     format = durationFormats.minimal,
     options = {},
   }: {
     format?: Humanizer;
     options?: humanizeDuration.Options;
-  } = {},
+  } = {}
 ) => format(differenceInMilliseconds(dateLeft, dateRight), options);
 
 export const prettyCountdown = (
-  ms: number, {
+  ms: number,
+  {
     format = humanizeDuration.humanizer({
       language: 'custom',
       languages: {
@@ -90,5 +98,32 @@ export const prettyCountdown = (
   }: {
     format?: Humanizer;
     options?: humanizeDuration.Options;
-  },
+  }
 ) => format(ms, options);
+
+export const toRoomUrlPath = (room: RoomRecord) => room.slug;
+export const toChallengeUrlPath = (challenge: ChallengeRecord) => challenge.slug; 
+
+export const urlPathToRoomCredentials = (
+  url: string
+): Result<JoinRoomRequestPayload['content'], undefined> => {
+  const match = new UrlPattern('/gameroom/:id(/:code)').match(url);
+
+  if (!(match && match.id)) {
+    return new Err(undefined);
+  }
+
+  return new Ok({
+    roomId: match.id,
+    code: match ? match.code : undefined,
+  });
+};
+
+export const hasOwnProperty = <X extends {}, Y extends PropertyKey>(
+  obj: X,
+  prop: Y
+): obj is X & Record<Y, unknown> => obj.hasOwnProperty(prop);
+
+// Immutably Reverses an Array
+// This is needed b/c the native Array.reverse() mutates in place 
+export const arrReverse = <T>(arr: T[]): T[] => arr.slice(0).reverse() as T[];

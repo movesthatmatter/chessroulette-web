@@ -30,13 +30,10 @@ export const LandingPage: React.FC<Props> = () => {
           setMe(msg.content.me);
         }
       }}
-      render={() => (
+      render={({ socket }) => (
         <div className={cls.container}>
           <PopupModal show={friendsPopup}>
-            <PopupContent
-              hasCloseButton
-              onClose={() => setFriendsPopup(false)}
-            >
+            <PopupContent hasCloseButton onClose={() => setFriendsPopup(false)}>
               <>
                 {me && (
                   <PlayWithFriendsPopup
@@ -53,8 +50,8 @@ export const LandingPage: React.FC<Props> = () => {
                     dispatchCreate={async () => {
                       (
                         await resources.createRoom({
-                          nickname: undefined,
-                          peerId: me.id,
+                          name: undefined,
+                          userId: me.id,
                           type: 'private',
                         })
                       ).map((room) => {
@@ -99,23 +96,28 @@ export const LandingPage: React.FC<Props> = () => {
                 />
               </div>
               <div className={cls.buttonWithMutunachiWrapper}>
-                <Mutunachi
-                  mid={12}
-                  className={cls.mutunachi}
-                />
+                <Mutunachi mid={12} className={cls.mutunachi} />
                 <ColoredButton
                   label="Play Open Challenge"
                   color="#54C4F2"
                   fontSize="21px"
                   padding="5px"
                   onClickFunction={async () => {
-                    if (!me) {
-                      return;
-                    }
+                    // if (!me) {
+                    //   return;
+                    // }
 
-                    (await resources.createChallenge({ peerId: me.id })).map((room) => {
-                      history.push(`/gameroom/${toRoomPath(room)}`);
-                    });
+                    // (
+                    //   await resources.createChallenge({
+                    //     peerId: me.id,
+                    //     game: {
+                    //       timeLimit: 'rapid',
+                    //       preferredColor: 'random',
+                    //     },
+                    //   })
+                    // ).map((room) => {
+                    //   history.push(`/gameroom/${toRoomPath(room)}`);
+                    // });
                   }}
                 />
               </div>

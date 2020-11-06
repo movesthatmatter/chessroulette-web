@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
-import { JoinFirstAvailableRoomHelper } from 'src/storybook/JoinDefaultRoomHelper';
+import { JoinFirstAvailableRoomHelper } from 'src/storybook/JoinFirstAvailableRoomHelper';
 import { eitherToResult } from 'src/lib/ioutil';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { ChatBoxContainer } from './ChatBoxContainer';
@@ -30,7 +30,7 @@ export const defaultStory = () => React.createElement(() => {
         render={({ room: socketRoom, me }) => (
           <RoomProvider
             id={socketRoom.id}
-            code={'code' in socketRoom ? socketRoom.code : undefined}
+            code={'code' in socketRoom ? socketRoom.code || undefined : undefined}
             onMessageReceived={handleMessages}
             onMessageSent={handleMessages}
             renderFallback={() => (
@@ -41,13 +41,13 @@ export const defaultStory = () => React.createElement(() => {
             render={({ room, broadcastMessage }) => (
               <>
                 <div>
-                  {`Me: ${me.name}`}
+                  {`Me: ${me.user.name}`}
                 </div>
                 <div>
                   {'Peers: '}
                   {Object.values(room.peers).map((peer) => (
                     <span key={peer.id}>
-                      {peer.name}
+                      {peer.user.name}
                       {' '}
                       |
                       {' '}

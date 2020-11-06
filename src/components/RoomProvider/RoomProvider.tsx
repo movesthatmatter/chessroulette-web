@@ -2,7 +2,7 @@ import React, {
   useState, ReactNode, useEffect, useRef,
 } from 'react';
 import {
-  PeerRecord, RoomStatsRecord, IceServerRecord,
+  PeerRecord, IceServerRecord, RoomRecord
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { AVStreamingConstraints, AVStreaming } from 'src/services/AVStreaming';
@@ -11,7 +11,6 @@ import { resources } from 'src/resources';
 import { SocketConsumer } from '../SocketProvider';
 import { PeersProvider, PeerConnections } from '../PeersProvider';
 import { Room, Peer } from './types';
-
 
 type RenderProps = {
   me: Peer;
@@ -51,7 +50,7 @@ export const RoomProvider: React.FC<Props> = ({
   const [
     socketRecords,
     setSocketRecords,
-  ] = useState<{me: PeerRecord; room: RoomStatsRecord} | undefined>();
+  ] = useState<{me: PeerRecord; room: RoomRecord} | undefined>();
   const [rtcPeerConnections, setRtcPeerConnections] = useState<PeerConnections>({});
   const [meAndMyRoom, setMeAndMyRoom] = useState<{me: Peer; room: Room} | undefined>();
 
@@ -63,14 +62,8 @@ export const RoomProvider: React.FC<Props> = ({
         return prev;
       }
 
-      const meId = socketRecords.me.id;
-
       const nextMe: Peer = {
-        // Updates From Socket
-        id: meId,
-        name: socketRecords.me.name,
-        avatarId: meId.slice(-1)[0],
-
+        ...socketRecords.me,
         // Updates From RTC (Peer Connections)
         connection: {
           channels: {
@@ -100,18 +93,13 @@ export const RoomProvider: React.FC<Props> = ({
           // TODO: Revise this logic here as I'm not sure it's working as it should
           //  or at the very least I'm not sure it's not extraneous, like the 2nd if
 
-
           if (socketRecords.room.peers[peerId]) {
             const { room: socketRoom } = socketRecords;
             const { [peerId]: socketRoomPeer } = socketRoom.peers;
             const { [peerId]: rtcConnection } = rtcPeerConnections;
 
             const nextPeer: Peer = {
-              id: socketRoomPeer.id,
-              name: socketRoomPeer.name,
-              // Thiis should come from somewhere else lowerver (server or smtg)
-              avatarId: socketRoomPeer.id.slice(-1)[0],
-
+              ...socketRoomPeer,
               connection: {
                 channels: rtcConnection.channels,
               },
@@ -143,7 +131,12 @@ export const RoomProvider: React.FC<Props> = ({
           code: socketRecords.room.code,
         } : {
           type: socketRecords.room.type,
+          code: null,
         },
+        slug: socketRecords.room.slug,
+
+        createdAt: socketRecords.room.createdAt,
+        createdBy: socketRecords.room.createdBy,
 
         // Updates from RTC (Peer Connections)
         me: nextMe,
@@ -154,6 +147,9 @@ export const RoomProvider: React.FC<Props> = ({
           ...nextPeers,
           [nextMe.id]: nextMe,
         },
+
+        activity: socketRecords.room.activity,
+        chatHistory: socketRecords.room.chatHistory,
       };
 
       return {
@@ -178,7 +174,7 @@ export const RoomProvider: React.FC<Props> = ({
           setSocketRecords(msg.content);
         } else if (msg.kind === 'joinRoomFailure') {
           setError('WrongCode');
-        } else if (msg.kind === 'roomStats') {
+        } else if (msg.kind === 'joinedRoomUpdated') {
           // This is needed because when there is a new Peer Joining the room
           //  The Peer Info comes from the socket
           setSocketRecords((prev) => (prev

@@ -31,7 +31,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
         <div className={cls.grid}>
           <div className={cls.side}>
             <Mutunachi
-              mid={challengee.avatarId}
+              mid={challengee.user.avatarId}
               className={cls.mutunachi}
             />
           </div>
@@ -39,15 +39,14 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
           <div className={cls.middle}>
             {'You\'ve been challenged by '}
             <span className={cls.bold}>
-              {`${challenger.name}`}
+              {`${challenger.user.name}`}
             </span>
-
 
           </div>
 
           <div className={cls.side}>
             <Mutunachi
-              mid={challenger.avatarId}
+              mid={challenger.user.avatarId}
               className={cls.mutunachi}
             />
           </div>
@@ -78,7 +77,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
         <div className={cls.grid}>
           <div className={cls.side}>
             <Mutunachi
-              mid={challenger.avatarId}
+              mid={challenger.user.avatarId}
               className={cls.mutunachi}
             />
           </div>
@@ -86,7 +85,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
             <div>
               {'You\'re challenging '}
               <div className={cls.bold}>
-                {`${challengee.name}`}
+                {`${challengee.user.name}`}
               </div>
             </div>
             <div>
@@ -95,7 +94,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
           </div>
           <div className={cls.side}>
             <Mutunachi
-              mid={challengee.avatarId}
+              mid={challengee.user.avatarId}
               className={cls.mutunachi}
             />
           </div>
@@ -119,7 +118,7 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
       <div className={cls.grid}>
         <div className={cls.side}>
           <Mutunachi
-            mid={challenger.avatarId}
+            mid={challenger.user.avatarId}
             className={cls.mutunachi}
           />
         </div>
@@ -127,18 +126,18 @@ export const ChallengeOfferPopup: React.FC<Props> = ({
         <div className={cls.middle}>
           <div className={cls.challengeText}>
             <span className={cls.bold}>
-              {`${challenger.name}`}
+              {`${challenger.user.name}`}
             </span>
             challenges
             <span className={cls.bold}>
-              {`${challengee.name}`}
+              {`${challengee.user.name}`}
             </span>
           </div>
         </div>
 
         <div className={cls.side}>
           <Mutunachi
-            mid={challengee.avatarId}
+            mid={challengee.user.avatarId}
             className={cls.mutunachi}
           />
         </div>

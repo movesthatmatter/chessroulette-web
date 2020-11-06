@@ -11,21 +11,20 @@ export default {
   title: 'Modules/GameRoom/Components/Challenge Offer Popup',
 };
 
-
 // const me = {
 //   id: '1',
 //   name: 'Capra',
 // };
 
 const peerMocker = new PeerMocker();
-const me = peerMocker.withProps({
+const me = peerMocker.withUserInfoProps({
   name: 'Capra',
 });
 
 const peers = [
-  peerMocker.withProps({ name: 'Elefantu verde' }),
-  peerMocker.withProps({ name: 'Hipopotamu' }),
-  peerMocker.withProps({ name: 'Girafa Mov' }),
+  peerMocker.withUserInfoProps({ name: 'Elefantu verde' }),
+  peerMocker.withUserInfoProps({ name: 'Hipopotamu' }),
+  peerMocker.withUserInfoProps({ name: 'Girafa Mov' }),
 ];
 
 const challengeOfferSending: GameChallengeRecord = {

@@ -3,8 +3,14 @@ import { createUseStyles } from 'src/lib/jss';
 import { useInterval } from 'src/lib/hooks';
 import { getRandomInt } from 'src/lib/util';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
+import { AspectRatio, AspectRatioProps } from '../AspectRatio';
+import { Box } from 'grommet';
+import { Text } from 'src/components/Text';
+import cx from 'classnames';
 
-type Props = {};
+type Props = AspectRatioProps & {
+  minimal?: boolean;
+};
 
 const now = () => (new Date()).getTime();
 
@@ -22,7 +28,10 @@ const sayings = [
 
 const getRandomSaying = () => sayings[getRandomInt(0, sayings.length - 1)];
 
-export const AwesomeLoader: React.FC<Props> = (props) => {
+export const AwesomeLoader: React.FC<Props> = ({
+  aspectRatio = { width: 1, height: 1 },
+  minimal,
+}) => {
   const cls = useStyles();
   const [randomKey, setRandomKey] = useState(now());
 
@@ -31,50 +40,54 @@ export const AwesomeLoader: React.FC<Props> = (props) => {
   }, 2 * 1000);
 
   return (
-    <div
-      className={cls.container}
-      key={randomKey}
-    >
-      <div className={cls.mutunachiContainer}>
+    <div className={cls.container}>
+      <AspectRatio
+        aspectRatio={aspectRatio}
+        className={cls.mutunachiContainer}
+        key={randomKey}
+      >
         <Mutunachi
           random
-          className={cls.mutunachi}
+          className={cx([
+            cls.mutunachi,
+            minimal && cls.animatedMutunachi,
+          ])}
         />
-      </div>
-      <div className={cls.text}>{getRandomSaying()}</div>
+      </AspectRatio>
+      {minimal || (
+        <Box pad="small">
+          <Text className={cls.text}>
+            {getRandomSaying()}
+          </Text>
+        </Box>
+      )}
     </div>
   );
 };
 
 const useStyles = createUseStyles({
   container: {
-    width: '300px',
-    paddingTop: '200px',
+    width: '100%',
     textAlign: 'center',
   },
   mutunachiContainer: {
-    width: '180px',
-    background: 'red',
+    width: '60%',
     margin: '0 auto',
-    position: 'relative',
   },
   mutunachi: {
-    width: '180px',
-    display: 'inline',
-    animation: 'pulse 3s infinite',
-
-    position: 'absolute',
-    bottom: 0,
-    left: '-50%',
-    transform: 'translateX(50%)',
+    height: '100%',
   },
 
   '@keyframes pulse': {
     '0%': {
-      opacity: 0.95,
+      opacity: 0.3,
     },
 
     '50%': {
+      opacity: 0.95,
+    },
+
+    '100%': {
       opacity: 0.3,
     },
   },
@@ -85,7 +98,10 @@ const useStyles = createUseStyles({
 
     animation: '2s infinite',
     animationName: '$pulse',
-
-    marginTop: '30px',
   },
+
+  animatedMutunachi: {
+    animation: '2s infinite',
+    animationName: '$pulse',
+  }
 });

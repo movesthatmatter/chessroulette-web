@@ -60,15 +60,16 @@ HTMLImageElement
 export const Mutunachi: React.FC<MutunachiProps> = ({
   mid,
   className,
+  random,
   ...imgProps
 }) => {
   const cls = useStyles();
-  const randomId = useRef(String(getRandomInt(0, 18))).current;
+  const src = mid ? map[mid] : map[String(getRandomInt(0, 18))];
 
   return (
     <img
       className={cx(cls.img, className)}
-      src={((mid && map[mid]) || map[randomId]) as string}
+      src={src as string}
       alt="Mutunachi"
       {...imgProps}
     />

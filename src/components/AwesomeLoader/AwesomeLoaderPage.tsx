@@ -9,7 +9,9 @@ export const AwesomeLoaderPage: React.FC<Props> = () => {
 
   return (
     <div className={cls.container}>
-      <AwesomeLoader />
+      <div style={{width: '300px'}}>
+        <AwesomeLoader />
+      </div>
     </div>
   );
 };

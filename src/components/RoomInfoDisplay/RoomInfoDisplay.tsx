@@ -87,15 +87,12 @@ export const RoomInfoDisplay: React.FC<RoomInfoProps> = ({
               Waiting for peers.
               <br />
               <br />
-              Dont just sit there, click the + icon above and
-              invite some friends over.
+              Dont just sit there, click the + icon above and invite some
+              friends over.
               <br />
               <br />
               <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Mutunachi
-                  mid={4}
-                  style={{ height: '100px' }}
-                />
+                <Mutunachi mid={4} style={{ height: '100px' }} />
               </div>
             </div>
           )}

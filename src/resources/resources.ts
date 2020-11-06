@@ -1,5 +1,4 @@
 import { getHttpInstance } from 'src/lib/http';
-import { Err, Result } from 'ts-results';
 import {
   io,
   publicRoomsResponsePayload,
@@ -15,8 +14,22 @@ import {
   PrivateRoomResponsePayload,
   iceServersResponse,
   IceServersResponse,
+  RegisterPeerRequestPayload,
+  RegisterPeerResponsePayload,
+  registerPeerResponsePayload,
+  AsyncResultWrapper,
+  RoomResponsePayload,
+  roomResponsePayload,
+  CreateChallengeResponse,
+  ChallengeRecord,
+  challengeRecord,
+  AcceptChallengeRequest,
+  QuickPairingRequest,
+  QuickPairingResponse,
+  quickPairingResponse,
 } from 'dstnd-io';
 import config from 'src/config';
+import { Result, Err, Ok } from 'ts-results';
 
 type ApiError = 'BadRequest' | 'BadResponse';
 
@@ -26,7 +39,9 @@ const http = getHttpInstance({
   // transformResponse: [],
 });
 
-export const getIceURLS = async (): Promise<Result<IceServersResponse, ApiError>> => {
+export const getIceURLS = async (): Promise<
+  Result<IceServersResponse, ApiError>
+> => {
   try {
     const { data } = await http.get('api/iceurls');
 
@@ -39,7 +54,7 @@ export const getIceURLS = async (): Promise<Result<IceServersResponse, ApiError>
 };
 
 export const getPublicRooms = async (): Promise<
-Result<PublicRoomsResponsePayload, ApiError>
+  Result<PublicRoomsResponsePayload, ApiError>
 > => {
   try {
     const { data } = await http.get('api/rooms');
@@ -56,7 +71,7 @@ export const getPublicRoom = async (
   id: string,
 ): Promise<Result<PublicRoomResponsePayload, ApiError>> => {
   try {
-    const { data } = await http.get(`/api/room?id=${id}`);
+    const { data } = await http.get(`/api/room/${id}`);
 
     return io
       .toResult(publicRoomResponsePayload.decode(data))
@@ -66,29 +81,112 @@ export const getPublicRoom = async (
   }
 };
 
-export const getPrivateRoom = async (
+export const getPrivateRoom = (
   code: string,
-): Promise<Result<PrivateRoomResponsePayload, ApiError>> => {
+) => {
+  return new AsyncResultWrapper<PrivateRoomResponsePayload, ApiError>(async () => {
+    try {
+      const { data } = await http.get(
+        '/api/room',
+        { params: { code }},
+      );
+  
+      return io
+        .toResult(privateRoomResponsePayload.decode(data))
+        .mapErr(() => 'BadResponse');
+    } catch (e) {
+      return new Err('BadRequest');
+    }
+  });
+};
+
+export const getRoom = (credentials: {
+  roomId: string;
+  code?: string;
+}) => {
+  return new AsyncResultWrapper<RoomResponsePayload, ApiError>(async () => {
+    try {
+      const { data } = await http.get(
+        `/api/rooms/${credentials.roomId}`,
+        { 
+          params: {
+            ...credentials.code && {
+              code: credentials.code,
+            },
+          },
+        },
+      );
+  
+      return io
+        .toResult(roomResponsePayload.decode(data))
+        .mapErr(() => 'BadResponse');
+    } catch (e) {
+      return new Err('BadRequest');
+    }
+  });
+};
+
+export const getRoomBySlug = (slug: string) => {
+  return new AsyncResultWrapper<RoomResponsePayload, ApiError>(async () => {
+    try {
+      const { data } = await http.get(`/api/rooms/slug/${slug}`);
+
+      return io
+        .toResult(roomResponsePayload.decode(data))
+        .mapErr(() => 'BadResponse');
+    } catch (e) {
+      return new Err('BadRequest');
+    }
+  });
+}
+
+export const createRoom = (
+  req: CreateRoomRequest,
+) => new AsyncResultWrapper<CreateRoomResponse, ApiError>(async () => {
   try {
-    const { data } = await http.get('/api/room', {
-      params: {
-        code,
-      },
-    });
+    const { data } = await http.post('api/rooms', req);
 
     return io
-      .toResult(privateRoomResponsePayload.decode(data))
+      .toResult(createRoomResponse.decode(data))
+      .mapErr(() => 'BadResponse' as const);
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+});
+
+export const createChallenge = (
+  req: CreateChallengeRequest,
+) => new AsyncResultWrapper<CreateChallengeResponse, ApiError>(async () => {
+  try {
+    const { data } = await http.post('api/challenges', req);
+
+    return io
+      .toResult(createChallengeResponse.decode(data))
       .mapErr(() => 'BadResponse');
   } catch (e) {
     return new Err('BadRequest');
   }
-};
+});
 
-export const createRoom = async (
-  req: CreateRoomRequest,
-): Promise<Result<CreateRoomResponse, ApiError>> => {
+export const getChallengeBySlug = (
+  slug: string,
+) => new AsyncResultWrapper<ChallengeRecord, ApiError>(async () => {
   try {
-    const { data } = await http.post('api/rooms', req);
+    const { data } = await http.get('api/challenges', { params: { slug } });
+
+    return io
+      .toResult(challengeRecord.decode(data))
+      .mapErr(() => 'BadResponse');
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+});
+
+export const acceptChallenge = (
+  req: AcceptChallengeRequest,
+) => new AsyncResultWrapper<CreateRoomResponse, ApiError>(async () => {
+  try {
+    const { data } = await http.post('api/challenges/accept', req);
 
     return io
       .toResult(createRoomResponse.decode(data))
@@ -96,16 +194,58 @@ export const createRoom = async (
   } catch (e) {
     return new Err('BadRequest');
   }
-};
+});
 
-export const createChallenge = async (
-  req: CreateChallengeRequest,
-): Promise<Result<CreateRoomResponse, ApiError>> => {
+// TODO: This needs to make sure the user is also the one that created it
+// Later through auth or smtg like that
+export const deleteChallenge = (
+  id: ChallengeRecord['id'],
+) => new AsyncResultWrapper<void, ApiError>(async () => {
   try {
-    const { data } = await http.post('api/challenges', req);
+    await http.delete(`api/challenges/${id}`);
+
+    return Ok.EMPTY;
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+});
+
+export const quickPair = (
+  req: QuickPairingRequest
+) => new AsyncResultWrapper<QuickPairingResponse, ApiError>(async () => {
+  try {
+    const { data } = await http.post(`api/challenges/quickpair`, req);
 
     return io
-      .toResult(createChallengeResponse.decode(data))
+      .toResult(quickPairingResponse.decode(data))
+      .mapErr(() => 'BadResponse');
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+});
+
+export const registerPeer = async (
+  req: RegisterPeerRequestPayload,
+): Promise<Result<RegisterPeerResponsePayload, ApiError>> => {
+  try {
+    const { data } = await http.post('api/peers', req);
+
+    return io
+      .toResult(registerPeerResponsePayload.decode(data))
+      .mapErr(() => 'BadResponse');
+  } catch (e) {
+    return new Err('BadRequest');
+  }
+};
+
+export const getGuestUserRegisteredAsPeer = async (): Promise<
+  Result<RegisterPeerResponsePayload, ApiError>
+> => {
+  try {
+    const { data } = await http.post('api/peers/guest');
+
+    return io
+      .toResult(registerPeerResponsePayload.decode(data))
       .mapErr(() => 'BadResponse');
   } catch (e) {
     return new Err('BadRequest');

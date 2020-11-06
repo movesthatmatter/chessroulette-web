@@ -1,4 +1,5 @@
 import * as io from 'io-ts';
+import { isoDateTimeFromISOString } from 'src/lib/date';
 
 export const chessPlayerWhite = io.type({
   color: io.literal('white'),
@@ -59,8 +60,11 @@ export const chessGameStatePending = io.type({
     black: io.number,
   }),
   pgn: io.undefined,
-  lastMoved: io.undefined,
   winner: io.undefined,
+  lastMoveBy: io.undefined,
+  lastMoveAt: io.undefined,
+  /* @deprecated */
+  lastMoved: io.undefined,
 });
 export type ChessGameStatePending = io.TypeOf<typeof chessGameStatePending>;
 
@@ -76,8 +80,11 @@ export const chessGameStateNeverStarted = io.type({
     black: io.number,
   }),
   pgn: io.undefined,
-  lastMoved: io.undefined,
   winner: io.undefined,
+  lastMoveBy: io.undefined,
+  lastMoveAt: io.undefined,
+  /* @deprecated */
+  lastMoved: io.undefined,
 });
 export type ChessGameStateNeverStarted = io.TypeOf<typeof chessGameStateNeverStarted>;
 
@@ -94,8 +101,12 @@ export const chessGameStateStarted = io.type({
     black: io.number,
   }),
   pgn: chessGameStatePgn,
-  lastMoved: io.keyof(chessPlayers.props),
   winner: io.undefined,
+
+  lastMoveBy: io.keyof(chessPlayers.props),
+  lastMoveAt: isoDateTimeFromISOString,
+  /* @deprecated */
+  lastMoved: io.keyof(chessPlayers.props),
 });
 export type ChessGameStateStarted = io.TypeOf<typeof chessGameStateStarted>;
 
@@ -111,8 +122,12 @@ export const chessGameStateFinished = io.type({
     black: io.number,
   }),
   pgn: chessGameStatePgn,
-  lastMoved: io.keyof(chessPlayers.props),
   winner: io.union([chessGameColor, io.literal('1/2')]),
+
+  lastMoveBy: io.keyof(chessPlayers.props),
+  lastMoveAt: isoDateTimeFromISOString,
+  /* @deprecated */
+  lastMoved: io.keyof(chessPlayers.props),
 });
 export type ChessGameStateFinished = io.TypeOf<typeof chessGameStateFinished>;
 

@@ -1,19 +1,16 @@
 import React from 'react';
 import { PeerMessageEnvelope } from 'src/services/peers';
+import { PeerRecord } from 'dstnd-io';
 import { ChatMessageRecord } from './records/ChatMessageRecord';
 import { ChatBox } from './ChatBox';
 
 type Props = {
-  me: {
-    id: string;
-    name: string;
-  };
+  me: PeerRecord;
   broadcastMessage: (
     msg: PeerMessageEnvelope<ChatMessageRecord>['message']
   ) => void;
   chatHistory: ChatMessageRecord[];
 };
-
 
 // This doesn't do much for now but it will most likely
 //  receive a Peers wrapper to be able to maintain it's own state and push updates

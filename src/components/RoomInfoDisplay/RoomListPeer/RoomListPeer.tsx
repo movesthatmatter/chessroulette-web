@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { Mutunachi, MutunachiProps } from 'src/components/Mutunachi/Mutunachi';
+import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { FaceTime } from 'src/components/FaceTimeArea/FaceTime';
 import { Peer } from 'src/components/RoomProvider';
 
@@ -23,7 +23,7 @@ export const RoomListPeer: React.FC<Props> = ({
 
   const checkMouseOver = () => {
     if (canChallenge) {
-      onDisplayChallengeName(peer.name);
+      onDisplayChallengeName(peer.user.name);
     }
   };
 
@@ -49,7 +49,7 @@ export const RoomListPeer: React.FC<Props> = ({
         && (
           <div className={cls.mutunachi}>
             <Mutunachi
-              mid={peer.avatarId}
+              mid={peer.user.avatarId}
               style={{ height: '35px' }}
             />
           </div>
@@ -61,7 +61,7 @@ export const RoomListPeer: React.FC<Props> = ({
             color: isMe ? '#F7627B' : '#000000',
           }}
         >
-          {peer.name}
+          {peer.user.name}
         </div>
       </div>
       <div className={cls.videoContainer}>
@@ -70,7 +70,7 @@ export const RoomListPeer: React.FC<Props> = ({
         ) : (
           <div className={cls.mutunachiLarge}>
             <Mutunachi
-              mid={peer.avatarId}
+              mid={peer.user.avatarId}
               style={{ height: '128px', marginTop: '8px' }}
             />
           </div>
