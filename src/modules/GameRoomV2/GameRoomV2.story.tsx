@@ -131,7 +131,7 @@ export const withSwitchingSides = () => (
                 game: chessGameActions.prepareGame({
                   players: [me.user, opponent.user],
                   preferredColor: 'white',
-                  timeLimit: 'bullet',
+                  timeLimit: 'untimed',
                 }),
               },
             }) as RoomWithPlayActivity
