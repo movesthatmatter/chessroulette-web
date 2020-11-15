@@ -36,6 +36,9 @@ type Props = {
   onOfferCanceled: () => void;
 };
 
+const TOP_HEIGHT = 80;
+const BOTTOM_HEIGHT = 80;
+
 export const GameRoomV2: React.FC<Props> = ({
   onMove = noop,
   onResign = noop,
@@ -64,7 +67,8 @@ export const GameRoomV2: React.FC<Props> = ({
 
   return (
     <>
-      <div className={cls.container}
+      <div
+        className={cls.container}
         style={{
           width: 'calc(100% - 32px)',
           paddingLeft: '32px',
@@ -79,7 +83,7 @@ export const GameRoomV2: React.FC<Props> = ({
               rightSide: 2,
             }}
             minSpaceBetween={30}
-            topHeight={80}
+            topHeight={TOP_HEIGHT}
             getTopComponent={({ right }) => (
               <Box fill direction="row" style={{ height: '100%' }}>
                 <div
@@ -94,26 +98,11 @@ export const GameRoomV2: React.FC<Props> = ({
                 <div
                   style={{
                     width: right.width,
-                    background: colors.white,
-                    height: '100%',
-                    display: 'flex',
-                    alignSelf: 'flex-end',
-                    justifySelf: 'flex-end',
                   }}
-                >
-                  <div
-                    style={{
-                      paddingTop: '16px',
-                      paddingLeft: '32px',
-                      paddingRight: '32px',
-                    }}
-                  >
-                    <UserMenu />
-                  </div>
-                </div>
+                />
               </Box>
             )}
-            bottomHeight={50}
+            bottomHeight={BOTTOM_HEIGHT}
             getBottomComponent={({ right }) => (
               <Box
                 fill
@@ -121,7 +110,6 @@ export const GameRoomV2: React.FC<Props> = ({
                 direction="row"
                 style={{
                   height: '100%',
-                  // background: 'red',
                 }}
               >
                 <div style={{ width: right.width }} />
@@ -135,9 +123,7 @@ export const GameRoomV2: React.FC<Props> = ({
                   <Text
                     style={{
                       ...fonts.small2,
-                      // paddingBottom: '20px',
                       fontWeight: 200,
-                      // background: 'green',
                     }}
                   >
                     Made with ❤️ across the world!
@@ -230,6 +216,12 @@ export const GameRoomV2: React.FC<Props> = ({
             )}
             getRightSideComponent={({ container }) => (
               <div className={cx(cls.side, cls.rightSide)}>
+                <div style={{
+                  paddingTop: '16px',
+                  height: `${TOP_HEIGHT - 16}px`,
+                }}>
+                  <UserMenu />
+                </div>
                 <div
                   className={cls.sideContent}
                   style={{
@@ -280,8 +272,10 @@ export const GameRoomV2: React.FC<Props> = ({
                   >
                     <ChatContainer
                       inputContainerStyle={{
-                        height: `${container.verticalPadding - 32}px`,
-                        marginBottom: '32px',
+                        // height: `${container.verticalPadding - 32}px`,
+                        height: `${BOTTOM_HEIGHT + container.verticalPadding}px`,
+                        // marginBottom: 0,
+                        // marginBottom: '32px',
                       }}
                     />
                   </div>

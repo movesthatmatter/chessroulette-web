@@ -104,6 +104,7 @@ const useStyles = createUseStyles({
   inputBox: {
     flex: 1,
     fontSize: '13px',
+    fontFamily: 'Lato, Open Sans, sans-serif',
     fontWeight: 400,
     padding: 0,
     border: 0,

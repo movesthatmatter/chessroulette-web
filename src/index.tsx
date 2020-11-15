@@ -12,6 +12,7 @@ WebFont.load({
       'Open Sans:300',
       'Open Sans:400',
       'Open Sans:700',
+      'Lato',
       'Lato:300',
       'Lato:400',
       'Lato:500',

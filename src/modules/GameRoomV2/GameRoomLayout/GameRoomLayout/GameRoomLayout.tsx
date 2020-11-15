@@ -92,7 +92,7 @@ export const GameRoomLayout: React.FC<Props> = ({
     setLayout(getLayout());
   }, [containerDimensions]);
 
-  const verticalPadding = containerDimensions.height - layout.gameArea;
+  const verticalPadding = (containerDimensions.height - layout.gameArea);
 
   const occupiedWidth = Math.floor((layout.leftSide + layout.gameArea + layout.rightSide) + (minSpaceBetween * 2));
 
@@ -179,8 +179,13 @@ export const GameRoomLayout: React.FC<Props> = ({
             className={cls.side}
             style={{
               width: `${layout.rightSide}px`,
-              height: `100%`,
               marginLeft: minSpaceBetween,
+              
+              // This is a hack to go above the top & bottom components
+              //  But ideally it could be done better!
+              height: `calc(100% + ${props.topHeight + props.bottomHeight}px)`,
+              marginTop: -props.topHeight,
+              position: 'relative',
             }}
           >
             {props.getRightSideComponent({
