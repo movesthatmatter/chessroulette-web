@@ -151,7 +151,6 @@ const useStyles = createUseStyles({
     background: ` url(${chessBackground})`,
   },
   headerText: {
-    fontFamily: 'Roboto Slab',
     fontWeight: 'bold',
     fontSize: '48px',
     lineHeight: '63px',
@@ -172,7 +171,6 @@ const useStyles = createUseStyles({
     width: '357px',
   },
   text: {
-    fontFamily: 'Roboto Slab',
     fontSize: '18px',
   },
   link: {

@@ -12,7 +12,7 @@ const customTheme: ThemeType = {
       },
     },
     font: {
-      family: 'Lato, Open Sans, Roboto Slab, sans-serif',
+      family: 'Lato, Open Sans, sans-serif',
     },
   },
   button: {

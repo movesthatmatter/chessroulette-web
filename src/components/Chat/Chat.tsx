@@ -103,7 +103,6 @@ const useStyles = createUseStyles({
   },
   inputBox: {
     flex: 1,
-    fontFamily: 'Lato, Open Sans, Roboto Slab, sans-serif',
     fontSize: '13px',
     fontWeight: 400,
     padding: 0,

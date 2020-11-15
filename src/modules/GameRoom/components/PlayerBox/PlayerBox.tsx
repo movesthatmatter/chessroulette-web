@@ -125,7 +125,6 @@ const useStyles = createUseStyles({
   },
   infoLeft: {
     flex: 1,
-    fontFamily: 'Roboto',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -155,7 +154,6 @@ const useStyles = createUseStyles({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontFamily: 'Roboto',
     padding: '0 10px',
 
     backgroundColor: '#EFE7E8',
