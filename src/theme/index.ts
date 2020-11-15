@@ -42,3 +42,4 @@ export * from './colors';
 export * from './effects';
 export * from './fonts';
 export * from './text';
+export * from './mediaQueries';
