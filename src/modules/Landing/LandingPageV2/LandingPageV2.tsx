@@ -1,6 +1,5 @@
 import React from 'react';
 import { Page } from 'src/components/Page';
-import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
 import { ChallengeButtonWidget } from 'src/modules/Games/Chess/components/ChallengeButtonWidget';
 import chessBackground from '../LandingPage/assets/chess_icons.png';
@@ -14,9 +13,9 @@ export const LandingPageV2: React.FC<Props> = () => {
 
   return (
     <Page>
-      <Box alignContent="center" justify="center" style={{ height: '100%' }}>
-        <Box width="xlarge" alignSelf="center" direction="row-responsive">
-          <Box
+      <div className={cls.container}>
+        <div className={cls.inner}>
+          <div
             style={{
               flex: 1,
               alignItems: 'flex-end',
@@ -31,16 +30,17 @@ export const LandingPageV2: React.FC<Props> = () => {
                 maxWidth: '500px',
               }}
             />
-          </Box>
+          </div>
           <div style={{ paddingRight: '32px' }} />
-          <Box
+          <div
             style={{
               flex: 1,
               alignSelf: 'center',
             }}
           >
             <h2 className={cls.headerText}>
-              Online Chess +<br />
+              Online Chess meets
+              <br/>
               Video Streaming
             </h2>
             <Text className={cls.text}>No account needed.</Text>
@@ -48,7 +48,7 @@ export const LandingPageV2: React.FC<Props> = () => {
             <Text className={cls.text}>
               Play with friends in a private lobby or start a quick game.
             </Text>
-            <Box width="small" margin={{ top: 'large' }} alignSelf="center" fill direction="row">
+            <div className={cls.buttonWrapper}>
               <ChallengeButtonWidget
                 label="Play a Friend"
                 challengeType="challenge"
@@ -63,24 +63,42 @@ export const LandingPageV2: React.FC<Props> = () => {
                 size="medium"
                 type="secondary"
               />
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+            </div>
+          </div>
+        </div>
+      </div>
     </Page>
   );
 };
 
 const useStyles = createUseStyles({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: '100%',
+  },
+  inner: {
+    display: 'flex',
+    alignSelf: 'center',
+    maxWidth: '100%',
+    width: '1152px',
+  },
   headerText: {
     marginTop: 0,
     fontSize: '48px',
     lineHeight: '140%',
+    fontWeight: 800,
   },
   text: {
-    fontFamily: 'Roboto Slab',
     fontSize: '18px',
     lineHeight: '1.6em',
     color: colors.neutralDarkest,
+    display: 'block',
+  },
+  buttonWrapper: {
+    marginTop: '48px',
+    display: 'flex',
+    flexDirection: 'row',
   },
 });

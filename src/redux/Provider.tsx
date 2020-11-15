@@ -5,14 +5,21 @@ import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { enhancer } from './enhancer';
 import createPersistedStore from './persistedStore';
 
-// const store = createStore(rootReducer, enhancer);
-
 const { store, persistor } = createPersistedStore(enhancer);
 
 export const ReduxProvider: React.FunctionComponent = ({ children }) => (
-  <Provider store={store}>
-    <PersistGate loading={AwesomeLoaderPage} persistor={persistor}>
-      {children}
-    </PersistGate>
-  </Provider>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        {(bootstraped) => {
+          // Hack: For some reason the persistor doens't set the bootstrapped flag to true
+          //  when prerednering via react-snapshot, which in turn always return the Loader State
+          // This workaround makes sure that the children are always rendered during prerendering
+          if (bootstraped || !!(window as any).reactSnapshotRender) {
+            return children;
+          }
+
+          return <AwesomeLoaderPage />
+        }}
+      </PersistGate>
+    </Provider>
 );

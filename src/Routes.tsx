@@ -20,7 +20,7 @@ export const Routes: React.FC<Props> = () => {
       />
       <Route exact strict path="/stats" key={location.key} component={StatsPage} />
       <Route exact strict path="/:slug" key={location.key} component={ChallengePage} />
-      <Route exact strict path="/" key={location.key} component={LandingPageV2} />
+      <Route exact path="/" component={LandingPageV2} />
     </Switch>
   );
 };

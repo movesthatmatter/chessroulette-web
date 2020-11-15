@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box } from 'grommet';
 import { createUseStyles } from './lib/jss';
 import { defaultTheme } from './theme';
 import { ReduxProvider } from './redux/Provider';
@@ -14,20 +13,22 @@ function App() {
   const cls = useStyles();
 
   return (
+    <>
     <ReduxProvider>
       <AuthenticationProvider>
         <SocketProvider>
           <PeerProvider>
             <ThemeProvider theme={defaultTheme}>
-              <Box className={cls.container}>
+              <div className={cls.container}>
                 {GA.init() && <GA.RouteTracker />}
                 <Routes />
-              </Box>
+              </div>
             </ThemeProvider>
           </PeerProvider>
         </SocketProvider>
       </AuthenticationProvider>
     </ReduxProvider>
+    </>
   );
 }
 
@@ -36,7 +37,7 @@ const useStyles = createUseStyles({
     width: '100%',
     height: '100%',
 
-    fontFamily: 'Lato, Open Sans, Roboto Slab, sans-serif',
+    fontFamily: 'Lato, Open Sans, sans-serif',
   },
 });
 
