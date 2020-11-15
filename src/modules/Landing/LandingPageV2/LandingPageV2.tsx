@@ -107,6 +107,10 @@ const useStyles = createUseStyles({
     fontSize: '60%',
     lineHeight: '100%',
     fontWeight: 400,
+
+    ...minMediaQuery(tabletBreakPoint, {
+      marginBottom: '48px',
+    }),
   },
   text: {
     fontSize: '30%',
@@ -119,9 +123,11 @@ const useStyles = createUseStyles({
     marginTop: '24px',
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-around',
 
-    ...maxMediaQuery(tabletBreakPoint, {
-      justifyContent: 'space-around',
+    ...minMediaQuery(tabletBreakPoint, {
+      marginTop: '48px',
+      justifyContent: 'flex-start',
     }),
   },
   rightSide: {
@@ -131,7 +137,6 @@ const useStyles = createUseStyles({
     ...minMediaQuery(tabletBreakPoint, {
       alignSelf: 'center',
       textAlign: 'left',
-      paddingLeft: '32px',
     }),
   },
   noMobileDisclaimerText: {

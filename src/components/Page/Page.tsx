@@ -12,7 +12,7 @@ export const Page: React.FC<Props> = (props) => {
     <div className={cls.container}>
       <div className={cls.paddingWrapper}>
         <div className={cls.top}>
-          <div className={cls.topMain}>
+          <div className={cls.topMain} style={{fontSize: 0}}>
             <a href="/">
               <img src={logo} alt="logo" className={cls.logo} />
             </a>
@@ -40,8 +40,8 @@ const useStyles = createUseStyles({
     height: 'calc(100% - 32px)',
   },
   top: {
-    paddingTop: '.6em',
-    paddingBottom: '.6em',
+    paddingTop: '10px',
+    paddingBottom: '10px',
     height: `${topHeightPx}px`,
     display: 'flex',
     flexDirection: 'row',
