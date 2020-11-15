@@ -69,7 +69,7 @@ export const defaultStory = () => (
           return (
             <StorybookReduxProvider>
               <SocketProvider>
-                <PeerProvider user={me.user} iceServers={[]}>
+                <PeerProvider>
                   <GameRoomV2
                     room={publicRoom}
                     onMove={action('on move')}

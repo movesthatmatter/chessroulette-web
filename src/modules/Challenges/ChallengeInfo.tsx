@@ -1,4 +1,4 @@
-import { ChallengeRecord, UserInfoRecord } from 'dstnd-io';
+import { ChallengeRecord } from 'dstnd-io';
 import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
 import React, { useState } from 'react';
@@ -8,7 +8,6 @@ import { Dialog } from 'src/components/Dialog/Dialog';
 
 type Props = {
   challenge: ChallengeRecord;
-  user: UserInfoRecord;
   onAccept: () => void;
   onDeny: () => void;
 };

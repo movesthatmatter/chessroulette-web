@@ -13,6 +13,7 @@ import { Dialog } from 'src/components/Dialog/Dialog';
 import { AwesomeError } from 'src/components/AwesomeError';
 import { selectAuthentication } from 'src/services/Authentication';
 import { useSelector } from 'react-redux';
+import { selectMyPeer } from 'src/components/PeerProvider';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   challengeType: PendingChallengeProps['type'];
@@ -40,7 +41,7 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
   const [gameSpecs, setGameSpecs] = useState<GameSpecsRecord | undefined>(undefined);
   const [challengeState, setChallengeState] = useState<ChallengeState>({ state: 'none' });
   const history = useHistory();
-  const authentication = useSelector(selectAuthentication);
+  const myPeer = useSelector(selectMyPeer);
 
   useEffect(() => {
     if (!visiblePopup) {
@@ -58,12 +59,6 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
     setVisiblePopup(false);
   }
 
-  if (authentication.authenticationType === 'none') {
-    return null;
-  }
-
-  const userId = authentication.user.id;
-
   return (
     <>
       <Button
@@ -72,10 +67,13 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
           setVisiblePopup(true);
         }}
         {...buttonProps}
+        disabled={!myPeer || buttonProps.disabled}
       />
       <Dialog
         visible={visiblePopup}
         content={
+          // The SOCKET Consumer should be replaced with PeerConsumer or something More High Level
+          // eithe a PeerConnection hook or another HighOrderComponent
           <SocketConsumer
             onMessage={(msg) => {
               if (msg.kind === 'challengeAccepted') {
@@ -122,7 +120,7 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
             label: 'Play',
             type: 'primary',
             onClick: () => {
-              if (!gameSpecs) {
+              if (!(myPeer && gameSpecs) ) {
                 return;
               }
 
@@ -131,7 +129,7 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                   .createChallenge({
                     type: 'private',
                     gameSpecs,
-                    userId,
+                    userId: myPeer.user.id,
                   })
                   .map((challenge) => {
                     setChallengeState({
@@ -143,7 +141,7 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                 resources
                   .quickPair({
                     gameSpecs,
-                    userId,
+                    userId: myPeer.user.id,
                   })
                   .map((r) => {
                     if (r.matched) {
@@ -157,7 +155,7 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                   });
               }
             },
-            disabled: !(faceTimeOn && gameSpecs),
+            disabled: !(faceTimeOn && gameSpecs && myPeer),
           },
         ]}
       />

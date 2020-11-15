@@ -21,113 +21,116 @@ export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
   const history = useHistory();
   const [friendsPopup, setFriendsPopup] = useState(false);
-  const [me, setMe] = useState<PeerRecord | void>();
+  // const [me, setMe] = useState<PeerRecord | void>();
+  // const [myPeer, setMyPeer] 
 
-  return (
-    <SocketConsumer
-      onMessage={(msg) => {
-        if (msg.kind === 'connectionOpened') {
-          setMe(msg.content.me);
-        }
-      }}
-      render={({ socket }) => (
-        <div className={cls.container}>
-          <PopupModal show={friendsPopup}>
-            <PopupContent hasCloseButton onClose={() => setFriendsPopup(false)}>
-              <>
-                {me && (
-                  <PlayWithFriendsPopup
-                    close={() => setFriendsPopup(false)}
-                    dispatchCodeJoin={async (code) => {
-                      (await resources.getPrivateRoom(code))
-                        .mapErr(() => {
-                          console.log('Bad Code - Let the user know');
-                        })
-                        .map((room) => {
-                          history.push(`/gameroom/${toRoomPath(room)}`);
-                        });
-                    }}
-                    dispatchCreate={async () => {
-                      (
-                        await resources.createRoom({
-                          name: undefined,
-                          userId: me.id,
-                          type: 'private',
-                        })
-                      ).map((room) => {
-                        history.push(`/gameroom/${toRoomPath(room)}`);
-                      });
-                    }}
-                  />
-                )}
-              </>
-            </PopupContent>
-          </PopupModal>
-          <div className={cls.leftSideContainer}>
-            <img src={logo} alt="logo" className={cls.logo} />
-            <div>
-              <p className={cls.headerText}>
-                Play chess online with
-                <br />
-                video streaming
-              </p>
-            </div>
-            <div
-              style={{ marginTop: '5px', marginBottom: '10px' }}
-              className={cls.text}
-            >
-              No account needed.
-              <br />
-              Game hosting and video chat.
-              <br />
-              Play with friends in a private lobby
-              <br />
-              or join an open challenge.
-              <br />
-            </div>
-            <div className={cls.buttonsContainer}>
-              <div style={{ marginRight: '30px' }}>
-                <ColoredButton
-                  label="Play with Friends"
-                  color="#08D183"
-                  fontSize="21px"
-                  padding="5px"
-                  onClickFunction={() => setFriendsPopup(true)}
-                />
-              </div>
-              <div className={cls.buttonWithMutunachiWrapper}>
-                <Mutunachi mid={12} className={cls.mutunachi} />
-                <ColoredButton
-                  label="Play Open Challenge"
-                  color="#54C4F2"
-                  fontSize="21px"
-                  padding="5px"
-                  onClickFunction={async () => {
-                    // if (!me) {
-                    //   return;
-                    // }
+  return null;
 
-                    // (
-                    //   await resources.createChallenge({
-                    //     peerId: me.id,
-                    //     game: {
-                    //       timeLimit: 'rapid',
-                    //       preferredColor: 'random',
-                    //     },
-                    //   })
-                    // ).map((room) => {
-                    //   history.push(`/gameroom/${toRoomPath(room)}`);
-                    // });
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-          <div className={cls.chessboard} />
-        </div>
-      )}
-    />
-  );
+  // return (
+  //   <SocketConsumer
+  //     onMessage={(msg) => {
+  //       if (msg.kind === 'connectionOpened') {
+  //         setMe(msg.content.me);
+  //       }
+  //     }}
+  //     render={({ socket }) => (
+  //       <div className={cls.container}>
+  //         <PopupModal show={friendsPopup}>
+  //           <PopupContent hasCloseButton onClose={() => setFriendsPopup(false)}>
+  //             <>
+  //               {me && (
+  //                 <PlayWithFriendsPopup
+  //                   close={() => setFriendsPopup(false)}
+  //                   dispatchCodeJoin={async (code) => {
+  //                     (await resources.getPrivateRoom(code))
+  //                       .mapErr(() => {
+  //                         console.log('Bad Code - Let the user know');
+  //                       })
+  //                       .map((room) => {
+  //                         history.push(`/gameroom/${toRoomPath(room)}`);
+  //                       });
+  //                   }}
+  //                   dispatchCreate={async () => {
+  //                     (
+  //                       await resources.createRoom({
+  //                         name: undefined,
+  //                         userId: me.id,
+  //                         type: 'private',
+  //                       })
+  //                     ).map((room) => {
+  //                       history.push(`/gameroom/${toRoomPath(room)}`);
+  //                     });
+  //                   }}
+  //                 />
+  //               )}
+  //             </>
+  //           </PopupContent>
+  //         </PopupModal>
+  //         <div className={cls.leftSideContainer}>
+  //           <img src={logo} alt="logo" className={cls.logo} />
+  //           <div>
+  //             <p className={cls.headerText}>
+  //               Play chess online with
+  //               <br />
+  //               video streaming
+  //             </p>
+  //           </div>
+  //           <div
+  //             style={{ marginTop: '5px', marginBottom: '10px' }}
+  //             className={cls.text}
+  //           >
+  //             No account needed.
+  //             <br />
+  //             Game hosting and video chat.
+  //             <br />
+  //             Play with friends in a private lobby
+  //             <br />
+  //             or join an open challenge.
+  //             <br />
+  //           </div>
+  //           <div className={cls.buttonsContainer}>
+  //             <div style={{ marginRight: '30px' }}>
+  //               <ColoredButton
+  //                 label="Play with Friends"
+  //                 color="#08D183"
+  //                 fontSize="21px"
+  //                 padding="5px"
+  //                 onClickFunction={() => setFriendsPopup(true)}
+  //               />
+  //             </div>
+  //             <div className={cls.buttonWithMutunachiWrapper}>
+  //               <Mutunachi mid={12} className={cls.mutunachi} />
+  //               <ColoredButton
+  //                 label="Play Open Challenge"
+  //                 color="#54C4F2"
+  //                 fontSize="21px"
+  //                 padding="5px"
+  //                 onClickFunction={async () => {
+  //                   // if (!me) {
+  //                   //   return;
+  //                   // }
+
+  //                   // (
+  //                   //   await resources.createChallenge({
+  //                   //     peerId: me.id,
+  //                   //     game: {
+  //                   //       timeLimit: 'rapid',
+  //                   //       preferredColor: 'random',
+  //                   //     },
+  //                   //   })
+  //                   // ).map((room) => {
+  //                   //   history.push(`/gameroom/${toRoomPath(room)}`);
+  //                   // });
+  //                 }}
+  //               />
+  //             </div>
+  //           </div>
+  //         </div>
+  //         <div className={cls.chessboard} />
+  //       </div>
+  //     )}
+  //   />
+  // );
 };
 
 const useStyles = createUseStyles({

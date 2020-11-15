@@ -58,11 +58,7 @@ export const defaultStory = () => (
   <Grommet theme={defaultTheme} full>
     <WithLocalStream render={(stream) => (
       <SocketProvider>
-        <PeerProvider
-          // This might not allow it to work with sockets
-          user={userRecordMocker.withProps({ id: '1' })}
-          iceServers={[]}
-        >
+        <PeerProvider>
           <PeerConsumer
             renderRoomJoined={(p) => (
               <ClassRoom
@@ -88,11 +84,7 @@ export const withPeerProvider = () => (
   <ReduxProvider>
     <Grommet theme={defaultTheme} full>
       <SocketProvider>
-        <PeerProvider
-          // This might not allow it to work with sockets
-          user={userRecordMocker.withProps({ id: String(getRandomInt(1, 6)) })}
-          iceServers={[]}
-        >
+        <PeerProvider>
           <PeerConsumer
             renderRoomJoined={(p) => <ClassRoom {...p} />}
             renderFallback={() => <AwesomeLoaderPage />}

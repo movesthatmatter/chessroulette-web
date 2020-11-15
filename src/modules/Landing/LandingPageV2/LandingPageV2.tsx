@@ -40,19 +40,15 @@ export const LandingPageV2: React.FC<Props> = () => {
             }}
           >
             <h2 className={cls.headerText}>
-              Online Chess +<br /> 
+              Online Chess +<br />
               Video Streaming
             </h2>
             <Text className={cls.text}>No account needed.</Text>
             <Text className={cls.text}>Game hosting and video chat.</Text>
-            <Text className={cls.text}>Play with friends in a private lobby or start a quick game.</Text>
-            <Box
-              width="small"
-              margin={{ top: 'large' }}
-              alignSelf="center"
-              fill
-              direction="row"
-            >
+            <Text className={cls.text}>
+              Play with friends in a private lobby or start a quick game.
+            </Text>
+            <Box width="small" margin={{ top: 'large' }} alignSelf="center" fill direction="row">
               <ChallengeButtonWidget
                 label="Play a Friend"
                 challengeType="challenge"

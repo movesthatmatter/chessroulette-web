@@ -5,22 +5,21 @@ import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { Page } from 'src/components/Page';
-import { SocketConsumer } from 'src/components/SocketProvider';
 import { toRoomUrlPath } from 'src/lib/util';
 import { resources } from 'src/resources';
-import { selectAuthentication } from 'src/services/Authentication';
 import { ChallengeInfo } from './ChallengeInfo';
 import { GenericRoom } from 'src/modules/GenericRoom';
+import { selectMyPeer } from 'src/components/PeerProvider';
 
 type Props = {};
 
-export const ChallengePage: React.FC<Props> = (props) => {
+export const ChallengePage: React.FC<Props> = () => {
   const params = useParams<{ slug: string }>();
   const [challenge, setChallenge] = useState<ChallengeRecord>();
   const [room, setRoom] = useState<RoomRecord>();
 
   const history = useHistory();
-  const auth = useSelector(selectAuthentication);
+  const myPeer = useSelector(selectMyPeer);
 
   useEffect(() => {
     resources
@@ -28,10 +27,6 @@ export const ChallengePage: React.FC<Props> = (props) => {
       .map(setRoom)
       .flatMapErr(() => resources.getChallengeBySlug(params.slug).map(setChallenge));
   }, []);
-
-  if (auth.authenticationType === 'none') {
-    return null;
-  }
 
   if (room) {
     return (
@@ -45,29 +40,26 @@ export const ChallengePage: React.FC<Props> = (props) => {
   } else if (challenge) {
     return (
       <Page>
-        <SocketConsumer
-          render={() => (
-            <Box align="center" justify="center">
-              <ChallengeInfo
-                challenge={challenge}
-                user={auth.user}
-                onDeny={() => {
-                  history.replace('/');
-                }}
-                onAccept={() => {
-                  resources
-                    .acceptChallenge({
-                      id: challenge.id,
-                      userId: auth.user.id,
-                    })
-                    .map((room) => {
-                      history.push(toRoomUrlPath(room));
-                    });
-                }}
-              />
-            </Box>
+        <Box align="center" justify="center">
+          {myPeer && (
+            <ChallengeInfo
+              challenge={challenge}
+              onDeny={() => {
+                history.replace('/');
+              }}
+              onAccept={() => {
+                resources
+                  .acceptChallenge({
+                    id: challenge.id,
+                    userId: myPeer.user.id,
+                  })
+                  .map((room) => {
+                    history.push(toRoomUrlPath(room));
+                  });
+              }}
+            />
           )}
-        />
+        </Box>
       </Page>
     );
   }

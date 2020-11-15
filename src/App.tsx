@@ -6,6 +6,9 @@ import { ReduxProvider } from './redux/Provider';
 import { AuthenticationProvider } from './services/Authentication';
 import { Routes } from './Routes';
 import { ThemeProvider } from 'react-jss';
+import { PeerProvider } from './components/PeerProvider';
+import { SocketProvider } from './components/SocketProvider';
+import { GA } from './services/Analytics';
 
 function App() {
   const cls = useStyles();
@@ -13,11 +16,16 @@ function App() {
   return (
     <ReduxProvider>
       <AuthenticationProvider>
-        <ThemeProvider theme={defaultTheme}>
-          <Box className={cls.container}>
-            <Routes />
-          </Box>
-        </ThemeProvider>
+        <SocketProvider>
+          <PeerProvider>
+            <ThemeProvider theme={defaultTheme}>
+              <Box className={cls.container}>
+                {GA.init() && <GA.RouteTracker />}
+                <Routes />
+              </Box>
+            </ThemeProvider>
+          </PeerProvider>
+        </SocketProvider>
       </AuthenticationProvider>
     </ReduxProvider>
   );
@@ -29,7 +37,6 @@ const useStyles = createUseStyles({
     height: '100%',
 
     fontFamily: 'Lato, Open Sans, Roboto Slab, sans-serif',
-    // fontFamily: 'Roboto',s
   },
 });
 
