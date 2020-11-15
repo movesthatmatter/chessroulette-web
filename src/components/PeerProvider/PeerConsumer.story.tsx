@@ -15,14 +15,7 @@ const userRecordMocker = new UserRecordMocker();
 
 export const defaultStory = () => (
   <SocketProvider>
-    <PeerProvider
-      user={userRecordMocker.withProps({
-        id: '1',
-        name: 'Kasparov',
-        avatarId: '1',
-      })}
-      iceServers={[]}
-    >
+    <PeerProvider>
       <PeerConsumer
         onReady={(p) => {
           if (p.state === 'notJoined') {
@@ -63,19 +56,3 @@ export const defaultStory = () => (
     </PeerProvider>
   </SocketProvider>
 );
-
-// export const withRoomInfoDisplayStory = () => (
-//   <SocketProvider>
-//     <PeerProvider render={(p) => (
-//       <>
-//         <p>
-//           {`Me: ${room.me.name}(${room.me.id})`}
-//         </p>
-//         <RoomInfoDisplay
-//           me={}
-//         />
-//       </>
-//     )}
-//     />
-//   </SocketProvider>
-// );
