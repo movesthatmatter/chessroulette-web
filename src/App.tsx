@@ -18,7 +18,14 @@ function App() {
       <AuthenticationProvider>
         <SocketProvider>
           <PeerProvider>
-            <JssProvider classNamePrefix={config.PRERENDERING ? 'PRE-' : undefined}>
+            <JssProvider
+              // Prefix the Mounted classes but not the prerendered ones
+              // This is to avoid style conflict between new and stale
+              //  prerendererd classes since those can't be removed (for now)
+              // The idea of prefixing the mounted classes is to decrease the
+              //  initial html size as much as possible!
+              classNamePrefix={config.PRERENDERING ? undefined : 'cr-'}
+            >
               <ThemeProvider theme={defaultTheme}>
                 <div className={cls.container}>
                   {GA.init() && <GA.RouteTracker />}
