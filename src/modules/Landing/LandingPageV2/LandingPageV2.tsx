@@ -29,6 +29,7 @@ export const LandingPageV2: React.FC<Props> = () => {
                 width: '100%',
                 maxWidth: '500px',
               }}
+              alt="Chessroulette Board"
             />
           </div>
           <div style={{ paddingRight: '32px' }} />
@@ -38,16 +39,16 @@ export const LandingPageV2: React.FC<Props> = () => {
               alignSelf: 'center',
             }}
           >
-            <h2 className={cls.headerText}>
-              Online Chess meets
+            <h1 className={cls.headerText}>
+              Where Chess meets
               <br/>
               Video Streaming
-            </h2>
-            <Text className={cls.text}>No account needed.</Text>
-            <Text className={cls.text}>Game hosting and video chat.</Text>
-            <Text className={cls.text}>
+            </h1>
+            <h3 className={cls.text}>No account needed.</h3>
+            <h3 className={cls.text}>Game hosting and video chat.</h3>
+            <h3 className={cls.text}>
               Play with friends in a private lobby or start a quick game.
-            </Text>
+            </h3>
             <div className={cls.buttonWrapper}>
               <ChallengeButtonWidget
                 label="Play a Friend"
@@ -92,9 +93,10 @@ const useStyles = createUseStyles({
   },
   text: {
     fontSize: '18px',
-    lineHeight: '1.6em',
+    lineHeight: '1em',
     color: colors.neutralDarkest,
     display: 'block',
+    fontWeight: 'normal',
   },
   buttonWrapper: {
     marginTop: '48px',
