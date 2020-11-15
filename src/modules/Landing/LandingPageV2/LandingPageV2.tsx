@@ -39,11 +39,10 @@ export const LandingPageV2: React.FC<Props> = () => {
               alignSelf: 'center',
             }}
           >
-            <h1 className={cls.headerText}>
-              Where Chess meets
-              <br/>
-              Video Streaming
-            </h1>
+            <h1 className={cls.headerText}>Chessroulette</h1>
+            <h2 className={cls.subheaderText}>
+              Where Chess meets Video.
+            </h2>
             <h3 className={cls.text}>No account needed.</h3>
             <h3 className={cls.text}>Game hosting and video chat.</h3>
             <h3 className={cls.text}>
@@ -86,10 +85,16 @@ const useStyles = createUseStyles({
     width: '1152px',
   },
   headerText: {
-    marginTop: 0,
-    fontSize: '48px',
+    margin: 0,
+    fontSize: '60px',
     lineHeight: '140%',
     fontWeight: 800,
+  },
+  subheaderText: {
+    marginTop: 0,
+    fontSize: '36px',
+    lineHeight: '100%',
+    fontWeight: 400,
   },
   text: {
     fontSize: '18px',
