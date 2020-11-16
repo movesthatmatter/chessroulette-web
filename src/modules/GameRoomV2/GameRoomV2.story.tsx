@@ -69,7 +69,7 @@ export const defaultStory = () => (
           return (
             <StorybookReduxProvider>
               <SocketProvider>
-                <PeerProvider user={me.user} iceServers={[]}>
+                <PeerProvider>
                   <GameRoomV2
                     room={publicRoom}
                     onMove={action('on move')}
@@ -131,7 +131,7 @@ export const withSwitchingSides = () => (
                 game: chessGameActions.prepareGame({
                   players: [me.user, opponent.user],
                   preferredColor: 'white',
-                  timeLimit: 'bullet',
+                  timeLimit: 'untimed',
                 }),
               },
             }) as RoomWithPlayActivity

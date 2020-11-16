@@ -30,11 +30,6 @@ export const defaultStory = () => (
         slug: 'testChallenge',
         type: 'private',
       }}
-      user={{
-        id: 'u1',
-        name: 'Gari Kasparov',
-        avatarId: '2',
-      }}
       onDeny={action('on deny')}
       onAccept={action('on accept')}
     />
@@ -63,11 +58,6 @@ export const asPage = () => (
                 createdBy: 'u3',
                 slug: 'testChallenge',
                 type: 'private',
-              }}
-              user={{
-                id: 'u1',
-                name: 'Gari Kasparov',
-                avatarId: '2',
               }}
               onDeny={action('on deny')}
               onAccept={action('on accept')}

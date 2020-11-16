@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReactGA from 'react-ga';
+import ReactGA, { InitializeOptions } from 'react-ga';
 import { Route } from 'react-router-dom';
 import config from 'src/config';
 
@@ -49,11 +49,14 @@ class GoogleAnalytics extends Component<Props> {
 
 const RouteTracker = () => <Route component={GoogleAnalytics} />;
 
-const init = (options = {}) => {
-  const isGAEnabled = process.env.REACT_APP_ENV === 'production';
+const init = (options: InitializeOptions = {}) => {
+  const isGAEnabled = config.ENV === 'production' || config.ENV === 'staging';
 
   if (isGAEnabled) {
-    ReactGA.initialize(config.GOOGLE_ANALYTICS_TRACKING_ID);
+    ReactGA.initialize(config.GOOGLE_ANALYTICS_TRACKING_ID, {
+      // debug: config.DEBUG,
+      ...options,
+    });
   }
 
   return isGAEnabled;

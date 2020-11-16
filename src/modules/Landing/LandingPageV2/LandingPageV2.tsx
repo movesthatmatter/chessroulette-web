@@ -1,22 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Page } from 'src/components/Page';
-import { Box } from 'grommet';
-import { Text } from 'src/components/Text';
 import { ChallengeButtonWidget } from 'src/modules/Games/Chess/components/ChallengeButtonWidget';
 import chessBackground from '../LandingPage/assets/chess_icons.png';
 import { createUseStyles } from 'src/lib/jss';
-import { colors } from 'src/theme';
+import { colors, minMediaQuery, maxMediaQuery } from 'src/theme';
+import cx from 'classnames';
+import { Events } from 'src/services/Analytics';
 
 type Props = {};
 
 export const LandingPageV2: React.FC<Props> = () => {
   const cls = useStyles();
 
+  useEffect(() => {
+    Events.trackPageView('Home');
+  }, []);
+
   return (
     <Page>
-      <Box alignContent="center" justify="center" style={{ height: '100%' }}>
-        <Box width="xlarge" alignSelf="center" direction="row-responsive">
-          <Box
+      <div className={cls.container}>
+        <div className={cls.inner}>
+          <div
             style={{
               flex: 1,
               alignItems: 'flex-end',
@@ -30,33 +34,21 @@ export const LandingPageV2: React.FC<Props> = () => {
                 width: '100%',
                 maxWidth: '500px',
               }}
+              alt="Chessroulette Board"
             />
-          </Box>
-          <div style={{ paddingRight: '32px' }} />
-          <Box
-            style={{
-              flex: 1,
-              alignSelf: 'center',
-            }}
-          >
-            <h2 className={cls.headerText}>
-              Online Chess +<br /> 
-              Video Streaming
-            </h2>
-            <Text className={cls.text}>No account needed.</Text>
-            <Text className={cls.text}>Game hosting and video chat.</Text>
-            <Text className={cls.text}>Play with friends in a private lobby or start a quick game.</Text>
-            <Box
-              width="small"
-              margin={{ top: 'large' }}
-              alignSelf="center"
-              fill
-              direction="row"
-            >
+          </div>
+          <div className={cls.rightSide}>
+            <h1 className={cls.headerText}>Chessroulette</h1>
+            <h2 className={cls.subheaderText}>Where Chess meets Video.</h2>
+            <h3 className={cls.text}>No account needed.</h3>
+            <h3 className={cls.text}>Game hosting and video chat.</h3>
+            <h3 className={cls.text}>
+              Play with friends in a private lobby or start a quick game.
+            </h3>
+            <div className={cx(cls.buttonWrapper, cls.desktopOnly)}>
               <ChallengeButtonWidget
                 label="Play a Friend"
                 challengeType="challenge"
-                size="medium"
                 style={{
                   marginRight: '16px',
                 }}
@@ -64,27 +56,106 @@ export const LandingPageV2: React.FC<Props> = () => {
               <ChallengeButtonWidget
                 label="Quick Game"
                 challengeType="quickPairing"
-                size="medium"
                 type="secondary"
               />
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+            </div>
+            <div className={cls.mobileOnly}>
+              <span className={cls.noMobileDisclaimerText}>
+                Please switch to a bigger screen to Play!
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </Page>
   );
 };
 
+const tabletBreakPoint = 600;
+const desktopBreakPoint = 769;
+
 const useStyles = createUseStyles({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: '100%',
+
+    fontSize: '32px',
+
+    ...minMediaQuery(tabletBreakPoint, {
+      fontSize: '40px',
+    }),
+
+    ...minMediaQuery(desktopBreakPoint, {
+      fontSize: '60px',
+    }),
+  },
+  inner: {
+    display: 'flex',
+    alignSelf: 'center',
+    maxWidth: '100%',
+    width: '1152px',
+
+    ...maxMediaQuery(tabletBreakPoint, {
+      flexDirection: 'column',
+    }),
+  },
   headerText: {
-    marginTop: 0,
-    fontSize: '48px',
+    margin: 0,
+    fontSize: '100%',
     lineHeight: '140%',
+    fontWeight: 800,
+  },
+  subheaderText: {
+    marginTop: 0,
+    fontSize: '60%',
+    lineHeight: '100%',
+    fontWeight: 400,
+
+    ...minMediaQuery(tabletBreakPoint, {
+      marginBottom: '48px',
+    }),
   },
   text: {
-    fontFamily: 'Roboto Slab',
-    fontSize: '18px',
-    lineHeight: '1.6em',
+    fontSize: '30%',
+    lineHeight: '1em',
     color: colors.neutralDarkest,
+    display: 'block',
+    fontWeight: 'normal',
+  },
+  buttonWrapper: {
+    marginTop: '24px',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+
+    ...minMediaQuery(tabletBreakPoint, {
+      marginTop: '48px',
+      justifyContent: 'flex-start',
+    }),
+  },
+  rightSide: {
+    flex: 1,
+    textAlign: 'center',
+
+    ...minMediaQuery(tabletBreakPoint, {
+      alignSelf: 'center',
+      textAlign: 'left',
+    }),
+  },
+  noMobileDisclaimerText: {
+    fontSize: '40%',
+    lineHeight: '40%',
+  },
+  desktopOnly: {
+    ...maxMediaQuery(tabletBreakPoint, {
+      display: 'none',
+    }),
+  },
+  mobileOnly: {
+    ...minMediaQuery(tabletBreakPoint, {
+      display: 'none',
+    }),
   },
 });

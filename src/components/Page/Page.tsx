@@ -40,8 +40,8 @@ const useStyles = createUseStyles({
     height: 'calc(100% - 32px)',
   },
   top: {
-    paddingTop: '.6em',
-    paddingBottom: '.6em',
+    paddingTop: '10px',
+    paddingBottom: '10px',
     height: `${topHeightPx}px`,
     display: 'flex',
     flexDirection: 'row',

@@ -154,7 +154,6 @@ const useStyles = createUseStyles({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    fontFamily: 'Roboto',
     padding: '0 10px',
     height: '40px',
 

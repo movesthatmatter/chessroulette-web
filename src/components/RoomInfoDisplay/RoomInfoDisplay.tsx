@@ -126,7 +126,6 @@ const useStyle = createUseStyles({
   roomInfoContainer: {
     display: 'flex',
     flexDirection: 'column',
-    fontFamily: 'Roboto',
     fontSize: '18px',
     color: '#322F2F',
     fontWeight: 'normal',

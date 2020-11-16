@@ -58,7 +58,6 @@ const useStyle = createUseStyles({
     fontSize: '18px',
     padding: '5px',
     outline: 'none',
-    fontFamily: 'Roboto',
     textAlign: 'center',
     margin: '0px 3px',
   },

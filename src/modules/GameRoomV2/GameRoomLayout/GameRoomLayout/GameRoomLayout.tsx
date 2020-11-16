@@ -2,21 +2,32 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
-import { Dimensions, getLayoutSizes, normalizeRatios, Ratios } from './util';
+import { getLayoutSizes, Ratios } from './util';
 
-type AllDimensions = {
-  gameAreaWidth: number;
-  leftSideWidth: number;
-  rightSideWidth: number;
+type ContainerDimensions = {
+  width: number;
+  height: number;
+  verticalPadding: number;
+  horizontalPadding: number;
+}
+
+type ExtendedDimensions = {
+  container: ContainerDimensions;
+  top: ContainerDimensions;
+  main: ContainerDimensions;
+  bottom: ContainerDimensions;
+  center: ContainerDimensions;
+  left: ContainerDimensions;
+  right: ContainerDimensions;
 }
 
 type Props = {
-  getGameComponent: (containerDimensions: Dimensions) => ReactNode;
-  getRightSideComponent: (containerDimensions: Dimensions) => ReactNode;
-  getLeftSideComponent: (containerDimensions: Dimensions) => ReactNode;
-  getTopComponent: (dimensions: AllDimensions) => ReactNode;
+  getGameComponent: (d: ExtendedDimensions) => ReactNode;
+  getRightSideComponent: (d: ExtendedDimensions) => ReactNode;
+  getLeftSideComponent: (d: ExtendedDimensions) => ReactNode;
+  getTopComponent: (d: ExtendedDimensions) => ReactNode;
+  getBottomComponent: (d: ExtendedDimensions) => ReactNode;
   topHeight: number;
-  getBottomComponent: (containerDimensions: AllDimensions) => ReactNode;
   bottomHeight: number;
   offsets?: {
     top?: number;
@@ -27,6 +38,7 @@ type Props = {
   minSpaceBetween?: number;
   ratios?: Partial<Ratios>;
   className?: string;
+  addRemainingTo?: 'left' | 'center' | 'right' | 'space-between';
 };
 
 export const GameRoomLayout: React.FC<Props> = ({
@@ -48,19 +60,29 @@ export const GameRoomLayout: React.FC<Props> = ({
   const verticalOffset = (offsets?.top || 0) + (offsets?.bottom || 0);
 
   const getLayout = () => {
-    const normalizedRatios = normalizeRatios({
-      leftSide: 0.5,
-      gameArea: 1,
-      rightSide: 0.5,
-      ...props.ratios,
-    });
+    if (!containerDimensions.updated) {
+      return {
+        leftSide: 0,
+        gameArea: 0,
+        rightSide: 0,
+        remaining: 0,
+      }
+    }
+
+    const width = containerDimensions.width - horizontalOffset - (minSpaceBetween * 2);
+    const height = containerDimensions.height - verticalOffset;
 
     return getLayoutSizes(
       {
-        width: containerDimensions.width - horizontalOffset - minSpaceBetween * 2,
-        height: containerDimensions.height - verticalOffset - props.topHeight,
+        width,
+        height,
       },
-      normalizedRatios
+      {
+        leftSide: 0.5,
+        gameArea: 1,
+        rightSide: 0.5,
+        ...props.ratios,
+      }
     );
   };
 
@@ -70,16 +92,57 @@ export const GameRoomLayout: React.FC<Props> = ({
     setLayout(getLayout());
   }, [containerDimensions]);
 
-  const verticalPadding = containerDimensions.height - layout.gameArea;
-  const horizontalPadding = containerDimensions.height - layout.gameArea;
+  const verticalPadding = (containerDimensions.height - layout.gameArea);
+
+  const occupiedWidth = Math.floor((layout.leftSide + layout.gameArea + layout.rightSide) + (minSpaceBetween * 2));
+
+  const extendedDimensions: Omit<ExtendedDimensions, 'container'> = {
+    left: {
+      width: layout.leftSide,
+      height: layout.gameArea,
+      horizontalPadding: 0,
+      verticalPadding,
+    },
+    right: {
+      width: layout.rightSide,
+      height: layout.gameArea,
+      horizontalPadding: 0,
+      verticalPadding,
+    },
+    center: {
+      width: layout.gameArea,
+      height: layout.gameArea,
+      horizontalPadding: 0,
+      verticalPadding,
+    },
+    main: {
+      width: occupiedWidth,
+      height: containerDimensions.height,
+      horizontalPadding: containerDimensions.width - occupiedWidth,
+      verticalPadding,
+    },
+    top: {
+      width: containerDimensions.width,
+      height: props.topHeight,
+      horizontalPadding: 0,
+      verticalPadding,
+    },
+    bottom: {
+      width: containerDimensions.width,
+      height: props.bottomHeight,
+      horizontalPadding: 0,
+      verticalPadding,
+    },
+  };
 
   return (
     <div className={cx(cls.container, className)}>
-      <div className={cls.top}>
+      <div className={cls.top} style={{
+        height: props.topHeight,
+      }}>
         {props.getTopComponent({
-          leftSideWidth: layout.leftSide,
-          rightSideWidth: layout.rightSide,
-          gameAreaWidth: layout.gameArea,
+          ...extendedDimensions,
+          container: extendedDimensions.top,
         })}
       </div>
       <div className={cls.contentContainer} ref={containerRef} style={{
@@ -96,9 +159,8 @@ export const GameRoomLayout: React.FC<Props> = ({
             }}
           >
             {props.getLeftSideComponent({
-              width: layout.leftSide,
-              height: layout.gameArea,
-              verticalPadding,
+              ...extendedDimensions,
+              container: extendedDimensions.left,
             })}
           </aside>
           <main
@@ -109,32 +171,36 @@ export const GameRoomLayout: React.FC<Props> = ({
             }}
           >
             {props.getGameComponent({
-              width: layout.gameArea,
-              height: layout.gameArea,
-              verticalPadding,
+              ...extendedDimensions,
+              container: extendedDimensions.center,
             })}
           </main>
           <aside
             className={cls.side}
             style={{
               width: `${layout.rightSide}px`,
-              height: `100%`,
               marginLeft: minSpaceBetween,
+              
+              // This is a hack to go above the top & bottom components
+              //  But ideally it could be done better!
+              height: `calc(100% + ${props.topHeight + props.bottomHeight}px)`,
+              marginTop: -props.topHeight,
+              position: 'relative',
             }}
           >
             {props.getRightSideComponent({
-              width: layout.rightSide,
-              height: layout.gameArea,
-              verticalPadding,
+              ...extendedDimensions,
+              container: extendedDimensions.right,
             })}
           </aside>
         </div>
       </div>
-      <div className={cls.bottom}>
+      <div className={cls.bottom} style={{
+        height: props.bottomHeight,
+      }}>
         {props.getBottomComponent({
-          leftSideWidth: layout.leftSide,
-          rightSideWidth: layout.rightSide,
-          gameAreaWidth: layout.gameArea,
+          ...extendedDimensions,
+          container: extendedDimensions.bottom,
         })}
       </div>
     </div>

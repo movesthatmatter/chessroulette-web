@@ -1,36 +1,42 @@
-import React from 'react';
-import { Box } from 'grommet';
-import { createUseStyles } from './lib/jss';
+import React, { useEffect } from 'react';
 import { defaultTheme } from './theme';
 import { ReduxProvider } from './redux/Provider';
 import { AuthenticationProvider } from './services/Authentication';
 import { Routes } from './Routes';
-import { ThemeProvider } from 'react-jss';
+import { JssProvider, ThemeProvider } from 'react-jss';
+import { PeerProvider } from './components/PeerProvider';
+import { SocketProvider } from './components/SocketProvider';
+import config from './config';
+import { GA } from './services/Analytics';
 
 function App() {
-  const cls = useStyles();
+  useEffect(() => {
+    GA.init();
+  }, [])
 
   return (
     <ReduxProvider>
       <AuthenticationProvider>
-        <ThemeProvider theme={defaultTheme}>
-          <Box className={cls.container}>
-            <Routes />
-          </Box>
-        </ThemeProvider>
+        <SocketProvider>
+          <PeerProvider>
+            <JssProvider
+              // Prefix the Mounted classes but not the prerendered ones
+              // This is to avoid style conflict between new and stale
+              //  prerendererd classes since those can't be removed (for now)
+              // The idea of prefixing the mounted classes is to decrease the
+              //  initial html size as much as possible!
+              classNamePrefix={config.PRERENDERING ? undefined : 'cr-'}
+              id={{ minify: !config.DEBUG }}
+            >
+              <ThemeProvider theme={defaultTheme}>
+                <Routes />
+              </ThemeProvider>
+            </JssProvider>
+          </PeerProvider>
+        </SocketProvider>
       </AuthenticationProvider>
     </ReduxProvider>
   );
 }
-
-const useStyles = createUseStyles({
-  container: {
-    width: '100%',
-    height: '100%',
-
-    fontFamily: 'Lato, Open Sans, Roboto Slab, sans-serif',
-    // fontFamily: 'Roboto',s
-  },
-});
 
 export default App;

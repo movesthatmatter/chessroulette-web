@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { Select, Box } from 'grommet';
+import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
 import { ChessGameTimeLimit, metadata, ChessPrefferedColorOption, GameSpecsRecord } from 'dstnd-io';
 import capitalize from 'capitalize';

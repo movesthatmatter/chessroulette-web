@@ -1,5 +1,5 @@
 import { ChessGameColor, ChessGameState } from 'dstnd-io';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
 import { floatingShadow, softBorderRadius } from 'src/theme/effects';
@@ -9,6 +9,7 @@ import { PlayerBox } from './components/PlayerBox/PlayerBox';
 import { GameHistory } from './components/GameHistory';
 import cx from 'classnames';
 import { getRelativeMaterialScore } from './util';
+import { Events } from 'src/services/Analytics';
 
 type Props = {
   game: ChessGameState;
@@ -17,6 +18,19 @@ type Props = {
 
 export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
   const cls = useStyles();
+
+  useEffect(() => {
+    if (!myPlayer) {
+      return;
+    }
+
+    // TODO: This is a bit inaccurate dependeding on the state because a
+    //  Page Refresh (not rerender which should not be counted twice for same value)
+    //  will retrack!
+    if (game.state === 'stopped' || game.state === 'finished') {
+      Events.trackGameEnded(game.state);
+    }
+  }, [game.state]);
 
   const myPlayer = game ? getPlayerByColor(homeColor, game.players) : undefined;
   const opponentPlayer = game
@@ -36,6 +50,7 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
 
   const materialScore = getRelativeMaterialScore(game.captured);
 
+  
   // TODO: Oct 29th
   //  The GameState shouldn't have a timeLeft anymore since now those calcs happen on the client (above)!
 

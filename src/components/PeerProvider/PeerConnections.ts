@@ -14,6 +14,7 @@ export class PeerConnections {
   private user: PeerRecord['user'];
 
   private pubsy = new Pubsy<{
+    onOpen: void;
     onError: PeerConnectionsErrors,
     onPeerStream: {
       peerId: PeerRecord['id'],
@@ -60,7 +61,9 @@ export class PeerConnections {
     this.unsubscribers.push(() => this.sdk.off('error', onErrorHandler))
     
     // On Open Event
-    const onOpenHandler = () => {};
+    const onOpenHandler = (id: string) => {
+      this.pubsy.publish('onOpen', undefined);
+    };
     this.sdk.on('open', onOpenHandler);
     this.unsubscribers.push(() => this.sdk.off('open', onOpenHandler))
 
@@ -106,6 +109,10 @@ export class PeerConnections {
     };
     this.sdk.on('disconnected', onDisconnectedHandler);
     this.unsubscribers.push(() => this.sdk.off('disconnected', onDisconnectedHandler));
+  }
+
+  onOpen(fn: () => void) {
+    return this.pubsy.subscribe('onOpen', fn);
   }
 
   onPeerStream(fn: (props: {
@@ -182,6 +189,7 @@ export class PeerConnections {
 
     this.unsubscribers = [];
 
+    this.sdk.disconnect();
     this.sdk.destroy();
 
     logsy.info('[PeerConnections] Closed.');
