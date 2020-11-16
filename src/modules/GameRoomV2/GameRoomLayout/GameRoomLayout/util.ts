@@ -33,38 +33,35 @@ export const getMaxKey = <O extends { [k: string]: number }>(obj: O) =>
   };
 };
 
-// TODO: Look into ways to optimize this a bit
-//  since it recursively gets called a lot of times
-//  before it reaches the end.
-// Maybe something like a logarithmic offset
 export const getLayoutSizes = (
   containerDimensions: ContainerDimensions,
   ratios: Ratios,
-  offset = 0
 ): {
   leftSide: number;
   gameArea: number;
   rightSide: number;
+  remaining: number;
 } => {
-  const gameArea =
-    (Math.min(containerDimensions.height, containerDimensions.width) - offset) * ratios.gameArea;
-  const leftSide = gameArea * ratios.leftSide;
-  const rightSide = gameArea * ratios.rightSide;
+  const normalizedRatios = normalizeRatios(ratios);
+  const ratio = normalizedRatios.gameArea + normalizedRatios.leftSide + normalizedRatios.rightSide;
+  const maxWidth = containerDimensions.height * ratio;
+  const diff = containerDimensions.width - maxWidth;
 
-  if (gameArea + leftSide + rightSide <= containerDimensions.width) {
+  if (diff >= 0) {
     return {
-      gameArea,
-      leftSide,
-      rightSide,
+      leftSide: Math.floor(normalizedRatios.leftSide * (maxWidth / ratio)),
+      gameArea: Math.floor(normalizedRatios.gameArea * (maxWidth / ratio)),
+      rightSide: Math.floor(normalizedRatios.rightSide * (maxWidth / ratio)),
+      remaining: diff,
     };
   }
 
+  const nextContainerHeight = containerDimensions.height - Math.abs(diff / ratio);
   return getLayoutSizes(
     {
-      width: containerDimensions.width,
-      height: containerDimensions.height,
+      ...containerDimensions,
+      height: nextContainerHeight,
     },
-    ratios,
-    offset + (0.01 * containerDimensions.width),
+    ratios
   );
 };

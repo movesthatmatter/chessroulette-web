@@ -40,5 +40,4 @@ export const pieces = {
   wN: WhiteKnight,
   wB: WhiteBishop,
   wP: WhitePawn,
-
 };

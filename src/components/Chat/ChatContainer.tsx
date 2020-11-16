@@ -5,6 +5,7 @@ import { Chat, ChatProps } from './Chat';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
+import { Events } from 'src/services/Analytics';
 
 type Props = Omit<ChatProps, 'onSend' | 'messages' | 'myId' | 'history'>;
 
@@ -33,6 +34,8 @@ export const ChatContainer: React.FC<Props> = (chatProps) => {
               kind: 'broadcastChatMessage',
               content: payload,
             });
+
+            Events.trackChatMessageSent();
           }}
           {...chatProps}
         />

@@ -1,10 +1,10 @@
-import React, { useRef, LegacyRef } from 'react';
+import React, { useRef, LegacyRef, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
-import { ChessMove } from 'dstnd-io/dist/chessGame';
+import { ChessGameStatePgn, ChessMove } from 'dstnd-io/dist/chessGame';
 import { noop } from 'src/lib/util';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
 import { ChessGame, ChessGameColor } from '../Games/Chess';
@@ -21,10 +21,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
 import { CSSProperties } from 'src/lib/jss/types';
 import { GameStateDialog } from './components/GameStateDialog';
+import { Move } from 'chess.js';
+import { Events } from 'src/services/Analytics';
 
 type Props = {
   room: RoomWithPlayActivity;
-  onMove: (m: ChessMove) => void;
+  onMove: (m: ChessMove, pgn: ChessGameStatePgn, history: Move[], color: ChessGameColor) => void;
   onResign: (resigningColor: ChessGameColor) => void;
   onAbort: () => void;
   onOfferDraw: () => void;
@@ -36,6 +38,9 @@ type Props = {
   onOfferCanceled: () => void;
 };
 
+const TOP_HEIGHT = 80;
+const BOTTOM_HEIGHT = 80;
+
 export const GameRoomV2: React.FC<Props> = ({
   onMove = noop,
   onResign = noop,
@@ -45,6 +50,11 @@ export const GameRoomV2: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
+
+  useEffect(() => {
+    Events.trackPageView('Game Room');
+  }, []);
+
   const homeColor = getPlayerColor(props.room.me.id, props.room.activity.game.players);
 
   const { game } = props.room.activity;
@@ -72,13 +82,13 @@ export const GameRoomV2: React.FC<Props> = ({
           rightSide: 2,
         }}
         minSpaceBetween={30}
-        topHeight={80}
-        getTopComponent={(dimensions) => (
+        topHeight={TOP_HEIGHT}
+        getTopComponent={({ right }) => (
           <Box fill direction="row" style={{ height: '100%' }}>
             <div
               style={{
                 flex: 1,
-                paddingLeft: '30px',
+                paddingLeft: '32px',
                 paddingTop: '16px',
               }}
             >
@@ -86,32 +96,25 @@ export const GameRoomV2: React.FC<Props> = ({
             </div>
             <div
               style={{
-                width: dimensions.rightSideWidth,
-                background: colors.white,
-                height: '100%',
-                display: 'flex',
-                alignSelf: 'flex-end',
-                justifySelf: 'flex-end',
+                width: right.width,
               }}
-            >
-              <div
-                style={{
-                  paddingTop: '16px',
-                  paddingLeft: '32px',
-                  paddingRight: '32px',
-                }}
-              >
-                <UserMenu />
-              </div>
-            </div>
+            />
           </Box>
         )}
-        bottomHeight={30}
-        getBottomComponent={(dimensions) => (
-          <Box fill align="center" direction="row">
-            <div style={{ width: dimensions.rightSideWidth }} />
+        bottomHeight={BOTTOM_HEIGHT}
+        getBottomComponent={({ right }) => (
+          <Box
+            fill
+            align="center"
+            direction="row"
+            style={{
+              height: '100%',
+            }}
+          >
+            <div style={{ width: right.width }} />
             <Box
               align="center"
+              justify="center"
               style={{
                 flex: 1,
               }}
@@ -119,9 +122,7 @@ export const GameRoomV2: React.FC<Props> = ({
               <Text
                 style={{
                   ...fonts.small2,
-                  paddingBottom: '20px',
                   fontWeight: 200,
-                  // background: 'green',
                 }}
               >
                 Made with ❤️ across the world!
@@ -129,19 +130,20 @@ export const GameRoomV2: React.FC<Props> = ({
             </Box>
             <div
               style={{
-                width: dimensions.rightSideWidth,
+                width: right.width,
                 height: '100%',
                 background: colors.white,
               }}
             />
           </Box>
         )}
-        getLeftSideComponent={(dimensions) => (
+        getLeftSideComponent={({ container, main }) => (
           <div
             className={cx(cls.side, cls.leftSide)}
             style={{
               flex: 1,
-              height: dimensions.height,
+              height: container.height,
+              paddingLeft: `${main.horizontalPadding < 32 ? 32 - main.horizontalPadding : 0}px`,
             }}
           >
             <div style={{ height: '30%' }} />
@@ -200,20 +202,28 @@ export const GameRoomV2: React.FC<Props> = ({
             </div>
           </div>
         )}
-        getGameComponent={(dimensions) => (
+        getGameComponent={({ container }) => (
           <div>
             <ChessGame
               className={cls.board}
               homeColor={homeColor}
               playable={canIPlay}
               pgn={props.room.activity.game.pgn || ''}
-              getBoardSize={() => dimensions.width}
-              onMove={onMove}
+              getBoardSize={() => container.width}
+              onMove={(...args) => onMove(...args, homeColor)}
             />
           </div>
         )}
-        getRightSideComponent={(dimensions) => (
+        getRightSideComponent={({ container }) => (
           <div className={cx(cls.side, cls.rightSide)}>
+            <div
+              style={{
+                paddingTop: '16px',
+                height: `${TOP_HEIGHT - 16}px`,
+              }}
+            >
+              <UserMenu />
+            </div>
             <div
               className={cls.sideContent}
               style={{
@@ -264,8 +274,10 @@ export const GameRoomV2: React.FC<Props> = ({
               >
                 <ChatContainer
                   inputContainerStyle={{
-                    height: `${dimensions.verticalPadding - 32}px`,
-                    marginBottom: '32px',
+                    // height: `${container.verticalPadding - 32}px`,
+                    height: `${BOTTOM_HEIGHT + container.verticalPadding}px`,
+                    // marginBottom: 0,
+                    // marginBottom: '32px',
                   }}
                 />
               </div>

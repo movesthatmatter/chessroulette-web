@@ -14,6 +14,8 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export default (enhancers: StoreEnhancer) => {
   const store = createStore(persistedReducer, enhancers);
+
   const persistor = persistStore(store);
+
   return { store, persistor };
 };

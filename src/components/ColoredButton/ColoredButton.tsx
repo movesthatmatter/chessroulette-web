@@ -61,7 +61,6 @@ const useStyle = createUseStyles({
     },
   },
   buttonLabel: {
-    fontFamily: 'Roboto',
     fontWeight: 'lighter',
     lineHeight: '28px',
     color: '#FFFFFF',

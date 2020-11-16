@@ -15,7 +15,6 @@ import { Button } from 'src/components/Button';
 import { useSelector } from 'react-redux';
 import { RoomCredentials } from 'src/components/PeerProvider/util';
 import { UserRecordMocker } from 'src/mocks/records';
-import { Page } from 'src/components/Page';
 
 export default {
   component: GenericRoom,
@@ -127,7 +126,7 @@ const RoomContainer: React.FC<{
               />
             </>
           )}
-          <PeerProvider user={user} iceServers={[]}>
+          <PeerProvider>
             <PeerConsumer
               onReady={(p) => {
                 setPeer(p.me);

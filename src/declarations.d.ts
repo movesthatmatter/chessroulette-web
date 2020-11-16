@@ -14,3 +14,5 @@ declare module 'react-popout';
 declare module 'split-every';
 
 declare module 'react-scroll-to-bottom';
+
+declare module 'react-snapshot';

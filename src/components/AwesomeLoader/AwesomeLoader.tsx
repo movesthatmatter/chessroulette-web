@@ -92,7 +92,6 @@ const useStyles = createUseStyles({
     },
   },
   text: {
-    fontFamily: 'Roboto',
     fontSize: '18px',
     fontWeight: 'normal',
 
