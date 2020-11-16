@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Page } from 'src/components/Page';
 import { ChallengeButtonWidget } from 'src/modules/Games/Chess/components/ChallengeButtonWidget';
 import chessBackground from '../LandingPage/assets/chess_icons.png';
 import { createUseStyles } from 'src/lib/jss';
 import { colors, minMediaQuery, maxMediaQuery } from 'src/theme';
 import cx from 'classnames';
+import { Events } from 'src/services/Analytics';
 
 type Props = {};
 
 export const LandingPageV2: React.FC<Props> = () => {
   const cls = useStyles();
+
+  useEffect(() => {
+    Events.trackPageView('Home');
+  }, []);
 
   return (
     <Page>

@@ -18,7 +18,7 @@ const inCheckAudio = new Audio(inCheckSound);
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   playable: boolean;
-  onMove?: (m: ChessMove, pgn: ChessGameStatePgn) => void;
+  onMove?: (m: ChessMove, pgn: ChessGameStatePgn, history: Move[]) => void;
   pgn: string;
 
   // If true the move will be snappy since it doesn't wait
@@ -146,7 +146,11 @@ export const ChessGame: React.FunctionComponent<Props> = ({
     const validMove = gameInstance.current.move(nextMove);
 
     if (validMove !== null) {
-      onMove(nextMove, gameInstance.current.pgn());
+      onMove(
+        nextMove,
+        gameInstance.current.pgn(),
+        gameInstance.current.history({ verbose: true }),
+      );
 
       if (maintainPositionLocally) {
         setFen(gameInstance.current.fen());

@@ -1,10 +1,10 @@
-import React, { useRef, LegacyRef } from 'react';
+import React, { useRef, LegacyRef, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
-import { ChessMove } from 'dstnd-io/dist/chessGame';
+import { ChessGameStatePgn, ChessMove } from 'dstnd-io/dist/chessGame';
 import { noop } from 'src/lib/util';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
 import { ChessGame, ChessGameColor } from '../Games/Chess';
@@ -21,10 +21,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
 import { CSSProperties } from 'src/lib/jss/types';
 import { GameStateDialog } from './components/GameStateDialog';
+import { Move } from 'chess.js';
+import { Events } from 'src/services/Analytics';
 
 type Props = {
   room: RoomWithPlayActivity;
-  onMove: (m: ChessMove) => void;
+  onMove: (m: ChessMove, pgn: ChessGameStatePgn, history: Move[], color: ChessGameColor) => void;
   onResign: (resigningColor: ChessGameColor) => void;
   onAbort: () => void;
   onOfferDraw: () => void;
@@ -48,6 +50,11 @@ export const GameRoomV2: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
+
+  useEffect(() => {
+    Events.trackPageView('Game Room');
+  }, []);
+
   const homeColor = getPlayerColor(props.room.me.id, props.room.activity.game.players);
 
   const { game } = props.room.activity;
@@ -203,7 +210,7 @@ export const GameRoomV2: React.FC<Props> = ({
               playable={canIPlay}
               pgn={props.room.activity.game.pgn || ''}
               getBoardSize={() => container.width}
-              onMove={onMove}
+              onMove={(...args) => onMove(...args, homeColor)}
             />
           </div>
         )}

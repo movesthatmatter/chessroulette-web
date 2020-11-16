@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { defaultTheme } from './theme';
 import { ReduxProvider } from './redux/Provider';
 import { AuthenticationProvider } from './services/Authentication';
@@ -6,10 +6,14 @@ import { Routes } from './Routes';
 import { JssProvider, ThemeProvider } from 'react-jss';
 import { PeerProvider } from './components/PeerProvider';
 import { SocketProvider } from './components/SocketProvider';
-import { GA } from './services/Analytics';
 import config from './config';
+import { GA } from './services/Analytics';
 
 function App() {
+  useEffect(() => {
+    GA.init();
+  }, [])
+
   return (
     <ReduxProvider>
       <AuthenticationProvider>
@@ -25,7 +29,6 @@ function App() {
               id={{ minify: !config.DEBUG }}
             >
               <ThemeProvider theme={defaultTheme}>
-                {GA.init() && <GA.RouteTracker />}
                 <Routes />
               </ThemeProvider>
             </JssProvider>

@@ -11,9 +11,9 @@ import { useHistory } from 'react-router-dom';
 import { toRoomUrlPath } from 'src/lib/util';
 import { Dialog } from 'src/components/Dialog/Dialog';
 import { AwesomeError } from 'src/components/AwesomeError';
-import { selectAuthentication } from 'src/services/Authentication';
 import { useSelector } from 'react-redux';
 import { selectMyPeer } from 'src/components/PeerProvider';
+import { Events } from 'src/services/Analytics';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   challengeType: PendingChallengeProps['type'];
@@ -136,6 +136,8 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                       state: 'pending',
                       challenge,
                     });
+
+                    Events.trackChallengeCreated('Friendly Challenge');
                   });
               } else {
                 resources
@@ -145,12 +147,16 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                   })
                   .map((r) => {
                     if (r.matched) {
+                      Events.trackQuickPairingMatched();
+
                       history.push(toRoomUrlPath(r.room));
                     } else {
                       setChallengeState({
                         state: 'pending',
                         challenge: r.challenge,
                       });
+
+                      Events.trackChallengeCreated('Quick Pairing');
                     }
                   });
               }
