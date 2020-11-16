@@ -12,7 +12,7 @@ export const Page: React.FC<Props> = (props) => {
     <div className={cls.container}>
       <div className={cls.paddingWrapper}>
         <div className={cls.top}>
-          <div className={cls.topMain} style={{fontSize: 0}}>
+          <div className={cls.topMain}>
             <a href="/">
               <img src={logo} alt="logo" className={cls.logo} />
             </a>

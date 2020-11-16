@@ -1,5 +1,4 @@
 import React from 'react';
-import { createUseStyles } from './lib/jss';
 import { defaultTheme } from './theme';
 import { ReduxProvider } from './redux/Provider';
 import { AuthenticationProvider } from './services/Authentication';
@@ -11,8 +10,6 @@ import { GA } from './services/Analytics';
 import config from './config';
 
 function App() {
-  const cls = useStyles();
-
   return (
     <ReduxProvider>
       <AuthenticationProvider>
@@ -25,12 +22,11 @@ function App() {
               // The idea of prefixing the mounted classes is to decrease the
               //  initial html size as much as possible!
               classNamePrefix={config.PRERENDERING ? undefined : 'cr-'}
+              id={{ minify: !config.DEBUG }}
             >
               <ThemeProvider theme={defaultTheme}>
-                <div className={cls.container}>
-                  {GA.init() && <GA.RouteTracker />}
-                  <Routes />
-                </div>
+                {GA.init() && <GA.RouteTracker />}
+                <Routes />
               </ThemeProvider>
             </JssProvider>
           </PeerProvider>
@@ -39,14 +35,5 @@ function App() {
     </ReduxProvider>
   );
 }
-
-const useStyles = createUseStyles({
-  container: {
-    width: '100%',
-    height: '100%',
-
-    fontFamily: 'Lato, Open Sans, sans-serif',
-  },
-});
 
 export default App;
