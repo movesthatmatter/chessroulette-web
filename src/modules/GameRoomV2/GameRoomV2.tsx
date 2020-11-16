@@ -66,236 +66,229 @@ export const GameRoomV2: React.FC<Props> = ({
   const dialogTarget = useRef();
 
   return (
-    <>
-      <div
-        className={cls.container}
-        style={{
-          width: 'calc(100% - 32px)',
-          paddingLeft: '32px',
+    <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
+      <GameRoomLayout
+        className={cls.layout}
+        ratios={{
+          leftSide: 1.2,
+          gameArea: 3,
+          rightSide: 2,
         }}
-      >
-        <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
-          <GameRoomLayout
-            className={cls.layout}
-            ratios={{
-              leftSide: 1.2,
-              gameArea: 3,
-              rightSide: 2,
+        minSpaceBetween={30}
+        topHeight={TOP_HEIGHT}
+        getTopComponent={({ right }) => (
+          <Box fill direction="row" style={{ height: '100%' }}>
+            <div
+              style={{
+                flex: 1,
+                paddingLeft: '32px',
+                paddingTop: '16px',
+              }}
+            >
+              <NavigationHeader />
+            </div>
+            <div
+              style={{
+                width: right.width,
+              }}
+            />
+          </Box>
+        )}
+        bottomHeight={BOTTOM_HEIGHT}
+        getBottomComponent={({ right }) => (
+          <Box
+            fill
+            align="center"
+            direction="row"
+            style={{
+              height: '100%',
             }}
-            minSpaceBetween={30}
-            topHeight={TOP_HEIGHT}
-            getTopComponent={({ right }) => (
-              <Box fill direction="row" style={{ height: '100%' }}>
-                <div
-                  style={{
-                    flex: 1,
-                    // paddingLeft: '30px',
-                    paddingTop: '16px',
-                  }}
-                >
-                  <NavigationHeader />
-                </div>
-                <div
-                  style={{
-                    width: right.width,
-                  }}
-                />
-              </Box>
-            )}
-            bottomHeight={BOTTOM_HEIGHT}
-            getBottomComponent={({ right }) => (
-              <Box
-                fill
-                align="center"
-                direction="row"
+          >
+            <div style={{ width: right.width }} />
+            <Box
+              align="center"
+              justify="center"
+              style={{
+                flex: 1,
+              }}
+            >
+              <Text
                 style={{
-                  height: '100%',
+                  ...fonts.small2,
+                  fontWeight: 200,
                 }}
               >
-                <div style={{ width: right.width }} />
-                <Box
-                  align="center"
-                  justify="center"
-                  style={{
-                    flex: 1,
-                  }}
-                >
-                  <Text
-                    style={{
-                      ...fonts.small2,
-                      fontWeight: 200,
-                    }}
-                  >
-                    Made with ❤️ across the world!
-                  </Text>
-                </Box>
-                <div
-                  style={{
-                    width: right.width,
-                    height: '100%',
-                    background: colors.white,
-                  }}
-                />
-              </Box>
-            )}
-            getLeftSideComponent={({ container }) => (
-              <div
-                className={cx(cls.side, cls.leftSide)}
-                style={{
-                  flex: 1,
-                  height: container.height,
-                }}
-              >
-                <div style={{ height: '30%' }} />
-                <div style={{ height: '40%' }}>
-                  <GameStateWidget game={props.room.activity.game} homeColor={homeColor} />
-                </div>
-                <div className={cls.gameActionsContainer} style={{ height: '30%' }}>
-                  <div className={cls.gameActionButtonsContainer}>
-                    {(game.state === 'finished' ||
-                      game.state === 'stopped' ||
-                      game.state === 'neverStarted') && (
-                      <ActionButton
-                        type="primary"
-                        label="Rematch"
-                        actionType="positive"
-                        icon={Refresh}
-                        reverse
-                        onSubmit={() => onRematchOffer()}
-                        className={cls.gameActionButton}
-                      />
-                    )}
-                    {game.state === 'pending' && (
-                      <ActionButton
-                        type="primary"
-                        label="Abort"
-                        actionType="negative"
-                        icon={Halt}
-                        reverse
-                        onSubmit={() => onAbort()}
-                        className={cls.gameActionButton}
-                      />
-                    )}
-                    {game.state === 'started' && (
-                      <>
-                        <ActionButton
-                          type="primary"
-                          label="Resign"
-                          actionType="negative"
-                          icon={Flag}
-                          reverse
-                          onSubmit={() => onResign(homeColor)}
-                          className={cls.gameActionButton}
-                        />
-                        <ActionButton
-                          type="primary"
-                          label="Offer Draw"
-                          actionType="positive"
-                          icon={Split}
-                          reverse
-                          onSubmit={() => onOfferDraw()}
-                          className={cls.gameActionButton}
-                        />
-                      </>
-                    )}
-                  </div>
-                </div>
+                Made with ❤️ across the world!
+              </Text>
+            </Box>
+            <div
+              style={{
+                width: right.width,
+                height: '100%',
+                background: colors.white,
+              }}
+            />
+          </Box>
+        )}
+        getLeftSideComponent={({ container, main }) => (
+          <div
+            className={cx(cls.side, cls.leftSide)}
+            style={{
+              flex: 1,
+              height: container.height,
+              paddingLeft: `${main.horizontalPadding < 32 ? 32 - main.horizontalPadding : 0}px`,
+            }}
+          >
+            <div style={{ height: '30%' }} />
+            <div style={{ height: '40%' }}>
+              <GameStateWidget game={props.room.activity.game} homeColor={homeColor} />
+            </div>
+            <div className={cls.gameActionsContainer} style={{ height: '30%' }}>
+              <div className={cls.gameActionButtonsContainer}>
+                {(game.state === 'finished' ||
+                  game.state === 'stopped' ||
+                  game.state === 'neverStarted') && (
+                  <ActionButton
+                    type="primary"
+                    label="Rematch"
+                    actionType="positive"
+                    icon={Refresh}
+                    reverse
+                    onSubmit={() => onRematchOffer()}
+                    className={cls.gameActionButton}
+                  />
+                )}
+                {game.state === 'pending' && (
+                  <ActionButton
+                    type="primary"
+                    label="Abort"
+                    actionType="negative"
+                    icon={Halt}
+                    reverse
+                    onSubmit={() => onAbort()}
+                    className={cls.gameActionButton}
+                  />
+                )}
+                {game.state === 'started' && (
+                  <>
+                    <ActionButton
+                      type="primary"
+                      label="Resign"
+                      actionType="negative"
+                      icon={Flag}
+                      reverse
+                      onSubmit={() => onResign(homeColor)}
+                      className={cls.gameActionButton}
+                    />
+                    <ActionButton
+                      type="primary"
+                      label="Offer Draw"
+                      actionType="positive"
+                      icon={Split}
+                      reverse
+                      onSubmit={() => onOfferDraw()}
+                      className={cls.gameActionButton}
+                    />
+                  </>
+                )}
               </div>
-            )}
-            getGameComponent={({ container }) => (
+            </div>
+          </div>
+        )}
+        getGameComponent={({ container }) => (
+          <div>
+            <ChessGame
+              className={cls.board}
+              homeColor={homeColor}
+              playable={canIPlay}
+              pgn={props.room.activity.game.pgn || ''}
+              getBoardSize={() => container.width}
+              onMove={onMove}
+            />
+          </div>
+        )}
+        getRightSideComponent={({ container }) => (
+          <div className={cx(cls.side, cls.rightSide)}>
+            <div
+              style={{
+                paddingTop: '16px',
+                height: `${TOP_HEIGHT - 16}px`,
+              }}
+            >
+              <UserMenu />
+            </div>
+            <div
+              className={cls.sideContent}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1,
+                overflow: 'hidden',
+                alignItems: 'stretch',
+                height: '100%',
+              }}
+            >
               <div>
-                <ChessGame
-                  className={cls.board}
-                  homeColor={homeColor}
-                  playable={canIPlay}
-                  pgn={props.room.activity.game.pgn || ''}
-                  getBoardSize={() => container.width}
-                  onMove={onMove}
+                <StreamingBox
+                  room={props.room}
+                  focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
                 />
               </div>
-            )}
-            getRightSideComponent={({ container }) => (
-              <div className={cx(cls.side, cls.rightSide)}>
-                <div style={{
+              <div
+                style={{
                   paddingTop: '16px',
-                  height: `${TOP_HEIGHT - 16}px`,
-                }}>
-                  <UserMenu />
-                </div>
-                <div
-                  className={cls.sideContent}
+                  paddingBottom: '16px',
+                  borderBottom: '1px solid',
+                  borderColor: colors.neutral,
+                }}
+              >
+                <Text
                   style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: 1,
-                    overflow: 'hidden',
-                    alignItems: 'stretch',
-                    height: '100%',
+                    ...fonts.subtitle2,
                   }}
                 >
-                  <div>
-                    <StreamingBox
-                      room={props.room}
-                      focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
-                    />
-                  </div>
-                  <div
+                  <FontAwesomeIcon
+                    icon={faComment}
+                    size="lg"
+                    color={colors.neutral}
                     style={{
-                      paddingTop: '16px',
-                      paddingBottom: '16px',
-                      borderBottom: '1px solid',
-                      borderColor: colors.neutral,
+                      marginRight: '8px',
                     }}
-                  >
-                    <Text
-                      style={{
-                        ...fonts.subtitle2,
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        icon={faComment}
-                        size="lg"
-                        color={colors.neutral}
-                        style={{
-                          marginRight: '8px',
-                        }}
-                      />
-                      Messages
-                    </Text>
-                  </div>
-                  <div
-                    style={{
-                      borderColor: colors.neutral,
-                      overflow: 'hidden',
-                      flex: 1,
-                    }}
-                  >
-                    <ChatContainer
-                      inputContainerStyle={{
-                        // height: `${container.verticalPadding - 32}px`,
-                        height: `${BOTTOM_HEIGHT + container.verticalPadding}px`,
-                        // marginBottom: 0,
-                        // marginBottom: '32px',
-                      }}
-                    />
-                  </div>
-                </div>
+                  />
+                  Messages
+                </Text>
               </div>
-            )}
-          />
-          <GameStateDialog
-            roomActivity={props.room.activity}
-            onOfferCanceled={props.onOfferCanceled}
-            onDrawAccepted={props.onDrawAccepted}
-            onDrawDenied={props.onDrawDenied}
-            onRematchAccepted={props.onRematchAccepted}
-            onRematchDenied={props.onRematchDenied}
-            myPlayer={myPlayer}
-            target={dialogTarget.current}
-          />
-        </div>
-      </div>
-    </>
+              <div
+                style={{
+                  borderColor: colors.neutral,
+                  overflow: 'hidden',
+                  flex: 1,
+                }}
+              >
+                <ChatContainer
+                  inputContainerStyle={{
+                    // height: `${container.verticalPadding - 32}px`,
+                    height: `${BOTTOM_HEIGHT + container.verticalPadding}px`,
+                    // marginBottom: 0,
+                    // marginBottom: '32px',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      />
+      <GameStateDialog
+        roomActivity={props.room.activity}
+        onOfferCanceled={props.onOfferCanceled}
+        onDrawAccepted={props.onDrawAccepted}
+        onDrawDenied={props.onDrawDenied}
+        onRematchAccepted={props.onRematchAccepted}
+        onRematchDenied={props.onRematchDenied}
+        myPlayer={myPlayer}
+        target={dialogTarget.current}
+      />
+    </div>
   );
 };
 
