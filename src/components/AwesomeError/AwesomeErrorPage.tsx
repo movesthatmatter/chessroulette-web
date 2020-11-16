@@ -11,9 +11,7 @@ export const AwesomeErrorPage: React.FC<Props> = (props) => {
 
   return (
     <div className={cls.container}>
-      <div style={{width: '300px'}}>
-        <AwesomeError errorType={props.errorType} />
-      </div>
+      <AwesomeError errorType={props.errorType} />
     </div>
   );
 };

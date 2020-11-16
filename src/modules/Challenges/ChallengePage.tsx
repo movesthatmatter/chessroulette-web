@@ -1,4 +1,4 @@
-import { ChallengeRecord, RoomRecord } from 'dstnd-io';
+import { AsyncResult, ChallengeRecord, RoomRecord } from 'dstnd-io';
 import { Box } from 'grommet';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -10,6 +10,7 @@ import { resources } from 'src/resources';
 import { ChallengeInfo } from './ChallengeInfo';
 import { GenericRoom } from 'src/modules/GenericRoom';
 import { selectMyPeer } from 'src/components/PeerProvider';
+import { AwesomeErrorPage } from 'src/components/AwesomeError';
 
 type Props = {};
 
@@ -18,15 +19,33 @@ export const ChallengePage: React.FC<Props> = () => {
   const [challenge, setChallenge] = useState<ChallengeRecord>();
   const [room, setRoom] = useState<RoomRecord>();
 
+  const [resourceState, setResourceState] = useState('none' as 'none' | 'loading' | 'error' | 'success');
+
   const history = useHistory();
   const myPeer = useSelector(selectMyPeer);
 
   useEffect(() => {
+    setResourceState('loading');
+
     resources
       .getRoomBySlug(params.slug)
       .map(setRoom)
-      .flatMapErr(() => resources.getChallengeBySlug(params.slug).map(setChallenge));
+      .flatMapErr(() => resources.getChallengeBySlug(params.slug).map(setChallenge))
+      .map(AsyncResult.passThrough(() => {
+        setResourceState('success');
+      }))
+      .mapErr(() => {
+        setResourceState('error');
+      });
   }, []);
+
+  if (resourceState === 'loading') {
+    return <AwesomeLoaderPage />;
+  }
+
+  if (resourceState === 'error') {
+    return <AwesomeErrorPage errorType="resourceNotFound" />;
+  }
 
   if (room) {
     return (
@@ -64,5 +83,5 @@ export const ChallengePage: React.FC<Props> = () => {
     );
   }
 
-  return <AwesomeLoaderPage />;
+  return null;
 };
