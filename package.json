@@ -70,7 +70,6 @@
     "react-dom": "^16.13.1",
     "react-final-form": "^6.5.0",
     "react-ga": "^2.7.0",
-    "react-https-redirect": "^1.1.0",
     "react-jss": "^10.1.1",
     "react-move": "^6.1.0",
     "react-popout": "^1.0.2",
