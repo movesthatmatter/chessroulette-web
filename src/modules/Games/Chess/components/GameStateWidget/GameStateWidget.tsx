@@ -14,9 +14,11 @@ import { Events } from 'src/services/Analytics';
 type Props = {
   game: ChessGameState;
   homeColor: ChessGameColor;
+  historyFocusedIndex?: number;
+  onMoveClick?: (index: number) => void;
 };
 
-export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
+export const GameStateWidget: React.FC<Props> = ({ game, homeColor, ...props }) => {
   const cls = useStyles();
 
   useEffect(() => {
@@ -50,7 +52,6 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
 
   const materialScore = getRelativeMaterialScore(game.captured);
 
-  
   // TODO: Oct 29th
   //  The GameState shouldn't have a timeLeft anymore since now those calcs happen on the client (above)!
 
@@ -71,7 +72,11 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
         )}
       </div>
       <div className={cls.gameStateContainer}>
-        <GameHistory game={game} />
+        <GameHistory
+          game={game}
+          focusedIndex={props.historyFocusedIndex}
+          onMoveClick={props.onMoveClick}
+        />
       </div>
       <div className={cls.player}>
         {myPlayer && (

@@ -1,4 +1,4 @@
-import React, { useRef, LegacyRef, useEffect } from 'react';
+import React, { useRef, LegacyRef, useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { RoomWithPlayActivity } from 'src/components/RoomProvider';
@@ -50,6 +50,9 @@ export const GameRoomV2: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
+  const dialogTarget = useRef();
+
+  const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
 
   useEffect(() => {
     Events.trackPageView('Game Room');
@@ -68,9 +71,13 @@ export const GameRoomV2: React.FC<Props> = ({
   const canIPlay =
     isMePlayer && // I must be a player
     (game.state === 'pending' || game.state === 'started') && // game must be in playable mode
-    game.lastMoveBy !== homeColor; // It must be my turn
+    game.lastMoveBy !== homeColor && // It must be my turn
+    gameDisplayedHistoryIndex === 0; // The most recent move must be displayed
 
-  const dialogTarget = useRef();
+  useEffect(() => {
+    // Reset the History Dislayed Index when the PGN is updated
+    setGameDisplayedHistoryIndex(0);
+  }, [game.pgn]);
 
   return (
     <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
@@ -148,7 +155,12 @@ export const GameRoomV2: React.FC<Props> = ({
           >
             <div style={{ height: '30%' }} />
             <div style={{ height: '40%' }}>
-              <GameStateWidget game={props.room.activity.game} homeColor={homeColor} />
+              <GameStateWidget
+                game={props.room.activity.game}
+                homeColor={homeColor}
+                historyFocusedIndex={gameDisplayedHistoryIndex}
+                onMoveClick={setGameDisplayedHistoryIndex}
+              />
             </div>
             <div className={cls.gameActionsContainer} style={{ height: '30%' }}>
               <div className={cls.gameActionButtonsContainer}>
@@ -210,7 +222,16 @@ export const GameRoomV2: React.FC<Props> = ({
               playable={canIPlay}
               pgn={props.room.activity.game.pgn || ''}
               getBoardSize={() => container.width}
-              onMove={(...args) => onMove(...args, homeColor)}
+              onMove={(...args) => {
+                onMove(...args, homeColor);
+              }}
+              onRewind={() => {
+                setGameDisplayedHistoryIndex((prev) => prev + 1);
+              }}
+              onForward={() => {
+                setGameDisplayedHistoryIndex((prev) => prev - 1);
+              }}
+              displayedHistoryIndex={gameDisplayedHistoryIndex}
             />
           </div>
         )}

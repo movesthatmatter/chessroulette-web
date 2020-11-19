@@ -1,64 +1,69 @@
 import { ChessGameState } from 'dstnd-io';
 import { Text } from 'src/components/Text';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { getNewChessGame } from 'src/modules/Games/Chess/lib/sdk';
-import splitEvery from 'split-every';
 import cx from 'classnames';
-import { arrReverse } from 'src/lib/util';
+import { arrReverse, noop } from 'src/lib/util';
 import { Emoji } from 'src/components/Emoji';
 import capitalize from 'capitalize';
 import { otherChessColor } from 'src/modules/Games/Chess/util';
 import { Box } from 'grommet';
 import { CSSProperties } from 'src/lib/jss/types';
+import {
+  PairedIndex,
+  PairedHistory,
+  pgnToHistory,
+  toPairedHistory,
+  linearToPairedIndex,
+  pairedToLinearIndex,
+  reversedLinearIndex,
+  pairedHistoryToHistory,
+} from '../../../../lib';
 
 type Props = {
   game: ChessGameState;
   className?: string;
   showRows?: number;
+  focusedIndex?: number;
+  onMoveClick? (nextIndex: number): void;
 };
 
-type PastMove = {
-  index: number;
-  notation: [string] | [string, string];
-};
-type ReadableHistory = PastMove[];
-
-const toHistory = (moves: string[]): ReadableHistory =>
-  splitEvery(2, moves).map((notation: PastMove['notation'], index: number) => ({
-    notation,
-    index: index + 1,
-  }));
-
-export const GameHistory: React.FC<Props> = ({ showRows = 4, game, ...props }) => {
+export const GameHistory: React.FC<Props> = ({
+  game,
+  showRows = 4,
+  focusedIndex = 0,
+  onMoveClick = noop,
+  ...props
+}) => {
   const cls = useStyles();
-  const gameInstance = useRef(getNewChessGame()).current;
-  const [history, setHistory] = useState<ReadableHistory>([]);
+  const [pairedHistory, setPairedHistory] = useState<PairedHistory>([]);
+  const [focus, setFocus] = useState<PairedIndex>([0, 0]);
 
   useEffect(() => {
     if (game.pgn) {
-      gameInstance.load_pgn(game.pgn);
-
-      const history = toHistory(gameInstance.history());
+      const history = pgnToHistory(game.pgn);
+      const pairedHistory = toPairedHistory(history);
 
       // Set the history in reverse so I can display history scrolled to the end
       //  using flex-direction: 'column-reverse' which reverses it by default
-      const historyInReverse = arrReverse(history);
+      const historyInReverse = arrReverse(pairedHistory);
 
-      setHistory(historyInReverse);
+      setPairedHistory(historyInReverse);
+      setFocus(linearToPairedIndex(history, focusedIndex));
     } else {
-      setHistory([]);
+      setPairedHistory([]);
     }
-  }, [game.pgn]);
+  }, [game.pgn, focusedIndex]);
 
   return (
     <div className={cx(cls.container, props.className)}>
       <div className={cls.spacer} />
       <div className={cls.content}>
-
         {game.state !== 'started' ? (
           <>
-            <div className={cx(cls.row, game.state === 'pending' ? cls.initStateRow : cls.resultRow)}>
+            <div
+              className={cx(cls.row, game.state === 'pending' ? cls.initStateRow : cls.resultRow)}
+            >
               <Box alignContent="center" align="center" justify="center" fill pad="small">
                 <Text size="small1" className={cls.text}>
                   {game.state === 'finished' && (
@@ -87,18 +92,42 @@ export const GameHistory: React.FC<Props> = ({ showRows = 4, game, ...props }) =
                 </Text>
               </Box>
             </div>
-            {game.state !== 'pending' && (
-              <div className={cls.filler} />
-            )}
+            {game.state !== 'pending' && <div className={cls.filler} />}
           </>
         ) : (
           <div className={cls.filler} />
         )}
-        {history.map((pastMove) => (
-          <div className={cls.row} key={pastMove.index}>
-            <Text className={cx(cls.text, cls.rowIndex)}>{`${pastMove.index}.`}</Text>
-            <Text className={cx(cls.text, cls.whiteMove)}>{pastMove.notation[0]}</Text>
-            <Text className={cx(cls.text, cls.blackMove)}>{pastMove.notation[1]}</Text>
+        {pairedHistory.map((pairedMove, index) => (
+          <div className={cls.row} key={index}>
+            <Text className={cx(cls.text, cls.rowIndex)}>{`${pairedHistory.length - index}.`}</Text>
+            <Text
+              className={cx(cls.text, cls.move, cls.whiteMove, {
+                [cls.activeMove]: focus[0] === pairedHistory.length - index - 1 && focus[1] === 0,
+              })}
+              onClick={() => {
+                const nextIndex = reversedLinearIndex(
+                  pairedHistoryToHistory(pairedHistory),
+                  pairedToLinearIndex([pairedHistory.length - index - 1, 0])
+                );
+                onMoveClick(nextIndex);
+              }}
+            >
+              {pairedMove[0].san}
+            </Text>
+            <Text
+              className={cx(cls.text, cls.move, cls.blackMove, {
+                [cls.activeMove]: focus[0] === pairedHistory.length - index - 1 && focus[1] === 1,
+              })}
+              onClick={() => {
+                const nextIndex = reversedLinearIndex(
+                  pairedHistoryToHistory(pairedHistory),
+                  pairedToLinearIndex([pairedHistory.length - index - 1, 1])
+                );
+                onMoveClick(nextIndex);
+              }}
+            >
+              {pairedMove[1]?.san}
+            </Text>
           </div>
         ))}
       </div>
@@ -135,7 +164,7 @@ const useStyles = createUseStyles({
     padding: '4px 8px',
     display: 'flex',
 
-    ...{
+    ...({
       '&:first-child': {
         borderBottomWidth: 0,
         paddingBottom: 0,
@@ -147,7 +176,7 @@ const useStyles = createUseStyles({
       '&:last-child': {
         paddingTop: 0,
       },
-    } as CSSProperties,
+    } as CSSProperties),
   },
   initStateRow: {
     flex: 1,
@@ -159,6 +188,9 @@ const useStyles = createUseStyles({
   rowIndex: {
     paddingRight: '16px',
   },
+  move: {
+    cursor: 'pointer',
+  },
   whiteMove: {
     flex: 1,
     fontWeight: 300,
@@ -169,5 +201,8 @@ const useStyles = createUseStyles({
   },
   filler: {
     flex: 1,
+  },
+  activeMove: {
+    fontWeight: 800,
   },
 });

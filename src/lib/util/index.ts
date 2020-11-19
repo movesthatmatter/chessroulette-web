@@ -124,6 +124,14 @@ export const hasOwnProperty = <X extends {}, Y extends PropertyKey>(
   prop: Y
 ): obj is X & Record<Y, unknown> => obj.hasOwnProperty(prop);
 
+// Use this to get inherited keys as well
+export const keyInObject = <X extends {}, Y extends PropertyKey>(
+  obj: X,
+  prop: Y
+): obj is X & Record<Y, unknown> => prop in obj;
+
 // Immutably Reverses an Array
 // This is needed b/c the native Array.reverse() mutates in place 
 export const arrReverse = <T>(arr: T[]): T[] => arr.slice(0).reverse() as T[];
+
+export const flatten = <T>(a: T[]) => a.reduce((accumulator, value) => accumulator.concat(value), [] as T[]);

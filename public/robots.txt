@@ -2,3 +2,5 @@
 User-agent: *
 Disallow:
 Sitemap: https://chessroulette.org/sitemap.xml
+
+Sitemap: http://example.com/sitemap_location.xml

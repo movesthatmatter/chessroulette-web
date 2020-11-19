@@ -1,26 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { noop } from 'src/lib/util';
+import { keyInObject, noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { Move, Square } from 'chess.js';
 import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
-import { ChessMove, ChessGameStatePgn, ChessGameStateFen, ChessGameColor } from 'dstnd-io';
+import { ChessMove, ChessGameStatePgn, ChessGameColor } from 'dstnd-io';
 import { ChessBoard } from '../ChessBoard';
-import { getNewChessGame } from '../../lib/sdk';
-import { getSquareForPiece } from '../../lib/util';
+import { getPgnAfterMove, getSquare, pgnToHistory, toChessColor } from '../../lib/util';
 import { CSSProperties } from 'src/lib/jss/types';
-import { toChessColor } from './util';
-import validMoveSound from '../../assets/sounds/valid_move.wav';
-import inCheckSound from '../../assets/sounds/in_check.wav';
-import checkMatedSound from '../../assets/sounds/check_mated.wav';
-
-const validMoveAudio = new Audio(validMoveSound);
-const inCheckAudio = new Audio(inCheckSound);
-const checkMatedAudio = new Audio(checkMatedSound);
+import useEventListener from '@use-it/event-listener';
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   playable: boolean;
-  onMove?: (m: ChessMove, pgn: ChessGameStatePgn, history: Move[]) => void;
   pgn: string;
 
   // If true the move will be snappy since it doesn't wait
@@ -33,11 +24,21 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   homeColor: ChessGameColor;
   orientation?: ChessGameColor;
 
+  onMove?: (m: ChessMove, pgn: ChessGameStatePgn, history: Move[]) => void;
+  onRewind?: () => void;
+  onForward?: () => void;
+  displayedHistoryIndex?: number;
+  onDisplayedHistoryIndexUpdated?: (index: number) => void;
+
   getBoardSize?: (p: { screenWidth: number; screenHeight: number }) => number;
 };
 
 export const ChessGame: React.FunctionComponent<Props> = ({
   onMove = noop,
+  onRewind = noop,
+  onForward = noop,
+  onDisplayedHistoryIndexUpdated = noop,
+  displayedHistoryIndex = 0,
   pgn = '',
   playable = false,
   getBoardSize = getDefaultBoardSize,
@@ -45,15 +46,14 @@ export const ChessGame: React.FunctionComponent<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
-  const gameInstance = useRef(getNewChessGame());
-  const [fen, setFen] = useState<ChessGameStateFen>();
-  const [history, setHistory] = useState([] as Move[]);
-  const [inCheckSquare, setInCheckSquare] = useState<Square>();
+  const [history, setHistory] = useState(pgnToHistory(pgn));
+  const [displayedHistory, setDisplayedHistory] = useState(history);
   const [focusedSquare, setFocusedSquare] = useState<Square>();
   const [orientation, setOrientation] = useState(props.orientation || props.homeColor);
   const [focusedSquareStyle, setFocusedSquareStyle] = useState(
     {} as Partial<{ [sq in Square]: CSSProperties }>
   );
+  const [nextUncommittedMove, setNextUncommittedMove] = useState<ChessMove>();
 
   useEffect(() => {
     if (props.orientation) {
@@ -64,32 +64,12 @@ export const ChessGame: React.FunctionComponent<Props> = ({
   }, [props.homeColor, props.orientation]);
 
   useEffect(() => {
-    if (!pgn) {
-      gameInstance.current = getNewChessGame();
-    }
-
-    const validPgn = gameInstance.current.load_pgn(pgn);
-
-    setFen(gameInstance.current.fen());
-    setHistory(gameInstance.current.history({ verbose: true }));
-
-    setInCheckSquare(undefined);
-
-    // This shouldn't be here
-    if (gameInstance.current.in_check()) {
-      setInCheckSquare(
-        getSquareForPiece(pgn, { color: gameInstance.current.turn(), type: 'k' })
-      );
-
-      if (gameInstance.current.in_checkmate()) {
-        checkMatedAudio.play();
-      } else {
-        inCheckAudio.play();
-      }
-    } else if (validPgn) {
-      validMoveAudio.play();
-    }
+    setHistory(pgnToHistory(pgn));
   }, [pgn]);
+
+  useEffect(() => {
+    setDisplayedHistory(history.slice(0, history.length - displayedHistoryIndex));
+  }, [history, displayedHistoryIndex]);
 
   useEffect(() => {
     setFocusedSquareStyle(
@@ -105,7 +85,11 @@ export const ChessGame: React.FunctionComponent<Props> = ({
 
   const onSquareClickHandler = (square: Square) => {
     setFocusedSquare((prev) => {
-      const piece = gameInstance.current.get(square);
+      if (!playable) {
+        return;
+      }
+
+      const piece = getSquare(pgn, square);
 
       // Refocus on current square if there is piece of homecolor (mine)
       if (piece && toChessColor(piece.color) === props.homeColor) {
@@ -118,10 +102,10 @@ export const ChessGame: React.FunctionComponent<Props> = ({
       }
 
       if (prev) {
-        // TODO: This probably shouldn't be here since it's inside a setState
-        onMoveHandler({
-          sourceSquare: prev,
-          targetSquare: square,
+        setNextUncommittedMove({
+          from: prev,
+          to: square,
+          promotion: 'q', // TODO: don't hardcode the queen
         });
 
         return undefined;
@@ -130,6 +114,34 @@ export const ChessGame: React.FunctionComponent<Props> = ({
       return prev;
     });
   };
+
+  useEventListener('keydown', (event: object) => {
+    if (!keyInObject(event, 'key')) {
+      return;
+    }
+
+    if (event.key === 'ArrowRight') {
+      if (displayedHistoryIndex > 0) {
+        onForward();
+      }
+    } else if (event.key === 'ArrowLeft') {
+      if (displayedHistoryIndex < history.length) {
+        onRewind();
+      }
+    }
+  });
+
+  useEffect(() => {
+    if (!nextUncommittedMove) {
+      return;
+    }
+
+    onMoveHandler({
+      sourceSquare: nextUncommittedMove.from,
+      targetSquare: nextUncommittedMove.to,
+    });
+    setNextUncommittedMove(undefined);
+  }, [nextUncommittedMove])
 
   const onMoveHandler = ({
     sourceSquare,
@@ -148,35 +160,24 @@ export const ChessGame: React.FunctionComponent<Props> = ({
       promotion: 'q', // TODO: don't hardcode the queen
     };
 
-    // see if the move is legal
-    const validMove = gameInstance.current.move(nextMove);
+    getPgnAfterMove(pgn, nextMove).map((nextPgn) => {
+      const nextHistory = pgnToHistory(nextPgn);
 
-    if (validMove !== null) {
-      onMove(
-        nextMove,
-        gameInstance.current.pgn(),
-        gameInstance.current.history({ verbose: true }),
-      );
+      onMove(nextMove, nextPgn, nextHistory);
 
       if (maintainPositionLocally) {
-        setFen(gameInstance.current.fen());
+        setHistory(nextHistory);
       }
-    }
+    });
   };
-
-  if (!fen) {
-    return null;
-  }
 
   return (
     <div className={cx([cls.container, props.className])}>
       <ChessBoard
         orientation={orientation}
-        position={fen}
-        history={history}
+        history={displayedHistory}
         calcWidth={getBoardSize}
         onDrop={onMoveHandler}
-        inCheckSquare={inCheckSquare}
         onSquareClick={onSquareClickHandler}
         clickedSquareStyle={focusedSquareStyle}
         darkSquareStyle={{
