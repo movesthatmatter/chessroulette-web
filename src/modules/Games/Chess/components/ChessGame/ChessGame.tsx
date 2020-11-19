@@ -7,14 +7,16 @@ import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
 import { ChessMove, ChessGameStatePgn, ChessGameStateFen, ChessGameColor } from 'dstnd-io';
 import { ChessBoard } from '../ChessBoard';
 import { getNewChessGame } from '../../lib/sdk';
-import validMoveSound from '../../assets/sounds/valid_move.wav';
-import inCheckSound from '../../assets/sounds/in_check.wav';
 import { getSquareForPiece } from '../../lib/util';
 import { CSSProperties } from 'src/lib/jss/types';
 import { toChessColor } from './util';
+import validMoveSound from '../../assets/sounds/valid_move.wav';
+import inCheckSound from '../../assets/sounds/in_check.wav';
+import checkMatedSound from '../../assets/sounds/check_mated.wav';
 
 const validMoveAudio = new Audio(validMoveSound);
 const inCheckAudio = new Audio(inCheckSound);
+const checkMatedAudio = new Audio(checkMatedSound);
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   playable: boolean;
@@ -79,7 +81,11 @@ export const ChessGame: React.FunctionComponent<Props> = ({
         getSquareForPiece(pgn, { color: gameInstance.current.turn(), type: 'k' })
       );
 
-      inCheckAudio.play();
+      if (gameInstance.current.in_checkmate()) {
+        checkMatedAudio.play();
+      } else {
+        inCheckAudio.play();
+      }
     } else if (validPgn) {
       validMoveAudio.play();
     }
