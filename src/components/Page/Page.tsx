@@ -2,6 +2,7 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import logo from 'src/assets/logo_v2.svg';
 import { UserMenu } from '../Navigation';
+import { colors, text } from 'src/theme';
 
 type Props = {};
 
@@ -16,6 +17,15 @@ export const Page: React.FC<Props> = (props) => {
             <a href="/">
               <img src={logo} alt="logo" className={cls.logo} />
             </a>
+            <div className={cls.nav}>
+              <div className={cls.linksContainer}>
+                <div className={cls.linkWrapper}>
+                  <a className={cls.link} href="mailto:support@chessroulette.org">
+                    Contact
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
           <div className={cls.userMenuWrapper}>
             <UserMenu />
@@ -49,6 +59,8 @@ const useStyles = createUseStyles({
   },
   topMain: {
     flex: 1,
+    display: 'flex',
+    flexDirection: 'row',
   },
   topRight: {
     justifySelf: 'flex-end',
@@ -61,6 +73,35 @@ const useStyles = createUseStyles({
     height: `calc(100% - ${topHeightPx}px)`,
   },
   userMenuWrapper: {
-    // width: '250px',
+    width: '250px',
+  },
+  nav: {
+    flex: 1,
+    flexDirection: 'column',
+    display: 'flex',
+    alignItems: 'flex-end',
+  },
+  linksContainer: {
+    paddingTop: '5px',
+    paddingRight: '32px',
+    display: 'flex',
+  },
+  linkWrapper: {
+    textAlign: 'center',
+  },
+  link: {
+    paddingLeft: '20px',
+    paddingRight: '20px',
+    textTransform: 'capitalize',
+    textDecoration: 'none',
+    color: colors.neutralDarkest,
+    fontFamily: 'Lato, Open Sans, sans serif',
+    fontSize: '16px',
+    textAlign: 'center',
+
+    '&:hover': {
+      fontWeight: 600,
+      color: text.primaryColor,
+    },
   },
 });
