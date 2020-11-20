@@ -18,5 +18,3 @@ declare module 'react-scroll-to-bottom';
 declare module 'react-snapshot';
 
 declare module 'react-https-redirect';
-
-// declare module 'array-flatten';

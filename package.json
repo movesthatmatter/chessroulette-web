@@ -36,7 +36,6 @@
     "@types/validatorjs": "^3.15.0",
     "@types/webfontloader": "^1.6.29",
     "@use-it/event-listener": "^0.1.5",
-    "array-flatten": "^3.0.0",
     "axios": "^0.19.2",
     "capitalize": "^2.0.3",
     "chance": "^1.1.5",
