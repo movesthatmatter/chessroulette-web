@@ -133,7 +133,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
                   fontWeight: 200,
                 }}
               >
-                Made with ❤️ across the world!
+                Made with ❤️ around the world!
               </Text>
             </Box>
             <div
