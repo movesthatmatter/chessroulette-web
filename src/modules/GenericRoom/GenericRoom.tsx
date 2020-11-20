@@ -77,6 +77,8 @@ export const GenericRoom: React.FC<Props> = (props) => {
                       Events.trackRematchDenied();
                     }}
                     onOfferCanceled={() => p.request(gameActions.cancelOffer())}
+                    onTimerFinished={() => p.request(gameActions.statusCheck())}
+                    onStatusCheck={() => p.request(gameActions.statusCheck())}
                   />
                 )}
               />

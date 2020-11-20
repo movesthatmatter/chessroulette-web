@@ -16,6 +16,7 @@ type Props = {
   active: boolean,
   gameTimeLimit: ChessGameState['timeLimit'];
   material?: number;
+  onTimerFinished?: () => void;
 };
 
 export const PlayerBox: React.FC<Props> = ({
@@ -24,6 +25,7 @@ export const PlayerBox: React.FC<Props> = ({
   active,
   gameTimeLimit,
   material = 0,
+  ...props
 }) => {
   const cls = useStyles();
 
@@ -51,6 +53,7 @@ export const PlayerBox: React.FC<Props> = ({
         <Coundtdown
           timeLeft={timeLeft}
           active={active}
+          onFinished={props.onTimerFinished}
         />
       )}
     </Box>

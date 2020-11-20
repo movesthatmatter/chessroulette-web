@@ -1,3 +1,4 @@
+import { action } from '@storybook/addon-actions';
 /* eslint-disable import/no-extraneous-dependencies */
 import { Grommet } from 'grommet';
 import { toISODateTime } from 'io-ts-isodatetime';
@@ -53,6 +54,7 @@ export const defaultStory = () => (
           lastMoved: undefined,
           captured: undefined,
         }}
+        onTimerFinished={action('onTimerFinished')}
       />
     </div>
   </Grommet>
@@ -118,6 +120,7 @@ export const withTimeFinished = () => (
               },
             },
           }}
+          onTimerFinished={action('onTimerFinished')}
         />
         </div>
       </div>
@@ -176,6 +179,7 @@ export const withGameStarted = () => (
             },
           },
         }}
+        onTimerFinished={action('onTimerFinished')}
       />
     </div>
   </Grommet>

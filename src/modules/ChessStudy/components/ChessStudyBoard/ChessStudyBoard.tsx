@@ -22,7 +22,7 @@ export const ChessStudyBoard: React.FC<ChessStudyBoardProps> = ({
   <ChessBoard
     {...boardProps}
     history={history}
-    onSquareClickMove={(p) => onMove({ from: p.sourceSquare, to: p.targetSquare })}
+    // onSquareClickMove={(p) => onMove({ from: p.sourceSquare, to: p.targetSquare })}
     onDrop={(p) => onMove({ from: p.sourceSquare, to: p.targetSquare })}
   />
 );

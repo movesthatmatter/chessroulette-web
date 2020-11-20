@@ -1,30 +1,36 @@
 import Chessboard, { Piece } from 'chessboardjsx';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Move, Square } from 'chess.js';
 import { CSSProperties } from 'src/lib/jss/types';
-import { noop } from 'src/lib/util';
 import { pieces } from './assets/chessPiecesChessrouletteTheme';
-
+import {
+  getSquareForPiece,
+  getTurn,
+  historyToFen,
+  historyToPgn,
+  inCheck,
+} from '../../lib';
 
 const getPieceRender = (pieceName: keyof typeof pieces, imageSrc: string) => (obj: {
-  isDragging: boolean,
-  squareWidth: number,
-  droppedPiece: Piece,
-  targetSquare: Square,
-  sourceSquare: Square
+  isDragging: boolean;
+  squareWidth: number;
+  droppedPiece: Piece;
+  targetSquare: Square;
+  sourceSquare: Square;
 }) => (
   <img
-    style={isWhite(pieceName)
-      ? {
-        width: obj.squareWidth * 0.8,
-        height: obj.squareWidth * 0.8,
-        marginTop: obj.squareWidth * 0.1,
-      }
-      : {
-        width: obj.squareWidth * 0.72,
-        height: obj.squareWidth * 0.72,
-        marginTop: obj.squareWidth * 0.16,
-      }
+    style={
+      isWhite(pieceName)
+        ? {
+            width: obj.squareWidth * 0.8,
+            height: obj.squareWidth * 0.8,
+            marginTop: obj.squareWidth * 0.1,
+          }
+        : {
+            width: obj.squareWidth * 0.72,
+            height: obj.squareWidth * 0.72,
+            marginTop: obj.squareWidth * 0.16,
+          }
     }
     src={imageSrc}
     alt={pieceName}
@@ -46,35 +52,31 @@ const toShortHandPiece = (p: keyof typeof pieces): Piece => {
   }
 
   return `${shortColor}${shortPiece}` as Piece;
-}
+};
 
 const piecesToBoardMap = Object.keys(pieces).reduce((prev, nextPieceName) => {
   return {
     ...prev,
     [toShortHandPiece(nextPieceName as keyof typeof pieces)]: getPieceRender(
-      nextPieceName as keyof typeof pieces, 
-      pieces[nextPieceName as keyof typeof pieces],
+      nextPieceName as keyof typeof pieces,
+      pieces[nextPieceName as keyof typeof pieces]
     ),
-  }
+  };
 }, {} as ChessBoardProps['pieces']);
 
-
-export type ChessBoardProps = Chessboard['props'] & {
+export type ChessBoardProps = Omit<Chessboard['props'], 'fen'> & {
   history: Move[];
   inCheckSquare?: Square;
-  onSquareClickMove?: (props: { targetSquare: Square; sourceSquare: Square }) => void;
-  onSquareClicked?: (sq: Square) => void;
   clickedSquareStyle: Partial<{ [sq in Square]: CSSProperties }>;
 };
 
 export const ChessBoard: React.FC<ChessBoardProps> = ({
   history,
-  onSquareClickMove = noop,
-  onSquareClicked = noop,
-  inCheckSquare,
   clickedSquareStyle,
   ...boardProps
 }) => {
+  const [inCheckSquare, setInCheckSquare] = useState<Square>();
+
   const lastMove = history[history.length - 1];
   const lastMoveStyle = lastMove
     ? {
@@ -91,8 +93,29 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
     }),
   };
 
+  useEffect(() => {
+    // Reset the state
+    setInCheckSquare(undefined);
+
+    if (history.length === 0) {
+      return;
+    }
+
+    const pgn = historyToPgn(history);
+
+    // Visual Effects
+    setInCheckSquare(() => {
+      if (inCheck(pgn)) {
+        return getSquareForPiece(pgn, { color: getTurn(pgn), type: 'k' });
+      }
+
+      return undefined;
+    });
+  }, [history]);
+
   return (
     <Chessboard
+      key={history.length}
       {...boardProps}
       squareStyles={{
         ...lastMoveStyle,
@@ -104,6 +127,7 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
         ...boardProps.boardStyle,
         position: 'relative',
       }}
+      position={historyToFen(history)}
     />
   );
 };
