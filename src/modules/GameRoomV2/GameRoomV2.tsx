@@ -5,7 +5,6 @@ import { RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
 import { ChessGameStatePgn, ChessMove } from 'dstnd-io/dist/chessGame';
-import { noop } from 'src/lib/util';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
 import { ChessGame, ChessGameColor } from '../Games/Chess';
 import { getPlayerColor, getPlayer, getOppositePlayer } from './util';
@@ -36,26 +35,26 @@ type Props = {
   onRematchAccepted: () => void;
   onRematchDenied: () => void;
   onOfferCanceled: () => void;
+  onTimerFinished: () => void;
+  onStatusCheck: () => void;
 };
 
 const TOP_HEIGHT = 80;
 const BOTTOM_HEIGHT = 80;
 
-export const GameRoomV2: React.FC<Props> = ({
-  onMove = noop,
-  onResign = noop,
-  onAbort = noop,
-  onOfferDraw = noop,
-  onRematchOffer = noop,
-  ...props
-}) => {
+export const GameRoomV2: React.FC<Props> = (props) => {
   const cls = useStyles();
   const dialogTarget = useRef();
 
   const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
 
+  // Analytics
   useEffect(() => {
     Events.trackPageView('Game Room');
+  }, []);
+
+  useEffect(() => {
+    props.onStatusCheck();
   }, []);
 
   const homeColor = getPlayerColor(props.room.me.id, props.room.activity.game.players);
@@ -160,6 +159,7 @@ export const GameRoomV2: React.FC<Props> = ({
                 homeColor={homeColor}
                 historyFocusedIndex={gameDisplayedHistoryIndex}
                 onMoveClick={setGameDisplayedHistoryIndex}
+                onTimerFinished={props.onTimerFinished}
               />
             </div>
             <div className={cls.gameActionsContainer} style={{ height: '30%' }}>
@@ -173,7 +173,7 @@ export const GameRoomV2: React.FC<Props> = ({
                     actionType="positive"
                     icon={Refresh}
                     reverse
-                    onSubmit={() => onRematchOffer()}
+                    onSubmit={() => props.onRematchOffer()}
                     className={cls.gameActionButton}
                   />
                 )}
@@ -184,7 +184,7 @@ export const GameRoomV2: React.FC<Props> = ({
                     actionType="negative"
                     icon={Halt}
                     reverse
-                    onSubmit={() => onAbort()}
+                    onSubmit={() => props.onAbort()}
                     className={cls.gameActionButton}
                   />
                 )}
@@ -196,7 +196,7 @@ export const GameRoomV2: React.FC<Props> = ({
                       actionType="negative"
                       icon={Flag}
                       reverse
-                      onSubmit={() => onResign(homeColor)}
+                      onSubmit={() => props.onResign(homeColor)}
                       className={cls.gameActionButton}
                     />
                     <ActionButton
@@ -205,7 +205,7 @@ export const GameRoomV2: React.FC<Props> = ({
                       actionType="positive"
                       icon={Split}
                       reverse
-                      onSubmit={() => onOfferDraw()}
+                      onSubmit={() => props.onOfferDraw()}
                       className={cls.gameActionButton}
                     />
                   </>
@@ -223,7 +223,7 @@ export const GameRoomV2: React.FC<Props> = ({
               pgn={props.room.activity.game.pgn || ''}
               getBoardSize={() => container.width}
               onMove={(...args) => {
-                onMove(...args, homeColor);
+                props.onMove(...args, homeColor);
               }}
               onRewind={() => {
                 setGameDisplayedHistoryIndex((prev) => prev + 1);

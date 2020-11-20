@@ -141,7 +141,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
       targetSquare: nextUncommittedMove.to,
     });
     setNextUncommittedMove(undefined);
-  }, [nextUncommittedMove])
+  }, [nextUncommittedMove]);
 
   const onMoveHandler = ({
     sourceSquare,

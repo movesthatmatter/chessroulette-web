@@ -44,7 +44,7 @@ const RoomContainer: React.FC<{
       quickPair({
         userId: peer.user.id,
         gameSpecs: {
-          timeLimit: 'blitz',
+          timeLimit: 'bullet',
           preferredColor: 'white',
         },
       }).map((r) => {
