@@ -94,6 +94,9 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
   };
 
   useEffect(() => {
+    // Reset the state
+    setInCheckSquare(undefined);
+
     if (history.length === 0) {
       return;
     }
