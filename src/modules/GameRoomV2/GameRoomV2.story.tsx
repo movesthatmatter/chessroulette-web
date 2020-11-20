@@ -4,7 +4,6 @@ import { Grommet } from 'grommet';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { defaultTheme } from 'src/theme';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
-import { Page } from 'src/components/Page';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { chessGameActions, ChessGameState, ChessGameStateStarted } from 'dstnd-io';
 import { action } from '@storybook/addon-actions';
@@ -13,6 +12,7 @@ import { RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 import { PeerProvider } from 'src/components/PeerProvider';
 import { SocketProvider } from 'src/components/SocketProvider';
+import { toISODateTime } from 'io-ts-isodatetime';
 
 export default {
   component: GameRoomV2,
@@ -82,6 +82,8 @@ export const defaultStory = () => (
                     onRematchOffer={action('onRematchOffer')}
                     onResign={action('onResign')}
                     onOfferCanceled={action('onOfferCancel')}
+                    onTimerFinished={action('onTimerFinished')}
+                    onStatusCheck={action('onStatusCheck')}
                   />
                 </PeerProvider>
               </SocketProvider>
@@ -151,6 +153,7 @@ export const withSwitchingSides = () => (
                       ...prev.activity,
                       game: chessGameActions.move(prev.activity.game as ChessGameStateStarted, {
                         move,
+                        movedAt: toISODateTime(new Date()),
                       }),
                     },
 
@@ -168,6 +171,8 @@ export const withSwitchingSides = () => (
                 onRematchOffer={action('onRematchOffer')}
                 onResign={action('onResign')}
                 onOfferCanceled={action('onOfferCancel')}
+                onTimerFinished={action('onTimerFinished')}
+                onStatusCheck={action('onStatusCheck')}
               />
               {/* </Page> */}
             </StorybookReduxProvider>
@@ -259,6 +264,8 @@ export const asPageWithStartedGame = () => (
                 onRematchOffer={action('onRematchOffer')}
                 onResign={action('onResign')}
                 onOfferCanceled={action('onOfferCancel')}
+                onTimerFinished={action('onTimerFinished')}
+                onStatusCheck={action('onStatusCheck')}
               />
             </StorybookReduxProvider>
           );
@@ -325,6 +332,8 @@ export const asPageWithFinishedGame = () => (
                 onRematchOffer={action('onRematchOffer')}
                 onResign={action('onResign')}
                 onOfferCanceled={action('onOfferCancel')}
+                onTimerFinished={action('onTimerFinished')}
+                onStatusCheck={action('onStatusCheck')}
               />
             </StorybookReduxProvider>
           );

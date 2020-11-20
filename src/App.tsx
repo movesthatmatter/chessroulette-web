@@ -8,7 +8,6 @@ import { PeerProvider } from './components/PeerProvider';
 import { SocketProvider } from './components/SocketProvider';
 import config from './config';
 import { GA } from './services/Analytics';
-import HttpsRedirect from 'react-https-redirect';
 
 function App() {
   useEffect(() => {
@@ -16,29 +15,27 @@ function App() {
   }, []);
 
   return (
-    <HttpsRedirect>
-      <ReduxProvider>
-        <AuthenticationProvider>
-          <SocketProvider>
-            <PeerProvider>
-              <JssProvider
-                // Prefix the Mounted classes but not the prerendered ones
-                // This is to avoid style conflict between new and stale
-                //  prerendererd classes since those can't be removed (for now)
-                // The idea of prefixing the mounted classes is to decrease the
-                //  initial html size as much as possible!
-                classNamePrefix={config.PRERENDERING ? undefined : 'cr-'}
-                id={{ minify: !config.DEBUG }}
-              >
-                <ThemeProvider theme={defaultTheme}>
-                  <Routes />
-                </ThemeProvider>
-              </JssProvider>
-            </PeerProvider>
-          </SocketProvider>
-        </AuthenticationProvider>
-      </ReduxProvider>
-    </HttpsRedirect>
+    <ReduxProvider>
+      <AuthenticationProvider>
+        <SocketProvider>
+          <PeerProvider>
+            <JssProvider
+              // Prefix the Mounted classes but not the prerendered ones
+              // This is to avoid style conflict between new and stale
+              //  prerendererd classes since those can't be removed (for now)
+              // The idea of prefixing the mounted classes is to decrease the
+              //  initial html size as much as possible!
+              classNamePrefix={config.PRERENDERING ? undefined : 'cr-'}
+              id={{ minify: !config.DEBUG }}
+            >
+              <ThemeProvider theme={defaultTheme}>
+                <Routes />
+              </ThemeProvider>
+            </JssProvider>
+          </PeerProvider>
+        </SocketProvider>
+      </AuthenticationProvider>
+    </ReduxProvider>
   );
 }
 

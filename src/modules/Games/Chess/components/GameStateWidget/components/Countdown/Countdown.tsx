@@ -37,9 +37,14 @@ export const Coundtdown: React.FC<Props> = ({ onFinished = () => noop, ...props 
 
     if (timeLeft <= 0) {
       setFinished(true);
-      onFinished();
     }
   }, [timeLeft]);
+
+  useEffect(() => {
+    if (finished) {
+      onFinished();
+    }
+  }, [finished]);
 
   const clock = (
     <>

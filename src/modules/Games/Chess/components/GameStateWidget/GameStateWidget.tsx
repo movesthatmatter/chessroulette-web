@@ -10,13 +10,22 @@ import { GameHistory } from './components/GameHistory';
 import cx from 'classnames';
 import { getRelativeMaterialScore } from './util';
 import { Events } from 'src/services/Analytics';
+import { noop } from 'src/lib/util';
 
 type Props = {
   game: ChessGameState;
   homeColor: ChessGameColor;
+  historyFocusedIndex?: number;
+  onMoveClick?: (index: number) => void;
+  onTimerFinished?: (color: ChessGameColor) => void;
 };
 
-export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
+export const GameStateWidget: React.FC<Props> = ({
+  game,
+  homeColor,
+  onTimerFinished = noop,
+  ...props
+}) => {
   const cls = useStyles();
 
   useEffect(() => {
@@ -50,10 +59,6 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
 
   const materialScore = getRelativeMaterialScore(game.captured);
 
-  
-  // TODO: Oct 29th
-  //  The GameState shouldn't have a timeLeft anymore since now those calcs happen on the client (above)!
-
   return (
     <div className={cls.container}>
       <div className={cx(cls.player, cls.playerTop)}>
@@ -65,13 +70,18 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
               active={game.state === 'started' && game.lastMoved !== opponentPlayer.color}
               gameTimeLimit={game.timeLimit}
               material={materialScore[opponentPlayer.color]}
+              onTimerFinished={() => onTimerFinished(opponentPlayer.color)}
             />
             <div className={cls.spacer} />
           </>
         )}
       </div>
       <div className={cls.gameStateContainer}>
-        <GameHistory game={game} />
+        <GameHistory
+          game={game}
+          focusedIndex={props.historyFocusedIndex}
+          onMoveClick={props.onMoveClick}
+        />
       </div>
       <div className={cls.player}>
         {myPlayer && (
@@ -83,6 +93,7 @@ export const GameStateWidget: React.FC<Props> = ({ game, homeColor }) => {
               active={game.state === 'started' && game.lastMoved !== myPlayer.color}
               gameTimeLimit={game.timeLimit}
               material={materialScore[myPlayer.color]}
+              onTimerFinished={() => onTimerFinished(myPlayer.color)}
             />
           </>
         )}
