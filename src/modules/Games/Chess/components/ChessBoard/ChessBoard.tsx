@@ -9,16 +9,7 @@ import {
   historyToFen,
   historyToPgn,
   inCheck,
-  isGameOver,
 } from '../../lib';
-
-import validMoveSound from '../../assets/sounds/valid_move.wav';
-import inCheckSound from '../../assets/sounds/in_check.wav';
-import checkMatedSound from '../../assets/sounds/check_mated.wav';
-
-const validMoveAudio = new Audio(validMoveSound);
-const inCheckAudio = new Audio(inCheckSound);
-const checkMatedAudio = new Audio(checkMatedSound);
 
 const getPieceRender = (pieceName: keyof typeof pieces, imageSrc: string) => (obj: {
   isDragging: boolean;
@@ -117,15 +108,6 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
 
       return undefined;
     });
-
-    // Sound Effects
-    if (isGameOver(pgn)) {
-      checkMatedAudio.play();
-    } else if (inCheck(pgn)) {
-      inCheckAudio.play();
-    } else {
-      validMoveAudio.play();
-    }
   }, [history]);
 
   return (

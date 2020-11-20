@@ -6,7 +6,7 @@ import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
 import { ChessGameStatePgn, ChessMove } from 'dstnd-io/dist/chessGame';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
-import { ChessGame, ChessGameColor } from '../Games/Chess';
+import { ChessGame, ChessGameColor, useSoundEffects } from '../Games/Chess';
 import { getPlayerColor, getPlayer, getOppositePlayer } from './util';
 import { floatingShadow, softBorderRadius } from 'src/theme/effects';
 import cx from 'classnames';
@@ -47,6 +47,8 @@ export const GameRoomV2: React.FC<Props> = (props) => {
   const dialogTarget = useRef();
 
   const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
+
+  useSoundEffects(props.room.activity.game);
 
   // Analytics
   useEffect(() => {
