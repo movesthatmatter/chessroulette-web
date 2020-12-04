@@ -17,28 +17,6 @@ export const AVStream: React.FunctionComponent<AVStreamProps> = ({
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
-
-      // stream.
-
-
-      // videoRef.current.setAttribute('autoplay', '');
-      // videoRef.current.setAttribute('muted', '');
-      // videoRef.current.setAttribute('playsinline', '');
-
-      // setTimeout(())
-
-      // videoRef.current.onloadedmetadata = (e) => {
-      //   console.log('loaded', e);
-      // }
-
-      // videoRef.current.HAVE_ENOUGH_DATA
-
-      // setTimeout(() => {
-      //   if (videoRef.current) {
-      //     videoRef.current.srcObject = stream;
-      //     videoRef.current.play();
-      //   }
-      // }, 1000);
     }
   }, [stream, videoRef]);
 
@@ -58,7 +36,7 @@ export const AVStream: React.FunctionComponent<AVStreamProps> = ({
       autoPlay
       playsInline
     >
-      <track kind="captions" />
+      <track kind="main" />
     </video>
   );
 };
