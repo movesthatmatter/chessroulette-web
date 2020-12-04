@@ -2810,6 +2810,13 @@
     "@types/react" "*"
     "@types/reactcss" "*"
 
+"@types/react-div-100vh@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@types/react-div-100vh/-/react-div-100vh-0.3.0.tgz#3146b567304c6d9587f340fdb4b6e612596f07ad"
+  integrity sha512-ooouxtvbj+mP/OmdAh91+huVECechS2Svb55zTWMaRPXIG4XXL4+TESR7navmm6kvlnZRhDNb7/2qUOTrQm17g==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-dom@*", "@types/react-dom@^16.9.0":
   version "16.9.8"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.8.tgz#fe4c1e11dfc67155733dfa6aa65108b4971cb423"
@@ -3494,6 +3501,11 @@
     "@webassemblyjs/ast" "1.9.0"
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
+
+"@wmik/use-media-recorder@^1.0.0-alpha.4":
+  version "1.0.0-alpha.4"
+  resolved "https://registry.yarnpkg.com/@wmik/use-media-recorder/-/use-media-recorder-1.0.0-alpha.4.tgz#76c555987e3f8b201326596db983bfc4835e4b81"
+  integrity sha512-s/JhI/Akyfhh6COlFhdYyrrgJOVvPkctiRhBMxZiK+qcw3+C+AUUndmx7l6sr2Qu8H7Ea/qiOEZOTOCDioQZ4A==
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
@@ -14494,6 +14506,11 @@ react-display-name@^0.2.4:
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/react-display-name/-/react-display-name-0.2.5.tgz#304c7cbfb59ee40389d436e1a822c17fe27936c6"
   integrity sha512-I+vcaK9t4+kypiSgaiVWAipqHRXYmZIuAiS8vzFvXHHXVigg/sMKwlRgLy6LH2i3rmP+0Vzfl5lFsFRwF1r3pg==
+
+react-div-100vh@^0.5.6:
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/react-div-100vh/-/react-div-100vh-0.5.6.tgz#1d73866e96379433dea066d3e55026efd77f4b29"
+  integrity sha512-foNzJeBwiWp2Xs+pDhKyX2sP9O8UoGfYyz/D+GgZaHCKS3R+lbtJc8OdgMDr03txXgPVsxGEtmjKeDcLW30xwQ==
 
 react-dnd-html5-backend@*:
   version "11.1.3"

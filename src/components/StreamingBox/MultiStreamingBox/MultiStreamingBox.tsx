@@ -1,18 +1,25 @@
 import React, { useEffect, useReducer } from 'react';
-import { FaceTime } from 'src/components/FaceTimeArea';
+import { FaceTime, FaceTimeProps } from 'src/components/FaceTimeArea';
 import { createUseStyles } from 'src/lib/jss';
 import { fonts, softBorderRadius } from 'src/theme';
 import { Streamer, StreamersMap } from '../types';
 import { Reel } from './components/Reel/Reel';
 import { reducer, initialState, initAction, focusAction, updateAction } from './reducer';
 
-type Props = {
+export type MultiStreamingBoxProps = {
   streamersMap: StreamersMap;
   myStreamingConfig: Streamer;
   focusedUserId?: Streamer['user']['id'];
+  aspectRatio?: FaceTimeProps['aspectRatio'],
 };
 
-export const MultiStreamingBox: React.FC<Props> = (props) => {
+export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
+  aspectRatio = {
+    width: 4,
+    height: 3,
+  },
+  ...props
+}) => {
   const cls = useStyles();
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -49,10 +56,7 @@ export const MultiStreamingBox: React.FC<Props> = (props) => {
         streamConfig={state.inFocus.streamingConfig}
         label={state.inFocus.user.name}
         labelPosition="bottom-left"
-        aspectRatio={{
-          width: 4,
-          height: 3,
-        }}
+        aspectRatio={aspectRatio}
       />
       <div className={cls.reelWrapper}>
         <Reel
@@ -68,10 +72,7 @@ export const MultiStreamingBox: React.FC<Props> = (props) => {
 };
 
 const useStyles = createUseStyles({
-  container: {
-    ...softBorderRadius,
-    overflow: 'hidden',
-  },
+  container: {},
   reelWrapper: {
     width: '22.2%',
     position: 'absolute',

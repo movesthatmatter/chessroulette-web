@@ -2,14 +2,17 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { FaceTime } from '../FaceTimeArea';
 import { Peer, Room } from '../RoomProvider';
-import { MultiStreamingBox } from './MultiStreamingBox';
+import { MultiStreamingBox, MultiStreamingBoxProps } from './MultiStreamingBox';
 import { Streamer } from './types';
 import { softBorderRadius } from 'src/theme';
+import cx from 'classnames';
 
 type Props = {
   room: Room;
   width?: number;
   focusedPeerId?: Peer['id'];
+  aspectRatio?: MultiStreamingBoxProps['aspectRatio'];
+  containerClassName?: string;
 };
 
 export const StreamingBox: React.FC<Props> = (props) => {
@@ -32,7 +35,7 @@ export const StreamingBox: React.FC<Props> = (props) => {
     }, {});
 
   return (
-    <div className={cls.container} style={{ width: props.width || '100%' }}>
+    <div className={cx(cls.container, props.containerClassName)} style={{ width: props.width || '100%' }}>
       {(Object.keys(activeStreamers).length > 0) ? (
         <MultiStreamingBox
           focusedUserId={props.focusedPeerId}
@@ -41,11 +44,12 @@ export const StreamingBox: React.FC<Props> = (props) => {
             streamingConfig: props.room.me.connection.channels.streaming,
             user: props.room.me.user,
           } as Streamer}
+          aspectRatio={props.aspectRatio}
         />
       ) : (
         <FaceTime
           streamConfig={props.room.me.connection.channels.streaming}
-          className={cls.fullFacetime}
+          aspectRatio={props.aspectRatio}
           muted
         />
       )}
@@ -65,9 +69,7 @@ const useStyles = createUseStyles({
   smallFacetime: {
     border: '2px solid rgba(0, 0, 0, .3)',
   },
-  fullFacetime: {
-    ...softBorderRadius,
-  },
+  fullFacetime: {},
   noFacetime: {
     background: '#ededed',
   },

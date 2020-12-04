@@ -45,7 +45,7 @@ export const LandingPageV2: React.FC<Props> = () => {
             <h3 className={cls.text}>
               Play with friends in a private lobby or start a quick game.
             </h3>
-            <div className={cx(cls.buttonWrapper, cls.desktopOnly)}>
+            <div className={cls.buttonWrapper}>
               <ChallengeButtonWidget
                 label="Play a Friend"
                 challengeType="challenge"
@@ -59,11 +59,11 @@ export const LandingPageV2: React.FC<Props> = () => {
                 type="secondary"
               />
             </div>
-            <div className={cls.mobileOnly}>
+            {/* <div className={cls.mobileOnly}>
               <span className={cls.noMobileDisclaimerText}>
                 Please switch to a bigger screen to Play!
               </span>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

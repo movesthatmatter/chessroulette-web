@@ -13,7 +13,7 @@ import cx from 'classnames';
 import { GameStateWidget } from '../Games/Chess/components/GameStateWidget/GameStateWidget';
 import { ActionButton } from 'src/components/Button';
 import { Refresh, Halt, Flag, Split } from 'grommet-icons';
-import { colors, fonts } from 'src/theme';
+import { colors, fonts, MOBILE_BREAKPOINT } from 'src/theme';
 import { ChatContainer } from 'src/components/Chat';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,6 +22,11 @@ import { CSSProperties } from 'src/lib/jss/types';
 import { GameStateDialog } from './components/GameStateDialog';
 import { Move } from 'chess.js';
 import { Events } from 'src/services/Analytics';
+import { useWindowWidth } from '@react-hook/window-size';
+import { PlayerBox } from '../Games/Chess/components/GameStateWidget/components/PlayerBox';
+import { MobileGameRoomLayout } from './GameRoomLayout/MobileGameRoomLayout';
+import { otherChessColor } from '../Games/Chess/util';
+import { getRelativeMaterialScore } from '../Games/Chess/components/GameStateWidget/util';
 
 type Props = {
   room: RoomWithPlayActivity;
@@ -45,6 +50,7 @@ const BOTTOM_HEIGHT = 80;
 export const GameRoomV2: React.FC<Props> = (props) => {
   const cls = useStyles();
   const dialogTarget = useRef();
+  const windowWidth = useWindowWidth();
 
   const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
 
@@ -68,6 +74,19 @@ export const GameRoomV2: React.FC<Props> = (props) => {
   const opponentPlayer = myPlayer
     ? getOppositePlayer(myPlayer, props.room.activity.game.players)
     : undefined;
+  
+  const now = new Date();
+  const myTimeLeft =
+    game.state === 'started' && game.lastMoveBy !== homeColor
+      ? game.timeLeft[homeColor] - (now.getTime() - new Date(game.lastMoveAt).getTime())
+      : game.timeLeft[homeColor];
+  const opponentTimeLeft =
+    game.state === 'started' && game.lastMoveBy === homeColor
+      ? game.timeLeft[otherChessColor(homeColor)] -
+        (now.getTime() - new Date(game.lastMoveAt).getTime())
+      : game.timeLeft[otherChessColor(homeColor)];
+  
+    const materialScore = getRelativeMaterialScore(game.captured);
 
   const canIPlay =
     isMePlayer && // I must be a player
@@ -79,6 +98,66 @@ export const GameRoomV2: React.FC<Props> = (props) => {
     // Reset the History Dislayed Index when the PGN is updated
     setGameDisplayedHistoryIndex(0);
   }, [game.pgn]);
+
+  // If Mobile
+  if (windowWidth <= MOBILE_BREAKPOINT) {
+    return (
+      <MobileGameRoomLayout
+        getTopArea={(dimensions) => (
+          <StreamingBox
+            room={props.room}
+            focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
+            aspectRatio={dimensions}
+          />
+        )}
+        getMainArea={(dimensions) => (
+          <>
+            {opponentPlayer && (
+              <div className={cls.mobileAwayPlayerWrapper}>
+                <PlayerBox
+                  player={opponentPlayer}
+                  timeLeft={opponentTimeLeft}
+                  active={game.state === 'started' && game.lastMoved !== opponentPlayer.color}
+                  gameTimeLimit={game.timeLimit}
+                  material={materialScore[opponentPlayer.color]}
+                  onTimerFinished={props.onTimerFinished}
+                />
+              </div>
+            )}
+            <ChessGame
+              className={cls.mobileBoard}
+              homeColor={homeColor}
+              playable={canIPlay}
+              pgn={props.room.activity.game.pgn || ''}
+              getBoardSize={() => dimensions.width}
+              onMove={(...args) => {
+                props.onMove(...args, homeColor);
+              }}
+              onRewind={() => {
+                setGameDisplayedHistoryIndex((prev) => prev + 1);
+              }}
+              onForward={() => {
+                setGameDisplayedHistoryIndex((prev) => prev - 1);
+              }}
+              displayedHistoryIndex={gameDisplayedHistoryIndex}
+            />
+            {myPlayer && (
+              <div className={cls.mobileHomePlayerWrapper}>
+                <PlayerBox
+                  player={myPlayer}
+                  timeLeft={myTimeLeft}
+                  active={game.state === 'started' && game.lastMoved !== myPlayer.color}
+                  gameTimeLimit={game.timeLimit}
+                  material={materialScore[myPlayer.color]}
+                  onTimerFinished={props.onTimerFinished}
+                />
+              </div>
+            )}
+          </>
+        )}
+      />
+    );
+  }
 
   return (
     <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
@@ -237,7 +316,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
             />
           </div>
         )}
-        getRightSideComponent={({ container }) => (
+        getRightSideComponent={({ container, isMobile }) => (
           <div className={cx(cls.side, cls.rightSide)}>
             <div
               style={{
@@ -262,6 +341,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
                 <StreamingBox
                   room={props.room}
                   focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
+                  containerClassName={cls.streamingBox}
                 />
               </div>
               <div
@@ -337,6 +417,9 @@ const useStyles = createUseStyles({
     ...softBorderRadius,
     overflow: 'hidden',
   },
+  mobileBoard: {
+    ...floatingShadow,
+  },
   playButtonsContainer: {
     padding: '1em 0',
   },
@@ -375,5 +458,19 @@ const useStyles = createUseStyles({
         marginBottom: '0px !important',
       },
     } as CSSProperties),
+  },
+  streamingBox: {
+    ...softBorderRadius,
+    overflow: 'hidden',
+  },
+
+  // Mobile
+  mobileAwayPlayerWrapper: {
+    marginBottom: '4px',
+    padding: '0 8px',
+  },
+  mobileHomePlayerWrapper: {
+    marginTop: '4px',
+    padding: '0 8px',
   },
 });

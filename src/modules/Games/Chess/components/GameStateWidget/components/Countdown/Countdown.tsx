@@ -7,6 +7,7 @@ import { useInterval } from 'src/lib/hooks';
 import { Text } from 'src/components/Text';
 import { timeLeftToFormatMajor, timeLeftToFormatMinor, timeLeftToInterval } from './util';
 import { text } from 'src/theme/text';
+import { onlyMobile } from 'src/theme';
 
 type Props = {
   timeLeft: number;
@@ -75,6 +76,11 @@ const useStyles = createUseStyles({
     fontSize: '32px',
     lineHeight: '32px',
     color: text.disabledColor,
+
+    ...onlyMobile({
+      fontSize: '24px',
+      lineHeight: '24px',
+    }),
   },
   textActive: {
     color: text.primaryColor,

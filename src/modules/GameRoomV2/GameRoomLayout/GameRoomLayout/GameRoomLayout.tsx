@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
-import { getLayoutSizes, Ratios } from './util';
+import { getLayoutSizes, Ratios, isMobile as getIsMobile } from './util';
 
 type ContainerDimensions = {
   width: number;
@@ -19,6 +19,7 @@ type ExtendedDimensions = {
   center: ContainerDimensions;
   left: ContainerDimensions;
   right: ContainerDimensions;
+  isMobile: boolean;
 }
 
 type Props = {
@@ -27,6 +28,7 @@ type Props = {
   getLeftSideComponent: (d: ExtendedDimensions) => ReactNode;
   getTopComponent: (d: ExtendedDimensions) => ReactNode;
   getBottomComponent: (d: ExtendedDimensions) => ReactNode;
+  // getMobileComponent: () => ReactNode;
   topHeight: number;
   bottomHeight: number;
   offsets?: {
@@ -58,6 +60,7 @@ export const GameRoomLayout: React.FC<Props> = ({
 
   const horizontalOffset = (offsets.right || 0) + (offsets?.left || 0);
   const verticalOffset = (offsets?.top || 0) + (offsets?.bottom || 0);
+  const [isMobile, setIsMobile] = useState(getIsMobile(containerDimensions));
 
   const getLayout = () => {
     if (!containerDimensions.updated) {
@@ -90,6 +93,7 @@ export const GameRoomLayout: React.FC<Props> = ({
 
   useEffect(() => {
     setLayout(getLayout());
+    setIsMobile(getIsMobile(containerDimensions));
   }, [containerDimensions]);
 
   const verticalPadding = (containerDimensions.height - layout.gameArea);
@@ -133,6 +137,7 @@ export const GameRoomLayout: React.FC<Props> = ({
       horizontalPadding: 0,
       verticalPadding,
     },
+    isMobile,
   };
 
   return (

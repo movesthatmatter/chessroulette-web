@@ -2,11 +2,13 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 
+export type AspectRatioExplicit = {
+  width: number;
+  height: number;
+};
+
 export type AspectRatioProps = React.HTMLProps<HTMLDivElement> & {
-  aspectRatio?: {
-    width: number;
-    height: number;
-  };
+  aspectRatio?: AspectRatioExplicit | number;
 } & ({
   width?: number | string;
   height?: never;
@@ -24,6 +26,8 @@ export const AspectRatio: React.FC<AspectRatioProps> = ({
 }) => {
   const cls = useStyles();
 
+  const ratio = typeof aspectRatio === 'number' ? aspectRatio : aspectRatio.width / aspectRatio.height;
+
   return (
     <div
       style={{
@@ -35,7 +39,7 @@ export const AspectRatio: React.FC<AspectRatioProps> = ({
     >
       <div
         className={cx(cls.inner, props.className)}
-        style={{ paddingBottom: `${100 / (aspectRatio.width / aspectRatio.height)}%` }}
+        style={{ paddingBottom: `${100 / ratio}%` }}
       >
         <div className={cls.content}>
           {props.children}

@@ -16,7 +16,14 @@ export const WithLocalStream: React.FC<Props> = ({
     const client = new AVStreaming();
 
     (async () => {
-      setLocalStream(await client.start(constraints));
+      const stream = await client.start({
+        audio: true,
+        video: true,
+      });
+
+      console.log('settings', stream.getVideoTracks()[0].getSettings());
+      // console.log('constraings', constraints);
+      setLocalStream(stream);
     })();
 
     return () => {

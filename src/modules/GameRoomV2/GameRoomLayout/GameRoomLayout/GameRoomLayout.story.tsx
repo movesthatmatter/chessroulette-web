@@ -14,7 +14,7 @@ import { action } from '@storybook/addon-actions';
 import { ChatHistoryRecord } from 'dstnd-io';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { minutes, seconds } from 'src/lib/time';
-import { AspectRatio, AspectRatioProps } from 'src/components/AspectRatio';
+import { AspectRatio, AspectRatioExplicit, AspectRatioProps } from 'src/components/AspectRatio';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
 
 export default {
@@ -273,7 +273,7 @@ export const withChessGame = () => (
 );
 
 const LayoutComponent: React.FC<{
-  aspectRatio: AspectRatioProps['aspectRatio'];
+  aspectRatio: AspectRatioExplicit;
   containerWidth: number;
   top: number;
   bottom: number;

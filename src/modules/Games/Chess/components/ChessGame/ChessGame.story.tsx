@@ -28,11 +28,17 @@ export default {
   title: 'Modules/Games/Chess/components/Chess Game',
 };
 
+const getBoardSize = (dimensions: {
+  screenWidth: number,
+  screenHeight: number,
+}) => Math.min(dimensions.screenWidth, dimensions.screenHeight) - 20
+
 export const asWhite = () => (
   <ChessGame
     homeColor="white"
     playable
     pgn=""
+    getBoardSize={getBoardSize}
   />
 );
 export const asBlack = () => (
@@ -40,6 +46,7 @@ export const asBlack = () => (
     homeColor="black"
     playable
     pgn=""
+    getBoardSize={getBoardSize}
   />
 );
 export const withLoggingOnMove = () => React.createElement(() => {
@@ -58,6 +65,7 @@ export const withLoggingOnMove = () => React.createElement(() => {
       pgn={fen}
       playable={myColor !== lastMoved}
       // fen={fen}
+      getBoardSize={getBoardSize}
     />
   );
 });
@@ -79,7 +87,7 @@ export const playableOnBothSide = () => React.createElement(() => {
         }}
         pgn={fen}
         playable={homeColor !== lastMoved}
-
+        getBoardSize={getBoardSize}
       />
     );
   });
@@ -100,6 +108,7 @@ export const withSwitchingSide = () => React.createElement(() => {
       }}
       pgn={fen}
       playable={homeColor !== lastMoved}
+      getBoardSize={getBoardSize}
       // fen={fen}
     />
   );
@@ -138,6 +147,7 @@ export const demoRandomGame = () =>
         homeColor="white"
         pgn={gameState.pgn}
         playable
+        getBoardSize={getBoardSize}
       />
     );
   });

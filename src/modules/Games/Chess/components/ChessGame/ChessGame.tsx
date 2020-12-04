@@ -10,7 +10,7 @@ import { getPgnAfterMove, getSquare, pgnToHistory, toChessColor } from '../../li
 import { CSSProperties } from 'src/lib/jss/types';
 import useEventListener from '@use-it/event-listener';
 
-type Props = React.HTMLProps<HTMLDivElement> & {
+export type ChessGameProps = React.HTMLProps<HTMLDivElement> & {
   playable: boolean;
   pgn: string;
 
@@ -33,7 +33,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   getBoardSize?: (p: { screenWidth: number; screenHeight: number }) => number;
 };
 
-export const ChessGame: React.FunctionComponent<Props> = ({
+export const ChessGame: React.FunctionComponent<ChessGameProps> = ({
   onMove = noop,
   onRewind = noop,
   onForward = noop,

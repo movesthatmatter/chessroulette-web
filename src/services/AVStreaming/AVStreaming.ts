@@ -15,7 +15,21 @@ export class AVStreaming {
       audio: true,
     }
   ) {
-    return navigator.mediaDevices.getUserMedia(constraints);
+    return navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+      stream.getVideoTracks().forEach((track) => {
+        const constraints = track.getConstraints();
+  
+        console.log('constraints new', constraints);
+  
+        // constraints.frameRate = 12;
+        // track.applyConstraints({
+        //   ...constraints,
+        //   // frameRate: 24,
+        // })
+      });
+  
+      return stream;
+    })
   }
 
   async stop(stream: MediaStream) {
@@ -31,7 +45,21 @@ export const getAVStream = (
     audio: true,
   }
 ) => {
-  return navigator.mediaDevices.getUserMedia(constraints);
+  return navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+    stream.getVideoTracks().forEach((track) => {
+      const constraints = track.getConstraints();
+
+      console.log('constraints new', constraints);
+
+      // constraints.frameRate = 12;
+      track.applyConstraints({
+        ...constraints,
+        frameRate: 12,
+      })
+    });
+
+    return stream;
+  })
 };
 
 export const removeAVStream = (stream: MediaStream) => {

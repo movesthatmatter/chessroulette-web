@@ -5,13 +5,10 @@ import { PeerStreamingConfig } from 'src/services/peers';
 import { AVStream, AVStreamProps } from '../AVStream';
 import { colors, fonts } from 'src/theme';
 import { Text } from 'src/components/Text';
-import { AspectRatio } from '../AspectRatio';
+import { AspectRatio, AspectRatioProps } from '../AspectRatio';
 
 export type FaceTimeProps = Omit<AVStreamProps, 'stream'> & {
-  aspectRatio?: {
-    width: number;
-    height: number;
-  };
+  aspectRatio?: AspectRatioProps['aspectRatio'];
   streamConfig: PeerStreamingConfig;
   streamingOffFallback?: React.ReactNode;
 

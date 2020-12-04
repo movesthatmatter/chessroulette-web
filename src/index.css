@@ -6,8 +6,36 @@ html, body, #root {
   font-family: 'Lato', 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* height: -webkit-fill-available; */
+
+  /* overflow: scroll;
+  background-color: 'red'; */
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+/* Make the PWA/Mobile feel like an APP */
+/* Taken from https://medium.com/appscope/designing-native-like-progressive-web-apps-for-ios-1b3cdda1d0e8 */
+body {
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+
+/* if landscape mode is detected, rotate the entire site -90 degrees to hint rotating to landscape */
+/* @media (orientation: landscape) {
+  body {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+
+    background-color: red;
+    height: '100% !important',
+  }
+} */

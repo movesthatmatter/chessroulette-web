@@ -115,7 +115,7 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
 
   return (
     <Chessboard
-      key={history.length}
+      // key={history.length}
       {...boardProps}
       squareStyles={{
         ...lastMoveStyle,
