@@ -77,6 +77,7 @@ const useStyles = createUseStyles({
     right: '12px',
     bottom: '6px',
     textAlign: 'center',
+    zIndex: 999,
   },
   labelWrapperLeft: {
     textAlign: 'left',

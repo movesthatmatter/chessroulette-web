@@ -60,7 +60,8 @@ const Component: React.FC<Props> = (props) => {
       }}>
         <StreamingBox
           room={props.room}
-          width={600}
+          // width={600}
+          // aspectRatio={}
           {
             ...props.focusOnPeerId && props.room.peers[props.focusOnPeerId] && {
               focusedPeerId: props.room.peers[props.focusOnPeerId].id,
