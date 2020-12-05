@@ -6,81 +6,62 @@ export type AVStreamingConstraints = {
   audio: boolean;
 };
 
-export class AVStreaming {
-  public stream?: MediaStream;
+class AVStreaming {
+  private _stream?: MediaStream;
 
-  async start(
-    constraints: AVStreamingConstraints = {
-      video: true,
-      audio: true,
-    }
-  ) {
-    return navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-      stream.getVideoTracks().forEach((track) => {
-        const constraints = track.getConstraints();
-  
-        console.log('constraints new', constraints);
-  
-        // constraints.frameRate = 12;
-        // track.applyConstraints({
-        //   ...constraints,
-        //   // frameRate: 24,
-        // })
+  private async createStream(constraints: AVStreamingConstraints) {
+    return navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then((stream) => {
+        this._stream = stream;
+
+        return stream;
       });
-  
-      return stream;
-    })
   }
 
-  async stop(stream: MediaStream) {
-    stream?.getTracks().forEach((track) => {
+  async getStream(constraints: AVStreamingConstraints = {
+    video: true,
+    audio: true,
+  }): Promise<MediaStream> {
+    if (!this._stream) {
+      return this.createStream(constraints).then((stream) => stream.clone());
+    }
+
+    return Promise.resolve(this._stream.clone());
+  }
+
+  stopStream(stream: MediaStream) {
+    stream.getTracks().forEach((track) => {
       track.stop();
+    });
+  }
+
+  hasPermission(constraints: AVStreamingConstraints = {
+    video: true,
+    audio: true,
+  }) {
+    return new AsyncResultWrapper<boolean, null>(() => {
+      if (this._stream) {
+        return Promise.resolve(new Ok(true));
+      }
+
+      return this.createStream(constraints)
+        .then(
+          () => new Ok(true),
+          () => {
+            // TOOO: Check the error because it might be something else then permission
+            return new Ok(false);
+          }
+        );
     });
   }
 }
 
-export const getAVStream = (
-  constraints: AVStreamingConstraints = {
-    video: true,
-    audio: true,
+let instance: AVStreaming;
+export const getAVStreaming = () => {
+  if (!instance) {
+    instance = new AVStreaming();
   }
-) => {
-  return navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-    stream.getVideoTracks().forEach((track) => {
-      const constraints = track.getConstraints();
 
-      console.log('constraints new', constraints);
-
-      // constraints.frameRate = 12;
-      track.applyConstraints({
-        ...constraints,
-        frameRate: 12,
-      })
-    });
-
-    return stream;
-  })
-};
-
-export const removeAVStream = (stream: MediaStream) => {
-  stream.getTracks().forEach((track) => {
-    track.stop();
-  });
-};
-
-export const isAVPermissionGranted = (
-  constraints: AVStreamingConstraints = {
-    video: true,
-    audio: true,
-  }
-) => {
-  return new AsyncResultWrapper<boolean, null>(() => {
-    return getAVStream(constraints)
-      .then((stream) => {
-        removeAVStream(stream);
-
-        return new Ok(true);
-      })
-      .catch(() => new Ok(false));
-  });
+  return instance;
 };
