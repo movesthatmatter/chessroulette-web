@@ -49,10 +49,6 @@ type Props = {
   focusOnPeerId?: string;
 }
 const Component: React.FC<Props> = (props) => {
-  // useEffect(() => {
-  //   console.log('focus on ', props.focusOnPeerId, props.focusOnPeerId && props.room.peers[props.focusOnPeerId]);
-  // }, [props.focusOnPeerId]);
-
   return (
     <Grommet theme={defaultTheme} full>
       <div style={{
@@ -77,7 +73,6 @@ export const defaultStory = () => (
   <WithLocalStream
     constraints={{ audio: true, video: true }}
     render={(stream) => {
-      // const peers = getPeers(stream, 2);
       const room = getRoomWithPeers(stream, 2);
 
       return (

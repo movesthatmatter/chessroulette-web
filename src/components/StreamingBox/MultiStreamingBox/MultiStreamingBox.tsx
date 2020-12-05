@@ -8,7 +8,6 @@ import { reducer, initialState, initAction, focusAction, updateAction } from './
 
 export type MultiStreamingBoxProps = {
   streamersMap: StreamersMap;
-  myStreamingConfig: Streamer;
   focusedUserId?: Streamer['user']['id'];
   aspectRatio?: FaceTimeProps['aspectRatio'],
 };
@@ -61,7 +60,6 @@ export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
       <div className={cls.reelWrapper}>
         <Reel
           reel={state.reel}
-          myStreamingConfig={props.myStreamingConfig}
           onClick={(userId) => {
             dispatch(focusAction({ userId }));
           }}

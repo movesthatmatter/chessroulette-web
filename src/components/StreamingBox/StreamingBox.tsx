@@ -1,10 +1,8 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { FaceTime } from '../FaceTimeArea';
+import { MyFaceTime } from '../FaceTimeArea';
 import { Peer, Room } from '../RoomProvider';
 import { MultiStreamingBox, MultiStreamingBoxProps } from './MultiStreamingBox';
-import { Streamer } from './types';
-import { softBorderRadius } from 'src/theme';
 import cx from 'classnames';
 
 type Props = {
@@ -40,18 +38,10 @@ export const StreamingBox: React.FC<Props> = (props) => {
         <MultiStreamingBox
           focusedUserId={props.focusedPeerId}
           streamersMap={activeStreamers}
-          myStreamingConfig={{
-            streamingConfig: props.room.me.connection.channels.streaming,
-            user: props.room.me.user,
-          } as Streamer}
           aspectRatio={props.aspectRatio}
         />
       ) : (
-        <FaceTime
-          streamConfig={props.room.me.connection.channels.streaming}
-          aspectRatio={props.aspectRatio}
-          muted
-        />
+        <MyFaceTime aspectRatio={props.aspectRatio}/>
       )}
     </div>
   );

@@ -3,12 +3,11 @@ import { createUseStyles } from 'src/lib/jss';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import cx from 'classnames';
 import { fonts, softBorderRadius } from 'src/theme';
-import { FaceTime } from 'src/components/FaceTimeArea';
+import { FaceTime, MyFaceTime } from 'src/components/FaceTimeArea';
 import { Streamer } from '../../../types';
 
 type Props = {
   reel: Streamer[];
-  myStreamingConfig: Streamer;
 
   onClick: (userId: Streamer['user']['id']) => void;
 };
@@ -51,12 +50,9 @@ export const Reel: React.FC<Props> = (props) => {
         );
       })}
       <div className={cls.smallFacetimeWrapper}>
-        <FaceTime
-          streamConfig={props.myStreamingConfig.streamingConfig}
+        <MyFaceTime
           className={cls.smallFacetime}
-          key={props.myStreamingConfig.user.id}
           aspectRatio={{ width: 4, height: 3 }}
-          muted
         />
         <div className={cls.smallFacetimeBorder} />
       </div>
