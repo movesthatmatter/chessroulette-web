@@ -89,11 +89,6 @@ export const GenericRoom: React.FC<Props> = (props) => {
         }}
         renderRoomNotJoined={() => <AwesomeLoaderPage />}
         renderFallback={() => <AwesomeLoaderPage />}
-        onUpdate={(p) => {
-          if (p.state === 'joined') {
-            p.startLocalStream();
-          }
-        }}
         onReady={(p) => {
           // Join the Room right away if already part of the game!
           if (p.state === 'notJoined') {
