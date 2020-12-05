@@ -8,10 +8,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { SocketConsumer } from '../SocketProvider';
 import {
   createRoomAction,
-  addMyStream,
   addPeerStream,
   updateRoomAction,
-  remmoveMyStream,
   createMeAction,
   updateMeAction,
   removeMeAction,
@@ -168,27 +166,6 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
         },
 
         request: (payload) => socket?.send(payload),
-
-        startLocalStream: () => {
-          if (!state.room?.me.connection.channels.streaming.on) {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-              dispatch(addMyStream({ stream }));
-            });
-          }
-        },
-        stopLocalStream: () => {
-          if (!state.room?.me.connection.channels.streaming.on) {
-            return;
-          }
-
-          state.room?.me.connection.channels.streaming.stream.getTracks().forEach((track) => {
-            if (state.room?.me.connection.channels.streaming.on) {
-              state.room?.me.connection.channels.streaming.stream.removeTrack(track);
-            }
-          });
-
-          remmoveMyStream();
-        },
       };
     });
   }, [state.room, state.me, socket]);

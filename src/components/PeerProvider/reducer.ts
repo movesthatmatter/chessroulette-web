@@ -90,6 +90,8 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
     }
   }),
 
+  // @Deprecate in favor of locally managing the local stream,
+  //  since the PeerProvider dosn't need to care about it!
   handleAction(addMyStream, (state, { payload }) => {
     if (!state.me) {
       return state;
@@ -126,6 +128,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
     };
   }),
 
+  // @deprecate – see above!
   handleAction(remmoveMyStream, (state) => {
     if (!state.me) {
       return state;

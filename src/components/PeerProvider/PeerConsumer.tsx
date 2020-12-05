@@ -16,9 +16,6 @@ type RenderJoinedProps = {
   broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
   request: SocketClient['send'];
   leaveRoom: () => void;
-
-  startLocalStream: () => void;
-  stopLocalStream: () => void;
 };
 
 type RenderNotJoinedProps = {

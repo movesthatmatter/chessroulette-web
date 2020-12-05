@@ -5,6 +5,7 @@ import config from 'src/config';
 import { wNamespace, woNamespace } from './util';
 import { Pubsy } from 'src/lib/Pubsy';
 import { ActivePeerConnection } from './ActivePeerConnection';
+import { getAVStreaming } from 'src/services/AVStreaming';
 
 export type PeerConnectionsErrors =
   | 'PEER_ID_TAKEN'
@@ -23,6 +24,8 @@ export class PeerConnections {
   }>();
 
   private sdk: PeerSDK;
+
+  private AVStreaming = getAVStreaming();
 
   connections: Record<PeerRecord['id'], ActivePeerConnection> = {};
 
@@ -80,8 +83,8 @@ export class PeerConnections {
     const onCallHandler = (call: PeerSDK.MediaConnection) => {
       const peerId = woNamespace(call.peer);
 
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
+      this.AVStreaming
+        .getStream()
         // TODO: This apc was already created at this time
         .then((myStream) => {
           call.answer(myStream);
@@ -143,9 +146,8 @@ export class PeerConnections {
 
         let onStreamUnsubscriber = () => {};
         const onOpenUnsubscriber = apc.onOpen(() => {
-          navigator
-            .mediaDevices
-            .getUserMedia({ video: true, audio: true })
+          this.AVStreaming
+            .getStream()
             .then((stream) => {
               const call = this.sdk.call(namespacedPeerId, stream);
 

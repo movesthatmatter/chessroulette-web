@@ -15,15 +15,10 @@ export type PeerContextProps =
       broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
       request: SocketClient['send'];
       leaveRoom: () => void;
-
-      // This simply starts the local stream for local display only!
-      startLocalStream: () => void;
-      stopLocalStream: () => void;
     }
   | {
       state: 'notJoined';
       proxy?: Proxy;
-      // room: RoomRecord;
       me: Peer;
       request: SocketClient['send'];
 

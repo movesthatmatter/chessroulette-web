@@ -5,7 +5,7 @@ import {
   PeerRecord, IceServerRecord, RoomRecord
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/services/peers';
-import { AVStreamingConstraints, AVStreaming } from 'src/services/AVStreaming';
+import { AVStreamingConstraints, getAVStreaming } from 'src/services/AVStreaming';
 import { noop } from 'src/lib/util';
 import { resources } from 'src/resources';
 import { SocketConsumer } from '../SocketProvider';
@@ -42,7 +42,7 @@ export const RoomProvider: React.FC<Props> = ({
   onMessageSent = noop,
   ...props
 }) => {
-  const avStreamClient = useRef(new AVStreaming());
+  const avStreamClient = useRef(getAVStreaming());
 
   const [iceServers, setIceServers] = useState<IceServerRecord[] | undefined>();
   const [localStream, setLocalStream] = useState<MediaStream | undefined>();
@@ -214,7 +214,7 @@ export const RoomProvider: React.FC<Props> = ({
 
                   // And start streaming
                   (async () => {
-                    const nextLocalStream = await avStreamClient.current.start();
+                    const nextLocalStream = await avStreamClient.current.getStream();
 
                     setLocalStream((prev) => {
                       // If there is a local stram running already don't change anything
@@ -229,7 +229,7 @@ export const RoomProvider: React.FC<Props> = ({
                 }}
 
                 // Start a new local stream everytime it's needed
-                onLocalStreamRequested={() => avStreamClient.current.start()}
+                onLocalStreamRequested={() => avStreamClient.current.getStream()}
                 onPeerConnectionsChanged={setRtcPeerConnections}
                 onPeerMsgReceived={onMessageReceived}
                 onPeerMsgSent={onMessageSent}
@@ -244,7 +244,7 @@ export const RoomProvider: React.FC<Props> = ({
                     room: meAndMyRoom.room,
 
                     startStreaming: async (constraints) => {
-                      const nextLocalStream = await avStreamClient.current.start(constraints);
+                      const nextLocalStream = await avStreamClient.current.getStream(constraints);
 
                       setLocalStream((prev) => {
                         // If there is a local stram running already don't change anything
@@ -263,7 +263,7 @@ export const RoomProvider: React.FC<Props> = ({
                       // TODO: Do I need to stop each RTC's Connection stream too?
                       // I'd suppose I do
                       if (localStream) {
-                        avStreamClient.current.stop(localStream);
+                        avStreamClient.current.stopStream(localStream);
                       }
                     },
                     broadcastMessage,
