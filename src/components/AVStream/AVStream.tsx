@@ -18,10 +18,19 @@ export const AVStream: React.FunctionComponent<AVStreamProps> = ({
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
     }
-  }, [stream, videoRef]);
+
+    return () => {
+      // Ensure the stream isn't used by this video anymore!
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+    }
+  }, [stream.id]);
 
   return (
     <video
+      // Make sure the video refreshes if the stream id changes
+      key={stream.id}
       ref={videoRef}
 
       // Hardcode this here for now to stop the hallow effect in dev mode
