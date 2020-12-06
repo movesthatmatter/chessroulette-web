@@ -1,7 +1,7 @@
 import { ChallengeRecord } from 'dstnd-io';
 import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
-import React from 'react';
+import React, { useState } from 'react';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { Button } from 'src/components/Button';
 import { ClipboardCopy } from 'src/components/CipboardCopy'
@@ -15,6 +15,7 @@ export type PendingChallengeProps = {
 
 export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
   const cls = useStyles();
+  const [copiedMagicLink, setCopiedMagicLink] = useState(false);
 
   return (
     <Box gap="small" width="medium" className={cls.container}>
@@ -33,7 +34,11 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
           <Text>Send Magic Link to a friend</Text>
         </Box>
       )}
-      <ClipboardCopy value={`${window.location.origin}/${toChallengeUrlPath(props.challenge)}`} />
+      <ClipboardCopy
+        value={`${window.location.origin}/${toChallengeUrlPath(props.challenge)}`}
+        autoCopy
+        onCopied={() => setCopiedMagicLink(true)}
+      />
     </Box>
   );
 };
