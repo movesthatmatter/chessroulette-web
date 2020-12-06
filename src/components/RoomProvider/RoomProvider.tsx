@@ -263,7 +263,7 @@ export const RoomProvider: React.FC<Props> = ({
                       // TODO: Do I need to stop each RTC's Connection stream too?
                       // I'd suppose I do
                       if (localStream) {
-                        avStreamClient.current.stopStream(localStream);
+                        avStreamClient.current.destroyStreamById(localStream.id);
                       }
                     },
                     broadcastMessage,

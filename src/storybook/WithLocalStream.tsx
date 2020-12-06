@@ -23,7 +23,7 @@ export const WithLocalStream: React.FC<Props> = ({
 
     return () => {
       if (localStream) {
-        client.stopStream(localStream);
+        client.destroyStreamById(localStream.id);
       }
     };
   }, []);

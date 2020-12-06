@@ -19,18 +19,24 @@ export const MyFaceTime: React.FC<Props> = ({
   const [myStreamConfig, setMyStreamConfig] = useState<PeerStreamingConfig>({ on: false });
 
   useEffect(() => {
-    AVStreaming.getStream(constraints).then((stream) => {
+    if (myStreamConfig.on) {
+      return;
+    }
+
+    const streamPromise = AVStreaming.getStream(constraints).then((stream) => {
       setMyStreamConfig({
         on: true,
         type: 'audio-video',
         stream,
       });
+
+      return stream;
     });
 
     return () => {
-      if (myStreamConfig.on) {
-        AVStreaming.stopStream(myStreamConfig.stream);
-      }
+      streamPromise.then((stream) => {
+        AVStreaming.destroyStreamById(stream.id);
+      });
     }
   }, []);
 

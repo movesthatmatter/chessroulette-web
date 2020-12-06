@@ -50,7 +50,7 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
 
     return () => {
       if (streamingConfig.on) {
-        AVStreaming.stopStream(streamingConfig.stream);
+        AVStreaming.destroyStreamById(streamingConfig.stream.id);
       }
     };
   }, [streamingConfig]);
