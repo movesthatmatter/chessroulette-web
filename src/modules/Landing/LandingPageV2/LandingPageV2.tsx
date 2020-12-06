@@ -4,7 +4,6 @@ import { ChallengeButtonWidget } from 'src/modules/Games/Chess/components/Challe
 import chessBackground from '../LandingPage/assets/chess_icons.png';
 import { createUseStyles } from 'src/lib/jss';
 import { colors, minMediaQuery, maxMediaQuery } from 'src/theme';
-import cx from 'classnames';
 import { Events } from 'src/services/Analytics';
 
 type Props = {};
@@ -59,11 +58,6 @@ export const LandingPageV2: React.FC<Props> = () => {
                 type="secondary"
               />
             </div>
-            {/* <div className={cls.mobileOnly}>
-              <span className={cls.noMobileDisclaimerText}>
-                Please switch to a bigger screen to Play!
-              </span>
-            </div> */}
           </div>
         </div>
       </div>
