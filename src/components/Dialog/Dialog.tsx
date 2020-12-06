@@ -1,7 +1,7 @@
 import { Box, Layer, LayerProps } from 'grommet';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, floatingShadow, fonts, softBorderRadius } from 'src/theme';
+import { colors, floatingShadow, fonts, onlyMobile, softBorderRadius } from 'src/theme';
 import { Button, ButtonProps } from '../Button';
 import { Text } from 'src/components/Text';
 import { noop } from 'src/lib/util';
@@ -31,6 +31,8 @@ export const Dialog: React.FC<DialogProps> = ({ hasCloseButton = true, onClose =
       position="center"
       animation="slide"
       target={props.target}
+      modal={true}
+      responsive={false}
     >
       <div className={cls.top}>
         <div style={{ flex: 1 }} />
@@ -86,6 +88,11 @@ const useStyles = createUseStyles({
     padding: 0,
     paddingBottom: '24px !important',
     position: 'relative',
+
+    ...onlyMobile({
+      width: '84% !important',
+      maxWidth: 'none !important',
+    }),
   },
   top: {
     height: '32px',
