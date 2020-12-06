@@ -4,6 +4,7 @@ import { UserMenu } from '../Navigation';
 import { colors, hideOnDesktop, hideOnMobile, text } from 'src/theme';
 import { Logo } from 'src/components/Logo';
 import cx from 'classnames';
+import { Footer } from '../Footer';
 
 type Props = {
   logoAsLink?: boolean;
@@ -45,13 +46,14 @@ export const Page: React.FC<Props> = ({
             <UserMenu reversed />
           </div>
         </div>
-        <main className={cls.main}>{props.children}</main>
+        <main className={cls.main}>
+          {props.children}
+        </main>
+        <Footer />
       </div>
     </div>
   );
 };
-
-const topHeightPx = 60;
 
 const useStyles = createUseStyles({
   container: {
@@ -62,6 +64,8 @@ const useStyles = createUseStyles({
   paddingWrapper: {
     padding: '16px',
     height: 'calc(100% - 32px)',
+    display: 'flex',
+    flexDirection: 'column',
   },
   top: {
     display: 'flex',
@@ -78,7 +82,7 @@ const useStyles = createUseStyles({
   },
   main: {
     width: '100%',
-    height: `calc(100% - ${topHeightPx}px)`,
+    flex: 1,
   },
   userMenuWrapper: {},
   nav: {
