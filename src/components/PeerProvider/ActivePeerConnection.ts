@@ -4,6 +4,7 @@ import { peerMessageEnvelope, PeerMessageEnvelope } from './records';
 import PeerSDK from 'peerjs';
 import { logsy } from 'src/lib/logsy';
 import { eitherToResult } from 'src/lib/ioutil';
+import { getAVStreaming } from 'src/services/AVStreaming';
 
 type Events = {
   onOpen: undefined;
@@ -15,6 +16,10 @@ type Events = {
 
 export class ActivePeerConnection {
   private pubsy = new Pubsy<Events>();
+
+  private AVStreaming = getAVStreaming();
+
+  private myStream?: MediaStream;
 
   private unsubscribers: Partial<Record<keyof Events, () => void>> = {};
 
@@ -58,12 +63,30 @@ export class ActivePeerConnection {
     // On Close Event
     const onCloseHandler = () => {
       logsy.info('[ActivePeerConnection] with Peer:', peerId, 'Connection Closed.');
+
+      this.removeMyStream();
+
       this.pubsy.publish('onClose', undefined);
     };
 
     connection.on('close', onCloseHandler);
 
     this.unsubscribers.onClose = () => connection.off('close', onCloseHandler);
+  }
+
+  async getMyStream() {
+    return this.AVStreaming.getStream().then((stream) => {
+      this.myStream = stream;
+
+      return stream;
+    });
+  }
+
+  private removeMyStream() {
+    if (this.myStream) {
+      this.AVStreaming.destroyStreamById(this.myStream.id);
+      this.myStream = undefined;
+    }
   }
 
   sendMessage(msg: PeerMessageEnvelope) {

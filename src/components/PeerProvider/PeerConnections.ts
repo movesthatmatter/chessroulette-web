@@ -5,7 +5,6 @@ import config from 'src/config';
 import { wNamespace, woNamespace } from './util';
 import { Pubsy } from 'src/lib/Pubsy';
 import { ActivePeerConnection } from './ActivePeerConnection';
-import { getAVStreaming } from 'src/services/AVStreaming';
 
 export type PeerConnectionsErrors =
   | 'PEER_ID_TAKEN'
@@ -24,8 +23,6 @@ export class PeerConnections {
   }>();
 
   private sdk: PeerSDK;
-
-  private AVStreaming = getAVStreaming();
 
   connections: Record<PeerRecord['id'], ActivePeerConnection> = {};
 
@@ -82,22 +79,27 @@ export class PeerConnections {
     // On Call Event
     const onCallHandler = (call: PeerSDK.MediaConnection) => {
       const peerId = woNamespace(call.peer);
+      const apc = this.connections[peerId];
 
-      this.AVStreaming
-        .getStream()
-        // TODO: This apc was already created at this time
-        .then((myStream) => {
-          call.answer(myStream);
-          call.on('stream', (stream) => {
-            this.pubsy.publish('onPeerStream', {
-              peerId,
-              stream,
-            });
+      if (!apc) {
+        // This shouldn't happen
+        return;
+      }
+
+      apc.getMyStream().then((myStream) => {
+        call.answer(myStream);
+        call.on('stream', (stream) => {
+          this.pubsy.publish('onPeerStream', {
+            peerId,
+            stream,
           });
         });
+      });
     };
     this.sdk.on('call', onCallHandler);
-    this.unsubscribers.push(() => this.sdk.off('call', onCallHandler));
+    this.unsubscribers.push(() => {
+      this.sdk.off('call', onCallHandler);
+    });
 
     // On Close Event
     const onCloseHandler = () => {
@@ -146,8 +148,7 @@ export class PeerConnections {
 
         let onStreamUnsubscriber = () => {};
         const onOpenUnsubscriber = apc.onOpen(() => {
-          this.AVStreaming
-            .getStream()
+          apc.getMyStream()
             .then((stream) => {
               const call = this.sdk.call(namespacedPeerId, stream);
 
@@ -160,7 +161,9 @@ export class PeerConnections {
 
               call.on('stream', onStreamHandler);
 
-              onStreamUnsubscriber = () => call.off('stream', onStreamHandler);
+              onStreamUnsubscriber = () => {
+                call.off('stream', onStreamHandler);
+              };
             });
         });
 
@@ -178,6 +181,16 @@ export class PeerConnections {
         unsubscribe();
       });
     });
+  }
+
+  removePeerConnection(peerId: PeerRecord['id']) {
+    const { [peerId]: apc, ...restConnections } = this.connections;
+
+    if (apc) {
+      apc.destroy();
+
+      this.connections = restConnections;
+    }
   }
 
   /**
