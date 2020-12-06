@@ -17,7 +17,7 @@ export const LandingPageV2: React.FC<Props> = () => {
   }, []);
 
   return (
-    <Page>
+    <Page logoAsLink={false}>
       <div className={cls.container}>
         <div className={cls.inner}>
           <div

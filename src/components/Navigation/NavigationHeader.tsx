@@ -1,18 +1,20 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import logo from 'src/assets/logo_v2.svg';
+import { Logo } from 'src/components/Logo';
 
-type Props = {};
+type Props = {
+  logoAsLink?: boolean;
+};
 
-export const NavigationHeader: React.FC<Props> = () => {
+export const NavigationHeader: React.FC<Props> = ({
+  logoAsLink = true,
+}) => {
   const cls = useStyles();
 
   return (
     <div className={cls.top}>
       <div className={cls.topMain}>
-        <a href="/">
-          <img src={logo} alt="logo" className={cls.logo} />
-        </a>
+        <Logo asLink={logoAsLink}/>
       </div>
     </div>
   );
@@ -33,9 +35,6 @@ const useStyles = createUseStyles({
   },
   topRight: {
     justifySelf: 'flex-end',
-  },
-  logo: {
-    width: '200px',
   },
   main: {
     width: '100%',

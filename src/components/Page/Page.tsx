@@ -1,12 +1,17 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import logo from 'src/assets/logo_v2.svg';
 import { UserMenu } from '../Navigation';
 import { colors, text } from 'src/theme';
+import { Logo } from 'src/components/Logo';
 
-type Props = {};
+type Props = {
+  logoAsLink?: boolean;
+};
 
-export const Page: React.FC<Props> = (props) => {
+export const Page: React.FC<Props> = ({
+  logoAsLink = true,
+  ...props
+}) => {
   const cls = useStyles();
 
   return (
@@ -14,9 +19,7 @@ export const Page: React.FC<Props> = (props) => {
       <div className={cls.paddingWrapper}>
         <div className={cls.top}>
           <div className={cls.topMain}>
-            <a href="/">
-              <img src={logo} alt="logo" className={cls.logo} />
-            </a>
+            <Logo asLink={logoAsLink}/>
             <div className={cls.nav}>
               <div className={cls.linksContainer}>
                 <div className={cls.linkWrapper}>
@@ -64,9 +67,6 @@ const useStyles = createUseStyles({
   },
   topRight: {
     justifySelf: 'flex-end',
-  },
-  logo: {
-    width: '200px',
   },
   main: {
     width: '100%',
