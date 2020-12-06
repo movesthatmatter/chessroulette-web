@@ -81,6 +81,7 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                   state: 'accepted',
                   room: msg.content.room,
                 });
+                setVisiblePopup(false);
 
                 history.push(toRoomUrlPath(msg.content.room));
               }
@@ -90,12 +91,13 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
             )}
             render={() => (
               <Box>
-                {challengeState.state === 'pending' ? (
+                {challengeState.state === 'pending' && (
                   <PendingChallenge
                     challenge={challengeState.challenge}
                     type={challengeType}
                   />
-                ) : (
+                )}
+                {challengeState.state === 'none' && (
                   <>
                     <FaceTimeSetup onUpdated={(s) => setFaceTimeOn(s.on)} />
                     <Box margin={{
