@@ -60,6 +60,7 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
       <FaceTime
         muted
         streamConfig={streamingConfig}
+        className={cls.facetime}
         streamingOffFallback={
           <AspectRatio
             className={cls.noFacetime}
@@ -104,5 +105,9 @@ const useStyles = createUseStyles({
   },
   noFacetime: {
     background: colors.neutral,
+  },
+  facetime: {
+    ...softBorderRadius,
+    overflow: 'hidden',
   },
 });
