@@ -1,6 +1,9 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Logo } from 'src/components/Logo';
+import { hideOnDesktop, hideOnMobile, onlyMobile } from 'src/theme';
+import { UserMenu } from './UserMenu';
+import cx from 'classnames';
 
 type Props = {
   logoAsLink?: boolean;
@@ -12,11 +15,17 @@ export const NavigationHeader: React.FC<Props> = ({
   const cls = useStyles();
 
   return (
+    <>
     <div className={cls.top}>
-      <div className={cls.topMain}>
+      <div className={cx(cls.topMain, cls.onlyMobile)}>
+        <Logo asLink={false} darkMode/>
+        <UserMenu darkMode reversed/>
+      </div>
+      <div className={cx(cls.topMain, cls.onlyDesktop)}>
         <Logo asLink={logoAsLink}/>
       </div>
     </div>
+    </>
   );
 };
 
@@ -29,15 +38,30 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'row',
     alignContent: 'space-between',
+
+    ...onlyMobile({
+      height: 'auto',
+      padding: '8px',
+    }),
   },
   topMain: {
     flex: 1,
+
+    ...onlyMobile({
+      display: 'flex',
+      alignContent: 'space-between',
+    }),
   },
-  topRight: {
-    justifySelf: 'flex-end',
+  menuIcon: {
+    marginLeft: '8px',
+    width: '20px',
+
   },
-  main: {
-    width: '100%',
-    height: `calc(100% - ${topHeightPx}px)`,
+
+  onlyMobile: {
+    ...hideOnDesktop,
   },
+  onlyDesktop: {
+    ...hideOnMobile,
+  }
 });

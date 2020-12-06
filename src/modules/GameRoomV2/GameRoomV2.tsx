@@ -104,11 +104,24 @@ export const GameRoomV2: React.FC<Props> = (props) => {
     return (
       <MobileGameRoomLayout
         getTopArea={(dimensions) => (
-          <StreamingBox
-            room={props.room}
-            focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
-            aspectRatio={dimensions}
-          />
+          <div style={{
+            position: 'relative',
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left:0 ,
+              right: 0,
+              zIndex: 999,
+            }}>
+              <NavigationHeader/>
+            </div>
+            <StreamingBox
+              room={props.room}
+              focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
+              aspectRatio={dimensions}
+            />
+          </div>
         )}
         getMainArea={(dimensions) => (
           <>
@@ -124,23 +137,25 @@ export const GameRoomV2: React.FC<Props> = (props) => {
                 />
               </div>
             )}
-            <ChessGame
-              className={cls.mobileBoard}
-              homeColor={homeColor}
-              playable={canIPlay}
-              pgn={props.room.activity.game.pgn || ''}
-              getBoardSize={() => dimensions.width}
-              onMove={(...args) => {
-                props.onMove(...args, homeColor);
-              }}
-              onRewind={() => {
-                setGameDisplayedHistoryIndex((prev) => prev + 1);
-              }}
-              onForward={() => {
-                setGameDisplayedHistoryIndex((prev) => prev - 1);
-              }}
-              displayedHistoryIndex={gameDisplayedHistoryIndex}
-            />
+            <div style={{ padding: '2px 8px 4px' }}>
+              <ChessGame
+                className={cls.mobileBoard}
+                homeColor={homeColor}
+                playable={canIPlay}
+                pgn={props.room.activity.game.pgn || ''}
+                getBoardSize={() => dimensions.width - 16}
+                onMove={(...args) => {
+                  props.onMove(...args, homeColor);
+                }}
+                onRewind={() => {
+                  setGameDisplayedHistoryIndex((prev) => prev + 1);
+                }}
+                onForward={() => {
+                  setGameDisplayedHistoryIndex((prev) => prev - 1);
+                }}
+                displayedHistoryIndex={gameDisplayedHistoryIndex}
+              />
+            </div>
             {myPlayer && (
               <div className={cls.mobileHomePlayerWrapper}>
                 <PlayerBox
@@ -175,7 +190,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
             <div
               style={{
                 flex: 1,
-                paddingLeft: '32px',
+                paddingLeft: '16px',
                 paddingTop: '16px',
               }}
             >
@@ -320,8 +335,8 @@ export const GameRoomV2: React.FC<Props> = (props) => {
           <div className={cx(cls.side, cls.rightSide)}>
             <div
               style={{
-                paddingTop: '16px',
-                height: `${TOP_HEIGHT - 16}px`,
+                // paddingTop: '16px',
+                height: `${TOP_HEIGHT}px`,
               }}
             >
               <UserMenu />
@@ -417,9 +432,6 @@ const useStyles = createUseStyles({
     ...softBorderRadius,
     overflow: 'hidden',
   },
-  mobileBoard: {
-    ...floatingShadow,
-  },
   playButtonsContainer: {
     padding: '1em 0',
   },
@@ -465,12 +477,17 @@ const useStyles = createUseStyles({
   },
 
   // Mobile
+  mobileBoard: {
+    ...floatingShadow,
+    ...softBorderRadius,
+    overflow: 'hidden',
+  },
   mobileAwayPlayerWrapper: {
-    marginBottom: '4px',
+    // marginBottom: '4px',
     padding: '0 8px',
   },
   mobileHomePlayerWrapper: {
-    marginTop: '4px',
+    // marginTop: '4px',
     padding: '0 8px',
   },
 });

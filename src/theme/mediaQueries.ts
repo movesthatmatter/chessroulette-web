@@ -11,3 +11,6 @@ export const MOBILE_BREAKPOINT = 600;
 
 export const onlyMobile = (css: CSSProperties) => maxMediaQuery(MOBILE_BREAKPOINT, css);
 export const onlyDesktop = (css: CSSProperties) => minMediaQuery(MOBILE_BREAKPOINT, css);
+
+export const hideOnMobile = onlyMobile({ 'display': 'none'});
+export const hideOnDesktop = onlyDesktop({ 'display': 'none'});

@@ -53,7 +53,7 @@ export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
     <div className={cls.container}>
       <FaceTime
         streamConfig={state.inFocus.streamingConfig}
-        label={state.inFocus.user.name}
+        label={state.reel.length > 0 ? state.inFocus.user.name : ''}
         labelPosition="bottom-left"
         aspectRatio={aspectRatio}
       />

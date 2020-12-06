@@ -3,7 +3,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { ChatBoxContainer } from 'src/components/ChatBox';
 import { ChatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRecord';
-import logo from 'src/assets/logo_black.svg';
+import logo from 'src/assets/logo.svg';
 import cx from 'classnames';
 import { RoomInfoDisplay } from 'src/components/RoomInfoDisplay';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';

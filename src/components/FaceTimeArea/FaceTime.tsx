@@ -3,7 +3,7 @@ import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { PeerStreamingConfig } from 'src/services/peers';
 import { AVStream, AVStreamProps } from '../AVStream';
-import { colors, fonts } from 'src/theme';
+import { colors, fonts, onlyMobile } from 'src/theme';
 import { Text } from 'src/components/Text';
 import { AspectRatio, AspectRatioProps } from '../AspectRatio';
 
@@ -78,6 +78,11 @@ const useStyles = createUseStyles({
     bottom: '6px',
     textAlign: 'center',
     zIndex: 999,
+
+    ...onlyMobile({
+      left: '8px',
+      bottom: '2px',
+    }),
   },
   labelWrapperLeft: {
     textAlign: 'left',

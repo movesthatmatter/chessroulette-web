@@ -1,8 +1,9 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { UserMenu } from '../Navigation';
-import { colors, text } from 'src/theme';
+import { colors, hideOnDesktop, hideOnMobile, text } from 'src/theme';
 import { Logo } from 'src/components/Logo';
+import cx from 'classnames';
 
 type Props = {
   logoAsLink?: boolean;
@@ -20,8 +21,18 @@ export const Page: React.FC<Props> = ({
         <div className={cls.top}>
           <div className={cls.topMain}>
             <Logo asLink={logoAsLink}/>
-            <div className={cls.nav}>
+            <div className={cx(cls.nav, cls.desktopOnly)}>
               <div className={cls.linksContainer}>
+                <div className={cls.linkWrapper}>
+                  <a className={cls.link} href="https://www.facebook.com/chessroulette">
+                    About
+                  </a>
+                </div>
+                <div className={cls.linkWrapper}>
+                  <a className={cls.link} href="https://www.instagram.com/chessroulette/">
+                    Instagram
+                  </a>
+                </div>
                 <div className={cls.linkWrapper}>
                   <a className={cls.link} href="mailto:support@chessroulette.org">
                     Contact
@@ -30,8 +41,8 @@ export const Page: React.FC<Props> = ({
               </div>
             </div>
           </div>
-          <div className={cls.userMenuWrapper}>
-            <UserMenu />
+          <div className={cx(cls.userMenuWrapper)}>
+            <UserMenu reversed />
           </div>
         </div>
         <main className={cls.main}>{props.children}</main>
@@ -49,13 +60,10 @@ const useStyles = createUseStyles({
     background: '#F6F8FB',
   },
   paddingWrapper: {
-    padding: '4px 16px',
+    padding: '16px',
     height: 'calc(100% - 32px)',
   },
   top: {
-    paddingTop: '10px',
-    paddingBottom: '10px',
-    height: `${topHeightPx}px`,
     display: 'flex',
     flexDirection: 'row',
     alignContent: 'space-between',
@@ -72,26 +80,23 @@ const useStyles = createUseStyles({
     width: '100%',
     height: `calc(100% - ${topHeightPx}px)`,
   },
-  userMenuWrapper: {
-    width: '250px',
-  },
+  userMenuWrapper: {},
   nav: {
     flex: 1,
     flexDirection: 'column',
     display: 'flex',
-    alignItems: 'flex-end',
+    alignItems: 'center',
   },
   linksContainer: {
-    paddingTop: '5px',
-    paddingRight: '32px',
+    paddingTop: '8px',
     display: 'flex',
   },
   linkWrapper: {
     textAlign: 'center',
-  },
-  link: {
     paddingLeft: '20px',
     paddingRight: '20px',
+  },
+  link: {
     textTransform: 'capitalize',
     textDecoration: 'none',
     color: colors.neutralDarkest,
@@ -100,8 +105,15 @@ const useStyles = createUseStyles({
     textAlign: 'center',
 
     '&:hover': {
-      fontWeight: 600,
+      borderBottom: `3px solid ${text.primaryColor}`,
       color: text.primaryColor,
     },
+  },
+
+  mobileOnly: {
+    ...hideOnDesktop,
+  },
+  desktopOnly: {
+    ...hideOnMobile,
   },
 });

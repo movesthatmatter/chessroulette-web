@@ -5,7 +5,7 @@ import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { defaultTheme } from 'src/theme';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
-import { chessGameActions, ChessGameState, ChessGameStateStarted } from 'dstnd-io';
+import { chessGameActions, ChessGameState, ChessGameStateStarted, GuestUserRecord } from 'dstnd-io';
 import { action } from '@storybook/addon-actions';
 import { GameRoomV2 } from './GameRoomV2';
 import { RoomWithPlayActivity } from 'src/components/RoomProvider';
@@ -13,6 +13,7 @@ import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 import { PeerProvider } from 'src/components/PeerProvider';
 import { SocketProvider } from 'src/components/SocketProvider';
 import { toISODateTime } from 'io-ts-isodatetime';
+import { UserRecordMocker } from 'src/mocks/records';
 
 export default {
   component: GameRoomV2,
@@ -67,7 +68,15 @@ export const defaultStory = () => (
           }) as RoomWithPlayActivity;
 
           return (
-            <StorybookReduxProvider>
+            <StorybookReduxProvider initialState={{
+              authentication: {
+                authenticationType: 'guest',
+                user: {
+                  ...me.user,
+                  isGuest: true,
+                } as GuestUserRecord,
+              }
+            }}>
               <SocketProvider>
                 <PeerProvider>
                   <GameRoomV2
