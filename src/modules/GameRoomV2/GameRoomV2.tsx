@@ -6,9 +6,9 @@ import { Box, Layer } from 'grommet';
 import { Text } from 'src/components/Text';
 import { ChessGameStatePgn, ChessMove } from 'dstnd-io/dist/chessGame';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
-import { ChessGame, ChessGameColor, useSoundEffects } from '../Games/Chess';
+import { ChessGame, ChessGameColor } from '../Games/Chess';
 import { getPlayerColor, getPlayer, getOppositePlayer } from './util';
-import { floatingShadow, hardBorderRadius, softBorderRadius } from 'src/theme/effects';
+import { floatingShadow, softBorderRadius } from 'src/theme/effects';
 import cx from 'classnames';
 import { GameStateWidget } from '../Games/Chess/components/GameStateWidget/GameStateWidget';
 import { ActionButton } from 'src/components/Button';
@@ -59,8 +59,6 @@ export const GameRoomV2: React.FC<Props> = (props) => {
   const windowWidth = useWindowWidth();
 
   const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
-
-  useSoundEffects(props.room.activity.game);
 
   // Analytics
   useEffect(() => {
@@ -252,7 +250,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
                   className={cls.mobileBoard}
                   homeColor={homeColor}
                   playable={canIPlay}
-                  pgn={props.room.activity.game.pgn || ''}
+                  game={props.room.activity.game}
                   getBoardSize={() => {
                     return dimensions.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 32);
                   }}
@@ -438,7 +436,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
               className={cls.board}
               homeColor={homeColor}
               playable={canIPlay}
-              pgn={props.room.activity.game.pgn || ''}
+              game={props.room.activity.game}
               getBoardSize={() => container.width}
               onMove={(...args) => {
                 props.onMove(...args, homeColor);

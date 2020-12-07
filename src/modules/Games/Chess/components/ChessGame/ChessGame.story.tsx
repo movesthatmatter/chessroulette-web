@@ -1,27 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState, useEffect } from 'react';
-import { noop } from 'src/lib/util';
+import React, { useState } from 'react';
 import { action } from '@storybook/addon-actions';
 import { ChessGame } from './ChessGame';
-import { getNewChessGame, ChessInstance } from '../../lib/sdk';
 import { ChessGameColor } from '../../records';
 import { otherChessColor } from '../../util';
+import { ChessGameStateMocker } from 'src/mocks/records';
+import { ChessGameState } from 'dstnd-io';
+import { actions } from 'dstnd-io/dist/chessGame/chessGameStateReducer';
+import { toISODateTime } from 'src/lib/date/ISODateTime';
 
-const randomPlay = (
-  chess: ChessInstance,
-  onChange: (fen: string) => void = noop,
-  speed = 1000,
-) => {
-  if (!chess.game_over()) {
-    const moves = chess.moves();
-    const move = moves[Math.floor(Math.random() * moves.length)];
-    chess.move(move);
-
-    onChange(chess.fen());
-
-    setTimeout(() => randomPlay(chess, onChange), speed);
-  }
-};
+const gameMocker = new ChessGameStateMocker();
 
 export default {
   component: ChessGame,
@@ -37,7 +25,7 @@ export const asWhite = () => (
   <ChessGame
     homeColor="white"
     playable
-    pgn=""
+    game={gameMocker.record()}
     getBoardSize={getBoardSize}
   />
 );
@@ -45,71 +33,107 @@ export const asBlack = () => (
   <ChessGame
     homeColor="black"
     playable
-    pgn=""
+    game={gameMocker.record()}
     getBoardSize={getBoardSize}
   />
 );
 export const withLoggingOnMove = () => React.createElement(() => {
-  const [fen, setFen] = useState<string>('');
-  const [lastMoved, setLastMoved] = useState<ChessGameColor>('black');
+  const [game, setGame] = useState<ChessGameState>(gameMocker.pending());
   const myColor: ChessGameColor = 'white';
 
   return (
     <ChessGame
       homeColor="white"
-      onMove={(_, newPgn) => {
-        setFen(newPgn);
-        setLastMoved((prev) => otherChessColor(prev));
+      onMove={(move, newPgn) => {
+        setGame((prev) => {
+          if (
+            prev.state === 'neverStarted'
+            || prev.state === 'finished'
+            || prev.state === 'stopped'
+            || prev.state === 'waitingForOpponent'
+          ) {
+            return prev;
+          }
+
+          return actions.move(prev, {
+            move,
+            movedAt: toISODateTime(new Date()),
+          });
+        });
+
         action('onMove')(newPgn);
       }}
-      pgn={fen}
-      playable={myColor !== lastMoved}
-      // fen={fen}
+      game={game}
+      playable={myColor !== game.lastMoveBy}
       getBoardSize={getBoardSize}
     />
   );
 });
 
 export const playableOnBothSide = () => React.createElement(() => {
-    const [fen, setFen] = useState<string>('');
-    const [lastMoved, setLastMoved] = useState<ChessGameColor>('black');
-    const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
-
-    return (
-      <ChessGame
-        homeColor={homeColor}
-        orientation="white"
-        onMove={(_, pgn) => {
-          setFen(pgn);
-          setLastMoved((prev) => otherChessColor(prev));
-          setHomeColor((prev) => otherChessColor(prev));
-          action('onMove')(pgn);
-        }}
-        pgn={fen}
-        playable={homeColor !== lastMoved}
-        getBoardSize={getBoardSize}
-      />
-    );
-  });
-
-export const withSwitchingSide = () => React.createElement(() => {
-  const [fen, setFen] = useState<string>('');
-  const [lastMoved, setLastMoved] = useState<ChessGameColor>('black');
+  const [game, setGame] = useState(gameMocker.record());
   const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
 
   return (
     <ChessGame
       homeColor={homeColor}
-      onMove={(_, pgn) => {
-        setFen(pgn);
-        setLastMoved((prev) => otherChessColor(prev));
+      orientation="white"
+      onMove={(move, pgn) => {
+        setGame((prev) => {
+          if (
+            prev.state === 'neverStarted'
+            || prev.state === 'finished'
+            || prev.state === 'stopped'
+            || prev.state === 'waitingForOpponent'
+          ) {
+            return prev;
+          }
+
+          return actions.move(prev, {
+            move,
+            movedAt: toISODateTime(new Date()),
+          });
+        });
+
         setHomeColor((prev) => otherChessColor(prev));
         action('onMove')(pgn);
       }}
-      pgn={fen}
-      playable={homeColor !== lastMoved}
+      game={game}
+      playable={homeColor !== game.lastMoveBy}
       getBoardSize={getBoardSize}
-      // fen={fen}
+    />
+  );
+});
+
+export const withSwitchingSide = () => React.createElement(() => {
+  const [game, setGame] = useState(gameMocker.record());
+  const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
+
+  return (
+    <ChessGame
+      homeColor={homeColor}
+      onMove={(move, pgn) => {
+        setGame((prev) => {
+          if (
+            prev.state === 'neverStarted'
+            || prev.state === 'finished'
+            || prev.state === 'stopped'
+            || prev.state === 'waitingForOpponent'
+          ) {
+            return prev;
+          }
+
+          return actions.move(prev, {
+            move,
+            movedAt: toISODateTime(new Date()),
+          });
+        });
+        setHomeColor((prev) => otherChessColor(prev));
+        action('onMove')(pgn);
+      }}
+      game={game}
+      playable={homeColor !== game.lastMoveBy}
+      getBoardSize={getBoardSize}
     />
   );
 });
@@ -118,36 +142,51 @@ export const withStartedGame = () => (
   <ChessGame
     homeColor="black"
     playable
-    // fen="rnb1kbnr/ppp1pppp/3q4/3p4/4PP2/2N5/PPPP2PP/R1BQKBNR b KQkq - 2 3"
-    pgn=""
+    game={gameMocker.started()}
   />
 );
 
-export const demoRandomGame = () =>
-  React.createElement(() => {
-    const [gameState, setGameState] = useState({ pgn: '' });
+// const randomPlay = (
+//   chess: ChessInstance,
+//   onChange: (fen: string) => void = noop,
+//   speed = 1000,
+// ) => {
+//   if (!chess.game_over()) {
+//     const moves = chess.moves();
+//     const move = moves[Math.floor(Math.random() * moves.length)];
+//     chess.move(move);
 
-    useEffect(() => {
-      const game = getNewChessGame();
+//     onChange(chess.fen());
 
-      randomPlay(
-        game,
-        () => {
-          setGameState((prevState) => ({
-            ...prevState,
-            pgn: game.pgn(),
-          }));
-        },
-        3 * 1000,
-      );
-    }, []);
+//     setTimeout(() => randomPlay(chess, onChange), speed);
+//   }
+// };
 
-    return (
-      <ChessGame
-        homeColor="white"
-        pgn={gameState.pgn}
-        playable
-        getBoardSize={getBoardSize}
-      />
-    );
-  });
+// export const demoRandomGame = () =>
+//   React.createElement(() => {
+//     const [game, setGame] = useState(gameMocker.record());
+
+//     useEffect(() => {
+//       const game = getNewChessGame();
+
+//       randomPlay(
+//         game,
+//         () => {
+//           // setGameState((prevState) => ({
+//           //   ...prevState,
+//           //   pgn: game.pgn(),
+//           // }));
+//         },
+//         3 * 1000,
+//       );
+//     }, []);
+
+//     return (
+//       <ChessGame
+//         homeColor="white"
+//         pgn={gameState.pgn}
+//         playable
+//         getBoardSize={getBoardSize}
+//       />
+//     );
+//   });
