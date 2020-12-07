@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { colors } from 'src/theme/colors';
 import { Text } from 'src/components/Text';
 import cx from 'classnames';
@@ -20,10 +20,14 @@ export type ActionButtonProps = {
   confirmation?: string,
   onSubmit: () => void;
   className?: string;
+  hideLabelUntilHover?: boolean;
+  full?: boolean;
 };
 
 export const ActionButton: React.FC<ActionButtonProps> = ({
   className,
+  hideLabelUntilHover = true,
+  full = false,
   ...props
 }) => {
   const Icon = props.icon;
@@ -34,7 +38,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   
   const cls = useStyles();
   const wrapperRef = useRef(null);
-  const [hovered, setHovered] = useState(false);
+  const [hovered, setHovered] = useState(!hideLabelUntilHover);
   const [focused, setFocused] = useState(false);  
 
   const onClickedOutsideCB = useCallback(() => {
@@ -51,17 +55,18 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
       className={cx(
         cls.button,
         cls[props.type],
+        full && cls.full,
         focused && (props.actionType === 'negative' ? cls.confirmNegative : cls.confirmPositive),
         className,
       )}
       type="submit"
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onMouseDown={() => {
+      onMouseLeave={() => setHovered(!hideLabelUntilHover)}
+      onClick={() => {
         setFocused((prev) => {
           if (prev) {
             props.onSubmit();
-            setHovered(false);
+            setHovered(!hideLabelUntilHover);
           }
           return !prev;
         });
@@ -107,13 +112,22 @@ const useStyles = createUseStyles({
     paddingLeft: 0,
     paddingRight: 0,
   },
+  full: {
+    ...buttonStyles.full,
+
+    ...({
+      '& $labelWrapper': {
+        textAlign: 'center',
+        flex: 1,
+      },
+    } as CSSProperties['nestedKey']),
+  },
   circle: {},
   closed: {},
   labelWrapper: {},
   label: {
     color: colors.white,
     fontWeight: 600, // TODO: Make it SemiBold
-    fontSize: '14px',
     lineHeight: '32px',
     direction: 'ltr',
   },

@@ -2,6 +2,7 @@ import { CSSProperties } from 'src/lib/jss/types';
 import { borderRadius, colors } from 'src/theme';
 import { buttonEffects } from './effects';
 import hexToRGBA from 'hex-to-rgba';
+import { makeImportant } from 'src/lib/jss';
 
 const button: CSSProperties = {
   cursor: 'pointer',
@@ -14,8 +15,6 @@ const button: CSSProperties = {
   height: '32px',
   lineHeight: '32px',
 
-  background: colors.neutral,
-
   '&:focus': {
     outline: 'none',
   },
@@ -24,13 +23,20 @@ const button: CSSProperties = {
   flexDirection: 'row',
 
   ...borderRadius,
-  ...buttonEffects.onClickTransition,
+  ...{
+    ...buttonEffects.onClickTransition,
+    '&:disabled': {
+      background: colors.neutral,
+      ...buttonEffects.onClickTransition["&:disabled"],
+    }
+  },
 };
 
 const clear: CSSProperties = {
   borderWidth: '1px !important',
   borderStyle: 'solid !important',
   borderColor: colors.neutral,
+
   background: 'transparent !important',
 
   ...({
@@ -51,13 +57,15 @@ const clear: CSSProperties = {
 };
 
 const full: CSSProperties = {
-  width: '100%',
-  flex: 1,
-  textAlign: 'center',
+  ...makeImportant({
+    width: '100%',
+    flex: 1,
+    textAlign: 'center',
+  }),
 };
 
 const primary: CSSProperties = {
-  background: colors.primary,
+    background: colors.primary,
   ...buttonEffects.primaryButtonShadow,
 
   '&:active': {
@@ -103,6 +111,7 @@ const secondary: CSSProperties = {
 
 const positive: CSSProperties = {
   background: colors.positive,
+
   ...buttonEffects.positiveButtonShadow,
 
   '&:active': {
@@ -121,7 +130,7 @@ const positive: CSSProperties = {
 };
 
 const negative: CSSProperties = {
-  background: colors.negative,
+  background: `${colors.negative}`,
   ...buttonEffects.negativeButtonShadow,
 
   '&:active': {

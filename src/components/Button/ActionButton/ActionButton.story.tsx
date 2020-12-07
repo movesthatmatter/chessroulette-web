@@ -52,6 +52,20 @@ export const defaultStory = () => (
             onSubmit={action('on submit action a')}
           />
         </div>
+        <div
+          style={{
+            marginBottom: '16px',
+          }}
+        >
+          <ActionButton
+            type="attention"
+            actionType="negative"
+            label="No Hover Action A"
+            hideLabelUntilHover={false}
+            icon={Anchor}
+            onSubmit={action('on submit action a')}
+          />
+        </div>
       </div>
       <div
         style={{
@@ -100,6 +114,24 @@ export const defaultStory = () => (
               reverse
               onSubmit={action('on submit action b')}
               confirmation="Really ?"
+            />
+          </div>
+          <div
+            style={{
+              marginBottom: '16px',
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <ActionButton
+              type="primary"
+              actionType="negative"
+              label="No Hover Action B"
+              icon={Upload}
+              reverse
+              hideLabelUntilHover={false}
+              onSubmit={action('on submit action b')}
             />
           </div>
         </div>
