@@ -149,7 +149,15 @@ export const withSwitchingSides = () => (
           );
 
           return (
-            <StorybookReduxProvider>
+            <StorybookReduxProvider initialState={{
+              authentication: {
+                authenticationType: 'guest',
+                user: {
+                  ...me.user,
+                  isGuest: true,
+                } as GuestUserRecord,
+              }
+            }}>
               {/* <Page> */}
               <GameRoomV2
                 // key={publicRoom.me.id}
@@ -260,7 +268,15 @@ export const asPageWithStartedGame = () => (
           );
 
           return (
-            <StorybookReduxProvider>
+            <StorybookReduxProvider initialState={{
+              authentication: {
+                authenticationType: 'guest',
+                user: {
+                  ...me.user,
+                  isGuest: true,
+                } as GuestUserRecord,
+              }
+            }}>
               <GameRoomV2
                 room={publicRoom}
                 onMove={action('on move')}
@@ -284,7 +300,7 @@ export const asPageWithStartedGame = () => (
   </Grommet>
 );
 
-export const asPageWithFinishedGame = () => (
+export const withFinishedGame = () => (
   <Grommet theme={defaultTheme} full>
     <WithLocalStream
       render={(stream) =>
@@ -328,7 +344,15 @@ export const asPageWithFinishedGame = () => (
           );
 
           return (
-            <StorybookReduxProvider>
+            <StorybookReduxProvider initialState={{
+              authentication: {
+                authenticationType: 'guest',
+                user: {
+                  ...me.user,
+                  isGuest: true,
+                } as GuestUserRecord,
+              }
+            }}>
               <GameRoomV2
                 room={publicRoom}
                 onMove={action('on move')}

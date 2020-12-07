@@ -2,18 +2,24 @@ import React, { useRef, LegacyRef, useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { RoomWithPlayActivity } from 'src/components/RoomProvider';
-import { Box } from 'grommet';
+import { Box, Layer } from 'grommet';
 import { Text } from 'src/components/Text';
 import { ChessGameStatePgn, ChessMove } from 'dstnd-io/dist/chessGame';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
 import { ChessGame, ChessGameColor, useSoundEffects } from '../Games/Chess';
 import { getPlayerColor, getPlayer, getOppositePlayer } from './util';
-import { floatingShadow, softBorderRadius } from 'src/theme/effects';
+import { floatingShadow, hardBorderRadius, softBorderRadius } from 'src/theme/effects';
 import cx from 'classnames';
 import { GameStateWidget } from '../Games/Chess/components/GameStateWidget/GameStateWidget';
 import { ActionButton } from 'src/components/Button';
-import { Refresh, Halt, Flag, Split } from 'grommet-icons';
-import { colors, fonts, MOBILE_BREAKPOINT } from 'src/theme';
+import { Refresh, Halt, Flag, Split, AppsRounded } from 'grommet-icons';
+import {
+  colors,
+  fonts,
+  MOBILE_BREAKPOINT,
+  onlySmallMobile,
+  SMALL_MOBILE_BREAKPOINT,
+} from 'src/theme';
 import { ChatContainer } from 'src/components/Chat';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -74,7 +80,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
   const opponentPlayer = myPlayer
     ? getOppositePlayer(myPlayer, props.room.activity.game.players)
     : undefined;
-  
+
   const now = new Date();
   const myTimeLeft =
     game.state === 'started' && game.lastMoveBy !== homeColor
@@ -85,8 +91,8 @@ export const GameRoomV2: React.FC<Props> = (props) => {
       ? game.timeLeft[otherChessColor(homeColor)] -
         (now.getTime() - new Date(game.lastMoveAt).getTime())
       : game.timeLeft[otherChessColor(homeColor)];
-  
-    const materialScore = getRelativeMaterialScore(game.captured);
+
+  const materialScore = getRelativeMaterialScore(game.captured);
 
   const canIPlay =
     isMePlayer && // I must be a player
@@ -99,78 +105,194 @@ export const GameRoomV2: React.FC<Props> = (props) => {
     setGameDisplayedHistoryIndex(0);
   }, [game.pgn]);
 
+  const mobileGameActionsRef = useRef<HTMLDivElement>(null);
+  const [showMobileGameActionsMenu, setShowMobileGameActionsMenu] = useState(false);
+
   // If Mobile
   if (windowWidth <= MOBILE_BREAKPOINT) {
     return (
-      <MobileGameRoomLayout
-        getTopArea={(dimensions) => (
-          <div style={{
-            position: 'relative',
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left:0 ,
-              right: 0,
-              zIndex: 999,
-            }}>
-              <NavigationHeader/>
-            </div>
-            <StreamingBox
-              room={props.room}
-              focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
-              aspectRatio={dimensions}
-            />
-          </div>
-        )}
-        getMainArea={(dimensions) => (
-          <>
-            {opponentPlayer && (
-              <div className={cls.mobileAwayPlayerWrapper}>
-                <PlayerBox
-                  player={opponentPlayer}
-                  timeLeft={opponentTimeLeft}
-                  active={game.state === 'started' && game.lastMoved !== opponentPlayer.color}
-                  gameTimeLimit={game.timeLimit}
-                  material={materialScore[opponentPlayer.color]}
-                  onTimerFinished={props.onTimerFinished}
-                />
+      <>
+        <MobileGameRoomLayout
+          getTopArea={(dimensions) => (
+            <div style={{ position: 'relative' }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: '32px',
+                  zIndex: 999,
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <NavigationHeader />
+
+                <div
+                  className={cls.mobileGameActionsContainer}
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                  }}
+                >
+                  <div ref={mobileGameActionsRef}>
+                    <AppsRounded
+                      color={colors.white}
+                      onMouseDown={() => setShowMobileGameActionsMenu(true)}
+                    />
+                  </div>
+                  {showMobileGameActionsMenu && mobileGameActionsRef.current && (
+                    <Layer
+                      responsive={false}
+                      position="bottom"
+                      animation="slide"
+                      className={cls.mobileGameActionMenuLayer}
+                      onClickOutside={() => setShowMobileGameActionsMenu(false)}
+                    >
+                      <Text size="small2" className={cls.mobileDialogTitle}>
+                        What's your next move?
+                      </Text>
+                      <div className={cls.mobileGameActionButtonsContainer}>
+                        {(game.state === 'finished' ||
+                          game.state === 'stopped' ||
+                          game.state === 'neverStarted') && (
+                          <ActionButton
+                            type="primary"
+                            label="Rematch"
+                            actionType="positive"
+                            icon={Refresh}
+                            full
+                            hideLabelUntilHover={false}
+                            onSubmit={() => {
+                              props.onRematchOffer();
+                              setShowMobileGameActionsMenu(false);
+                            }}
+                            className={cls.gameActionButton}
+                          />
+                        )}
+                        {game.state === 'pending' && (
+                          <ActionButton
+                            type="primary"
+                            label="Abort"
+                            confirmation="Sure want to Abort?"
+                            actionType="negative"
+                            icon={Halt}
+                            full
+                            hideLabelUntilHover={false}
+                            onSubmit={() => {
+                              props.onAbort();
+                              setShowMobileGameActionsMenu(false);
+                            }}
+                            className={cls.gameActionButton}
+                          />
+                        )}
+                        {game.state === 'started' && (
+                          <>
+                            <ActionButton
+                              type="primary"
+                              label="Resign"
+                              actionType="negative"
+                              confirmation="Really Resigning?"
+                              icon={Flag}
+                              full
+                              hideLabelUntilHover={false}
+                              onSubmit={() => {
+                                props.onResign(homeColor);
+                                setShowMobileGameActionsMenu(false);
+                              }}
+                              className={cls.gameActionButton}
+                            />
+                            <ActionButton
+                              type="primary"
+                              label="Offer Draw"
+                              confirmation="Yes, I want a draw!"
+                              actionType="positive"
+                              icon={Split}
+                              full
+                              hideLabelUntilHover={false}
+                              onSubmit={() => {
+                                props.onOfferDraw();
+                                setShowMobileGameActionsMenu(false);
+                              }}
+                              className={cls.gameActionButton}
+                            />
+                          </>
+                        )}
+                      </div>
+                    </Layer>
+                  )}
+                </div>
               </div>
-            )}
-            <div style={{ padding: '2px 8px 4px' }}>
-              <ChessGame
-                className={cls.mobileBoard}
-                homeColor={homeColor}
-                playable={canIPlay}
-                pgn={props.room.activity.game.pgn || ''}
-                getBoardSize={() => dimensions.width - 16}
-                onMove={(...args) => {
-                  props.onMove(...args, homeColor);
-                }}
-                onRewind={() => {
-                  setGameDisplayedHistoryIndex((prev) => prev + 1);
-                }}
-                onForward={() => {
-                  setGameDisplayedHistoryIndex((prev) => prev - 1);
-                }}
-                displayedHistoryIndex={gameDisplayedHistoryIndex}
+              <StreamingBox
+                room={props.room}
+                focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
+                aspectRatio={dimensions}
               />
             </div>
-            {myPlayer && (
-              <div className={cls.mobileHomePlayerWrapper}>
-                <PlayerBox
-                  player={myPlayer}
-                  timeLeft={myTimeLeft}
-                  active={game.state === 'started' && game.lastMoved !== myPlayer.color}
-                  gameTimeLimit={game.timeLimit}
-                  material={materialScore[myPlayer.color]}
-                  onTimerFinished={props.onTimerFinished}
+          )}
+          getMainArea={(dimensions) => (
+            <div className={cls.mobileMainContainer}>
+              {opponentPlayer && (
+                <div className={cx(cls.mobilePlayerWrapper, cls.mobileAwayPlayerWrapper)}>
+                  <PlayerBox
+                    player={opponentPlayer}
+                    timeLeft={opponentTimeLeft}
+                    active={game.state === 'started' && game.lastMoved !== opponentPlayer.color}
+                    gameTimeLimit={game.timeLimit}
+                    material={materialScore[opponentPlayer.color]}
+                    onTimerFinished={props.onTimerFinished}
+                  />
+                </div>
+              )}
+              <div className={cls.mobileChessGameWrapper}>
+                <ChessGame
+                  className={cls.mobileBoard}
+                  homeColor={homeColor}
+                  playable={canIPlay}
+                  pgn={props.room.activity.game.pgn || ''}
+                  getBoardSize={() => {
+                    return dimensions.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 32);
+                  }}
+                  onMove={(...args) => {
+                    props.onMove(...args, homeColor);
+                  }}
+                  onRewind={() => {
+                    setGameDisplayedHistoryIndex((prev) => prev + 1);
+                  }}
+                  onForward={() => {
+                    setGameDisplayedHistoryIndex((prev) => prev - 1);
+                  }}
+                  displayedHistoryIndex={gameDisplayedHistoryIndex}
                 />
               </div>
-            )}
-          </>
-        )}
-      />
+              {myPlayer && (
+                <div className={cx(cls.mobilePlayerWrapper, cls.mobileHomePlayerWrapper)}>
+                  <PlayerBox
+                    player={myPlayer}
+                    timeLeft={myTimeLeft}
+                    active={game.state === 'started' && game.lastMoved !== myPlayer.color}
+                    gameTimeLimit={game.timeLimit}
+                    material={materialScore[myPlayer.color]}
+                    onTimerFinished={props.onTimerFinished}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        />
+        <GameStateDialog
+          roomActivity={props.room.activity}
+          onOfferCanceled={props.onOfferCanceled}
+          onDrawAccepted={props.onDrawAccepted}
+          onDrawDenied={props.onDrawDenied}
+          onRematchAccepted={props.onRematchAccepted}
+          onRematchDenied={props.onRematchDenied}
+          myPlayer={myPlayer}
+        />
+      </>
     );
   }
 
@@ -477,17 +599,59 @@ const useStyles = createUseStyles({
   },
 
   // Mobile
+  mobileGameActionsContainer: {
+    // display: 'flex',
+
+    // background: 'white',
+    padding: '0 12px 4px',
+
+    ...onlySmallMobile({
+      padding: '0 8px 4px',
+    }),
+  },
+  mobileGameActionMenuLayer: {
+    ...softBorderRadius,
+    ...floatingShadow,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    width: '100%',
+
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    padding: '16px 0 8px',
+  },
+  mobileGameActionButtonsContainer: {
+    width: '70%',
+    padding: '16px',
+  },
+  mobileDialogTitle: {
+    ...fonts.subtitle1,
+  },
+
+  mobileMainContainer: {
+    paddingBottom: '8px',
+  },
   mobileBoard: {
     ...floatingShadow,
     ...softBorderRadius,
     overflow: 'hidden',
   },
-  mobileAwayPlayerWrapper: {
-    // marginBottom: '4px',
-    padding: '0 8px',
+  mobileChessGameWrapper: {
+    padding: '6px 16px 8px',
+
+    ...onlySmallMobile({
+      paddingLeft: '30px',
+      paddingRight: '30px',
+    }),
   },
-  mobileHomePlayerWrapper: {
-    // marginTop: '4px',
-    padding: '0 8px',
+  mobilePlayerWrapper: {
+    padding: '0 12px',
+
+    ...onlySmallMobile({
+      padding: '0 8px',
+    }),
   },
+  mobileAwayPlayerWrapper: {},
+  mobileHomePlayerWrapper: {},
 });

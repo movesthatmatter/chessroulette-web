@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
 import Div100vh from 'react-div-100vh';
+import { colors } from 'src/theme';
 
 type Dimensions = {
   width: number;
@@ -46,7 +47,6 @@ const useStyles = createUseStyles({
   container: {
     height: '100vh',
     width: '100vw',
-    background: '#F6F8FB',
     position: 'fixed',
   },
   mainWrapper: {
@@ -72,6 +72,12 @@ const useStyles = createUseStyles({
     marginBottom: '8px',
   },
   mainContainer: {
+    position: 'relative',
+    zIndex: 23,
     flexGrow: 0,
+    borderRadius: '32px 32px 0 0',
+    paddingTop: '16px',
+    marginTop: '-40px',
+    background: colors.neutralLightest,
   },
 });
