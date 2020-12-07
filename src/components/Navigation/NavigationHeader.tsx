@@ -1,7 +1,7 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Logo } from 'src/components/Logo';
-import { hideOnDesktop, hideOnMobile, onlyMobile } from 'src/theme';
+import { hideOnDesktop, hideOnMobile, onlyMobile, onlySmallMobile } from 'src/theme';
 import { UserMenu } from './UserMenu';
 import cx from 'classnames';
 
@@ -41,6 +41,10 @@ const useStyles = createUseStyles({
 
     ...onlyMobile({
       height: 'auto',
+      padding: '12px',
+    }),
+
+    ...onlySmallMobile({
       padding: '8px',
     }),
   },
@@ -52,12 +56,6 @@ const useStyles = createUseStyles({
       alignContent: 'space-between',
     }),
   },
-  menuIcon: {
-    marginLeft: '8px',
-    width: '20px',
-
-  },
-
   onlyMobile: {
     ...hideOnDesktop,
   },

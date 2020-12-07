@@ -80,6 +80,7 @@ const useStyles = createUseStyles({
     overflowY: 'scroll',
     display: 'flex',
     flexDirection: 'column-reverse',
+    paddingBottom: '12px',
   },
   faceTimeAsButton: {
     cursor: 'pointer',
