@@ -16,6 +16,7 @@ import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { minutes, seconds } from 'src/lib/time';
 import { AspectRatio, AspectRatioExplicit, AspectRatioProps } from 'src/components/AspectRatio';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
+import { ChessGameStateMocker } from 'src/mocks/records';
 
 export default {
   component: GameRoomLayout,
@@ -24,6 +25,7 @@ export default {
 
 const peerMock = new PeerMocker();
 const roomMocker = new RoomMocker();
+const gameMocker = new ChessGameStateMocker();
 
 const peerA = peerMock.record();
 const peerB = peerMock.record();
@@ -227,7 +229,7 @@ export const withChessGame = () => (
                 <ChessGame
                   homeColor="black"
                   playable
-                  pgn=""
+                  game={gameMocker.record()}
                   getBoardSize={() => container.width}
                 />
               )}

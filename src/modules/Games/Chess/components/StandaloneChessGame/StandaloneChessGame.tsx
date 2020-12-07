@@ -81,7 +81,7 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
       )}
       <ChessGame
         homeColor={props.homeColor}
-        pgn={game?.pgn ?? ''}
+        game={game}
         playable={playable}
         getBoardSize={(p) => getBoardSize(p) - 100}
         onMove={onMove}

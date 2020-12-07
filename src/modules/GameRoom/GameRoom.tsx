@@ -210,9 +210,10 @@ export const GameRoom: React.FC<GameRoomProps> = ({
             </div>
           </aside>
           <div className={cls.middleSide}>
-            <ChessGame
+            {/* <ChessGame
               className={cls.gameContainer}
-              pgn={props.currentGame?.pgn ?? ''}
+              // pgn={props.currentGame?.pgn ?? ''}
+              // game={props.currentGame}
               homeColor={homeColor}
               playable={playable}
               onMove={(nextPgn) => {
@@ -242,8 +243,8 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                 // setLastMoveTime(now);
 
                 // props.onGameStateUpdate(nextGame);
-              }}
-            />
+              }} */}
+            {/* /> */}
           </div>
           <aside className={cls.rightSide}>
             <RoomInfoDisplay
