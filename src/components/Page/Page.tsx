@@ -92,7 +92,7 @@ const useStyles = createUseStyles({
     alignItems: 'center',
   },
   linksContainer: {
-    paddingTop: '8px',
+    paddingTop: '14px',
     display: 'flex',
   },
   linkWrapper: {

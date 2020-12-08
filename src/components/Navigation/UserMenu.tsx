@@ -7,12 +7,9 @@ import { colors, floatingShadow, fonts } from 'src/theme';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { Avatar } from 'src/components/Avatar';
 import { useSelector } from 'react-redux';
-import { selectMyPeer } from '../PeerProvider';
 import { Peer } from '../RoomProvider';
 import cx from 'classnames';
-// import { Menu } from 'grommet-icons';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import { usePeerState } from 'src/components/PeerProvider';
 
 
 type Props = {
@@ -35,7 +32,7 @@ const getStatusColor = (peer?: Peer) => {
 export const UserMenu: React.FC<Props> = ({ darkMode = false, reversed = false }) => {
   const cls = useStyles();
   const auth = useSelector(selectAuthentication);
-  const myPeer = useSelector(selectMyPeer);
+  const peerState = usePeerState();
 
   // TODO: Maybe change in the future
   if (auth.authenticationType === 'none') {
@@ -69,13 +66,14 @@ export const UserMenu: React.FC<Props> = ({ darkMode = false, reversed = false }
             {auth.user.name}
           </Text>
           <Text className={cls.userType}>
-            {auth.user.isGuest ? 'Guest ' : 'User '}
             <div
               className={cls.dot}
               style={{
-                backgroundColor: getStatusColor(myPeer),
+                backgroundColor: getStatusColor(peerState.status === 'open' ? peerState.me : undefined),
               }}
             />
+            {auth.user.isGuest ? ' Guest ' : ' User '}
+            {peerState.status === 'open' && peerState.room && `| ${peerState.room.name} Room `}
           </Text>
         </Box>
       </Box>
