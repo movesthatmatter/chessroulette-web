@@ -1,5 +1,5 @@
 import { createReducer } from 'deox';
-import { PeerRecord } from 'dstnd-io';
+import { joinedRoomUpdatedPayload, PeerRecord, RoomRecord } from 'dstnd-io';
 import { GenericStateSlice } from 'src/redux/types';
 import { Room, Peer } from '../RoomProvider';
 import {
@@ -16,7 +16,7 @@ import {
   removeMeAction,
 } from './actions';
 
-type State = {
+export type State = {
   me: undefined;
   room: undefined;
 } | {
@@ -45,11 +45,41 @@ const peerRecordToPeer = (p: PeerRecord): Peer => {
 
 // const roomWithPeers = (room: RoomStatsRecord): Room =>
 
+const getNewRoom = (me: Peer, room: RoomRecord): Room => {
+  const { [me.id]: removedMyPeer, ...peersWithoutMe } = room.peers;
+
+  const nextPeers = Object
+    .values(peersWithoutMe)
+    .map(peerRecordToPeer)
+    .reduce((prev, next) => ({
+      ...prev,
+      [next.id]: next,
+    }), {});
+
+    const nextRoom: Room = {
+      ...room,
+      me,
+      peers: nextPeers,
+      peersIncludingMe: {
+        ...nextPeers,
+        [me.id]: me,
+      },
+      peersCount: Object.keys(nextPeers).length,
+    }
+
+    return nextRoom;
+}
+
 export const reducer = createReducer(initialState as State, (handleAction) => ([
   handleAction(createMeAction, (state, { payload }) => {
+    const nextMe = peerRecordToPeer(payload.me);
+
     return {
       ...state,
-      me: peerRecordToPeer(payload),
+      me: nextMe,
+      ...payload.joinedRoom && {
+        room: getNewRoom(nextMe, payload.joinedRoom),
+      }
     }
   }),
 
@@ -58,12 +88,14 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
       return state;
     }
 
-    const nextMe = {
+    const nextMe: Peer = {
       ...state.me,
-      ...payload,
+      ...payload.me,
     };
 
-    const nextRoom = (nextMe.hasJoinedRoom && state.room)
+    const nextRoom: Room | undefined = (payload.me.hasJoinedRoom && state.room)
+      // Only update Me if the state already has a room.
+      // The iam room here shouldn't take precedence over a room update action
       ? {
         ...state.room,
         me: nextMe,
@@ -72,7 +104,9 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
           [nextMe.id]: nextMe,
         }
       }
-      : undefined;
+      : (payload.joinedRoom && !state.room)
+        ? getNewRoom(nextMe, payload.joinedRoom)
+        : undefined;
 
     const next = {
       ...state,
@@ -166,39 +200,15 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
       return state;
     }
 
-    const {
-      [state.me.id]: removedMyPeer,
-      ...peersWithoutMe
-    } = payload.room.peers;
-
-    const nextPeers = Object
-      .values(peersWithoutMe)
-      .map(peerRecordToPeer)
-      .reduce((prev, next) => ({
-        ...prev,
-        [next.id]: next,
-      }), {});
-
     const nextMe = {
       ...state.me,
       ...payload.me,
     };
 
-    const nextRoom: Room = {
-      ...payload.room,
-      me: nextMe,
-      peers: nextPeers,
-      peersIncludingMe: {
-        ...nextPeers,
-        [payload.me.id]: nextMe,
-      },
-      peersCount: Object.keys(nextPeers).length,
-    }
-
     return {
       ...state,
       me: nextMe,
-      room: nextRoom,
+      room: getNewRoom(nextMe, payload.room),
     };
   }),
   handleAction(updateRoomAction, (state, { payload }) => {
@@ -227,18 +237,21 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
         [next.id]: next,
       }), {});
 
+    const nextRoom: Room = {
+      ...state.room,
+      ...payload.room,
+      me: state.me,
+      peers: nextPeers,
+      peersCount: Object.keys(nextPeers).length,
+      peersIncludingMe: {
+        [state.me.id]: state.me,
+        ...nextPeers,
+      },
+    };
+
     return {
       ...state,
-      room: {
-        ...state.room,
-        ...payload.room,
-        peers: nextPeers,
-        peersCount: Object.keys(nextPeers).length,
-        peersIncludingMe: {
-          [state.room.me.id]: state.room.me,
-          ...nextPeers,
-        },
-      },
+      room: nextRoom,
     };
   }),
 

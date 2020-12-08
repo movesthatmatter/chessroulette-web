@@ -3,12 +3,18 @@ import { PeerRecord, RoomRecord } from 'dstnd-io';
 
 export const createMeAction = createAction(
   'Create Me',
-  (resolve) => (me: PeerRecord) => resolve(me),
+  (resolve) => (p: {
+    me: PeerRecord;
+    joinedRoom?: RoomRecord;
+  }) => resolve(p),
 );
 
 export const updateMeAction = createAction(
   'Update Me',
-  (resolve) => (me: PeerRecord) => resolve(me),
+  (resolve) => (p: {
+    me: PeerRecord;
+    joinedRoom?: RoomRecord;
+  }) => resolve(p),
 );
 
 export const removeMeAction = createAction(

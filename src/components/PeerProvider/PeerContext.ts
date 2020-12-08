@@ -18,7 +18,7 @@ export type PeerContextProps =
     }
   | {
       state: 'notJoined';
-      proxy?: Proxy;
+      proxy: Proxy;
       me: Peer;
       request: SocketClient['send'];
 

@@ -92,10 +92,15 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
 
     const unsubscribeFromOnError = peerConnections.current.onError((error) => {
       logsy.error('[PeerProvider]', error);
-      setContextState({
-        state: 'error',
-        error,
-      });
+      if (error === 'PEER_ID_TAKEN') {
+        // TODO This should probably do some fault tolerance
+        setContextState({
+          state: 'error',
+          error,
+        });
+      }
+
+      // TODO: In case of other errors don't do anything yet!
     });
 
     return () => {
@@ -120,11 +125,6 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       return;
     }
 
-    console.group('[PeerProvider] Room Updated');
-    console.log('Room Peers', Object.keys(state.room.peers).length, state.room.peers);
-    console.log('Peer Connections', Object.keys(peerConnections.current?.connections ?? {}).length, peerConnections.current?.connections);
-    console.groupEnd();
-
     // Reconcile the Room Peers with the PeerConnections
     //  i.e. Remove any peer connectoins that aren't part of the room anymore!
     Object.keys(peerConnections.current?.connections ?? []).forEach((peerId) => {
@@ -138,10 +138,6 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       }
     });
 
-    console.group('[PeerProvider] Room & PeerConnections Reconciler');
-    console.log('Room Peers', Object.keys(state.room.peers).length, state.room.peers);
-    console.log('Peer Connections', Object.keys(peerConnections.current?.connections ?? {}).length, peerConnections.current?.connections);
-    console.groupEnd();
   }, [state.room]);
 
   // Context State Management
@@ -156,6 +152,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       if (!state.room) {
         return {
           state: 'notJoined',
+          proxy,
           me: state.me,
           joinRoom: (credentials: RoomCredentials) => {
             socket.send({
@@ -210,9 +207,15 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
     const onMessageUnsubscriber = socket.onMessage((msg) => {
       if (msg.kind === 'iam') {
         if (!state.me) {
-          dispatch(createMeAction(msg.content));
+          dispatch(createMeAction({
+            me: msg.content.peer,
+            joinedRoom: msg.content.hasJoinedRoom ? msg.content.room : undefined,
+          }));
         } else {
-          dispatch(updateMeAction(msg.content));
+          dispatch(updateMeAction({
+            me: msg.content.peer,
+            joinedRoom: msg.content.hasJoinedRoom ? msg.content.room : undefined,
+          }));
         }
       } else if (msg.kind === 'joinedRoomUpdated') {
         dispatch(updateRoomAction({ room: msg.content }));
