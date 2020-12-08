@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { noop } from 'src/lib/util';
-import { SocketContext } from './SocketProvider';
+import { SocketContext } from './SocketContext';
 
 export type SocketConsumerProps = {
-  wssURL?: string;
   autoDemandConnection?: boolean;
   render: (renderProps: {
     send: SocketClient['send'];
