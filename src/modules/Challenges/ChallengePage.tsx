@@ -3,7 +3,6 @@ import { Box } from 'grommet';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Page } from 'src/components/Page';
-import { toRoomUrlPath } from 'src/lib/util';
 import { resources } from 'src/resources';
 import { ChallengeInfo } from './ChallengeInfo';
 import { Events } from 'src/services/Analytics';
@@ -36,10 +35,8 @@ export const ChallengePage: React.FC<Props> = ({ challenge, myPeer }) => {
                   id: challenge.id,
                   userId: myPeer.user.id,
                 })
-                .map((room) => {
+                .map(() => {
                   Events.trackFriendlyChallengeAccepted();
-
-                  history.push(toRoomUrlPath(room));
                 });
             }}
           />

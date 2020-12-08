@@ -1,44 +1,54 @@
-import { AsyncResult, ChallengeRecord, RoomRecord } from 'dstnd-io';
-import { Box } from 'grommet';
+import { AsyncResult, ChallengeRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
-import { Page } from 'src/components/Page';
-import { toRoomUrlPath } from 'src/lib/util';
 import { resources } from 'src/resources';
-import { ChallengeInfo } from './ChallengeInfo';
 import { GenericRoom } from 'src/modules/GenericRoom';
-import { selectMyPeer } from 'src/components/PeerProvider';
+import { selectMyPeer, selectPeerProviderState } from 'src/components/PeerProvider';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
-import { Events } from 'src/services/Analytics';
 import { ChallengePage } from './ChallengePage';
+import { useSocketState } from 'src/components/SocketProvider';
 
 type Props = {};
 
 export const ChallengeOrRoomPage: React.FC<Props> = () => {
   const params = useParams<{ slug: string }>();
   const [challenge, setChallenge] = useState<ChallengeRecord>();
-  const [room, setRoom] = useState<RoomRecord>();
-
-  const [resourceState, setResourceState] = useState('none' as 'none' | 'loading' | 'error' | 'success');
-
+  const [resourceState, setResourceState] = useState(
+    'none' as 'none' | 'loading' | 'error' | 'success'
+  );
   const myPeer = useSelector(selectMyPeer);
+  const peerProviderState = useSelector(selectPeerProviderState);
+  const socketState = useSocketState();
 
   useEffect(() => {
-    setResourceState('loading');
+    // If there is no room or challenge try to load the challenge
+    if (!peerProviderState.room && !challenge && socketState.status === 'open') {
+      setResourceState('loading');
 
-    resources
-      .getRoomBySlug(params.slug)
-      .map(setRoom)
-      .flatMapErr(() => resources.getChallengeBySlug(params.slug).map(setChallenge))
-      .map(AsyncResult.passThrough(() => {
-        setResourceState('success');
-      }))
-      .mapErr(() => {
-        setResourceState('error');
-      });
-  }, []);
+      resources
+        .getRoomBySlug(params.slug)
+        .map((room) => {
+          socketState.socket.send({
+            kind: 'joinRoomRequest',
+            content: {
+              roomId: room.id,
+              code: room.code || undefined,
+            },
+          });
+        })
+        .flatMapErr(() => resources.getChallengeBySlug(params.slug).map(setChallenge))
+        .map(
+          AsyncResult.passThrough(() => {
+            setResourceState('success');
+          })
+        )
+        .mapErr(() => {
+          setResourceState('error');
+        });
+    }
+  }, [peerProviderState.room, challenge, socketState.status]);
 
   if (resourceState === 'loading') {
     return <AwesomeLoaderPage />;
@@ -48,22 +58,17 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
     return <AwesomeErrorPage errorType="resourceNotFound" />;
   }
 
-  if (room) {
+  if (peerProviderState.room) {
     return (
       <GenericRoom
         roomCredentials={{
-          id: room.id,
-          code: room.code || undefined,
+          id: peerProviderState.room.id,
+          code: peerProviderState.room.code || undefined,
         }}
       />
     );
   } else if (challenge) {
-    return (
-      <ChallengePage 
-        challenge={challenge}
-        myPeer={myPeer}
-      />
-    );
+    return <ChallengePage challenge={challenge} myPeer={myPeer} />;
   }
 
   return null;

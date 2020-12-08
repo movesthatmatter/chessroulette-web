@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { PeerConsumer } from 'src/components/PeerProvider';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { gameActions } from 'src/modules/Games/Chess/gameActions';
@@ -89,19 +89,6 @@ export const GenericRoom: React.FC<Props> = (props) => {
         }}
         renderRoomNotJoined={() => <AwesomeLoaderPage />}
         renderFallback={() => <AwesomeLoaderPage />}
-        onReady={(p) => {
-          // Join the Room right away if already part of the game!
-          if (p.state === 'notJoined') {
-            p.joinRoom(props.roomCredentials);
-          }
-        }}
-        // TODO: Add an onClose callback to leave the room as well. MAYBE!
-        // Normally when closing the socket connection the room is updated!
-        onUnmounted={(p) => {
-          if (p.state === 'joined') {
-            p.leaveRoom();
-          }
-        }}
       />
     </Box>
   );

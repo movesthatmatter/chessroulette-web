@@ -7,8 +7,6 @@ import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
 import { resources } from 'src/resources';
 import { SocketConsumer } from 'src/components/SocketProvider';
 import { PendingChallenge, PendingChallengeProps } from './PendingChallenge';
-import { useHistory } from 'react-router-dom';
-import { toRoomUrlPath } from 'src/lib/util';
 import { Dialog } from 'src/components/Dialog/Dialog';
 import { AwesomeError } from 'src/components/AwesomeError';
 import { useSelector } from 'react-redux';
@@ -40,7 +38,6 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
   const [faceTimeOn, setFaceTimeOn] = useState(false);
   const [gameSpecs, setGameSpecs] = useState<GameSpecsRecord | undefined>(undefined);
   const [challengeState, setChallengeState] = useState<ChallengeState>({ state: 'none' });
-  const history = useHistory();
   const myPeer = useSelector(selectMyPeer);
 
   useEffect(() => {
@@ -82,8 +79,6 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                   room: msg.content.room,
                 });
                 setVisiblePopup(false);
-
-                history.push(toRoomUrlPath(msg.content.room));
               }
             }}
             fallbackRender={() => (
@@ -150,8 +145,6 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                   .map((r) => {
                     if (r.matched) {
                       Events.trackQuickPairingMatched();
-
-                      history.push(toRoomUrlPath(r.room));
                     } else {
                       setChallengeState({
                         state: 'pending',
