@@ -13,6 +13,7 @@ export type DialogProps = {
   content: string | React.ReactNode;
   graphic?: React.ReactNode;
   buttons?: (ButtonProps | boolean | undefined)[];
+  buttonsStacked?: boolean;
   hasCloseButton?: boolean;
   onClose?: () => void;
   target?: LayerProps['target'];
@@ -54,7 +55,11 @@ export const Dialog: React.FC<DialogProps> = ({ hasCloseButton = true, onClose =
         )}
       </div>
       {props.buttons && (
-        <div className={cls.buttonsWrapper}>
+        <div className={cls.buttonsWrapper} {...props.buttonsStacked && {
+          style: {
+            flexDirection: 'column',
+          }
+        }}>
           {props.buttons.map((buttonProps, i) => {
             if (typeof buttonProps !== 'object') {
               return null;
@@ -64,7 +69,7 @@ export const Dialog: React.FC<DialogProps> = ({ hasCloseButton = true, onClose =
               <Button
                 key={i}
                 className={cls.button}
-                containerClassName={cls.buttonContainer}
+                containerClassName={props.buttonsStacked ? cls.stackedButtonContainer : cls.buttonContainer}
                 // size="medium"
                 full
                 {...buttonProps}
@@ -139,6 +144,9 @@ const useStyles = createUseStyles({
     '&:first-child': {
       marginLeft: 0,
     },
+  },
+  stackedButtonContainer: {
+    marginBottom: '16px',
   },
   button: {
     paddingBottom: 0,
