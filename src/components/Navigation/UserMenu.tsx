@@ -70,10 +70,18 @@ export const UserMenu: React.FC<Props> = ({ darkMode = false, reversed = false }
               className={cls.dot}
               style={{
                 backgroundColor: getStatusColor(peerState.status === 'open' ? peerState.me : undefined),
+                display: reversed ? 'none' : 'inline-block',
               }}
             />
             {auth.user.isGuest ? ' Guest ' : ' User '}
             {peerState.status === 'open' && peerState.room && `| ${peerState.room.name} Room `}
+            <div
+              className={cls.dot}
+              style={{
+                backgroundColor: getStatusColor(peerState.status === 'open' ? peerState.me : undefined),
+                display: reversed ? 'inline-block' : 'none',
+              }}
+            />
           </Text>
         </Box>
       </Box>

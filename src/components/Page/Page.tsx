@@ -10,10 +10,7 @@ type Props = {
   logoAsLink?: boolean;
 };
 
-export const Page: React.FC<Props> = ({
-  logoAsLink = true,
-  ...props
-}) => {
+export const Page: React.FC<Props> = ({ logoAsLink = true, ...props }) => {
   const cls = useStyles();
 
   return (
@@ -21,16 +18,24 @@ export const Page: React.FC<Props> = ({
       <div className={cls.paddingWrapper}>
         <div className={cls.top}>
           <div className={cls.topMain}>
-            <Logo asLink={logoAsLink}/>
+            <Logo asLink={logoAsLink} />
             <div className={cx(cls.nav, cls.desktopOnly)}>
               <div className={cls.linksContainer}>
                 <div className={cls.linkWrapper}>
-                  <a className={cls.link} href="https://www.facebook.com/chessroulette">
+                  <a
+                    className={cls.link}
+                    href="https://www.facebook.com/chessroulette"
+                    target="_blank"
+                  >
                     About
                   </a>
                 </div>
                 <div className={cls.linkWrapper}>
-                  <a className={cls.link} href="https://www.instagram.com/chessroulette/">
+                  <a
+                    className={cls.link}
+                    href="https://www.instagram.com/chessroulette/"
+                    target="_blank"
+                  >
                     Instagram
                   </a>
                 </div>
@@ -46,9 +51,7 @@ export const Page: React.FC<Props> = ({
             <UserMenu reversed />
           </div>
         </div>
-        <main className={cls.main}>
-          {props.children}
-        </main>
+        <main className={cls.main}>{props.children}</main>
         <Footer />
       </div>
     </div>
