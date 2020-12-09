@@ -142,6 +142,12 @@ export const ChallengeButtonWidget: React.FC<Props> = ({ challengeType, ...butto
                   })
                   .map((r) => {
                     if (r.matched) {
+                      setChallengeState({
+                        state: 'none'
+                      });
+
+                      history.push(toRoomUrlPath(r.room));
+
                       Events.trackQuickPairingMatched();
                     } else {
                       setChallengeState({
