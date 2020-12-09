@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { getAVStreaming, AVStreamingConstraints } from 'src/services/AVStreaming';
+import { getAVStreaming, AVStreamingConstraints, AVStreaming } from 'src/services/AVStreaming';
 import { PeerStreamingConfig } from 'src/services/peers';
 import { FaceTime, FaceTimeProps } from './FaceTime';
+import useInstance from '@use-it/instance';
 
 type Props = Omit<FaceTimeProps, 'streamConfig'> & {
   constraints?: AVStreamingConstraints;
@@ -15,7 +16,7 @@ export const MyFaceTime: React.FC<Props> = ({
   },
   ...props
 }) => {
-  const AVStreaming = useRef(getAVStreaming()).current;
+  const AVStreaming = useInstance<AVStreaming>(getAVStreaming);
   const [myStreamConfig, setMyStreamConfig] = useState<PeerStreamingConfig>({ on: false });
 
   useEffect(() => {

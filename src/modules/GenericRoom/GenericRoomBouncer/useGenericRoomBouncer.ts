@@ -1,13 +1,14 @@
+import useInstance from '@use-it/instance';
 import { useEffect, useReducer, useRef } from 'react';
-import { getAVStreaming } from 'src/services/AVStreaming';
+import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
 import { grantPermissionsAction, initialState, reducer } from './reducer';
 
 export const useGenericRoomBouncer = (checkOnMount = false) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const avStreamingRef = useRef(getAVStreaming()).current;
+  const AVStreaming = useInstance<AVStreaming>(getAVStreaming);
 
   const checkPermissions = () => {
-    avStreamingRef.hasPermission().map(() => {
+    AVStreaming.hasPermission().map(() => {
       dispatch(grantPermissionsAction);
     });
   };

@@ -1,5 +1,6 @@
+import useInstance from '@use-it/instance';
 import React, { useEffect, useRef, useState } from 'react';
-import { getAVStreaming } from 'src/services/AVStreaming';
+import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
 import { FaceTimeSetup } from '../FaceTimeSetup/FaceTimeSetup';
 
 type Props = {
@@ -11,7 +12,7 @@ export const FaceTimeSetupWidget: React.FC<Props> = ({
   renderPermissionGranted = () => null,
   ...props
 }) => {
-  const AVStreaming = useRef(getAVStreaming()).current;
+  const AVStreaming = useInstance<AVStreaming>(getAVStreaming);
   const [permissionsState, setPermissionsState] = useState<'none' | 'granted' | 'denied'>('none');
 
   useEffect(() => {

@@ -5,8 +5,9 @@ import { AspectRatio } from 'src/components/AspectRatio';
 import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
 import { FaceTime } from '../FaceTime';
-import { getAVStreaming } from 'src/services/AVStreaming';
+import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
 import { colors, softBorderRadius } from 'src/theme';
+import useInstance from '@use-it/instance';
 
 type Props = {
   onUpdated: (streamingConfig: PeerStreamingConfig) => void;
@@ -14,7 +15,7 @@ type Props = {
 
 export const FaceTimeSetup: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const AVStreaming = useRef(getAVStreaming()).current;
+  const AVStreaming = useInstance<AVStreaming>(getAVStreaming);
 
   const [streamingConfig, setStreamingConfig] = useState<PeerStreamingConfig>({ on: false });
   const [permissionState, setPermissionState] = useState<'none' | 'pending' | 'granted' | 'denied'>(

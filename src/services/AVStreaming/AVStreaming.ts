@@ -8,7 +8,7 @@ export type AVStreamingConstraints = {
 type DestroyStreamFn = () => void;
 
 // Note: As of Dec 5h, 2020, It currently doesn't seperate the Audio from Video if needed in the future!
-class AVStreaming {
+class AVStreamingClass {
   private pendingStreamCreationPromise?: Promise<MediaStream>;
 
   public activeStreamsById: {
@@ -124,10 +124,12 @@ class AVStreaming {
   }
 }
 
+export type AVStreaming = AVStreamingClass;
+
 let instance: AVStreaming;
 export const getAVStreaming = () => {
   if (!instance) {
-    instance = new AVStreaming();
+    instance = new AVStreamingClass();
   }
 
   return instance;
