@@ -8,6 +8,7 @@ import { PeerProvider } from './components/PeerProvider';
 import { SocketProvider } from './components/SocketProvider';
 import config from './config';
 import { GA } from './services/Analytics';
+import { RouteEffects } from './RouteEffects';
 
 function App() {
   useEffect(() => {
@@ -30,6 +31,7 @@ function App() {
             >
               <ThemeProvider theme={defaultTheme}>
                 <Routes />
+                <RouteEffects />
               </ThemeProvider>
             </JssProvider>
           </PeerProvider>

@@ -147,6 +147,10 @@ const useStyles = createUseStyles({
   },
   stackedButtonContainer: {
     marginBottom: '16px',
+
+    '&:last-child': {
+      marginBottom: 0,
+    }
   },
   button: {
     paddingBottom: 0,

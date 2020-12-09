@@ -9,7 +9,7 @@ import { Avatar } from 'src/components/Avatar';
 import { useSelector } from 'react-redux';
 import { Peer } from '../RoomProvider';
 import cx from 'classnames';
-import { usePeerState } from 'src/components/PeerProvider';
+import { PeerState, usePeerState } from 'src/components/PeerProvider';
 
 
 type Props = {
@@ -17,12 +17,12 @@ type Props = {
   reversed?: boolean;
 };
 
-const getStatusColor = (peer?: Peer) => {
-  if (!peer) {
+const getStatusColor = (peerState: PeerState) => {
+  if (peerState.status !== 'open') {
     return colors.neutral;
   }
 
-  if (peer.connection.channels.streaming.on) {
+  if (peerState.hasJoinedRoom && peerState.connected) {
     return colors.primary;
   }
 
@@ -69,16 +69,16 @@ export const UserMenu: React.FC<Props> = ({ darkMode = false, reversed = false }
             <div
               className={cls.dot}
               style={{
-                backgroundColor: getStatusColor(peerState.status === 'open' ? peerState.me : undefined),
+                backgroundColor: getStatusColor(peerState),
                 display: reversed ? 'none' : 'inline-block',
               }}
             />
             {auth.user.isGuest ? ' Guest ' : ' User '}
-            {peerState.status === 'open' && peerState.room && `| ${peerState.room.name} Room `}
+            {peerState.status === 'open' && peerState.hasJoinedRoom && peerState.connected && `| ${peerState.room.name} Room `}
             <div
               className={cls.dot}
               style={{
-                backgroundColor: getStatusColor(peerState.status === 'open' ? peerState.me : undefined),
+                backgroundColor: getStatusColor(peerState),
                 display: reversed ? 'inline-block' : 'none',
               }}
             />

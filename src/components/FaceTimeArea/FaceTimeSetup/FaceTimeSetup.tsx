@@ -86,8 +86,8 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
               )}
               {permissionState === 'denied' && (
                 <Text size="small1">
-                  Your Camera & Microphone permissions seem to be off. Please allow them in order to
-                  proceed.
+                  Your Camera & Microphone permissions seem to be off.
+                  Please use your Browser's settings to allow them.
                 </Text>
               )}
             </Box>

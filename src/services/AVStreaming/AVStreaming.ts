@@ -30,8 +30,6 @@ class AVStreaming {
   }
 
   private async createStream(constraints: AVStreamingConstraints): Promise<MediaStream> {
-    console.log('[AVStreaming] creating new stream');
-
     this.pendingStreamCreationPromise = navigator.mediaDevices.getUserMedia(constraints);
 
     const stream = await this.pendingStreamCreationPromise;
@@ -41,13 +39,10 @@ class AVStreaming {
     // Reset it again!
     this.pendingStreamCreationPromise = undefined;
 
-    console.log('[AVStreaming] active', Object.keys(instance.activeStreamsById).length, this.activeStreamsById);
-
     return stream;
   }
 
   destroyStreamById(streamId: string) {
-    console.log('[AVStreaming] destroyStreamById', streamId);
     const { [streamId]: stream, ...restActiveStreams } = this.activeStreamsById;
 
     if (stream) {
@@ -58,17 +53,12 @@ class AVStreaming {
       // Remove the stream from active
       this.activeStreamsById = restActiveStreams;
     }
-
-    console.log('[AVStreaming] active', Object.keys(instance.activeStreamsById).length, this.activeStreamsById);
   }
 
   private cloneStream(stream: MediaStream) {
     const clonedStream = stream.clone();
-    console.log('[AVStreaming] cloning stream', stream?.id);
 
     this.activeStreamsById[clonedStream.id] = clonedStream;
-
-    console.log('[AVStreaming] active', Object.keys(instance.activeStreamsById).length, this.activeStreamsById);
 
     return clonedStream;
   }
@@ -89,8 +79,6 @@ class AVStreaming {
       audio: true,
     }
   ): Promise<MediaStream> {
-    console.log('[AVStreaming] getStream');
-
     if (this.pendingStreamCreationPromise) {
       return this
         .pendingStreamCreationPromise
