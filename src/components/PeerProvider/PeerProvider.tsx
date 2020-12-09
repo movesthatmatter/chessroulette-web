@@ -22,11 +22,12 @@ import { selectPeerProviderState } from './selectors';
 import { resources } from 'src/resources';
 import { selectAuthentication } from 'src/services/Authentication';
 import { usePeerConnections } from './usePeerConnections';
+import useInstance from '@use-it/instance';
 
 export type PeerProviderProps = {};
 
 export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
-  const proxy = useRef(new Proxy()).current;
+  const proxy = useInstance<Proxy>(() => new Proxy());
   const [contextState, setContextState] = useState<PeerContextProps>({ state: 'init' });
   const [socket, setSocket] = useState<SocketClient | undefined>();
   const [iceServers, setIceServers] = useState<IceServerRecord[]>();
