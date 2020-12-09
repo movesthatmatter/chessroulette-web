@@ -28,7 +28,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
     // }
 
     // If there is no joinedRoom, roomInfo or challenge, load the possible Challenge or RoomInfo
-    if (!(challenge || roomInfo)) {
+    if (!(challenge || roomInfo) && resourceState === 'none') {
       setResourceState('loading');
 
       resources
