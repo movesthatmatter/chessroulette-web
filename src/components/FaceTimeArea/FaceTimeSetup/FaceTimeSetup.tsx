@@ -8,6 +8,7 @@ import { FaceTime } from '../FaceTime';
 import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
 import { colors, softBorderRadius } from 'src/theme';
 import useInstance from '@use-it/instance';
+import { seconds } from 'src/lib/time';
 
 type Props = {
   onUpdated: (streamingConfig: PeerStreamingConfig) => void;
@@ -51,7 +52,10 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
 
     return () => {
       if (streamingConfig.on) {
-        AVStreaming.destroyStreamById(streamingConfig.stream.id);
+        // This is important as destroying it right away would
+        //  create a need to reask for userMedia which on some browsers
+        //  will retrigger the permissions!
+        AVStreaming.destroyStreamByIdAfter(streamingConfig.stream.id, seconds(3));
       }
     };
   }, [streamingConfig]);
