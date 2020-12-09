@@ -12,6 +12,11 @@ export type PeerContextProps =
       proxy: Proxy;
       room: Room;
       me: Peer;
+
+      connected: boolean;
+      connectToRoom: () => void;
+      disconnectFromRoom: () => void;
+
       broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
       request: SocketClient['send'];
       leaveRoom: () => void;

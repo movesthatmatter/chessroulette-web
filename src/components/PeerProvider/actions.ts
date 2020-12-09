@@ -3,67 +3,39 @@ import { PeerRecord, RoomRecord } from 'dstnd-io';
 
 export const createMeAction = createAction(
   'Create Me',
-  (resolve) => (p: {
-    me: PeerRecord;
-    joinedRoom?: RoomRecord;
-  }) => resolve(p),
+  (resolve) => (p: { me: PeerRecord; joinedRoom?: RoomRecord }) => resolve(p)
 );
 
 export const updateMeAction = createAction(
   'Update Me',
-  (resolve) => (p: {
-    me: PeerRecord;
-    joinedRoom?: RoomRecord;
-  }) => resolve(p),
+  (resolve) => (p: { me: PeerRecord; joinedRoom?: RoomRecord }) => resolve(p)
 );
 
-export const removeMeAction = createAction(
-  'Remove Me',
-  (resolve) => () => resolve(),
-);
+export const removeMeAction = createAction('Remove Me', (resolve) => () => resolve());
 
 export const createRoomAction = createAction(
   'Create Room',
-  (resolve) => (p: {
-    room: RoomRecord;
-    me: PeerRecord;
-  }) => resolve(p),
+  (resolve) => (p: { room: RoomRecord; me: PeerRecord }) => resolve(p)
 );
 
 export const updateRoomAction = createAction(
   'Update Room',
-  (resolve) => (p: {
-    room: RoomRecord;
-  }) => resolve(p),
+  (resolve) => (p: { room: RoomRecord }) => resolve(p)
 );
 
 export const removeRoomAction = createAction('Remove Room');
 
-export const addPeerAction = createAction(
-  'Add Peer',
-  (resolve) => (p: PeerRecord) => resolve(p),
-);
-
-export const removePeerAction = createAction(
-  'Remove Peer',
-  (resolve) => (p: {peerId: PeerRecord['id']}) => resolve(p),
-);
-
-export const addMyStream = createAction(
-  'Add My Stream',
-  (resolve) => (p: {
-    stream: MediaStream;
-  }) => resolve(p),
-);
-
-export const remmoveMyStream = createAction(
-  'Remove My Stream',
-);
-
 export const addPeerStream = createAction(
   'Add Peer Stream',
-  (resolve) => (p: {
-    peerId: string;
-    stream: MediaStream;
-  }) => resolve(p),
+  (resolve) => (p: { peerId: string; stream: MediaStream }) => resolve(p)
+);
+
+export const removePeerStreamAction = createAction(
+  'Remove Peer Stream',
+  (resolve) => (p: { peerId: PeerRecord['id'] }) => resolve(p)
+);
+
+export const closePeerChannelsAction = createAction(
+  'Close Peer Channels',
+  (resolve) => (p: { peerId: PeerRecord['id'] }) => resolve(p)
 );

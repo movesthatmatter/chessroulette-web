@@ -4,17 +4,30 @@ import { PeerConnectionsErrors } from './PeerConnections';
 import { PeerContext } from './PeerContext';
 import { Proxy } from './Proxy';
 import usePrevious from 'use-previous';
+import { SocketClient } from 'src/services/socket/SocketClient';
 
 export type PeerState =
   | {
       status: 'init';
     }
-  | {
+  | ({
       status: 'open';
-      client: Proxy;
+      client: Proxy & {
+        send: SocketClient['send'];
+      };
       me: Peer;
-      room?: Room;
-    }
+    } & (
+      | {
+          hasJoinedRoom: true;
+          room: Room;
+          connected: boolean;
+          connectToRoom: () => void;
+          disconnectFromRoom: () => void;
+        }
+      | {
+          hasJoinedRoom: false;
+        }
+    ))
   | {
       status: 'closed';
       error?: PeerConnectionsErrors;
@@ -28,18 +41,34 @@ export const usePeerState = (): PeerState => {
   const previousContextState = usePrevious(context.state);
 
   // On Previously Connected and now back to init
-  if (context.state === 'init' && (previousContextState === 'joined' || previousContextState === 'notJoined')) {
+  if (
+    context.state === 'init' &&
+    (previousContextState === 'joined' || previousContextState === 'notJoined')
+  ) {
     return {
       status: 'disconnected',
-    }
-  }
-  else if (context.state === 'joined' || context.state === 'notJoined') {
+    };
+  } else if (context.state === 'joined' || context.state === 'notJoined') {
+    const client = Object.assign(context.proxy, {
+      send: context.request,
+    });
+
     return {
       status: 'open',
-      client: context.proxy,
+      client,
       me: context.me,
-      room: context.state === 'joined' ? context.room : undefined,
-    }
+      ...(context.state === 'joined'
+        ? {
+            hasJoinedRoom: true,
+            room: context.room,
+            connected: context.connected,
+            connectToRoom: context.connectToRoom,
+            disconnectFromRoom: context.disconnectFromRoom,
+          }
+        : {
+            hasJoinedRoom: false,
+          }),
+    };
   } else if (context.state === 'error') {
     return {
       status: 'closed',
@@ -49,5 +78,5 @@ export const usePeerState = (): PeerState => {
 
   return {
     status: 'init',
-  }
+  };
 };
