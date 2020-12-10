@@ -13,7 +13,7 @@ import { defaultTheme } from 'src/theme';
 import { getRandomInt } from 'src/lib/util';
 import { Button } from 'src/components/Button';
 import { useSelector } from 'react-redux';
-import { RoomCredentials } from 'src/components/PeerProvider/util';
+import { RoomCredentials } from 'src/components/PeerProvider';
 import { UserRecordMocker } from 'src/mocks/records';
 
 export default {

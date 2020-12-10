@@ -39,14 +39,11 @@ export const GenericRoom: React.FC<Props> = ({
     }
   }, [peerState]);
 
+  // Connect to the Room on Mount
+  useEffect(connectToRoom, [connectToRoom]);
 
-  useEffect(() => {
-    connectToRoom();
-  }, [connectToRoom]);
-
-  useEffect(() => {
-    return leaveRoom;
-  }, [])
+  // Leave the Room on unmount
+  useEffect(() => leaveRoom, []);
 
   // This only support Play Rooms for now! 
   if (room.activity.type !== 'play') {
