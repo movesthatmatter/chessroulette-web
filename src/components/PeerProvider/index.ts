@@ -1,4 +1,4 @@
 export * from './PeerProvider';
 export * from './PeerConsumer';
-export * from './selectors';
-export * from './usePeerState';
+export * from './redux/selectors';
+export * from './hooks/usePeerState';

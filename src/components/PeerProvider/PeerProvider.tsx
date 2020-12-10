@@ -1,28 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { IceServerRecord } from 'dstnd-io';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { useSelector, useDispatch } from 'react-redux';
-import { SocketConsumer } from '../SocketProvider';
-import {
-  createRoomAction,
-  addPeerStream,
-  updateRoomAction,
-  createMeAction,
-  updateMeAction,
-  removeMeAction,
-  closePeerChannelsAction,
-} from './actions';
-import { RoomCredentials } from './util';
-import { PeerMessageEnvelope } from './records';
-import { Proxy } from './Proxy';
+import { RoomCredentials } from './lib/util';
+import { PeerMessageEnvelope } from './lib/records';
+import { Proxy } from './lib/Proxy';
 import { PeerContextProps, PeerContext } from './PeerContext';
-import { selectPeerProviderState } from './selectors';
+import { selectPeerProviderState } from './redux/selectors';
 import { resources } from 'src/resources';
 import { selectAuthentication } from 'src/services/Authentication';
-import { usePeerConnections } from './usePeerConnections';
 import useInstance from '@use-it/instance';
+import { PeerConnectionsHandler, PeerConnectionsState, SocketConnectionHandler } from './Handlers';
+import { addPeerStream, closePeerChannelsAction } from './redux/actions';
 
 export type PeerProviderProps = {};
 
@@ -35,45 +26,14 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   const state = useSelector(selectPeerProviderState);
   const dispatch = useDispatch();
 
+  const [pcState, setPCState] = useState<PeerConnectionsState>({ status: 'init' });
+
   // Get ICE Urls onmount
   useEffect(() => {
     (async () => {
       (await resources.getIceURLS()).map(setIceServers);
     })();
   }, []);
-
-  const pcState = usePeerConnections(
-    iceServers,
-    auth.authenticationType === 'none' ? undefined : auth.user,
-    {
-      onOpen: () => {},
-      // onPeerConnected: (p) => {},
-      onPeerDisconnected: (peerId) => {
-        dispatch(closePeerChannelsAction({ peerId }));
-      },
-      onPeerStream: (p) => {
-        dispatch(addPeerStream(p));
-      },
-    }
-  );
-
-  useEffect(() => {
-    if (!(state.room && pcState.status === 'open')) {
-      return;
-    }
-
-    // Reconcile the Room Peers with the PeerConnections
-    //  i.e. Remove any peer connections that aren't part of the room anymore!
-    Object.keys(pcState.client.connections).forEach((peerId) => {
-      if (!state.room) {
-        return;
-      }
-
-      if (!state.room.peers[peerId]) {
-        pcState.client.removePeerConnection(peerId);
-      }
-    });
-  }, [state.room, pcState]);
 
   // Context State Management
   useEffect(() => {
@@ -84,140 +44,106 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
         };
       }
 
-      if (!state.room) {
+      if (state.room && pcState.status === 'open') {
         return {
-          state: 'notJoined',
+          state: 'joined',
           proxy,
           me: state.me,
-          joinRoom: (credentials: RoomCredentials) => {
+          room: state.room,
+          connected: pcState.status === 'open' && pcState.connected,
+
+          connectToRoom: () => {
+            if (state.room?.peers) {
+              pcState.connect(state.room.peers);
+            }
+          },
+
+          disconnectFromRoom: () => {
+            if (pcState.status === 'open') {
+              pcState.disconnect();
+            }
+          },
+
+          leaveRoom: () => {
+            pcState.destroy();
+
             socket.send({
-              kind: 'joinRoomRequest',
-              content: {
-                roomId: credentials.id,
-                code: credentials.code,
-              },
+              kind: 'leaveRoomRequest',
+              content: undefined,
             });
           },
+
+          // this is needed here as otherwise the old state is used
+          broadcastMessage: (message) => {
+            const payload: PeerMessageEnvelope = {
+              message,
+              timestamp: toISODateTime(new Date()),
+            };
+
+            if (pcState.status === 'open') {
+              Object.values(pcState.client.connections).forEach((apc) => {
+                apc.sendMessage(payload);
+              });
+            }
+
+            proxy.publishOnPeerMessageSent(payload);
+          },
+
           request: (payload) => socket?.send(payload),
         };
       }
 
       return {
-        state: 'joined',
+        state: 'notJoined',
         proxy,
         me: state.me,
-        room: state.room,
-        connected: pcState.status === 'open' && pcState.connected,
-
-        // This is the action that starts the P2P connection
-        //  and it needs to be on demand so the user is in control
-        //  of it!
-        connectToRoom: () => {
-          if (pcState.status === 'open' && state.room?.peers) {
-            pcState.connect(state.room.peers);
-          }
-        },
-
-        disconnectFromRoom: () => {
-          if (pcState.status === 'open') {
-            pcState.disconnect();
-          }
-        },
-
-        leaveRoom: () => {
+        joinRoom: (credentials: RoomCredentials) => {
           socket.send({
-            kind: 'leaveRoomRequest',
-            content: undefined,
+            kind: 'joinRoomRequest',
+            content: {
+              roomId: credentials.id,
+              code: credentials.code,
+            },
           });
         },
-
-        // this is needed here as otherwise the old state is used
-        broadcastMessage: (message) => {
-          const payload: PeerMessageEnvelope = {
-            message,
-            timestamp: toISODateTime(new Date()),
-          };
-
-          if (pcState.status === 'open') {
-            Object.values(pcState.client.connections).forEach((apc) => {
-              apc.sendMessage(payload);
-            });
-          }
-
-          proxy.publishOnPeerMessageSent(payload);
-        },
-
         request: (payload) => socket?.send(payload),
       };
     });
   }, [state.room, state.me, socket, pcState]);
 
-  // Socket Message Handler
-  useEffect(() => {
-    if (!socket) {
-      return;
-    }
-
-    const onMessageUnsubscriber = socket.onMessage((msg) => {
-      if (msg.kind === 'iam') {
-        if (!state.me) {
-          dispatch(
-            createMeAction({
-              me: msg.content.peer,
-              joinedRoom: msg.content.hasJoinedRoom ? msg.content.room : undefined,
-            })
-          );
-        } else {
-          dispatch(
-            updateMeAction({
-              me: msg.content.peer,
-              joinedRoom: msg.content.hasJoinedRoom ? msg.content.room : undefined,
-            })
-          );
-        }
-      } else if (msg.kind === 'joinedRoomUpdated') {
-        dispatch(updateRoomAction({ room: msg.content }));
-
-        return;
-      } else if (msg.kind === 'joinRoomSuccess') {
-        dispatch(
-          createRoomAction({
-            room: msg.content.room,
-            me: msg.content.me,
-          })
-        );
-      }
-    });
-
-    return () => {
-      onMessageUnsubscriber();
-    };
-  }, [socket, state]);
+  // TODO: Show a proper message if not authenticated for some reason
+  if (auth.authenticationType === 'none') {
+    return null;
+  }
 
   return (
     <>
-      {/* TODO: Make sure this works correctly when the auth user changes */}
-      {auth.authenticationType !== 'none' && (
-        // TODO: This is rendered here only to be able to react to its events
-        // not UI, but ideally it will be a hook!
-        <SocketConsumer
-          onReady={(socketClient) => {
-            setSocket(socketClient);
+      <SocketConnectionHandler
+        user={auth.user}
+        dispatch={dispatch}
+        peerProviderState={state}
+        onReady={setSocket}
+        render={() => {
+          // The state.room is important to be present
+          // before instantiating the handler b/c it should only
+          // be created before being ready to connect to the peers
+          if (iceServers && state.room) {
+            return (
+              <PeerConnectionsHandler
+                onPeerStream={(p) => dispatch(addPeerStream(p))}
+                onPeerDisconnected={(peerId) => {
+                  dispatch(closePeerChannelsAction({ peerId }));
+                }}
+                iceServers={iceServers}
+                user={auth.user}
+                onStateUpdate={setPCState}
+              />
+            );
+          }
 
-            socketClient.send({
-              kind: 'userIdentification',
-              content: { userId: auth.user.id },
-            });
-          }}
-          onClose={() => {
-            dispatch(removeMeAction());
-
-            // Once the socket closes destroy the PeerConnection as well
-            pcState.destroy();
-          }}
-          render={() => null}
-        />
-      )}
+          return null;
+        }}
+      />
       <PeerContext.Provider value={contextState}>{props.children}</PeerContext.Provider>
     </>
   );

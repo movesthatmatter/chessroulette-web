@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { Peer, Room } from '../RoomProvider';
-import { PeerConnectionsErrors } from './PeerConnections';
-import { PeerContext } from './PeerContext';
-import { Proxy } from './Proxy';
+import { Peer, Room } from '../../RoomProvider';
+import { PeerConnectionsErrors } from '../lib/PeerConnections';
+import { PeerContext } from '../PeerContext';
+import { Proxy } from '../lib/Proxy';
 import usePrevious from 'use-previous';
 import { SocketClient } from 'src/services/socket/SocketClient';
 
@@ -42,6 +42,8 @@ export type PeerState =
       status: 'disconnected';
     };
 
+// TODO: This should conincide to the context state and simply
+//  be a proxy to it!
 export const usePeerState = (): PeerState => {
   const context = useContext(PeerContext);
   const previousContextState = usePrevious(context.state);

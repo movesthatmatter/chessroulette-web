@@ -2,9 +2,9 @@ import { createContext } from 'react';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { Peer, Room } from '../RoomProvider';
-import { PeerConnectionsErrors } from './PeerConnections';
-import { Proxy } from './Proxy';
-import { RoomCredentials } from './util';
+import { PeerConnectionsErrors } from './lib/PeerConnections';
+import { Proxy } from './lib/Proxy';
+import { RoomCredentials } from './lib/util';
 
 export type PeerContextProps =
   | {
