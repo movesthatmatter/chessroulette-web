@@ -53,7 +53,7 @@ export const GenericRoomBouncer: React.FC<Props> = ({
         >
           {!(state.permissionsGranted || state.permissionsRequestAgreed) ? (
             <Text size="small1">
-              To be able to have an authentic chessroulette experience we need access to your camera
+              To be able to get the most out of your <strong>Chessroulette</strong> experience you need to allow access to your camera
               and microphone.
             </Text>
           ) : (

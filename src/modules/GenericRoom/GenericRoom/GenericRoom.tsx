@@ -33,9 +33,9 @@ export const GenericRoom: React.FC<Props> = ({
     }
   }, [peerState, connectionAttempt]);
 
-  const disconnectFromRoom = useCallback(() => {
+  const leaveRoom = useCallback(() => {
     if (peerState.status === 'open' && peerState.hasJoinedRoom) {
-      peerState.disconnectFromRoom();
+      peerState.leaveRoom();
     }
   }, [peerState]);
 
@@ -45,7 +45,7 @@ export const GenericRoom: React.FC<Props> = ({
   }, [connectToRoom]);
 
   useEffect(() => {
-    return disconnectFromRoom;
+    return leaveRoom;
   }, [])
 
   // This only support Play Rooms for now! 

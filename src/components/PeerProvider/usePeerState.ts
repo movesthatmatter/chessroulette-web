@@ -22,7 +22,13 @@ export type PeerState =
           room: Room;
           connected: boolean;
           connectToRoom: () => void;
+
+          // This disconnects from the Peers in the room
+          //  but doesn't leave – i.e. remains joined to the room
           disconnectFromRoom: () => void;
+
+          // This leaves the room
+          leaveRoom: () => void;
         }
       | {
           hasJoinedRoom: false;
@@ -64,6 +70,7 @@ export const usePeerState = (): PeerState => {
             connected: context.connected,
             connectToRoom: context.connectToRoom,
             disconnectFromRoom: context.disconnectFromRoom,
+            leaveRoom: context.leaveRoom,
           }
         : {
             hasJoinedRoom: false,
