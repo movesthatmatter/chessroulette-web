@@ -1,5 +1,5 @@
 import { Pubsy } from 'src/lib/Pubsy';
-import { PeerMessageEnvelope } from './records';
+import { PeerMessageEnvelope } from '../records';
 
 export class Proxy {
   private pubsy = new Pubsy<{

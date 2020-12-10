@@ -4,7 +4,7 @@ import { SocketClient } from 'src/services/socket/SocketClient';
 import { Peer, Room } from '../RoomProvider';
 import { PeerConnectionsErrors } from './lib/PeerConnections';
 import { Proxy } from './lib/Proxy';
-import { RoomCredentials } from './lib/util';
+import { RoomCredentials } from './types';
 
 export type PeerContextProps =
   | {

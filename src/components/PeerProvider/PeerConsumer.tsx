@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useReducer, useRef } from 'react';
-import { RoomRecord, RoomStatsRecord } from 'dstnd-io';
+import React, { useContext, useEffect, useRef } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { noop } from 'src/lib/util';
 import { PeerContext } from './PeerContext';
 import { Peer, Room } from '../RoomProvider';
-import { PeerMessageEnvelope } from './lib/records';
-import { RoomCredentials } from './lib/util';
+import { PeerMessageEnvelope } from './records';
+import { RoomCredentials } from './types';
 import { PeerConnectionsErrors } from './lib/PeerConnections';
 
 // TODO: Make use of the ContextProps with Omit or Pick since 95% of the fields are the same
