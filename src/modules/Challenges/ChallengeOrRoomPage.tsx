@@ -20,13 +20,6 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
   const peerState = usePeerState();
 
   useEffect(() => {
-    // If the peer state gets a room just set it as room info
-    // if (peerState.status === 'open' && peerState.hasJoinedRoom) {
-    //   setChallenge(undefined);
-    //   setRoomInfo(peerState.room);
-    //   return;
-    // }
-
     // If there is no joinedRoom, roomInfo or challenge, load the possible Challenge or RoomInfo
     if (!(challenge || roomInfo) && resourceState === 'none') {
       setResourceState('loading');

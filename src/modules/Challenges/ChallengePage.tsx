@@ -38,7 +38,7 @@ export const ChallengePage: React.FC<Props> = ({ challenge, myPeer }) => {
               .map(AsyncResult.passThrough((room) => {
                 Events.trackFriendlyChallengeAccepted();
 
-                history.push(toRoomUrlPath(room));
+                history.replace(toRoomUrlPath(room));
               }));
           }}
         />
