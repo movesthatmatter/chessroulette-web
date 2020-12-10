@@ -1,5 +1,6 @@
 import { RoomRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { usePeerState } from 'src/components/PeerProvider';
 import { Room } from 'src/components/RoomProvider';
@@ -15,7 +16,8 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo, ...props }) => {
   const [room, setRoom] = useState<Room | undefined>(
     peerState.status === 'open' && peerState.hasJoinedRoom ? peerState.room : undefined
   );
-  const { state: bouncerState } = useGenericRoomBouncer(true);
+  const { state: bouncerState } = useGenericRoomBouncer();
+  const history = useHistory();
 
   useEffect(() => {
     if (peerState.status !== 'open') {
@@ -41,6 +43,7 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo, ...props }) => {
     return (
       <GenericRoomBouncer
         roomInfo={roomInfo}
+        onCancel={() => history.goBack()}
         onReady={() => {
           if (peerState.status === 'open') {
             // This call will eventually get a peerState room

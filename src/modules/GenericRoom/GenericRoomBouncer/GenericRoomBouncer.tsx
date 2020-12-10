@@ -1,29 +1,31 @@
 import { RoomRecord } from 'dstnd-io';
-import React, { useEffect, useReducer, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Dialog } from 'src/components/Dialog/Dialog';
 import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
+import { Text } from 'src/components/Text';
 import { noop } from 'src/lib/util';
 import {
   confirmAction,
   grantPermissionsAction,
   agreePermissionsRequestAction,
-  initialState,
-  reducer,
 } from './reducer';
+import { selectroomBouncerState } from './selectors';
 
 type Props = {
   roomInfo?: RoomRecord;
   onReady?: () => void;
+  onCancel?: () => void;
 };
 
 // TODO: This is also where the facebook login will be for Random!
 export const GenericRoomBouncer: React.FC<Props> = ({
   onReady = noop,
+  onCancel = noop,
   ...props
 }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const history = useHistory();
+  const state = useSelector(selectroomBouncerState);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (state.ready) {
@@ -39,12 +41,21 @@ export const GenericRoomBouncer: React.FC<Props> = ({
     <Dialog
       visible={!state.ready}
       hasCloseButton={false}
+      title={
+        state.permissionsGranted ? "Smile – You're on camera!" : "Smile – You'll be on camera!"
+      }
       content={
-        <div style={{
-          textAlign: 'center',
-        }}>
+        <div
+          style={{
+            marginTop: '16px',
+            textAlign: 'center',
+          }}
+        >
           {!(state.permissionsGranted || state.permissionsRequestAgreed) ? (
-            `Just a few more steps before you can join the room!`
+            <Text size="small1">
+              To be able to have an authentic chessroulette experience we need access to your camera
+              and microphone.
+            </Text>
           ) : (
             <FaceTimeSetup
               onUpdated={(s) => {
@@ -68,7 +79,7 @@ export const GenericRoomBouncer: React.FC<Props> = ({
             }
           : {
               type: 'positive',
-              label: 'Join Room',
+              label: "I'm ready to Join",
               disabled: !state.permissionsGranted,
               onClick: () => {
                 dispatch(confirmAction());
@@ -76,10 +87,8 @@ export const GenericRoomBouncer: React.FC<Props> = ({
             },
         {
           type: 'secondary',
-          label: 'Take me back',
-          onClick: () => {
-            history.goBack();
-          },
+          label: 'Cancel',
+          onClick: onCancel,
         },
       ]}
     />

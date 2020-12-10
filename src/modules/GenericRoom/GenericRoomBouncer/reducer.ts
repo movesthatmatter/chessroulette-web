@@ -1,4 +1,5 @@
 import { createReducer, createAction } from 'deox';
+import { GenericStateSlice } from 'src/redux/types';
 
 export type State = {
   // Cmmera & Mic Permissions
@@ -69,3 +70,10 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
     }
   })
 ]));
+
+export const stateSliceByKey = {
+  roomBouncer: reducer,
+};
+
+export type ModuleState = ReturnType<typeof reducer>;
+export type ModuleStateSlice = GenericStateSlice<typeof stateSliceByKey, typeof reducer>;
