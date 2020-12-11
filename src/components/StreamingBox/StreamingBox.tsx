@@ -5,43 +5,64 @@ import { Peer, Room } from '../RoomProvider';
 import { MultiStreamingBox, MultiStreamingBoxProps } from './MultiStreamingBox';
 import cx from 'classnames';
 
-type Props = {
+export type StreamingBoxProps = {
   room: Room;
   width?: number;
   focusedPeerId?: Peer['id'];
   aspectRatio?: MultiStreamingBoxProps['aspectRatio'];
   containerClassName?: string;
+
+  headerOverlay?: MultiStreamingBoxProps['headerOverlay'];
+  mainOverlay?: MultiStreamingBoxProps['mainOverlay'];
+  footerOverlay?: MultiStreamingBoxProps['footerOverlay'];
 };
 
-export const StreamingBox: React.FC<Props> = (props) => {
+export const StreamingBox: React.FC<StreamingBoxProps> = (props) => {
   const cls = useStyles();
 
-  const activeStreamers = Object
-    .values(props.room.peers)
-    .reduce((prev, next) => {
-      if (!next.connection.channels.streaming.on) {
-        return prev;
-      }
+  const activeStreamers = Object.values(props.room.peers).reduce((prev, next) => {
+    if (!next.connection.channels.streaming.on) {
+      return prev;
+    }
 
-      return {
-        ...prev,
-        [next.id]: {
-          user: next.user,
-          streamingConfig: next.connection.channels.streaming,
-        }
-      }
-    }, {});
+    return {
+      ...prev,
+      [next.id]: {
+        user: next.user,
+        streamingConfig: next.connection.channels.streaming,
+      },
+    };
+  }, {});
 
   return (
-    <div className={cx(cls.container, props.containerClassName)} style={{ width: props.width || '100%' }}>
-      {(Object.keys(activeStreamers).length > 0) ? (
+    <div
+      className={cx(cls.container, props.containerClassName)}
+      style={{ width: props.width || '100%' }}
+    >
+      {Object.keys(activeStreamers).length > 0 ? (
         <MultiStreamingBox
           focusedUserId={props.focusedPeerId}
           streamersMap={activeStreamers}
           aspectRatio={props.aspectRatio}
+          footerOverlay={props.footerOverlay}
+          headerOverlay={props.headerOverlay}
+          mainOverlay={props.mainOverlay}
+          // No label here for now!
+          label={undefined}
         />
       ) : (
-        <MyFaceTime aspectRatio={props.aspectRatio}/>
+        <MyFaceTime
+          aspectRatio={props.aspectRatio}
+          headerOverlay={
+            props.headerOverlay ? props.headerOverlay({ inFocus: props.room.me.user }) : null
+          }
+          mainOverlay={
+            props.mainOverlay ? props.mainOverlay({ inFocus: props.room.me.user }) : null
+          }
+          footerOverlay={
+            props.footerOverlay ? props.footerOverlay({ inFocus: props.room.me.user }) : null
+          }
+        />
       )}
     </div>
   );

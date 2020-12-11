@@ -6,18 +6,23 @@ import { Streamer, StreamersMap } from '../types';
 import { Reel } from './components/Reel/Reel';
 import { reducer, initialState, initAction, focusAction, updateAction } from './reducer';
 
+type OverlayedNodeRender = (p: { inFocus: Streamer['user'] }) => React.ReactNode;
+
 export type MultiStreamingBoxProps = {
   streamersMap: StreamersMap;
   focusedUserId?: Streamer['user']['id'];
-  aspectRatio?: FaceTimeProps['aspectRatio'],
-};
+  headerOverlay?: OverlayedNodeRender;
+  footerOverlay?: OverlayedNodeRender;
+  mainOverlay?: OverlayedNodeRender;
+} & Omit<FaceTimeProps, 'streamConfig' | 'footer' | 'header'>;
 
 export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
-  aspectRatio = {
-    width: 4,
-    height: 3,
-  },
-  ...props
+  streamersMap,
+  focusedUserId,
+  headerOverlay,
+  mainOverlay,
+  footerOverlay,
+  ...faceTimeProps
 }) => {
   const cls = useStyles();
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -25,25 +30,29 @@ export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
   useEffect(() => {
     dispatch(
       initAction({
-        streamersMap: props.streamersMap,
-        focusedUserId: props.focusedUserId,
+        streamersMap: streamersMap,
+        focusedUserId: focusedUserId,
       })
     );
   }, []);
 
   useEffect(() => {
-    if (props.focusedUserId) {
-      dispatch(focusAction({
-        userId: props.focusedUserId,
-      }))
+    if (focusedUserId) {
+      dispatch(
+        focusAction({
+          userId: focusedUserId,
+        })
+      );
     }
-  }, [props.focusedUserId]);
+  }, [focusedUserId]);
 
   useEffect(() => {
-    dispatch(updateAction({
-      streamersMap: props.streamersMap,
-    }))
-  }, [props.streamersMap])
+    dispatch(
+      updateAction({
+        streamersMap: streamersMap,
+      })
+    );
+  }, [streamersMap]);
 
   if (!state.ready) {
     return null;
@@ -55,35 +64,78 @@ export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
         streamConfig={state.inFocus.streamingConfig}
         label={state.reel.length > 0 ? state.inFocus.user.name : ''}
         labelPosition="bottom-left"
-        aspectRatio={aspectRatio}
+        {...faceTimeProps}
       />
-      <div className={cls.reelWrapper}>
-        <Reel
-          reel={state.reel}
-          onClick={(userId) => {
-            dispatch(focusAction({ userId }));
-          }}
-        />
+      <div className={cls.overlayedContainer}>
+        <div className={cls.headerWrapper}>
+          {headerOverlay ? headerOverlay({ inFocus: state.inFocus.user }) : null}
+        </div>
+        <div className={cls.mainWrapper}>
+          <div className={cls.mainOverlayWrapper}>
+            {mainOverlay ? mainOverlay({ inFocus: state.inFocus.user }) : null}
+          </div>
+          <div className={cls.reelWrapper}>
+            <div className={cls.reelScroller}>
+              <Reel
+                reel={state.reel}
+                onClick={(userId) => {
+                  dispatch(focusAction({ userId }));
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className={cls.footerWrapper}>
+          {footerOverlay ? footerOverlay({ inFocus: state.inFocus.user }) : null}
+        </div>
       </div>
     </div>
   );
 };
 
 const useStyles = createUseStyles({
-  container: {},
-  reelWrapper: {
-    width: '22.2%',
+  container: {
+    position: 'relative',
+  },
+  overlayedContainer: {
     position: 'absolute',
-    top: '2%',
-    bottom: '2%',
-    right: '2%',
-    overflowY: 'scroll',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+
     display: 'flex',
-    flexDirection: 'column-reverse',
-    paddingBottom: '12px',
+    flexDirection: 'column',
+  },
+  headerWrapper: {},
+  footerWrapper: {},
+  mainWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    flex: 1,
+    minHeight: 0,
   },
   faceTimeAsButton: {
     cursor: 'pointer',
+  },
+  mainOverlayWrapper: {
+    flex: 1,
+  },
+  reelWrapper: {
+    display: 'flex',
+    flex: '0 1 auto',
+    overflow: 'auto',
+
+    width: '22.2%',
+    paddingRight: '8px',
+    paddingBottom: '8px',
+  },
+  reelScroller: {
+    minHeight: '100%',
+    overflowY: 'scroll',
+    display: 'flex',
+    flexDirection: 'column-reverse',
+    flex: 1,
   },
   reel: {},
   smallFacetimeWrapper: {
