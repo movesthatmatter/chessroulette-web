@@ -16,7 +16,7 @@ export type SocketConsumerProps = {
   }) => React.ReactNode;
 
   onReady?: (socket: SocketClient) => void;
-  onMessage?: Parameters<SocketClient['onMessage']>[0];
+  onMessage?: (msg: Parameters<Parameters<SocketClient['onMessage']>[0]>[0]) => void;
   onClose?: () => void;
 };
 

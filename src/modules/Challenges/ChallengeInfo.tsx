@@ -14,21 +14,18 @@ type Props = {
 
 export const ChallengeInfo: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const [faceTimeOn, setFaceTimeOn] = useState(false);
+  // const [faceTimeOn, setFaceTimeOn] = useState(false);
 
   return (
     <Dialog
       visible
       hasCloseButton={false}
       content={
-        <>
-          <Box margin={{bottom: 'medium'}} className={cls.textContainer}>
-            <Text>
-              You've been challenged to a <b>{props.challenge.gameSpecs.timeLimit}</b> game!
-            </Text>
-          </Box>
-          <FaceTimeSetup onUpdated={(s) => setFaceTimeOn(s.on)} />
-        </>
+        <div className={cls.textContainer}>
+          <Text>
+            You've been challenged to a <b>{props.challenge.gameSpecs.timeLimit}</b> game!
+          </Text>
+        </div>
       }
       buttons={[
         {
@@ -41,9 +38,9 @@ export const ChallengeInfo: React.FC<Props> = (props) => {
         {
           label: 'Accept',
           onClick: () => {
-            props.onAccept();;
+            props.onAccept();
           },
-          disabled: !faceTimeOn,
+          // disabled: !faceTimeOn,
         },
       ]}
     />

@@ -1,24 +1,9 @@
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
 import { Dialog } from './components/Dialog/Dialog';
-import { selectPeerProviderState, usePeerState } from './components/PeerProvider';
-import { toRoomUrlPath } from './lib/util';
+import { usePeerState } from './components/PeerProvider';
 
 export const RouteEffects: React.FC = () => {
-  const history = useHistory();
   const peerState = usePeerState();
-  const peerProviderState = useSelector(selectPeerProviderState);
-
-  useEffect(() => {
-    if (peerProviderState.room) {
-      const hasRoomInPath = history.location.pathname.indexOf(peerProviderState.room.slug) > -1;
-
-      if (!hasRoomInPath) {
-        history.push(toRoomUrlPath(peerProviderState.room));
-      }
-    }
-  }, [peerProviderState.room, history.location]);
 
   return (
     <Dialog

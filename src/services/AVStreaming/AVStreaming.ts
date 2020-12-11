@@ -8,7 +8,7 @@ export type AVStreamingConstraints = {
 type DestroyStreamFn = () => void;
 
 // Note: As of Dec 5h, 2020, It currently doesn't seperate the Audio from Video if needed in the future!
-class AVStreaming {
+class AVStreamingClass {
   private pendingStreamCreationPromise?: Promise<MediaStream>;
 
   public activeStreamsById: {
@@ -30,8 +30,6 @@ class AVStreaming {
   }
 
   private async createStream(constraints: AVStreamingConstraints): Promise<MediaStream> {
-    console.log('[AVStreaming] creating new stream');
-
     this.pendingStreamCreationPromise = navigator.mediaDevices.getUserMedia(constraints);
 
     const stream = await this.pendingStreamCreationPromise;
@@ -41,13 +39,10 @@ class AVStreaming {
     // Reset it again!
     this.pendingStreamCreationPromise = undefined;
 
-    console.log('[AVStreaming] active', Object.keys(instance.activeStreamsById).length, this.activeStreamsById);
-
     return stream;
   }
 
   destroyStreamById(streamId: string) {
-    console.log('[AVStreaming] destroyStreamById', streamId);
     const { [streamId]: stream, ...restActiveStreams } = this.activeStreamsById;
 
     if (stream) {
@@ -58,17 +53,23 @@ class AVStreaming {
       // Remove the stream from active
       this.activeStreamsById = restActiveStreams;
     }
+  }
 
-    console.log('[AVStreaming] active', Object.keys(instance.activeStreamsById).length, this.activeStreamsById);
+  // This is important because cloning requires permissions on some browsers
+  //  so adding a delay highers the possibility to reuse one!
+  // TODO: As of 12/09/2020 I haven't found a way to stop and restart the
+  //  same getUserMedia stream, but if that would work than all we would need
+  //  is to create one!
+  destroyStreamByIdAfter(streamId: string, ms = 250) {
+    setTimeout(() => {
+      this.destroyStreamById(streamId);
+    }, ms);
   }
 
   private cloneStream(stream: MediaStream) {
     const clonedStream = stream.clone();
-    console.log('[AVStreaming] cloning stream', stream?.id);
 
     this.activeStreamsById[clonedStream.id] = clonedStream;
-
-    console.log('[AVStreaming] active', Object.keys(instance.activeStreamsById).length, this.activeStreamsById);
 
     return clonedStream;
   }
@@ -89,8 +90,6 @@ class AVStreaming {
       audio: true,
     }
   ): Promise<MediaStream> {
-    console.log('[AVStreaming] getStream');
-
     if (this.pendingStreamCreationPromise) {
       return this
         .pendingStreamCreationPromise
@@ -136,10 +135,12 @@ class AVStreaming {
   }
 }
 
+export type AVStreaming = AVStreamingClass;
+
 let instance: AVStreaming;
 export const getAVStreaming = () => {
   if (!instance) {
-    instance = new AVStreaming();
+    instance = new AVStreamingClass();
   }
 
   return instance;

@@ -3,8 +3,9 @@ import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { Box, TextInput, Button } from 'grommet';
 import { Copy } from 'grommet-icons';
 import { noop } from 'src/lib/util';
-import { colors, onlyMobile, text } from 'src/theme';
+import { colors, onlyMobile } from 'src/theme';
 import cx from 'classnames';
+import { seconds } from 'src/lib/time';
 
 type Props = {
   value: string;
@@ -13,31 +14,27 @@ type Props = {
   onCopied?: () => void;
 };
 
-export const ClipboardCopy: React.FC<Props> = ({
-  onCopied = noop,
-  ...props
-}) => {
+export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, ...props }) => {
   const cls = useStyles();
   const [copied, setCopied] = useState(false);
 
   const copy = () => {
-    navigator.clipboard.writeText(props.value);
+    navigator.clipboard.writeText(props.value).then(() => {
+      setCopied(true);
 
-    setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, seconds(2));
 
-    onCopied();
-  }
+      onCopied();
+    });
+  };
 
   return (
-    <Box direction="row" className={cls.container} fill>
-      <TextInput
-        value={props.value}
-        plain
-        size="small"
-        className={cls.textInput}
-      />
+    <Box direction="row" className={cx(cls.container, copied && cls.containerCopied)} fill>
+      <TextInput value={props.value} plain size="small" className={cls.textInput} />
       <Button
-        icon={<Copy color={colors.neutralDarkest} className={cls.copyIcon}/>}
+        icon={<Copy color={colors.neutralDarkest} className={cls.copyIcon} />}
         className={cx(cls.copyButton)}
         size="small"
         plain
@@ -53,6 +50,10 @@ const useStyles = createUseStyles({
     border: `1px solid ${colors.neutral}`,
     borderRadius: '40px',
     overflow: 'hidden',
+    transition: 'border 150ms ease-in',
+  },
+  containerCopied: {
+    borderColor: colors.positive,
   },
   textInput: {
     ...makeImportant({

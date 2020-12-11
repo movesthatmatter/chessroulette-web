@@ -3177,6 +3177,11 @@
   resolved "https://registry.yarnpkg.com/@use-it/event-listener/-/event-listener-0.1.5.tgz#870456241bfef66acea6395c69b66fe516bee3cd"
   integrity sha512-SWbhB0iFcoNL1BEldApGTqfB9aoGpU82iZUVTBtZaTFNrVKAGwuQTF15N9MzRvTgyuOASWf1pCKXbdVtKZgeRg==
 
+"@use-it/instance@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@use-it/instance/-/instance-0.3.0.tgz#312fc9d233ad502a24a3287b7ac59cfc203a3fad"
+  integrity sha512-zSGzTkqf2dviql9ucDqo4CLv4B+C8eds0+cO+N91XAkcPE+xoE7ldXwk+FhJxBx3Fe51vjYUW51S6/ciawP2Rg==
+
 "@vercel/build-utils@2.4.2":
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-2.4.2.tgz#38604af38faa7d94e39ef98c9e579ad34579b0e9"

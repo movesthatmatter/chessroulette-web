@@ -1,6 +1,6 @@
 import { PeerRecord } from 'dstnd-io';
 import { Pubsy } from 'src/lib/Pubsy';
-import { peerMessageEnvelope, PeerMessageEnvelope } from './records';
+import { peerMessageEnvelope, PeerMessageEnvelope } from '../records';
 import PeerSDK from 'peerjs';
 import { logsy } from 'src/lib/logsy';
 import { eitherToResult } from 'src/lib/ioutil';

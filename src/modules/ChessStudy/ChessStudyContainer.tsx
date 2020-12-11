@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import { PeerConsumer } from 'src/components/PeerProvider';
-import { PeerMessageEnvelope } from 'src/components/PeerProvider/records';
+import { PeerMessageEnvelope } from 'src/components/PeerProvider';
 import { Room } from 'src/components/RoomProvider';
 import { eitherToResult } from 'src/lib/ioutil';
 import { useDispatch, useSelector } from 'react-redux';

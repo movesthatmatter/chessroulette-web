@@ -15,6 +15,9 @@ export class PeerConnections {
 
   private pubsy = new Pubsy<{
     onOpen: void;
+    onClose: void;
+    onPeerConnected: PeerRecord['id'];
+    onPeerDisconnected: PeerRecord['id'];
     onError: PeerConnectionsErrors,
     onPeerStream: {
       peerId: PeerRecord['id'],
@@ -72,6 +75,15 @@ export class PeerConnections {
       const peerId = woNamespace(pc.peer);
 
       this.connections[peerId] = new ActivePeerConnection(peerId, pc);
+
+      const unsubscribeFromApcOnClose = this.connections[peerId].onClose(() => {
+        this.removePeerConnection(peerId);
+
+        this.pubsy.publish('onPeerDisconnected', peerId);
+      });
+      this.unsubscribers.push(unsubscribeFromApcOnClose);
+
+      this.pubsy.publish('onPeerConnected', peerId);
     };
     this.sdk.on('connection', onConnectionHandler);
     this.unsubscribers.push(() => this.sdk.off('connection', onConnectionHandler));
@@ -104,6 +116,7 @@ export class PeerConnections {
     // On Close Event
     const onCloseHandler = () => {
       logsy.info('[PeerConnections] PeerSDK Closed.');
+      this.pubsy.publish('onClose', undefined);
     };
     this.sdk.on('close', onCloseHandler);
     this.unsubscribers.push(() => this.sdk.off('close', onCloseHandler));
@@ -118,6 +131,18 @@ export class PeerConnections {
 
   onOpen(fn: () => void) {
     return this.pubsy.subscribe('onOpen', fn);
+  }
+
+  onClose(fn: () => void) {
+    return this.pubsy.subscribe('onClose', fn);
+  }
+
+  onPeerConnected(fn: (peerId: PeerRecord['id']) => void) {
+    return this.pubsy.subscribe('onPeerConnected', fn);
+  }
+
+  onPeerDisconnected(fn: (peerId: PeerRecord['id']) => void) {
+    return this.pubsy.subscribe('onPeerDisconnected', fn);
   }
 
   onPeerStream(fn: (props: {
@@ -165,6 +190,14 @@ export class PeerConnections {
                 call.off('stream', onStreamHandler);
               };
             });
+
+          this.pubsy.publish('onPeerConnected', peer.id);
+        });
+
+        const onCloseUnsubscriber = apc.onClose(() => {
+          this.removePeerConnection(peer.id);
+
+          this.pubsy.publish('onPeerDisconnected', peer.id);
         });
 
         this.connections[peer.id] = apc;
@@ -173,6 +206,7 @@ export class PeerConnections {
           // Put all the unsubscribers here
           onStreamUnsubscriber();
           onOpenUnsubscriber();
+          onCloseUnsubscriber();
         };
       });
 

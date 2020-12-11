@@ -13,7 +13,7 @@ import { defaultTheme } from 'src/theme';
 import { getRandomInt } from 'src/lib/util';
 import { Button } from 'src/components/Button';
 import { useSelector } from 'react-redux';
-import { RoomCredentials } from 'src/components/PeerProvider/util';
+import { RoomCredentials } from 'src/components/PeerProvider';
 import { UserRecordMocker } from 'src/mocks/records';
 
 export default {
@@ -82,14 +82,17 @@ const RoomContainer: React.FC<{
   return (
     <SocketConsumer
       onMessage={(msg) => {
-        if (msg.kind === 'challengeAccepted') {
-          setRoomCredentials({
-            id: msg.content.room.id,
-            ...(msg.content.room.type === 'private' && {
-              code: msg.content.room.code,
-            }),
-          });
+        if (msg.kind === 'iam') {
+
         }
+        // if (msg.kind === 'challengeAccepted') {
+        //   setRoomCredentials({
+        //     id: msg.content.room.id,
+        //     ...(msg.content.room.type === 'private' && {
+        //       code: msg.content.room.code,
+        //     }),
+        //   });
+        // }
       }}
       render={() => (
         <>
@@ -131,11 +134,11 @@ const RoomContainer: React.FC<{
               onReady={(p) => {
                 setPeer(p.me);
               }}
-              render={() => (
+              render={(p) => (
                 <>
                   {/* <pre>roomCredentials: {JSON.stringify(roomCredentials, null, 2) || '{}'}</pre>
                   <pre>{JSON.stringify(user, null, 2)}</pre> */}
-                  {showRoom && roomCredentials && <GenericRoom roomCredentials={roomCredentials} />}
+                  {showRoom && p.state === 'joined' && <GenericRoom room={p.room} />}
                 </>
               )}
             />

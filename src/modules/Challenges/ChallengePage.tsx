@@ -1,4 +1,4 @@
-import { ChallengeRecord } from 'dstnd-io';
+import { AsyncResult, ChallengeRecord } from 'dstnd-io';
 import { Box } from 'grommet';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { resources } from 'src/resources';
 import { ChallengeInfo } from './ChallengeInfo';
 import { Events } from 'src/services/Analytics';
 import { Peer } from 'src/components/RoomProvider';
+import { toRoomUrlPath } from 'src/lib/util';
 
 type Props = {
   challenge: ChallengeRecord;
@@ -22,26 +23,26 @@ export const ChallengePage: React.FC<Props> = ({ challenge, myPeer }) => {
 
   return (
     <Page>
-      <Box align="center" justify="center">
-        {myPeer && (
-          <ChallengeInfo
-            challenge={challenge}
-            onDeny={() => {
-              history.replace('/');
-            }}
-            onAccept={() => {
-              resources
-                .acceptChallenge({
-                  id: challenge.id,
-                  userId: myPeer.user.id,
-                })
-                .map(() => {
-                  Events.trackFriendlyChallengeAccepted();
-                });
-            }}
-          />
-        )}
-      </Box>
+      {myPeer && (
+        <ChallengeInfo
+          challenge={challenge}
+          onDeny={() => {
+            history.replace('/');
+          }}
+          onAccept={() => {
+            resources
+              .acceptChallenge({
+                id: challenge.id,
+                userId: myPeer.user.id,
+              })
+              .map(AsyncResult.passThrough((room) => {
+                Events.trackFriendlyChallengeAccepted();
+
+                history.replace(toRoomUrlPath(room));
+              }));
+          }}
+        />
+      )}
     </Page>
   );
 };

@@ -1,2 +1,2 @@
-export * from './GenericRoomPage';
 export * from './GenericRoom';
+export * from './GenericRoomBouncer';

@@ -38,6 +38,7 @@
     "@types/validatorjs": "^3.15.0",
     "@types/webfontloader": "^1.6.29",
     "@use-it/event-listener": "^0.1.5",
+    "@use-it/instance": "^0.3.0",
     "@wmik/use-media-recorder": "^1.0.0-alpha.4",
     "axios": "^0.19.2",
     "capitalize": "^2.0.3",

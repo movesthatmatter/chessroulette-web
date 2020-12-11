@@ -40,7 +40,7 @@ export const Page: React.FC<Props> = ({ logoAsLink = true, ...props }) => {
                   </a>
                 </div>
                 <div className={cls.linkWrapper}>
-                  <a className={cls.link} href="mailto:support@chessroulette.org">
+                  <a className={cls.link} href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage">
                     Contact
                   </a>
                 </div>

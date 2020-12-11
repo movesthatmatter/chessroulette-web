@@ -12,6 +12,12 @@ import { AwesomeError } from 'src/components/AwesomeError';
 import { useSelector } from 'react-redux';
 import { selectMyPeer } from 'src/components/PeerProvider';
 import { Events } from 'src/services/Analytics';
+import {
+  GenericRoomBouncer,
+  useGenericRoomBouncer,
+} from 'src/modules/GenericRoom/GenericRoomBouncer';
+import { toRoomUrlPath } from 'src/lib/util';
+import { useHistory } from 'react-router-dom';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   challengeType: PendingChallengeProps['type'];
@@ -30,15 +36,17 @@ type ChallengeState =
       room: RoomRecord;
     };
 
-export const ChallengeButtonWidget: React.FC<Props> = ({
-  challengeType,
-  ...buttonProps
-}) => {
+export const ChallengeButtonWidget: React.FC<Props> = ({ challengeType, ...buttonProps }) => {
   const [visiblePopup, setVisiblePopup] = useState<boolean>(false);
-  const [faceTimeOn, setFaceTimeOn] = useState(false);
+  // const [faceTimeOn, setFaceTimeOn] = useState(false);
   const [gameSpecs, setGameSpecs] = useState<GameSpecsRecord | undefined>(undefined);
   const [challengeState, setChallengeState] = useState<ChallengeState>({ state: 'none' });
   const myPeer = useSelector(selectMyPeer);
+  const history = useHistory();
+
+  const { state: bouncerState, ...bouncerActions } = useGenericRoomBouncer();
+
+  const reeadyToSubmit = gameSpecs && myPeer;
 
   useEffect(() => {
     if (!visiblePopup) {
@@ -51,10 +59,10 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
       return resources.deleteChallenge(challengeState.challenge.id).map(() => {
         setVisiblePopup(false);
       });
-    };
+    }
 
     setVisiblePopup(false);
-  }
+  };
 
   return (
     <>
@@ -79,28 +87,18 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                   room: msg.content.room,
                 });
                 setVisiblePopup(false);
+
+                history.push(toRoomUrlPath(msg.content.room));
               }
             }}
-            fallbackRender={() => (
-              <AwesomeError />
-            )}
+            fallbackRender={() => <AwesomeError />}
             render={() => (
               <Box>
                 {challengeState.state === 'pending' && (
-                  <PendingChallenge
-                    challenge={challengeState.challenge}
-                    type={challengeType}
-                  />
+                  <PendingChallenge challenge={challengeState.challenge} type={challengeType} />
                 )}
                 {challengeState.state === 'none' && (
-                  <>
-                    <FaceTimeSetup onUpdated={(s) => setFaceTimeOn(s.on)} />
-                    <Box margin={{
-                      top: '28px',
-                    }}>
-                      <ChessChallengeCreator onUpdate={setGameSpecs} />
-                    </Box>
-                  </>
+                  <ChessChallengeCreator onUpdate={setGameSpecs} />
                 )}
               </Box>
             )}
@@ -117,7 +115,7 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
             label: 'Play',
             type: 'primary',
             onClick: () => {
-              if (!(myPeer && gameSpecs) ) {
+              if (!(myPeer && gameSpecs)) {
                 return;
               }
 
@@ -144,6 +142,12 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                   })
                   .map((r) => {
                     if (r.matched) {
+                      setChallengeState({
+                        state: 'none'
+                      });
+
+                      history.push(toRoomUrlPath(r.room));
+
                       Events.trackQuickPairingMatched();
                     } else {
                       setChallengeState({
@@ -156,7 +160,7 @@ export const ChallengeButtonWidget: React.FC<Props> = ({
                   });
               }
             },
-            disabled: !(faceTimeOn && gameSpecs && myPeer),
+            disabled: !reeadyToSubmit,
           },
         ]}
       />
