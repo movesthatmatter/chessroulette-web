@@ -112,120 +112,121 @@ export const GameRoomV2: React.FC<Props> = (props) => {
       <>
         <MobileGameRoomLayout
           getTopArea={(dimensions) => (
-              <StreamingBox
-                room={props.room}
-                focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
-                aspectRatio={dimensions}
-                headerOverlay={() => <NavigationHeader />}
-                mainOverlay={() => (
+            <StreamingBox
+              room={props.room}
+              focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
+              aspectRatio={dimensions}
+              headerOverlay={() => <NavigationHeader />}
+              mainOverlay={() => (
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    position: 'relative',
+                  }}
+                >
                   <div
+                    className={cls.mobileGameActionsContainer}
                     style={{
-                      width: '100%',
-                      height: '100%',
-                      position: 'relative',
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
                     }}
                   >
-                    <div
-                      className={cls.mobileGameActionsContainer}
-                      style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                      }}
-                    >
-                      <div ref={mobileGameActionsRef}>
-                        <AppsRounded
-                          color={colors.white}
-                          onMouseDown={() => setShowMobileGameActionsMenu(true)}
-                        />
-                      </div>
-                      {showMobileGameActionsMenu && mobileGameActionsRef.current && (
-                        <Layer
-                          responsive={false}
-                          position="bottom"
-                          animation="slide"
-                          className={cls.mobileGameActionMenuLayer}
-                          onClickOutside={() => setShowMobileGameActionsMenu(false)}
-                        >
-                          <Text size="small2" className={cls.mobileDialogTitle}>
-                            What's your next move?
-                          </Text>
-                          <div className={cls.mobileGameActionButtonsContainer}>
-                            {(game.state === 'finished' ||
-                              game.state === 'stopped' ||
-                              game.state === 'neverStarted') && (
-                              <ActionButton
-                                type="primary"
-                                label="Rematch"
-                                actionType="positive"
-                                icon={Refresh}
-                                full
-                                hideLabelUntilHover={false}
-                                onSubmit={() => {
-                                  props.onRematchOffer();
-                                  setShowMobileGameActionsMenu(false);
-                                }}
-                                className={cls.gameActionButton}
-                              />
-                            )}
-                            {game.state === 'pending' && (
-                              <ActionButton
-                                type="primary"
-                                label="Abort"
-                                confirmation="Sure want to Abort?"
-                                actionType="negative"
-                                icon={Halt}
-                                full
-                                hideLabelUntilHover={false}
-                                onSubmit={() => {
-                                  props.onAbort();
-                                  setShowMobileGameActionsMenu(false);
-                                }}
-                                className={cls.gameActionButton}
-                              />
-                            )}
-                            {game.state === 'started' && (
-                              <>
-                                <ActionButton
-                                  type="primary"
-                                  label="Resign"
-                                  actionType="negative"
-                                  confirmation="Really Resigning?"
-                                  icon={Flag}
-                                  full
-                                  hideLabelUntilHover={false}
-                                  onSubmit={() => {
-                                    props.onResign(homeColor);
-                                    setShowMobileGameActionsMenu(false);
-                                  }}
-                                  className={cls.gameActionButton}
-                                />
-                                <ActionButton
-                                  type="primary"
-                                  label="Offer Draw"
-                                  confirmation="Yes, I want a draw!"
-                                  actionType="positive"
-                                  icon={Split}
-                                  full
-                                  hideLabelUntilHover={false}
-                                  onSubmit={() => {
-                                    props.onOfferDraw();
-                                    setShowMobileGameActionsMenu(false);
-                                  }}
-                                  className={cls.gameActionButton}
-                                />
-                              </>
-                            )}
-                          </div>
-                        </Layer>
-                      )}
+                    <div ref={mobileGameActionsRef}>
+                      <AppsRounded
+                        color={colors.white}
+                        onClick={() => setShowMobileGameActionsMenu(true)}
+                        className={cls.mobileGameActionsButtonIcon}
+                      />
                     </div>
+                    {showMobileGameActionsMenu && mobileGameActionsRef.current && (
+                      <Layer
+                        responsive={false}
+                        position="bottom"
+                        animation="slide"
+                        className={cls.mobileGameActionMenuLayer}
+                        onClickOutside={() => setShowMobileGameActionsMenu(false)}
+                      >
+                        <Text size="small2" className={cls.mobileDialogTitle}>
+                          What's your next move?
+                        </Text>
+                        <div className={cls.mobileGameActionButtonsContainer}>
+                          {(game.state === 'finished' ||
+                            game.state === 'stopped' ||
+                            game.state === 'neverStarted') && (
+                            <ActionButton
+                              type="primary"
+                              label="Rematch"
+                              actionType="positive"
+                              icon={Refresh}
+                              full
+                              hideLabelUntilHover={false}
+                              onSubmit={() => {
+                                props.onRematchOffer();
+                                setShowMobileGameActionsMenu(false);
+                              }}
+                              className={cls.gameActionButton}
+                            />
+                          )}
+                          {game.state === 'pending' && (
+                            <ActionButton
+                              type="primary"
+                              label="Abort"
+                              confirmation="Sure want to Abort?"
+                              actionType="negative"
+                              icon={Halt}
+                              full
+                              hideLabelUntilHover={false}
+                              onSubmit={() => {
+                                props.onAbort();
+                                setShowMobileGameActionsMenu(false);
+                              }}
+                              className={cls.gameActionButton}
+                            />
+                          )}
+                          {game.state === 'started' && (
+                            <>
+                              <ActionButton
+                                type="primary"
+                                label="Resign"
+                                actionType="negative"
+                                confirmation="Really Resigning?"
+                                icon={Flag}
+                                full
+                                hideLabelUntilHover={false}
+                                onSubmit={() => {
+                                  props.onResign(homeColor);
+                                  setShowMobileGameActionsMenu(false);
+                                }}
+                                className={cls.gameActionButton}
+                              />
+                              <ActionButton
+                                type="primary"
+                                label="Offer Draw"
+                                confirmation="Yes, I want a draw!"
+                                actionType="positive"
+                                icon={Split}
+                                full
+                                hideLabelUntilHover={false}
+                                onSubmit={() => {
+                                  props.onOfferDraw();
+                                  setShowMobileGameActionsMenu(false);
+                                }}
+                                className={cls.gameActionButton}
+                              />
+                            </>
+                          )}
+                        </div>
+                      </Layer>
+                    )}
                   </div>
-                )}
-                // Account for the rounded border
-                footerOverlay={() => <div style={{ height: '32px' }} />}
-              />
+                </div>
+              )}
+              // Account for the rounded border
+              footerOverlay={() => <div style={{ height: '32px' }} />}
+            />
           )}
           getMainArea={(dimensions) => (
             <div className={cls.mobileMainContainer}>
@@ -593,6 +594,9 @@ const useStyles = createUseStyles({
   },
 
   // Mobile
+  mobileGameActionsButtonIcon: {
+    ...floatingShadow,
+  },
   mobileGameActionsContainer: {
     // display: 'flex',
 
@@ -622,7 +626,6 @@ const useStyles = createUseStyles({
   mobileDialogTitle: {
     ...fonts.subtitle1,
   },
-
   mobileMainContainer: {
     paddingBottom: '8px',
   },
