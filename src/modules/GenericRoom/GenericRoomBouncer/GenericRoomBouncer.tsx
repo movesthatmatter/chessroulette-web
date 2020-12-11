@@ -5,6 +5,7 @@ import { Dialog } from 'src/components/Dialog/Dialog';
 import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
 import { Text } from 'src/components/Text';
 import { noop } from 'src/lib/util';
+import { Events } from 'src/services/Analytics';
 import {
   confirmAction,
   grantPermissionsAction,
@@ -13,7 +14,7 @@ import {
 import { selectroomBouncerState } from './selectors';
 
 type Props = {
-  roomInfo?: RoomRecord;
+  roomInfo: RoomRecord;
   onReady?: () => void;
   onCancel?: () => void;
 };
@@ -53,8 +54,8 @@ export const GenericRoomBouncer: React.FC<Props> = ({
         >
           {!(state.permissionsGranted || state.permissionsRequestAgreed) ? (
             <Text size="small1">
-              To be able to get the most out of your <strong>Chessroulette</strong> experience you need to allow access to your camera
-              and microphone.
+              To be able to get the most out of your <strong>Chessroulette</strong>
+              experience you need to allow access to your camera and microphone.
             </Text>
           ) : (
             <FaceTimeSetup
@@ -74,6 +75,8 @@ export const GenericRoomBouncer: React.FC<Props> = ({
               type: 'primary',
               label: 'Start my Camera',
               onClick: () => {
+                Events.trackAVPermissionsRequestAccepted(props.roomInfo.type);
+
                 dispatch(agreePermissionsRequestAction());
               },
             }
@@ -82,13 +85,19 @@ export const GenericRoomBouncer: React.FC<Props> = ({
               label: "I'm ready to Join",
               disabled: !state.permissionsGranted,
               onClick: () => {
+                Events.trackRoomJoiningConfirmed(props.roomInfo.type);
+
                 dispatch(confirmAction());
               },
             },
         {
           type: 'secondary',
           label: 'Cancel',
-          onClick: onCancel,
+          onClick: () => {
+            Events.trackRoomJoiningCanceled(props.roomInfo.type);
+
+            onCancel();
+          },
         },
       ]}
     />

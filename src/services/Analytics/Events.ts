@@ -1,8 +1,6 @@
 import capitalize from 'capitalize';
 import ReactGA from 'react-ga';
 
-type EventCategory = 'User' | 'Game - Chess' | 'Player - Chess' | 'Chat';
-
 const trackEvent = ({
   category,
   action,
@@ -37,6 +35,14 @@ type GameEndedReason =
   | 'Stalemate'
   | 'Threefold Repetition';
 
+enum EventCategory {
+  User = 'User',
+  GameChess = 'Game - Chess',
+  PlayerChess = 'Player - Chess',
+  Chat = 'Chat',
+  Room = 'Room',
+}
+
 export const Events = {
   trackEvent,
 
@@ -55,75 +61,93 @@ export const Events = {
   },
 
   trackChallengeCreated: (type: ChallengeType) => trackEvent({
-    category: 'User',
+    category: EventCategory.User,
     action: 'Challenge Created',
     description: type,
   }),
 
   trackFriendlyChallengeAccepted: () => trackEvent({
-    category: 'User',
+    category: EventCategory.User,
     action: 'Friendly Challenge Accepted',
   }),
 
   trackQuickPairingMatched: () => trackEvent({
-    category: 'User',
+    category: EventCategory.User,
     action: 'Quick Pairing Matched',
   }),
 
+  trackAVPermissionsRequestAccepted: (type: 'public' | 'private') => trackEvent({
+    category: EventCategory.Room,
+    action: 'AV Permissions Request Accepted',
+    description: capitalize(type),
+  }),
+
+  trackRoomJoiningConfirmed: (type: 'public' | 'private') => trackEvent({
+    category: EventCategory.Room,
+    action: 'Room Joining Confirmed',
+    description: capitalize(type),
+  }),
+
+  trackRoomJoiningCanceled: (type: 'public' | 'private') => trackEvent({
+    category: EventCategory.Room,
+    action: 'Room Joining Canceled',
+    description: capitalize(type),
+  }),
+
   trackDrawOffered: () => trackEvent({
-    category: 'Player - Chess',
+    category: EventCategory.PlayerChess,
     action: 'Draw Offered',
   }),
 
   trackDrawAccepted: () => trackEvent({
-    category: 'Player - Chess',
+    category: EventCategory.PlayerChess,
     action: 'Draw Accepted',
   }),
 
   trackDrawDenied: () => trackEvent({
-    category: 'Player - Chess',
+    category: EventCategory.PlayerChess,
     action: 'Draw Denied',
   }),
 
   trackResigned: () => trackEvent({
-    category: 'Player - Chess',
+    category: EventCategory.PlayerChess,
     action: 'Resigned',
   }),
 
   trackAborted: () => trackEvent({
-    category: 'Player - Chess',
+    category: EventCategory.PlayerChess,
     action: 'Aborted',
   }),
 
   trackRematchOffered: () => trackEvent({
-    category: 'Player - Chess',
+    category: EventCategory.PlayerChess,
     action: 'Rematch Offered',
   }),
 
   trackRematchDenied: () => trackEvent({
-    category: 'Player - Chess',
+    category: EventCategory.PlayerChess,
     action: 'Rematch Denied',
   }),
 
   trackRematchAccepted: () => trackEvent({
-    category: 'Player - Chess',
+    category: EventCategory.PlayerChess,
     action: 'Rematch Accepted',
   }),
 
   trackGameStarted: (color: 'white' | 'black') => trackEvent({
-    category: 'Game - Chess',
+    category: EventCategory.GameChess,
     action: 'Game Started',
     description: capitalize(color),
   }),
 
   trackGameEnded: (reason: 'finished' | 'stopped') => trackEvent({
-    category: 'Game - Chess',
+    category: EventCategory.GameChess,
     action: 'Game Ended',
     description: capitalize(reason),
   }),
 
   trackChatMessageSent: () => trackEvent({
-    category: 'Chat',
+    category: EventCategory.Chat,
     action: 'Message Sent',
   }),
   // trackMoveMade: (color: 'white' | 'black') => trackEvent({
