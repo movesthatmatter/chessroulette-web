@@ -3,7 +3,7 @@ import { Page } from 'src/components/Page';
 import { ChallengeButtonWidget } from 'src/modules/Games/Chess/components/ChallengeButtonWidget';
 import chessBackground from '../LandingPage/assets/chess_icons.png';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, minMediaQuery, maxMediaQuery } from 'src/theme';
+import { colors, minMediaQuery, maxMediaQuery, onlySmallMobile } from 'src/theme';
 import { Events } from 'src/services/Analytics';
 
 type Props = {};
@@ -16,52 +16,51 @@ export const LandingPageV2: React.FC<Props> = () => {
   }, []);
 
   return (
-    <Page logoAsLink={false}>
-      <div className={cls.container}>
-        <div className={cls.inner}>
-          <div
-            style={{
-              flex: 1,
-              alignItems: 'flex-end',
-              display: 'flex',
-              flexDirection: 'row',
-            }}
-          >
-            <img
-              src={chessBackground}
+    <>
+      <Page logoAsLink={false}>
+        <div className={cls.container}>
+          <div className={cls.inner}>
+            <div
               style={{
-                width: '100%',
-                maxWidth: '500px',
+                flex: 1,
+                alignItems: 'flex-end',
+                display: 'flex',
+                flexDirection: 'row',
               }}
-              alt="Chessroulette Board"
-            />
-          </div>
-          <div className={cls.rightSide}>
-            <h1 className={cls.headerText}>Chessroulette</h1>
-            <h2 className={cls.subheaderText}>Where Chess meets Video.</h2>
-            <h3 className={cls.text}>No account needed.</h3>
-            <h3 className={cls.text}>Game hosting and video chat.</h3>
-            <h3 className={cls.text}>
-              Play with friends in a private lobby or start a quick game.
-            </h3>
-            <div className={cls.buttonWrapper}>
-              <ChallengeButtonWidget
-                label="Play a Friend"
-                challengeType="challenge"
-                style={{
-                  marginRight: '16px',
-                }}
+            >
+              <img
+                src={chessBackground}
+                className={cls.heroImage}
+                alt="Chessroulette Board"
               />
-              <ChallengeButtonWidget
-                label="Quick Game"
-                challengeType="quickPairing"
-                type="secondary"
-              />
+            </div>
+            <div className={cls.rightSide}>
+              <h1 className={cls.headerText}>Chessroulette</h1>
+              <h2 className={cls.subheaderText}>Where Chess meets Video.</h2>
+              <h3 className={cls.text}>No account needed.</h3>
+              <h3 className={cls.text}>Game hosting and video chat.</h3>
+              <h3 className={cls.text}>
+                Play with friends in a private lobby or start a quick game.
+              </h3>
+              <div className={cls.buttonWrapper}>
+                <ChallengeButtonWidget
+                  label="Play a Friend"
+                  challengeType="challenge"
+                  style={{
+                    marginRight: '16px',
+                  }}
+                />
+                <ChallengeButtonWidget
+                  label="Quick Game"
+                  challengeType="quickPairing"
+                  type="secondary"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </Page>
+      </Page>
+    </>
   );
 };
 
@@ -93,6 +92,15 @@ const useStyles = createUseStyles({
 
     ...maxMediaQuery(tabletBreakPoint, {
       flexDirection: 'column',
+    }),
+  },
+  heroImage: {
+    width: '90%',
+    margin: '0 auto',
+    maxWidth: '500px',
+
+    ...onlySmallMobile({
+      // width: '50%',
     }),
   },
   headerText: {

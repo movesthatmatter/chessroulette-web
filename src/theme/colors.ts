@@ -31,6 +31,8 @@ const secondary = neutral;
 const secondaryLight = neutralLight;
 const secondaryDark = neutralDark;
 
+const lightBackground = neutralLightest;
+
 export const colors = {
   primary,
   primaryHover,
@@ -64,4 +66,6 @@ export const colors = {
   neutralDark,
   neutralDarker,
   neutralDarkest,
+  
+  lightBackground,
 };

@@ -5,6 +5,7 @@ import { Room, RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { Events } from 'src/services/Analytics';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { usePeerState } from 'src/components/PeerProvider';
+import { Helmet } from 'react-helmet';
 
 type Props = {
   room: Room;
@@ -52,6 +53,9 @@ export const GenericRoom: React.FC<Props> = ({
 
   return (
     <>
+    {/* <Helmet> */}
+      {/* <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/> */}
+    {/* </Helmet> */}
     <GameRoomV2
       key={room.id}
       room={room as RoomWithPlayActivity}

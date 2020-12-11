@@ -25,6 +25,9 @@ body {
   -webkit-touch-callout: none;
 }
 
+body-landing-page {
+  background: 'purple',
+}
 
 /* if landscape mode is detected, rotate the entire site -90 degrees to hint rotating to landscape */
 /* @media (orientation: landscape) {

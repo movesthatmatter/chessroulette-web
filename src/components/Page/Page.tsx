@@ -5,6 +5,7 @@ import { colors, hideOnDesktop, hideOnMobile, text } from 'src/theme';
 import { Logo } from 'src/components/Logo';
 import cx from 'classnames';
 import { Footer } from '../Footer';
+import { Helmet } from 'react-helmet';
 
 type Props = {
   logoAsLink?: boolean;
@@ -15,6 +16,9 @@ export const Page: React.FC<Props> = ({ logoAsLink = true, ...props }) => {
 
   return (
     <div className={cls.container}>
+      <Helmet bodyAttributes={{ class: cls.body }}>
+        {/* <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/> */}
+      </Helmet>
       <div className={cls.paddingWrapper}>
         <div className={cls.top}>
           <div className={cls.topMain}>
@@ -40,7 +44,10 @@ export const Page: React.FC<Props> = ({ logoAsLink = true, ...props }) => {
                   </a>
                 </div>
                 <div className={cls.linkWrapper}>
-                  <a className={cls.link} href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage">
+                  <a
+                    className={cls.link}
+                    href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage"
+                  >
                     Contact
                   </a>
                 </div>
@@ -53,20 +60,38 @@ export const Page: React.FC<Props> = ({ logoAsLink = true, ...props }) => {
         </div>
         <main className={cls.main}>{props.children}</main>
         <Footer />
+        <div />
       </div>
     </div>
   );
 };
 
 const useStyles = createUseStyles({
+  body: {
+    background: colors.lightBackground,
+    // paddingTop: 'env(safe-area-inset-top, 16px)',
+    // paddingLeft: 'env(safe-area-inset-left, 16px)',
+    // paddingRight: 'env(safe-area-inset-right, 16px)',
+    // paddingBottom: 'env(safe-area-inset-bottom, 16px)',
+    // height: 'calc(100vh - (env(safe-area-inset-top, 16px) + env(safe-area-inset-bottom, 16px)))',
+    height: '100%',
+    width: '100%',
+    // flex: 1,
+  },
   container: {
     width: '100%',
     height: '100%',
-    background: '#F6F8FB',
+    // display: 'flex',
   },
   paddingWrapper: {
-    padding: '16px',
-    height: 'calc(100% - 32px)',
+    paddingLeft: '16px',
+    paddingRight: '16px',
+    // padding: '16px',
+    flex: 1,
+
+    // paddingBottom: 'env(safe-area-inset-bottom, 16px)',
+    // height: 'calc(100% - 32px)',
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -85,7 +110,7 @@ const useStyles = createUseStyles({
   },
   main: {
     width: '100%',
-    flex: 1,
+    // flex: 1,
   },
   userMenuWrapper: {},
   nav: {
