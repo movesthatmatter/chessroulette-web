@@ -5,6 +5,7 @@ import { Copy } from 'grommet-icons';
 import { noop } from 'src/lib/util';
 import { colors, onlyMobile, text } from 'src/theme';
 import cx from 'classnames';
+import { seconds } from 'src/lib/time';
 
 type Props = {
   value: string;
@@ -25,11 +26,15 @@ export const ClipboardCopy: React.FC<Props> = ({
 
     setCopied(true);
 
+    setTimeout(() => {
+      setCopied(false);
+    }, seconds(2))
+
     onCopied();
   }
 
   return (
-    <Box direction="row" className={cls.container} fill>
+    <Box direction="row" className={cx(cls.container, copied && cls.containerCopied)} fill>
       <TextInput
         value={props.value}
         plain
@@ -53,6 +58,10 @@ const useStyles = createUseStyles({
     border: `1px solid ${colors.neutral}`,
     borderRadius: '40px',
     overflow: 'hidden',
+    transition: 'border 150ms ease-in',
+  },
+  containerCopied: {
+    borderColor: colors.positive,
   },
   textInput: {
     ...makeImportant({
