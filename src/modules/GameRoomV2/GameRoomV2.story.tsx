@@ -68,15 +68,17 @@ export const defaultStory = () => (
           }) as RoomWithPlayActivity;
 
           return (
-            <StorybookReduxProvider initialState={{
-              authentication: {
-                authenticationType: 'guest',
-                user: {
-                  ...me.user,
-                  isGuest: true,
-                } as GuestUserRecord,
-              }
-            }}>
+            <StorybookReduxProvider
+              initialState={{
+                authentication: {
+                  authenticationType: 'guest',
+                  user: {
+                    ...me.user,
+                    isGuest: true,
+                  } as GuestUserRecord,
+                },
+              }}
+            >
               <SocketProvider>
                 <PeerProvider>
                   <GameRoomV2
@@ -101,6 +103,125 @@ export const defaultStory = () => (
         })
       }
     />
+  </Grommet>
+);
+
+export const withMultipleWatchers = () => (
+  <Grommet theme={defaultTheme} full>
+    <SocketProvider>
+      <WithLocalStream
+        render={(stream) =>
+          React.createElement(() => {
+            const me = peerMock.withChannels({
+              streaming: {
+                on: true,
+                type: 'audio-video',
+                stream,
+              },
+            });
+
+            const opponent = peerMock.withChannels({
+              streaming: {
+                on: true,
+                type: 'audio-video',
+                stream,
+              },
+            });
+
+            const watcher1 = peerMock.withChannels({
+              streaming: {
+                on: true,
+                type: 'audio-video',
+                stream,
+              },
+            });
+
+            const watcher2 = peerMock.withChannels({
+              streaming: {
+                on: true,
+                type: 'audio-video',
+                stream,
+              },
+            });
+
+            const watcher3 = peerMock.withChannels({
+              streaming: {
+                on: true,
+                type: 'audio-video',
+                stream,
+              },
+            });
+
+            const watcher4 = peerMock.withChannels({
+              streaming: {
+                on: true,
+                type: 'audio-video',
+                stream,
+              },
+            });
+
+            const homeColor = 'white';
+
+            const [currentGame] = useState<ChessGameState>(
+              chessGameActions.prepareGame({
+                players: [me.user, opponent.user],
+                preferredColor: homeColor,
+                timeLimit: 'blitz',
+              })
+            );
+
+            const publicRoom = roomMocker.withProps({
+              me,
+              peers: {
+                [opponent.id]: opponent,
+                [watcher1.id]: watcher1,
+                [watcher2.id]: watcher2,
+                [watcher3.id]: watcher3,
+                [watcher4.id]: watcher4,
+              },
+              name: 'Valencia',
+              type: 'public',
+              activity: {
+                type: 'play',
+                game: currentGame,
+              },
+            }) as RoomWithPlayActivity;
+
+            return (
+              <StorybookReduxProvider
+                initialState={{
+                  authentication: {
+                    authenticationType: 'guest',
+                    user: {
+                      ...me.user,
+                      isGuest: true,
+                    } as GuestUserRecord,
+                  },
+                }}
+              >
+                <PeerProvider>
+                  <GameRoomV2
+                    room={publicRoom}
+                    onMove={action('on move')}
+                    onAbort={action('onAbort')}
+                    onDrawAccepted={action('onDrawAccepted')}
+                    onDrawDenied={action('onDrawDenied')}
+                    onOfferDraw={action('onOfferDraw')}
+                    onRematchAccepted={action('onRematchAccepted')}
+                    onRematchDenied={action('onRematchDenied')}
+                    onRematchOffer={action('onRematchOffer')}
+                    onResign={action('onResign')}
+                    onOfferCanceled={action('onOfferCancel')}
+                    onTimerFinished={action('onTimerFinished')}
+                    onStatusCheck={action('onStatusCheck')}
+                  />
+                </PeerProvider>
+              </StorybookReduxProvider>
+            );
+          })
+        }
+      />
+    </SocketProvider>
   </Grommet>
 );
 
@@ -149,15 +270,17 @@ export const withSwitchingSides = () => (
           );
 
           return (
-            <StorybookReduxProvider initialState={{
-              authentication: {
-                authenticationType: 'guest',
-                user: {
-                  ...me.user,
-                  isGuest: true,
-                } as GuestUserRecord,
-              }
-            }}>
+            <StorybookReduxProvider
+              initialState={{
+                authentication: {
+                  authenticationType: 'guest',
+                  user: {
+                    ...me.user,
+                    isGuest: true,
+                  } as GuestUserRecord,
+                },
+              }}
+            >
               {/* <Page> */}
               <GameRoomV2
                 // key={publicRoom.me.id}
@@ -268,15 +391,17 @@ export const asPageWithStartedGame = () => (
           );
 
           return (
-            <StorybookReduxProvider initialState={{
-              authentication: {
-                authenticationType: 'guest',
-                user: {
-                  ...me.user,
-                  isGuest: true,
-                } as GuestUserRecord,
-              }
-            }}>
+            <StorybookReduxProvider
+              initialState={{
+                authentication: {
+                  authenticationType: 'guest',
+                  user: {
+                    ...me.user,
+                    isGuest: true,
+                  } as GuestUserRecord,
+                },
+              }}
+            >
               <GameRoomV2
                 room={publicRoom}
                 onMove={action('on move')}
@@ -344,15 +469,17 @@ export const withFinishedGame = () => (
           );
 
           return (
-            <StorybookReduxProvider initialState={{
-              authentication: {
-                authenticationType: 'guest',
-                user: {
-                  ...me.user,
-                  isGuest: true,
-                } as GuestUserRecord,
-              }
-            }}>
+            <StorybookReduxProvider
+              initialState={{
+                authentication: {
+                  authenticationType: 'guest',
+                  user: {
+                    ...me.user,
+                    isGuest: true,
+                  } as GuestUserRecord,
+                },
+              }}
+            >
               <GameRoomV2
                 room={publicRoom}
                 onMove={action('on move')}
