@@ -47,14 +47,14 @@ export const LandingPageV2: React.FC<Props> = () => {
             <div className={cls.buttonWrapper}>
               <ChallengeButtonWidget
                 label="Play a Friend"
-                challengeType="challenge"
+                challengeType='private'
                 style={{
                   marginRight: '16px',
                 }}
               />
               <ChallengeButtonWidget
                 label="Quick Game"
-                challengeType="quickPairing"
+                challengeType='public'
                 type="secondary"
               />
             </div>

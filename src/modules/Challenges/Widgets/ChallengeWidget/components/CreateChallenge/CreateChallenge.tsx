@@ -10,20 +10,15 @@ type State = GameSpecsRecord;
 
 export type ChessChallengeCreatorProps = {
   onUpdate: (state: State) => void;
-
-  timeLimit?: ChessGameTimeLimit;
-  preferredColor?: ChessPrefferedColorOption;
 };
 
-export const ChessChallengeCreator: React.FC<ChessChallengeCreatorProps> = ({
-  timeLimit = 'rapid',
-  preferredColor = 'random',
+export const CreateChallenge: React.FC<ChessChallengeCreatorProps> = ({
   ...props
 }) => {
   const cls = useStyles();
   const [state, setState] = useState<State>({
-    timeLimit,
-    preferredColor,
+    timeLimit: 'rapid',
+    preferredColor: 'random',
   });
 
   useEffect(() => {

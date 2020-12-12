@@ -44,6 +44,10 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
         };
       }
 
+      // Note: This means that if the RTC Server is down
+      //  it won't connect to a room. 
+      //  This is actualy super fucked up as it doesnt update properly like this!
+      // TODO: I need to rethin this whole context state shit!
       if (state.room && pcState.status === 'open') {
         return {
           state: 'joined',
@@ -53,15 +57,14 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           connected: pcState.status === 'open' && pcState.connected,
 
           connectToRoom: () => {
-            if (state.room?.peers) {
+            console.log('connect to room', pcState);
+            if (state.room?.peers && pcState.status === 'open') {
               pcState.connect(state.room.peers);
             }
           },
 
           disconnectFromRoom: () => {
-            if (pcState.status === 'open') {
-              pcState.disconnect();
-            }
+            pcState.disconnect();
           },
 
           leaveRoom: () => {

@@ -6833,9 +6833,9 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.1.2":
-  version "0.1.2"
-  resolved "https://github.com/dstnd/dstnd-io.git#057973145d1e8a2bbf0bca8b55818df7963fc97f"
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.1.3":
+  version "0.1.3"
+  resolved "https://github.com/dstnd/dstnd-io.git#076b90e930241ab78dfc050a862721a666ec837d"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"

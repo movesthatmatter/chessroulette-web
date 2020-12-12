@@ -3,14 +3,12 @@ import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
 import React, { useState } from 'react';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
-import { Button } from 'src/components/Button';
 import { ClipboardCopy } from 'src/components/CipboardCopy'
 import { createUseStyles } from 'src/lib/jss';
 import { toChallengeUrlPath } from 'src/lib/util';
 
 export type PendingChallengeProps = {
   challenge: ChallengeRecord;
-  type: 'challenge' | 'quickPairing';
 };
 
 export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
@@ -19,7 +17,7 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
 
   return (
     <Box gap="small" width="medium" className={cls.container}>
-      {props.type === 'quickPairing' ? (
+      {(props.challenge.type === 'public') ? (
         <>
           <Box margin={{ bottom: 'medium' }}>
             <Text>Waiting for opponent...</Text>

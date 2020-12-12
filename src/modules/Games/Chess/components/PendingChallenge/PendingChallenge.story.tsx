@@ -1,4 +1,3 @@
-import { action } from '@storybook/addon-actions';
 import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
@@ -15,18 +14,12 @@ const challengeMocker = new ChallengeMocker();
 
 export const asPrivateChallenge = () => (
   <Grommet theme={defaultTheme}>
-    <PendingChallenge
-      challenge={challengeMocker.record()}
-      type={'challenge'}
-    />
+    <PendingChallenge challenge={challengeMocker.record('public')} />
   </Grommet>
 );
 
 export const asQuickPairing = () => (
   <Grommet theme={defaultTheme}>
-    <PendingChallenge
-      challenge={challengeMocker.record()}
-      type={'quickPairing'}
-    />
+    <PendingChallenge challenge={challengeMocker.record('private')} />
   </Grommet>
 );
