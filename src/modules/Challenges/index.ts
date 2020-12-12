@@ -1,1 +1,1 @@
-export * from './ChallengePage';
+export * from './ChallengeOrRoomPage';
