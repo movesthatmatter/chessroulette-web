@@ -67,15 +67,18 @@ const useStyles = createUseStyles({
   mask: {
     margin: '0 auto',
     overflow: 'hidden',
-    background: `linear-gradient(top, ${colors.primary} 0%, #fff 300%)`,
+    background: `linear-gradient(top, ${colors.primaryLight} 100%, #fff 0%)`,
     position: 'relative',
     borderRadius: '50%',
     marginBottom: '16px',
     ...effects.floatingShadow,
+    zIndex: 999,
   },
   animationBox: {
     width: '300%',
     marginLeft: '-100%',
+    position: 'relative',
+    zIndex: 990,
   },
 
   reel: {
