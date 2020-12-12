@@ -1,12 +1,16 @@
 import { ChallengeRecord, RoomRecord, UserRecord } from 'dstnd-io';
-import React, { useEffect } from 'react';
-import { useSocketState } from 'src/components/SocketProvider';
+import React from 'react';
+import { useSocketOnMessage } from 'src/components/SocketProvider';
 import { PendingChallengeProps } from './PendingChallenge';
-import { AwesomeError } from 'src/components/AwesomeError';
 import { PendingChallenge } from './PendingChallenge';
 
 export type PendingChallengeContainerProps = PendingChallengeProps & {
-  onChallengeAccepted: (p: {
+  onAccepted: (p: {
+    id: ChallengeRecord['id']
+    chalengeeId: UserRecord['id'],
+    room: RoomRecord,
+  }) => void;
+  onMatched: (p: {
     id: ChallengeRecord['id']
     chalengeeId: UserRecord['id'],
     room: RoomRecord,
@@ -15,25 +19,26 @@ export type PendingChallengeContainerProps = PendingChallengeProps & {
 };
 
 export const PendingChallengeContainer: React.FC<PendingChallengeContainerProps> = (props) => {
-  const socketState = useSocketState();
-
-  useEffect(() => {
-    if (socketState.status === 'open') {
-      const unsubscribe = socketState.socket.onMessage((msg) => {
-        if (msg.kind === 'challengeAccepted') {
-          props.onChallengeAccepted({
-            id: msg.content.id,
-            chalengeeId: msg.content.userId,
-            room: msg.content.room,
-          });
-        }
-      });
-
-      return () => {
-        unsubscribe();
-      };
+  useSocketOnMessage((msg) => {
+    if (msg.kind === 'challengeAccepted') {
+      if (props.challenge.type === 'private') {
+        props.onAccepted({
+          id: msg.content.id,
+          chalengeeId: msg.content.userId,
+          room: msg.content.room,
+        });
+      } else {
+        // TODO: This is not 100% true b/c a public challenge could still be
+        //  accepted by going through the link. But for the current purposes
+        //  it's ok. this is a server change where the payload king is different!
+        props.onMatched({
+          id: msg.content.id,
+          chalengeeId: msg.content.userId,
+          room: msg.content.room,
+        });
+      }
     }
-  }, [socketState]);
+  });
 
   return (<PendingChallenge challenge={props.challenge} />);
 };

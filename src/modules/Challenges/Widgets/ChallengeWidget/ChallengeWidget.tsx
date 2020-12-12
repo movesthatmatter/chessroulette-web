@@ -1,10 +1,5 @@
 import capitalize from 'capitalize';
-import {
-  ChallengeRecord,
-  GameSpecsRecord,
-  RoomRecord,
-  UserRecord,
-} from 'dstnd-io';
+import { ChallengeRecord, GameSpecsRecord, RoomRecord, UserRecord } from 'dstnd-io';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ButtonProps } from 'src/components/Button';
@@ -17,20 +12,23 @@ import { CreateChallenge } from './components/CreateChallenge';
 import { PendingChallenge } from './components/PendingChallenge';
 
 type Props = {
-  onMatched?: (room: RoomRecord) => void;
-  onAccepted?: (room: RoomRecord) => void;
-  onDenied?: () => void;
-
-  // Do we need this?
-  onCanceled?: () => void;
+  // Called When a Quick Pair (public) is matched
+  onMatched: (room: RoomRecord) => void;
+  // Called when a private challenge is accepted
+  onAccepted: (room: RoomRecord) => void;
+  onCanceled: () => void;
 } & (
   | {
       challenge?: undefined;
       challengeType: ChallengeRecord['type'];
+      // Called when the user presses the cancel button
+      onDenied?: never;
     }
   | {
       challenge: ChallengeRecord;
       challengeType?: undefined;
+      // Called when a challenge is denied
+      onDenied: () => void;
     }
 );
 
@@ -60,18 +58,11 @@ type AccepingtChallengeState = {
 
 type State = CreatingChallengeState | WaitingForPairingState | AccepingtChallengeState;
 
-export const ChallengeWidget: React.FC<Props> = ({
-  onMatched = noop,
-  onAccepted = noop,
-  onCanceled = noop,
-  onDenied = noop,
-  ...props
-}) => {
+export const ChallengeWidget: React.FC<Props> = (props) => {
   const getCancelButton = (onClick: () => void): ButtonProps => ({
     label: 'Cancel',
     type: 'secondary',
     onClick: () => {
-      setState(undefined);
       onClick();
     },
   });
@@ -84,15 +75,20 @@ export const ChallengeWidget: React.FC<Props> = ({
       buttons: [
         getCancelButton(() => {
           return resources.deleteChallenge(challenge.id).map(() => {
-            onCanceled();
+            if (props.onCanceled) {
+              props.onCanceled();
+            }
           });
         }),
       ],
       content: (
         <PendingChallenge
           challenge={challenge}
-          onChallengeAccepted={({ room }) => {
-            onAccepted(room);
+          onAccepted={({ room }) => {
+            props.onAccepted(room);
+          }}
+          onMatched={({ room }) => {
+            props.onMatched(room);
           }}
         />
       ),
@@ -127,7 +123,7 @@ export const ChallengeWidget: React.FC<Props> = ({
         />
       ),
       buttons: [
-        getCancelButton(onCanceled),
+        getCancelButton(props.onCanceled || noop),
         {
           label: 'Play',
           type: 'primary',
@@ -152,7 +148,7 @@ export const ChallengeWidget: React.FC<Props> = ({
                 })
                 .map((r) => {
                   if (r.matched) {
-                    onMatched(r.room);
+                    props.onMatched(r.room);
 
                     Events.trackQuickPairingMatched();
                   } else {
@@ -178,7 +174,11 @@ export const ChallengeWidget: React.FC<Props> = ({
       __html: `Do you want to Play a <b>${capitalize(challenge.gameSpecs.timeLimit)}</b> game?`,
     },
     buttons: [
-      getCancelButton(onCanceled),
+      {
+        type: 'secondary',
+        label: 'Deny',
+        onClick: props.onDenied || noop,
+      },
       {
         type: 'primary',
         label: 'Play',
@@ -189,7 +189,7 @@ export const ChallengeWidget: React.FC<Props> = ({
               userId: user.id,
             })
             .map((room) => {
-              onAccepted(room);
+              props.onAccepted(room);
             });
         },
       },
@@ -234,5 +234,13 @@ export const ChallengeWidget: React.FC<Props> = ({
     return null;
   }
 
-  return <Dialog visible title={state.title} content={state.content} buttons={state.buttons} />;
+  return (
+    <Dialog
+      visible
+      hasCloseButton={false}
+      title={state.title}
+      content={state.content}
+      buttons={state.buttons}
+    />
+  );
 };

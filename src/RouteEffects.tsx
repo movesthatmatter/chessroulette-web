@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { Dialog } from './components/Dialog/Dialog';
 import { Page } from './components/Page';
 import { usePeerState } from './components/PeerProvider';
-import { SocketConsumer, useSocketOnMessage } from './components/SocketProvider';
+import { SocketConsumer } from './components/SocketProvider';
 import { toRoomUrlPath } from './lib/util';
 import { ChallengeWidget } from './modules/Challenges/Widgets/ChallengeWidget';
 
@@ -61,70 +61,81 @@ export const RouteEffects: React.FC = () => {
   }
 
   return (
-    <>
-      {/* The SocketConsumer is used here instead of the useSocketOnMessage b/c that restarts the 
-        socket connection when it closes, while this doesn't since on diconnect it's not rendered
-      */}
-      <SocketConsumer
-        onMessage={(msg) => {
-          if (msg.kind === 'iam') {
-            // If not on the challenge page already
-
-            if (
-              msg.content.hasActiveChallenge &&
-              !onChallengeOrRoomPage(msg.content.challenge.slug)
-            ) {
-              setActivityState({
-                activity: 'pendingChallenge',
-                challenge: msg.content.challenge,
-              });
-            } else if (msg.content.hasJoinedRoom && !onChallengeOrRoomPage(msg.content.room.slug)) {
-              setActivityState({
-                activity: 'joinedRoom',
-                room: msg.content.room,
-              });
-            }
+    <SocketConsumer
+      onMessage={(msg) => {
+        if (msg.kind === 'iam') {
+          if (msg.content.hasJoinedRoom && !onChallengeOrRoomPage) {
+            setActivityState({
+              activity: 'joinedRoom',
+              room: msg.content.room,
+            });
+          } else if (
+            msg.content.hasActiveChallenge &&
+            !onChallengeOrRoomPage(msg.content.challenge.slug)
+          ) {
+            setActivityState({
+              activity: 'pendingChallenge',
+              challenge: msg.content.challenge,
+            });
           }
-        }}
-        render={({ send }) => (
-          <>
-            {activityState.activity === 'pendingChallenge' && (
-              <ChallengeWidget challenge={activityState.challenge} />
-            )}
-            {activityState.activity === 'joinedRoom' && (
-              <Dialog
-                visible
-                title="Joined Room"
-                content="You are already part of a Room. What do you wnat to do?"
-                buttonsStacked
-                buttons={[
-                  {
-                    label: 'Go to Room',
-                    type: 'primary',
-                    onClick: () => {
-                      history.push(toRoomUrlPath(activityState.room));
+        }
+      }}
+      render={({ send }) => (
+        <>
+          {activityState.activity === 'pendingChallenge' && (
+            <ChallengeWidget
+              challenge={activityState.challenge}
+              onAccepted={(room) => {
+                setActivityState({ activity: 'none' });
 
-                      setActivityState({ activity: 'none' });
-                    },
-                  },
-                  {
-                    label: 'Leave Room',
-                    type: 'secondary',
-                    onClick: () => {
-                      send({
-                        kind: 'leaveRoomRequest',
-                        content: undefined,
-                      });
+                history.push(toRoomUrlPath(room));
+              }}
+              onMatched={(room) => {
+                setActivityState({ activity: 'none' });
 
-                      setActivityState({ activity: 'none' });
-                    },
+                history.push(toRoomUrlPath(room));
+              }}
+              onDenied={() => {
+                setActivityState({ activity: 'none' });
+              }}
+              onCanceled={() => {
+                setActivityState({ activity: 'none' });
+              }}
+            />
+          )}
+          {activityState.activity === 'joinedRoom' && (
+            <Dialog
+              visible
+              title="Joined Room"
+              content="You are already part of a Room. What do you wnat to do?"
+              buttonsStacked
+              buttons={[
+                {
+                  label: 'Go to Room',
+                  type: 'primary',
+                  onClick: () => {
+                    history.push(toRoomUrlPath(activityState.room));
+
+                    setActivityState({ activity: 'none' });
                   },
-                ]}
-              />
-            )}
-          </>
-        )}
-      />
-    </>
+                },
+                {
+                  label: 'Leave Room',
+                  type: 'secondary',
+                  onClick: () => {
+                    send({
+                      kind: 'leaveRoomRequest',
+                      content: undefined,
+                    });
+
+                    setActivityState({ activity: 'none' });
+                  },
+                },
+              ]}
+            />
+          )}
+        </>
+      )}
+    />
   );
 };

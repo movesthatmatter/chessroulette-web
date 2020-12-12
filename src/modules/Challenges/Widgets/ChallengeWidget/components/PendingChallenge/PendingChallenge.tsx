@@ -1,5 +1,4 @@
 import { ChallengeRecord } from 'dstnd-io';
-import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
 import React, { useState } from 'react';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
@@ -20,11 +19,13 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
       <div className={cls.top}>
         {props.challenge.type === 'public' ? (
           <>
-            {/* <Text>Waiting for opponent...</Text> */}
             <div className={cls.loader}>
               <AwesomeLoader minimal/>
             </div>
-            <Text size="small1">Wait here for someone across the world to join or <strong>Share this Magic Link</strong> to a friend!</Text>
+            <Text size="small1">
+              Wait here for someone across the world to join or 
+              <strong>Share this Magic Link</strong> to a friend!
+            </Text>
           </>
         ) : (
           <Text size="small1">Share this Magic Link to a friend</Text>

@@ -2,6 +2,7 @@ import { action } from '@storybook/addon-actions';
 import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 import { SocketProvider } from 'src/components/SocketProvider';
 import { ChallengeMocker, UserRecordMocker } from 'src/mocks/records';
 import { authenticate } from 'src/services/Authentication/resources';
@@ -72,8 +73,9 @@ export const acceptChallenge = () => (
       <ChallengeWidget
         challenge={challengeMocker.record('public')}
         onAccepted={action('on accepted')}
-        onCanceled={action('on canceled')}
+        onDenied={action('on canceled')}
         onMatched={action('on matched')}
+        onCanceled={action('on canceled')}
       />
     </StorybookReduxProvider>
   </Grommet>
@@ -100,8 +102,9 @@ export const pendingPublicChallenge = () => {
           <ChallengeWidget
             challenge={challenge}
             onAccepted={action('on accepted')}
-            onCanceled={action('on canceled')}
+            onDenied={action('on denied')}
             onMatched={action('on matched')}
+            onCanceled={action('on canceled')}
           />
         </SocketProvider>
       </StorybookReduxProvider>
@@ -130,8 +133,9 @@ export const pendingPrivateChallenge = () => {
           <ChallengeWidget
             challenge={challenge}
             onAccepted={action('on accepted')}
-            onCanceled={action('on canceled')}
+            onDenied={action('on denied')}
             onMatched={action('on matched')}
+            onCanceled={action('on canceled')}
           />
         </SocketProvider>
       </StorybookReduxProvider>

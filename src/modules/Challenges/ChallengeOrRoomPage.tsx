@@ -5,11 +5,9 @@ import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { resources } from 'src/resources';
 import { usePeerState } from 'src/components/PeerProvider';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
-import { ChallengePage } from './ChallengePage';
 import { GenericRoomPage } from '../GenericRoom/GenericRoom/GenericRoomPage';
 import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication';
-import { PendingChallenge } from '../Games/Chess/components/PendingChallenge/PendingChallenge';
 import { ChallengeWidget } from './Widgets/ChallengeWidget';
 import { Page } from 'src/components/Page';
 
@@ -57,16 +55,19 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
     );
   }
 
+  const goBackOrHome = () => {
+    history.length > 2 ? history.goBack() : history.push('/');
+  }
+
   if (challenge) {
     return (
       <Page>
         <ChallengeWidget
           challenge={challenge}
           onAccepted={setRoomInfo}
-          onCanceled={() => {
-            console.log('history', history)
-            history.length > 2 ? history.goBack() : history.push('/')
-          }}
+          onMatched={setRoomInfo}
+          onDenied={goBackOrHome}
+          onCanceled={goBackOrHome}
         />
       </Page>
     );
