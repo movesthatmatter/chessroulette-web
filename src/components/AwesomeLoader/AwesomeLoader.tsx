@@ -1,66 +1,60 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { useInterval } from 'src/lib/hooks';
-import { getRandomInt } from 'src/lib/util';
+import { getRandomInt, range, shuffle } from 'src/lib/util';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
-import { AspectRatio, AspectRatioProps } from '../AspectRatio';
-import { Box } from 'grommet';
+import { AspectRatio } from '../AspectRatio';
 import { Text } from 'src/components/Text';
 import cx from 'classnames';
+import { colors, effects } from 'src/theme';
 
-type Props = AspectRatioProps & {
+type Props = {
   minimal?: boolean;
+  size?: string | number;
 };
-
-const now = () => (new Date()).getTime();
 
 const sayings = [
   'Loading...',
 
-  'Jumping through many hoops to connect you',
+  'Jumping through many hoops',
   'Hold on a second Mister!',
-  'Tired of waiting?! Here we goooooo....Oops :)',
+  'Tired of waiting?! Here we goooooo 😀',
   'Look at that pretty face',
-  'Don\'t worry. We\'ll be there in a jiffy',
-  'Gotta\' make\'em wait ;)',
+  "Don't worry. We'll be there in a jiffy",
+  "Gotta' make'em wait 😉",
   'Establishing connection...',
 ];
 
 const getRandomSaying = () => sayings[getRandomInt(0, sayings.length - 1)];
 
-export const AwesomeLoader: React.FC<Props> = ({
-  aspectRatio = { width: 1, height: 1 },
-  minimal,
-}) => {
+const shuffleMids = () => shuffle(range(18, 0));
+
+export const AwesomeLoader: React.FC<Props> = ({ size = 200, minimal }) => {
   const cls = useStyles();
-  const [randomKey, setRandomKey] = useState(now());
+  const [shuffled, setShuffled] = useState(shuffleMids());
+  const [index, setIndex] = useState(0);
 
   useInterval(() => {
-    setRandomKey(now());
-  }, 2 * 1000);
+    if (index < shuffled.length - 1) {
+      setIndex(index + 1);
+    } else {
+      setShuffled(shuffleMids);
+      setIndex(0);
+    }
+  }, 2000);
 
   return (
     <div className={cls.container}>
-      <AspectRatio
-        aspectRatio={aspectRatio}
-        className={cls.mutunachiContainer}
-        key={randomKey}
-      >
-        <Mutunachi
-          random
-          className={cx([
-            cls.mutunachi,
-            minimal && cls.animatedMutunachi,
-          ])}
-        />
-      </AspectRatio>
-      {minimal || (
-        <Box pad="small">
-          <Text className={cls.text}>
-            {getRandomSaying()}
-          </Text>
-        </Box>
-      )}
+      <div className={cls.mask} style={{ width: size }}>
+        <AspectRatio aspectRatio={1}>
+          <div className={cls.animationBox}>
+            <div className={cls.mutunachiContainer}>
+              <Mutunachi mid={shuffled[index]} className={cx([cls.mutunachi, minimal])} />
+            </div>
+          </div>
+        </AspectRatio>
+      </div>
+      {minimal || <Text className={cls.text}>{getRandomSaying()}</Text>}
     </div>
   );
 };
@@ -70,37 +64,49 @@ const useStyles = createUseStyles({
     width: '100%',
     textAlign: 'center',
   },
-  mutunachiContainer: {
-    width: '60%',
+  mask: {
     margin: '0 auto',
+    overflow: 'hidden',
+    background: `linear-gradient(top, ${colors.primary} 0%, #fff 300%)`,
+    position: 'relative',
+    borderRadius: '50%',
+    marginBottom: '16px',
+    ...effects.floatingShadow,
+  },
+  animationBox: {
+    width: '300%',
+    marginLeft: '-100%',
+  },
+
+  reel: {
+    display: 'flex',
+  },
+  mutunachiContainer: {
+    width: '33.33%',
+    transform: 'translateX(200%)',
+    animation: '2000ms ease-in-out infinite',
+    animationName: '$snapLeft',
   },
   mutunachi: {
-    height: '100%',
+    width: '70%',
+    paddingTop: '30%',
+    paddingLeft: '15%',
   },
-
-  '@keyframes pulse': {
+  '@keyframes snapLeft': {
     '0%': {
-      opacity: 0.3,
+      transform: 'translateX(200%)',
     },
-
-    '50%': {
-      opacity: 0.95,
+    '25%': {
+      transform: 'translateX(100%)',
     },
-
+    '75%': {
+      transform: 'translateX(100%)',
+    },
     '100%': {
-      opacity: 0.3,
+      transform: 'translateX(0%)',
     },
   },
   text: {
-    fontSize: '18px',
-    fontWeight: 'normal',
-
-    animation: '2s infinite',
-    animationName: '$pulse',
+    fontSize: '14px',
   },
-
-  animatedMutunachi: {
-    animation: '2s infinite',
-    animationName: '$pulse',
-  }
 });

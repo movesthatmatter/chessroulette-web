@@ -20,11 +20,11 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
         {props.challenge.type === 'public' ? (
           <>
             <div className={cls.loader}>
-              <AwesomeLoader minimal/>
+              <AwesomeLoader minimal size="30%" />
             </div>
             <Text size="small1">
-              Wait here for someone across the world to join or 
-              <strong>Share this Magic Link</strong> to a friend!
+              Wait here for someone across the world to join or
+              <strong> Share this Magic Link</strong> to a friend!
             </Text>
           </>
         ) : (
@@ -46,7 +46,7 @@ const useStyles = createUseStyles({
     // paddingBottom: '32px',
   },
   loader: {
-    paddingBottom: '16px',
+    // paddingBottom: '16px',
   },
   top: {
     paddingBottom: '8px',
