@@ -38,7 +38,7 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo, ...props }) => {
 
   // If the user hasn't joined the existent Room yet
   //  make him go through the bouncer and have him join it!
-  if (roomInfo && !bouncerState.ready && peerState.status === 'open') {
+  if (roomInfo && !bouncerState.ready) {
     return (
       <Page>
         <GenericRoomBouncer
@@ -56,7 +56,9 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo, ...props }) => {
               });
             }
           }}
-        />
+        >
+          <AwesomeLoaderPage />
+        </GenericRoomBouncer>
       </Page>
     );
   }
