@@ -21,7 +21,10 @@ type SocketState =
       status: 'closed';
     };
 
-export const useSocketState = ({ autoDemandConnection = true }: Props = {}): SocketState => {
+export const useSocketState = ({
+  // Don't Start a Connection Automatically
+  autoDemandConnection = false,
+}: Props = {}): SocketState => {
   const contextState = useContext(SocketContext);
   const [socketState, setSocketState] = useState<SocketState>({ status: 'init' });
 
