@@ -72,13 +72,12 @@ const useStyles = createUseStyles({
     borderRadius: '50%',
     marginBottom: '16px',
     ...effects.floatingShadow,
-    zIndex: 999,
+    zIndex: 1,
   },
   animationBox: {
     width: '300%',
     marginLeft: '-100%',
     position: 'relative',
-    zIndex: 990,
   },
 
   reel: {
