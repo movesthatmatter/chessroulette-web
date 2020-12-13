@@ -34,7 +34,7 @@ export const RouteEffects: React.FC = () => {
         <Dialog
           visible
           title="You got disconnected!"
-          content="This could happen if you have another session opened!"
+          content="This could happen if you have another session opened or no internet!"
           hasCloseButton={false}
           buttonsStacked
           buttons={[
@@ -44,14 +44,6 @@ export const RouteEffects: React.FC = () => {
                 window.location.reload();
               },
               type: 'primary',
-              full: true,
-            },
-            {
-              label: "That's fine! Close this Page",
-              onClick: () => {
-                window.close();
-              },
-              type: 'secondary',
               full: true,
             },
           ]}
