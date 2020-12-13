@@ -125,7 +125,7 @@ export const ChallengeWidget: React.FC<Props> = (props) => {
       buttons: [
         getCancelButton(props.onCanceled || noop),
         {
-          label: 'Play',
+          label: 'Create',
           type: 'primary',
           withLoader: true,
           onClick: () => {
