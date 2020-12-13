@@ -19,7 +19,9 @@ export const ChallengeButtonWidget: React.FC<Props> = ({ challengeType, ...butto
   return (
     <>
       <Button
-        onClick={() => setVisiblePopup(true)}
+        onClick={() => {
+          setVisiblePopup(true)
+        }}
         {...buttonProps}
         disabled={!myPeer || buttonProps.disabled}
       />

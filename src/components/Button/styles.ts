@@ -56,6 +56,11 @@ const clear: CSSProperties = {
   } as CSSProperties['nestedKey']),
 };
 
+const hasLoader: CSSProperties = {
+  position: 'relative',
+  cursor: 'auto',
+};
+
 const full: CSSProperties = {
   ...makeImportant({
     width: '100%',
@@ -80,6 +85,9 @@ const primary: CSSProperties = {
     '&$clear': {
       borderColor: `${colors.primary} !important`,
     },
+    '&$clear$hasLoader $loader > div': {
+      backgroundColor: `${colors.primary} !important`,
+    },
   } as CSSProperties['nestedKey']),
 };
 
@@ -98,6 +106,9 @@ const secondary: CSSProperties = {
   ...({
     '&$clear': {
       borderColor: `${colors.secondary} !important`,
+    },
+    '&$clear$hasLoader $loader > div': {
+      backgroundColor: `${colors.secondary} !important`,
     },
     '& $icon': {
       fill: `${colors.neutralDarkest} !important`,
@@ -126,6 +137,9 @@ const positive: CSSProperties = {
     '&$clear': {
       borderColor: `${colors.positive} !important`,
     },
+    '&$clear$hasLoader $loader > div': {
+      backgroundColor: `${colors.positive} !important`,
+    },
   } as CSSProperties['nestedKey']),
 };
 
@@ -144,6 +158,9 @@ const negative: CSSProperties = {
   ...({
     '&$clear': {
       borderColor: `${colors.negative} !important`,
+    },
+    '&$clear$hasLoader $loader > div': {
+      backgroundColor: `${colors.negative} !important`,
     },
   } as CSSProperties['nestedKey']),
 };
@@ -164,6 +181,9 @@ const attention: CSSProperties = {
     '&$clear': {
       borderColor: `${colors.attention} !important`,
     },
+    '&$clear$hasLoader $loader > div': {
+      backgroundColor: `${colors.attention} !important`,
+    },
   } as CSSProperties['nestedKey']),
 };
 
@@ -171,6 +191,7 @@ export const buttonStyles = {
   button,
   clear,
   full,
+  hasLoader,
 
   primary,
   secondary,

@@ -5,6 +5,7 @@ import React from 'react';
 import { defaultTheme } from 'src/theme';
 import { Button } from './Button2';
 import { Dashboard, Group, Save, Tape, ObjectGroup, Key } from 'grommet-icons';
+import { delay } from 'src/lib/time';
 
 export default {
   component: Button,
@@ -94,7 +95,13 @@ export const defaultStory = () => (
           onClick={action('clicked')}
         />
         <Button label="Primary" type="primary" reverse icon={Group} onClick={action('clicked')} />
-        <Button label="Secondary" type="secondary" reverse icon={ObjectGroup} onClick={action('clicked')} />
+        <Button
+          label="Secondary"
+          type="secondary"
+          reverse
+          icon={ObjectGroup}
+          onClick={action('clicked')}
+        />
         <Button
           label="Attention"
           type="attention"
@@ -120,7 +127,13 @@ export const defaultStory = () => (
           onClick={action('clicked')}
         />
         <Button label="Primary" type="primary" full icon={Group} onClick={action('clicked')} />
-        <Button label="Secondary" type="secondary" full icon={ObjectGroup} onClick={action('clicked')} />
+        <Button
+          label="Secondary"
+          type="secondary"
+          full
+          icon={ObjectGroup}
+          onClick={action('clicked')}
+        />
         <Button label="Attention" type="attention" full icon={Save} onClick={action('clicked')} />
         <Button label="Disabled" disabled full icon={Key} onClick={action('clicked')} />
       </div>
@@ -196,88 +209,268 @@ export const defaultStory = () => (
         }}
       >
         <h4>Medium Sized</h4>
-        
-          <Button
-            label="Default"
-            icon={Dashboard}
-            size="medium"
-            clear
-            onClick={action('clicked')}
-          />
 
-          <Button
-            label="Positive"
-            type="positive"
-            size="medium"
-            icon={Tape}
-            onClick={action('clicked')}
-          />
-          <Button
-            label="Negative"
-            type="negative"
-            size="medium"
-            icon={ObjectGroup}
-            onClick={action('clicked')}
-          />
-          <Button
-            label="Primary"
-            type="primary"
-            clear
-            size="medium"
-            icon={Group}
-            onClick={action('clicked')}
-          />
-          <Button
-            label="Secondary"
-            type="secondary"
-            clear
-            size="medium"
-            icon={Group}
-            onClick={action('clicked')}
-          />
-          <Button label="Attention" type="attention" size="medium" onClick={action('clicked')} />
-          <Button label="Disabled" disabled size="medium" icon={Key} onClick={action('clicked')} />
+        <Button label="Default" icon={Dashboard} size="medium" clear onClick={action('clicked')} />
+
+        <Button
+          label="Positive"
+          type="positive"
+          size="medium"
+          icon={Tape}
+          onClick={action('clicked')}
+        />
+        <Button
+          label="Negative"
+          type="negative"
+          size="medium"
+          icon={ObjectGroup}
+          onClick={action('clicked')}
+        />
+        <Button
+          label="Primary"
+          type="primary"
+          clear
+          size="medium"
+          icon={Group}
+          onClick={action('clicked')}
+        />
+        <Button
+          label="Secondary"
+          type="secondary"
+          clear
+          size="medium"
+          icon={Group}
+          onClick={action('clicked')}
+        />
+        <Button label="Attention" type="attention" size="medium" onClick={action('clicked')} />
+        <Button label="Disabled" disabled size="medium" icon={Key} onClick={action('clicked')} />
       </div>
       <div
         style={{
-          width: '150px',
+          width: '250px',
           marginLeft: '16px',
         }}
       >
         <h4>Large Sized</h4>
-          <Button label="Default" icon={Dashboard} size="large" clear onClick={action('clicked')} />
-          <Button
-            label="Positive"
-            type="positive"
-            size="large"
-            icon={Tape}
-            onClick={action('clicked')}
-          />
-          <Button
-            label="Negative"
-            type="negative"
-            size="large"
-            icon={ObjectGroup}
-            onClick={action('clicked')}
-          />
-          <Button
-            label="Primary"
-            type="primary"
-            clear
-            size="large"
-            icon={Group}
-            onClick={action('clicked')}
-          />
-          <Button
-            label="Secondary"
-            type="secondary"
-            clear
-            size="large"
-            icon={Group}
-            onClick={action('clicked')}
-          />
-          <Button label="Attention" type="attention" size="large" onClick={action('clicked')} />
-          <Button label="Disabled" disabled size="large" icon={Key} onClick={action('clicked')} />
+        <Button label="Default" icon={Dashboard} size="large" clear onClick={action('clicked')} />
+        <Button
+          label="Positive"
+          type="positive"
+          size="large"
+          icon={Tape}
+          onClick={action('clicked')}
+        />
+        <Button
+          label="Negative"
+          type="negative"
+          size="large"
+          icon={ObjectGroup}
+          onClick={action('clicked')}
+        />
+        <Button
+          label="Primary"
+          type="primary"
+          clear
+          size="large"
+          icon={Group}
+          onClick={action('clicked')}
+        />
+        <Button
+          label="Secondary"
+          type="secondary"
+          clear
+          size="large"
+          icon={Group}
+          onClick={action('clicked')}
+        />
+        <Button label="Attention" type="attention" size="large" onClick={action('clicked')} />
+        <Button label="Disabled" disabled size="large" icon={Key} onClick={action('clicked')} />
+      </div>
+      <div
+        style={{
+          width: '200px',
+          marginLeft: '16px',
+        }}
+      >
+        <h4>With Loader</h4>
+        <Button
+          label="Basic"
+          withLoader
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+        <Button
+          label="Full With Icon"
+          type="positive"
+          full
+          withLoader
+          icon={Tape}
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+        <Button
+          label="Full"
+          type="negative"
+          size="medium"
+          full
+          withLoader
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+        <Button
+          label="Clear With Icon"
+          type="primary"
+          clear
+          size="medium"
+          icon={Group}
+          withLoader
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+        <Button
+          label="With Icon Reversed"
+          type="secondary"
+          reverse
+          size="medium"
+          icon={Group}
+          withLoader
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+        <Button
+          label="Attention"
+          type="attention"
+          size="medium"
+          withLoader
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+        <Button
+          label="Disabled"
+          disabled
+          size="medium"
+          icon={Key}
+          withLoader
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+      </div>
+      <div
+        style={{
+          width: '200px',
+          marginLeft: '16px',
+        }}
+      >
+        <h4>With Loader as Clear</h4>
+        <Button
+          label="Basic"
+          withLoader
+          clear
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+        <Button
+          label="Full With Icon"
+          type="positive"
+          full
+          clear
+          withLoader
+          icon={Tape}
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+        <Button
+          label="Full"
+          type="negative"
+          size="medium"
+          full
+          clear
+          withLoader
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+        <Button
+          label="Clear With Icon"
+          type="primary"
+          clear
+          size="medium"
+          icon={Group}
+          withLoader
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+        <Button
+          label="With Icon Reversed"
+          type="secondary"
+          reverse
+          clear
+          size="medium"
+          icon={Group}
+          withLoader
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+        <Button
+          label="Attention"
+          type="attention"
+          size="medium"
+          clear
+          withLoader
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
+        <Button
+          label="Disabled"
+          disabled
+          size="medium"
+          icon={Key}
+          withLoader
+          clear
+          onClick={() => {
+            action('clicked');
+
+            return delay(2000);
+          }}
+        />
       </div>
     </div>
   </Grommet>

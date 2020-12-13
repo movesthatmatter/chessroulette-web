@@ -1,5 +1,5 @@
 import capitalize from 'capitalize';
-import { ChallengeRecord, GameSpecsRecord, RoomRecord, UserRecord } from 'dstnd-io';
+import { ChallengeRecord, GameSpecsRecord, Ok, RoomRecord, UserRecord } from 'dstnd-io';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ButtonProps } from 'src/components/Button';
@@ -62,9 +62,8 @@ export const ChallengeWidget: React.FC<Props> = (props) => {
   const getCancelButton = (onClick: () => void): ButtonProps => ({
     label: 'Cancel',
     type: 'secondary',
-    onClick: () => {
-      onClick();
-    },
+    withLoader: true,
+    onClick,
   });
 
   const getWaitingForPairingState = (challenge: ChallengeRecord): WaitingForPairingState => {
@@ -127,9 +126,10 @@ export const ChallengeWidget: React.FC<Props> = (props) => {
         {
           label: 'Play',
           type: 'primary',
+          withLoader: true,
           onClick: () => {
             if (props.challengeType === 'private') {
-              resources
+              return resources
                 .createChallenge({
                   type: 'private',
                   gameSpecs,
@@ -139,9 +139,11 @@ export const ChallengeWidget: React.FC<Props> = (props) => {
                   setState(getWaitingForPairingState(challenge));
 
                   Events.trackChallengeCreated('Friendly Challenge');
+
+                  return Ok.EMPTY;
                 });
             } else {
-              resources
+              return resources
                 .quickPair({
                   gameSpecs,
                   userId: user.id,
@@ -156,6 +158,8 @@ export const ChallengeWidget: React.FC<Props> = (props) => {
 
                     Events.trackChallengeCreated('Quick Pairing');
                   }
+
+                  return Ok.EMPTY;
                 });
             }
           },
