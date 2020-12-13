@@ -43,7 +43,7 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo, ...props }) => {
       <Page>
         <GenericRoomBouncer
           roomInfo={roomInfo}
-          onCancel={() => (history.length > 0 ? history.goBack() : history.push('/'))}
+          onCancel={() => history.push('/')}
           onReady={() => {
             if (peerState.status === 'open') {
               // This call will eventually get a peerState room

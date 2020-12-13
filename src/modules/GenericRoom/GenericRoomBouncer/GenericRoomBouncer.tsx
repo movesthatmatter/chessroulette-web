@@ -75,9 +75,9 @@ export const GenericRoomBouncer: React.FC<Props> = ({
               type: 'primary',
               label: 'Start my Camera',
               onClick: () => {
-                Events.trackAVPermissionsRequestAccepted(props.roomInfo.type);
-
                 dispatch(agreePermissionsRequestAction());
+
+                Events.trackAVPermissionsRequestAccepted(props.roomInfo.type);
               },
             }
           : {
@@ -85,18 +85,18 @@ export const GenericRoomBouncer: React.FC<Props> = ({
               label: "I'm ready to Join",
               disabled: !state.permissionsGranted,
               onClick: () => {
-                Events.trackRoomJoiningConfirmed(props.roomInfo.type);
-
                 dispatch(confirmAction());
+
+                Events.trackRoomJoiningConfirmed(props.roomInfo.type);
               },
             },
         {
           type: 'secondary',
           label: 'Cancel',
           onClick: () => {
-            Events.trackRoomJoiningCanceled(props.roomInfo.type);
-
             onCancel();
+
+            Events.trackRoomJoiningCanceled(props.roomInfo.type);
           },
         },
       ]}

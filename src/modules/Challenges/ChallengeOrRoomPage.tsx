@@ -56,7 +56,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
   }
 
   const goBackOrHome = () => {
-    history.length > 2 ? history.goBack() : history.push('/');
+    history.push('/')
   }
 
   if (challenge) {
