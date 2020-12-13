@@ -5,6 +5,8 @@ import { Text } from 'src/components/Text';
 import { ChessGameTimeLimit, metadata, ChessPrefferedColorOption, GameSpecsRecord } from 'dstnd-io';
 import capitalize from 'capitalize';
 import { SelectInput } from 'src/components/Input/SelectInput';
+import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import humanizeDuration from 'humanize-duration';
 
 type State = GameSpecsRecord;
 
@@ -12,9 +14,12 @@ export type ChessChallengeCreatorProps = {
   onUpdate: (state: State) => void;
 };
 
-export const CreateChallenge: React.FC<ChessChallengeCreatorProps> = ({
-  ...props
-}) => {
+const formatTimeLimit = humanizeDuration.humanizer({
+  largest: 2,
+  round: true,
+});
+
+export const CreateChallenge: React.FC<ChessChallengeCreatorProps> = ({ ...props }) => {
   const cls = useStyles();
   const [state, setState] = useState<State>({
     timeLimit: 'rapid',
@@ -32,12 +37,28 @@ export const CreateChallenge: React.FC<ChessChallengeCreatorProps> = ({
           Time Limit
         </Text>
         <SelectInput
-          options={Object.keys(metadata.game.chessGameTimeLimitMsMap).map((k) => ({
-            value: k,
-            label: capitalize(k),
-          }))}
+          options={Object.keys(metadata.game.chessGameTimeLimitMsMap).map((k) => {
+            const timeLimit = (chessGameTimeLimitMsMap as any)[k];
+
+            if (k === 'untimed') {
+              return {
+                value: k,
+                label: capitalize(k),
+              };
+            }
+
+            return {
+              value: k,
+              label: `${capitalize(k)} (${formatTimeLimit(timeLimit)})`,
+            };
+          })}
           value={{
-            label: capitalize(state.timeLimit),
+            label:
+              state.timeLimit === 'untimed'
+                ? capitalize(state.timeLimit)
+                : `${capitalize(state.timeLimit)} (${formatTimeLimit(
+                    metadata.game.chessGameTimeLimitMsMap[state.timeLimit]
+                  )})`,
             value: state.timeLimit,
           }}
           onSelect={({ value }) => {
@@ -54,8 +75,8 @@ export const CreateChallenge: React.FC<ChessChallengeCreatorProps> = ({
         </Text>
         <SelectInput
           options={metadata.game.chessGamePrefferedColorOptionList.map((k) => ({
-            value: k,
             label: capitalize(k),
+            value: k,
           }))}
           value={{
             label: capitalize(state.preferredColor),
