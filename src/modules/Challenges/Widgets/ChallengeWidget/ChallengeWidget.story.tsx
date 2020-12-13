@@ -1,11 +1,9 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { action } from '@storybook/addon-actions';
 import { Grommet } from 'grommet';
-/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import { SocketProvider } from 'src/components/SocketProvider';
 import { ChallengeMocker, UserRecordMocker } from 'src/mocks/records';
-import { authenticate } from 'src/services/Authentication/resources';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 import { defaultTheme } from 'src/theme';
 import { ChallengeWidget } from './ChallengeWidget';
@@ -31,6 +29,7 @@ export const createPublicChallenge = () => (
       <ChallengeWidget
         // challenge={challengeMocker.record('public')}
         challengeType="public"
+        onCreated={action('on created')}
         onAccepted={action('on accepted')}
         onCanceled={action('on canceled')}
         onMatched={action('on matched')}
@@ -52,6 +51,7 @@ export const createPrivateChallenge = () => (
       <ChallengeWidget
         // challenge={challengeMocker.record('public')}
         challengeType="private"
+        onCreated={action('on created')}
         onAccepted={action('on accepted')}
         onCanceled={action('on canceled')}
         onMatched={action('on matched')}

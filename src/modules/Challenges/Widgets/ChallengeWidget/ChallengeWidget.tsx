@@ -22,6 +22,7 @@ type Props = {
       challenge?: undefined;
       challengeType: ChallengeRecord['type'];
       // Called when the user presses the cancel button
+      onCreated?: (challenge: ChallengeRecord) => void;
       onDenied?: never;
     }
   | {
@@ -138,6 +139,10 @@ export const ChallengeWidget: React.FC<Props> = (props) => {
                 .map((challenge) => {
                   setState(getWaitingForPairingState(challenge));
 
+                  if (props.onCreated) {
+                    props.onCreated(challenge);
+                  }
+
                   Events.trackChallengeCreated('Friendly Challenge');
 
                   return Ok.EMPTY;
@@ -155,6 +160,10 @@ export const ChallengeWidget: React.FC<Props> = (props) => {
                     Events.trackQuickPairingMatched();
                   } else {
                     setState(getWaitingForPairingState(r.challenge));
+
+                    if (props.challengeType && props.onCreated) {
+                      props.onCreated(r.challenge);
+                    }
 
                     Events.trackChallengeCreated('Quick Pairing');
                   }
