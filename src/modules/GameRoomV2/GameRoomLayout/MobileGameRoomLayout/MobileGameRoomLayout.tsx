@@ -69,15 +69,14 @@ const useStyles = createUseStyles({
     position: 'relative',
     overflow: 'hidden',
     flexGrow: 1,
-    marginBottom: '8px',
   },
   mainContainer: {
     position: 'relative',
     zIndex: 23,
     flexGrow: 0,
-    borderRadius: '32px 32px 0 0',
+    borderRadius: '16px 16px 0 0',
     paddingTop: '16px',
-    marginTop: '-40px',
+    marginTop: '-16px',
     background: colors.neutralLightest,
   },
 });

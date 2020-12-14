@@ -225,7 +225,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
                 </div>
               )}
               // Account for the rounded border
-              footerOverlay={() => <div style={{ height: '32px' }} />}
+              footerOverlay={() => <div style={{ height: '16px' }} />}
             />
           )}
           getMainArea={(dimensions) => (
@@ -249,7 +249,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
                   playable={canIPlay}
                   game={props.room.activity.game}
                   getBoardSize={() => {
-                    return dimensions.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 32);
+                    return dimensions.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 24);
                   }}
                   onMove={(...args) => {
                     props.onMove(...args, homeColor);
@@ -598,9 +598,6 @@ const useStyles = createUseStyles({
     ...floatingShadow,
   },
   mobileGameActionsContainer: {
-    // display: 'flex',
-
-    // background: 'white',
     padding: '0 12px 4px',
 
     ...onlySmallMobile({
@@ -635,7 +632,7 @@ const useStyles = createUseStyles({
     overflow: 'hidden',
   },
   mobileChessGameWrapper: {
-    padding: '6px 16px 8px',
+    padding: '6px 12px 8px',
 
     ...onlySmallMobile({
       paddingLeft: '30px',
