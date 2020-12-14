@@ -1,10 +1,12 @@
 import capitalize from 'capitalize';
 import { ChallengeRecord, GameSpecsRecord, Ok, RoomRecord, UserRecord } from 'dstnd-io';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ButtonProps } from 'src/components/Button';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
 import { noop } from 'src/lib/util';
+import { useGenericRoomBouncer } from 'src/modules/GenericRoom';
+import { BrowserNotSupportedDialog } from 'src/modules/GenericRoom/GenericRoomBouncer/components/BrowserNotSuppoortedDialog';
 import { resources } from 'src/resources';
 import { Events } from 'src/services/Analytics';
 import { selectAuthentication } from 'src/services/Authentication';
@@ -242,6 +244,16 @@ export const ChallengeWidget: React.FC<Props> = (props) => {
           props.challenge ? { challenge: props.challenge } : { challengeType: props.challengeType }
         )
   );
+
+  const { state: bouncerState, checkBrowserSupport } = useGenericRoomBouncer();
+
+  useEffect(() => {
+    checkBrowserSupport();
+  }, []);
+
+  if (!bouncerState.browserIsSupported) {
+    return <BrowserNotSupportedDialog visible />;
+  }
 
   if (!state) {
     return null;
