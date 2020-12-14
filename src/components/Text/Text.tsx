@@ -4,7 +4,7 @@ import { fonts } from 'src/theme';
 import cx from 'classnames';
 
 type Props = JSX.IntrinsicElements['span'] & {
-  size?: 'small1' | 'small2';
+  size?: 'small1' | 'small2' | 'body1' | 'body2';
 };
 
 export const Text: React.FC<Props> = ({
