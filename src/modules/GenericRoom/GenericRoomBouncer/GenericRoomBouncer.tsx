@@ -39,7 +39,7 @@ export const GenericRoomBouncer: React.FC<Props> = ({
     return <>{props.children}</>;
   }
 
-  if (!isWebViewAndAVPermissionsDenied) {
+  if (isWebViewAndAVPermissionsDenied) {
     return (
       <Dialog
         visible
@@ -73,7 +73,7 @@ export const GenericRoomBouncer: React.FC<Props> = ({
               using is limited in that regard!
               <br />
               <br />
-              <strong>For best results please open this Magic Link in Chrome or Safari.</strong>
+              For best results please open this Magic Link in <strong>Chrome</strong> or <strong>Safari.</strong>
             </Text>
             <div style={{ paddingBottom: '8px' }} />
             <ClipboardCopy value={`${window.location.href}`} autoCopy />
