@@ -15,7 +15,7 @@ export type PendingChallengeProps = {
 export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
   const cls = useStyles();
   const [copiedMagicLink, setCopiedMagicLink] = useState(false);
-  const { loading, isSupported, share } = useWebShare();
+  const { share } = useWebShare();
 
   return (
     <div className={cls.container}>

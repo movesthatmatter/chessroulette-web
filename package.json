@@ -65,6 +65,7 @@
     "io-ts": "^2.2.10",
     "io-ts-isodatetime": "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.3",
     "io-ts-types": "^0.5.10",
+    "is-ua-webview": "^1.0.5",
     "js-logger": "^1.6.0",
     "jss": "^10.1.1",
     "loaders.css": "^0.1.2",
