@@ -1,5 +1,5 @@
 import { ChallengeRecord, RoomRecord } from 'dstnd-io';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Dialog } from './components/Dialog/Dialog';
 import { Page } from './components/Page';
@@ -7,11 +7,6 @@ import { usePeerState } from './components/PeerProvider';
 import { SocketConsumer } from './components/SocketProvider';
 import { toRoomUrlPath } from './lib/util';
 import { ChallengeWidget } from './modules/Challenges/Widgets/ChallengeWidget';
-import isWebViewUA from 'is-ua-webview';
-import { Text } from './components/Text';
-import { Layer } from 'grommet';
-import { floatingShadow, softBorderRadius } from './theme';
-import { Button } from './components/Button';
 
 type ActivityState =
   | {
@@ -30,50 +25,8 @@ export const RouteEffects: React.FC = () => {
   const peerState = usePeerState();
   const history = useHistory();
   const [activityState, setActivityState] = useState<ActivityState>({ activity: 'none' });
-  const [isWebView, setIsWebView] = useState(false);
 
   const onChallengeOrRoomPage = (slug: string) => history.location.pathname.indexOf(slug) > -1;
-
-  useEffect(() => {
-    setIsWebView(isWebViewUA(navigator.userAgent));
-  }, []);
-
-  if (isWebView) {
-    return (
-      <Layer
-        responsive={false}
-        position="bottom"
-        animation="slide"
-        style={{
-          ...softBorderRadius,
-          ...floatingShadow,
-          borderBottomLeftRadius: 0,
-          borderBottomRightRadius: 0,
-          width: '100%',
-
-          justifyContent: 'center',
-          alignItems: 'center',
-
-          padding: '16px 0 8px',
-        }}
-        // className={cls.mobileGameActionMenuLayer}
-        // onClickOutside={() => setShowMobileGameActionsMenu(false)}
-      >
-        <Text size="small1">
-          Sorry You're in an unsupportwed WebView!
-        </Text>
-        <br/>
-        <Button
-          label="Open a real Browser"
-          type="positive"
-          onClick={() => {
-            window.open(window.location.href, '_system', 'location=yes');
-            // window.location.href = `safari://${window.location.href}`
-          }}
-        />
-      </Layer>
-    );
-  }
 
   if (peerState.status === 'disconnected') {
     return (
