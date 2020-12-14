@@ -71,7 +71,7 @@ export const ChallengeWidget: React.FC<Props> = (props) => {
     return {
       state: 'waitingForPairing',
       challenge,
-      title: 'Congrats! Challenge Created',
+      title: 'Congrats! Game Created 🥳',
       buttons: [
         getCancelButton(() => {
           return resources.deleteChallenge(challenge.id).map(() => {

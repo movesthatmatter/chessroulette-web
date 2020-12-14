@@ -6,6 +6,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { colors, minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
 import { Events } from 'src/services/Analytics';
 import { fonts } from 'src/theme/fonts';
+import { Emoji } from 'src/components/Emoji';
 
 type Props = {};
 
@@ -45,7 +46,7 @@ export const LandingPageV2: React.FC<Props> = () => {
             <div className={cls.list}>
               <h3 className={cls.text}>Play with friends in a private room.</h3>
               <h3 className={cls.text}>Start a quick game with someone across the world.</h3>
-              <h3 className={cls.text}>Face to Face. Live. Free. 😎</h3>
+              <h3 className={cls.text}>Face to Face. Live. Free. <Emoji symbol="😎" /></h3>
             </div>
             <div className={cls.buttonWrapper}>
               <ChallengeButtonWidget

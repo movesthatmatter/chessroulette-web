@@ -2535,7 +2535,7 @@
     pretty-format "^24.0.0"
     redent "^3.0.0"
 
-"@testing-library/react@^9.3.2":
+"@testing-library/react@^9.3.2", "@testing-library/react@^9.4.1":
   version "9.5.0"
   resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-9.5.0.tgz#71531655a7890b61e77a1b39452fbedf0472ca5e"
   integrity sha512-di1b+D0p+rfeboHO5W7gTVeZDIK5+maEgstrZbWZSSvxDyfDRkkyBE1AJR5Psd6doNldluXlCWqXriUfqu/9Qg==
@@ -14954,6 +14954,13 @@ react-transition-group@^4.3.0:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-use-web-share@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-use-web-share/-/react-use-web-share-1.0.2.tgz#b30da26d251f6e6821339c27874f9384bb80ce7d"
+  integrity sha512-sTuLqSrpJHqmAAgL7gBp+JPTSEz3PmlZ8TOzz4DLXurQLjcn/zoOnVFw9VUZN/5eHv+5J3LQ9rK0JzG7I4NrjQ==
+  dependencies:
+    "@testing-library/react" "^9.4.1"
 
 react@*, react@^16.13.1, react@^16.8.3:
   version "16.13.1"

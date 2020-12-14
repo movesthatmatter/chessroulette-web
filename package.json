@@ -88,6 +88,7 @@
     "react-scripts": "3.4.1",
     "react-select": "^3.1.0",
     "react-transition-group": "^4.3.0",
+    "react-use-web-share": "^1.0.2",
     "recoil": "^0.0.8",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
