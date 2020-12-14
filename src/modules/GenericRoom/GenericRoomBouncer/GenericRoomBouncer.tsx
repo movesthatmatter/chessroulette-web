@@ -1,16 +1,12 @@
 import { RoomRecord } from 'dstnd-io';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
 import { Dialog } from 'src/components/Dialog/Dialog';
 import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
 import { Text } from 'src/components/Text';
 import { noop } from 'src/lib/util';
 import { Events } from 'src/services/Analytics';
-import { confirmAction, grantPermissionsAction, agreePermissionsRequestAction } from './reducer';
-import { selectroomBouncerState } from './selectors';
-import isWebViewUA from 'is-ua-webview';
-import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
-import { ClipboardCopy } from 'src/components/CipboardCopy';
+import { useGenericRoomBouncer } from './useGenericRoomBouncer';
+import { BrowserNotSupportedDialog } from './components/BrowserNotSuppoortedDialog';
 
 type Props = {
   roomInfo: RoomRecord;
@@ -24,71 +20,34 @@ export const GenericRoomBouncer: React.FC<Props> = ({
   onCancel = noop,
   ...props
 }) => {
-  const state = useSelector(selectroomBouncerState);
-  const dispatch = useDispatch();
-
-  const [isWebViewAndAVPermissionsDenied, setIsWebViewAndAVPermissionsDenied] = useState(false);
+  const bouncer = useGenericRoomBouncer();
 
   useEffect(() => {
-    if (state.ready) {
+    if (bouncer.state.ready) {
       onReady();
     }
-  }, [state.ready]);
+  }, [bouncer.state.ready]);
 
-  if (state.ready) {
+  useEffect(() => {
+    bouncer.checkBrowserSupport();
+  }, []);
+
+  if (bouncer.state.ready) {
     return <>{props.children}</>;
   }
 
-  if (isWebViewAndAVPermissionsDenied) {
-    return (
-      <Dialog
-        visible
-        hasCloseButton={false}
-        graphic={
-          <div
-            style={{
-              textAlign: 'center',
-              paddingBottom: '16px',
-            }}
-          >
-            <Mutunachi
-              mid={5}
-              width="100px"
-              style={{
-                width: '30%',
-                display: 'inline',
-              }}
-            />
-          </div>
-        }
-        title="Oops. Your browser isn't supported!"
-        content={
-          <div
-            style={{
-              textAlign: 'center',
-            }}
-          >
-            <Text size="small1">
-              Chessroulette requires access to your camera and microphone but the browser you're
-              using is limited in that regard!
-              <br />
-              <br />
-              For best results please open this Magic Link in <strong>Chrome</strong> or <strong>Safari.</strong>
-            </Text>
-            <div style={{ paddingBottom: '8px' }} />
-            <ClipboardCopy value={`${window.location.href}`} autoCopy />
-          </div>
-        }
-      />
-    );
+  if (!bouncer.state.browserIsSupported) {
+    return <BrowserNotSupportedDialog visible />;
   }
 
   return (
     <Dialog
-      visible={!state.ready}
+      visible={!bouncer.state.ready}
       hasCloseButton={false}
       title={
-        state.permissionsGranted ? "Smile – You're on camera!" : "Smile – You'll be on camera!"
+        bouncer.state.permissionsGranted
+          ? "Smile – You're on camera!"
+          : "Smile – You'll be on camera!"
       }
       content={
         <div
@@ -97,7 +56,7 @@ export const GenericRoomBouncer: React.FC<Props> = ({
             textAlign: 'center',
           }}
         >
-          {!(state.permissionsGranted || state.permissionsRequestAgreed) ? (
+          {!(bouncer.state.permissionsGranted || bouncer.state.permissionsRequestAgreed) ? (
             <Text size="small1">
               To be able to get the most out of your <strong>Chessroulette</strong>
               experience you need to allow access to your camera and microphone.
@@ -106,11 +65,7 @@ export const GenericRoomBouncer: React.FC<Props> = ({
             <FaceTimeSetup
               onUpdated={(s) => {
                 if (s.on) {
-                  dispatch(grantPermissionsAction());
-                } else {
-                  if (isWebViewUA(navigator.userAgent)) {
-                    setIsWebViewAndAVPermissionsDenied(true);
-                  }
+                  bouncer.checkPermissions();
                 }
               }}
             />
@@ -119,12 +74,12 @@ export const GenericRoomBouncer: React.FC<Props> = ({
       }
       buttonsStacked
       buttons={[
-        !(state.permissionsGranted || state.permissionsRequestAgreed)
+        !(bouncer.state.permissionsGranted || bouncer.state.permissionsRequestAgreed)
           ? {
               type: 'primary',
               label: 'Start my Camera',
               onClick: () => {
-                dispatch(agreePermissionsRequestAction());
+                bouncer.agreeWithPermissionsRequest();
 
                 Events.trackAVPermissionsRequestAccepted(props.roomInfo.type);
               },
@@ -132,9 +87,9 @@ export const GenericRoomBouncer: React.FC<Props> = ({
           : {
               type: 'positive',
               label: "I'm ready to Join",
-              disabled: !state.permissionsGranted,
+              disabled: !bouncer.state.permissionsGranted,
               onClick: () => {
-                dispatch(confirmAction());
+                bouncer.confirm();
 
                 Events.trackRoomJoiningConfirmed(props.roomInfo.type);
               },

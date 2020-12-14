@@ -1,21 +1,45 @@
 import useInstance from '@use-it/instance';
-import { useEffect, useReducer, useRef } from 'react';
+import { useEffect } from 'react';
 import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
-import { grantPermissionsAction, initialState, reducer } from './reducer';
+import {
+  grantPermissionsAction,
+  acceptBrowserSuppport,
+  confirmJoiningRoomAction,
+  agreePermissionsRequestAction,
+} from './reducer';
+import isWebViewUA from 'is-ua-webview';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectroomBouncerState } from './selectors';
 
 export const useGenericRoomBouncer = (checkOnMount = false) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const state = useSelector(selectroomBouncerState);
+  const dispatch = useDispatch();
   const AVStreaming = useInstance<AVStreaming>(getAVStreaming);
+
+  const agreeWithPermissionsRequest = () => {
+    dispatch(agreePermissionsRequestAction());
+  };
 
   const checkPermissions = () => {
     AVStreaming.hasPermission().map(() => {
-      dispatch(grantPermissionsAction);
+      dispatch(grantPermissionsAction());
     });
+  };
+
+  const checkBrowserSupport = () => {
+    if (!isWebViewUA(navigator.userAgent)) {
+      dispatch(acceptBrowserSuppport());
+    }
   };
 
   const checkAll = () => {
     checkPermissions();
-  }
+    checkBrowserSupport();
+  };
+
+  const confirm = () => {
+    dispatch(confirmJoiningRoomAction());
+  };
 
   useEffect(() => {
     if (checkOnMount) {
@@ -25,8 +49,11 @@ export const useGenericRoomBouncer = (checkOnMount = false) => {
 
   return {
     state,
+    agreeWithPermissionsRequest,
     checkPermissions,
     checkAll,
+    checkBrowserSupport,
+    confirm,
 
     dangerouslyGrantPermissions: () => {
       dispatch(grantPermissionsAction);

@@ -27,6 +27,7 @@ export const defaultStory = () =>
               confirmedRoomJoin: false,
               permissionsGranted: false,
               permissionsRequestAgreed: false,
+              browserIsSupported: false,
               ready: false,
             },
           }}

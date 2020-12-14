@@ -2,9 +2,10 @@ import { createReducer, createAction } from 'deox';
 import { GenericStateSlice } from 'src/redux/types';
 
 export type State = {
-  // Cmmera & Mic Permissions
+  // Cqmera & Mic Permissions
   permissionsRequestAgreed: boolean;
   permissionsGranted: boolean;
+  browserIsSupported: boolean;
   confirmedRoomJoin: boolean;
 
   ready: boolean;
@@ -13,6 +14,7 @@ export type State = {
 export const initialState: State = {
   permissionsRequestAgreed: false,
   permissionsGranted: false,
+  browserIsSupported: false,
   confirmedRoomJoin: false,
 
   // TODO: Add
@@ -23,10 +25,11 @@ export const initialState: State = {
 
 export const agreePermissionsRequestAction = createAction('AgreePermissionsRequest');
 export const grantPermissionsAction = createAction('GrantPermisssions');
-export const confirmAction = createAction('Confirm');
+export const acceptBrowserSuppport = createAction('AcceptBrowserSuppport');
+export const confirmJoiningRoomAction = createAction('ConfirmJoiningRoomAction');
 
 const getReadyFlag = (state: State) => {
-  return state.permissionsGranted && state.confirmedRoomJoin;
+  return state.permissionsGranted && state.confirmedRoomJoin && state.browserIsSupported;
 }
 
 export const reducer = createReducer(initialState as State, (handleAction) => ([
@@ -38,8 +41,6 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
 
     return {
       ...nextState,
-
-      // Ready!
       ready: getReadyFlag(nextState),
     }
   }),
@@ -51,12 +52,21 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
 
     return {
       ...nextState,
-
-      // Ready!
       ready: getReadyFlag(nextState),
     }
   }),
-  handleAction(confirmAction, (state) => {
+  handleAction(acceptBrowserSuppport, (state) => {
+    const nextState = {
+      ...state,
+      browserIsSupported: true,
+    };
+
+    return {
+      ...nextState,
+      ready: getReadyFlag(nextState),
+    }
+  }),
+  handleAction(confirmJoiningRoomAction, (state) => {
     const nextState = {
       ...state,
       confirmedRoomJoin: true,
@@ -64,8 +74,6 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
 
     return {
       ...nextState,
-
-      // Ready!
       ready: getReadyFlag(nextState),
     }
   })

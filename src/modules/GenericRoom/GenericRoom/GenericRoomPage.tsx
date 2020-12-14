@@ -32,6 +32,23 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo, ...props }) => {
     }
   }, [peerState]);
 
+  useEffect(() => {
+    if (!bouncerState.ready) {
+      return;
+    }
+
+    if (peerState.status === 'open') {
+      // This call will eventually get a peerState room
+      peerState.client.send({
+        kind: 'joinRoomRequest',
+        content: {
+          roomId: roomInfo.id,
+          code: roomInfo.code || undefined,
+        },
+      });
+    }
+  }, [bouncerState.ready]);
+
   if (room) {
     return <GenericRoom room={room} />;
   }
@@ -44,18 +61,6 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo, ...props }) => {
         <GenericRoomBouncer
           roomInfo={roomInfo}
           onCancel={() => history.push('/')}
-          onReady={() => {
-            if (peerState.status === 'open') {
-              // This call will eventually get a peerState room
-              peerState.client.send({
-                kind: 'joinRoomRequest',
-                content: {
-                  roomId: roomInfo.id,
-                  code: roomInfo.code || undefined,
-                },
-              });
-            }
-          }}
         >
           <AwesomeLoaderPage />
         </GenericRoomBouncer>
