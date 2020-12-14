@@ -1,10 +1,8 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { UserMenu } from '../Navigation';
-import { colors, hideOnDesktop, hideOnMobile, text } from 'src/theme';
 import { Logo } from 'src/components/Logo';
-import cx from 'classnames';
 import { Footer } from '../Footer';
+import { NavigationMenu } from '../Navigation/NavigationMenu';
 
 type Props = {
   logoAsLink?: boolean;
@@ -19,36 +17,9 @@ export const Page: React.FC<Props> = ({ logoAsLink = true, ...props }) => {
         <div className={cls.top}>
           <div className={cls.topMain}>
             <Logo asLink={logoAsLink} />
-            <div className={cx(cls.nav, cls.desktopOnly)}>
-              <div className={cls.linksContainer}>
-                <div className={cls.linkWrapper}>
-                  <a
-                    className={cls.link}
-                    href="https://www.facebook.com/chessroulette"
-                    target="_blank"
-                  >
-                    About
-                  </a>
-                </div>
-                <div className={cls.linkWrapper}>
-                  <a
-                    className={cls.link}
-                    href="https://www.instagram.com/chessroulette/"
-                    target="_blank"
-                  >
-                    Instagram
-                  </a>
-                </div>
-                <div className={cls.linkWrapper}>
-                  <a className={cls.link} href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage">
-                    Contact
-                  </a>
-                </div>
-              </div>
+            <div className={cls.navigationMenu}>
+              <NavigationMenu />
             </div>
-          </div>
-          <div className={cx(cls.userMenuWrapper)}>
-            <UserMenu reversed />
           </div>
         </div>
         <main className={cls.main}>{props.children}</main>
@@ -63,6 +34,9 @@ const useStyles = createUseStyles({
     width: '100%',
     height: '100%',
     background: '#F6F8FB',
+
+    maxWidth: '1140px',
+    margin: '0 auto',
   },
   paddingWrapper: {
     padding: '16px',
@@ -79,6 +53,7 @@ const useStyles = createUseStyles({
     flex: 1,
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   topRight: {
     justifySelf: 'flex-end',
@@ -87,40 +62,9 @@ const useStyles = createUseStyles({
     width: '100%',
     flex: 1,
   },
-  userMenuWrapper: {},
-  nav: {
+  navigationMenu: {
+    alignSelf: 'center',
+    justifySelf: 'center',
     flex: 1,
-    flexDirection: 'column',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  linksContainer: {
-    paddingTop: '14px',
-    display: 'flex',
-  },
-  linkWrapper: {
-    textAlign: 'center',
-    paddingLeft: '20px',
-    paddingRight: '20px',
-  },
-  link: {
-    textTransform: 'capitalize',
-    textDecoration: 'none',
-    color: colors.neutralDarkest,
-    fontFamily: 'Lato, Open Sans, sans serif',
-    fontSize: '16px',
-    textAlign: 'center',
-
-    '&:hover': {
-      borderBottom: `3px solid ${text.primaryColor}`,
-      color: text.primaryColor,
-    },
-  },
-
-  mobileOnly: {
-    ...hideOnDesktop,
-  },
-  desktopOnly: {
-    ...hideOnMobile,
   },
 });
