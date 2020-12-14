@@ -15,6 +15,16 @@ const button: CSSProperties = {
   height: '32px',
   lineHeight: '32px',
 
+  '&:hover': {
+    opacity: '.8',
+  },
+
+  ...{
+    '&:disabled&:hover': {
+      opacity: '1 !important',
+    },
+  } as CSSProperties,
+
   '&:focus': {
     outline: 'none',
   },
@@ -27,8 +37,19 @@ const button: CSSProperties = {
     ...buttonEffects.onClickTransition,
     '&:disabled': {
       background: colors.neutral,
-      ...buttonEffects.onClickTransition["&:disabled"],
-    }
+      ...buttonEffects.onClickTransition['&:disabled'],
+    },
+  },
+};
+
+const iconButton: CSSProperties = {
+  '&:disabled': {
+    ...{
+      '&$clear$iconButton $icon': {
+        fill: `${colors.neutral} !important`,
+        stroke: `${colors.neutral} !important`,
+      },
+    } as CSSProperties['nestedKey'],
   },
 };
 
@@ -46,7 +67,7 @@ const clear: CSSProperties = {
       lineHeight: '28px',
     },
     '& $iconWrapper': {
-      height: '28px',
+      height: '30px',
     },
     '& $icon': {
       // color: `${colors.black} !important`,
@@ -70,7 +91,7 @@ const full: CSSProperties = {
 };
 
 const primary: CSSProperties = {
-    background: colors.primary,
+  background: colors.primary,
   ...buttonEffects.primaryButtonShadow,
 
   '&:active': {
@@ -87,6 +108,15 @@ const primary: CSSProperties = {
     },
     '&$clear$hasLoader $loader > div': {
       backgroundColor: `${colors.primary} !important`,
+    },
+    '&$clear$iconButton $icon': {
+      fill: `${colors.primary} !important`,
+      stroke: `${colors.primary} !important`,
+    },
+    '&$clear$iconButton$hasLoader $loader > div': {
+      backgroundColor: `transparent !important`,
+      borderColor: `${colors.primary} !important`,
+      borderBottomColor: `transparent !important`,
     },
   } as CSSProperties['nestedKey']),
 };
@@ -109,6 +139,15 @@ const secondary: CSSProperties = {
     },
     '&$clear$hasLoader $loader > div': {
       backgroundColor: `${colors.secondary} !important`,
+    },
+    '&$clear$iconButton $icon': {
+      fill: `${colors.secondary} !important`,
+      stroke: `${colors.secondary} !important`,
+    },
+    '&$clear$iconButton$hasLoader $loader > div': {
+      backgroundColor: `transparent !important`,
+      borderColor: `${colors.secondary} !important`,
+      borderBottomColor: `transparent !important`,
     },
     '& $icon': {
       fill: `${colors.neutralDarkest} !important`,
@@ -137,6 +176,15 @@ const positive: CSSProperties = {
     '&$clear': {
       borderColor: `${colors.positive} !important`,
     },
+    '&$clear$iconButton $icon': {
+      fill: `${colors.positive} !important`,
+      stroke: `${colors.positive} !important`,
+    },
+    '&$clear$iconButton$hasLoader $loader > div': {
+      backgroundColor: `transparent !important`,
+      borderColor: `${colors.positive} !important`,
+      borderBottomColor: `transparent !important`,
+    },
     '&$clear$hasLoader $loader > div': {
       backgroundColor: `${colors.positive} !important`,
     },
@@ -162,6 +210,15 @@ const negative: CSSProperties = {
     '&$clear$hasLoader $loader > div': {
       backgroundColor: `${colors.negative} !important`,
     },
+    '&$clear$iconButton$hasLoader $loader > div': {
+      backgroundColor: `transparent !important`,
+      borderColor: `${colors.negative} !important`,
+      borderBottomColor: `transparent !important`,
+    },
+    '&$clear$iconButton $icon': {
+      fill: `${colors.negative} !important`,
+      stroke: `${colors.negative} !important`,
+    },
   } as CSSProperties['nestedKey']),
 };
 
@@ -181,6 +238,15 @@ const attention: CSSProperties = {
     '&$clear': {
       borderColor: `${colors.attention} !important`,
     },
+    '&$clear$iconButton $icon': {
+      fill: `${colors.attention} !important`,
+      stroke: `${colors.attention} !important`,
+    },
+    '&$clear$iconButton$hasLoader $loader > div': {
+      backgroundColor: `transparent !important`,
+      borderColor: `${colors.attention} !important`,
+      borderBottomColor: `transparent !important`,
+    },
     '&$clear$hasLoader $loader > div': {
       backgroundColor: `${colors.attention} !important`,
     },
@@ -189,6 +255,7 @@ const attention: CSSProperties = {
 
 export const buttonStyles = {
   button,
+  iconButton,
   clear,
   full,
   hasLoader,
