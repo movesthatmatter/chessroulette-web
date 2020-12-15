@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux';
 import { stateSliceByKey as authentication } from 'src/services/Authentication';
-import { stateSliceByKey as chessStudy } from 'src/modules/ChessStudy/reducer';
 import { stateSliceByKey as joinedRoom } from 'src/components/PeerProvider/redux/reducer';
 import { stateSliceByKey as roomBouncer } from 'src/modules/GenericRoom/GenericRoomBouncer/reducer';
+import { stateSliceByKey as session } from 'src/services/Session/reducer';
 
 const allModuleReducers = {
   ...authentication,
-  ...chessStudy,
   ...joinedRoom,
+  ...session,
 
   // This should be saved in the session at least, for the camera agreed
   //  and other consents!
