@@ -55,8 +55,8 @@ export const Dialog: React.FC<DialogProps> = ({
           </div>
         )}
       </div>
-      {props.graphic}
       {props.title && <div className={cls.title}>{props.title}</div>}
+      {props.graphic}
       <div className={cls.contentWrapper}>
         {(typeof props.content === 'string' || isDangerouslySetHtml(props.content)) ? (
           <div className={cls.contentTextWrapper}>
