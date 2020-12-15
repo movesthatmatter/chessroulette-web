@@ -33,6 +33,7 @@ import { PlayerBox } from '../Games/Chess/components/GameStateWidget/components/
 import { MobileGameRoomLayout } from './GameRoomLayout/MobileGameRoomLayout';
 import { otherChessColor } from '../Games/Chess/util';
 import { getRelativeMaterialScore } from '../Games/Chess/components/GameStateWidget/util';
+import { useSession } from 'src/services/Session';
 
 type Props = {
   room: RoomWithPlayActivity;
@@ -105,6 +106,17 @@ export const GameRoomV2: React.FC<Props> = (props) => {
 
   const mobileGameActionsRef = useRef<HTMLDivElement>(null);
   const [showMobileGameActionsMenu, setShowMobileGameActionsMenu] = useState(false);
+
+  const session = useSession();
+
+  useEffect(() => {
+    if (
+      (game.state === 'finished' || game.state === 'stopped') &&
+      game.winner === myPlayer?.color
+    ) {
+      session.attemptToShowFeedbackDialog();
+    }
+  }, [game, myPlayer]);
 
   // If Mobile
   if (windowWidth <= MOBILE_BREAKPOINT) {
