@@ -13,6 +13,8 @@ export const FeedbackDialog: React.FC<Props> = ({ attemptToShowOnMount = false }
   const [doneRateAndReview, setDoneRateAndReview] = useState(false);
   const feedbackDialog = useFeedbackDialog();
 
+  console.log('feedback state', state);
+
   useEffect(() => {
     if (attemptToShowOnMount) {
       actions.attemptToShow();
@@ -30,7 +32,7 @@ export const FeedbackDialog: React.FC<Props> = ({ attemptToShowOnMount = false }
     );
   }
 
-  if (state.steps.rating) {
+  if (state.canShow.steps.rating) {
     return (
       <RateAndReviewDialog
         onPostponed={() => {
@@ -41,7 +43,7 @@ export const FeedbackDialog: React.FC<Props> = ({ attemptToShowOnMount = false }
     );
   }
 
-  if (state.steps.friendsInvite) {
+  if (state.canShow.steps.friendsInvite) {
     return (
       <InviteFriendsDialog
         onDone={() => {

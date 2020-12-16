@@ -8,6 +8,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { seconds } from 'src/lib/time';
 import { Events } from 'src/services/Analytics';
 import { colors } from 'src/theme';
+import { locale } from './locale';
 
 type Props = {
   onDone: () => void;
@@ -77,21 +78,13 @@ export const InviteFriendsDialog: React.FC<Props> = (props) => {
               try {
                 share({
                   title: ``,
-                  text: `
-                    Hey, have you heard of ${window.location.origin}?
-                    It's a new chess platform that allows you to video-chat with your friends while playing a game. 
-                    I thought you might be a good fit! 😉`,
+                  text: locale.inviteFriendsSharedMessage,
                   url: `${window.location.origin}`,
                 });
               } catch (e) {
                 // do nothing. If the navigator.share doesn't eist it throws an error
                 /// especially on desktop browsers!
               }
-
-              // Wait a bit to show the Thank You
-              setTimeout(() => {
-                props.onDone();
-              }, seconds(1));
             }}
           />
         </div>

@@ -10,6 +10,7 @@ import { seconds } from 'src/lib/time';
 import { Events } from 'src/services/Analytics';
 import { Rating } from '../types';
 import { useFeedbackDialog } from '../useFeedbackDialog';
+import { locale } from './locale';
 
 type Props = {
   onDone: () => void;
@@ -145,10 +146,7 @@ export const RateAndReviewDialog: React.FC<Props> = (props) => {
                       try {
                         share({
                           title: ``,
-                          text: `
-                            Hey, have you heard of ${window.location.origin}?
-                            It's a new chess platform that allows you to video-chat with your friends while playing a game. 
-                            I thought you might be a good fit! 😉`,
+                          text: locale.inviteFriendsSharedMessage,
                           url: `${window.location.origin}`,
                         });
                       } catch (e) {
