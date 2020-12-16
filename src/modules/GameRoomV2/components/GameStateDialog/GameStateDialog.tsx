@@ -4,6 +4,7 @@ import { Box } from 'grommet';
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
 import { Emoji } from 'src/components/Emoji';
+import { useFeedbackDialog } from 'src/components/FeedbackDialog/useFeedbackDialog';
 import { RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { Text } from 'src/components/Text';
 import { otherChessColor } from 'src/modules/Games/Chess/util';
@@ -26,11 +27,23 @@ type Props = {
 export const GameStateDialog: React.FC<Props> = ({ roomActivity, myPlayer, ...props }) => {
   const { game } = roomActivity;
   const [gameResultSeen, setGameResultSeen] = useState(false);
+  const feedbackDialog = useFeedbackDialog();
 
   useEffect(() => {
     // Everytime the game state changes, reset the seen!
     setGameResultSeen(false);
   }, [game.state]);
+
+  useEffect(() => {
+    if (
+      gameResultSeen &&
+      (game.state === 'finished' || game.state === 'stopped') &&
+      game.winner === myPlayer?.color
+    ) {
+      // Ask for Feedback only the first time (or next time if postponed) she wins!
+      feedbackDialog.attemptToShow();
+    }
+  }, [gameResultSeen, game.state, game.winner, myPlayer]);
 
 
   if (!roomActivity.offer) {

@@ -1,41 +1,39 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useWebShare from 'react-use-web-share';
 import { ClipboardCopy } from 'src/components/CipboardCopy';
 import { Dialog } from 'src/components/Dialog/Dialog';
 import { Emoji } from 'src/components/Emoji';
 import { Text } from 'src/components/Text';
+import { useWillUnmount } from 'src/lib/hooks/useWillUnmount';
 import { createUseStyles } from 'src/lib/jss';
+import { seconds } from 'src/lib/time';
 import { Events } from 'src/services/Analytics';
-import { useSession } from 'src/services/Session';
+import { Rating } from '../types';
+import { useFeedbackDialog } from '../useFeedbackDialog';
 
-type AnswerMood = 'negative' | 'neutral' | 'positive';
+type Props = {
+  onDone: () => void;
+  onPostponed: () => void;
+};
 
-type Props = {};
-
-export const RateAndReviewDialog: React.FC<Props> = () => {
+export const RateAndReviewDialog: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const [answer, setAnswer] = useState<AnswerMood>();
   const { share } = useWebShare();
-  const session = useSession();
-  const answerRef = useRef<AnswerMood>();
+  const feedbackDialog = useFeedbackDialog();
+  const [rating, setRating] = useState<Rating>();
 
-  const respond = () => {
-    if (answerRef.current) {
-      session.respondToFeedbackDialog(answerRef.current);
+  useWillUnmount(() => {
+    // The Actualy Rating is triggered on unmoount.
+    //  This way if the dialog is somehow closed w/o
+    //  the users interaction there's a chance it will
+    // get tracked/saved
+    if (rating) {
+      feedbackDialog.finishRatingStep(rating);
     }
-  };
+  }, [rating, feedbackDialog]);
 
   useEffect(() => {
-    answerRef.current = answer;
-  }, [answer]);
-
-  useEffect(() => {
-    // On Unmount attempt to save the state if answered
-    return respond;
-  }, []);
-
-  useEffect(() => {
-    Events.trackRateAndReviewDialogShown();
+    Events.trackFeedbackDialogSeen('Rating Step');
   }, []);
 
   return (
@@ -57,34 +55,34 @@ export const RateAndReviewDialog: React.FC<Props> = () => {
                   flex: 1,
                 }}
               >
-                {(!answer || answer === 'negative') && (
+                {(!rating || rating === 'negative') && (
                   <Emoji
                     symbol="🙁"
                     className={cls.emoji}
                     onClick={() => {
-                      setAnswer((prev) => {
+                      setRating((prev) => {
                         return prev === 'negative' ? undefined : 'negative';
                       });
                     }}
                   />
                 )}
-                {(!answer || answer === 'neutral') && (
+                {(!rating || rating === 'neutral') && (
                   <Emoji
                     symbol="😐"
                     className={cls.emoji}
                     onClick={() => {
-                      setAnswer((prev) => {
+                      setRating((prev) => {
                         return prev === 'neutral' ? undefined : 'neutral';
                       });
                     }}
                   />
                 )}
-                {(!answer || answer === 'positive') && (
+                {(!rating || rating === 'positive') && (
                   <Emoji
                     symbol="😄"
                     className={cls.emoji}
                     onClick={() => {
-                      setAnswer((prev) => {
+                      setRating((prev) => {
                         return prev === 'positive' ? undefined : 'positive';
                       });
                     }}
@@ -93,14 +91,14 @@ export const RateAndReviewDialog: React.FC<Props> = () => {
               </div>
             </div>
           }
-          {answer && (
+          {rating && (
             <div
               style={{
                 textAlign: 'center',
                 paddingTop: '16px',
               }}
             >
-              {answer === 'negative' && (
+              {rating === 'negative' && (
                 <>
                   <Text size="small1" asParagraph>
                     <strong>Oh no!</strong>
@@ -111,7 +109,7 @@ export const RateAndReviewDialog: React.FC<Props> = () => {
                 </>
               )}
 
-              {answer === 'neutral' && (
+              {rating === 'neutral' && (
                 <>
                   <Text size="small1" asParagraph>
                     <strong>Your Opinion Matters!</strong>
@@ -121,7 +119,7 @@ export const RateAndReviewDialog: React.FC<Props> = () => {
                   </Text>
                 </>
               )}
-              {answer === 'positive' && (
+              {rating === 'positive' && (
                 <>
                   <div className={cls.top}>
                     <Text size="small1" asParagraph>
@@ -139,6 +137,11 @@ export const RateAndReviewDialog: React.FC<Props> = () => {
                   <ClipboardCopy
                     value={window.location.origin}
                     onCopied={() => {
+                      // Wait a bit till I show the Thank You
+                      setTimeout(() => {
+                        props.onDone();
+                      }, seconds(2));
+
                       try {
                         share({
                           title: ``,
@@ -162,40 +165,43 @@ export const RateAndReviewDialog: React.FC<Props> = () => {
       }
       buttonsStacked
       buttons={[
-        answer && {
+        rating && {
           type: 'primary',
           label: {
             negative: 'Let me tell you!',
             neutral: 'Happy to help!',
             positive: 'Write us!',
-          }[answer],
+          }[rating],
           onClick: () => {
             const subject = {
               negative: `I'm not happy with my experience`,
               neutral: `My experience was OK but...`,
               positive: 'I had a great experience!',
-            }[answer];
+            }[rating];
 
             window.open(`mailto:feedback@chessroulette.org?subject=${subject}`);
 
-            Events.trackRateAndReviewDialogLeaveReviewButtonPressed();
+            Events.trackFeedbackDialogReviewButtonPressed(rating);
+
+            // Wait a bit to show the Thank You
+            setTimeout(() => {
+              props.onDone();
+            }, seconds(1));
           },
         },
-        answer
+        rating
           ? {
               type: 'secondary',
               label: `Done`,
-              onClick: () => {
-                respond();
-                session.closeFeedbackDialogForNow();
-              },
+              onClick: props.onDone,
             }
           : {
               type: 'secondary',
               label: `I'll do it later`,
               onClick: () => {
-                session.postponeFeedback();
-                session.closeFeedbackDialogForNow();
+                Events.trackFeedbackDialogPostponed('Rating Step');
+
+                props.onPostponed();
               },
             },
       ]}

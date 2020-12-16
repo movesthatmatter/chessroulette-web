@@ -5,19 +5,20 @@ import { Dialog } from 'src/components/Dialog/Dialog';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
+import { seconds } from 'src/lib/time';
 import { Events } from 'src/services/Analytics';
-import { useSession } from 'src/services/Session';
 import { colors } from 'src/theme';
 
-type Props = {};
+type Props = {
+  onDone: () => void;
+};
 
-export const InviteFriendsDialog: React.FC<Props> = () => {
+export const InviteFriendsDialog: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const session = useSession();
   const { share } = useWebShare();
 
   useEffect(() => {
-    Events.trackInviteFriendsDialogShown();
+    Events.trackFeedbackDialogSeen('Friends Invite Step');
   }, []);
 
   return (
@@ -71,7 +72,7 @@ export const InviteFriendsDialog: React.FC<Props> = () => {
           <ClipboardCopy
             value={window.location.origin}
             onCopied={() => {
-              Events.trackInviteFriendsDialogShareButtonPressed();
+              Events.trackFeedbackDialogInviteFriendsShareButtonPressed();
 
               try {
                 share({
@@ -86,6 +87,11 @@ export const InviteFriendsDialog: React.FC<Props> = () => {
                 // do nothing. If the navigator.share doesn't eist it throws an error
                 /// especially on desktop browsers!
               }
+
+              // Wait a bit to show the Thank You
+              setTimeout(() => {
+                props.onDone();
+              }, seconds(1));
             }}
           />
         </div>
@@ -95,8 +101,7 @@ export const InviteFriendsDialog: React.FC<Props> = () => {
           type: 'primary',
           label: `Done`,
           onClick: () => {
-            session.markFriendInviteAsSeen();
-            session.closeFeedbackDialogForNow();
+            props.onDone();
           },
         },
       ]}
@@ -107,7 +112,6 @@ export const InviteFriendsDialog: React.FC<Props> = () => {
 const useStyles = createUseStyles({
   container: {},
   link: {
-    // textDecoration: 'none',
     color: colors.neutralDarkest,
     fontFamily: 'Lato, Open Sans, sans serif',
   },

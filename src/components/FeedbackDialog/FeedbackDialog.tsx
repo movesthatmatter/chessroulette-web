@@ -1,31 +1,54 @@
-import React, { useEffect } from 'react';
-import { useSession } from 'src/services/Session';
-import { RateAndReviewDialog, InviteFriendsDialog } from './components';
-
-type AnswerMood = 'negative' | 'neutral' | 'positive';
+import React, { useEffect, useState } from 'react';
+import { RateAndReviewDialog, InviteFriendsDialog, ThankYouDialog } from './components';
+import { Rating } from './types';
+import { useFeedbackDialog } from './useFeedbackDialog';
 
 type Props = {
-  onAnswered?: (mood: AnswerMood) => void;
+  onRated?: (rating: Rating) => void;
   attemptToShowOnMount?: boolean;
 };
 
-export const FeedbackDialog: React.FC<Props> = ({
-  attemptToShowOnMount = false,
-}) => {
-  const session = useSession();
+export const FeedbackDialog: React.FC<Props> = ({ attemptToShowOnMount = false }) => {
+  const { state, ...actions } = useFeedbackDialog();
+  const [doneRateAndReview, setDoneRateAndReview] = useState(false);
+  const feedbackDialog = useFeedbackDialog();
 
   useEffect(() => {
     if (attemptToShowOnMount) {
-      session.attemptToShowFeedbackDialog();
+      actions.attemptToShow();
     }
   }, []);
 
-  if (session.state.canShowFeedbackDialog.steps.feedback) {
-    return <RateAndReviewDialog />
+  if (doneRateAndReview) {
+    return (
+      // This should be part of the Rate And Review Component
+      <ThankYouDialog
+        onClose={() => {
+          feedbackDialog.markAllStepsAsSeen();
+        }}
+      />
+    );
   }
 
-  if (session.state.canShowFeedbackDialog.steps.friendsInvite) {
-    return <InviteFriendsDialog />
+  if (state.steps.rating) {
+    return (
+      <RateAndReviewDialog
+        onPostponed={() => {
+          feedbackDialog.markAllStepsAsSeen();
+        }}
+        onDone={() => setDoneRateAndReview(true)}
+      />
+    );
+  }
+
+  if (state.steps.friendsInvite) {
+    return (
+      <InviteFriendsDialog
+        onDone={() => {
+          feedbackDialog.markStepAsSeen('friendsInvite');
+        }}
+      />
+    );
   }
 
   return null;

@@ -41,7 +41,7 @@ enum EventCategory {
   PlayerChess = 'Player - Chess',
   Chat = 'Chat',
   Room = 'Room',
-  Misc = 'Misc',
+  App = 'App',
 }
 
 export const Events = {
@@ -174,40 +174,36 @@ export const Events = {
   //   description: capitalize(color),
   // }),
 
-  // Marketing
+  // Feedback
 
-  trackRateAndReviewDialogShown: () =>
+  trackFeedbackDialogSeen: (step: 'Rating Step' | 'Review Step' | 'Friends Invite Step') =>
     trackEvent({
-      category: EventCategory.Misc,
-      action: 'Rate And Review Dialog Shown',
+      category: EventCategory.App,
+      action: `Feedback Dialog: Seen ${step}`,
+      description: capitalize(step),
       nonInteraction: true,
     }),
-  trackRateAndReviewDialogAnswered: (answer: 'negative' | 'neutral' | 'positive') =>
+  trackFeedbackDialogPostponed: (step: 'Rating Step') =>
     trackEvent({
-      category: EventCategory.Misc,
-      action: 'Rate And Review Dialog Answered',
+      category: EventCategory.App,
+      action: `Feedback Dialog: Postponed ${step}`,
+    }),
+
+  trackFeedbackDialogRated: (answer: 'negative' | 'neutral' | 'positive') =>
+    trackEvent({
+      category: EventCategory.App,
+      action: 'Feedback Dialog: Rated',
       description: answer,
     }),
-  trackRateAndReviewDialogPostponed: () =>
+  trackFeedbackDialogReviewButtonPressed: (answer: 'negative' | 'neutral' | 'positive') =>
     trackEvent({
-      category: EventCategory.Misc,
-      action: 'Rate And Review Dialog Postponed',
+      category: EventCategory.App,
+      action: 'Feedback Dialog: Review Button Pressed',
+      description: answer,
     }),
-  trackRateAndReviewDialogLeaveReviewButtonPressed: () =>
+  trackFeedbackDialogInviteFriendsShareButtonPressed: () =>
     trackEvent({
-      category: EventCategory.Misc,
-      action: 'Rate And Review Dialog Leave Review Button Pressed',
-    }),
-
-  trackInviteFriendsDialogShown: () =>
-    trackEvent({
-      category: EventCategory.Misc,
-      action: 'Invite Friends Dialog Shown',
-      nonInteraction: true,
-    }),
-  trackInviteFriendsDialogShareButtonPressed: () =>
-    trackEvent({
-      category: EventCategory.Misc,
-      action: 'Invite Friends Dialog Share Button Pressed',
+      category: EventCategory.App,
+      action: 'Feedback Dialog: Invite Friends Share Button Pressed',
     }),
 };

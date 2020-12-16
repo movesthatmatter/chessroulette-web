@@ -2,6 +2,8 @@ import { ChallengeRecord, RoomRecord } from 'dstnd-io';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Dialog } from './components/Dialog/Dialog';
+import { FeedbackDialog } from './components/FeedbackDialog';
+import { useFeedbackDialog } from './components/FeedbackDialog/useFeedbackDialog';
 import { Page } from './components/Page';
 import { usePeerState } from './components/PeerProvider';
 import { SocketConsumer } from './components/SocketProvider';
@@ -25,8 +27,15 @@ export const RouteEffects: React.FC = () => {
   const peerState = usePeerState();
   const history = useHistory();
   const [activityState, setActivityState] = useState<ActivityState>({ activity: 'none' });
+  const feedbackDialog = useFeedbackDialog();
 
   const onChallengeOrRoomPage = (slug: string) => history.location.pathname.indexOf(slug) > -1;
+
+  if (feedbackDialog.state.canShow.anyStep) {
+    return (
+      <FeedbackDialog />
+    );
+  }
 
   if (peerState.status === 'disconnected') {
     return (
