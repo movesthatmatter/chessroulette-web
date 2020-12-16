@@ -1,19 +1,26 @@
 {
-    "short_name": "Chessroulette",
-    "name": "Play Chess and Videochat with friends or join an open challenge.",
-    "icons": [
-        {
-            "src": "/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/android-chrome-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ],
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff",
-    "display": "standalone"
+  "short_name": "Chessroulette",
+  "name": "Play Chess and Video Chat with friends or show off your Queen's Gambit with someone across the world",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/android-chrome-192x192.png?v=xQ7q772rgw",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+        "src": "/android-chrome-512x512.png?v=xQ7q772rgw",
+        "sizes": "512x512",
+        "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff"
 }

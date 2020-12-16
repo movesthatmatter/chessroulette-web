@@ -6,7 +6,7 @@ import { colors, minMediaQuery } from 'src/theme';
 
 const errorsMap = {
   resourceNotFound: {
-    title: `404 Error`,
+    title: `Missing In Action`,
     description: `What you're looking for isn't here, but hey – Keep Looking?!`,
     mid: '5',
   },
@@ -36,8 +36,8 @@ export const AwesomeError: React.FC<AwesomeErrorProps> = ({
       </AspectRatio>
       {minimal || (
         <div className={cls.textContainer}>
-          <h1 className={cls.title}>{errorsMap[errorType].title}</h1>
-          <h3 className={cls.description}>{errorsMap[errorType].description}</h3>
+          <h4 className={cls.title}>{errorsMap[errorType].title}</h4>
+          <h6 className={cls.description}>{errorsMap[errorType].description}</h6>
         </div>
       )}
     </div>
@@ -82,7 +82,6 @@ const useStyles = createUseStyles({
     padding: '16px',
   },
   title: {
-    fontSize: '100%',
     marginBottom: 0,
     color: colors.neutralDarker,
   },

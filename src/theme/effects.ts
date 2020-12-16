@@ -8,6 +8,10 @@ export const softBorderRadius: CSSProperties = {
   borderRadius: '8px',
 };
 
+export const hardBorderRadius: CSSProperties = {
+  borderRadius: '16px',
+}
+
 export const borderRadius: CSSProperties = {
   borderRadius: '16px',
 };

@@ -26,11 +26,18 @@ WebFont.load({
 });
 
 render(
-  <React.StrictMode>
+  // Note: Dec 10, 2020 – Took this out b/c it makes components
+  //  mount twice. This is bad especially if I'm trying to instantiate
+  //  something only once :)
+  // This shouldn't affect production build though but I'm still taking it out.
+  // Its good for dev mode so you might want to use it to check things out
+  //  every now and then!
+  // Also See https://stackoverflow.com/questions/49055172/react-component-mounting-twice
+  // <React.StrictMode>
     <BrowserRouter>
       <App />
-    </BrowserRouter>
-  </React.StrictMode>,
+    </BrowserRouter>,
+  // </React.StrictMode>,
   document.getElementById('root'),
 );
 

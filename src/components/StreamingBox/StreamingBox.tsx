@@ -1,52 +1,67 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { FaceTime } from '../FaceTimeArea';
+import { MyFaceTime } from '../FaceTimeArea';
 import { Peer, Room } from '../RoomProvider';
-import { MultiStreamingBox } from './MultiStreamingBox';
-import { Streamer } from './types';
-import { softBorderRadius } from 'src/theme';
+import { MultiStreamingBox, MultiStreamingBoxProps } from './MultiStreamingBox';
+import cx from 'classnames';
 
-type Props = {
+export type StreamingBoxProps = {
   room: Room;
   width?: number;
   focusedPeerId?: Peer['id'];
+  aspectRatio?: MultiStreamingBoxProps['aspectRatio'];
+  containerClassName?: string;
+
+  headerOverlay?: MultiStreamingBoxProps['headerOverlay'];
+  mainOverlay?: MultiStreamingBoxProps['mainOverlay'];
+  footerOverlay?: MultiStreamingBoxProps['footerOverlay'];
 };
 
-export const StreamingBox: React.FC<Props> = (props) => {
+export const StreamingBox: React.FC<StreamingBoxProps> = (props) => {
   const cls = useStyles();
 
-  const activeStreamers = Object
-    .values(props.room.peers)
-    .reduce((prev, next) => {
-      if (!next.connection.channels.streaming.on) {
-        return prev;
-      }
+  const activeStreamers = Object.values(props.room.peers).reduce((prev, next) => {
+    if (!next.connection.channels.streaming.on) {
+      return prev;
+    }
 
-      return {
-        ...prev,
-        [next.id]: {
-          user: next.user,
-          streamingConfig: next.connection.channels.streaming,
-        }
-      }
-    }, {});
+    return {
+      ...prev,
+      [next.id]: {
+        user: next.user,
+        streamingConfig: next.connection.channels.streaming,
+      },
+    };
+  }, {});
 
   return (
-    <div className={cls.container} style={{ width: props.width || '100%' }}>
-      {(Object.keys(activeStreamers).length > 0) ? (
+    <div
+      className={cx(cls.container, props.containerClassName)}
+      style={{ width: props.width || '100%' }}
+    >
+      {Object.keys(activeStreamers).length > 0 ? (
         <MultiStreamingBox
           focusedUserId={props.focusedPeerId}
           streamersMap={activeStreamers}
-          myStreamingConfig={{
-            streamingConfig: props.room.me.connection.channels.streaming,
-            user: props.room.me.user,
-          } as Streamer}
+          aspectRatio={props.aspectRatio}
+          footerOverlay={props.footerOverlay}
+          headerOverlay={props.headerOverlay}
+          mainOverlay={props.mainOverlay}
+          // No label here for now!
+          label={undefined}
         />
       ) : (
-        <FaceTime
-          streamConfig={props.room.me.connection.channels.streaming}
-          className={cls.fullFacetime}
-          muted
+        <MyFaceTime
+          aspectRatio={props.aspectRatio}
+          headerOverlay={
+            props.headerOverlay ? props.headerOverlay({ inFocus: props.room.me.user }) : null
+          }
+          mainOverlay={
+            props.mainOverlay ? props.mainOverlay({ inFocus: props.room.me.user }) : null
+          }
+          footerOverlay={
+            props.footerOverlay ? props.footerOverlay({ inFocus: props.room.me.user }) : null
+          }
         />
       )}
     </div>
@@ -65,9 +80,7 @@ const useStyles = createUseStyles({
   smallFacetime: {
     border: '2px solid rgba(0, 0, 0, .3)',
   },
-  fullFacetime: {
-    ...softBorderRadius,
-  },
+  fullFacetime: {},
   noFacetime: {
     background: '#ededed',
   },

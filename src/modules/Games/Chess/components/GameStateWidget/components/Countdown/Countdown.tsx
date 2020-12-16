@@ -7,6 +7,7 @@ import { useInterval } from 'src/lib/hooks';
 import { Text } from 'src/components/Text';
 import { timeLeftToFormatMajor, timeLeftToFormatMinor, timeLeftToInterval } from './util';
 import { text } from 'src/theme/text';
+import { onlyMobile } from 'src/theme';
 
 type Props = {
   timeLeft: number;
@@ -51,7 +52,7 @@ export const Coundtdown: React.FC<Props> = ({ onFinished = () => noop, ...props 
       {timeLeft > 0 ? (
         <Text className={cls.text}>
           <Text className={cx(cls.text, cls.major, props.active && cls.textActive)}>
-            {dateFormat(timeLeft, timeLeftToFormatMajor(timeLeft))}
+            {dateFormat(timeLeft, timeLeftToFormatMajor(timeLeft))}:
           </Text>
           <Text className={cx(cls.text, cls.minor, props.active && cls.textActive)}>
             {dateFormat(timeLeft, timeLeftToFormatMinor(timeLeft))}
@@ -59,7 +60,7 @@ export const Coundtdown: React.FC<Props> = ({ onFinished = () => noop, ...props 
         </Text>
       ) : (
         <Text className={cx(cls.text)}>
-          <Text className={cx(cls.text, cls.major)}>0</Text>
+          <Text className={cx(cls.text, cls.major)}>0:</Text>
           <Text className={cx(cls.text, cls.minor)}>00</Text>
         </Text>
       )}
@@ -75,6 +76,11 @@ const useStyles = createUseStyles({
     fontSize: '32px',
     lineHeight: '32px',
     color: text.disabledColor,
+
+    ...onlyMobile({
+      fontSize: '24px',
+      lineHeight: '24px',
+    }),
   },
   textActive: {
     color: text.primaryColor,

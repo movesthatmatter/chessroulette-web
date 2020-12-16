@@ -26,7 +26,7 @@ const neutralButtonShadow = {
 };
 
 const onClickTransition = {
-  transition: 'all 100ms linear',
+  transition: 'transform 100ms linear',
 
   '&:active': {
     transform: 'scale(.9)',

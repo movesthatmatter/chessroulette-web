@@ -1,20 +1,31 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import logo from 'src/assets/logo_v2.svg';
+import { Logo } from 'src/components/Logo';
+import { hideOnDesktop, hideOnMobile, onlyMobile, onlySmallMobile } from 'src/theme';
+import { UserMenu } from './UserMenu';
+import cx from 'classnames';
 
-type Props = {};
+type Props = {
+  logoAsLink?: boolean;
+};
 
-export const NavigationHeader: React.FC<Props> = () => {
+export const NavigationHeader: React.FC<Props> = ({
+  logoAsLink = true,
+}) => {
   const cls = useStyles();
 
   return (
+    <>
     <div className={cls.top}>
-      <div className={cls.topMain}>
-        <a href="/">
-          <img src={logo} alt="logo" className={cls.logo} />
-        </a>
+      <div className={cx(cls.topMain, cls.onlyMobile)}>
+        <Logo asLink={false} darkMode/>
+        <UserMenu darkMode reversed/>
+      </div>
+      <div className={cx(cls.topMain, cls.onlyDesktop)}>
+        <Logo asLink={logoAsLink}/>
       </div>
     </div>
+    </>
   );
 };
 
@@ -27,18 +38,28 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'row',
     alignContent: 'space-between',
+
+    ...onlyMobile({
+      height: 'auto',
+      padding: '12px',
+    }),
+
+    ...onlySmallMobile({
+      padding: '8px',
+    }),
   },
   topMain: {
     flex: 1,
+
+    ...onlyMobile({
+      display: 'flex',
+      alignContent: 'space-between',
+    }),
   },
-  topRight: {
-    justifySelf: 'flex-end',
+  onlyMobile: {
+    ...hideOnDesktop,
   },
-  logo: {
-    width: '200px',
-  },
-  main: {
-    width: '100%',
-    height: `calc(100% - ${topHeightPx}px)`,
-  },
+  onlyDesktop: {
+    ...hideOnMobile,
+  }
 });

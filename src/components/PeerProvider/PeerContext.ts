@@ -2,9 +2,9 @@ import { createContext } from 'react';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { Peer, Room } from '../RoomProvider';
-import { PeerConnectionsErrors } from './PeerConnections';
-import { Proxy } from './Proxy';
-import { RoomCredentials } from './util';
+import { PeerConnectionsErrors } from './lib/PeerConnections';
+import { Proxy } from './lib/Proxy';
+import { RoomCredentials } from './types';
 
 export type PeerContextProps =
   | {
@@ -12,18 +12,18 @@ export type PeerContextProps =
       proxy: Proxy;
       room: Room;
       me: Peer;
+
+      connected: boolean;
+      connectToRoom: () => void;
+      disconnectFromRoom: () => void;
+
       broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
       request: SocketClient['send'];
       leaveRoom: () => void;
-
-      // This simply starts the local stream for local display only!
-      startLocalStream: () => void;
-      stopLocalStream: () => void;
     }
   | {
       state: 'notJoined';
-      proxy?: Proxy;
-      // room: RoomRecord;
+      proxy: Proxy;
       me: Peer;
       request: SocketClient['send'];
 

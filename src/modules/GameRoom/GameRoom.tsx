@@ -3,7 +3,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { PeerMessageEnvelope } from 'src/services/peers';
 import { ChatBoxContainer } from 'src/components/ChatBox';
 import { ChatMessageRecord } from 'src/components/ChatBox/records/ChatMessageRecord';
-import logo from 'src/assets/logo_black.svg';
+import logo from 'src/assets/logo.svg';
 import cx from 'classnames';
 import { RoomInfoDisplay } from 'src/components/RoomInfoDisplay';
 import { PopupModal } from 'src/components/PopupModal/PopupModal';
@@ -210,9 +210,10 @@ export const GameRoom: React.FC<GameRoomProps> = ({
             </div>
           </aside>
           <div className={cls.middleSide}>
-            <ChessGame
+            {/* <ChessGame
               className={cls.gameContainer}
-              pgn={props.currentGame?.pgn ?? ''}
+              // pgn={props.currentGame?.pgn ?? ''}
+              // game={props.currentGame}
               homeColor={homeColor}
               playable={playable}
               onMove={(nextPgn) => {
@@ -242,8 +243,8 @@ export const GameRoom: React.FC<GameRoomProps> = ({
                 // setLastMoveTime(now);
 
                 // props.onGameStateUpdate(nextGame);
-              }}
-            />
+              }} */}
+            {/* /> */}
           </div>
           <aside className={cls.rightSide}>
             <RoomInfoDisplay

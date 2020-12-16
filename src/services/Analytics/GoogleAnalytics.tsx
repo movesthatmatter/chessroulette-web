@@ -54,7 +54,7 @@ const init = (options: InitializeOptions = {}) => {
 
   if (isGAEnabled) {
     ReactGA.initialize(config.GOOGLE_ANALYTICS_TRACKING_ID, {
-      // debug: config.DEBUG,
+      debug: config.DEBUG,
       ...options,
     });
   }

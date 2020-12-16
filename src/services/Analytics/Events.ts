@@ -1,34 +1,32 @@
 import capitalize from 'capitalize';
 import ReactGA from 'react-ga';
 
-type EventCategory = 'User' | 'Game - Chess' | 'Player - Chess' | 'Chat';
-
 const trackEvent = ({
   category,
   action,
   description,
   ...rest
 }: {
-  category: EventCategory,
-  action: string,
-  value?: number,
-  description?: string,
-  nonInteraction?: boolean,
+  category: EventCategory;
+  action: string;
+  value?: number;
+  description?: string;
+  nonInteraction?: boolean;
 }) => {
   ReactGA.event({
     category,
     action,
 
-    ...description && {
+    ...(description && {
       label: description,
-    },
+    }),
 
     ...rest,
-  })
-}
+  });
+};
 
 type ChallengeType = 'Friendly Challenge' | 'Quick Pairing';
-type GameEndedReason = 
+type GameEndedReason =
   | 'Check Mate'
   | 'Draw Accepted'
   | 'Resignation'
@@ -36,6 +34,15 @@ type GameEndedReason =
   | 'Time Finished'
   | 'Stalemate'
   | 'Threefold Repetition';
+
+enum EventCategory {
+  User = 'User',
+  GameChess = 'Game - Chess',
+  PlayerChess = 'Player - Chess',
+  Chat = 'Chat',
+  Room = 'Room',
+  App = 'App',
+}
 
 export const Events = {
   trackEvent,
@@ -54,81 +61,157 @@ export const Events = {
     ReactGA.pageview(page);
   },
 
-  trackChallengeCreated: (type: ChallengeType) => trackEvent({
-    category: 'User',
-    action: 'Challenge Created',
-    description: type,
-  }),
+  trackChallengeCreated: (type: ChallengeType) =>
+    trackEvent({
+      category: EventCategory.User,
+      action: 'Challenge Created',
+      description: type,
+    }),
 
-  trackFriendlyChallengeAccepted: () => trackEvent({
-    category: 'User',
-    action: 'Friendly Challenge Accepted',
-  }),
+  trackFriendlyChallengeAccepted: () =>
+    trackEvent({
+      category: EventCategory.User,
+      action: 'Friendly Challenge Accepted',
+    }),
 
-  trackQuickPairingMatched: () => trackEvent({
-    category: 'User',
-    action: 'Quick Pairing Matched',
-  }),
+  trackQuickPairingMatched: () =>
+    trackEvent({
+      category: EventCategory.User,
+      action: 'Quick Pairing Matched',
+    }),
 
-  trackDrawOffered: () => trackEvent({
-    category: 'Player - Chess',
-    action: 'Draw Offered',
-  }),
+  trackAVPermissionsRequestAccepted: (type: 'public' | 'private') =>
+    trackEvent({
+      category: EventCategory.Room,
+      action: 'AV Permissions Request Accepted',
+      description: capitalize(type),
+    }),
 
-  trackDrawAccepted: () => trackEvent({
-    category: 'Player - Chess',
-    action: 'Draw Accepted',
-  }),
+  trackRoomJoiningConfirmed: (type: 'public' | 'private') =>
+    trackEvent({
+      category: EventCategory.Room,
+      action: 'Room Joining Confirmed',
+      description: capitalize(type),
+    }),
 
-  trackDrawDenied: () => trackEvent({
-    category: 'Player - Chess',
-    action: 'Draw Denied',
-  }),
+  trackRoomJoiningCanceled: (type: 'public' | 'private') =>
+    trackEvent({
+      category: EventCategory.Room,
+      action: 'Room Joining Canceled',
+      description: capitalize(type),
+    }),
 
-  trackResigned: () => trackEvent({
-    category: 'Player - Chess',
-    action: 'Resigned',
-  }),
+  trackDrawOffered: () =>
+    trackEvent({
+      category: EventCategory.PlayerChess,
+      action: 'Draw Offered',
+    }),
 
-  trackAborted: () => trackEvent({
-    category: 'Player - Chess',
-    action: 'Aborted',
-  }),
+  trackDrawAccepted: () =>
+    trackEvent({
+      category: EventCategory.PlayerChess,
+      action: 'Draw Accepted',
+    }),
 
-  trackRematchOffered: () => trackEvent({
-    category: 'Player - Chess',
-    action: 'Rematch Offered',
-  }),
+  trackDrawDenied: () =>
+    trackEvent({
+      category: EventCategory.PlayerChess,
+      action: 'Draw Denied',
+    }),
 
-  trackRematchDenied: () => trackEvent({
-    category: 'Player - Chess',
-    action: 'Rematch Denied',
-  }),
+  trackResigned: () =>
+    trackEvent({
+      category: EventCategory.PlayerChess,
+      action: 'Resigned',
+    }),
 
-  trackRematchAccepted: () => trackEvent({
-    category: 'Player - Chess',
-    action: 'Rematch Accepted',
-  }),
+  trackAborted: () =>
+    trackEvent({
+      category: EventCategory.PlayerChess,
+      action: 'Aborted',
+    }),
 
-  trackGameStarted: (color: 'white' | 'black') => trackEvent({
-    category: 'Game - Chess',
-    action: 'Game Started',
-    description: capitalize(color),
-  }),
+  trackRematchOffered: () =>
+    trackEvent({
+      category: EventCategory.PlayerChess,
+      action: 'Rematch Offered',
+    }),
 
-  trackGameEnded: (reason: 'finished' | 'stopped') => trackEvent({
-    category: 'Game - Chess',
-    action: 'Game Ended',
-    description: capitalize(reason),
-  }),
+  trackRematchDenied: () =>
+    trackEvent({
+      category: EventCategory.PlayerChess,
+      action: 'Rematch Denied',
+    }),
 
-  trackChatMessageSent: () => trackEvent({
-    category: 'Chat',
-    action: 'Message Sent',
-  }),
+  trackRematchAccepted: () =>
+    trackEvent({
+      category: EventCategory.PlayerChess,
+      action: 'Rematch Accepted',
+    }),
+
+  trackGameStarted: (color: 'white' | 'black') =>
+    trackEvent({
+      category: EventCategory.GameChess,
+      action: 'Game Started',
+      description: capitalize(color),
+    }),
+
+  trackGameEnded: (reason: 'finished' | 'stopped') =>
+    trackEvent({
+      category: EventCategory.GameChess,
+      action: 'Game Ended',
+      description: capitalize(reason),
+    }),
+
+  trackChatMessageSent: () =>
+    trackEvent({
+      category: EventCategory.Chat,
+      action: 'Message Sent',
+    }),
   // trackMoveMade: (color: 'white' | 'black') => trackEvent({
   //   category: 'Game - Chess',
   //   action: 'Move Made',
   //   description: capitalize(color),
   // }),
+
+  // Feedback
+
+  trackFeedbackDialogSeen: (step: 'Rating Step' | 'Review Step' | 'Friends Invite Step') =>
+    trackEvent({
+      category: EventCategory.App,
+      action: `Feedback Dialog: Seen ${step}`,
+      description: capitalize(step),
+      nonInteraction: true,
+    }),
+  trackFeedbackDialogPostponed: (step: 'Rating Step') =>
+    trackEvent({
+      category: EventCategory.App,
+      action: `Feedback Dialog: Postponed ${step}`,
+    }),
+
+  trackFeedbackDialogRated: (answer: 'negative' | 'neutral' | 'positive') =>
+    trackEvent({
+      category: EventCategory.App,
+      action: 'Feedback Dialog: Rated',
+      description: answer,
+    }),
+  trackFeedbackDialogReviewButtonPressed: (answer: 'negative' | 'neutral' | 'positive') =>
+    trackEvent({
+      category: EventCategory.App,
+      action: 'Feedback Dialog: Review Button Pressed',
+      description: answer,
+    }),
+  trackFeedbackDialogInviteFriendsShareButtonPressed: () =>
+    trackEvent({
+      category: EventCategory.App,
+      action: 'Feedback Dialog: Invite Friends Share Button Pressed',
+    }),
+
+  // Others
+
+  trackBrowserNotSupportedDialogShown: () => trackEvent({
+    category: EventCategory.App,
+    action: 'Browser Not Supported Dialog Show',
+    nonInteraction: true,
+  }),
 };

@@ -1,41 +1,45 @@
-import React from 'react';
-import { createUseStyles } from 'src/lib/jss';
+import React, { useState } from 'react';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { Box, TextInput, Button } from 'grommet';
-import { Clipboard } from 'grommet-icons';
+import { Copy } from 'grommet-icons';
+import { noop } from 'src/lib/util';
+import { colors, onlyMobile } from 'src/theme';
+import cx from 'classnames';
+import { seconds } from 'src/lib/time';
 
 type Props = {
   value: string;
+  // @deprecate This doesnt work in some environemnts (ios)
+  autoCopy?: boolean;
   onCopied?: () => void;
 };
 
-export const ClipboardCopy: React.FC<Props> = (props) => {
+export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, ...props }) => {
   const cls = useStyles();
+  const [copied, setCopied] = useState(false);
+
+  const copy = () => {
+    navigator.clipboard.writeText(props.value).then(() => {
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, seconds(2));
+
+      onCopied();
+    });
+  };
 
   return (
-    <Box direction="row" className={cls.container} fill>
-      <TextInput
-        value={props.value}
-        plain
-        size="small"
-        style={{
-          fontSize: '13px',
-          fontWeight: 'normal',
-          height: '32px',
-        }}
-      />
+    <Box direction="row" className={cx(cls.container, copied && cls.containerCopied)} fill>
+      <TextInput value={props.value} plain size="small" className={cls.textInput} />
       <Button
-        icon={<Clipboard color="light-1"/>}
-        className={cls.copyButton}
+        icon={<Copy color={colors.neutralDarkest} className={cls.copyIcon} />}
+        className={cx(cls.copyButton)}
         size="small"
         plain
         focusIndicator
-        color="dark-1"
-        onClick={() => {
-          navigator.clipboard.writeText(props.value);
-        }}
-        style={{
-          height: '32px',
-        }}
+        onClick={copy}
       />
     </Box>
   );
@@ -43,21 +47,51 @@ export const ClipboardCopy: React.FC<Props> = (props) => {
 
 const useStyles = createUseStyles({
   container: {
-    border: '1px solid grey',
+    border: `1px solid ${colors.neutral}`,
     borderRadius: '40px',
     overflow: 'hidden',
+    transition: 'border 150ms ease-in',
+  },
+  containerCopied: {
+    borderColor: colors.positive,
+  },
+  textInput: {
+    ...makeImportant({
+      fontSize: '13px',
+      fontWeight: 'normal',
+      height: '32px',
+
+      // These are needed for WebViews on IOS
+      //  since the boody takes them out!
+      userSelect: 'auto',
+      WebkitTapHighlightColor: 'initial',
+      WebkitTouchCallout: 'default',
+    }),
   },
   copyButton: {
-    background: 'grey !important',
+    background: `${colors.neutral} !important`,
     padding: '0 1em 0 .7em !important',
-    // color: 'white !important',
 
     '&:active': {
+      background: `${colors.neutralDark} !important`,
+    },
+
+    '&:hover': {
       opacity: 0.8,
     },
 
     '&:focus': {
       boxShadow: 'none !important',
     },
+  },
+  copyButtonSuccess: {
+    background: `${colors.positive} !important`,
+  },
+  copyIcon: {
+    width: '16px !important',
+
+    ...onlyMobile({
+      width: '14px !important',
+    }),
   },
 });

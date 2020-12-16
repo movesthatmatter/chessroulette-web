@@ -4,18 +4,21 @@
 // };
 // import { Chess } from 'dstnd-io';
 import Chance from 'chance';
-import { ChessPlayer } from 'src/modules/Games/Chess';
+import { ChessPlayer } from 'dstnd-io';
+import { UserInfoMocker } from './UserInfoMocker';
+// import { ChessPlayer } from 'src/modules/Games/Chess';
 
 const chance = new Chance();
 
 const colors = ['white', 'black'];
 
+const userInfoMock = new UserInfoMocker();
+
 export class ChessPlayerMock {
   record(): ChessPlayer {
     return {
-      id: String(chance.integer({ min: 1 })),
-      name: String(chance.name()),
       color: colors[chance.integer({ min: 0, max: 1 })] as 'white' | 'black',
+      user: userInfoMock.record(),
     };
   }
 

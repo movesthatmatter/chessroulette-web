@@ -1,0 +1,30 @@
+{
+  "urls": [
+    "gameSoundsFX.ogg",
+    "gameSoundsFX.m4a",
+    "gameSoundsFX.mp3",
+    "gameSoundsFX.ac3"
+  ],
+  "sprite": {
+    "captured": [
+      0,
+      169.13832199546485
+    ],
+    "check_mated": [
+      2000,
+      229.3197278911565
+    ],
+    "game_started": [
+      4000,
+      253.5600907029476
+    ],
+    "in_check": [
+      6000,
+      302.76643990929665
+    ],
+    "valid_move": [
+      8000,
+      255.57823129251744
+    ]
+  }
+}

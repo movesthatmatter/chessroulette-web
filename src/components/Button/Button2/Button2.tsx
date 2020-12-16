@@ -1,21 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { ButtonType } from '../type';
 import { Icon as GIcon } from 'grommet-icons';
 import cx from 'classnames';
 import { buttonStyles } from '../styles';
 import { borderRadius, colors } from 'src/theme';
-import { buttonEffects } from '../effects';
 import { Text } from 'src/components/Text';
 import { CSSProperties } from 'src/lib/jss/types';
-
+import Loader from 'react-loaders';
+import 'loaders.css';
+import { AsyncResult } from 'dstnd-io';
 
 export type ButtonProps = {
   type?: ButtonType;
   icon?: GIcon;
   label: string;
   reverse?: boolean;
-  onClick: () => void;
+
   disabled?: boolean;
   clear?: boolean;
   full?: boolean;
@@ -23,6 +24,8 @@ export type ButtonProps = {
   className?: string;
   size?: 'auto' | 'small' | 'medium' | 'large';
   style?: CSSProperties;
+  onClick: (() => void) | (() => Promise<any>) | (() => AsyncResult<any, any>);
+  withLoader?: boolean;
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -30,18 +33,16 @@ export const Button: React.FC<ButtonProps> = ({
   clear = false,
   full = false,
   reverse = false,
+  withLoader = false,
   size = 'auto',
   ...props
 }) => {
   const cls = useStyles();
   const Icon = props.icon;
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <div className={cx(
-      cls.container,
-      props.containerClassName,
-      full && cls.containerFull,
-    )}>
+    <div className={cx(cls.container, props.containerClassName, full && cls.containerFull)}>
       <button
         disabled={props.disabled}
         type="submit"
@@ -53,19 +54,62 @@ export const Button: React.FC<ButtonProps> = ({
           props.icon && cls.withIcon,
           reverse && cls.reverse,
           size !== 'auto' && cls[size],
-          props.className,
+          isLoading && cls.hasLoader,
+          props.className
         )}
         style={props.style}
-        onClick={() => props.onClick()}
+        onClick={() => {
+          if (isLoading) {
+            return;
+          }
+
+          const result = props.onClick();
+
+          if (!withLoader) {
+            return;
+          }
+
+          if (AsyncResult.isAsyncResult(result)) {
+            setIsLoading(true);
+
+            result
+              .map(() => setIsLoading(false))
+              .mapErr(() => setIsLoading(false));
+          } else {
+            setIsLoading(true);
+
+            Promise.resolve(result).finally(() => {
+              setIsLoading(false);
+            });
+          }
+        }}
       >
-        <Text className={cls.label}>
-          {props.label}
-        </Text>
-        {Icon && (
-          <div className={cls.iconWrapper}>
-            <Icon className={cls.icon}/>
-          </div>
-        )}
+        <>
+          <Text
+            className={cls.label}
+            style={{
+              ...(isLoading && {
+                  visibility: 'hidden',
+                }),
+            }}
+          >
+            {props.label}
+          </Text>
+          {isLoading && (
+            <div className={cls.loadingWrapper}>
+              <Loader
+                type="ball-pulse"
+                active
+                innerClassName={cls.loader}
+              />
+            </div>
+          )}
+          {Icon && (
+            <div className={cls.iconWrapper}>
+              <Icon className={cls.icon} />
+            </div>
+          )}
+        </>
       </button>
     </div>
   );
@@ -88,8 +132,8 @@ const useStyles = createUseStyles({
       '& $iconWrapper': {
         marginLeft: 0,
         marginRight: '-8px',
-      }
-    }
+      },
+    },
   },
   small: {
     minWidth: '100px',
@@ -127,5 +171,15 @@ const useStyles = createUseStyles({
     stroke: `${colors.white} !important`,
     width: '16px !important',
     height: '16px !important',
+  },
+  loadingWrapper: {
+    position: 'absolute',
+    top: '3px',
+    left: 0,
+    right: 0,
+    bottom: '3px',
+  },
+  loader: {
+    transform: 'scale(.5)',
   },
 });

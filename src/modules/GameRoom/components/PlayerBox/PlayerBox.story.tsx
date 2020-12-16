@@ -21,18 +21,19 @@ export const homePlayer = () => (
   }}
   >
     <WithLocalStream render={(stream) => (
-      <PlayerBox
-        player={whitePlayerMock}
-        side="home"
-        streamConfig={{
-          on: true,
-          stream,
-          type: 'audio-video',
-        }}
-        currentGame={undefined}
-        avatarId="8"
-        onTimeFinished={action('on time finished')}
-      />
+      null
+      // <PlayerBox
+      //   player={whitePlayerMock}
+      //   side="home"
+      //   streamConfig={{
+      //     on: true,
+      //     stream,
+      //     type: 'audio-video',
+      //   }}
+      //   currentGame={undefined}
+      //   avatarId="8"
+      //   onTimeFinished={action('on time finished')}
+      // />
     )}
     />
   </div>

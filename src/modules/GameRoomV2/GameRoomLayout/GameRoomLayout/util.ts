@@ -65,3 +65,5 @@ export const getLayoutSizes = (
     ratios
   );
 };
+
+export const isMobile = (dimensions: ContainerDimensions) => dimensions.width < 601;

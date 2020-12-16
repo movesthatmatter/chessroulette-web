@@ -31,11 +31,11 @@ export const PlayerBox: React.FC<Props> = ({
 
   return (
     <Box fill className={cls.container} direction="row">
-      <Box className={cls.playerInfo} fill direction="row">
+      <Box fill direction="row">
         <Avatar>
           <Mutunachi mid={player.user.avatarId} />
         </Avatar>
-        <Box>
+        <Box className={cls.playerInfo}>
           <Text className={cls.playerNameText}>
             {player.user.name}
           </Text>
@@ -62,7 +62,9 @@ export const PlayerBox: React.FC<Props> = ({
 
 const useStyles = createUseStyles({
   container: {},
-  playerInfo: {},
+  playerInfo: {
+    marginLeft: '8px',
+  },
   avatar: {
     height: '32px',
     width: '32px',
