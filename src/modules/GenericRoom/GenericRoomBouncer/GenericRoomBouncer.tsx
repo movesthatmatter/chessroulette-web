@@ -46,20 +46,20 @@ export const GenericRoomBouncer: React.FC<Props> = ({
       hasCloseButton={false}
       title={
         bouncer.state.permissionsGranted
-          ? "Smile – You're on camera!"
+          ? "Wow! You look ready! 😏"
           : "Smile – You'll be on camera!"
       }
       content={
         <div
           style={{
-            marginTop: '16px',
+            marginTop: '0px',
             textAlign: 'center',
           }}
         >
           {!(bouncer.state.permissionsGranted || bouncer.state.permissionsRequestAgreed) ? (
             <Text size="small1">
-              To be able to get the most out of your <strong>Chessroulette</strong>
-              experience you need to allow access to your camera and microphone.
+              Get the most out of your <strong>Chessroulette </strong>
+              experience by allowing access to your camera and microphone.
             </Text>
           ) : (
             <FaceTimeSetup
