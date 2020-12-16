@@ -32,6 +32,12 @@ const useStyles = createUseStyles({
       fontSize: '13px',
       fontWeight: 'normal',
       height: '32px',
+
+       // These are needed for WebViews on IOS
+      //  since the boody takes them out!
+      userSelect: 'auto',
+      WebkitTapHighlightColor: 'initial',
+      WebkitTouchCallout: 'default',
     }),
   },
 });
