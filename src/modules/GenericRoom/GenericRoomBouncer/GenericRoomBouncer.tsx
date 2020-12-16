@@ -6,7 +6,7 @@ import { Text } from 'src/components/Text';
 import { noop } from 'src/lib/util';
 import { Events } from 'src/services/Analytics';
 import { useGenericRoomBouncer } from './useGenericRoomBouncer';
-import { BrowserNotSupportedDialog } from './components/BrowserNotSuppoortedDialog';
+
 
 type Props = {
   roomInfo: RoomRecord;
@@ -28,16 +28,13 @@ export const GenericRoomBouncer: React.FC<Props> = ({
     }
   }, [bouncer.state.ready]);
 
-  useEffect(() => {
-    bouncer.checkBrowserSupport();
-  }, []);
-
   if (bouncer.state.ready) {
     return <>{props.children}</>;
   }
 
+  // let the Global Bouncer Dialog deal with it!
   if (!bouncer.state.browserIsSupported) {
-    return <BrowserNotSupportedDialog visible />;
+    return null;
   }
 
   return (
@@ -79,6 +76,9 @@ export const GenericRoomBouncer: React.FC<Props> = ({
               type: 'primary',
               label: 'Start my Camera',
               onClick: () => {
+                // Make sure the Browser Is Supported before anything else
+                bouncer.checkBrowserSupport();
+
                 bouncer.agreeWithPermissionsRequest();
 
                 Events.trackAVPermissionsRequestAccepted(props.roomInfo.type);

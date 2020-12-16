@@ -9,6 +9,7 @@ import { usePeerState } from './components/PeerProvider';
 import { SocketConsumer } from './components/SocketProvider';
 import { toRoomUrlPath } from './lib/util';
 import { ChallengeWidget } from './modules/Challenges/Widgets/ChallengeWidget';
+import { BrowserNotSupportedDialog, useGenericRoomBouncer } from './modules/GenericRoom';
 
 type ActivityState =
   | {
@@ -28,14 +29,9 @@ export const RouteEffects: React.FC = () => {
   const history = useHistory();
   const [activityState, setActivityState] = useState<ActivityState>({ activity: 'none' });
   const feedbackDialog = useFeedbackDialog();
+  const { state: bouncerState } = useGenericRoomBouncer();
 
   const onChallengeOrRoomPage = (slug: string) => history.location.pathname.indexOf(slug) > -1;
-
-  if (feedbackDialog.state.canShow.anyStep) {
-    return (
-      <FeedbackDialog />
-    );
-  }
 
   if (peerState.status === 'disconnected') {
     return (
@@ -59,6 +55,14 @@ export const RouteEffects: React.FC = () => {
         />
       </Page>
     );
+  }
+
+  if (!bouncerState.browserIsSupported) {
+    return <BrowserNotSupportedDialog visible />;
+  }
+
+  if (feedbackDialog.state.canShow.anyStep) {
+    return <FeedbackDialog />;
   }
 
   return (

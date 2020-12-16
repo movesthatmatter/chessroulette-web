@@ -3,9 +3,9 @@ import { useEffect } from 'react';
 import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
 import {
   grantPermissionsAction,
-  acceptBrowserSuppport,
   confirmJoiningRoomAction,
   agreePermissionsRequestAction,
+  refuseBrowserSuppport,
 } from './reducer';
 import isWebViewUA from 'is-ua-webview';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,8 +27,8 @@ export const useGenericRoomBouncer = (checkOnMount = false) => {
   };
 
   const checkBrowserSupport = () => {
-    if (!isWebViewUA(navigator.userAgent)) {
-      dispatch(acceptBrowserSuppport());
+    if (isWebViewUA(navigator.userAgent)) {
+      dispatch(refuseBrowserSuppport());
     }
   };
 

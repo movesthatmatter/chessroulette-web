@@ -14,8 +14,11 @@ export type State = {
 export const initialState: State = {
   permissionsRequestAgreed: false,
   permissionsGranted: false,
-  browserIsSupported: false,
   confirmedRoomJoin: false,
+
+  // This is true by default until a check called from
+  // a specific place sets it to false!
+  browserIsSupported: true,
 
   // TODO: Add
   // loggedInIfRandom: false
@@ -25,7 +28,7 @@ export const initialState: State = {
 
 export const agreePermissionsRequestAction = createAction('AgreePermissionsRequest');
 export const grantPermissionsAction = createAction('GrantPermisssions');
-export const acceptBrowserSuppport = createAction('AcceptBrowserSuppport');
+export const refuseBrowserSuppport = createAction('RefuseBrowserSuppport');
 export const confirmJoiningRoomAction = createAction('ConfirmJoiningRoomAction');
 
 const getReadyFlag = (state: State) => {
@@ -55,10 +58,10 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
       ready: getReadyFlag(nextState),
     }
   }),
-  handleAction(acceptBrowserSuppport, (state) => {
+  handleAction(refuseBrowserSuppport, (state) => {
     const nextState = {
       ...state,
-      browserIsSupported: true,
+      browserIsSupported: false,
     };
 
     return {

@@ -89,8 +89,9 @@ export const ChallengeWidget: React.FC<Props> = ({
     checkBrowserSupport();
   }, []);
 
+  // let the Global Bouncer Dialog deal with it!
   if (!bouncerState.browserIsSupported) {
-    return <BrowserNotSupportedDialog visible />;
+    return null;
   }
 
   if (!(state && user)) {
