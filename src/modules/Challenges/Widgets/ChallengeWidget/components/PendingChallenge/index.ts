@@ -1,1 +1,2 @@
-export { PendingChallengeContainer as PendingChallenge } from './PendingChallengeContainer';
+// Only Expose the Dialog since the Analytics Events are tracked at that level
+export * from './PendingChallengeDialog';

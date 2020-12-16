@@ -13,7 +13,13 @@ export default {
 export const defaultStory = () => (
   <Grommet theme={defaultTheme} full>
     <Box pad="medium" align="center">
-      <CreateChallenge onUpdate={action('on update')} />
+      <CreateChallenge
+        gameSpecs={{
+          timeLimit: 'blitz',
+          preferredColor: 'black',
+        }}
+        onUpdated={action('on update')}
+      />
     </Box>
   </Grommet>
 );

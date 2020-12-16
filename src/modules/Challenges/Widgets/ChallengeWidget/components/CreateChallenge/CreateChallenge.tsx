@@ -1,17 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
-import { ChessGameTimeLimit, metadata, ChessPrefferedColorOption, GameSpecsRecord } from 'dstnd-io';
+import {
+  ChessGameTimeLimit,
+  metadata,
+  GameSpecsRecord,
+  ChallengeRecord,
+  ChessGameColor,
+} from 'dstnd-io';
 import capitalize from 'capitalize';
 import { SelectInput } from 'src/components/Input/SelectInput';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import humanizeDuration from 'humanize-duration';
 
-type State = GameSpecsRecord;
-
-export type ChessChallengeCreatorProps = {
-  onUpdate: (state: State) => void;
+export type CreateChallengeProps = {
+  gameSpecs: ChallengeRecord['gameSpecs'];
+  onUpdated: (gs: GameSpecsRecord) => void;
 };
 
 const formatTimeLimit = humanizeDuration.humanizer({
@@ -19,16 +24,8 @@ const formatTimeLimit = humanizeDuration.humanizer({
   round: true,
 });
 
-export const CreateChallenge: React.FC<ChessChallengeCreatorProps> = ({ ...props }) => {
+export const CreateChallenge: React.FC<CreateChallengeProps> = ({ gameSpecs, onUpdated }) => {
   const cls = useStyles();
-  const [state, setState] = useState<State>({
-    timeLimit: 'rapid',
-    preferredColor: 'random',
-  });
-
-  useEffect(() => {
-    props.onUpdate(state);
-  }, [state]);
 
   return (
     <div className={cls.container}>
@@ -54,18 +51,18 @@ export const CreateChallenge: React.FC<ChessChallengeCreatorProps> = ({ ...props
           })}
           value={{
             label:
-              state.timeLimit === 'untimed'
-                ? capitalize(state.timeLimit)
-                : `${capitalize(state.timeLimit)} (${formatTimeLimit(
-                    metadata.game.chessGameTimeLimitMsMap[state.timeLimit]
+              gameSpecs.timeLimit === 'untimed'
+                ? capitalize(gameSpecs.timeLimit)
+                : `${capitalize(gameSpecs.timeLimit)} (${formatTimeLimit(
+                    metadata.game.chessGameTimeLimitMsMap[gameSpecs.timeLimit]
                   )})`,
-            value: state.timeLimit,
+            value: gameSpecs.timeLimit,
           }}
           onSelect={({ value }) => {
-            setState((prev) => ({
-              ...prev,
+            onUpdated({
+              ...gameSpecs,
               timeLimit: value as ChessGameTimeLimit,
-            }));
+            });
           }}
         />
       </Box>
@@ -79,15 +76,15 @@ export const CreateChallenge: React.FC<ChessChallengeCreatorProps> = ({ ...props
             value: k,
           }))}
           value={{
-            label: capitalize(state.preferredColor),
-            value: state.preferredColor,
+            label: capitalize(gameSpecs.preferredColor),
+            value: gameSpecs.preferredColor,
           }}
-          onSelect={({ value }) =>
-            setState((prev) => ({
-              ...prev,
-              preferredColor: value as ChessPrefferedColorOption,
-            }))
-          }
+          onSelect={({ value }) => {
+            onUpdated({
+              ...gameSpecs,
+              preferredColor: value as ChessGameColor,
+            });
+          }}
         />
       </Box>
     </div>

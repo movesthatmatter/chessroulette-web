@@ -3,11 +3,11 @@ import { Text } from 'src/components/Text';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 
-type Props = {
+export type AcceptChallengeProps = {
   challenge: ChallengeRecord;
 };
 
-export const AcceptChallenge: React.FC<Props> = (props) => {
+export const AcceptChallenge: React.FC<AcceptChallengeProps> = (props) => {
   const cls = useStyles();
 
   return (

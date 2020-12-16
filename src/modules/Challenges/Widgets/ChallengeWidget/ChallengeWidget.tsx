@@ -1,251 +1,89 @@
-import capitalize from 'capitalize';
-import { ChallengeRecord, GameSpecsRecord, Ok, RoomRecord, UserRecord } from 'dstnd-io';
+import { ChallengeRecord, RoomRecord, UserRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { ButtonProps } from 'src/components/Button';
-import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
 import { noop } from 'src/lib/util';
 import { useGenericRoomBouncer } from 'src/modules/GenericRoom';
-import { BrowserNotSupportedDialog } from 'src/modules/GenericRoom/GenericRoomBouncer/components/BrowserNotSuppoortedDialog';
-import { resources } from 'src/resources';
-import { Events } from 'src/services/Analytics';
-import { selectAuthentication } from 'src/services/Authentication';
-import { CreateChallenge } from './components/CreateChallenge';
-import { PendingChallenge } from './components/PendingChallenge';
+import { BrowserNotSupportedDialog } from 'src/modules/GenericRoom';
+import { useAuthenticatedUser } from 'src/services/Authentication';
+import { AcceptChallengeDialog } from './components/AcceptChallenge';
+import { CreateChallengeDialog } from './components/CreateChallenge';
+import { PendingChallengeDialog } from './components/PendingChallenge';
 
 type Props = {
+  // Called when a challenge is created
+  onCreated?: (challenge: ChallengeRecord) => void;
   // Called When a Quick Pair (public) is matched
-  onMatched: (room: RoomRecord) => void;
+  onMatched?: (room: RoomRecord) => void;
   // Called when a private challenge is accepted
-  onAccepted: (room: RoomRecord) => void;
-  onCanceled: () => void;
+  onAccepted?: (room: RoomRecord) => void;
+  // Called when the User Exitst he Dialog
+  onCanceled?: () => void;
+  // Called when the User Denies an Accepting Challenge
+  onDenied?: () => void;
 } & (
   | {
       challenge?: undefined;
       challengeType: ChallengeRecord['type'];
-      // Called when the user presses the cancel button
-      onCreated?: (challenge: ChallengeRecord) => void;
-      onDenied?: never;
     }
   | {
       challenge: ChallengeRecord;
       challengeType?: undefined;
-      // Called when a challenge is denied
-      onDenied: () => void;
     }
 );
 
-type CreatingChallengeState = {
-  state: 'creatingChallenge';
-  gameSpecs: GameSpecsRecord;
-  title: string;
-  content: DialogProps['content'];
-  buttons: ButtonProps[];
-};
+type State =
+  | {
+      type: 'create';
+      challengeType: ChallengeRecord['type'];
+    }
+  | {
+      type: 'pending';
+      challenge: ChallengeRecord;
+    }
+  | {
+      type: 'accept';
+      challenge: ChallengeRecord;
+    };
 
-type WaitingForPairingState = {
-  state: 'waitingForPairing';
-  challenge: ChallengeRecord;
-  content: DialogProps['content'];
-  title: string;
-  buttons: ButtonProps[];
-};
+export const ChallengeWidget: React.FC<Props> = ({
+  onCreated = noop,
+  onMatched = noop,
+  onAccepted = noop,
+  onDenied = noop,
+  onCanceled = noop,
+  ...props
+}) => {
+  const getInitialState = (user?: UserRecord): State | undefined => {
+    if (!user) {
+      return undefined;
+    }
 
-type AccepingtChallengeState = {
-  state: 'acceptingChallenge';
-  challenge: ChallengeRecord;
-  content: DialogProps['content'];
-  title: string;
-  buttons: ButtonProps[];
-};
+    if (!props.challenge) {
+      return {
+        type: 'create',
+        challengeType: props.challengeType,
+      };
+    }
 
-type State = CreatingChallengeState | WaitingForPairingState | AccepingtChallengeState;
+    if (props.challenge.createdBy === user.id) {
+      return {
+        type: 'pending',
+        challenge: props.challenge,
+      };
+    }
 
-export const ChallengeWidget: React.FC<Props> = (props) => {
-  const getCancelButton = (onClick: () => void): ButtonProps => ({
-    label: 'Cancel',
-    type: 'secondary',
-    withLoader: true,
-    onClick,
-  });
-
-  const getWaitingForPairingState = (challenge: ChallengeRecord): WaitingForPairingState => {
     return {
-      state: 'waitingForPairing',
-      challenge,
-      title: 'Congrats! Game Created 🥳',
-      buttons: [
-        getCancelButton(() => {
-          return resources.deleteChallenge(challenge.id).map(() => {
-            if (props.onCanceled) {
-              props.onCanceled();
-            }
-          });
-        }),
-      ],
-      content: (
-        <PendingChallenge
-          challenge={challenge}
-          onAccepted={({ room }) => {
-            props.onAccepted(room);
-          }}
-          onMatched={({ room }) => {
-            props.onMatched(room);
-          }}
-        />
-      ),
+      type: 'accept',
+      challenge: props.challenge,
     };
   };
 
-  const getCreatingChallengeState = (
-    gameSpecs: ChallengeRecord['gameSpecs'] = {
-      timeLimit: 'rapid',
-      preferredColor: 'random',
-    },
-    user: UserRecord
-  ): CreatingChallengeState => {
-    return {
-      state: 'creatingChallenge',
-      gameSpecs,
-      title: 'Create a Game',
-      content: (
-        <CreateChallenge
-          onUpdate={(gameSpecs) => {
-            setState((prev) => {
-              if (prev?.state !== 'creatingChallenge') {
-                return prev;
-              }
-
-              return {
-                ...prev,
-                gameSpecs,
-              };
-            });
-          }}
-        />
-      ),
-      buttons: [
-        getCancelButton(props.onCanceled || noop),
-        {
-          label: 'Create',
-          type: 'primary',
-          withLoader: true,
-          onClick: () => {
-            if (props.challengeType === 'private') {
-              return resources
-                .createChallenge({
-                  type: 'private',
-                  gameSpecs,
-                  userId: user.id,
-                })
-                .map((challenge) => {
-                  setState(getWaitingForPairingState(challenge));
-
-                  if (props.onCreated) {
-                    props.onCreated(challenge);
-                  }
-
-                  Events.trackChallengeCreated('Friendly Challenge');
-
-                  return Ok.EMPTY;
-                });
-            } else {
-              return resources
-                .quickPair({
-                  gameSpecs,
-                  userId: user.id,
-                })
-                .map((r) => {
-                  if (r.matched) {
-                    props.onMatched(r.room);
-
-                    Events.trackQuickPairingMatched();
-                  } else {
-                    setState(getWaitingForPairingState(r.challenge));
-
-                    if (props.challengeType && props.onCreated) {
-                      props.onCreated(r.challenge);
-                    }
-
-                    Events.trackChallengeCreated('Quick Pairing');
-                  }
-
-                  return Ok.EMPTY;
-                });
-            }
-          },
-        },
-      ],
-    };
-  };
-
-  const getAcceptingChallengeState = (
-    challenge: ChallengeRecord,
-    user: UserRecord
-  ): AccepingtChallengeState => ({
-    state: 'acceptingChallenge',
-    title: `You've Been Challenged`,
-    content: {
-      __html: `Do you want to Play a <b>${capitalize(challenge.gameSpecs.timeLimit)}</b> game?`,
-    },
-    buttons: [
-      {
-        type: 'secondary',
-        label: 'Deny',
-        onClick: props.onDenied || noop,
-      },
-      {
-        type: 'primary',
-        label: 'Play',
-        onClick: () => {
-          resources
-            .acceptChallenge({
-              id: challenge.id,
-              userId: user.id,
-            })
-            .map((room) => {
-              props.onAccepted(room);
-            });
-        },
-      },
-    ],
-    challenge,
-  });
-
-  const getState = (
-    user: UserRecord,
-    opts:
-      | {
-          challenge: ChallengeRecord;
-        }
-      | {
-          challenge?: undefined;
-          gameSpecs?: GameSpecsRecord;
-          challengeType: ChallengeRecord['type'];
-        }
-  ): State => {
-    if (!opts.challenge) {
-      return getCreatingChallengeState(opts.gameSpecs, user);
-    }
-
-    if (opts.challenge.createdBy === user.id) {
-      return getWaitingForPairingState(opts.challenge);
-    }
-
-    return getAcceptingChallengeState(opts.challenge, user);
-  };
-
-  const auth = useSelector(selectAuthentication);
-  const [state, setState] = useState<State | undefined>(
-    auth.authenticationType === 'none'
-      ? undefined
-      : getState(
-          auth.user,
-          props.challenge ? { challenge: props.challenge } : { challengeType: props.challengeType }
-        )
-  );
-
+  const user = useAuthenticatedUser();
   const { state: bouncerState, checkBrowserSupport } = useGenericRoomBouncer();
+  const [state, setState] = useState<State | undefined>(undefined);
+
+  useEffect(() => {
+    setState(getInitialState(user));
+  }, [props.challenge, props.challengeType, user]);
 
   useEffect(() => {
     checkBrowserSupport();
@@ -255,17 +93,56 @@ export const ChallengeWidget: React.FC<Props> = (props) => {
     return <BrowserNotSupportedDialog visible />;
   }
 
-  if (!state) {
+  if (!(state && user)) {
     return null;
   }
 
-  return (
-    <Dialog
-      visible
-      hasCloseButton={false}
-      title={state.title}
-      content={state.content}
-      buttons={state.buttons}
-    />
-  );
+  if (state.type === 'create') {
+    return (
+      <CreateChallengeDialog
+        visible
+        user={user}
+        challengeType={state.challengeType}
+        onCancel={() => {
+          setState(undefined);
+          onCanceled();
+        }}
+        onMatched={onMatched}
+        onCreated={(challenge) => {
+          setState({
+            type: 'pending',
+            challenge,
+          });
+
+          onCreated(challenge);
+        }}
+      />
+    );
+  }
+
+  if (state.type === 'pending') {
+    return (
+      <PendingChallengeDialog
+        visible
+        challenge={state.challenge}
+        onAccepted={onAccepted}
+        onCanceled={onCanceled}
+        onMatched={onMatched}
+      />
+    );
+  }
+
+  if (state.type === 'accept') {
+    return (
+      <AcceptChallengeDialog
+        visible
+        user={user}
+        challenge={state.challenge}
+        onDenied={onDenied}
+        onAccepted={onAccepted}
+      />
+    );
+  }
+
+  return null;
 };

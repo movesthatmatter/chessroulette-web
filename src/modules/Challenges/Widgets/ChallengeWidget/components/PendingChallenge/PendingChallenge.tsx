@@ -64,11 +64,8 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
 const useStyles = createUseStyles({
   container: {
     textAlign: 'center',
-    // paddingBottom: '32px',
   },
-  loader: {
-    // paddingBottom: '16px',
-  },
+  loader: {},
   top: {
     paddingBottom: '8px',
   },
