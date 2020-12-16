@@ -1,8 +1,6 @@
 import { ChallengeRecord, RoomRecord, UserRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { noop } from 'src/lib/util';
-import { useGenericRoomBouncer } from 'src/modules/GenericRoom';
-import { BrowserNotSupportedDialog } from 'src/modules/GenericRoom';
 import { useAuthenticatedUser } from 'src/services/Authentication';
 import { AcceptChallengeDialog } from './components/AcceptChallenge';
 import { CreateChallengeDialog } from './components/CreateChallenge';
@@ -78,21 +76,11 @@ export const ChallengeWidget: React.FC<Props> = ({
   };
 
   const user = useAuthenticatedUser();
-  const { state: bouncerState, checkBrowserSupport } = useGenericRoomBouncer();
   const [state, setState] = useState<State | undefined>(undefined);
 
   useEffect(() => {
     setState(getInitialState(user));
   }, [props.challenge, props.challengeType, user]);
-
-  useEffect(() => {
-    checkBrowserSupport();
-  }, []);
-
-  // let the Global Bouncer Dialog deal with it!
-  if (!bouncerState.browserIsSupported) {
-    return null;
-  }
 
   if (!(state && user)) {
     return null;

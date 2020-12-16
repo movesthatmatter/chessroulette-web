@@ -7,7 +7,6 @@ import { noop } from 'src/lib/util';
 import { Events } from 'src/services/Analytics';
 import { useGenericRoomBouncer } from './useGenericRoomBouncer';
 
-
 type Props = {
   roomInfo: RoomRecord;
   onReady?: () => void;
@@ -28,6 +27,11 @@ export const GenericRoomBouncer: React.FC<Props> = ({
     }
   }, [bouncer.state.ready]);
 
+  useEffect(() => {
+    // Make sure the Browser Is Supported before anything else
+    bouncer.checkBrowserSupport();
+  }, []);
+
   if (bouncer.state.ready) {
     return <>{props.children}</>;
   }
@@ -43,7 +47,7 @@ export const GenericRoomBouncer: React.FC<Props> = ({
       hasCloseButton={false}
       title={
         bouncer.state.permissionsGranted
-          ? "Wow! You look ready! 😏"
+          ? 'Wow! You look ready! 😏'
           : "Smile – You'll be on camera!"
       }
       content={
@@ -76,9 +80,6 @@ export const GenericRoomBouncer: React.FC<Props> = ({
               type: 'primary',
               label: 'Start my Camera',
               onClick: () => {
-                // Make sure the Browser Is Supported before anything else
-                bouncer.checkBrowserSupport();
-
                 bouncer.agreeWithPermissionsRequest();
 
                 Events.trackAVPermissionsRequestAccepted(props.roomInfo.type);

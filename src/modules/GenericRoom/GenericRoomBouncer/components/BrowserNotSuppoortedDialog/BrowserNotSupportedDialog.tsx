@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { TextInput } from 'src/components/TextInput';
 import { createUseStyles } from 'src/lib/jss';
+import { Events } from 'src/services/Analytics';
 
 type Props = {
   visible: DialogProps['visible'];
@@ -11,6 +12,10 @@ type Props = {
 
 export const BrowserNotSupportedDialog: React.FC<Props> = (props) => {
   const cls = useStyles();
+
+  useEffect(() => {
+    Events.trackBrowserNotSupportedDialogShown();
+  }, []);
 
   return (
     <Dialog

@@ -27,9 +27,13 @@ export const useGenericRoomBouncer = (checkOnMount = false) => {
   };
 
   const checkBrowserSupport = () => {
-    if (isWebViewUA(navigator.userAgent)) {
+    const supported = !isWebViewUA(navigator.userAgent);
+
+    if (!supported) {
       dispatch(refuseBrowserSuppport());
     }
+
+    return supported;
   };
 
   const checkAll = () => {

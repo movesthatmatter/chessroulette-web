@@ -206,4 +206,12 @@ export const Events = {
       category: EventCategory.App,
       action: 'Feedback Dialog: Invite Friends Share Button Pressed',
     }),
+
+  // Others
+
+  trackBrowserNotSupportedDialogShown: () => trackEvent({
+    category: EventCategory.App,
+    action: 'Browser Not Supported Dialog Show',
+    nonInteraction: true,
+  }),
 };
