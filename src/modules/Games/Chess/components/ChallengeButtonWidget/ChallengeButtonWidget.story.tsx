@@ -38,11 +38,11 @@ export const defaultStory = () => (
             }}>
               <ChallengeButtonWidget
                 label="Play a Friend"
-                challengeType='challenge'
+                challengeType='private'
               />
               <ChallengeButtonWidget
                 label="Quickpair"
-                challengeType='quickPairing'
+                challengeType='public'
               />
             </StorybookReduxProvider>
           </div>

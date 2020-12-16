@@ -135,3 +135,5 @@ export const keyInObject = <X extends {}, Y extends PropertyKey>(
 export const arrReverse = <T>(arr: T[]): T[] => arr.slice(0).reverse() as T[];
 
 export const flatten = <T>(a: T[]) => a.reduce((accumulator, value) => accumulator.concat(value), [] as T[]);
+
+export const objectKeys = <O extends object>(o: O) => Object.keys(o) as (keyof O)[];

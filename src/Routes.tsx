@@ -2,9 +2,7 @@ import React from 'react';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { LichessAuthCallbackPage } from './services/Authentication/widgets/LichessAuthCallbackPage';
 import { StatsPage } from './modules/Stats';
-import { ChallengePage } from './modules/Challenges';
 import { LandingPageV2 } from './modules/Landing/LandingPageV2';
-import { GA } from './services/Analytics';
 import { ChallengeOrRoomPage } from './modules/Challenges/ChallengeOrRoomPage';
 
 type Props = {};

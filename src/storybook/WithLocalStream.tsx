@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AVStreaming } from 'src/services/AVStreaming';
+import { getAVStreaming } from 'src/services/AVStreaming';
 
 type Props = {
   constraints?: { audio: boolean; video: boolean };
@@ -13,15 +13,17 @@ export const WithLocalStream: React.FC<Props> = ({
   const [localStream, setLocalStream] = useState<MediaStream | undefined>();
 
   useEffect(() => {
-    const client = new AVStreaming();
+    const client = getAVStreaming();
 
     (async () => {
-      setLocalStream(await client.start(constraints));
+      const stream = await client.getStream(constraints);
+
+      setLocalStream(stream);
     })();
 
     return () => {
       if (localStream) {
-        client.stop(localStream);
+        client.destroyStreamById(localStream.id);
       }
     };
   }, []);

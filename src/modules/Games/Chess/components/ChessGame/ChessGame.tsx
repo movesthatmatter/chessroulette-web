@@ -1,18 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { keyInObject, noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { Move, Square } from 'chess.js';
 import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
-import { ChessMove, ChessGameStatePgn, ChessGameColor } from 'dstnd-io';
+import { ChessMove, ChessGameStatePgn, ChessGameColor, ChessGameState } from 'dstnd-io';
 import { ChessBoard } from '../ChessBoard';
 import { getPgnAfterMove, getSquare, pgnToHistory, toChessColor } from '../../lib/util';
 import { CSSProperties } from 'src/lib/jss/types';
 import useEventListener from '@use-it/event-listener';
+import { useSoundEffects } from '../../useSoundEffects';
 
-type Props = React.HTMLProps<HTMLDivElement> & {
+export type ChessGameProps = React.HTMLProps<HTMLDivElement> & {
   playable: boolean;
-  pgn: string;
+  game: ChessGameState;
 
   // If true the move will be snappy since it doesn't wait
   //  for the entire state to update (over the network) before
@@ -33,20 +34,20 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   getBoardSize?: (p: { screenWidth: number; screenHeight: number }) => number;
 };
 
-export const ChessGame: React.FunctionComponent<Props> = ({
+export const ChessGame: React.FunctionComponent<ChessGameProps> = ({
+  game,
   onMove = noop,
   onRewind = noop,
   onForward = noop,
   onDisplayedHistoryIndexUpdated = noop,
   displayedHistoryIndex = 0,
-  pgn = '',
   playable = false,
   getBoardSize = getDefaultBoardSize,
   maintainPositionLocally = true,
   ...props
 }) => {
   const cls = useStyles();
-  const [history, setHistory] = useState(pgnToHistory(pgn));
+  const [history, setHistory] = useState(pgnToHistory(game.pgn || ''));
   const [displayedHistory, setDisplayedHistory] = useState(history);
   const [focusedSquare, setFocusedSquare] = useState<Square>();
   const [orientation, setOrientation] = useState(props.orientation || props.homeColor);
@@ -54,6 +55,8 @@ export const ChessGame: React.FunctionComponent<Props> = ({
     {} as Partial<{ [sq in Square]: CSSProperties }>
   );
   const [nextUncommittedMove, setNextUncommittedMove] = useState<ChessMove>();
+
+  useSoundEffects(game);
 
   useEffect(() => {
     if (props.orientation) {
@@ -64,8 +67,8 @@ export const ChessGame: React.FunctionComponent<Props> = ({
   }, [props.homeColor, props.orientation]);
 
   useEffect(() => {
-    setHistory(pgnToHistory(pgn));
-  }, [pgn]);
+    setHistory(pgnToHistory(game.pgn || ''));
+  }, [game.pgn]);
 
   useEffect(() => {
     setDisplayedHistory(history.slice(0, history.length - displayedHistoryIndex));
@@ -89,7 +92,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
         return;
       }
 
-      const piece = getSquare(pgn, square);
+      const piece = getSquare(game.pgn || '', square);
 
       // Refocus on current square if there is piece of homecolor (mine)
       if (piece && toChessColor(piece.color) === props.homeColor) {
@@ -160,7 +163,7 @@ export const ChessGame: React.FunctionComponent<Props> = ({
       promotion: 'q', // TODO: don't hardcode the queen
     };
 
-    getPgnAfterMove(pgn, nextMove).map((nextPgn) => {
+    getPgnAfterMove(game.pgn || '', nextMove).map((nextPgn) => {
       const nextHistory = pgnToHistory(nextPgn);
 
       onMove(nextMove, nextPgn, nextHistory);

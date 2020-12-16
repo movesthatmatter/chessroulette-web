@@ -1,24 +1,35 @@
-import { Box, Layer, LayerProps } from 'grommet';
+import { Layer, LayerProps } from 'grommet';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, floatingShadow, fonts, softBorderRadius } from 'src/theme';
+import { colors, floatingShadow, fonts, onlyMobile, softBorderRadius } from 'src/theme';
 import { Button, ButtonProps } from '../Button';
 import { Text } from 'src/components/Text';
-import { noop } from 'src/lib/util';
+import { hasOwnProperty, noop } from 'src/lib/util';
 import { FormClose } from 'grommet-icons';
+
+type DangerouslySetInnerHTML = { __html: string };
 
 export type DialogProps = {
   visible: boolean;
   title?: string;
-  content: string | React.ReactNode;
+  content: string | DangerouslySetInnerHTML | React.ReactNode;
+
   graphic?: React.ReactNode;
   buttons?: (ButtonProps | boolean | undefined)[];
+  buttonsStacked?: boolean;
   hasCloseButton?: boolean;
   onClose?: () => void;
   target?: LayerProps['target'];
 };
 
-export const Dialog: React.FC<DialogProps> = ({ hasCloseButton = true, onClose = noop, ...props }) => {
+const isDangerouslySetHtml = (t: unknown): t is DangerouslySetInnerHTML =>
+  typeof t === 'object' && hasOwnProperty(t || {}, '__html');
+
+export const Dialog: React.FC<DialogProps> = ({
+  hasCloseButton = true,
+  onClose = noop,
+  ...props
+}) => {
   const cls = useStyles();
 
   if (!props.visible) {
@@ -29,8 +40,12 @@ export const Dialog: React.FC<DialogProps> = ({ hasCloseButton = true, onClose =
     <Layer
       className={cls.container}
       position="center"
-      animation="slide"
+      // Note: Took the animation out because during the transition it renders
+      //  the content weirdly! 
+      animation={false}
       target={props.target}
+      modal={true}
+      responsive={false}
     >
       <div className={cls.top}>
         <div style={{ flex: 1 }} />
@@ -40,19 +55,30 @@ export const Dialog: React.FC<DialogProps> = ({ hasCloseButton = true, onClose =
           </div>
         )}
       </div>
-      {props.graphic}
       {props.title && <div className={cls.title}>{props.title}</div>}
+      {props.graphic}
       <div className={cls.contentWrapper}>
-        {typeof props.content === 'string' ? (
+        {(typeof props.content === 'string' || isDangerouslySetHtml(props.content)) ? (
           <div className={cls.contentTextWrapper}>
-            <Text className={cls.contentText}>{props.content}</Text>
+            {typeof props.content === 'string' ? (
+              <Text className={cls.contentText}>{props.content}</Text>
+              ) : (
+              <Text className={cls.contentText} dangerouslySetInnerHTML={props.content} />
+            )}
           </div>
         ) : (
-          <>{props.content}</>
+          props.content
         )}
       </div>
       {props.buttons && (
-        <div className={cls.buttonsWrapper}>
+        <div
+          className={cls.buttonsWrapper}
+          {...(props.buttonsStacked && {
+            style: {
+              flexDirection: 'column',
+            },
+          })}
+        >
           {props.buttons.map((buttonProps, i) => {
             if (typeof buttonProps !== 'object') {
               return null;
@@ -62,7 +88,9 @@ export const Dialog: React.FC<DialogProps> = ({ hasCloseButton = true, onClose =
               <Button
                 key={i}
                 className={cls.button}
-                containerClassName={cls.buttonContainer}
+                containerClassName={
+                  props.buttonsStacked ? cls.stackedButtonContainer : cls.buttonContainer
+                }
                 // size="medium"
                 full
                 {...buttonProps}
@@ -86,6 +114,11 @@ const useStyles = createUseStyles({
     padding: 0,
     paddingBottom: '24px !important',
     position: 'relative',
+
+    ...onlyMobile({
+      width: '84% !important',
+      maxWidth: 'none !important',
+    }),
   },
   top: {
     height: '32px',
@@ -107,11 +140,15 @@ const useStyles = createUseStyles({
   title: {
     ...fonts.subtitle1,
     textAlign: 'center',
-  },
-  contentWrapper: {
-    paddingBottom: '32px',
     paddingLeft: '32px',
     paddingRight: '32px',
+    paddingBottom: '16px',
+  },
+  contentWrapper: {
+    // background: 'red',
+    paddingLeft: '32px',
+    paddingRight: '32px',
+    paddingBottom: '32px',
   },
   contentTextWrapper: {
     textAlign: 'center',
@@ -131,6 +168,13 @@ const useStyles = createUseStyles({
 
     '&:first-child': {
       marginLeft: 0,
+    },
+  },
+  stackedButtonContainer: {
+    marginBottom: '16px',
+
+    '&:last-child': {
+      marginBottom: 0,
     },
   },
   button: {

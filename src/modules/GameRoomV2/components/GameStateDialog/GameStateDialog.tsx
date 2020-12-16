@@ -1,10 +1,13 @@
 import capitalize from 'capitalize';
 import { ChessPlayer } from 'dstnd-io';
 import { Box } from 'grommet';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
+import { Emoji } from 'src/components/Emoji';
+import { useFeedbackDialog } from 'src/components/FeedbackDialog/useFeedbackDialog';
 import { RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { Text } from 'src/components/Text';
+import { otherChessColor } from 'src/modules/Games/Chess/util';
 import { getPlayerByColor } from '../../util';
 
 type Props = {
@@ -22,7 +25,72 @@ type Props = {
 };
 
 export const GameStateDialog: React.FC<Props> = ({ roomActivity, myPlayer, ...props }) => {
+  const { game } = roomActivity;
+  const [gameResultSeen, setGameResultSeen] = useState(false);
+  const feedbackDialog = useFeedbackDialog();
+
+  useEffect(() => {
+    // Everytime the game state changes, reset the seen!
+    setGameResultSeen(false);
+  }, [game.state]);
+
+  useEffect(() => {
+    if (
+      gameResultSeen &&
+      (game.state === 'finished' || game.state === 'stopped') &&
+      game.winner === myPlayer?.color
+    ) {
+      // Ask for Feedback only the first time (or next time if postponed) she wins!
+      feedbackDialog.attemptToShow();
+    }
+  }, [gameResultSeen, game.state, game.winner, myPlayer]);
+
+
   if (!roomActivity.offer) {
+    if ((game.state === 'finished' || game.state === 'stopped') && !gameResultSeen) {
+      return (
+        <Dialog
+          target={props.target}
+          visible
+          hasCloseButton={false}
+          content={
+            <Box align="center">
+              {/* <Text>Waiting for your opponent to make a decision...</Text> */}
+              {game.state === 'finished' && (
+                <>
+                  {game.winner === '1/2' ? (
+                    'Game Ended in a Draw by Stalemate!'
+                  ) : (
+                    <>
+                      {`${capitalize(game.winner)} won! `}
+                      <Text>
+                        <Emoji symbol="🎉" />
+                      </Text>
+                    </>
+                  )}
+                </>
+              )}
+              {game.state === 'stopped' && (
+                <>
+                  {game.winner === '1/2'
+                    ? 'Game Ended in a Draw!'
+                    : `${capitalize(otherChessColor(game.winner))} resigned!`}
+                </>
+              )}
+            </Box>
+          }
+          onClose={() => () => setGameResultSeen(true)}
+          buttons={[
+            {
+              label: 'Ok',
+              type: 'primary',
+              onClick: () => setGameResultSeen(true),
+            },
+          ]}
+        />
+      );
+    }
+
     return null;
   }
 

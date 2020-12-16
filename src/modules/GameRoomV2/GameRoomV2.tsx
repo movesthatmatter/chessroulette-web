@@ -2,18 +2,24 @@ import React, { useRef, LegacyRef, useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { RoomWithPlayActivity } from 'src/components/RoomProvider';
-import { Box } from 'grommet';
+import { Box, Layer } from 'grommet';
 import { Text } from 'src/components/Text';
 import { ChessGameStatePgn, ChessMove } from 'dstnd-io/dist/chessGame';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
-import { ChessGame, ChessGameColor, useSoundEffects } from '../Games/Chess';
+import { ChessGame, ChessGameColor } from '../Games/Chess';
 import { getPlayerColor, getPlayer, getOppositePlayer } from './util';
 import { floatingShadow, softBorderRadius } from 'src/theme/effects';
 import cx from 'classnames';
 import { GameStateWidget } from '../Games/Chess/components/GameStateWidget/GameStateWidget';
 import { ActionButton } from 'src/components/Button';
-import { Refresh, Halt, Flag, Split } from 'grommet-icons';
-import { colors, fonts } from 'src/theme';
+import { Refresh, Halt, Flag, Split, AppsRounded } from 'grommet-icons';
+import {
+  colors,
+  fonts,
+  MOBILE_BREAKPOINT,
+  onlySmallMobile,
+  SMALL_MOBILE_BREAKPOINT,
+} from 'src/theme';
 import { ChatContainer } from 'src/components/Chat';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,6 +28,11 @@ import { CSSProperties } from 'src/lib/jss/types';
 import { GameStateDialog } from './components/GameStateDialog';
 import { Move } from 'chess.js';
 import { Events } from 'src/services/Analytics';
+import { useWindowWidth } from '@react-hook/window-size';
+import { PlayerBox } from '../Games/Chess/components/GameStateWidget/components/PlayerBox';
+import { MobileGameRoomLayout } from './GameRoomLayout/MobileGameRoomLayout';
+import { otherChessColor } from '../Games/Chess/util';
+import { getRelativeMaterialScore } from '../Games/Chess/components/GameStateWidget/util';
 
 type Props = {
   room: RoomWithPlayActivity;
@@ -45,10 +56,9 @@ const BOTTOM_HEIGHT = 80;
 export const GameRoomV2: React.FC<Props> = (props) => {
   const cls = useStyles();
   const dialogTarget = useRef();
+  const windowWidth = useWindowWidth();
 
   const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
-
-  useSoundEffects(props.room.activity.game);
 
   // Analytics
   useEffect(() => {
@@ -69,6 +79,19 @@ export const GameRoomV2: React.FC<Props> = (props) => {
     ? getOppositePlayer(myPlayer, props.room.activity.game.players)
     : undefined;
 
+  const now = new Date();
+  const myTimeLeft =
+    game.state === 'started' && game.lastMoveBy !== homeColor
+      ? game.timeLeft[homeColor] - (now.getTime() - new Date(game.lastMoveAt).getTime())
+      : game.timeLeft[homeColor];
+  const opponentTimeLeft =
+    game.state === 'started' && game.lastMoveBy === homeColor
+      ? game.timeLeft[otherChessColor(homeColor)] -
+        (now.getTime() - new Date(game.lastMoveAt).getTime())
+      : game.timeLeft[otherChessColor(homeColor)];
+
+  const materialScore = getRelativeMaterialScore(game.captured);
+
   const canIPlay =
     isMePlayer && // I must be a player
     (game.state === 'pending' || game.state === 'started') && // game must be in playable mode
@@ -79,6 +102,194 @@ export const GameRoomV2: React.FC<Props> = (props) => {
     // Reset the History Dislayed Index when the PGN is updated
     setGameDisplayedHistoryIndex(0);
   }, [game.pgn]);
+
+  const mobileGameActionsRef = useRef<HTMLDivElement>(null);
+  const [showMobileGameActionsMenu, setShowMobileGameActionsMenu] = useState(false);
+
+  // If Mobile
+  if (windowWidth <= MOBILE_BREAKPOINT) {
+    return (
+      <>
+        <MobileGameRoomLayout
+          getTopArea={(dimensions) => (
+            <StreamingBox
+              room={props.room}
+              focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
+              aspectRatio={dimensions}
+              headerOverlay={() => <NavigationHeader />}
+              mainOverlay={() => (
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    position: 'relative',
+                  }}
+                >
+                  <div
+                    className={cls.mobileGameActionsContainer}
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                    }}
+                  >
+                    <div ref={mobileGameActionsRef}>
+                      <AppsRounded
+                        color={colors.white}
+                        onClick={() => setShowMobileGameActionsMenu(true)}
+                        className={cls.mobileGameActionsButtonIcon}
+                      />
+                    </div>
+                    {showMobileGameActionsMenu && mobileGameActionsRef.current && (
+                      <Layer
+                        responsive={false}
+                        position="bottom"
+                        animation="slide"
+                        className={cls.mobileGameActionMenuLayer}
+                        onClickOutside={() => setShowMobileGameActionsMenu(false)}
+                      >
+                        <Text size="small2" className={cls.mobileDialogTitle}>
+                          What's your next move?
+                        </Text>
+                        <div className={cls.mobileGameActionButtonsContainer}>
+                          {(game.state === 'finished' ||
+                            game.state === 'stopped' ||
+                            game.state === 'neverStarted') && (
+                            <ActionButton
+                              type="primary"
+                              label="Rematch"
+                              actionType="positive"
+                              icon={Refresh}
+                              full
+                              hideLabelUntilHover={false}
+                              onSubmit={() => {
+                                props.onRematchOffer();
+                                setShowMobileGameActionsMenu(false);
+                              }}
+                              className={cls.gameActionButton}
+                            />
+                          )}
+                          {game.state === 'pending' && (
+                            <ActionButton
+                              type="primary"
+                              label="Abort"
+                              confirmation="Sure want to Abort?"
+                              actionType="negative"
+                              icon={Halt}
+                              full
+                              hideLabelUntilHover={false}
+                              onSubmit={() => {
+                                props.onAbort();
+                                setShowMobileGameActionsMenu(false);
+                              }}
+                              className={cls.gameActionButton}
+                            />
+                          )}
+                          {game.state === 'started' && (
+                            <>
+                              <ActionButton
+                                type="primary"
+                                label="Resign"
+                                actionType="negative"
+                                confirmation="Really Resigning?"
+                                icon={Flag}
+                                full
+                                hideLabelUntilHover={false}
+                                onSubmit={() => {
+                                  props.onResign(homeColor);
+                                  setShowMobileGameActionsMenu(false);
+                                }}
+                                className={cls.gameActionButton}
+                              />
+                              <ActionButton
+                                type="primary"
+                                label="Offer Draw"
+                                confirmation="Yes, I want a draw!"
+                                actionType="positive"
+                                icon={Split}
+                                full
+                                hideLabelUntilHover={false}
+                                onSubmit={() => {
+                                  props.onOfferDraw();
+                                  setShowMobileGameActionsMenu(false);
+                                }}
+                                className={cls.gameActionButton}
+                              />
+                            </>
+                          )}
+                        </div>
+                      </Layer>
+                    )}
+                  </div>
+                </div>
+              )}
+              // Account for the rounded border
+              footerOverlay={() => <div style={{ height: '16px' }} />}
+            />
+          )}
+          getMainArea={(dimensions) => (
+            <div className={cls.mobileMainContainer}>
+              {opponentPlayer && (
+                <div className={cx(cls.mobilePlayerWrapper, cls.mobileAwayPlayerWrapper)}>
+                  <PlayerBox
+                    player={opponentPlayer}
+                    timeLeft={opponentTimeLeft}
+                    active={game.state === 'started' && game.lastMoved !== opponentPlayer.color}
+                    gameTimeLimit={game.timeLimit}
+                    material={materialScore[opponentPlayer.color]}
+                    onTimerFinished={props.onTimerFinished}
+                  />
+                </div>
+              )}
+              <div className={cls.mobileChessGameWrapper}>
+                <ChessGame
+                  className={cls.mobileBoard}
+                  homeColor={homeColor}
+                  playable={canIPlay}
+                  game={props.room.activity.game}
+                  getBoardSize={() => {
+                    return dimensions.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 24);
+                  }}
+                  onMove={(...args) => {
+                    props.onMove(...args, homeColor);
+                  }}
+                  onRewind={() => {
+                    setGameDisplayedHistoryIndex((prev) => prev + 1);
+                  }}
+                  onForward={() => {
+                    setGameDisplayedHistoryIndex((prev) => prev - 1);
+                  }}
+                  displayedHistoryIndex={gameDisplayedHistoryIndex}
+                />
+              </div>
+              {myPlayer && (
+                <div className={cx(cls.mobilePlayerWrapper, cls.mobileHomePlayerWrapper)}>
+                  <PlayerBox
+                    player={myPlayer}
+                    timeLeft={myTimeLeft}
+                    active={game.state === 'started' && game.lastMoved !== myPlayer.color}
+                    gameTimeLimit={game.timeLimit}
+                    material={materialScore[myPlayer.color]}
+                    onTimerFinished={props.onTimerFinished}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        />
+        <GameStateDialog
+          roomActivity={props.room.activity}
+          onOfferCanceled={props.onOfferCanceled}
+          onDrawAccepted={props.onDrawAccepted}
+          onDrawDenied={props.onDrawDenied}
+          onRematchAccepted={props.onRematchAccepted}
+          onRematchDenied={props.onRematchDenied}
+          myPlayer={myPlayer}
+        />
+      </>
+    );
+  }
 
   return (
     <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
@@ -96,7 +307,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
             <div
               style={{
                 flex: 1,
-                paddingLeft: '32px',
+                paddingLeft: '16px',
                 paddingTop: '16px',
               }}
             >
@@ -222,7 +433,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
               className={cls.board}
               homeColor={homeColor}
               playable={canIPlay}
-              pgn={props.room.activity.game.pgn || ''}
+              game={props.room.activity.game}
               getBoardSize={() => container.width}
               onMove={(...args) => {
                 props.onMove(...args, homeColor);
@@ -237,12 +448,12 @@ export const GameRoomV2: React.FC<Props> = (props) => {
             />
           </div>
         )}
-        getRightSideComponent={({ container }) => (
+        getRightSideComponent={({ container, isMobile }) => (
           <div className={cx(cls.side, cls.rightSide)}>
             <div
               style={{
-                paddingTop: '16px',
-                height: `${TOP_HEIGHT - 16}px`,
+                // paddingTop: '16px',
+                height: `${TOP_HEIGHT}px`,
               }}
             >
               <UserMenu />
@@ -262,6 +473,7 @@ export const GameRoomV2: React.FC<Props> = (props) => {
                 <StreamingBox
                   room={props.room}
                   focusedPeerId={isMePlayer ? opponentPlayer?.user.id : undefined}
+                  containerClassName={cls.streamingBox}
                 />
               </div>
               <div
@@ -376,4 +588,64 @@ const useStyles = createUseStyles({
       },
     } as CSSProperties),
   },
+  streamingBox: {
+    ...softBorderRadius,
+    overflow: 'hidden',
+  },
+
+  // Mobile
+  mobileGameActionsButtonIcon: {
+    ...floatingShadow,
+  },
+  mobileGameActionsContainer: {
+    padding: '0 12px 4px',
+
+    ...onlySmallMobile({
+      padding: '0 8px 4px',
+    }),
+  },
+  mobileGameActionMenuLayer: {
+    ...softBorderRadius,
+    ...floatingShadow,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    width: '100%',
+
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    padding: '16px 0 8px',
+  },
+  mobileGameActionButtonsContainer: {
+    width: '70%',
+    padding: '16px',
+  },
+  mobileDialogTitle: {
+    ...fonts.subtitle1,
+  },
+  mobileMainContainer: {
+    paddingBottom: '8px',
+  },
+  mobileBoard: {
+    ...floatingShadow,
+    ...softBorderRadius,
+    overflow: 'hidden',
+  },
+  mobileChessGameWrapper: {
+    padding: '6px 12px 8px',
+
+    ...onlySmallMobile({
+      paddingLeft: '30px',
+      paddingRight: '30px',
+    }),
+  },
+  mobilePlayerWrapper: {
+    padding: '0 12px',
+
+    ...onlySmallMobile({
+      padding: '0 8px',
+    }),
+  },
+  mobileAwayPlayerWrapper: {},
+  mobileHomePlayerWrapper: {},
 });

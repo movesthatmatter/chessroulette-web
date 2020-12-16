@@ -20,6 +20,7 @@ export const SelectInput: React.FC<Props> = ({
   return (
     <Select
       {...props}
+      isSearchable={false}
       onChange={(value, actionType) => {
         onChange(value, actionType);
 

@@ -74,7 +74,6 @@ const Component = (p: {
           <pre>Focused: {state.inFocus.user.id}</pre>
           <Reel
             reel={state.reel}
-            myStreamingConfig={p.myStreamingConfig}
             onClick={(userId) => {
               dispatch(focusAction({ userId }));
             }}

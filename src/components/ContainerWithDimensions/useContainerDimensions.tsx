@@ -10,7 +10,7 @@ export type ContainerDimensions = {
 /**
  * Hook that alerts clicks outside of the passed ref
  */
-export function useContainerDimensions(targetRef: React.RefObject<any>) {
+export function useContainerDimensions(targetRef: React.RefObject<HTMLElement>) {
   const [dimensions, setDimensions] = useState<ContainerDimensions>({ 
     width: 0,
     height: 0,
@@ -21,8 +21,8 @@ export function useContainerDimensions(targetRef: React.RefObject<any>) {
     const onResizeHandler = () => {
       if (targetRef.current) {
         setDimensions({
-          width: targetRef.current?.offsetWidth,
-          height: targetRef.current?.offsetHeight,
+          width: targetRef.current.offsetWidth,
+          height: targetRef.current.offsetHeight,
           updated: true,
         });
       }
@@ -35,7 +35,7 @@ export function useContainerDimensions(targetRef: React.RefObject<any>) {
     return () => {
       window.removeEventListener('resize', onResizeHandler);
     };
-  }, [targetRef]);
+  }, [targetRef.current]);
 
   return dimensions;
 }

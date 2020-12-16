@@ -1,17 +1,18 @@
 import React from 'react';
 
-type Props = {
+type Props = React.HTMLProps<HTMLSpanElement> & {
   symbol: string;
   label?: string;
 };
 
-export const Emoji: React.FC<Props> = (props) => (
+export const Emoji: React.FC<Props> = ({ label, symbol, ...props }) => (
   <span
     className="emoji"
     role="img"
-    aria-label={props.label ? props.label : ''}
-    aria-hidden={props.label ? 'false' : 'true'}
+    aria-label={label ? label : ''}
+    aria-hidden={label ? 'false' : 'true'}
+    {...props}
   >
-    {props.symbol}
+    {symbol}
   </span>
 );

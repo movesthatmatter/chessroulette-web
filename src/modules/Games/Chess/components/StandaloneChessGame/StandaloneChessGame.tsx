@@ -8,7 +8,7 @@ import { ChessGameState, ChessGameColor, ChessMove } from 'dstnd-io';
 import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
 import { Avatar } from 'src/components/Avatar';
 import { otherChessColor } from '../../util';
-import { ChessGame } from '../ChessGame/ChessGame';
+import { ChessGame, ChessGameProps } from '../ChessGame/ChessGame';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 
 type Props = React.HTMLProps<HTMLDivElement> & {
@@ -18,7 +18,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   // The bottom side
   homeColor: ChessGameColor;
 
-  onMove: (m: ChessMove) => void;
+  onMove: ChessGameProps['onMove'];
   onTimerFinished?: () => void;
 
   getBoardSize?: (p: {screenWidth: number; screenHeight: number}) => number;
@@ -81,7 +81,7 @@ export const StandaloneChessGame: React.FunctionComponent<Props> = ({
       )}
       <ChessGame
         homeColor={props.homeColor}
-        pgn={game?.pgn ?? ''}
+        game={game}
         playable={playable}
         getBoardSize={(p) => getBoardSize(p) - 100}
         onMove={onMove}
