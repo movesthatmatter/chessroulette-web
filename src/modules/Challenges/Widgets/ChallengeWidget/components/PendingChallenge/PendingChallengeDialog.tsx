@@ -27,6 +27,7 @@ export const PendingChallengeDialog: React.FC<PendingChallengeDialogProps> = ({
     <Dialog
       visible={visible}
       title={title}
+      hasCloseButton={false}
       content={
         <PendingChallengeContainer
           challenge={challenge}

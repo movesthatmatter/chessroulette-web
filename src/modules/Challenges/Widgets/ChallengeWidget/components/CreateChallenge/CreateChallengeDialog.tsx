@@ -69,6 +69,7 @@ export const CreateChallengeDialog: React.FC<Props> = ({
   return (
     <Dialog
       visible={visible}
+      hasCloseButton={false}
       title={title}
       content={<CreateChallenge gameSpecs={gameSpecs} onUpdated={setGameSpecs} />}
       buttons={[

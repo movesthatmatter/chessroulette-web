@@ -103,7 +103,7 @@ const useStyles = createUseStyles({
   },
   headerText: {
     margin: 0,
-    fontSize: '100%',
+    fontSize: '110%',
     lineHeight: '140%',
     fontWeight: 800,
 

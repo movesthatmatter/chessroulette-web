@@ -23,6 +23,7 @@ export const AcceptChallengeDialog: React.FC<Props> = ({
     <Dialog
       visible={visible}
       title={title}
+      hasCloseButton={false}
       content={{
         __html: `Do you want to Play a <b>${capitalize(challenge.gameSpecs.timeLimit)}</b> game?`,
       }}
