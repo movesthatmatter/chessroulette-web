@@ -8,8 +8,7 @@ import { AwesomeErrorPage } from 'src/components/AwesomeError';
 import { GenericRoomPage } from '../GenericRoom/GenericRoom/GenericRoomPage';
 import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication';
-import { ChallengeWidget } from './Widgets/ChallengeWidget';
-import { Page } from 'src/components/Page';
+import { ChallengePage } from './ChallengePage';
 
 type Props = {};
 
@@ -50,26 +49,22 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
   }
 
   if (roomInfo) {
-    return (
-      <GenericRoomPage roomInfo={roomInfo} />
-    );
+    return <GenericRoomPage roomInfo={roomInfo} />;
   }
 
   const goBackOrHome = () => {
-    history.push('/')
-  }
+    history.push('/');
+  };
 
   if (challenge) {
     return (
-      <Page>
-        <ChallengeWidget
-          challenge={challenge}
-          onAccepted={setRoomInfo}
-          onMatched={setRoomInfo}
-          onDenied={goBackOrHome}
-          onCanceled={goBackOrHome}
-        />
-      </Page>
+      <ChallengePage
+        challenge={challenge}
+        onAccepted={setRoomInfo}
+        onMatched={setRoomInfo}
+        onDenied={goBackOrHome}
+        onCanceled={goBackOrHome}
+      />
     );
   }
 
