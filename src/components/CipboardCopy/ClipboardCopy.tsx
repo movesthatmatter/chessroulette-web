@@ -18,8 +18,10 @@ export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, ...props }) =>
   const cls = useStyles();
   const [copied, setCopied] = useState(false);
 
-  const copy = () => {
-    navigator.clipboard.writeText(props.value).then(() => {
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(props.value);
+
       setCopied(true);
 
       setTimeout(() => {
@@ -27,7 +29,7 @@ export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, ...props }) =>
       }, seconds(2));
 
       onCopied();
-    });
+    } catch (e) {}
   };
 
   return (
