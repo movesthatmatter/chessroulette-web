@@ -1,19 +1,12 @@
 import { differenceInMilliseconds } from 'date-fns';
 import humanizeDuration, { Humanizer } from 'humanize-duration';
-import {
-  JoinRoomRequestPayload,
-  RoomRecord,
-  ChallengeRecord,
-} from 'dstnd-io';
-import UrlPattern from 'url-pattern';
-import { Result, Err, Ok } from 'ts-results';
+import { RoomRecord, ChallengeRecord } from 'dstnd-io';
 
-export const noop = () => { 
+export const noop = () => {
   // do nothing
 };
 
-export const range = (length: number, startAt = 0) =>
-  Array.from({ length }, (_, i) => i + startAt);
+export const range = (length: number, startAt = 0) => Array.from({ length }, (_, i) => i + startAt);
 
 /**
  * https://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range
@@ -101,22 +94,7 @@ export const prettyCountdown = (
 ) => format(ms, options);
 
 export const toRoomUrlPath = (room: RoomRecord) => room.slug;
-export const toChallengeUrlPath = (challenge: ChallengeRecord) => challenge.slug; 
-
-export const urlPathToRoomCredentials = (
-  url: string
-): Result<JoinRoomRequestPayload['content'], undefined> => {
-  const match = new UrlPattern('/gameroom/:id(/:code)').match(url);
-
-  if (!(match && match.id)) {
-    return new Err(undefined);
-  }
-
-  return new Ok({
-    roomId: match.id,
-    code: match ? match.code : undefined,
-  });
-};
+export const toChallengeUrlPath = (challenge: ChallengeRecord) => challenge.slug;
 
 export const hasOwnProperty = <X extends {}, Y extends PropertyKey>(
   obj: X,
@@ -130,9 +108,10 @@ export const keyInObject = <X extends {}, Y extends PropertyKey>(
 ): obj is X & Record<Y, unknown> => prop in obj;
 
 // Immutably Reverses an Array
-// This is needed b/c the native Array.reverse() mutates in place 
+// This is needed b/c the native Array.reverse() mutates in place
 export const arrReverse = <T>(arr: T[]): T[] => arr.slice(0).reverse() as T[];
 
-export const flatten = <T>(a: T[]) => a.reduce((accumulator, value) => accumulator.concat(value), [] as T[]);
+export const flatten = <T>(a: T[]) =>
+  a.reduce((accumulator, value) => accumulator.concat(value), [] as T[]);
 
 export const objectKeys = <O extends object>(o: O) => Object.keys(o) as (keyof O)[];
