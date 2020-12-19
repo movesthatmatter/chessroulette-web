@@ -18,7 +18,7 @@ import {
   pairedToLinearIndex,
   reversedLinearIndex,
   pairedHistoryToHistory,
-} from '../../../../lib';
+} from '../../lib';
 
 type Props = {
   game: ChessGameState;

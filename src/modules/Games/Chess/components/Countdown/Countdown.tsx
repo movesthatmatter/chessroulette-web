@@ -19,7 +19,7 @@ type Props = {
   className?: string;
 };
 
-export const Coundtdown: React.FC<Props> = ({ onFinished = () => noop, ...props }) => {
+export const Countdown: React.FC<Props> = ({ onFinished = () => noop, ...props }) => {
   const cls = useStyles();
   const [finished, setFinished] = useState(false as boolean);
   const [timeLeft, setTimeLeft] = useState(props.timeLeft);

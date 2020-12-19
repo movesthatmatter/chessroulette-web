@@ -7,7 +7,7 @@ import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, fonts } from 'src/theme';
-import { Coundtdown } from '../Countdown';
+import { Countdown } from '../Countdown';
 
 type Props = {
   player: ChessPlayer;
@@ -49,7 +49,7 @@ export const PlayerBox: React.FC<Props> = ({
         </Box>
       </Box>
       {gameTimeLimit !== 'untimed' && (
-        <Coundtdown
+        <Countdown
           timeLeft={timeLeft}
           active={active}
           onFinished={props.onTimerFinished}

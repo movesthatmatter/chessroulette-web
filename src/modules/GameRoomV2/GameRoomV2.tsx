@@ -29,7 +29,7 @@ import { GameStateDialog } from './components/GameStateDialog';
 import { Move } from 'chess.js';
 import { Events } from 'src/services/Analytics';
 import { useWindowWidth } from '@react-hook/window-size';
-import { PlayerBox } from '../Games/Chess/components/GameStateWidget/components/PlayerBox';
+import { PlayerBox } from '../Games/Chess/components/PlayerBox';
 import { MobileGameRoomLayout } from './GameRoomLayout/MobileGameRoomLayout';
 import { otherChessColor } from '../Games/Chess/util';
 import { getRelativeMaterialScore } from '../Games/Chess/components/GameStateWidget/util';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { PeerStreamingConfig } from 'src/services/peers';
 import { AspectRatio } from 'src/components/AspectRatio';

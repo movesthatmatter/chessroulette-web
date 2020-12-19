@@ -1,7 +1,7 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { fonts } from 'src/theme';
-import { pieces } from '../../../ChessBoard/assets/chessPiecesChessrouletteTheme';
+import { pieces } from '../ChessBoard/assets/chessPiecesChessrouletteTheme';
 import cx from 'classnames';
 
 type Props = {
