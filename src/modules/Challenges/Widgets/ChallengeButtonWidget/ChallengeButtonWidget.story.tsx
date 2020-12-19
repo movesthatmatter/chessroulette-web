@@ -3,7 +3,7 @@ import React from 'react';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
 import { ChallengeButtonWidget } from './ChallengeButtonWidget';
-import { SocketConsumer, SocketProvider } from 'src/components/SocketProvider';
+import { SocketConsumer, SocketProvider } from 'src/providers/SocketProvider';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 import { UserRecordMocker } from 'src/mocks/records';
 

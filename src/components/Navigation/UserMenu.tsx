@@ -7,9 +7,8 @@ import { colors, floatingShadow, fonts } from 'src/theme';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { Avatar } from 'src/components/Avatar';
 import { useSelector } from 'react-redux';
-import { Peer } from '../RoomProvider';
 import cx from 'classnames';
-import { PeerState, usePeerState } from 'src/components/PeerProvider';
+import { PeerState, usePeerState } from 'src/providers/PeerProvider';
 
 
 type Props = {

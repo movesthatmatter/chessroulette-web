@@ -1,7 +1,7 @@
 import { ChessInstance, ShortMove, Piece, Square } from 'chess.js';
 import { Result, Ok, Err } from 'ts-results';
 import { getNewChessGame } from './sdk';
-import { ChessGameStatePgn, ChessMove } from 'dstnd-io';
+import { ChessGameState, ChessGameStatePgn, ChessMove, UserRecord } from 'dstnd-io';
 import { FullMove, HalfMove, History, PairedMove, PairedHistory } from './types';
 import { flatten } from 'src/lib/util';
 
@@ -121,3 +121,8 @@ export const getGameAfterMove = (
 
   return new Err(undefined);
 };
+
+
+export const getPlayerStats = (game: ChessGameState, playerUserId: UserRecord['id']) => {
+  
+}

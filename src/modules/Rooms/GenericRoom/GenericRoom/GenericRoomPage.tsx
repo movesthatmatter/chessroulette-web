@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { Page } from 'src/components/Page';
-import { usePeerState } from 'src/components/PeerProvider';
-import { Room } from 'src/components/RoomProvider';
+import { usePeerState } from 'src/providers/PeerProvider';
+import { Room } from 'src/providers/PeerProvider';
 import { GenericRoomBouncer, useGenericRoomBouncer } from '../GenericRoomBouncer';
 import { GenericRoom } from './GenericRoom';
 

@@ -1,7 +1,7 @@
 import { useWindowWidth } from '@react-hook/window-size';
 import { ChessGameColor, ChessGameStatePgn, ChessMove } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
-import { RoomWithPlayActivity } from 'src/components/RoomProvider';
+import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { createUseStyles } from 'src/lib/jss';
 import { GameStateDialog } from 'src/modules/GameRoomV2/components/GameStateDialog';
 import { getOppositePlayer, getPlayer, getPlayerColor } from 'src/modules/GameRoomV2/util';

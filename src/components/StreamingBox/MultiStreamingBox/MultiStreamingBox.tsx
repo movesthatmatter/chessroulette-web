@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from 'react';
-import { FaceTime, FaceTimeProps } from 'src/components/FaceTimeArea';
+import { FaceTime, FaceTimeProps } from 'src/components/FaceTime';
 import { createUseStyles } from 'src/lib/jss';
 import { fonts, softBorderRadius } from 'src/theme';
 import { Streamer, StreamersMap } from '../types';
@@ -96,6 +96,7 @@ export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
 const useStyles = createUseStyles({
   container: {
     position: 'relative',
+
   },
   overlayedContainer: {
     position: 'absolute',
@@ -132,10 +133,17 @@ const useStyles = createUseStyles({
   },
   reelScroller: {
     minHeight: '100%',
-    overflowY: 'scroll',
     display: 'flex',
     flexDirection: 'column-reverse',
     flex: 1,
+    overflowY: 'auto',
+
+    // overscroll: auto;
+    msOverflowStyle: '-ms-autohiding-scrollbar',
+
+    '&:hover': {
+      // overflowY: 'scroll',
+    }
   },
   reel: {},
   smallFacetimeWrapper: {

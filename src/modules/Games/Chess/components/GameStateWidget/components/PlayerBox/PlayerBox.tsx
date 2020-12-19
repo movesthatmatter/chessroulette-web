@@ -1,4 +1,4 @@
-import { ChessPlayer } from 'dstnd-io';
+import { ChessGameState, ChessPlayer } from 'dstnd-io';
 import { Box } from 'grommet';
 
 import React from 'react';
@@ -6,7 +6,6 @@ import { Avatar } from 'src/components/Avatar';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { ChessGameState } from 'src/modules/Games/Chess/records';
 import { floatingShadow, fonts } from 'src/theme';
 import { Coundtdown } from '../Countdown';
 

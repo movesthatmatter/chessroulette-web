@@ -13,7 +13,7 @@ import {
   GameOfferingCancelRequestPayload,
   GameStatusCheckRequestPayload,
 } from 'dstnd-io';
-import { Room } from 'src/components/RoomProvider';
+import { Room } from 'src/providers/PeerProvider';
 
 export const gameActions = {
   join: (roomId: Room['id'], code?: string): GameJoinRequestPayload => ({

@@ -1,7 +1,7 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { MyFaceTime } from '../FaceTimeArea';
-import { Peer, Room } from '../RoomProvider';
+import { MyFaceTime } from '../FaceTime';
+import { Peer, Room } from 'src/providers/PeerProvider';
 import { MultiStreamingBox, MultiStreamingBoxProps } from './MultiStreamingBox';
 import cx from 'classnames';
 

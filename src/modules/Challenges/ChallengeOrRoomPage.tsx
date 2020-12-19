@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { resources } from 'src/resources';
-import { usePeerState } from 'src/components/PeerProvider';
+import { usePeerState } from 'src/providers/PeerProvider';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
 import { GenericRoomPage } from 'src/modules/Rooms/GenericRoom';
 import { useSelector } from 'react-redux';

@@ -1,7 +1,7 @@
 import { RoomRecord } from 'dstnd-io';
 import React, { useEffect } from 'react';
 import { Dialog } from 'src/components/Dialog/Dialog';
-import { FaceTimeSetup } from 'src/components/FaceTimeArea/FaceTimeSetup';
+import { FaceTimeSetup } from 'src/components/FaceTime/FaceTimeSetup';
 import { Text } from 'src/components/Text';
 import { noop } from 'src/lib/util';
 import { Events } from 'src/services/Analytics';

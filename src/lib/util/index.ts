@@ -7,7 +7,6 @@ import {
 } from 'dstnd-io';
 import UrlPattern from 'url-pattern';
 import { Result, Err, Ok } from 'ts-results';
-import { Room } from 'src/components/RoomProvider';
 
 export const noop = () => { 
   // do nothing

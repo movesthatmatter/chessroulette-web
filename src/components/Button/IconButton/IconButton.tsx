@@ -4,7 +4,7 @@ import { Icon as GIcon } from 'grommet-icons';
 import { borderRadius, colors } from 'src/theme';
 import cx from 'classnames';
 import { ButtonType } from '../type';
-import { buttonStyles } from '../styles';
+import { buttonStyles } from '../styles/styles';
 import { AsyncResult } from 'dstnd-io';
 import Loader from 'react-loaders';
 import 'loaders.css';

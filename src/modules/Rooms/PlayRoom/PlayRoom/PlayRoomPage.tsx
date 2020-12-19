@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { gameActions } from 'src/modules/Games/Chess/gameActions';
-import { Room, RoomWithPlayActivity } from 'src/components/RoomProvider';
+import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { Events } from 'src/services/Analytics';
 import { SocketClient } from 'src/services/socket/SocketClient';
-import { usePeerState } from 'src/components/PeerProvider';
+import { usePeerState } from 'src/providers/PeerProvider';
 import { PlayRoom } from 'src/modules/Rooms/PlayRoom/PlayRoom/PlayRoom';
 
 type Props = {

@@ -56,8 +56,6 @@ export class ChessGameV2 extends React.Component<Props, State> {
 
     this.chess.load_pgn(this.props.game.pgn || '');
 
-    // this.chess.load(this.props.game.fen || '');
-
     this.state = {
       current: getCurrentChessState(this.chess),
     };

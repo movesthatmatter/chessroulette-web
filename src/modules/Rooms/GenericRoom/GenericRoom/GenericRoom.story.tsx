@@ -1,11 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useState } from 'react';
 import { GenericRoom } from './GenericRoom';
-import { PeerConsumer, PeerProvider } from 'src/components/PeerProvider';
+import { PeerConsumer, PeerProvider } from 'src/providers/PeerProvider';
 import { authenticateAsExistentGuest } from 'src/services/Authentication/resources';
 import { GuestUserRecord, PeerRecord } from 'dstnd-io';
 import { quickPair } from 'src/resources/resources';
-import { SocketConsumer, SocketProvider } from 'src/components/SocketProvider';
+import { SocketConsumer, SocketProvider } from 'src/providers/SocketProvider';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 import { AuthenticationProvider, selectAuthentication } from 'src/services/Authentication';
 import { Grommet } from 'grommet';
@@ -13,7 +13,7 @@ import { defaultTheme } from 'src/theme';
 import { getRandomInt } from 'src/lib/util';
 import { Button } from 'src/components/Button';
 import { useSelector } from 'react-redux';
-import { RoomCredentials } from 'src/components/PeerProvider';
+import { RoomCredentials } from 'src/providers/PeerProvider';
 import { UserRecordMocker } from 'src/mocks/records';
 
 export default {

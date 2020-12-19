@@ -6,10 +6,10 @@ import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { chessGameActions, ChessGameState, ChessGameStateStarted, GuestUserRecord } from 'dstnd-io';
 import { action } from '@storybook/addon-actions';
-import { RoomWithPlayActivity } from 'src/components/RoomProvider';
+import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
-import { PeerProvider } from 'src/components/PeerProvider';
-import { SocketProvider } from 'src/components/SocketProvider';
+import { PeerProvider } from 'src/providers/PeerProvider';
+import { SocketProvider } from 'src/providers/SocketProvider';
 import { PlayRoom } from './PlayRoom';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 

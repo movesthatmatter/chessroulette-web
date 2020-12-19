@@ -3,7 +3,7 @@ import { keyInObject, noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { Move, Square } from 'chess.js';
-import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
+// import { getBoardSize as getDefaultBoardSize } from 'src/modules/GameRoom/util';
 import { ChessMove, ChessGameStatePgn, ChessGameColor, ChessGameState } from 'dstnd-io';
 import { ChessBoard } from '../ChessBoard';
 import { getPgnAfterMove, getSquare, pgnToHistory, toChessColor } from '../../lib/util';
@@ -42,7 +42,7 @@ export const ChessGame: React.FunctionComponent<ChessGameProps> = ({
   onDisplayedHistoryIndexUpdated = noop,
   displayedHistoryIndex = 0,
   playable = false,
-  getBoardSize = getDefaultBoardSize,
+  getBoardSize,
   maintainPositionLocally = true,
   ...props
 }) => {

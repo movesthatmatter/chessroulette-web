@@ -3,4 +3,4 @@ import { fromArray } from 'fp-ts/lib/ReadonlyNonEmptyArray';
 // export * from './Button';
 export * from './ActionButton';
 export * from './IconButton';
-export * from './Button2';
+export * from './Button';
