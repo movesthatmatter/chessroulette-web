@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { stateSliceByKey as authentication } from 'src/services/Authentication';
 import { stateSliceByKey as joinedRoom } from 'src/components/PeerProvider/redux/reducer';
-import { stateSliceByKey as roomBouncer } from 'src/modules/GenericRoom/GenericRoomBouncer/reducer';
+import { stateSliceByKey as roomBouncer } from 'src/modules/Rooms/GenericRoom/GenericRoomBouncer/reducer';
 import { stateSliceByKey as session } from 'src/services/Session/reducer';
 
 const allModuleReducers = {

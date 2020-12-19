@@ -5,7 +5,7 @@ import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { resources } from 'src/resources';
 import { usePeerState } from 'src/components/PeerProvider';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
-import { GenericRoomPage } from '../GenericRoom/GenericRoom/GenericRoomPage';
+import { GenericRoomPage } from 'src/modules/Rooms/GenericRoom';
 import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication';
 import { ChallengePage } from './ChallengePage';

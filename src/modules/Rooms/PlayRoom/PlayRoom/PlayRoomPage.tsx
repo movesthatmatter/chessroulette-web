@@ -1,17 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { gameActions } from 'src/modules/Games/Chess/gameActions';
-import { GameRoomV2 } from 'src/modules/GameRoomV2/GameRoomV2';
 import { Room, RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { Events } from 'src/services/Analytics';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { usePeerState } from 'src/components/PeerProvider';
-import { PlayRoom } from 'src/modules/Rooms/PlayRoom/PlayRoom';
+import { PlayRoom } from 'src/modules/Rooms/PlayRoom/PlayRoom/PlayRoom';
 
 type Props = {
-  room: Room;
+  room: RoomWithPlayActivity;
 };
 
-export const GenericRoom: React.FC<Props> = ({ room }) => {
+export const PlayRoomPage: React.FC<Props> = ({ room }) => {
   const peerState = usePeerState();
   const [connectionAttempt, setConnectionAttempt] = useState(false);
 
@@ -44,15 +43,15 @@ export const GenericRoom: React.FC<Props> = ({ room }) => {
   // Leave the Room on unmount
   useEffect(() => leaveRoom, []);
 
-  // This only support Play Rooms for now!
-  if (room.activity.type !== 'play') {
-    return null;
-  }
+  // Analytics
+  useEffect(() => {
+    Events.trackPageView('Play Room');
+  }, []);
 
   return (
     <PlayRoom
       key={room.id}
-      room={room as RoomWithPlayActivity}
+      room={room}
       onMove={(nextMove, _, history, color) => {
         request(gameActions.move(nextMove));
 
@@ -106,7 +105,7 @@ export const GenericRoom: React.FC<Props> = ({ room }) => {
       }}
       onOfferCanceled={() => request(gameActions.cancelOffer())}
       onTimerFinished={() => request(gameActions.statusCheck())}
-      onStatusCheck={() => request(gameActions.statusCheck())}
+      onGameStatusCheck={() => request(gameActions.statusCheck())}
     />
   );
 };

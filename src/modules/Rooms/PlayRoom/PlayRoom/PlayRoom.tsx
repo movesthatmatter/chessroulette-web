@@ -1,14 +1,15 @@
 import { useWindowWidth } from '@react-hook/window-size';
 import { ChessGameColor, ChessGameStatePgn, ChessMove } from 'dstnd-io';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { createUseStyles } from 'src/lib/jss';
 import { GameStateDialog } from 'src/modules/GameRoomV2/components/GameStateDialog';
 import { getOppositePlayer, getPlayer, getPlayerColor } from 'src/modules/GameRoomV2/util';
 import { useSoundEffects } from 'src/modules/Games/Chess';
 import { otherChessColor } from 'src/modules/Games/Chess/util';
+import { Events } from 'src/services/Analytics';
 import { MOBILE_BREAKPOINT } from 'src/theme';
-import { DesktopLayout, ChessGameHistory, MobileLayout } from './Layouts';
+import { DesktopLayout, ChessGameHistory, MobileLayout } from '../Layouts';
 
 type Props = {
   room: RoomWithPlayActivity;
@@ -28,7 +29,7 @@ type Props = {
   onRematchDenied: () => void;
   onOfferCanceled: () => void;
   onTimerFinished: () => void;
-  onStatusCheck: () => void;
+  onGameStatusCheck: () => void;
 };
 
 export const PlayRoom: React.FC<Props> = (props) => {
@@ -40,7 +41,10 @@ export const PlayRoom: React.FC<Props> = (props) => {
 
   useSoundEffects(game);
 
-  
+  // Check the Game Status
+  useEffect(() => {
+    props.onGameStatusCheck();
+  }, []);
 
   // TODO: Get the whole state from the util function
   const myPlayer = getPlayer(props.room.me.user.id, game.players);

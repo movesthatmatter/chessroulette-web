@@ -92,7 +92,7 @@ export const defaultStory = () => (
                     onResign={action('onResign')}
                     onOfferCanceled={action('onOfferCancel')}
                     onTimerFinished={action('onTimerFinished')}
-                    onStatusCheck={action('onStatusCheck')}
+                    onGameStatusCheck={action('onStatusCheck')}
                   />
                 </PeerProvider>
               </SocketProvider>
@@ -187,7 +187,7 @@ export const withSwitchingSides = () => (
                 onResign={action('onResign')}
                 onOfferCanceled={action('onOfferCancel')}
                 onTimerFinished={action('onTimerFinished')}
-                onStatusCheck={action('onStatusCheck')}
+                onGameStatusCheck={action('onStatusCheck')}
               />
             </StorybookReduxProvider>
           );

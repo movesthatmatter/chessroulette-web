@@ -9,7 +9,7 @@ import { usePeerState } from './components/PeerProvider';
 import { SocketConsumer } from './components/SocketProvider';
 import { toRoomUrlPath } from './lib/util';
 import { ChallengeWidget } from './modules/Challenges/Widgets/ChallengeWidget';
-import { BrowserNotSupportedDialog, useGenericRoomBouncer } from './modules/GenericRoom';
+import { BrowserNotSupportedDialog, useGenericRoomBouncer } from './modules/Rooms/GenericRoom';
 
 type ActivityState =
   | {

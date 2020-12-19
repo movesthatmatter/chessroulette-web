@@ -54,8 +54,6 @@ export const MobileLayout: React.FC<Props> = (props) => {
       : game.timeLeft[otherChessColor(props.homeColor)];
   const materialScore = getRelativeMaterialScore(game.captured);
 
-  console.log('me as player', props.meAsPlayer);
-
   return (
     <MobileGameRoomLayout
       getTopArea={(dimensions) => (
