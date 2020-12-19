@@ -154,7 +154,7 @@ const useStyles = createUseStyles({
     display: 'flex',
     flex: 1,
     flexDirection: 'column-reverse',
-    overflowY: 'scroll',
+    overflowY: 'auto',
   },
   row: {
     borderWidth: 0,
