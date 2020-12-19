@@ -49,6 +49,9 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
                 if (e.key === 'Enter' && input.trim() !== '') {
                   onSend(input);
                   setInput('');
+
+                  // Don't add a new line
+                  e.preventDefault();
                 }
               }}
             />
