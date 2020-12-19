@@ -5,14 +5,13 @@ import { Room, RoomWithPlayActivity } from 'src/components/RoomProvider';
 import { Events } from 'src/services/Analytics';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { usePeerState } from 'src/components/PeerProvider';
+import { PlayRoom } from 'src/modules/Rooms/PlayRoom/PlayRoom';
 
 type Props = {
   room: Room;
 };
 
-export const GenericRoom: React.FC<Props> = ({
-  room,
-}) => {
+export const GenericRoom: React.FC<Props> = ({ room }) => {
   const peerState = usePeerState();
   const [connectionAttempt, setConnectionAttempt] = useState(false);
 
@@ -24,7 +23,7 @@ export const GenericRoom: React.FC<Props> = ({
     if (peerState.status === 'open') {
       peerState.client.send(payload);
     }
-  }
+  };
 
   const connectToRoom = useCallback(() => {
     if (peerState.status === 'open' && peerState.hasJoinedRoom && !connectionAttempt) {
@@ -45,14 +44,13 @@ export const GenericRoom: React.FC<Props> = ({
   // Leave the Room on unmount
   useEffect(() => leaveRoom, []);
 
-  // This only support Play Rooms for now! 
+  // This only support Play Rooms for now!
   if (room.activity.type !== 'play') {
     return null;
   }
 
   return (
-    <>
-    <GameRoomV2
+    <PlayRoom
       key={room.id}
       room={room as RoomWithPlayActivity}
       onMove={(nextMove, _, history, color) => {
@@ -110,6 +108,5 @@ export const GenericRoom: React.FC<Props> = ({
       onTimerFinished={() => request(gameActions.statusCheck())}
       onStatusCheck={() => request(gameActions.statusCheck())}
     />
-    </>
   );
 };
