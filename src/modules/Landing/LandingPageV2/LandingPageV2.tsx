@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Page } from 'src/components/Page';
-import { ChallengeButtonWidget } from 'src/modules/Games/Chess/components/ChallengeButtonWidget';
+import { ChallengeButtonWidget } from 'src/modules/Challenges';
 import chessBackground from '../LandingPage/assets/chess_icons.png';
 import { createUseStyles } from 'src/lib/jss';
 import { colors, minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
