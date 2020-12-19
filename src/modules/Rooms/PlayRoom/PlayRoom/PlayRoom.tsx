@@ -4,12 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { createUseStyles } from 'src/lib/jss';
 import { GameStateDialog } from 'src/modules/GameRoomV2/components/GameStateDialog';
-import { getOppositePlayer, getPlayer, getPlayerColor } from 'src/modules/GameRoomV2/util';
 import { useSoundEffects } from 'src/modules/Games/Chess';
-import { otherChessColor } from 'src/modules/Games/Chess/util';
-import { Events } from 'src/services/Analytics';
 import { MOBILE_BREAKPOINT } from 'src/theme';
 import { DesktopLayout, ChessGameHistory, MobileLayout } from '../Layouts';
+import { getPlayerStats } from 'src/modules/Games/Chess/lib';
 
 type Props = {
   room: RoomWithPlayActivity;
@@ -41,24 +39,16 @@ export const PlayRoom: React.FC<Props> = (props) => {
 
   useSoundEffects(game);
 
-  // Check the Game Status
+  // Ensure the Game is synced!
   useEffect(() => {
     props.onGameStatusCheck();
   }, []);
 
-  // TODO: Get the whole state from the util function
-  const myPlayer = getPlayer(props.room.me.user.id, game.players);
-  const isMePlayer = !!myPlayer;
-  const opponentPlayer = myPlayer
-    ? getOppositePlayer(myPlayer, props.room.activity.game.players)
-    : undefined;
-  const homeColor = getPlayerColor(props.room.me.id, props.room.activity.game.players);
+  // TODO: This isn't really used yet!
   const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
-  const canIPlay =
-    isMePlayer && // I must be a player
-    (game.state === 'pending' || game.state === 'started') && // game must be in playable mode
-    (game.lastMoveBy ? game.lastMoveBy === otherChessColor(homeColor) : homeColor === 'white') && // It must be my turn
-    gameDisplayedHistoryIndex === 0; // The most recent move must be displayed
+
+  const playerStats = getPlayerStats(game, props.room.me.id);
+  const homeColor = playerStats.player?.color || 'white';
 
   const content = () => {
     if (windowWidth <= MOBILE_BREAKPOINT) {
@@ -74,9 +64,9 @@ export const PlayRoom: React.FC<Props> = (props) => {
           onHistoryIndexUpdated={() => {}}
           historyIndex={gameDisplayedHistoryIndex}
           homeColor={homeColor}
-          canIPlay={canIPlay}
-          opponentAsPlayer={opponentPlayer}
-          meAsPlayer={myPlayer}
+          canIPlay={playerStats.canPlay}
+          opponentAsPlayer={playerStats.opponent}
+          meAsPlayer={playerStats.player}
         />
       );
     }
@@ -93,9 +83,9 @@ export const PlayRoom: React.FC<Props> = (props) => {
         onHistoryIndexUpdated={() => {}}
         historyIndex={gameDisplayedHistoryIndex}
         homeColor={homeColor}
-        canIPlay={canIPlay}
-        opponentAsPlayer={opponentPlayer}
-        meAsPlayer={myPlayer}
+        canIPlay={playerStats.canPlay}
+        opponentAsPlayer={playerStats.opponent}
+        meAsPlayer={playerStats.player}
       />
     );
   };
@@ -110,7 +100,7 @@ export const PlayRoom: React.FC<Props> = (props) => {
         onDrawDenied={props.onDrawDenied}
         onRematchAccepted={props.onRematchAccepted}
         onRematchDenied={props.onRematchDenied}
-        myPlayer={myPlayer}
+        myPlayer={playerStats.player}
       />
     </>
   );

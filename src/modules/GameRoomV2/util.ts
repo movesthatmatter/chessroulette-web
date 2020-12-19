@@ -22,11 +22,13 @@ export const getPlayerByColor = (
 export const getPlayer = (
   userId: string,
   players: ChessGameState['players'],
-) => {
-  const matched = players.find((p) => p.user.id === userId);
+): ChessPlayer | undefined => {
+  if (players[0].user.id === userId) {
+    return players[0];
+  }
 
-  if (matched) {
-    return matched;
+  if (players[1]?.user.id === userId) {
+    return players[1];
   }
 
   return undefined;

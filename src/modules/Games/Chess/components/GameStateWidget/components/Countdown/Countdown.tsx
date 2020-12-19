@@ -10,6 +10,9 @@ import { text } from 'src/theme/text';
 import { onlyMobile } from 'src/theme';
 
 type Props = {
+  // TODO: this needs a refactoring
+  //  as it should take te lsat move and total time in account
+  //  that's all! and do any calculation here
   timeLeft: number;
   active: boolean;
   onFinished?: () => void;
