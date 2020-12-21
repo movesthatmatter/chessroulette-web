@@ -8,12 +8,11 @@ import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { chessGameActions, ChessGameState, ChessGameStateStarted, GuestUserRecord } from 'dstnd-io';
 import { action } from '@storybook/addon-actions';
 import { GameRoomV2 } from './GameRoomV2';
-import { RoomWithPlayActivity } from 'src/components/RoomProvider';
+import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
-import { PeerProvider } from 'src/components/PeerProvider';
-import { SocketProvider } from 'src/components/SocketProvider';
+import { PeerProvider } from 'src/providers/PeerProvider';
+import { SocketProvider } from 'src/providers/SocketProvider';
 import { toISODateTime } from 'io-ts-isodatetime';
-import { UserRecordMocker } from 'src/mocks/records';
 
 export default {
   component: GameRoomV2,

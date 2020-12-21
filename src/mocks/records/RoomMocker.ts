@@ -1,9 +1,8 @@
 import Chance from 'chance';
-import { Room, Peer } from 'src/components/RoomProvider';
+import { Peer, Room } from 'src/providers/PeerProvider';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { range } from 'src/lib/util';
 import { PeerMocker } from './PeerMocker';
-import { RoomStatsRecordMocker } from './RoomStatsRecordMocker';
 
 const chance = new Chance();
 const peerMocker = new PeerMocker();

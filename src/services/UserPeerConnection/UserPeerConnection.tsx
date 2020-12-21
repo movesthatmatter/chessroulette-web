@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SocketConsumer } from 'src/components/SocketProvider';
+import { SocketConsumer } from 'src/providers/SocketProvider';
 import { createUseStyles } from 'src/lib/jss';
 import { SocketClient } from '../socket/SocketClient';
 

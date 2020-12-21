@@ -36,7 +36,7 @@ import {
   GameOfferingCancelRequestPayload,
   GameStatusCheckRequestPayload,
 } from 'dstnd-io';
-import { PeerMessageEnvelope } from 'src/components/PeerProvider/records';
+import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
 type ReceivableMessagesMap = {
   peerJoinedRoom: PeerJoinedRoomPayload;

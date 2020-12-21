@@ -9,7 +9,7 @@ import {
 import {
   SocketConsumer,
   SocketConsumerProps,
-} from 'src/components/SocketProvider';
+} from 'src/providers/SocketProvider';
 import { resources } from 'src/resources';
 
 type Props = Pick<

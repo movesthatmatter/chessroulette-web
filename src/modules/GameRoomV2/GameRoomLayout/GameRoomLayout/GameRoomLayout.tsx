@@ -184,7 +184,7 @@ export const GameRoomLayout: React.FC<Props> = ({
             className={cls.side}
             style={{
               width: `${layout.rightSide}px`,
-              marginLeft: minSpaceBetween,
+              marginLeft: Math.max(minSpaceBetween, layout.remaining / 2),
               
               // This is a hack to go above the top & bottom components
               //  But ideally it could be done better!
@@ -213,7 +213,7 @@ export const GameRoomLayout: React.FC<Props> = ({
 };
 
 const transitionsEffect = {
-  transition: 'all 150ms ease-in',
+  // transition: 'all 150ms ease-in',
 };
 
 const useStyles = createUseStyles({

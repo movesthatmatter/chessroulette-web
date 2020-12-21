@@ -1,9 +1,11 @@
 import { ChessInstance, ShortMove, Piece, Square } from 'chess.js';
 import { Result, Ok, Err } from 'ts-results';
 import { getNewChessGame } from './sdk';
-import { ChessGameStatePgn, ChessMove } from 'dstnd-io';
+import { ChessGameState, ChessGameStatePgn, ChessMove, ChessPlayer, UserRecord } from 'dstnd-io';
 import { FullMove, HalfMove, History, PairedMove, PairedHistory } from './types';
 import { flatten } from 'src/lib/util';
+import { getOppositePlayer, getPlayer } from 'src/modules/GameRoomV2/util';
+import { getRelativeMaterialScore } from '../components/GameStateWidget/util';
 
 export const getStartingPgn = () => getNewChessGame().pgn();
 export const getStartingFen = () => getNewChessGame().fen();
@@ -59,7 +61,8 @@ export const toPairedHistory = (moves: History): PairedHistory =>
     return [...prevWithoutLastMove, nextFullMove];
   }, [] as PairedHistory);
 
-export const pairedHistoryToHistory = (ph: PairedHistory): History => flatten(ph) as unknown as History;
+export const pairedHistoryToHistory = (ph: PairedHistory): History =>
+  (flatten(ph) as unknown) as History;
 
 // [0] - The PairedMove index
 // [1] - The color/side index
@@ -67,9 +70,9 @@ export type PairedIndex = [number, number];
 
 export const linearToPairedIndex = (history: History, index: number): PairedIndex => {
   const diff = history.length - 1 - index;
-  
+
   return [Math.floor(diff / 2), diff % 2];
-}
+};
 
 export const pairedToLinearIndex = (index: PairedIndex) => index[0] * 2 + index[1];
 
@@ -95,9 +98,14 @@ export const inDraw = (pgn: ChessGameStatePgn) => getNewChessGame(pgn).in_draw()
 export const isGameOver = (pgn: ChessGameStatePgn) => getNewChessGame(pgn).game_over();
 
 export const getTurn = (pgn: ChessGameStatePgn) => getNewChessGame(pgn).turn();
-export const getSquare = (pgn: ChessGameStatePgn, square: Square) => getNewChessGame(pgn).get(square);
-export const isValidMove = (pgn: ChessGameStatePgn, m: ChessMove) => getNewChessGame(pgn).move(m) !== null;
-export const getPgnAfterMove = (pgn: ChessGameStatePgn, m: ChessMove): Result<ChessGameStatePgn, void> => {
+export const getSquare = (pgn: ChessGameStatePgn, square: Square) =>
+  getNewChessGame(pgn).get(square);
+export const isValidMove = (pgn: ChessGameStatePgn, m: ChessMove) =>
+  getNewChessGame(pgn).move(m) !== null;
+export const getPgnAfterMove = (
+  pgn: ChessGameStatePgn,
+  m: ChessMove
+): Result<ChessGameStatePgn, void> => {
   const instance = getNewChessGame(pgn);
 
   if (instance.move(m)) {
@@ -105,8 +113,7 @@ export const getPgnAfterMove = (pgn: ChessGameStatePgn, m: ChessMove): Result<Ch
   }
 
   return Err(undefined);
-}
-
+};
 
 // @Deprecate as it's not used
 export const getGameAfterMove = (
@@ -120,4 +127,56 @@ export const getGameAfterMove = (
   }
 
   return new Err(undefined);
+};
+
+type UserAsPlayerStats =
+  | {
+      isPlayer: true;
+      player: ChessPlayer;
+      opponent: ChessPlayer | undefined;
+      canPlay: boolean;
+      materialScore: number;
+    }
+  | ({
+      isPlayer: false;
+      player: undefined;
+      opponent: undefined;
+      canPlay: false;
+      materialScore: undefined;
+    } & {});
+
+export const getPlayerStats = (
+  game: ChessGameState,
+  userId: UserRecord['id']
+): UserAsPlayerStats => {
+  const player = getPlayer(userId, game.players);
+
+  if (player) {
+    const opponent = getOppositePlayer(player, game.players);
+    const materialScore = getRelativeMaterialScore(game.captured);
+
+    const canPlay =
+      // I must have an opponent to be able to play
+      !!opponent &&
+      // game must be in playable mode
+      (game.state === 'pending' || game.state === 'started') &&
+      // It must be my turn or be white if first move
+      (game.lastMoveBy ? game.lastMoveBy === opponent.color : player.color === 'white');
+
+    return {
+      isPlayer: true,
+      player,
+      opponent,
+      canPlay,
+      materialScore: materialScore[player.color],
+    };
+  }
+
+  return {
+    player: undefined,
+    isPlayer: false,
+    opponent: undefined,
+    canPlay: false,
+    materialScore: undefined,
+  };
 };

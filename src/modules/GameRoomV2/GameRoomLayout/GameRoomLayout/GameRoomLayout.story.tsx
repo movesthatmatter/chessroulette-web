@@ -9,12 +9,12 @@ import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { GameRoomLayout } from './GameRoomLayout';
-import { Chat } from 'src/components/Chat/Chat';
+import { Chat } from 'src/modules/Chat/Chat';
 import { action } from '@storybook/addon-actions';
 import { ChatHistoryRecord } from 'dstnd-io';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { minutes, seconds } from 'src/lib/time';
-import { AspectRatio, AspectRatioExplicit, AspectRatioProps } from 'src/components/AspectRatio';
+import { AspectRatio, AspectRatioExplicit } from 'src/components/AspectRatio';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
 import { ChessGameStateMocker } from 'src/mocks/records';
 

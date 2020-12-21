@@ -1,10 +1,8 @@
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Peer, Room } from 'src/components/RoomProvider';
-import { SocketConsumer } from 'src/components/SocketProvider';
+import { SocketConsumer } from 'src/providers/SocketProvider';
 import { createUseStyles } from 'src/lib/jss';
-import { resources } from 'src/resources';
 import { selectAuthentication } from 'src/services/Authentication';
 import { Stats } from './Stats';
 
