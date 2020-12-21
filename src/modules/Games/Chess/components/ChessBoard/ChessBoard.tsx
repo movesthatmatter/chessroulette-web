@@ -1,4 +1,4 @@
-import Chessboard, { Piece } from 'chessboardjsx';
+// import Chessboard, { Piece } from 'chessboardjsx';
 import React, { useEffect, useState } from 'react';
 import { Move, Square } from 'chess.js';
 import { CSSProperties } from 'src/lib/jss/types';
@@ -10,6 +10,9 @@ import {
   historyToPgn,
   inCheck,
 } from '../../lib';
+
+// TOOD: I added this cause I removed the chessboardjsx
+type Piece = any;
 
 const getPieceRender = (pieceName: keyof typeof pieces, imageSrc: string) => (obj: {
   isDragging: boolean;
@@ -64,7 +67,10 @@ const piecesToBoardMap = Object.keys(pieces).reduce((prev, nextPieceName) => {
   };
 }, {} as ChessBoardProps['pieces']);
 
-export type ChessBoardProps = Omit<Chessboard['props'], 'fen'> & {
+type ChessBoardPropsS = any;
+
+// export type ChessBoardProps = Omit<Chessboard['props'], 'fen'> & {
+export type ChessBoardProps = Omit<ChessBoardPropsS, 'fen'> & {
   history: Move[];
   inCheckSquare?: Square;
   clickedSquareStyle: Partial<{ [sq in Square]: CSSProperties }>;
@@ -113,21 +119,24 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
     });
   }, [history]);
 
-  return (
-    <Chessboard
-      // key={history.length}
-      {...boardProps}
-      squareStyles={{
-        ...lastMoveStyle,
-        ...clickedSquareStyle,
-        ...inCheckStyle,
-      }}
-      pieces={piecesToBoardMap}
-      boardStyle={{
-        ...boardProps.boardStyle,
-        position: 'relative',
-      }}
-      position={historyToFen(history)}
-    />
-  );
+  return null;
+
+  // Removed this during the big refactoring
+  // return (
+  //   // <Chessboard
+  //   //   // key={history.length}
+  //   //   {...boardProps}
+  //   //   squareStyles={{
+  //   //     ...lastMoveStyle,
+  //   //     ...clickedSquareStyle,
+  //   //     ...inCheckStyle,
+  //   //   }}
+  //   //   pieces={piecesToBoardMap}
+  //   //   boardStyle={{
+  //   //     ...boardProps.boardStyle,
+  //   //     position: 'relative',
+  //   //   }}
+  //   //   position={historyToFen(history)}
+  //   // />
+  // );
 };

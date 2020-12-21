@@ -1,211 +1,169 @@
-import React, { useState } from 'react';
-import logo from 'src/assets/logo.svg';
-import { createUseStyles } from 'src/lib/jss';
-import { ColoredButton } from 'src/components/ColoredButton/ColoredButton';
-import { PopupModal } from 'src/components/PopupModal/PopupModal';
-import { PlayWithFriendsPopup } from 'src/components/PlayWithFriendsPopup/PlayWithFriendsPopup';
-import { SocketConsumer } from 'src/components/SocketProvider';
-import { PeerRecord, CreateRoomResponse } from 'dstnd-io';
-import { useHistory } from 'react-router-dom';
-import { resources } from 'src/resources';
-import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
-import { PopupContent } from 'src/components/PopupContent';
+import React, { useEffect } from 'react';
+import { Page } from 'src/components/Page';
+import { ChallengeButtonWidget } from 'src/modules/Challenges';
 import chessBackground from './assets/chess_icons.png';
+import { createUseStyles } from 'src/lib/jss';
+import { colors, minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
+import { Events } from 'src/services/Analytics';
+import { fonts } from 'src/theme/fonts';
+import { Emoji } from 'src/components/Emoji';
 
 type Props = {};
 
-const toRoomPath = (room: CreateRoomResponse) =>
-  `${room.id}${room.type === 'private' ? `/${room.code}` : ''}`;
-
 export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
-  const history = useHistory();
-  const [friendsPopup, setFriendsPopup] = useState(false);
-  // const [me, setMe] = useState<PeerRecord | void>();
-  // const [myPeer, setMyPeer] 
 
-  return null;
+  useEffect(() => {
+    Events.trackPageView('Home');
+  }, []);
 
-  // return (
-  //   <SocketConsumer
-  //     onMessage={(msg) => {
-  //       if (msg.kind === 'connectionOpened') {
-  //         setMe(msg.content.me);
-  //       }
-  //     }}
-  //     render={({ socket }) => (
-  //       <div className={cls.container}>
-  //         <PopupModal show={friendsPopup}>
-  //           <PopupContent hasCloseButton onClose={() => setFriendsPopup(false)}>
-  //             <>
-  //               {me && (
-  //                 <PlayWithFriendsPopup
-  //                   close={() => setFriendsPopup(false)}
-  //                   dispatchCodeJoin={async (code) => {
-  //                     (await resources.getPrivateRoom(code))
-  //                       .mapErr(() => {
-  //                         console.log('Bad Code - Let the user know');
-  //                       })
-  //                       .map((room) => {
-  //                         history.push(`/gameroom/${toRoomPath(room)}`);
-  //                       });
-  //                   }}
-  //                   dispatchCreate={async () => {
-  //                     (
-  //                       await resources.createRoom({
-  //                         name: undefined,
-  //                         userId: me.id,
-  //                         type: 'private',
-  //                       })
-  //                     ).map((room) => {
-  //                       history.push(`/gameroom/${toRoomPath(room)}`);
-  //                     });
-  //                   }}
-  //                 />
-  //               )}
-  //             </>
-  //           </PopupContent>
-  //         </PopupModal>
-  //         <div className={cls.leftSideContainer}>
-  //           <img src={logo} alt="logo" className={cls.logo} />
-  //           <div>
-  //             <p className={cls.headerText}>
-  //               Play chess online with
-  //               <br />
-  //               video streaming
-  //             </p>
-  //           </div>
-  //           <div
-  //             style={{ marginTop: '5px', marginBottom: '10px' }}
-  //             className={cls.text}
-  //           >
-  //             No account needed.
-  //             <br />
-  //             Game hosting and video chat.
-  //             <br />
-  //             Play with friends in a private lobby
-  //             <br />
-  //             or join an open challenge.
-  //             <br />
-  //           </div>
-  //           <div className={cls.buttonsContainer}>
-  //             <div style={{ marginRight: '30px' }}>
-  //               <ColoredButton
-  //                 label="Play with Friends"
-  //                 color="#08D183"
-  //                 fontSize="21px"
-  //                 padding="5px"
-  //                 onClickFunction={() => setFriendsPopup(true)}
-  //               />
-  //             </div>
-  //             <div className={cls.buttonWithMutunachiWrapper}>
-  //               <Mutunachi mid={12} className={cls.mutunachi} />
-  //               <ColoredButton
-  //                 label="Play Open Challenge"
-  //                 color="#54C4F2"
-  //                 fontSize="21px"
-  //                 padding="5px"
-  //                 onClickFunction={async () => {
-  //                   // if (!me) {
-  //                   //   return;
-  //                   // }
+  return (
+    <Page logoAsLink={false}>
+      <div className={cls.container}>
+        <div className={cls.inner}>
+          <div
+            style={{
+              flex: 1,
+              alignItems: 'flex-end',
+              display: 'flex',
+              flexDirection: 'row',
+            }}
+          >
+            <img
+              src={chessBackground}
+              style={{
+                width: '95%',
+                margin: '0 auto',
+                maxWidth: '500px',
+              }}
+              alt="Chessroulette Board"
+            />
+          </div>
+          <div className={cls.rightSide}>
+            <h1 className={cls.headerText}>Chessroulette</h1>
+            <h2 className={cls.subheaderText}>Where Chess Meets Video</h2>
 
-  //                   // (
-  //                   //   await resources.createChallenge({
-  //                   //     peerId: me.id,
-  //                   //     game: {
-  //                   //       timeLimit: 'rapid',
-  //                   //       preferredColor: 'random',
-  //                   //     },
-  //                   //   })
-  //                   // ).map((room) => {
-  //                   //   history.push(`/gameroom/${toRoomPath(room)}`);
-  //                   // });
-  //                 }}
-  //               />
-  //             </div>
-  //           </div>
-  //         </div>
-  //         <div className={cls.chessboard} />
-  //       </div>
-  //     )}
-  //   />
-  // );
+            <div className={cls.list}>
+              <h3 className={cls.text}>Play with friends in a private room.</h3>
+              <h3 className={cls.text}>Start a quick game with someone across the world.</h3>
+              <h3 className={cls.text}>Face to Face. Live. Free. <Emoji symbol="😎" /></h3>
+            </div>
+            <div className={cls.buttonWrapper}>
+              <ChallengeButtonWidget
+                label="Play Friend"
+                challengeType="private"
+                size="small"
+                style={{
+                  marginRight: '16px',
+                }}
+              />
+              <ChallengeButtonWidget
+                label="Quick Game"
+                size="small"
+                challengeType="public"
+                type="secondary"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Page>
+  );
 };
+
+const tabletBreakPoint = 600;
+const desktopBreakPoint = 769;
 
 const useStyles = createUseStyles({
   container: {
-    fontFamily: 'Open Sans, sans-serif',
-    position: 'fixed',
-    width: '100%',
-    height: '100%',
-    top: '0',
-    left: '0',
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
+    height: '100%',
+
+    fontSize: '32px',
+
+    ...minMediaQuery(tabletBreakPoint, {
+      fontSize: '40px',
+    }),
+
+    ...minMediaQuery(desktopBreakPoint, {
+      fontSize: '60px',
+    }),
   },
-  chessboard: {
-    width: '360px',
-    height: '321px',
-    background: ` url(${chessBackground})`,
+  inner: {
+    display: 'flex',
+    alignSelf: 'center',
+    maxWidth: '100%',
+    width: '1152px',
+
+    ...maxMediaQuery(tabletBreakPoint, {
+      flexDirection: 'column',
+    }),
   },
   headerText: {
-    fontWeight: 'bold',
-    fontSize: '48px',
-    lineHeight: '63px',
-    margin: '0 auto',
-    color: '#262626',
-    position: 'relative',
-    zIndex: 2,
+    margin: 0,
+    fontSize: '110%',
+    lineHeight: '140%',
+    fontWeight: 800,
+
+    ...onlyMobile({
+      fontSize: '130%',
+    }),
   },
-  buttonsContainer: {
-    marginTop: '80px',
-    marginLeft: '100px',
+  subheaderText: {
+    marginTop: 0,
+    fontSize: '60%',
+    lineHeight: '100%',
+    fontWeight: 400,
+
+    ...onlyMobile({
+      fontSize: '70%',
+      marginBottom: '48px',
+    }),
+  },
+  list: {},
+  text: {
+    ...fonts.body1,
+    lineHeight: '1em',
+    color: colors.neutralDarkest,
+
+    ...onlySmallMobile({
+      fontSize: '12px',
+    }),
+  },
+  buttonWrapper: {
+    marginTop: '24px',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'spaced-around',
-  },
-  logo: {
-    marginBottom: '20px',
-    width: '357px',
-  },
-  text: {
-    fontSize: '18px',
-  },
-  link: {
-    margin: '0px',
-    maxWidth: '100px',
-    borderRadius: '15px',
-    backgroundColor: '#e9685a',
-    textAlign: 'center',
-    color: 'white',
-    textDecoration: 'none',
+    justifyContent: 'space-around',
 
-    '&:hover': {
-      transform: 'scale(1.05)',
-      textDecoration: 'none',
-      cursor: 'pointer',
-      backgroundColor: '#e9685a',
-    },
+    ...minMediaQuery(tabletBreakPoint, {
+      marginTop: '48px',
+      justifyContent: 'flex-start',
+    }),
   },
-  linkContent: {
-    padding: '10px',
+  rightSide: {
+    flex: 1,
+    textAlign: 'center',
+
+    ...minMediaQuery(tabletBreakPoint, {
+      alignSelf: 'center',
+      textAlign: 'left',
+    }),
   },
-  leftSideContainer: {
-    display: 'flex',
-    width: '575px',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+  noMobileDisclaimerText: {
+    fontSize: '40%',
+    lineHeight: '40%',
   },
-  buttonWithMutunachiWrapper: {
-    position: 'relative',
+  desktopOnly: {
+    ...maxMediaQuery(tabletBreakPoint, {
+      display: 'none',
+    }),
   },
-  mutunachi: {
-    position: 'absolute',
-    zIndex: 1,
-    top: `-${171 + 50}px`,
-    left: '12%',
-    height: '220px',
+  mobileOnly: {
+    ...minMediaQuery(tabletBreakPoint, {
+      display: 'none',
+    }),
   },
 });

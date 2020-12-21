@@ -5,11 +5,11 @@ import { Dialog } from './components/Dialog/Dialog';
 import { FeedbackDialog } from './components/FeedbackDialog';
 import { useFeedbackDialog } from './components/FeedbackDialog/useFeedbackDialog';
 import { Page } from './components/Page';
-import { usePeerState } from './components/PeerProvider';
-import { SocketConsumer } from './components/SocketProvider';
+import { usePeerState } from './providers/PeerProvider';
+import { SocketConsumer } from './providers/SocketProvider';
 import { toRoomUrlPath } from './lib/util';
-import { ChallengeWidget } from './modules/Challenges/Widgets/ChallengeWidget';
-import { BrowserNotSupportedDialog, useGenericRoomBouncer } from './modules/GenericRoom';
+import { ChallengeWidget } from './modules/Challenges/Widgets/ChallengeWidget/ChallengeWidget';
+import { BrowserNotSupportedDialog, useGenericRoomBouncer } from './modules/Rooms/GenericRoom';
 
 type ActivityState =
   | {

@@ -1,9 +1,9 @@
 import Chance from 'chance';
-import { Peer } from 'src/components/RoomProvider';
-import { PeerRecord, UserRecord } from 'dstnd-io';
+import { Peer } from 'src/providers/PeerProvider';
+import { UserRecord } from 'dstnd-io';
 import { UserRecordMocker } from './UserRecordMocker';
 import { PeerRecordMock } from './PeerRecordMock';
-import { ISODateTime, toISODateTime } from 'src/lib/date/ISODateTime';
+import { toISODateTime } from 'src/lib/date/ISODateTime';
 
 const chance = new Chance();
 

@@ -2,7 +2,7 @@ import { ChallengeRecord } from 'dstnd-io';
 import { Text } from 'src/components/Text';
 import React, { useState } from 'react';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
-import { ClipboardCopy } from 'src/components/CipboardCopy';
+import { ClipboardCopy } from 'src/components/ClipboardCopy';
 import { createUseStyles } from 'src/lib/jss';
 import { toChallengeUrlPath } from 'src/lib/util';
 import useWebShare from 'react-use-web-share';

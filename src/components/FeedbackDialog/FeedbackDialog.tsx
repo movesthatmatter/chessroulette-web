@@ -13,8 +13,6 @@ export const FeedbackDialog: React.FC<Props> = ({ attemptToShowOnMount = false }
   const [doneRateAndReview, setDoneRateAndReview] = useState(false);
   const feedbackDialog = useFeedbackDialog();
 
-  console.log('feedback state', state);
-
   useEffect(() => {
     if (attemptToShowOnMount) {
       actions.attemptToShow();

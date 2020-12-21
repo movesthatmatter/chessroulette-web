@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import useWebShare from 'react-use-web-share';
-import { ClipboardCopy } from 'src/components/CipboardCopy';
+import { ClipboardCopy } from 'src/components/ClipboardCopy';
 import { Dialog } from 'src/components/Dialog/Dialog';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
