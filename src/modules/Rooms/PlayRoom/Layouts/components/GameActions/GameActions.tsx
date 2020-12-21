@@ -24,10 +24,12 @@ export const GameActions: React.FC<Props> = ({ game, isMobile = false, ...props 
       ? {
           full: true,
           hideLabelUntilHover: false,
+          reverse: false,
         }
       : {
           full: false,
           hideLabelUntilHover: true,
+          reverse: true,
         };
 
     if (game.state === 'finished' || game.state === 'stopped' || game.state === 'neverStarted') {
@@ -37,7 +39,6 @@ export const GameActions: React.FC<Props> = ({ game, isMobile = false, ...props 
           label="Rematch"
           actionType="positive"
           icon={Refresh}
-          reverse
           onSubmit={() => props.onRematchOffer()}
           className={cls.gameActionButton}
           {...dynamicProps}
@@ -52,7 +53,6 @@ export const GameActions: React.FC<Props> = ({ game, isMobile = false, ...props 
           label="Abort"
           actionType="negative"
           icon={Halt}
-          reverse
           onSubmit={() => props.onAbort()}
           className={cls.gameActionButton}
           {...dynamicProps}
@@ -68,7 +68,6 @@ export const GameActions: React.FC<Props> = ({ game, isMobile = false, ...props 
             label="Resign"
             actionType="negative"
             icon={Flag}
-            reverse
             onSubmit={() => props.onResign()}
             className={cls.gameActionButton}
             {...dynamicProps}
@@ -78,7 +77,6 @@ export const GameActions: React.FC<Props> = ({ game, isMobile = false, ...props 
             label="Offer Draw"
             actionType="positive"
             icon={Split}
-            reverse
             onSubmit={() => props.onOfferDraw()}
             className={cls.gameActionButton}
             {...dynamicProps}
