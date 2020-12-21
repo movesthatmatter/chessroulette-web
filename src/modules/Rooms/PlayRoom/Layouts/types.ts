@@ -1,6 +1,6 @@
 import { Move } from 'chess.js';
 import { ChessGameColor, ChessGameStatePgn, ChessMove, ChessPlayer } from 'dstnd-io';
-import { RoomWithPlayActivity } from 'src/components/RoomProvider';
+import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 
 export type ChessGameHistory = Move[];
 

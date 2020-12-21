@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
 import { Emoji } from 'src/components/Emoji';
 import { useFeedbackDialog } from 'src/components/FeedbackDialog/useFeedbackDialog';
-import { RoomWithPlayActivity } from 'src/components/RoomProvider';
+import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { Text } from 'src/components/Text';
 import { otherChessColor } from 'src/modules/Games/Chess/util';
 import { getPlayerByColor } from '../../util';

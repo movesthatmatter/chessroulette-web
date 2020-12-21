@@ -1,12 +1,12 @@
 import React, { useRef, LegacyRef, useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { StreamingBox } from 'src/components/StreamingBox';
-import { RoomWithPlayActivity } from 'src/components/RoomProvider';
+import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { Box, Layer } from 'grommet';
 import { Text } from 'src/components/Text';
-import { ChessGameStatePgn, ChessMove } from 'dstnd-io/dist/chessGame';
+import { ChessGameColor, ChessGameStatePgn, ChessMove } from 'dstnd-io/dist/chessGame';
 import { GameRoomLayout } from './GameRoomLayout/GameRoomLayout';
-import { ChessGame, ChessGameColor } from '../Games/Chess';
+import { ChessGame } from '../Games/Chess';
 import { getPlayerColor, getPlayer, getOppositePlayer } from './util';
 import { floatingShadow, softBorderRadius } from 'src/theme/effects';
 import cx from 'classnames';
@@ -20,7 +20,7 @@ import {
   onlySmallMobile,
   SMALL_MOBILE_BREAKPOINT,
 } from 'src/theme';
-import { ChatContainer } from 'src/components/Chat';
+import { ChatContainer } from 'src/modules/Chat';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
@@ -29,7 +29,7 @@ import { GameStateDialog } from './components/GameStateDialog';
 import { Move } from 'chess.js';
 import { Events } from 'src/services/Analytics';
 import { useWindowWidth } from '@react-hook/window-size';
-import { PlayerBox } from '../Games/Chess/components/GameStateWidget/components/PlayerBox';
+import { PlayerBox } from '../Games/Chess/components/PlayerBox';
 import { MobileGameRoomLayout } from './GameRoomLayout/MobileGameRoomLayout';
 import { otherChessColor } from '../Games/Chess/util';
 import { getRelativeMaterialScore } from '../Games/Chess/components/GameStateWidget/util';

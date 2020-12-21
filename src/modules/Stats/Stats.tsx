@@ -1,9 +1,6 @@
-import { Box, Table, TableBody, TableCell, TableFooter, TableHeader, TableRow, Text } from 'grommet';
-import React, { ReactElement, ReactNode, useEffect } from 'react';
-import { Peer, Room } from 'src/components/RoomProvider';
-import { SocketConsumer } from 'src/components/SocketProvider';
+import { Box } from 'grommet';
+import React, { ReactNode } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { resources } from 'src/resources';
 import dateformat from 'dateformat'
 import { StatsTable } from './components';
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';

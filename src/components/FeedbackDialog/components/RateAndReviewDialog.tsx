@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import useWebShare from 'react-use-web-share';
-import { ClipboardCopy } from 'src/components/CipboardCopy';
+import { ClipboardCopy } from 'src/components/ClipboardCopy';
 import { Dialog } from 'src/components/Dialog/Dialog';
 import { Emoji } from 'src/components/Emoji';
 import { Text } from 'src/components/Text';

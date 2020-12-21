@@ -12,7 +12,7 @@ import { ChessGameV2 } from 'src/modules/Games/Chess/components/ChessGameV2';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
-import { ChatContainer } from 'src/components/Chat';
+import { ChatContainer } from 'src/modules/Chat';
 import { LayoutProps } from '../types';
 
 type Props = LayoutProps;

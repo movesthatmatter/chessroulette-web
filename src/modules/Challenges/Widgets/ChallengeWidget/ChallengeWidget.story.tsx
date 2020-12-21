@@ -2,7 +2,7 @@
 import { action } from '@storybook/addon-actions';
 import { Grommet } from 'grommet';
 import React from 'react';
-import { SocketProvider } from 'src/components/SocketProvider';
+import { SocketProvider } from 'src/providers/SocketProvider';
 import { ChallengeMocker, UserRecordMocker } from 'src/mocks/records';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 import { defaultTheme } from 'src/theme';

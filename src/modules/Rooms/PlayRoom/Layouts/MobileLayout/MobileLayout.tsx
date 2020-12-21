@@ -16,7 +16,7 @@ import {
 } from 'src/theme';
 import { LayoutProps } from '../types';
 import cx from 'classnames';
-import { PlayerBox } from 'src/modules/Games/Chess/components/GameStateWidget/components/PlayerBox';
+import { PlayerBox } from 'src/modules/Games/Chess/components/PlayerBox';
 import { otherChessColor } from 'src/modules/Games/Chess/util';
 import { getRelativeMaterialScore } from 'src/modules/Games/Chess/components/GameStateWidget/util';
 import { ChessGameV2 } from 'src/modules/Games/Chess/components/ChessGameV2';
@@ -53,8 +53,6 @@ export const MobileLayout: React.FC<Props> = (props) => {
         (now.getTime() - new Date(game.lastMoveAt).getTime())
       : game.timeLeft[otherChessColor(props.homeColor)];
   const materialScore = getRelativeMaterialScore(game.captured);
-
-  console.log('me as player', props.meAsPlayer);
 
   return (
     <MobileGameRoomLayout

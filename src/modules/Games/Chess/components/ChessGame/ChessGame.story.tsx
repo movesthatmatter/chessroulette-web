@@ -2,10 +2,9 @@
 import React, { useState } from 'react';
 import { action } from '@storybook/addon-actions';
 import { ChessGame } from './ChessGame';
-import { ChessGameColor } from '../../records';
 import { otherChessColor } from '../../util';
 import { ChessGameStateMocker } from 'src/mocks/records';
-import { ChessGameState } from 'dstnd-io';
+import { ChessGameColor, ChessGameState } from 'dstnd-io';
 import { actions } from 'dstnd-io/dist/chessGame/chessGameStateReducer';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 

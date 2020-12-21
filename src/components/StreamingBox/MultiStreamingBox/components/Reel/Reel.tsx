@@ -3,7 +3,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import cx from 'classnames';
 import { fonts, softBorderRadius } from 'src/theme';
-import { FaceTime, MyFaceTime } from 'src/components/FaceTimeArea';
+import { FaceTime, MyFaceTime } from 'src/components/FaceTime';
 import { Streamer } from '../../../types';
 
 type Props = {

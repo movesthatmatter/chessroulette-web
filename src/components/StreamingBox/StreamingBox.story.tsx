@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { Grommet } from 'grommet';
@@ -8,7 +8,7 @@ import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { StreamingBox, StreamingBoxProps } from './StreamingBox';
 import { getRandomInt, range } from 'src/lib/util';
 import { useInterval } from 'src/lib/hooks';
-import { Peer, Room } from '../RoomProvider';
+import { Peer, Room } from 'src/providers/PeerProvider';
 
 export default {
   component: StreamingBox,

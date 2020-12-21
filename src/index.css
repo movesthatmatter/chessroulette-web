@@ -1,4 +1,6 @@
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   width: 100%;
   padding: 0;
@@ -20,13 +22,17 @@ code {
 /* Make the PWA/Mobile feel like an APP */
 /* Taken from https://medium.com/appscope/designing-native-like-progressive-web-apps-for-ios-1b3cdda1d0e8 */
 body {
-  -webkit-user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-
-  background-color: #F6F8FB;
+  background-color: #f6f8fb;
 }
 
+@media (hover: none) {
+  /* All Mobile devcies - not only PWA */
+  body {
+    /* -webkit-user-select: none; */
+    -webkit-tap-highlight-color: transparent;
+    /* -webkit-touch-callout: none; */
+  }
+}
 
 /* if landscape mode is detected, rotate the entire site -90 degrees to hint rotating to landscape */
 /* @media (orientation: landscape) {

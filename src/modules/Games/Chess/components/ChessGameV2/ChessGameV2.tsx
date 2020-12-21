@@ -56,8 +56,6 @@ export class ChessGameV2 extends React.Component<Props, State> {
 
     this.chess.load_pgn(this.props.game.pgn || '');
 
-    // this.chess.load(this.props.game.fen || '');
-
     this.state = {
       current: getCurrentChessState(this.chess),
     };
@@ -88,7 +86,7 @@ export class ChessGameV2 extends React.Component<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps: Props) {
     // If there are changes in the props commit them
     if (prevProps.game.pgn !== this.props.game.pgn) {
       this.commit();
@@ -99,7 +97,7 @@ export class ChessGameV2 extends React.Component<Props, State> {
     return {
       free: false,
       dests: toDests(this.chess),
-      color: this.chess.turn() === 'w' ? 'white' : 'black',
+      color: this.props.homeColor,
     } as const;
   }
 
@@ -108,6 +106,7 @@ export class ChessGameV2 extends React.Component<Props, State> {
 
     return (
       <Chessboard
+        // Reset the Board anytime the color changes
         key={this.props.homeColor}
         {...this.props}
         fen={chessState.fen}
@@ -115,11 +114,10 @@ export class ChessGameV2 extends React.Component<Props, State> {
         check={chessState.inCheck}
         resizable
         coordinates
-        viewOnly={!this.props.playable}
         movable={this.calcMovable()}
         lastMove={chessState.lastMove && [chessState.lastMove.from, chessState.lastMove.to]}
         orientation={this.props.orientation || this.props.homeColor}
-        onMove={(orig, dest, capturedPiece) => {
+        onMove={(orig, dest) => {
           const nextMove: ChessMove = {
             from: orig as Square,
             to: dest as Square,
