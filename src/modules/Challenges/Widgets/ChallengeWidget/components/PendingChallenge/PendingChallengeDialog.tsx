@@ -34,7 +34,7 @@ export const PendingChallengeDialog: React.FC<PendingChallengeDialogProps> = ({
           onAccepted={({ room }) => {
             onAccepted(room);
 
-            Events.trackChallengeCreated('Quick Pairing');
+            Events.trackFriendlyChallengeAccepted();
           }}
           onMatched={({ room }) => {
             onMatched(room);
