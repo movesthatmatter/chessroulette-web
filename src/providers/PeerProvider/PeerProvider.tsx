@@ -45,7 +45,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       }
 
       // Note: This means that if the RTC Server is down
-      //  it won't connect to a room. 
+      //  it won't connect to a room.
       //  This is actualy super fucked up as it doesnt update properly like this!
       // TODO: I need to rethin this whole context state shit!
       if (state.room && pcState.status === 'open') {
@@ -114,39 +114,37 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
     });
   }, [state.room, state.me, socket, pcState]);
 
-  // TODO: Show a proper message if not authenticated for some reason
-  if (auth.authenticationType === 'none') {
-    return null;
-  }
-
   return (
     <>
-      <SocketConnectionHandler
-        user={auth.user}
-        dispatch={dispatch}
-        peerProviderState={state}
-        onReady={setSocket}
-        render={() => {
-          // The state.room is important to be present
-          // before instantiating the handler b/c it should only
-          // be created before being ready to connect to the peers
-          if (iceServers && state.room) {
-            return (
-              <PeerConnectionsHandler
-                onPeerStream={(p) => dispatch(addPeerStream(p))}
-                onPeerDisconnected={(peerId) => {
-                  dispatch(closePeerChannelsAction({ peerId }));
-                }}
-                iceServers={iceServers}
-                user={auth.user}
-                onStateUpdate={setPCState}
-              />
-            );
-          }
+      {/* // TODO: Show a proper message if not authenticated for some reason */}
+      {auth.authenticationType !== 'none' && (
+        <SocketConnectionHandler
+          user={auth.user}
+          dispatch={dispatch}
+          peerProviderState={state}
+          onReady={setSocket}
+          render={() => {
+            // The state.room is important to be present
+            // before instantiating the handler b/c it should only
+            // be created before being ready to connect to the peers
+            if (iceServers && state.room) {
+              return (
+                <PeerConnectionsHandler
+                  onPeerStream={(p) => dispatch(addPeerStream(p))}
+                  onPeerDisconnected={(peerId) => {
+                    dispatch(closePeerChannelsAction({ peerId }));
+                  }}
+                  iceServers={iceServers}
+                  user={auth.user}
+                  onStateUpdate={setPCState}
+                />
+              );
+            }
 
-          return null;
-        }}
-      />
+            return null;
+          }}
+        />
+      )}
       <PeerContext.Provider value={contextState}>{props.children}</PeerContext.Provider>
     </>
   );
