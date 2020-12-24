@@ -3,6 +3,7 @@ import { Events } from 'src/services/Analytics';
 import {
   attempToShowAnyStepAction,
   finishStepAction,
+  forcefullyShowAllStepsStepsAction,
   markAllStepsAsSeenAction,
   markStepAsSeenAction,
   posponeStepAction,
@@ -17,6 +18,10 @@ export const useFeedbackDialog = () => {
   const attemptToShow = () => {
     dispatch(attempToShowAnyStepAction({ at: new Date() }));
   };
+
+  const forcefullyShowAllSteps = () => {
+    dispatch(forcefullyShowAllStepsStepsAction({ at: new Date() }));
+  }
 
   // const postponeStep = (step: StepName) => {
   //   dispatch(posponeStepAction({ at: new Date(), step }));
@@ -53,6 +58,7 @@ export const useFeedbackDialog = () => {
   return {
     state,
     attemptToShow,
+    forcefullyShowAllSteps,
     markStepAsSeen,
     markAllStepsAsSeen,
     finishRatingStep,

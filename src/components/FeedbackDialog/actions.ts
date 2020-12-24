@@ -6,6 +6,11 @@ export const attempToShowAnyStepAction = createAction(
   (resolve) => (p: { at: Date }) => resolve(p)
 );
 
+export const forcefullyShowAllStepsStepsAction = createAction(
+  'Feedback Dialog: Forcefully Show All Steps',
+  (resolve) => (p: { at: Date }) => resolve(p)
+);
+
 export const posponeStepAction = createAction(
   'Feedback Dialog: Pospone Step',
   (resolve) => (p: { step: StepName, at: Date }) => resolve(p)
