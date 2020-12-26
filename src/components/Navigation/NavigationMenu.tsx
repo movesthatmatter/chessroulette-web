@@ -5,6 +5,7 @@ import { Menu } from 'grommet-icons';
 import cx from 'classnames';
 import { FormClose } from 'grommet-icons';
 import { UserMenu } from './UserMenu';
+import { useFeedbackDialog } from '../FeedbackDialog/useFeedbackDialog';
 
 type Props = {
   className?: string;
@@ -13,6 +14,7 @@ type Props = {
 export const NavigationMenu: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [open, setOpen] = useState(false);
+  const feedbackDialog = useFeedbackDialog();
 
   const menuContent = (
     <>
@@ -35,7 +37,21 @@ export const NavigationMenu: React.FC<Props> = (props) => {
           className={cls.link}
           href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage"
         >
-          Contact
+          Get In Touch
+        </a>
+      </div>
+      <div className={cls.linkWrapper}>
+        <a
+          className={cls.link}
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+
+            setOpen(false);
+            feedbackDialog.forcefullyShowAllSteps()
+          }}
+        >
+          Leave Feedback
         </a>
       </div>
     </>

@@ -11,6 +11,7 @@ import {
   markStepAsSeenAction,
   markAllStepsAsSeenAction,
   posponeStepAction,
+  forcefullyShowAllStepsStepsAction,
 } from './actions';
 import { FeedbackState } from './types';
 
@@ -72,6 +73,18 @@ export const reducer = createReducer(initialState, (handleAction) => [
     return {
       ...state,
       canShow: getCanShow(state, payload.at),
+    };
+  }),
+  handleAction([forcefullyShowAllStepsStepsAction], (state, { payload }) => {
+    return {
+      ...state,
+      canShow: {
+        anyStep: true,
+        steps: {
+          rating: true,
+          friendsInvite: true,
+        },
+      },
     };
   }),
   handleAction(posponeStepAction, (state, { payload }) => {
