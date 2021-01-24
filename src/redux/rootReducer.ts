@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { firebaseReducer } from 'react-redux-firebase';
 import { stateSliceByKey as authentication } from 'src/services/Authentication';
 import { stateSliceByKey as peerProvider } from 'src/providers/PeerProvider/redux/reducer';
 import { stateSliceByKey as roomBouncer } from 'src/modules/Rooms/GenericRoom/GenericRoomBouncer/reducer';
@@ -15,6 +16,7 @@ const allModuleReducers = {
 };
 
 export const rootReducer = combineReducers({
+  firebase: firebaseReducer,
   ...allModuleReducers,
 });
 

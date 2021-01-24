@@ -3,13 +3,15 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import config from 'src/config';
+import { FirebaseProvider } from 'src/providers/FirebaseProvider';
 import { enhancer } from './enhancer';
 import createPersistedStore from './persistedStore';
 
 const { store, persistor } = createPersistedStore(enhancer);
 
 export const ReduxProvider: React.FunctionComponent = ({ children }) => (
-    <Provider store={store}>
+  <Provider store={store}>
+    <FirebaseProvider dispatch={store.dispatch}>
       <PersistGate persistor={persistor}>
         {(bootstraped) => {
           // Hack: For some reason the persistor doens't set the bootstrapped flag to true
@@ -22,5 +24,6 @@ export const ReduxProvider: React.FunctionComponent = ({ children }) => (
           return <AwesomeLoaderPage />
         }}
       </PersistGate>
-    </Provider>
+    </FirebaseProvider>
+  </Provider>
 );
