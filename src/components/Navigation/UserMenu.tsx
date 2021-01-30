@@ -9,6 +9,7 @@ import { Avatar } from 'src/components/Avatar';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import { PeerState, usePeerState } from 'src/providers/PeerProvider';
+import { LogoutButton } from 'src/services/Authentication/widgets';
 
 
 type Props = {

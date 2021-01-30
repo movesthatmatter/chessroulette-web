@@ -6,6 +6,8 @@ import cx from 'classnames';
 import { FormClose } from 'grommet-icons';
 import { UserMenu } from './UserMenu';
 import { useFeedbackDialog } from '../FeedbackDialog/useFeedbackDialog';
+import { useAuthentication } from 'src/services/Authentication';
+import { AuthenticationButton, LogoutButton } from 'src/services/Authentication/widgets';
 
 type Props = {
   className?: string;
@@ -15,6 +17,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [open, setOpen] = useState(false);
   const feedbackDialog = useFeedbackDialog();
+  const auth = useAuthentication();
 
   const menuContent = (
     <>
@@ -62,7 +65,15 @@ export const NavigationMenu: React.FC<Props> = (props) => {
       <div className={cls.desktopMenu}>
         <div className={cx(cls.linksContainer)}>{menuContent}</div>
         <div>
-          <UserMenu reversed />
+          {auth.authenticationType === 'user'
+            ? (
+              <>
+                <LogoutButton />
+                <UserMenu reversed />
+              </>
+            )
+            : (<AuthenticationButton />)
+          }
         </div>
       </div>
       <div className={cx(cls.onlyMobile)}>
