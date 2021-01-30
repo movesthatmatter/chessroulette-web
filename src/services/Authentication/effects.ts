@@ -1,40 +1,19 @@
 import { Dispatch } from 'redux';
-import {
-  UserRecord,
-  AuthenticationViaExternalAccountRequestPayload,
-  GuestUserRecord,
-} from 'dstnd-io';
+import { GuestUserRecord } from 'dstnd-io';
 import { setUserAction, unsetUserAction } from './actions';
 import {
-  authenticate,
   authenticateAsGuest,
   authenticateAsExistentGuest,
+  getUser,
 } from './resources';
 
-export const authenticateExistentUserEffect = (
-  userId: UserRecord['id']
-) => async (dispatch: Dispatch) => {
-  // Reset the possible stale current user to make sure it's never used
-  dispatch(unsetUserAction());
+export const authenticateWithAccessTokenEffect = (token: string) => async (dispatch: Dispatch) => {
+  return getUser(token)
+    .map((user) => {
+      dispatch(setUserAction(user));
 
-  return (await authenticate({ userId })).map(({ user }) => {
-    dispatch(setUserAction(user));
-
-    return user;
-  });
-}
-
-export const authenticateViaExternalAccountEffect = (
-  opts: AuthenticationViaExternalAccountRequestPayload
-) => async (dispatch: Dispatch) => {
-  // Reset the possible stale current user to make sure it's never used
-  dispatch(unsetUserAction());
-
-  return (await authenticate(opts)).map(({ user }) => {
-    dispatch(setUserAction(user));
-
-    return user;
-  });
+      return user;
+    });
 }
 
 export const authenticateAsGuestEffect = () => async (dispatch: Dispatch) => {
