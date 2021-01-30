@@ -13,6 +13,10 @@ const SIGNALING_SERVER_CONFIG = {
 const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN as string;
 const GOOGLE_ANALYTICS_TRACKING_ID = process.env.REACT_APP_GOOGLE_ANALYTICS_TRACKING_ID as string;
 
+const FACEBOOK = {
+  APP_ID: process.env.REACT_APP_FACEBOOK_APP_ID as string,
+};
+
 const FIREBASE = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY as string,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN as string,
@@ -41,6 +45,9 @@ const config = {
   SENTRY_DSN,
   GOOGLE_ANALYTICS_TRACKING_ID,
 
+  FACEBOOK,
+
+  // TODO: Takeout
   FIREBASE,
 };
 
