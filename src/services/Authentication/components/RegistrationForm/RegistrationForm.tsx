@@ -8,6 +8,10 @@ import { colors } from 'src/theme';
 
 type Props = {
   userInfo: {
+    type: 'internal';
+    email: string;
+  } | {
+    type: 'external';
     email?: string;
     firstName?: string;
     lastName?: string;
@@ -21,11 +25,19 @@ type Props = {
 
 export const RegistrationForm: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const [model, setModel] = useState({
-    email: props.userInfo.email || '',
-    firstName: props.userInfo.firstName || '',
-    lastName: props.userInfo.lastName || '',
-  });
+  const [model, setModel] = useState(
+    props.userInfo.type === 'internal'
+      ? {
+        email: props.userInfo.email,
+        firstName: '',
+        lastName: '',
+      }
+      : {
+        email: props.userInfo.email || '',
+        firstName: props.userInfo.firstName || '',
+        lastName: props.userInfo.lastName || '',
+      }
+  );
 
   return (
     <div className={cls.container}>
@@ -35,8 +47,15 @@ export const RegistrationForm: React.FC<Props> = (props) => {
         </Text>
       </div>
       <TextInput
-        label={props.userInfo.email ? 'Is your email correct?' : 'What\'s your email?'}
+        label={
+          (props.userInfo.type === 'internal' && model.email.length > 0)
+            ? 'I already know your Email'
+            : props.userInfo.email
+              ? 'Is your email correct?'
+              : 'What\'s your email?'
+        }
         placeholder="beth.harmon@queens.gambit"
+        readOnly={model.email.length > 0}
         value={model.email}
         onChange={(e) => {
           setModel({
@@ -46,7 +65,11 @@ export const RegistrationForm: React.FC<Props> = (props) => {
         }}
       />
       <TextInput
-        label={props.userInfo.firstName ? 'What about your First Name?' : 'And what\'s your First Name?'}
+        label={
+          (props.userInfo.type === 'external' && props.userInfo.firstName)
+            ? 'What about your First Name?'
+            : 'And what\'s your First Name?'
+        }
         placeholder="Beth"
         value={model.firstName}
         onChange={(e) => {

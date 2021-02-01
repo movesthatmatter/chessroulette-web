@@ -13,7 +13,10 @@ export default {
 export const defaultStory = () => (
   <Grommet theme={defaultTheme}>
     <RegistrationForm
-      userInfo={{}}
+      userInfo={{
+        type: 'internal',
+        email: 'sample@email.com',
+      }}
       onSubmit={action('on submit')}
     />
   </Grommet>

@@ -7,11 +7,13 @@ import { VerificationForm } from './VerificationForm';
 
 export default {
   component: VerificationForm,
-  title: 'services/Authentication/components/RegistrationForm',
+  title: 'services/Authentication/components/VerificationForm',
 };
 
 export const defaultStory = () => (
   <Grommet theme={defaultTheme}>
-    <VerificationForm onSubmit={action('on submit')} />
+    <div style={{width: 420}}>
+      <VerificationForm onSubmit={action('on submit')} />
+    </div>
   </Grommet>
 );

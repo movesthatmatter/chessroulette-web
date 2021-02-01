@@ -8,6 +8,8 @@ import { LichessAuthButton } from 'src/vendors/lichess/LichessAuthButton';
 import config from 'src/config';
 import { keyInObject } from 'src/lib/util';
 import { UserAccountInfo } from '../../types';
+import { Form } from 'src/components/Form';
+import { validator } from 'src/lib/validator';
 
 
 type Props = {
@@ -25,7 +27,13 @@ const splitName = (name: string) => {
 
 export const VerificationForm: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const [email, setEmail] = useState('');
+
+  // const [model, setModel] = useState({
+  //   email: '',
+  // })
+  // const [validationErros, setValidationErrors] = useState({
+  //   email: undefined,
+  // });
 
   // TODO: Here the email needs to be verified, by default!
   //  The Code Input will be shown by default, with a message to
@@ -50,7 +58,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
       && keyInObject(fbState.currentUser, 'name')
     ) {
       const name = splitName(fbState.currentUser.name || '');
-      
+
       props.onSubmit({
         type: 'external',
         externalVendor: 'facebook',
@@ -64,25 +72,40 @@ export const VerificationForm: React.FC<Props> = (props) => {
 
   return (
     <div className={cls.container}>
-      <TextInput
-        label="What's your Email?"
-        placeholder="beth.harmon@queens.gambit"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      
-      <Button
-        label="Send Email"
-        full
-        type="positive"
-        disabled={email.length === 0} // TODO: check if email!
-        onClick={() => {
-          props.onSubmit({
+      <Form<{
+        email: string;
+      }>
+        onSubmit={(model) => {
+          return props.onSubmit({
             type: 'internal',
-            email,
+            email: model.email,
             verificationCode: '', // TODO: Add the code too when I do the verification
           });
         }}
+        validator={{
+          email: [validator.rules.email(), validator.messages.email],
+        }}
+        render={(p) => (
+          <>
+            <TextInput
+              label="What's your Email?"
+              placeholder="beth.harmon@queens.gambit"
+              // value={model.email}
+              onChange={(e) => p.onChange('email', e.target.value)}
+              onBlur={() => p.validateField('email')}
+              validationError={p.validationErrors?.email}
+            />
+
+            <Button
+              label="Send Email"
+              full
+              type="positive"
+              // disabled={model.email.length === 0} // TODO: check if email!
+              withLoader
+              onClick={p.submit}
+            />
+          </>
+        )}
       />
       <Hr text="Or Continue With" />
       <div className={cls.buttonRow}>
