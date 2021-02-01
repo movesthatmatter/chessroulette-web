@@ -1,8 +1,9 @@
-import { validateEmail, validateName } from "./rules";
+import { validateEmail, validateName, validateDigits } from "./rules";
 
 const rules = {
   email: () => validateEmail,
   name: () => validateName,
+  digits: (count: number) => (input: string) => validateDigits(count, input),
 };
 
 const messages = {
