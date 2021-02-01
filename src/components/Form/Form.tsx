@@ -2,7 +2,6 @@ import React from 'react';
 import { objectKeys } from 'src/lib/util';
 import objectEquals from 'object-equals';
 
-
 type BaseModel = {
   [field: string]: string;
 }
@@ -21,11 +20,13 @@ type Props<Model extends BaseModel, ValidationModel extends Model = Model> = {
     ]
   }
   initialModel?: Partial<Model>;
+  validateOnChange: boolean;
   render: (p: {
     model: Model;
     validate: () => void;
     validateField: (k: keyof ValidationModel) => void;
     validationErrors: ValidationErrors<ValidationModel>;
+    hasValidationErrors: boolean;
     canSubmit: boolean;
     submit: () => void | Promise<unknown>;
     onChange: (field: keyof ValidationModel, newValue: string) => void;
@@ -36,12 +37,17 @@ type State<Model extends BaseModel, ValidationModel extends Model = Model> = {
   model: Model;
   validationErrors: ValidationErrors<ValidationModel>;
   hasValidationErrors: boolean;
+  canSubmit: boolean;
 }
 
 export class Form<
   Model extends BaseModel,
   ValidationModel extends Model = Model
   > extends React.Component<Props<ValidationModel>, State<ValidationModel>> {
+
+  static defaultProps: Partial<Props<{}>> = {
+    validateOnChange: false,
+  };
 
   constructor(props: Props<ValidationModel>) {
     super(props);
@@ -50,6 +56,7 @@ export class Form<
       model: (this.props.initialModel || {}) as ValidationModel,
       validationErrors: undefined,
       hasValidationErrors: false,
+      canSubmit: Object.keys(this.props.validator).length === 0,
     };
 
     this.validateField = this.validateField.bind(this);
@@ -74,18 +81,18 @@ export class Form<
       return prev;
     }, {} as NonNullable<ValidationErrors<ValidationModel>>);
 
-    console.log('validate validationErrors', validationErrors);
-
     return new Promise((resolve) => {
       if (Object.keys(validationErrors).length > 0) {
         this.setState({
           validationErrors,
           hasValidationErrors: true,
+          canSubmit: false,
         }, resolve);
       } else {
         this.setState({
           validationErrors: undefined,
           hasValidationErrors: false,
+          canSubmit: true,
         }, resolve);
       }
     });
@@ -98,13 +105,24 @@ export class Form<
 
     const fieldValidated = validate(inputValue);
 
-    this.setState((prev) => ({
-      validationErrors: {
-        ...prev.validationErrors,
-        [field]: fieldValidated ? undefined : message,
-      },
-      hasValidationErrors: prev.hasValidationErrors || !fieldValidated,
-    }));
+    this.setState((prev) => {
+      const { [field]: removed, ...restPrevValidationErrors} = prev.validationErrors || {};
+
+      const nextValidationErrors = {
+        ...restPrevValidationErrors,
+        ...!fieldValidated && {
+          [field]: message,
+        }
+      };
+      const nextHasValidationErrors = Object.keys(nextValidationErrors).length > 0;
+
+      return {
+        ...prev,
+        validationErrors: nextValidationErrors,
+        hasValidationErrors: nextHasValidationErrors,
+        canSubmit: !nextHasValidationErrors,
+      };
+    });
   }
 
   private onChange(field: keyof ValidationModel, newValue: string) {
@@ -113,13 +131,15 @@ export class Form<
         ...prev.model,
         [field]: newValue,
       },
-    }));
+    }), () => {
+      if (this.props.validateOnChange) {
+        this.validateField(field);
+      }
+    });
   }
 
   private submit() {
-    console.log('attempting to submit')
     return this.validate().then(() => {
-      console.log('submitting', !this.state.hasValidationErrors, this.state);
       if (!this.state.hasValidationErrors) {
         return this.props.onSubmit(this.state.model);
       }
@@ -141,7 +161,8 @@ export class Form<
       validate: this.validate,
       validateField: this.validateField,
       validationErrors: this.state.validationErrors,
-      canSubmit: false,
+      hasValidationErrors: this.state.hasValidationErrors,
+      canSubmit: this.state.canSubmit,
       submit: this.submit,
       onChange: this.onChange,
     });
