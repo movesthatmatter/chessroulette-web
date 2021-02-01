@@ -41,6 +41,7 @@ export const defaultStory = () => (
             <TextInput
               label="Email"
               onChange={(e) => p.onChange('email', e.target.value)}
+              value={p.model.email}
               onBlur={() => p.validateField('email')}
               validationError={p.validationErrors?.email}
             />

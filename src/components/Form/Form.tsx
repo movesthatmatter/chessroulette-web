@@ -9,7 +9,7 @@ type ValidationErrors<ValidationModel extends BaseModel> = undefined | {
   [k in keyof ValidationModel]?: string;
 };
 
-type Props<ValidationModel extends BaseModel> = {
+type Props<Model extends BaseModel, ValidationModel extends (Partial<Model> & BaseModel) = Model> = {
   onSubmit: (model: ValidationModel) => void | Promise<unknown>;
   validator: {
     [k in keyof ValidationModel]: [
@@ -18,6 +18,7 @@ type Props<ValidationModel extends BaseModel> = {
     ]
   }
   render: (p: {
+    model: Model;
     validate: () => void;
     validateField: (k: keyof ValidationModel) => void;
     validationErrors: ValidationErrors<ValidationModel>;
@@ -115,6 +116,7 @@ export class Form<ValidationModel extends BaseModel> extends React.Component<Pro
 
   render() {
     return this.props.render({
+      model: this.state.model,
       validate: this.validate,
       validateField: this.validateField,
       validationErrors: this.state.validationErrors,
