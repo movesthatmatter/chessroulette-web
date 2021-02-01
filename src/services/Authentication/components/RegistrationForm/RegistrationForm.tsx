@@ -58,6 +58,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
         }}
         initialModel={initialModel}
         onSubmit={props.onSubmit}
+        validateOnChange={false}
         render={(p) => (
           <>
             <TextInput
@@ -115,5 +116,5 @@ const useStyles = createUseStyles({
   },
   infoText: {
     color: colors.neutralDarker,
-  }
+  },
 });

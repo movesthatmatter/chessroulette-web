@@ -10,6 +10,11 @@ import { keyInObject } from 'src/lib/util';
 import { UserAccountInfo } from '../../types';
 import { Form } from 'src/components/Form';
 import { validator } from 'src/lib/validator';
+import * as resources from '../../resources';
+import { CodeInput } from 'src/components/CodeInput';
+import { Text } from 'src/components/Text';
+import { colors } from 'src/theme';
+import { Emoji } from 'src/components/Emoji';
 
 
 type Props = {
@@ -27,6 +32,7 @@ const splitName = (name: string) => {
 
 export const VerificationForm: React.FC<Props> = (props) => {
   const cls = useStyles();
+  const [emailToBeVerified, setEmailToBeVerified] = useState<string>();
 
   // const [model, setModel] = useState({
   //   email: '',
@@ -72,41 +78,83 @@ export const VerificationForm: React.FC<Props> = (props) => {
 
   return (
     <div className={cls.container}>
-      <Form<{
-        email: string;
-      }>
-        onSubmit={(model) => {
-          return props.onSubmit({
-            type: 'internal',
-            email: model.email,
-            verificationCode: '', // TODO: Add the code too when I do the verification
-          });
-        }}
-        validator={{
-          email: [validator.rules.email(), validator.messages.email],
-        }}
-        render={(p) => (
-          <>
-            <TextInput
-              label="What's your Email?"
-              placeholder="beth.harmon@queens.gambit"
-              // value={model.email}
-              onChange={(e) => p.onChange('email', e.target.value)}
-              onBlur={() => p.validateField('email')}
-              validationError={p.validationErrors?.email}
-            />
-
-            <Button
-              label="Send Email"
-              full
-              type="positive"
-              // disabled={model.email.length === 0} // TODO: check if email!
-              withLoader
-              onClick={p.submit}
-            />
-          </>
-        )}
-      />
+      {emailToBeVerified ? (
+        <Form<{
+          code: string;
+        }>
+          key="code-verification-form"
+          onSubmit={(model) => {
+            return props.onSubmit({
+              type: 'internal',
+              email: emailToBeVerified,
+              verificationCode: model.code, // TODO: Add the code too when I do the verification
+            });
+          }}
+          validateOnChange
+          validator={{
+            code: [validator.rules.digits(5), 'The Code isn\'t valid'],
+          }}
+          render={(p) => (
+            <>
+              <div className={cls.infoTextWrapper}>
+                <Text size="body1" className={cls.infoText}>
+                  I just sent you an email with a code!<br/> You know what to do <Emoji symbol="😎" />
+                </Text>
+              </div>
+              <CodeInput
+                onChange={(input) => {
+                  p.onChange('code', input);
+                }}
+                fieldSize={45}
+              />
+              <Button
+                label="Verify"
+                full
+                type="positive"
+                disabled={!p.canSubmit} // TODO: check if email!
+                withLoader
+                onClick={p.submit}
+              />
+            </>
+          )}
+        />
+      ) : (
+        <Form<{
+          email: string;
+        }>
+          key="email-form"
+          onSubmit={async (model) => {
+            return resources
+              .verifyEmail(model)
+              .map(() => setEmailToBeVerified(model.email))
+              .resolve();
+          }}
+          validator={{
+            email: [validator.rules.email(), validator.messages.email],
+          }}
+          render={(p) => (
+            <>
+              <TextInput
+                key="email"
+                label="What's your Email?"
+                placeholder="beth.harmon@queens.gambit"
+                // value={model.email}
+                onChange={(e) => p.onChange('email', e.target.value)}
+                onBlur={() => p.validateField('email')}
+                validationError={p.validationErrors?.email}
+              />
+              <Button
+                label="Send Email"
+                full
+                type="positive"
+                // disabled={model.email.length === 0} // TODO: check if email!
+                withLoader
+                onClick={p.submit}
+              />
+            </>
+          )}
+        />
+      )}
       <Hr text="Or Continue With" />
       <div className={cls.buttonRow}>
         <LichessAuthButton
@@ -147,5 +195,16 @@ const useStyles = createUseStyles({
     flexDirection: 'row',
     justifyContent: 'center',
     paddingTop: '16px',
+  },
+  infoTextWrapper: {
+    textAlign: 'center',
+    paddingBottom: '24px',
+  },
+  infoText: {
+    color: colors.neutralDarker,
+  },
+  errorMessageWrapper: {
+    color: colors.negativeLight,
+    paddingLeft: '12px',
   },
 });

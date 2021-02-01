@@ -6,7 +6,6 @@ import {
   UserCheckRequestPayload,
   userCheckResponsePayload,
   UserCheckResponsePayload,
-  GuestUserRecord,
   Result,
   Err,
   AsyncResultWrapper,
@@ -19,8 +18,7 @@ import {
   UserRecord,
   userRecord,
 } from 'dstnd-io';
-import { getHttpInstance, http } from 'src/lib/http';
-import config from 'src/config';
+import { http } from 'src/lib/http';
 
 
 type ApiError = 'BadRequest' | 'BadResponse';
