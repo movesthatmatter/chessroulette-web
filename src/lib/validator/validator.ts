@@ -1,12 +1,16 @@
-import { validateEmail } from "./rules";
+import { validateEmail, validateName } from "./rules";
 
 const rules = {
   email: () => validateEmail,
+  name: () => validateName,
 };
 
-const messages: {[k in keyof typeof rules]: string} = {
-  email: 'The email isn\'t valid',
-}
+const messages = {
+  email: 'This email doesn\'t look right',
+  name: 'The name looks weird',
+  firstName: 'The First Name doesn\'t seem valid',
+  lastName: 'The Last Name doesn\'t seem valid',
+};
 
 export const validator = {
   rules,

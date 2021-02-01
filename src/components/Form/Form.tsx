@@ -1,5 +1,7 @@
 import React from 'react';
 import { objectKeys } from 'src/lib/util';
+import objectEquals from 'object-equals';
+
 
 type BaseModel = {
   [field: string]: string;
@@ -9,14 +11,16 @@ type ValidationErrors<ValidationModel extends BaseModel> = undefined | {
   [k in keyof ValidationModel]?: string;
 };
 
-type Props<Model extends BaseModel, ValidationModel extends (Partial<Model> & BaseModel) = Model> = {
+type Props<Model extends BaseModel, ValidationModel extends Model = Model> = {
   onSubmit: (model: ValidationModel) => void | Promise<unknown>;
+  onValidationErrorsUpdated?: (validationErrors: ValidationErrors<ValidationModel>) => void;
   validator: {
-    [k in keyof ValidationModel]: [
+    [k in keyof Partial<ValidationModel>]: [
       (i: string) => boolean,
       string,
     ]
   }
+  initialModel?: Partial<Model>;
   render: (p: {
     model: Model;
     validate: () => void;
@@ -34,12 +38,16 @@ type State<Model extends BaseModel, ValidationModel extends Model = Model> = {
   hasValidationErrors: boolean;
 }
 
-export class Form<ValidationModel extends BaseModel> extends React.Component<Props<ValidationModel>, State<ValidationModel>> {
+export class Form<
+  Model extends BaseModel,
+  ValidationModel extends Model = Model
+  > extends React.Component<Props<ValidationModel>, State<ValidationModel>> {
+
   constructor(props: Props<ValidationModel>) {
     super(props);
 
     this.state = {
-      model: {} as ValidationModel,
+      model: (this.props.initialModel || {}) as ValidationModel,
       validationErrors: undefined,
       hasValidationErrors: false,
     };
@@ -65,6 +73,8 @@ export class Form<ValidationModel extends BaseModel> extends React.Component<Pro
 
       return prev;
     }, {} as NonNullable<ValidationErrors<ValidationModel>>);
+
+    console.log('validate validationErrors', validationErrors);
 
     return new Promise((resolve) => {
       if (Object.keys(validationErrors).length > 0) {
@@ -107,11 +117,22 @@ export class Form<ValidationModel extends BaseModel> extends React.Component<Pro
   }
 
   private submit() {
+    console.log('attempting to submit')
     return this.validate().then(() => {
+      console.log('submitting', !this.state.hasValidationErrors, this.state);
       if (!this.state.hasValidationErrors) {
         return this.props.onSubmit(this.state.model);
       }
     })
+  }
+
+  componentDidUpdate(_: Props<ValidationModel>, prevState: State<ValidationModel>) {
+    if (
+      this.props.onValidationErrorsUpdated
+      && !objectEquals(prevState.validationErrors, this.state.validationErrors)
+    ) {
+      this.props.onValidationErrorsUpdated(this.state.validationErrors);
+    }
   }
 
   render() {
