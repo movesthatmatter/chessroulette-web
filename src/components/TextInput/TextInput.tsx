@@ -9,11 +9,13 @@ import cx from 'classnames';
 type Props = Omit<React.ComponentProps<typeof GTextInput>, | 'plain' | 'size' | 'ref'> & {
   className?: string;
   label?: string;
+  validationError?: string;
 };
 
 export const TextInput: React.FC<Props> = ({
   className,
   label,
+  value,
   ...props
 }) => {
   const cls = useStyles();
@@ -25,15 +27,23 @@ export const TextInput: React.FC<Props> = ({
           <Text size="small2">{label}</Text>
         </div>
       )}
-      <div className={cls.inputWrapper}>
+      <div className={cx(cls.inputWrapper, props.validationError && cls.errorInputWrapper)}>
         <GTextInput
-          value={props.value}
+          value={value}
           plain
           size="small"
-          className={cls.textInput}
+          className={cx(
+            cls.textInput,
+            props.readOnly && cls.readonly,
+          )}
           {...props}
         />
       </div>
+      {props.validationError && (
+        <div className={cls.errorMessageWrapper}>
+          <Text size="small1">{props.validationError}</Text>
+        </div>
+      )}
     </div>
   );
 };
@@ -58,6 +68,9 @@ const useStyles = createUseStyles({
     borderRadius: '40px',
     overflow: 'hidden',
   },
+  errorInputWrapper: {
+    borderColor: colors.negative,
+  },
   textInput: {
     ...makeImportant({
       fontSize: '13px',
@@ -70,5 +83,14 @@ const useStyles = createUseStyles({
       WebkitTapHighlightColor: 'initial',
       WebkitTouchCallout: 'default',
     }),
+  },
+  readonly: {
+    ...makeImportant({
+      background: colors.neutralLightest,
+    }),
+  },
+  errorMessageWrapper: {
+    color: colors.negativeLight,
+    paddingLeft: '12px',
   },
 });
