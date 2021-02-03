@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from 'src/components/Button';
 import { Hr } from 'src/components/Hr';
 import { TextInput } from 'src/components/TextInput';
 import { createUseStyles } from 'src/lib/jss';
-import { useFacebookLogin } from 'react-use-fb-login';
 import { LichessAuthButton } from 'src/vendors/lichess/LichessAuthButton';
-import config from 'src/config';
-import { keyInObject } from 'src/lib/util';
 import { UserAccountInfo } from '../../types';
 import { Form } from 'src/components/Form';
 import { validator } from 'src/lib/validator';
@@ -15,6 +12,7 @@ import { CodeInput } from 'src/components/CodeInput';
 import { Text } from 'src/components/Text';
 import { colors } from 'src/theme';
 import { Emoji } from 'src/components/Emoji';
+import { FacebookAuthButton } from 'src/vendors/facebook/FacebookAuthButton/FacebookAuthButton';
 
 
 type Props = {
@@ -33,48 +31,6 @@ const splitName = (name: string) => {
 export const VerificationForm: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [emailToBeVerified, setEmailToBeVerified] = useState<string>();
-
-  // const [model, setModel] = useState({
-  //   email: '',
-  // })
-  // const [validationErros, setValidationErrors] = useState({
-  //   email: undefined,
-  // });
-
-  // TODO: Here the email needs to be verified, by default!
-  //  The Code Input will be shown by default, with a message to
-  //  check their email. Regardless if the email exists in the DB
-  //  or not. This is to avoid hackers checking if other users have an account!
-
-  const [fbState, fbLogin] = useFacebookLogin({
-    appId: config.FACEBOOK.APP_ID,
-    language: 'EN',
-    version: '3.1',
-    fields: ['id', 'email', 'name', 'picture' as any],
-    onFailure: error => {
-      console.log(error);
-    }
-  });
-
-  useEffect(() => {
-    if (
-      fbState.currentUser
-      && keyInObject(fbState.currentUser, 'id')
-      && keyInObject(fbState.currentUser, 'email')
-      && keyInObject(fbState.currentUser, 'name')
-    ) {
-      const name = splitName(fbState.currentUser.name || '');
-
-      props.onSubmit({
-        type: 'external',
-        externalVendor: 'facebook',
-        email: fbState.currentUser.email as string,
-        externalUserId: fbState.currentUser.id as string,
-        firstName: name.first,
-        lastName: name.last,
-      });
-    }
-  }, [fbState.currentUser])
 
   return (
     <div className={cls.container}>
@@ -138,7 +94,6 @@ export const VerificationForm: React.FC<Props> = (props) => {
                 key="email"
                 label="What's your Email?"
                 placeholder="beth.harmon@queens.gambit"
-                // value={model.email}
                 onChange={(e) => p.onChange('email', e.target.value)}
                 onBlur={() => p.validateField('email')}
                 validationError={p.validationErrors?.email}
@@ -147,7 +102,6 @@ export const VerificationForm: React.FC<Props> = (props) => {
                 label="Send Email"
                 full
                 type="positive"
-                // disabled={model.email.length === 0} // TODO: check if email!
                 withLoader
                 onClick={p.submit}
               />
@@ -161,25 +115,25 @@ export const VerificationForm: React.FC<Props> = (props) => {
           full
           label="Lichess"
           type="secondary"
-          onSuccess={(r) => {
+          onSuccess={(accessToken) => {
             props.onSubmit({
               type: 'external',
-              externalVendor: 'lichess',
-              email: r.email,
-              externalUserId: r.id,
-
-              // Since Lichess doesn't return a name the User will have to input it!
-              firstName: undefined,
-              lastName: undefined,
+              vendor: 'lichess',
+              accessToken,
             });
           }}
         />
         <div style={{ width: '16px' }} />
-        <Button
+        <FacebookAuthButton
           label="Facebook"
-          type="primary"
           full
-          onClick={fbLogin}
+          onSuccess={(accessToken) => {
+            props.onSubmit({
+              type: 'external',
+              vendor: 'facebook',
+              accessToken,
+            });
+          }}
         />
       </div>
     </div>

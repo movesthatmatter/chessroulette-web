@@ -12,7 +12,7 @@ import config from 'src/config';
 import { getHttpInstance } from 'src/lib/http';
 
 const http = getHttpInstance({
-  baseURL: `${config.HTTP_ENDPOINT}/vendors/lichess/auth`,
+  baseURL: `${config.HTTP_ENDPOINT}/vendors/lichess/oauth`,
 });
 
 type ApiError = 'BadRequest' | 'BadResponse';

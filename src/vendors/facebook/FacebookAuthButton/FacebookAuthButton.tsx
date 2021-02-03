@@ -2,14 +2,13 @@ import React from 'react';
 import { ButtonProps } from 'src/components/Button';
 import { OAuthButton, getRedirectUrl } from 'src/services/Oauth2';
 
-
 type Props = Omit<ButtonProps, 'onClick' | 'label'> & {
   label?: ButtonProps['label'];
   onSuccess: (token: string) => void;
 };
 
-export const LichessAuthButton: React.FC<Props> = ({
-  label = 'Lichess Login',
+export const FacebookAuthButton: React.FC<Props> = ({
+  label = 'Facebook Login',
   onSuccess,
   ...props
 }) => {
@@ -17,9 +16,9 @@ export const LichessAuthButton: React.FC<Props> = ({
     <OAuthButton
       label={label}
       onSuccess={onSuccess}
-      vendor="lichess"
+      vendor="facebook"
       getOauthUrl={async () => {
-        const res = await getRedirectUrl('lichess').map(({ redirectUrl }) => redirectUrl).resolve();
+        const res = await getRedirectUrl('facebook').map(({ redirectUrl }) => redirectUrl).resolve();
 
         if (res.ok) {
           return res.val;

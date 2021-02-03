@@ -7,16 +7,17 @@ import { createUseStyles } from 'src/lib/jss';
 import { validator } from 'src/lib/validator';
 import { colors } from 'src/theme';
 
+export type RegistrationUserInfo = {
+  type: 'internal';
+  email: string;
+} | {
+  type: 'external';
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+};
 type Props = {
-  userInfo: {
-    type: 'internal';
-    email: string;
-  } | {
-    type: 'external';
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-  };
+  userInfo: RegistrationUserInfo;
   onSubmit: (p: {
     email: string;
     firstName: string;

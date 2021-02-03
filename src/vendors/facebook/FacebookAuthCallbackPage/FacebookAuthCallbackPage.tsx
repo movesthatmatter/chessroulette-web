@@ -3,6 +3,6 @@ import { OAuthCallbackPage } from 'src/services/Oauth2/components/OAuthCallbackP
 
 type Props = {};
 
-export const LichessAuthCallbackPage: React.FC<Props> = (props) => {
-  return <OAuthCallbackPage {...props} vendor="lichess" />
+export const FacebookAuthCallbackPage: React.FC<Props> = (props) => {
+  return <OAuthCallbackPage {...props} vendor="facebook" />
 }

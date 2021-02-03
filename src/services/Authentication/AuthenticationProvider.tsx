@@ -1,12 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-// import { createNewGuestUser } from './effects';
 import { selectAuthentication } from './selectors';
 import { AuthenticationContext } from './AuthenticationContext';
 import {
   authenticateAsGuestEffect,
-  // authenticateExistentUserEffect,
-  authenticateWithAccessTokenEffect,
   authenticateAsExistentGuestEffect,
 } from './effects';
 

@@ -14,9 +14,9 @@ import {
   CreateUserAccountResponsePayload,
   VerifyEmailRequestPayload,
   VerifyEmailResponsePayload,
-  verifyEmailResponsePayload,
   UserRecord,
   userRecord,
+  Ok,
 } from 'dstnd-io';
 import { http } from 'src/lib/http';
 
@@ -26,10 +26,9 @@ type ApiError = 'BadRequest' | 'BadResponse';
 export const verifyEmail = (req: VerifyEmailRequestPayload) => {
   return new AsyncResultWrapper<VerifyEmailResponsePayload, ApiError>(async () => {
     try {
-      const { data } = await http.post('/api/auth/verify-email', req);
+      await http.post('/api/auth/verify-email', req);
 
-      return io.toResult(verifyEmailResponsePayload.decode(data))
-        .mapErr(() => 'BadResponse');
+      return new Ok(undefined);
     } catch (e) {
       return new Err('BadRequest');
     }
@@ -39,7 +38,7 @@ export const verifyEmail = (req: VerifyEmailRequestPayload) => {
 export const checkUser = (req: UserCheckRequestPayload) => {
   return new AsyncResultWrapper<UserCheckResponsePayload, ApiError>(async () => {
     try {
-      const { data } = await http.post('/api/auth/check', req);
+      const { data } = await http.post('/api/auth', req);
 
       return io.toResult(userCheckResponsePayload.decode(data))
         .mapErr(() => 'BadResponse');
@@ -70,8 +69,6 @@ export const getUser = (accessToken: string) => {
           'auth-token': accessToken,
         },
       });
-
-      console.log('data', data);
 
       return io.toResult(userRecord.decode(data))
         .mapErr(() => 'BadResponse');
