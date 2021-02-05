@@ -23,6 +23,7 @@ export class SocketConnectionHandler extends Component<Props> {
   render() {
     return (
       <SocketConsumer
+        key={this.props.user.id}
         onReady={(socket) => {
           socket.send({
             kind: 'userIdentification',

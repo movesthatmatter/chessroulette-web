@@ -54,7 +54,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
             <>
               <div className={cls.infoTextWrapper}>
                 <Text size="body1" className={cls.infoText}>
-                  I just sent you an email with a code!<br/> You know what to do <Emoji symbol="😎" />
+                  I just sent you an email at <strong>{emailToBeVerified}</strong> with a code!<br/> You know what to do <Emoji symbol="😎" />
                 </Text>
               </div>
               <CodeInput

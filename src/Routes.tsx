@@ -6,6 +6,8 @@ import { LandingPage } from './modules/Landing/LandingPage';
 import { ChallengeOrRoomPage } from './modules/Challenges/ChallengeOrRoomPage';
 import { OAuthCallbackPage } from './services/Oauth2/components/OAuthCallbackPage';
 import { FacebookAuthCallbackPage } from './vendors/facebook';
+import { PeerProvider } from './providers/PeerProvider';
+import { SocketProvider } from './providers/SocketProvider';
 
 type Props = {};
 
@@ -26,9 +28,14 @@ export const Routes: React.FC<Props> = () => {
         exact
         component={FacebookAuthCallbackPage}
       />
-      <Route exact strict path="/stats" key={location.key} component={StatsPage} />
-      <Route exact strict path="/:slug" key={location.key} component={ChallengeOrRoomPage} />
-      <Route exact path="/" component={LandingPage} />
+
+      <SocketProvider>
+        <PeerProvider>
+          <Route exact strict path="/stats" key={location.key} component={StatsPage} />
+          <Route exact strict path="/:slug" key={location.key} component={ChallengeOrRoomPage} />
+          <Route exact path="/" component={LandingPage} />
+        </PeerProvider>
+      </SocketProvider>
     </Switch>
   );
 };
