@@ -64,15 +64,10 @@ export const NavigationMenu: React.FC<Props> = (props) => {
     <div className={cx(cls.container, props.className)}>
       <div className={cls.desktopMenu}>
         <div className={cx(cls.linksContainer)}>{menuContent}</div>
-        <div>
+        <div className={cls.authMenu}>
           {auth.authenticationType === 'user'
-            ? (
-              <>
-                <LogoutButton />
-                <UserMenu reversed />
-              </>
-            )
-            : (<AuthenticationButton />)
+            ? <UserMenu reversed withDropMenu />
+            : <AuthenticationButton />
           }
         </div>
       </div>
@@ -216,5 +211,10 @@ const useStyles = createUseStyles({
     ...hideOnMobile,
     display: 'flex',
     flexDirection: 'row',
+  },
+  authMenu: {
+    minWidth: '180px',
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
 });
