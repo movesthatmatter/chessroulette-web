@@ -14,9 +14,9 @@ import {
   CreateUserAccountResponsePayload,
   VerifyEmailRequestPayload,
   VerifyEmailResponsePayload,
-  UserRecord,
-  userRecord,
   Ok,
+  registeredUserRecord,
+  RegisteredUserRecord,
 } from 'dstnd-io';
 import { http } from 'src/lib/http';
 
@@ -62,7 +62,7 @@ export const createUser = (req: CreateUserAccountRequestPayload) => {
 }
 
 export const getUser = (accessToken: string) => {
-  return new AsyncResultWrapper<UserRecord, ApiError>(async () => {
+  return new AsyncResultWrapper<RegisteredUserRecord, ApiError>(async () => {
     try {
       const { data } = await http.get('/api/users', {
         headers: {
@@ -70,7 +70,7 @@ export const getUser = (accessToken: string) => {
         },
       });
 
-      return io.toResult(userRecord.decode(data))
+      return io.toResult(registeredUserRecord.decode(data))
         .mapErr(() => 'BadResponse');
     } catch (e) {
       return new Err('BadRequest');

@@ -21,6 +21,7 @@ export const defaultStory = () => (
       authentication: {
         authenticationType: 'user',
         user: userA,
+        accessToken: 'my token',
       },
     }}
   >

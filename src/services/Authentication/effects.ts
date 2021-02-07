@@ -1,16 +1,16 @@
 import { Dispatch } from 'redux';
 import { GuestUserRecord } from 'dstnd-io';
-import { setUserAction, unsetUserAction } from './actions';
+import { setGuestUserAction, setUserAction, unsetUserAction } from './actions';
 import {
   authenticateAsGuest,
   authenticateAsExistentGuest,
   getUser,
 } from './resources';
 
-export const authenticateWithAccessTokenEffect = (token: string) => async (dispatch: Dispatch) => {
-  return getUser(token)
+export const authenticateWithAccessTokenEffect = (accessToken: string) => async (dispatch: Dispatch) => {
+  return getUser(accessToken)
     .map((user) => {
-      dispatch(setUserAction(user));
+      dispatch(setUserAction({ user, accessToken }));
 
       return user;
     });
@@ -21,7 +21,7 @@ export const authenticateAsGuestEffect = () => async (dispatch: Dispatch) => {
   dispatch(unsetUserAction());
 
   return (await authenticateAsGuest()).map(({ guest }) => {
-    dispatch(setUserAction(guest));
+    dispatch(setGuestUserAction(guest));
 
     return guest;
   });
@@ -34,7 +34,7 @@ export const authenticateAsExistentGuestEffect = (
   dispatch(unsetUserAction());
 
   return (await authenticateAsExistentGuest({ guestUser })).map(({ guest }) => {
-    dispatch(setUserAction(guest));
+    dispatch(setGuestUserAction(guest));
 
     return guest;
   });

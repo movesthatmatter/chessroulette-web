@@ -56,7 +56,7 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
                   external: verifiedExternalVendorInfo,
                 }).map((r) => {
                   dispatch(authenticateWithAccessTokenEffect(r.accessToken));
-                })
+                });
               }}
             />
           ) : (
