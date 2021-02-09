@@ -83,9 +83,15 @@ export const NavigationMenu: React.FC<Props> = (props) => {
               <FormClose onClick={() => setOpen(false)} className={cls.drawerCloseBtn} />
               <div className={cls.drawerMenuContent}>
                 <div className={cls.drawerUserMenuWrapper}>
-                  <UserMenu reversed />
+                  {auth.authenticationType === 'user'
+                    ? <UserMenu reversed withDropMenu />
+                    : <AuthenticationButton containerClassName={cls.mobileAuthenticationButton} />
+                  }
                 </div>
                 <div className={cls.drawerLinksContainer}>{menuContent}</div>
+                {auth.authenticationType === 'user' && (
+                  <LogoutButton full type="secondary" />
+                )}
               </div>
             </div>
           </div>
@@ -98,7 +104,6 @@ export const NavigationMenu: React.FC<Props> = (props) => {
 const useStyles = createUseStyles({
   container: {},
   mobileOverlay: {
-    zIndex: 990,
     position: 'fixed',
     top: 0,
     left: 0,
@@ -156,15 +161,23 @@ const useStyles = createUseStyles({
 
   drawerMenuContainer: {
     background: colors.white,
-    padding: '16px 24px 16px 24px',
+    padding: '0 24px',
     height: '100%',
+
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
   },
 
   drawerUserMenuWrapper: {
-    padding: '16px 0 32px',
+    padding: '32px 0',
     borderBottom: `1px solid ${colors.neutralLighter}`,
   },
   drawerMenuContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    // background: 'red',
     ...({
       '& $linkWrapper': {
         padding: '16px 0',
@@ -174,6 +187,7 @@ const useStyles = createUseStyles({
   },
   drawerLinksContainer: {
     paddingTop: '16px',
+    flex: 1,
   },
 
   linksContainer: {
@@ -214,6 +228,11 @@ const useStyles = createUseStyles({
   },
   authMenu: {
     minWidth: '180px',
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+
+  mobileAuthenticationButton: {
     display: 'flex',
     justifyContent: 'flex-end',
   },
