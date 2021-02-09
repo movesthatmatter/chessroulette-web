@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
-import { Button } from 'src/components/Button';
+import { Button, ButtonProps } from 'src/components/Button';
 import { AuthenticationDialog } from '../AuthenticationDialog';
 
 
-type Props = {};
+type Props = Omit<ButtonProps, 'onClick' | 'click' | 'type' | 'label'> & {
+  label?: string;
+}
 
-export const AuthenticationButton: React.FC<Props> = () => {
+export const AuthenticationButton: React.FC<Props> = ({
+  label = 'My Account',
+  ...restButtonProps
+}) => {
   const [showDialog, setShowDialog] = useState(false);
   const [dialogUniqKey, setDialogUniqKey] = useState(String(Math.random()));
 
   return (
     <>
       <Button
-        label="My Account"
+        label={label}
         clear
         type="primary"
         onClick={() => {
@@ -22,6 +27,7 @@ export const AuthenticationButton: React.FC<Props> = () => {
         style={{
           marginBottom: 0,
         }}
+        {...restButtonProps}
       />
       <AuthenticationDialog key={dialogUniqKey} visible={showDialog} onClose={() => setShowDialog(false)} />
     </>
