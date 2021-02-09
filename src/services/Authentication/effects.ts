@@ -2,9 +2,9 @@ import { Dispatch } from 'redux';
 import { GuestUserRecord } from 'dstnd-io';
 import { setGuestUserAction, setUserAction, unsetUserAction } from './actions';
 import {
-  authenticateAsGuest,
   authenticateAsExistentGuest,
   getUser,
+  authenticateAsNewGuest,
 } from './resources';
 
 export const authenticateWithAccessTokenEffect = (accessToken: string) => async (dispatch: Dispatch) => {
@@ -20,7 +20,7 @@ export const authenticateAsGuestEffect = () => async (dispatch: Dispatch) => {
   // Reset the possible stale current user to make sure it's never used
   dispatch(unsetUserAction());
 
-  return (await authenticateAsGuest()).map(({ guest }) => {
+  return (await authenticateAsNewGuest()).map(({ guest }) => {
     dispatch(setGuestUserAction(guest));
 
     return guest;
@@ -33,9 +33,10 @@ export const authenticateAsExistentGuestEffect = (
   // Reset the possible stale current user to make sure it's never used
   dispatch(unsetUserAction());
 
-  return (await authenticateAsExistentGuest({ guestUser })).map(({ guest }) => {
-    dispatch(setGuestUserAction(guest));
+  return authenticateAsExistentGuest({ guestUser })
+    .map(({ guest }) => {
+      dispatch(setGuestUserAction(guest));
 
-    return guest;
-  });
+      return guest;
+    });
 }

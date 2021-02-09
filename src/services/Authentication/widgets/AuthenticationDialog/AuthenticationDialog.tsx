@@ -23,7 +23,7 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
   const [
     verifiedExternalVendorInfo,
     setVerifiedExternalVendorInfo,
-  ] = useState<CreateUserAccountRequestPayload['external']>();
+  ] = useState<CreateUserAccountRequestPayload['data']['external']>();
 
   const dispatch = useDispatch();
 
