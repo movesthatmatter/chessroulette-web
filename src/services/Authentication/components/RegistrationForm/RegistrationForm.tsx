@@ -1,6 +1,7 @@
+import { AsyncResult } from 'dstnd-io';
 import React from 'react';
 import { Button } from 'src/components/Button';
-import { Form } from 'src/components/Form';
+import { Form, FormError, SubmissionErrors } from 'src/components/Form';
 import { Text } from 'src/components/Text';
 import { TextInput } from 'src/components/TextInput';
 import { createUseStyles } from 'src/lib/jss';
@@ -16,13 +17,16 @@ export type RegistrationUserInfo = {
   firstName?: string;
   lastName?: string;
 };
+
+type Model = {
+  email: string;
+  firstName: string;
+  lastName: string;
+};
+
 type Props = {
   userInfo: RegistrationUserInfo;
-  onSubmit: (p: {
-    email: string;
-    firstName: string;
-    lastName: string;
-  }) => void;
+  onSubmit: (p: Model) => AsyncResult<void, SubmissionErrors<Model>>;
 };
 
 export const RegistrationForm: React.FC<Props> = (props) => {
@@ -74,7 +78,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
               readOnly={props.userInfo.type === 'internal' && props.userInfo.email.length > 0}
               value={p.model.email}
               onChange={(e) => p.onChange('email', e.target.value)}
-              validationError={p.validationErrors?.email}
+              validationError={p.errors.validationErrors?.email || p.errors.submissionValidationErrors?.email}
             />
             <TextInput
               label={
@@ -85,15 +89,16 @@ export const RegistrationForm: React.FC<Props> = (props) => {
               placeholder="Beth"
               value={p.model.firstName}
               onChange={(e) => p.onChange('firstName', e.target.value)}
-              validationError={p.validationErrors?.firstName}
+              validationError={p.errors.validationErrors?.firstName || p.errors.submissionValidationErrors?.firstName}
             />
             <TextInput
               label="Your Last Name?"
               placeholder="Harmon"
               value={p.model.lastName}
               onChange={(e) => p.onChange('lastName', e.target.value)}
-              validationError={p.validationErrors?.lastName}
+              validationError={p.errors.validationErrors?.lastName || p.errors.submissionValidationErrors?.lastName}
             />
+            {p.errors.submissionGenericError && <FormError message={p.errors.submissionGenericError} />}
             <Button
               label="Create Account"
               full

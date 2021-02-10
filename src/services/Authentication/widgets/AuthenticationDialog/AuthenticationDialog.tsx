@@ -49,44 +49,79 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
             <RegistrationForm
               userInfo={registrationUserInfo}
               onSubmit={(input) => {
-                resources.createUser({
+                return resources.createUser({
                   email: input.email,
                   firstName: input.firstName,
                   lastName: input.lastName,
                   external: verifiedExternalVendorInfo,
-                }).map((r) => {
-                  dispatch(authenticateWithAccessTokenEffect(r.accessToken));
-                });
+                })
+                  .mapErr((e) => {
+                    if (e.type === 'ValidationErrors') {
+                      return {
+                        type: 'SubmissionValidationErrors',
+                        content: e.content,
+                      } as const;
+                    }
+                    // if (e.type === '')
+                    return {
+                      type: 'SubmissionGenericError',
+                      content: undefined,
+                    } as const;
+                  })
+                  .map((r) => {
+                    dispatch(authenticateWithAccessTokenEffect(r.accessToken));
+                  });
               }}
             />
           ) : (
               <VerificationForm
                 onSubmit={(input) => {
-                  resources.checkUser(input).map((r) => {
-                    if (r.status === 'ExistentUser') {
-                      dispatch(authenticateWithAccessTokenEffect(r.accessToken));
-                    } else if (r.status === 'InexistentUser') {
-                      if (input.type === 'internal') {
-                        setRegistrationUserInfo(input);
-                      } else if (r.external) {
-                        setVerifiedExternalVendorInfo({
-                          vendor: input.vendor,
-                          accessToken: input.accessToken,
-                        });
+                  return resources
+                    .checkUser(input)
+                    .mapErr((e) => {
+                      console.log('verification failed', e);
 
-                        setRegistrationUserInfo({
-                          type: 'external',
-                          email: r.external.user.email,
-                          ...keyInObject(r.external.user, 'firstName') && {
-                            firstName: r.external.user.firstName,
+                      if (e.type === 'VerificationFailed' && input.type === 'internal') {
+                        return {
+                          type: 'SubmissionValidationErrors',
+                          content: {
+                            fields: {
+                              code: 'The Verification Code is incorrect!',
+                            },
                           },
-                          ...keyInObject(r.external.user, 'lastName') && {
-                            firstName: r.external.user.lastName,
-                          },
-                        });
+                        } as const;
+                      };
+
+                      return {
+                        type: 'SubmissionGenericError',
+                        content: undefined,
+                      } as const;
+                    })
+                    .map((r) => {
+                      if (r.status === 'ExistentUser') {
+                        dispatch(authenticateWithAccessTokenEffect(r.accessToken));
+                      } else if (r.status === 'InexistentUser') {
+                        if (input.type === 'internal') {
+                          setRegistrationUserInfo(input);
+                        } else if (r.external) {
+                          setVerifiedExternalVendorInfo({
+                            vendor: input.vendor,
+                            accessToken: input.accessToken,
+                          });
+
+                          setRegistrationUserInfo({
+                            type: 'external',
+                            email: r.external.user.email,
+                            ...keyInObject(r.external.user, 'firstName') && {
+                              firstName: r.external.user.firstName,
+                            },
+                            ...keyInObject(r.external.user, 'lastName') && {
+                              firstName: r.external.user.lastName,
+                            },
+                          });
+                        }
                       }
-                    }
-                  });
+                    });
                 }}
               />
             )}

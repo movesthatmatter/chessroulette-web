@@ -5,7 +5,7 @@ import { TextInput } from 'src/components/TextInput';
 import { createUseStyles } from 'src/lib/jss';
 import { LichessAuthButton } from 'src/vendors/lichess/LichessAuthButton';
 import { UserAccountInfo } from '../../types';
-import { Form } from 'src/components/Form';
+import { Form, FormError, SubmissionErrors } from 'src/components/Form';
 import { validator } from 'src/lib/validator';
 import * as resources from '../../resources';
 import { CodeInput } from 'src/components/CodeInput';
@@ -13,20 +13,17 @@ import { Text } from 'src/components/Text';
 import { colors } from 'src/theme';
 import { Emoji } from 'src/components/Emoji';
 import { FacebookAuthButton } from 'src/vendors/facebook/FacebookAuthButton/FacebookAuthButton';
+import { AsyncResult } from 'dstnd-io';
 
+
+type Model = {
+  code: string;
+}
 
 type Props = {
-  onSubmit: (r: UserAccountInfo) => void;
+  onSubmit: (r: UserAccountInfo) => AsyncResult<void, SubmissionErrors<Model>>;
+  // onSubmit: (r: UserAccountInfo) => void;
 };
-
-const splitName = (name: string) => {
-  const splitName = name?.split(' ') || [];
-
-  return {
-    first: splitName[0],
-    last: splitName.slice(-1)[0],
-  }
-}
 
 export const VerificationForm: React.FC<Props> = (props) => {
   const cls = useStyles();
@@ -35,9 +32,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
   return (
     <div className={cls.container}>
       {emailToBeVerified ? (
-        <Form<{
-          code: string;
-        }>
+        <Form<Model>
           key="code-verification-form"
           onSubmit={(model) => {
             return props.onSubmit({
@@ -61,8 +56,14 @@ export const VerificationForm: React.FC<Props> = (props) => {
                 onChange={(input) => {
                   p.onChange('code', input);
                 }}
+                // onComplete={debounce(p.submit, 250)}
                 fieldSize={45}
               />
+              {(p.errors.submissionGenericError || p.errors.submissionValidationErrors?.code) && (
+                <FormError
+                  message={p.errors.submissionGenericError || p.errors.submissionValidationErrors?.code || ''}
+                />
+              )}
               <Button
                 label="Verify"
                 full
@@ -79,11 +80,30 @@ export const VerificationForm: React.FC<Props> = (props) => {
           email: string;
         }>
           key="email-form"
-          onSubmit={async (model) => {
+          onSubmit={(model) => {
             return resources
               .verifyEmail(model)
               .map(() => setEmailToBeVerified(model.email))
-              .resolve();
+              .mapErr((e) => {
+                if (e.type === 'ValidationErrors') {
+                  return {
+                    type: 'SubmissionValidationErrors',
+                    content: e.content,
+                  };
+                }
+
+                if (e.type === 'EmailCantSendError') {
+                  return {
+                    type: 'SubmissionGenericError',
+                    content: `Ooops – This one's on me! I couldn't send you email now but please try again in a few moments.`,
+                  };
+                }
+
+                return {
+                  type: 'SubmissionGenericError',
+                  content: e.content,
+                }
+              });
           }}
           validator={{
             email: [validator.rules.email(), validator.messages.email],
@@ -96,8 +116,11 @@ export const VerificationForm: React.FC<Props> = (props) => {
                 placeholder="beth.harmon@queens.gambit"
                 onChange={(e) => p.onChange('email', e.target.value)}
                 onBlur={() => p.validateField('email')}
-                validationError={p.validationErrors?.email}
+                validationError={
+                  p.errors.validationErrors?.email || p.errors.submissionValidationErrors?.email
+                }
               />
+              {p.errors.submissionGenericError && <FormError message={p.errors.submissionGenericError}/>}
               <Button
                 label="Send Email"
                 full
@@ -156,9 +179,5 @@ const useStyles = createUseStyles({
   },
   infoText: {
     color: colors.neutralDarker,
-  },
-  errorMessageWrapper: {
-    color: colors.negativeLight,
-    paddingLeft: '12px',
   },
 });

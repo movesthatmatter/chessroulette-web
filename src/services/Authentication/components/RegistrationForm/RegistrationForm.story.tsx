@@ -1,4 +1,6 @@
 import { action } from '@storybook/addon-actions';
+import { AsyncResultWrapper, Ok } from 'dstnd-io';
+import { delay } from 'fp-ts/lib/Task';
 import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
@@ -17,7 +19,15 @@ export const defaultStory = () => (
         type: 'internal',
         email: 'sample@email.com',
       }}
-      onSubmit={action('on submit')}
+      onSubmit={() => {
+        action('on submit')();
+
+        return new AsyncResultWrapper(async () => {
+          await delay(2 * 1000);
+
+          return Ok.EMPTY;
+        });
+      }}
     />
   </Grommet>
 );
