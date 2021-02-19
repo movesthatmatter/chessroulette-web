@@ -51,7 +51,6 @@ export const defaultStory = () => (
           winner: undefined,
           lastMoveBy: undefined,
           lastMoveAt: undefined,
-          lastMoved: undefined,
           captured: undefined,
         }}
         onTimerFinished={action('onTimerFinished')}
@@ -102,7 +101,6 @@ export const withTimeFinished = () => (
             winner: 'white',
             lastMoveBy: 'black',
             lastMoveAt: toISODateTime(new Date()),
-            lastMoved: 'white',
             captured: {
               white: {
                 p: 0,
@@ -161,7 +159,6 @@ export const withGameStarted = () => (
           winner: undefined,
           lastMoveBy: 'white',
           lastMoveAt: toISODateTime(new Date()),
-          lastMoved: 'white',
           captured: {
             white: {
               p: 0,

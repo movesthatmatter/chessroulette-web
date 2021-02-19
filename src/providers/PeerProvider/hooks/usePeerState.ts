@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import { Peer, Room } from '../types';
 import { PeerConnectionsErrors } from '../lib/PeerConnections';
 import { PeerContext } from '../PeerContext';
-import { Proxy } from '../lib/Proxy';
 import usePrevious from 'use-previous';
 import { SocketClient } from 'src/services/socket/SocketClient';
 
@@ -12,8 +11,9 @@ export type PeerState =
     }
   | ({
       status: 'open';
-      client: Proxy & {
-        send: SocketClient['send'];
+      client: {
+        onMessage: SocketClient['onMessage'];
+        sendMessage: SocketClient['send'];
       };
       me: Peer;
     } & (
@@ -57,9 +57,10 @@ export const usePeerState = (): PeerState => {
       status: 'disconnected',
     };
   } else if (context.state === 'joined' || context.state === 'notJoined') {
-    const client = Object.assign(context.proxy, {
-      send: context.request,
-    });
+    const client = {
+      sendMessage: context.sendMessage.bind(context),
+      onMessage: context.onMessage.bind(context),
+    };
 
     return {
       status: 'open',

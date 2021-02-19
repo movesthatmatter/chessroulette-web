@@ -1,9 +1,8 @@
 import { useWindowWidth } from '@react-hook/window-size';
-import { ChessGameColor, ChessGameStatePgn, ChessMove } from 'dstnd-io';
-import React, { useEffect, useState } from 'react';
+import { ChessGameColor, ChessGameStatePgn, ChessMove, GameRecord } from 'dstnd-io';
+import React, { useState } from 'react';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
-import { createUseStyles } from 'src/lib/jss';
-import { GameStateDialog } from 'src/modules/GameRoomV2/components/GameStateDialog';
+import { GameStateDialog } from 'src/modules/Games/Chess/components/GameStateDialog';
 import { useSoundEffects } from 'src/modules/Games/Chess';
 import { MOBILE_BREAKPOINT } from 'src/theme';
 import { DesktopLayout, ChessGameHistory, MobileLayout } from '../Layouts';
@@ -11,6 +10,7 @@ import { getPlayerStats } from 'src/modules/Games/Chess/lib';
 
 type Props = {
   room: RoomWithPlayActivity;
+  game: GameRecord;
   onMove: (
     m: ChessMove,
     pgn: ChessGameStatePgn,
@@ -30,22 +30,14 @@ type Props = {
   onGameStatusCheck: () => void;
 };
 
-export const PlayRoom: React.FC<Props> = (props) => {
-  const cls = useStyles();
-
+export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
   const windowWidth = useWindowWidth();
-
-  const { game } = props.room.activity;
-
-  useSoundEffects(game);
-
-  // Ensure the Game is synced!
-  useEffect(() => {
-    props.onGameStatusCheck();
-  }, []);
-
   // TODO: This isn't really used yet!
   const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
+
+  // TODO: Need to make sure the given game has the same id as the activity game id
+
+  useSoundEffects(game);
 
   const playerStats = getPlayerStats(game, props.room.me.id);
   const homeColor = playerStats.player?.color || 'white';
@@ -55,6 +47,7 @@ export const PlayRoom: React.FC<Props> = (props) => {
       return (
         <MobileLayout
           room={props.room}
+          game={game}
           onMove={props.onMove}
           onAbort={props.onAbort}
           onOfferDraw={props.onOfferDraw}
@@ -74,6 +67,7 @@ export const PlayRoom: React.FC<Props> = (props) => {
     return (
       <DesktopLayout
         room={props.room}
+        game={game}
         onMove={props.onMove}
         onAbort={props.onAbort}
         onOfferDraw={props.onOfferDraw}
@@ -95,6 +89,7 @@ export const PlayRoom: React.FC<Props> = (props) => {
       {content()}
       <GameStateDialog
         roomActivity={props.room.activity}
+        game={game}
         onOfferCanceled={props.onOfferCanceled}
         onDrawAccepted={props.onDrawAccepted}
         onDrawDenied={props.onDrawDenied}
@@ -105,7 +100,3 @@ export const PlayRoom: React.FC<Props> = (props) => {
     </>
   );
 };
-
-const useStyles = createUseStyles({
-  container: {},
-});

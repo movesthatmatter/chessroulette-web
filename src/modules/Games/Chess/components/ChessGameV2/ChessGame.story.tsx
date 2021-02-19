@@ -1,16 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ChessGameV2 } from './ChessGameV2';
 import 'react-chessground/dist/styles/chessground.css';
-import { ChessGameStateMocker } from 'src/mocks/records';
-import { otherChessColor } from '../../util';
+import { GameRecordMocker } from 'src/mocks/records/GameRecordMocker';
 
 export default {
   component: ChessGameV2,
   title: 'Modules/Games/Chess/components/Chess Game V2',
 };
 
-const gameMocker = new ChessGameStateMocker();
+const gameMocker = new GameRecordMocker();
 
 export const fromStartingPosition = () =>
   React.createElement(() => {
@@ -20,8 +19,6 @@ export const fromStartingPosition = () =>
     return (
       <ChessGameV2
         game={game}
-        // fen={fen}
-
         homeColor="black"
         onMove={({ fen }) => {
         }}
@@ -39,8 +36,6 @@ export const withGameStarted = () =>
       <ChessGameV2
         game={game}
         size={400}
-        // fen={fen}
-
         homeColor="black"
         onMove={({ fen }) => {
         }}

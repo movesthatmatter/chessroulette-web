@@ -1,11 +1,12 @@
 import { Move } from 'chess.js';
-import { ChessGameColor, ChessGameStatePgn, ChessMove, ChessPlayer } from 'dstnd-io';
+import { ChessGameColor, ChessGameStatePgn, ChessMove, ChessPlayer, GameRecord } from 'dstnd-io';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 
 export type ChessGameHistory = Move[];
 
 export type LayoutProps = {
   room: RoomWithPlayActivity;
+  game: GameRecord;
   historyIndex: number;
   onHistoryIndexUpdated: (i: number) => void;
 

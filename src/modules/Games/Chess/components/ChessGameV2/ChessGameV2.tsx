@@ -4,15 +4,15 @@ import { getNewChessGame, toChessColor } from '../../lib';
 import { toDests } from './util';
 import {
   ChessGameColor,
-  ChessGameState,
   ChessGameStateFen,
   ChessGameStatePgn,
   ChessMove,
+  GameRecord,
 } from 'dstnd-io';
 import { Chessboard, ChessboardProps } from '../ChessBoardV2';
 
 type Props = Omit<ChessboardProps, 'onMove' | 'fen'> & {
-  game: ChessGameState;
+  game: GameRecord;
   homeColor: ChessGameColor;
   orientation?: ChessGameColor;
   playable?: boolean;
@@ -106,8 +106,8 @@ export class ChessGameV2 extends React.Component<Props, State> {
 
     return (
       <Chessboard
-        // Reset the Board anytime the color changes
-        key={this.props.homeColor}
+        // Reset the Board anytime the game changes
+        key={this.props.game.id}
         {...this.props}
         fen={chessState.fen}
         turnColor={chessState.turn}

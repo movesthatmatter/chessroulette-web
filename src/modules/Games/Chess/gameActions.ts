@@ -13,17 +13,11 @@ import {
   GameOfferingCancelRequestPayload,
   GameStatusCheckRequestPayload,
 } from 'dstnd-io';
-import { Room } from 'src/providers/PeerProvider';
 
 export const gameActions = {
-  join: (roomId: Room['id'], code?: string): GameJoinRequestPayload => ({
+  join: (): GameJoinRequestPayload => ({
     kind: 'gameJoinRequest',
-    content: {
-      roomCredentials: {
-        roomId,
-        code,
-      },
-    },
+    content: undefined,
   }),
   abort: (): GameAbortionRequestPayload => ({
     kind: 'gameAbortionRequest',

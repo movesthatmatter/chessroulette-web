@@ -91,7 +91,11 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
             proxy.publishOnPeerMessageSent(payload);
           },
 
+          // @deprecate in favor of send Message
           request: (payload) => socket?.send(payload),
+
+          sendMessage: socket.send.bind(socket),
+          onMessage: socket.onMessage.bind(socket),
         };
       }
 
@@ -109,6 +113,10 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           });
         },
         request: (payload) => socket?.send(payload),
+
+        // @deprecate in favor of send Message
+        sendMessage: socket.send.bind(socket),
+        onMessage: socket.onMessage.bind(socket),
       };
     });
   }, [state.room, state.me, socket, pcState]);

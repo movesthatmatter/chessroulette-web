@@ -23,7 +23,7 @@ const BOTTOM_HEIGHT = 80;
 export const DesktopLayout: React.FC<Props> = (props) => {
   const cls = useStyles();
   const dialogTarget = useRef();
-  const { game } = props.room.activity;
+  const { game } = props;
 
   return (
     <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
@@ -82,7 +82,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
             <div style={{ height: '30%' }} />
             <div style={{ height: '40%' }}>
               <GameStateWidget
-                game={props.room.activity.game}
+                game={game}
                 homeColor={props.homeColor}
                 historyFocusedIndex={props.historyIndex}
                 onMoveClick={props.onHistoryIndexUpdated}
