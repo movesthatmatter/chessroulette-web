@@ -5,8 +5,10 @@ import { Events } from 'src/services/Analytics';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { PlayRoom } from 'src/modules/Rooms/PlayRoom/PlayRoom/PlayRoom';
-import { GameRecord } from 'dstnd-io';
+import { chessGameUtils } from 'dstnd-io';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
+import { Game } from 'src/modules/Games';
+import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 
 
 type Props = {
@@ -18,7 +20,7 @@ export const PlayRoomPage: React.FC<Props> = ({ room }) => {
   const [connectionAttempt, setConnectionAttempt] = useState(false);
 
   // TODO: This could be in redux but it's ok for now!
-  const [game, setGame] = useState<GameRecord>();
+  const [game, setGame] = useState<Game>();
 
   const request: SocketClient['send'] = (payload) => {
     // TODO: Look into what to do if not open!
@@ -64,7 +66,7 @@ export const PlayRoomPage: React.FC<Props> = ({ room }) => {
       const unsubscribers = [
         peerState.client.onMessage((payload) => {
           if (payload.kind === 'joinedGameUpdated') {
-            setGame(payload.content);
+            setGame(gameRecordToGame(payload.content));
           }
         }),
       ];

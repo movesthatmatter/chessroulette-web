@@ -1,4 +1,3 @@
-import { ChessGameState } from 'dstnd-io';
 import { useEffect, useRef } from 'react';
 import { inCheck } from './lib';
 import objectEquals from 'object-equals';
@@ -6,12 +5,13 @@ import { Howl, HowlOptions } from 'howler';
 import soundFxM4A from './assets/sounds/gameSoundsFX.m4a';
 import soundFxOGG from './assets/sounds/gameSoundsFX.ogg';
 import soundSpriteJSON from './assets/sounds/gameSoundsFX.json';
+import { Game } from '../types';
 
-const isDone = (game: ChessGameState) => game.state === 'finished' || game.state === 'stopped';
+const isDone = (game: Game) => game.state === 'finished' || game.state === 'stopped';
 
-const isInCheck = (game: ChessGameState) => game.state === 'started' && inCheck(game.pgn);
+const isInCheck = (game: Game) => game.state === 'started' && inCheck(game.pgn);
 
-export const useSoundEffects = (game: ChessGameState) => {
+export const useSoundEffects = (game: Game) => {
   const prevGame = useRef(game);
   const howl = useRef<Howl>();
 

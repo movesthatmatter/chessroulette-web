@@ -37,7 +37,6 @@ export class ChessGameStateMocker {
       winner: undefined,
       lastMoveBy: undefined,
       lastMoveAt: undefined,
-      captured: undefined,
     };
 
     const started: ChessGameStateStarted = {
@@ -47,22 +46,6 @@ export class ChessGameStateMocker {
       winner: undefined,
       lastMoveBy: 'white',
       lastMoveAt: toISODateTime(new Date()),
-      captured: {
-        white: {
-          p: 0,
-          n: 0,
-          b: 0,
-          q: 0,
-          r: 0,
-        },
-        black: {
-          p: 0,
-          n: 0,
-          b: 0,
-          q: 0,
-          r: 0,
-        },
-      },
     };
 
     if (state === 'pending') {
@@ -78,13 +61,6 @@ export class ChessGameStateMocker {
         state: 'finished',
         pgn: '1. e4 e5 2. Qf3 Na6 3. Bc4 h6 4. Qxf7#',
         winner: 'white',
-        captured: {
-          ...started.captured,
-          white: {
-            ...started.captured.white,
-            p: 1,
-          },
-        },
       };
     } else if (state === 'stopped') {
       return {

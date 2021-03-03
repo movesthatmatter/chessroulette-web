@@ -5,3 +5,5 @@ export * from './UserInfoMocker';
 export * from './UserRecordMocker';
 export * from './ChallengeMocker';
 export * from './ChessGameStateMocker';
+export * from './GameMocker';
+export * from './GameRecordMocker';

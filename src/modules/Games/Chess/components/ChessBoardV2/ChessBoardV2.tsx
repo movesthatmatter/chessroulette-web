@@ -5,12 +5,12 @@ import 'react-chessground/dist/styles/chessground.css';
 import blueBoard from './assets/board/blue.svg';
 import cx from 'classnames';
 
-export type ChessboardProps = Omit<ChessgroundProps, 'width' | 'height'> & {
+export type ChessBoardProps = Omit<ChessgroundProps, 'width' | 'height'> & {
   className?: string;
   size?: number;
 };
 
-export const Chessboard: React.FC<ChessboardProps> = (props) => {
+export const ChessBoard: React.FC<ChessBoardProps> = (props) => {
   const cls = useStyles();
 
   return (

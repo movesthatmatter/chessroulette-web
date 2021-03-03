@@ -4,6 +4,7 @@ import {
 } from 'dstnd-io';
 import { ChessGameStateMocker } from './ChessGameStateMocker';
 import { Chance } from 'chance';
+import { toISODateTime } from 'src/lib/date/ISODateTime';
 
 const chessGameStateMocker = new ChessGameStateMocker();
 const chance = new Chance();
@@ -13,6 +14,8 @@ export class GameRecordMocker {
     return {
       id: chance.guid(),
       ...chessGameStateMocker.record(state),
+      createdAt: toISODateTime(new Date()),
+      updatedAt: toISODateTime(new Date()),
     };
   }
 

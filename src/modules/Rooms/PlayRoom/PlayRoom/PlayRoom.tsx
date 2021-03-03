@@ -7,10 +7,11 @@ import { useSoundEffects } from 'src/modules/Games/Chess';
 import { MOBILE_BREAKPOINT } from 'src/theme';
 import { DesktopLayout, ChessGameHistory, MobileLayout } from '../Layouts';
 import { getPlayerStats } from 'src/modules/Games/Chess/lib';
+import { Game } from 'src/modules/Games';
 
 type Props = {
   room: RoomWithPlayActivity;
-  game: GameRecord;
+  game: Game;
   onMove: (
     m: ChessMove,
     pgn: ChessGameStatePgn,

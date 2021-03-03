@@ -9,9 +9,9 @@ import {
   ChessMove,
   GameRecord,
 } from 'dstnd-io';
-import { Chessboard, ChessboardProps } from '../ChessBoardV2';
+import { ChessBoard, ChessBoardProps } from '../ChessBoardV2';
 
-type Props = Omit<ChessboardProps, 'onMove' | 'fen'> & {
+type Props = Omit<ChessBoardProps, 'onMove' | 'fen'> & {
   game: GameRecord;
   homeColor: ChessGameColor;
   orientation?: ChessGameColor;
@@ -105,7 +105,7 @@ export class ChessGameV2 extends React.Component<Props, State> {
     const chessState = this.state.uncommited || this.state.current;
 
     return (
-      <Chessboard
+      <ChessBoard
         // Reset the Board anytime the game changes
         key={this.props.game.id}
         {...this.props}

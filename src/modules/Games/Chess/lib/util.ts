@@ -1,11 +1,12 @@
 import { ChessInstance, ShortMove, Piece, Square } from 'chess.js';
 import { Result, Ok, Err } from 'ts-results';
 import { getNewChessGame } from './sdk';
-import { ChessGameState, ChessGameStatePgn, ChessMove, ChessPlayer, UserRecord } from 'dstnd-io';
+import { ChessGameState, ChessGameStatePgn, chessGameUtils, ChessMove, ChessPlayer, GameRecord, UserRecord } from 'dstnd-io';
 import { FullMove, HalfMove, History, PairedMove, PairedHistory } from './types';
 import { flatten } from 'src/lib/util';
 import { getOppositePlayer, getPlayer } from 'src/modules/GameRoomV2/util';
 import { getRelativeMaterialScore } from '../components/GameStateWidget/util';
+import { Game } from '../../types';
 
 export const getStartingPgn = () => getNewChessGame().pgn();
 export const getStartingFen = () => getNewChessGame().fen();
@@ -146,7 +147,7 @@ type UserAsPlayerStats =
     } & {});
 
 export const getPlayerStats = (
-  game: ChessGameState,
+  game: Game,
   userId: UserRecord['id']
 ): UserAsPlayerStats => {
   const player = getPlayer(userId, game.players);
@@ -180,3 +181,8 @@ export const getPlayerStats = (
     materialScore: undefined,
   };
 };
+
+export const gameRecordToGame = (g: GameRecord): Game => ({
+  ...g,
+  captured: chessGameUtils.getCapturedPiecesFromPgn(g.pgn),
+});
