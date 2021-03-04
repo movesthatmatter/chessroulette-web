@@ -11,6 +11,7 @@ import cx from 'classnames';
 import { PeerState, usePeerState } from 'src/providers/PeerProvider';
 import { LogoutButton } from 'src/services/Authentication/widgets';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
+import { Link } from 'react-router-dom';
 
 
 type Props = {
@@ -110,15 +111,14 @@ export const UserMenu: React.FC<Props> = ({
               {labelContent}
             </div>
             <div className={cls.menuContent}>
-              {/* <div className={cls.linkWrapper}>
-                <a
+              <div className={cls.linkWrapper}>
+                <Link
+                  to="/user/games"
                   className={cls.link}
-                  href="https://gabrielctroia.medium.com/meet-chessroulette-org-a-quarantine-project-e4108f05db39"
-                  target="_blank"
                 >
-                  My Account
-                </a>
-              </div> */}
+                  My Games
+                </Link>
+              </div>
               <LogoutButton full type="secondary" />
             </div>
           </div>
