@@ -61,7 +61,7 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
             icon={Send}
             type="primary"
             onSubmit={() => {
-              if (input.length > 0) {
+              if (input.trim() !== '') {
                 onSend(input);
                 setInput('');
               }

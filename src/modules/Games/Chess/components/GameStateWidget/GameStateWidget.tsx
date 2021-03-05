@@ -115,6 +115,8 @@ const useStyles = createUseStyles({
     ...floatingShadow,
     ...softBorderRadius,
     height: 'calc(100% - 80px)',
+    minHeight: '100px',
+    minWidth: '130px',
   },
   player: {},
   playerTop: {},

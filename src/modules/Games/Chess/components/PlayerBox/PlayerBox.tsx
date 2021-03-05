@@ -1,12 +1,13 @@
 import { ChessGameState, ChessPlayer } from 'dstnd-io';
 import { Box } from 'grommet';
 
-import React from 'react';
+import React , {useRef} from 'react';
 import { Avatar } from 'src/components/Avatar';
+import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { floatingShadow, fonts } from 'src/theme';
+import { floatingShadow, fonts, maxMediaQuery, minMediaQuery } from 'src/theme';
 import { Countdown } from '../Countdown';
 
 type Props = {
@@ -27,9 +28,11 @@ export const PlayerBox: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
+  const boxContainerRef = useRef(null);
+  const containerDimensions = useContainerDimensions(boxContainerRef);
 
   return (
-    <Box fill className={cls.container} direction="row">
+    <Box fill className={cls.container} direction={containerDimensions.width > 170 ? 'row' : 'column'} ref={boxContainerRef}>
       <Box fill direction="row">
         <Avatar>
           <Mutunachi mid={player.user.avatarId} />
@@ -60,7 +63,8 @@ export const PlayerBox: React.FC<Props> = ({
 };
 
 const useStyles = createUseStyles({
-  container: {},
+  container: {
+  },
   playerInfo: {
     marginLeft: '8px',
   },

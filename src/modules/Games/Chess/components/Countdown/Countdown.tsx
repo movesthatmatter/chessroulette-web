@@ -7,7 +7,8 @@ import { useInterval } from 'src/lib/hooks';
 import { Text } from 'src/components/Text';
 import { timeLeftToFormatMajor, timeLeftToFormatMinor, timeLeftToInterval } from './util';
 import { text } from 'src/theme/text';
-import { onlyMobile } from 'src/theme';
+import { maxMediaQuery, onlyMobile } from 'src/theme';
+import { minutes } from 'src/lib/time';
 
 type Props = {
   // TODO: this needs a refactoring
@@ -54,10 +55,14 @@ export const Countdown: React.FC<Props> = ({ onFinished = () => noop, ...props }
     <>
       {timeLeft > 0 ? (
         <Text className={cls.text}>
-          <Text className={cx(cls.text, cls.major, props.active && cls.textActive)}>
+          <Text className={cx(cls.text, cls.major, props.active && cls.textActive, {
+            [cls.countdownMilliseconds] : timeLeft < minutes(1),
+          })}>
             {dateFormat(timeLeft, timeLeftToFormatMajor(timeLeft))}:
           </Text>
-          <Text className={cx(cls.text, cls.minor, props.active && cls.textActive)}>
+          <Text className={cx(cls.text, cls.minor, props.active && cls.textActive,{
+            [cls.countdownMilliseconds] : timeLeft < minutes(1),
+          })}>
             {dateFormat(timeLeft, timeLeftToFormatMinor(timeLeft))}
           </Text>
         </Text>
@@ -79,7 +84,10 @@ const useStyles = createUseStyles({
     fontSize: '32px',
     lineHeight: '32px',
     color: text.disabledColor,
-
+    ...maxMediaQuery(1000, {
+      fontSize: '24px',
+      lineHeight: '24px',
+    }),
     ...onlyMobile({
       fontSize: '24px',
       lineHeight: '24px',
@@ -95,4 +103,7 @@ const useStyles = createUseStyles({
     fontWeight: 300,
   },
   paused: {},
+  countdownMilliseconds : {
+    color: 'red',
+  }
 });
