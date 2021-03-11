@@ -36,7 +36,6 @@ export class ChessGameStateMocker {
       players: [whitePlayer, blackPlayer],
       winner: undefined,
       lastMoveBy: undefined,
-      lastMoved: undefined,
       lastMoveAt: undefined,
       captured: undefined,
     };
@@ -48,7 +47,6 @@ export class ChessGameStateMocker {
       winner: undefined,
       lastMoveBy: 'white',
       lastMoveAt: toISODateTime(new Date()),
-      lastMoved: 'white',
       captured: {
         white: {
           p: 0,

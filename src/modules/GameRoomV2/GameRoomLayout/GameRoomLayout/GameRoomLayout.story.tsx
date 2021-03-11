@@ -3,7 +3,7 @@
 import React, { useRef } from 'react';
 import { Box, Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
-import { ChessGame } from 'src/modules/Games/Chess';
+import { ChessGameV2 } from 'src/modules/Games/Chess/components/ChessGameV2';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
@@ -16,7 +16,7 @@ import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { minutes, seconds } from 'src/lib/time';
 import { AspectRatio, AspectRatioExplicit } from 'src/components/AspectRatio';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
-import { ChessGameStateMocker } from 'src/mocks/records';
+import { GameRecordMocker } from 'src/mocks/records/GameRecordMocker';
 
 export default {
   component: GameRoomLayout,
@@ -25,7 +25,7 @@ export default {
 
 const peerMock = new PeerMocker();
 const roomMocker = new RoomMocker();
-const gameMocker = new ChessGameStateMocker();
+const gameMocker = new GameRecordMocker();
 
 const peerA = peerMock.record();
 const peerB = peerMock.record();
@@ -226,11 +226,11 @@ export const withChessGame = () => (
                 />
               )}
               getGameComponent={({ container }) => (
-                <ChessGame
+                <ChessGameV2
                   homeColor="black"
                   playable
                   game={gameMocker.record()}
-                  getBoardSize={() => container.width}
+                  onMove={action('on move')}
                 />
               )}
               getLeftSideComponent={() => <></>}

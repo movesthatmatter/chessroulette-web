@@ -28,7 +28,7 @@ type Props = LayoutProps;
 export const MobileLayout: React.FC<Props> = (props) => {
   const cls = useStyles();
 
-  const { game } = props.room.activity;
+  const { game } = props;
 
   const mobileGameActionsRef = useRef<HTMLDivElement>(null);
 
@@ -134,7 +134,7 @@ export const MobileLayout: React.FC<Props> = (props) => {
               <PlayerBox
                 player={props.opponentAsPlayer}
                 timeLeft={opponentTimeLeft}
-                active={game.state === 'started' && game.lastMoved !== props.opponentAsPlayer.color}
+                active={game.state === 'started' && game.lastMoveBy !== props.opponentAsPlayer.color}
                 gameTimeLimit={game.timeLimit}
                 material={materialScore[props.opponentAsPlayer.color]}
                 onTimerFinished={props.onTimerFinished}
@@ -143,7 +143,7 @@ export const MobileLayout: React.FC<Props> = (props) => {
           )}
           <div className={cls.mobileChessGameWrapper}>
             <ChessGameV2
-              game={props.room.activity.game}
+              game={game}
               onMove={({ move, pgn }) => {
                 props.onMove(move, pgn, [], props.homeColor);
               }}
@@ -158,7 +158,7 @@ export const MobileLayout: React.FC<Props> = (props) => {
               <PlayerBox
                 player={props.meAsPlayer}
                 timeLeft={myTimeLeft}
-                active={game.state === 'started' && game.lastMoved !== props.meAsPlayer.color}
+                active={game.state === 'started' && game.lastMoveBy !== props.meAsPlayer.color}
                 gameTimeLimit={game.timeLimit}
                 material={materialScore[props.meAsPlayer.color]}
                 onTimerFinished={props.onTimerFinished}

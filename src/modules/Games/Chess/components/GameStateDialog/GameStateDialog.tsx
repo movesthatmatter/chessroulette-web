@@ -1,5 +1,5 @@
 import capitalize from 'capitalize';
-import { ChessPlayer } from 'dstnd-io';
+import { ChessPlayer, GameRecord } from 'dstnd-io';
 import { Box } from 'grommet';
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
@@ -8,10 +8,11 @@ import { useFeedbackDialog } from 'src/components/FeedbackDialog/useFeedbackDial
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { Text } from 'src/components/Text';
 import { otherChessColor } from 'src/modules/Games/Chess/util';
-import { getPlayerByColor } from '../../util';
+import { getPlayerByColor } from '../../../../GameRoomV2/util';
 
 type Props = {
   roomActivity: RoomWithPlayActivity['activity'];
+  game: GameRecord;
   myPlayer?: ChessPlayer;
 
   onOfferCanceled: () => void;
@@ -24,10 +25,11 @@ type Props = {
   target?: DialogProps['target'];
 };
 
-export const GameStateDialog: React.FC<Props> = ({ roomActivity, myPlayer, ...props }) => {
-  const { game } = roomActivity;
+export const GameStateDialog: React.FC<Props> = ({ roomActivity, game, myPlayer, ...props }) => {
   const [gameResultSeen, setGameResultSeen] = useState(false);
   const feedbackDialog = useFeedbackDialog();
+
+  // TODO: Make sure the game id matches the room activity game id
 
   useEffect(() => {
     // Everytime the game state changes, reset the seen!
@@ -131,7 +133,7 @@ export const GameStateDialog: React.FC<Props> = ({ roomActivity, myPlayer, ...pr
             {(() => {
               const offerer = getPlayerByColor(
                 roomActivity.offer.content.by,
-                roomActivity.game.players
+                game.players
               );
 
               return (
@@ -174,7 +176,7 @@ export const GameStateDialog: React.FC<Props> = ({ roomActivity, myPlayer, ...pr
             {(() => {
               const offerer = getPlayerByColor(
                 roomActivity.offer.content.by,
-                roomActivity.game.players
+                game.players
               );
 
               return (

@@ -67,7 +67,7 @@ export const GameStateWidget: React.FC<Props> = ({
             <PlayerBox
               player={opponentPlayer}
               timeLeft={opponentTimeLeft}
-              active={game.state === 'started' && game.lastMoved !== opponentPlayer.color}
+              active={game.state === 'started' && game.lastMoveBy !== opponentPlayer.color}
               gameTimeLimit={game.timeLimit}
               material={materialScore[opponentPlayer.color]}
               onTimerFinished={() => onTimerFinished(opponentPlayer.color)}
@@ -90,7 +90,7 @@ export const GameStateWidget: React.FC<Props> = ({
             <PlayerBox
               player={myPlayer}
               timeLeft={myTimeLeft}
-              active={game.state === 'started' && game.lastMoved !== myPlayer.color}
+              active={game.state === 'started' && game.lastMoveBy !== myPlayer.color}
               gameTimeLimit={game.timeLimit}
               material={materialScore[myPlayer.color]}
               onTimerFinished={() => onTimerFinished(myPlayer.color)}

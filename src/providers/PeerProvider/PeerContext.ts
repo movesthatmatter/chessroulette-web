@@ -18,14 +18,24 @@ export type PeerContextProps =
       disconnectFromRoom: () => void;
 
       broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
+      // @deprecate in favor of SendMessage
       request: SocketClient['send'];
+
+      sendMessage: SocketClient['send'];
+      onMessage: SocketClient['onMessage'];
+
       leaveRoom: () => void;
     }
   | {
       state: 'notJoined';
       proxy: Proxy;
       me: Peer;
+
+      // @deprecate in favor of SendMessage
       request: SocketClient['send'];
+
+      sendMessage: SocketClient['send'];
+      onMessage: SocketClient['onMessage'];
 
       joinRoom: (c: RoomCredentials) => void;
     }

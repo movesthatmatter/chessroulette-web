@@ -1,16 +1,24 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grommet } from 'grommet';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { defaultTheme } from 'src/theme';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
-import { chessGameActions, ChessGameState, ChessGameStateStarted, GuestUserRecord } from 'dstnd-io';
+import {
+  AsyncResult,
+  chessGameActions,
+  ChessGameStateStarted,
+  GameRecord,
+  GuestUserRecord,
+  UserRecord,
+} from 'dstnd-io';
 import { action } from '@storybook/addon-actions';
-import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
+import { Peer, RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 import { PeerProvider } from 'src/providers/PeerProvider';
 import { SocketProvider } from 'src/providers/SocketProvider';
 import { PlayRoom } from './PlayRoom';
+import { authenticateAsNewGuest } from 'src/services/Authentication/resources';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 
 export default {
@@ -44,13 +52,14 @@ export const defaultStory = () => (
 
           const homeColor = 'white';
 
-          const [currentGame] = useState<ChessGameState>(
-            chessGameActions.prepareGame({
+          const [currentGame] = useState<GameRecord>({
+            id: '1',
+            ...chessGameActions.prepareGame({
               players: [me.user, opponent.user],
               preferredColor: homeColor,
               timeLimit: 'blitz',
-            })
-          );
+            }),
+          });
 
           const publicRoom = roomMocker.withProps({
             me,
@@ -61,7 +70,7 @@ export const defaultStory = () => (
             type: 'public',
             activity: {
               type: 'play',
-              game: currentGame,
+              gameId: currentGame.id,
             },
           }) as RoomWithPlayActivity;
 
@@ -75,12 +84,15 @@ export const defaultStory = () => (
                     isGuest: true,
                   } as GuestUserRecord,
                 },
+
+                // TODO: the game will be added here
               }}
             >
               <SocketProvider>
                 <PeerProvider>
                   <PlayRoom
                     room={publicRoom}
+                    game={currentGame}
                     onMove={action('on move')}
                     onAbort={action('onAbort')}
                     onDrawAccepted={action('onDrawAccepted')}
@@ -109,44 +121,71 @@ export const withSwitchingSides = () => (
     <WithLocalStream
       render={(stream) =>
         React.createElement(() => {
-          const me = useRef(
-            peerMock.withChannels({
-              streaming: {
-                on: true,
-                type: 'audio-video',
-                stream,
-              },
-            })
-          ).current;
+          const [me, setMe] = useState<Peer>();
+          const [opponent, setOpponent] = useState<Peer>();
+          const [game, setGame] = useState<GameRecord>();
+          const [publicRoom, setPublicRoom] = useState<RoomWithPlayActivity>();
 
-          const opponent = useRef(
-            peerMock.withChannels({
-              streaming: {
-                on: true,
-                type: 'audio-video',
-                stream,
+          const userToPeer = (user: UserRecord) => ({
+            user: user,
+            id: user.id,
+            joinedRoomId: null,
+            joinedRoomAt: null,
+            hasJoinedRoom: false,
+            connection: {
+              // This shouldn't be so
+              // there's no connetion with myself :)
+              channels: {
+                data: { on: true },
+                streaming: { on: false },
               },
-            })
-          ).current;
+            },
+          } as const);
 
-          const [publicRoom, setPublicRoom] = useState(
-            roomMocker.withProps({
-              me,
-              peers: {
-                [opponent.id]: opponent,
-              },
-              name: 'Valencia',
-              type: 'public',
-              activity: {
-                type: 'play',
-                game: chessGameActions.prepareGame({
+          useEffect(() => {
+            AsyncResult.all(
+              authenticateAsNewGuest(),
+              authenticateAsNewGuest()
+            ).map(([myUser, opponentUser]) => {
+              const me = userToPeer(myUser.guest);
+              const opponent = userToPeer(opponentUser.guest);
+
+              const nextGame = {
+                id: '1',
+                ...chessGameActions.prepareGame({
                   players: [me.user, opponent.user],
                   preferredColor: 'white',
                   timeLimit: 'blitz',
                 }),
-              },
-            }) as RoomWithPlayActivity
-          );
+              };
+
+              const nextRoom = roomMocker.withProps({
+                me,
+                peers: {
+                  [opponent.id]: opponent,
+                },
+                name: 'Valencia',
+                type: 'public',
+                activity: {
+                  type: 'play',
+                  gameId: nextGame.id,
+                },
+              }) as RoomWithPlayActivity;
+
+              setMe(me);
+              setOpponent(opponent);
+              setGame(nextGame);
+              setPublicRoom(nextRoom);
+            });
+          }, []);
+
+          if (!(me && opponent && publicRoom && game)) {
+            return (
+              <div>
+                Users need to join first!
+              </div>
+            )
+          }
 
           return (
             <StorybookReduxProvider
@@ -162,19 +201,16 @@ export const withSwitchingSides = () => (
             >
               <PlayRoom
                 room={publicRoom}
+                game={game}
                 onMove={(move) => {
-                  console.log('moved', move);
-                  setPublicRoom((prev) => ({
-                    ...prev,
-                    activity: {
-                      ...prev.activity,
-                      game: chessGameActions.move(prev.activity.game as ChessGameStateStarted, {
-                        move,
-                        movedAt: toISODateTime(new Date()),
-                      }),
-                    },
+                  // TODO this will be done via redux actions
 
-                    me: prev.me.id === me.id ? opponent : me,
+                  setGame((prev) => ({
+                    ...prev as GameRecord,
+                    ...chessGameActions.move(prev as ChessGameStateStarted, {
+                      move,
+                      movedAt: toISODateTime(new Date()),
+                    }),
                   }));
                 }}
                 onAbort={action('onAbort')}
