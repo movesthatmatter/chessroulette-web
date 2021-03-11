@@ -26,7 +26,13 @@ export const OAuthButton: React.FC<Props> = (props) => {
 
     (window.self as WindowWithOnTokenReceived)[fnName] = (token: string) => {
       if (typeof token === 'string') {
-        setRedirectUri(undefined);
+
+        // HACK: If the timer isn't here, the react-popout component in which
+        // the OauthCallbackPage is rendered throws:
+        //   Error: unmountComponentAtNode(...): Target container is not a DOM element.
+        setTimeout(() => {
+          setRedirectUri(undefined);
+        }, 200);
 
         props.onSuccess(token);
       }
