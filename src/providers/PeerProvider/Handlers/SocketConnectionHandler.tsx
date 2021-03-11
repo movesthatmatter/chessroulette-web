@@ -1,6 +1,7 @@
-import { UserRecord } from 'dstnd-io';
+import { GuestUserRecord } from 'dstnd-io';
 import React from 'react';
 import { Component, Dispatch } from 'react';
+import { SocketClient } from 'src/services/socket/SocketClient';
 import { SocketConsumer, SocketConsumerProps } from '../../SocketProvider';
 import {
   createMeAction,
@@ -12,26 +13,63 @@ import {
 import { State as PeerProviderState } from '../redux/reducer';
 
 type Props = {
-  user: UserRecord;
   peerProviderState: PeerProviderState;
   dispatch: Dispatch<any>;
   render: SocketConsumerProps['render'];
   onReady?: SocketConsumerProps['onReady'];
-};
+} & ({
+  isGuest: true;
+  guestUser: GuestUserRecord;
+} | {
+  isGuest: false;
+  accessToken: string;
+});
 
 export class SocketConnectionHandler extends Component<Props> {
+  private socketRef?: SocketClient;
+
+  componentDidUpdate(prevProps: Props) {
+    if (!this.socketRef) {
+      return;
+    }
+
+    if (
+      prevProps.isGuest !== this.props.isGuest // If the Guest flag has changed
+      // If the Guest User Id has changed
+      || (prevProps.isGuest && this.props.isGuest && prevProps.guestUser.id !== this.props.guestUser.id)
+      // If the Access Token has changed
+      || (!prevProps.isGuest && !this.props.isGuest && prevProps.accessToken !== this.props.accessToken)
+    ) {
+      this.identify(this.socketRef);
+    }
+  }
+
+  private identify(socket: SocketClient) {
+    socket.send({
+      kind: 'userIdentification',
+      content: {
+        ...this.props.isGuest ? {
+          isGuest: true,
+          guestUserId: this.props.guestUser.id,
+        } : {
+            isGuest: false,
+            acessToken: this.props.accessToken,
+          },
+      },
+    });
+  }
+
   render() {
     return (
       <SocketConsumer
         onReady={(socket) => {
-          socket.send({
-            kind: 'userIdentification',
-            content: { userId: this.props.user.id },
-          });
+          this.identify(socket);
 
           if (this.props.onReady) {
             this.props.onReady(socket);
           }
+
+          this.socketRef = socket;
         }}
         onClose={() => this.props.dispatch(removeMeAction())}
         onMessage={(msg) => {

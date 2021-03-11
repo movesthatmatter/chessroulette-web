@@ -105,6 +105,7 @@ const primary: CSSProperties = {
   ...({
     '&$clear': {
       borderColor: `${colors.primary} !important`,
+      ...buttonEffects.primaryClearButtonShadow,
     },
     '&$clear$hasLoader $loader > div': {
       backgroundColor: `${colors.primary} !important`,
@@ -136,6 +137,7 @@ const secondary: CSSProperties = {
   ...({
     '&$clear': {
       borderColor: `${colors.secondary} !important`,
+      ...buttonEffects.secondaryClearButtonShadow,
     },
     '&$clear$hasLoader $loader > div': {
       backgroundColor: `${colors.secondary} !important`,
@@ -175,6 +177,7 @@ const positive: CSSProperties = {
   ...({
     '&$clear': {
       borderColor: `${colors.positive} !important`,
+      ...buttonEffects.positiveClearButtonShadow,
     },
     '&$clear$iconButton $icon': {
       fill: `${colors.positive} !important`,
@@ -206,6 +209,7 @@ const negative: CSSProperties = {
   ...({
     '&$clear': {
       borderColor: `${colors.negative} !important`,
+      ...buttonEffects.negativeClearButtonShadow,
     },
     '&$clear$hasLoader $loader > div': {
       backgroundColor: `${colors.negative} !important`,
@@ -237,6 +241,7 @@ const attention: CSSProperties = {
   ...({
     '&$clear': {
       borderColor: `${colors.attention} !important`,
+      ...buttonEffects.attentionClearButtonShadow,
     },
     '&$clear$iconButton $icon': {
       fill: `${colors.attention} !important`,

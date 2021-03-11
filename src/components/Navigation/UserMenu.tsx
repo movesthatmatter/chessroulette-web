@@ -1,19 +1,22 @@
+import React, { useRef, useState } from 'react';
 import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
-import React from 'react';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { selectAuthentication } from 'src/services/Authentication';
-import { colors, floatingShadow, fonts } from 'src/theme';
+import { colors, floatingShadow, fonts, hardBorderRadius, text } from 'src/theme';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { Avatar } from 'src/components/Avatar';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import { PeerState, usePeerState } from 'src/providers/PeerProvider';
+import { LogoutButton } from 'src/services/Authentication/widgets';
+import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 
 
 type Props = {
   darkMode?: boolean;
   reversed?: boolean;
+  withDropMenu?: boolean;
 };
 
 const getStatusColor = (peerState: PeerState) => {
@@ -28,32 +31,42 @@ const getStatusColor = (peerState: PeerState) => {
   return colors.positive;
 };
 
-export const UserMenu: React.FC<Props> = ({ darkMode = false, reversed = false }) => {
+export const UserMenu: React.FC<Props> = ({
+  darkMode = false,
+  reversed = false,
+  withDropMenu = false,
+}) => {
   const cls = useStyles();
   const auth = useSelector(selectAuthentication);
   const peerState = usePeerState();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuOpened, setMenuOpened] = useState(false);
+
+  useOnClickOutside(menuRef, () => {
+    setMenuOpened(false);
+  })
 
   // TODO: Maybe change in the future
   if (auth.authenticationType === 'none') {
     return null;
   }
 
-  return (
+  const labelContent = (
     <Box
       fill
       className={cx(cls.container, darkMode && cls.containerDarkMode)}
       direction="row"
     >
-      <Box fill direction={reversed ? 'row-reverse' : 'row'} align="center">
-        {/* <Menu size="medium" color={darkMode ? colors.white : colors.neutralDark} /> */}
-        {/* <FontAwesomeIcon
-          icon={faEllipsisV}
-          color={darkMode ? colors.white : colors.neutralDark}
-          // size="sm"
-          // className={cls.exitIcon}
-          // onClick={() => props.onClose()}
-        />
-        <div className={cls.spacer} /> */}
+      <Box
+        fill
+        direction={reversed ? 'row-reverse' : 'row'}
+        className={cls.label}
+        {...withDropMenu && {
+          onClick: () => {
+            setMenuOpened((prev) => !prev);
+          }
+        }}
+      >
         <Avatar className={cls.avatar} darkMode={darkMode} hasBorder={darkMode}>
           <Mutunachi mid={auth.user.avatarId} />
         </Avatar>
@@ -86,6 +99,35 @@ export const UserMenu: React.FC<Props> = ({ darkMode = false, reversed = false }
       </Box>
     </Box>
   );
+
+  if (withDropMenu) {
+    return (
+      <div className={cx(menuOpened && cls.menuWrapper)}>
+        {labelContent}
+        {menuOpened && (
+          <div className={cls.menuContentWrapper} ref={menuRef}>
+            <div className={cls.openedMenuLabelWrapper}>
+              {labelContent}
+            </div>
+            <div className={cls.menuContent}>
+              {/* <div className={cls.linkWrapper}>
+                <a
+                  className={cls.link}
+                  href="https://gabrielctroia.medium.com/meet-chessroulette-org-a-quarantine-project-e4108f05db39"
+                  target="_blank"
+                >
+                  My Account
+                </a>
+              </div> */}
+              <LogoutButton full type="secondary" />
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return labelContent;
 };
 
 const useStyles = createUseStyles({
@@ -116,4 +158,56 @@ const useStyles = createUseStyles({
     display: 'inline-block',
   },
   userNameWrapper: {},
+
+  menuWrapper: {
+    position: 'relative',
+  },
+  menuContentWrapper: {
+    position: 'absolute',
+    top: '-12px',
+    paddingTop: '12px',
+    right: '-12px',
+    paddingRight: '12px',
+    paddingLeft: '12px',
+
+    width: '200px',
+
+    zIndex: 999,
+    background: colors.white,
+    ...floatingShadow,
+    ...hardBorderRadius,
+  },
+  openedMenuLabelWrapper: {
+    paddingBottom: '16px',
+    borderBottom: `1px solid ${colors.neutralLighter}`,
+  },
+  menuContent: {
+    paddingTop: '16px',
+  },
+  label: {
+    '&:focus': {
+      ...makeImportant({
+        boxShadow: 'none',
+      }),
+    },
+  },
+
+  linkWrapper: {
+    padding: '8px 20px 16px',
+    alignSelf: 'center',
+    textAlign: 'right',
+  },
+  link: {
+    textTransform: 'capitalize',
+    textDecoration: 'none',
+    color: colors.neutralDarkest,
+    fontFamily: 'Lato, Open Sans, sans serif',
+    fontSize: '16px',
+    textAlign: 'right',
+
+    '&:hover': {
+      borderBottom: `3px solid ${text.primaryColor}`,
+      color: text.primaryColor,
+    },
+  },
 });

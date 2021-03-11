@@ -9,18 +9,18 @@ import createPersistedStore from './persistedStore';
 const { store, persistor } = createPersistedStore(enhancer);
 
 export const ReduxProvider: React.FunctionComponent = ({ children }) => (
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-        {(bootstraped) => {
-          // Hack: For some reason the persistor doens't set the bootstrapped flag to true
-          //  when prerednering via react-snapshot, which in turn always return the Loader State
-          // This workaround makes sure that the children are always rendered during prerendering
-          if (bootstraped || config.PRERENDERING) {
-            return children;
-          }
+  <Provider store={store}>
+    <PersistGate persistor={persistor}>
+      {(bootstraped) => {
+        // Hack: For some reason the persistor doens't set the bootstrapped flag to true
+        //  when prerednering via react-snapshot, which in turn always return the Loader State
+        // This workaround makes sure that the children are always rendered during prerendering
+        if (bootstraped || config.PRERENDERING) {
+          return children;
+        }
 
-          return <AwesomeLoaderPage />
-        }}
-      </PersistGate>
-    </Provider>
+        return <AwesomeLoaderPage />
+      }}
+    </PersistGate>
+  </Provider>
 );

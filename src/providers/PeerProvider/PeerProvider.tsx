@@ -20,13 +20,12 @@ export type PeerProviderProps = {};
 export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   const proxy = useInstance<Proxy>(() => new Proxy());
   const [contextState, setContextState] = useState<PeerContextProps>({ state: 'init' });
+  const [pcState, setPCState] = useState<PeerConnectionsState>({ status: 'init' });
   const [socket, setSocket] = useState<SocketClient | undefined>();
   const [iceServers, setIceServers] = useState<IceServerRecord[]>();
   const auth = useSelector(selectAuthentication);
   const state = useSelector(selectPeerProviderState);
   const dispatch = useDispatch();
-
-  const [pcState, setPCState] = useState<PeerConnectionsState>({ status: 'init' });
 
   // Get ICE Urls onmount
   useEffect(() => {
@@ -119,7 +118,13 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       {/* // TODO: Show a proper message if not authenticated for some reason */}
       {auth.authenticationType !== 'none' && (
         <SocketConnectionHandler
-          user={auth.user}
+          {...auth.authenticationType === 'guest' ? {
+            isGuest: true,
+            guestUser: auth.user,
+          } : {
+            isGuest: false,
+            accessToken: auth.accessToken,
+          }}
           dispatch={dispatch}
           peerProviderState={state}
           onReady={setSocket}

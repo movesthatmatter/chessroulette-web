@@ -1,62 +1,54 @@
-import {
-  io,
-  AuthenticationResponsePayload,
-  authenticationResponsePayload,
-  AuthenticationRequestPayload,
-  GuestAuthenticationResponsePayload,
-  guestAuthenticationResponsePayload,
-  GuestAuthenticationRequestPayload,
-  GuestUserRecord,
-  Result, 
-  Err,
-} from 'dstnd-io';
-import { getHttpInstance } from 'src/lib/http';
-import config from 'src/config';
+import { Resources } from 'dstnd-io';
+import { http } from 'src/lib/http';
 
-const http = getHttpInstance({
-  baseURL: `${config.HTTP_ENDPOINT}/api/auth`,
-});
 
-type ApiError = 'BadRequest' | 'BadResponse';
+const {
+  resource: emailVerificationResource,
+} = Resources.Collections.Authentication.EmailVerification;
 
-export const authenticate = async (
-  req: AuthenticationRequestPayload,
-): Promise<Result<AuthenticationResponsePayload, ApiError>> => {
-  try {
-    const { data } = await http.post('/', req);
+export const verifyEmail = (req: Resources.Util.RequestOf<typeof emailVerificationResource>) => {
+  return emailVerificationResource
+    .request(req, (data) => http.post('api/auth/verify-email', data));
+}
 
-    return io
-      .toResult(authenticationResponsePayload.decode(data))
-      .mapErr(() => 'BadResponse');
-  } catch (e) {
-    return new Err('BadRequest');
-  }
-};
+const { resource: userCheckResource } = Resources.Collections.Authentication.UserCheck;
 
-export const authenticateAsGuest = async (): Promise<
-  Result<GuestAuthenticationResponsePayload, ApiError>
-> => {
-  try {
-    const { data } = await http.post('/guest');
+export const checkUser = (req: Resources.Util.RequestOf<typeof userCheckResource>) => {
+  return userCheckResource.request(req, (data) => http.post('/api/auth', data));
+}
 
-    return io
-      .toResult(guestAuthenticationResponsePayload.decode(data))
-      .mapErr(() => 'BadResponse');
-  } catch (e) {
-    return new Err('BadRequest');
-  }
-};
+const {
+  resource: userRegistrationResource,
+} = Resources.Collections.Authentication.UserRegistration;
 
-export const authenticateAsExistentGuest = async (
-  req: GuestAuthenticationRequestPayload,
-): Promise<Result<GuestAuthenticationResponsePayload, ApiError>> => {
-  try {
-    const { data } = await http.post('/guest', req);
+export const createUser = (req: Resources.Util.RequestOf<typeof userRegistrationResource>) => {
+  return userRegistrationResource.request(req, (data) => http.post('/api/auth/register', data));
+}
 
-    return io
-      .toResult(guestAuthenticationResponsePayload.decode(data))
-      .mapErr(() => 'BadResponse');
-  } catch (e) {
-    return new Err('BadRequest');
-  }
-};
+const { resource: getUserResource } = Resources.Collections.User.GetUser;
+
+export const getUser = (accessToken: string) => {
+  return getUserResource.request(undefined, () => {
+    return http.get('/api/users', {
+      headers: {
+        'auth-token': accessToken,
+      },
+    });
+  });
+}
+
+const {
+  resource: guestAuthenticationResource,
+} = Resources.Collections.Authentication.GuestAuthentication;
+
+export const authenticateAsNewGuest = () => {
+  return guestAuthenticationResource.request({
+    guestUser: null,
+  }, (data) => http.post('/api/auth/guest', data));
+}
+
+export const authenticateAsExistentGuest = (
+  req: Resources.Util.RequestOf<typeof guestAuthenticationResource>
+) => {
+  return guestAuthenticationResource.request(req, (data) => http.post('/api/auth/guest', data));
+}

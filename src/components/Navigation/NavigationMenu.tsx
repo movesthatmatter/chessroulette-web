@@ -6,6 +6,8 @@ import cx from 'classnames';
 import { FormClose } from 'grommet-icons';
 import { UserMenu } from './UserMenu';
 import { useFeedbackDialog } from '../FeedbackDialog/useFeedbackDialog';
+import { useAuthentication } from 'src/services/Authentication';
+import { AuthenticationButton, LogoutButton } from 'src/services/Authentication/widgets';
 
 type Props = {
   className?: string;
@@ -15,6 +17,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [open, setOpen] = useState(false);
   const feedbackDialog = useFeedbackDialog();
+  const auth = useAuthentication();
 
   const menuContent = (
     <>
@@ -61,8 +64,11 @@ export const NavigationMenu: React.FC<Props> = (props) => {
     <div className={cx(cls.container, props.className)}>
       <div className={cls.desktopMenu}>
         <div className={cx(cls.linksContainer)}>{menuContent}</div>
-        <div>
-          <UserMenu reversed />
+        <div className={cls.authMenu}>
+          {auth.authenticationType === 'user'
+            ? <UserMenu reversed withDropMenu />
+            : <AuthenticationButton />
+          }
         </div>
       </div>
       <div className={cx(cls.onlyMobile)}>
@@ -77,9 +83,15 @@ export const NavigationMenu: React.FC<Props> = (props) => {
               <FormClose onClick={() => setOpen(false)} className={cls.drawerCloseBtn} />
               <div className={cls.drawerMenuContent}>
                 <div className={cls.drawerUserMenuWrapper}>
-                  <UserMenu reversed />
+                  {auth.authenticationType === 'user'
+                    ? <UserMenu reversed withDropMenu />
+                    : <AuthenticationButton containerClassName={cls.mobileAuthenticationButton} />
+                  }
                 </div>
                 <div className={cls.drawerLinksContainer}>{menuContent}</div>
+                {auth.authenticationType === 'user' && (
+                  <LogoutButton full type="secondary" />
+                )}
               </div>
             </div>
           </div>
@@ -92,7 +104,6 @@ export const NavigationMenu: React.FC<Props> = (props) => {
 const useStyles = createUseStyles({
   container: {},
   mobileOverlay: {
-    zIndex: 990,
     position: 'fixed',
     top: 0,
     left: 0,
@@ -150,15 +161,23 @@ const useStyles = createUseStyles({
 
   drawerMenuContainer: {
     background: colors.white,
-    padding: '16px 24px 16px 24px',
+    padding: '0 24px',
     height: '100%',
+
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
   },
 
   drawerUserMenuWrapper: {
-    padding: '16px 0 32px',
+    padding: '32px 0',
     borderBottom: `1px solid ${colors.neutralLighter}`,
   },
   drawerMenuContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    // background: 'red',
     ...({
       '& $linkWrapper': {
         padding: '16px 0',
@@ -168,6 +187,7 @@ const useStyles = createUseStyles({
   },
   drawerLinksContainer: {
     paddingTop: '16px',
+    flex: 1,
   },
 
   linksContainer: {
@@ -205,5 +225,15 @@ const useStyles = createUseStyles({
     ...hideOnMobile,
     display: 'flex',
     flexDirection: 'row',
+  },
+  authMenu: {
+    minWidth: '180px',
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+
+  mobileAuthenticationButton: {
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
 });

@@ -14,10 +14,16 @@ export class UserRecordMocker {
   public record(isGuest = false): UserRecord {
     const id = chance.guid().slice(0, 4);
 
+    const firstName = chance.first();
+    const lastName = chance.last();
+    const name = `${firstName} ${lastName}`;
+
     if (isGuest) {
       return {
         id,
-        name: chance.name(),
+        firstName,
+        lastName,
+        name,
         avatarId: String(getRandomInt(1, 18)),
         isGuest: true,
         sid: String((new Date().getTime())),
@@ -31,23 +37,26 @@ export class UserRecordMocker {
       id,
       isGuest: false,
       email,
-      name: chance.name(),
+      firstName,
+      lastName,
+      name,
       avatarId: String(getRandomInt(1, 18)),
-      externalAccountId,
-      externalAccountType: 'lichess',
-      externalAccountInfo: {
-        email,
-        id: externalAccountId,
-        username: chance.name(),
-        perfs: {
-          rapid: this.lichessPerf(),
-          blitz: this.lichessPerf(),
-          bullet: this.lichessPerf(),
-          correspondence: this.lichessPerf(),
-          classical: this.lichessPerf(),
-          puzzle: this.lichessPerf(),
-        },
-      },
+      profilePicUrl: undefined,
+      // externalAccountId,
+      // externalAccountType: 'lichess',
+      // externalAccountInfo: {
+      //   email,
+      //   id: externalAccountId,
+      //   username: chance.name(),
+      //   perfs: {
+      //     rapid: this.lichessPerf(),
+      //     blitz: this.lichessPerf(),
+      //     bullet: this.lichessPerf(),
+      //     correspondence: this.lichessPerf(),
+      //     classical: this.lichessPerf(),
+      //     puzzle: this.lichessPerf(),
+      //   },
+      // },
     };
   }
 
@@ -61,7 +70,7 @@ export class UserRecordMocker {
   withProps<TIsGuest extends boolean = false>(
     props: Partial<Omit<UserRecord, 'isGuest'>>,
     isGuest: TIsGuest = false as TIsGuest,
-  ): TIsGuest extends false ? RegisteredUserRecord: GuestUserRecord  {
+  ): TIsGuest extends false ? RegisteredUserRecord : GuestUserRecord {
     return {
       ...this.record(isGuest),
       ...props,

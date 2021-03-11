@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-// import { createNewGuestUser } from './effects';
 import { selectAuthentication } from './selectors';
 import { AuthenticationContext } from './AuthenticationContext';
 import {
   authenticateAsGuestEffect,
-  authenticateExistentUserEffect,
   authenticateAsExistentGuestEffect,
 } from './effects';
 
@@ -17,7 +15,8 @@ export const AuthenticationProvider: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (authentication.authenticationType === 'user') {
-      dispatch(authenticateExistentUserEffect(authentication.user.id));
+      // TODO: Replace this with authenticateWithAccessTokenEffect
+      // dispatch(authenticateExistentUserEffect(authentication.user.id));
     } else if (authentication.authenticationType === 'guest') {
       dispatch(authenticateAsExistentGuestEffect(authentication.user));
     } else {

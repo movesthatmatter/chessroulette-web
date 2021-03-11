@@ -1,3 +1,4 @@
+import { action } from '@storybook/addon-actions';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { LichessAuthButton } from './LichessAuthButton';
@@ -7,4 +8,4 @@ export default {
   title: 'services/Authentication/LichessAuthButton',
 };
 
-export const defaultStory = () => <LichessAuthButton />;
+export const defaultStory = () => <LichessAuthButton onSuccess={action('On Success')} />;
