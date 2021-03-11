@@ -17,7 +17,7 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
     const requestBody = request.data;
 
     console.group(
-      '%cHttp %cRequest:',
+      `%cHttp.${request.method?.toUpperCase()} %cRequest:`,
       logUnimportantStyle,
       logImportantStyle,
       request.url
@@ -25,6 +25,7 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
     console.log('Options:    ', {
       ...request.params,
       body: requestBody,
+      method: request.method,
     });
     console.log('Body:       ', requestBody);
     console.log('Copy Body:  ', {
