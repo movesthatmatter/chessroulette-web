@@ -4,6 +4,7 @@ import axios, {
   AxiosResponse,
 } from 'axios';
 import config from 'src/config';
+import { authentication } from 'src/services/Authentication';
 
 export const getHttpInstance = (opts?: AxiosRequestConfig) => {
   const instance = axios.create(opts);
@@ -73,6 +74,22 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
       return Promise.reject(e);
     });
   }
+
+  // Add the Authentication Header
+  instance.interceptors.request.use(async (request) => {
+    const accessTokenResult = await authentication
+      .getAccessToken()
+      .resolve();
+
+    if (accessTokenResult.ok) {
+      request.headers = {
+        ...request.headers,
+        'auth-token': accessTokenResult.val,
+      }
+    }
+
+    return request;
+  });
 
   return instance;
 };
