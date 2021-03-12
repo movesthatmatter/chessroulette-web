@@ -11,7 +11,7 @@ export const verifyEmail = (req: Resources.Util.RequestOf<typeof emailVerificati
 }
 
 // Rename this resurce to !authenticate instead of UserCheck!
-const { resource: userCheckResource } = Resources.Collections.Authentication.UserCheck;
+const { resource: userCheckResource } = Resources.Collections.Authentication.Authenticate;
 
 export const authenticate = (req: Resources.Util.RequestOf<typeof userCheckResource>) => {
   return userCheckResource.request(req, (data) => http.post('/api/auth', data));
