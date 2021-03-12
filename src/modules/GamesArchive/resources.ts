@@ -4,12 +4,8 @@ import { http } from 'src/lib/http';
 
 const {
   resource: getUserGamesResource,
-} = Resources.Collections.Game.GetUserGames;
+} = Resources.Collections.Game.GetMyGames;
 
-export const getUserGames = (req: Resources.Util.RequestOf<typeof getUserGamesResource>) => {
-  return getUserGamesResource
-    .request(req, (params) => http.get(`api/games/${params.userId}`))
-    .mapErr((e) => {
-      console.log('e', e);
-    })
+export const getMyGames = () => {
+  return getUserGamesResource.request(undefined, () => http.get(`api/games`));
 }
