@@ -16,7 +16,7 @@ export const AuthenticatedPage: React.FC<Props> = ({
   const user = useAuthenticatedUser();
   const history = useHistory()
 
-  if (!user || user.isGuest) {
+  if (!user) {
     return (
       <AuthenticationDialog visible onClose={() => {
         history.replace('/');
