@@ -113,6 +113,14 @@ export const UserMenu: React.FC<Props> = ({
             <div className={cls.menuContent}>
               <div className={cls.linkWrapper}>
                 <Link
+                  to="/user"
+                  className={cls.link}
+                >
+                  My Profile
+                </Link>
+              </div>
+              <div className={cls.linkWrapper}>
+                <Link
                   to="/user/games"
                   className={cls.link}
                 >

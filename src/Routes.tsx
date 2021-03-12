@@ -4,11 +4,11 @@ import { LichessAuthCallbackPage } from './vendors/lichess/LichessAuthCallbackPa
 import { StatsPage } from './modules/Stats';
 import { LandingPage } from './modules/Landing/LandingPage';
 import { ChallengeOrRoomPage } from './modules/Challenges/ChallengeOrRoomPage';
-import { OAuthCallbackPage } from './services/Oauth2/components/OAuthCallbackPage';
 import { FacebookAuthCallbackPage } from './vendors/facebook';
 import { PeerProvider } from './providers/PeerProvider';
 import { SocketProvider } from './providers/SocketProvider';
 import { GamesArchivePage } from './modules/GamesArchive';
+import { UserProfilePage } from './modules/UserProfile';
 
 type Props = {};
 
@@ -28,6 +28,12 @@ export const Routes: React.FC<Props> = () => {
         key={location.key}
         exact
         component={FacebookAuthCallbackPage}
+      />
+      <Route
+        path="/user"
+        key={location.key}
+        exact
+        component={UserProfilePage}
       />
       <Route
         path="/user/games"
