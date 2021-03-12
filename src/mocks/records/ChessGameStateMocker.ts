@@ -37,7 +37,12 @@ export class ChessGameStateMocker {
       winner: undefined,
       lastMoveBy: undefined,
       lastMoveAt: undefined,
+
+      startedAt: undefined,
+      lastActivityAt: undefined,
     };
+
+    const now = new Date();
 
     const started: ChessGameStateStarted = {
       ...pending,
@@ -45,7 +50,10 @@ export class ChessGameStateMocker {
       pgn: '1. e4 e5 2. Qf3 Na6',
       winner: undefined,
       lastMoveBy: 'white',
-      lastMoveAt: toISODateTime(new Date()),
+      lastMoveAt: toISODateTime(now),
+
+      startedAt: toISODateTime(now),
+      lastActivityAt: toISODateTime(now),
     };
 
     if (state === 'pending') {
@@ -54,6 +62,7 @@ export class ChessGameStateMocker {
       return {
         ...pending,
         state: 'neverStarted',
+        lastActivityAt: toISODateTime(now),
       };
     } else if (state === 'finished') {
       return {
