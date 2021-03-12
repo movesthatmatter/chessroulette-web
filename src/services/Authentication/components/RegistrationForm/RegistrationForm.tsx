@@ -75,7 +75,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
                     : 'What\'s your email?'
               }
               placeholder="beth.harmon@queens.gambit"
-              readOnly={props.userInfo.type === 'internal' && props.userInfo.email.length > 0}
+              readOnly
               value={p.model.email}
               onChange={(e) => p.onChange('email', e.target.value)}
               validationError={p.errors.validationErrors?.email || p.errors.submissionValidationErrors?.email}

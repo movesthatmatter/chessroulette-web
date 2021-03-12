@@ -31,6 +31,7 @@ type RegistrationStep = {
   name: 'RegistrationStep',
   state: {
     registrationUserInfo: RegistrationUserInfo,
+    verificationToken: string;
     verifiedExternalVendorInfo?: CreateUserAccountRequestPayload['data']['external'];
   },
 };
@@ -85,6 +86,7 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
               name: 'RegistrationStep',
               state: {
                 registrationUserInfo: input,
+                verificationToken: r.verificationToken,
               },
             });
           } else if (r.external) {
@@ -105,6 +107,7 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
                   vendor: input.vendor,
                   accessToken: input.accessToken,
                 },
+                verificationToken: r.verificationToken,
               }
             });
           }
@@ -140,10 +143,9 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
           userInfo={s.registrationUserInfo}
           onSubmit={(input) => {
             return resources.createUser({
-              email: input.email,
               firstName: input.firstName,
               lastName: input.lastName,
-              external: s.verifiedExternalVendorInfo,
+              verificationToken: s.verificationToken,
             })
               .mapErr((e) => {
                 if (e.type === 'ValidationErrors') {
