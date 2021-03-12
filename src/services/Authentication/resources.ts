@@ -1,7 +1,6 @@
 import { Resources } from 'dstnd-io';
 import { http } from 'src/lib/http';
 
-
 const {
   resource: emailVerificationResource,
 } = Resources.Collections.Authentication.EmailVerification;
@@ -27,13 +26,9 @@ export const createUser = (req: Resources.Util.RequestOf<typeof userRegistration
 
 const { resource: getUserResource } = Resources.Collections.User.GetUser;
 
-export const getUser = (accessToken: string) => {
+export const getUser = () => {
   return getUserResource.request(undefined, () => {
-    return http.get('/api/users', {
-      headers: {
-        'auth-token': accessToken,
-      },
-    });
+    return http.get('/api/users');
   });
 }
 
@@ -51,4 +46,15 @@ export const authenticateAsExistentGuest = (
   req: Resources.Util.RequestOf<typeof guestAuthenticationResource>
 ) => {
   return guestAuthenticationResource.request(req, (data) => http.post('/api/auth/guest', data));
+}
+
+const {
+  resource: connectExternalAccountResource,
+} = Resources.Collections.User.ConnectExternalAccount;
+
+export const connectExternalAccount = (
+  req: Resources.Util.RequestOf<typeof connectExternalAccountResource>,
+) => {
+  return connectExternalAccountResource
+    .request(req, (data) => http.post(`api/users/connect-external-account`, data));
 }
