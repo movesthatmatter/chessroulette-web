@@ -1,6 +1,6 @@
 import { Layer } from 'grommet';
-import { AppsRounded } from 'grommet-icons';
-import React, { useRef, useState } from 'react';
+import { AppsRounded , Chat} from 'grommet-icons';
+import React, { useRef, useState, useEffect} from 'react';
 import { NavigationHeader } from 'src/components/Navigation';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { Text } from 'src/components/Text';
@@ -10,6 +10,7 @@ import {
   colors,
   floatingShadow,
   fonts,
+  onlyMobile,
   onlySmallMobile,
   SMALL_MOBILE_BREAKPOINT,
   softBorderRadius,
@@ -22,6 +23,10 @@ import { getRelativeMaterialScore } from 'src/modules/Games/Chess/components/Gam
 import { ChessGameV2 } from 'src/modules/Games/Chess/components/ChessGameV2';
 import { useWindowWidth } from '@react-hook/window-size';
 import { GameActions } from '../components/GameActions';
+import { ChatContainer } from 'src/modules/Chat';
+import { ChatIconWithBadge } from 'src/modules/Chat/components/ChatIconWithBadge';
+import { useSelector } from 'react-redux';
+import {selectChatHistory, selectUserID} from 'src/providers/PeerProvider/redux/selectors';
 
 type Props = LayoutProps;
 
@@ -32,10 +37,32 @@ export const MobileLayout: React.FC<Props> = (props) => {
 
   const mobileGameActionsRef = useRef<HTMLDivElement>(null);
 
+  const mobileChatButton = useRef<HTMLDivElement>(null);
+
+  const chatHistory = useSelector(selectChatHistory);
+  const me = useSelector(selectUserID);
+  const newMessageCounter = useRef(0);
   const [showMobileGameActionsMenu, setShowMobileGameActionsMenu] = useState(false);
 
+  const [showChatWindow, setShowChatWindow ] = useState(false);
   // This should be container width
   const windowWidth = useWindowWidth();
+
+  useEffect(() => {
+    if (chatHistory && !showChatWindow) {
+      if (chatHistory.messages.length > 0 && chatHistory.messages[0].fromUserId !== me ){
+        newMessageCounter.current += 1;
+      }
+    }
+  }, [chatHistory?.messages]);
+
+  useEffect(() => {
+    newMessageCounter.current = 0;
+  },[])
+
+  function markMessagesAsRead() {
+    newMessageCounter.current = 0;
+  }
 
   // TODO: These shouldn't be here!
   // TOODO: In fact the whole notion of timeleft is conceptualy wrong here.
@@ -79,6 +106,12 @@ export const MobileLayout: React.FC<Props> = (props) => {
                   right: 0,
                 }}
               >
+                <div ref={mobileChatButton} style={{backgroundColor:'transparent'}}>
+                 <ChatIconWithBadge color={colors.white} onClick={() => {
+                   markMessagesAsRead();
+                   setShowChatWindow(true)}}
+                    newMessages={newMessageCounter.current}/>
+                </div>
                 <div ref={mobileGameActionsRef}>
                   <AppsRounded
                     color={colors.white}
@@ -86,7 +119,7 @@ export const MobileLayout: React.FC<Props> = (props) => {
                     className={cls.mobileGameActionsButtonIcon}
                   />
                 </div>
-                {showMobileGameActionsMenu && mobileGameActionsRef.current && (
+                {showMobileGameActionsMenu && mobileGameActionsRef.current &&  (
                   <Layer
                     responsive={false}
                     position="bottom"
@@ -120,6 +153,20 @@ export const MobileLayout: React.FC<Props> = (props) => {
                     />
                   </Layer>
                 )}
+                {
+                  showChatWindow && mobileChatButton.current && (
+                    <Layer 
+                    style={{borderRadius:'18px', left:'10px', bottom: '10px',}} 
+                    responsive={false} 
+                    position='bottom-left' 
+                    animation='slide' 
+                    onClickOutside={() => setShowChatWindow(false)}>
+                      <div className={cls.chatContainer}>
+                      <ChatContainer/>
+                      </div>
+                    </Layer>
+                  )
+                }
               </div>
             </div>
           )}
@@ -205,6 +252,11 @@ const useStyles = createUseStyles({
   },
   mobileMainContainer: {
     paddingBottom: '8px',
+  },
+  chatContainer:{
+    padding:'10px',
+    height: '400px',
+    overflow:'hidden',
   },
   mobileBoard: {
     ...floatingShadow,

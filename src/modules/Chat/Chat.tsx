@@ -3,7 +3,7 @@ import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { ChatHistoryRecord } from 'dstnd-io';
 import { Message } from './components';
-import { colors } from 'src/theme';
+import { colors, onlyMobile, onlySmallMobile } from 'src/theme';
 import { IconButton } from 'src/components/Button';
 import { Send } from 'grommet-icons';
 import { CSSProperties } from 'src/lib/jss/types';
@@ -37,7 +37,7 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
           />
         ))}
       </div>
-      <div style={props.inputContainerStyle}>
+      <div style={props.inputContainerStyle} className={cls.bottomPart}>
         <div className={cls.inputContainer}>
           <div className={cls.inputBoxWrapper}>
             <textarea
@@ -88,6 +88,9 @@ const useStyles = createUseStyles({
     overflowY: 'scroll',
     marginTop: '10px',
     scrollBehavior: 'smooth',
+  },
+  bottomPart:{
+    ...onlySmallMobile({height: '50px'}),
   },
   inputContainer: {
     borderTop: 'solid 1px',
