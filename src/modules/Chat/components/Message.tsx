@@ -11,12 +11,14 @@ type Props = {
   myId: UserRecord['id'];
   message: ChatMessageRecord;
   user: UserInfoRecord;
+  sameUser: boolean;
 };
 
 export const Message: React.FC<Props> = ({
   myId,
   message,
   user,
+  sameUser
 }) => {
   const cls = useStyles();
 
@@ -43,7 +45,7 @@ export const Message: React.FC<Props> = ({
         </Text>
         </Linkify>
       </div>
-      {message.fromUserId !== myId && (
+      {message.fromUserId !== myId && !sameUser && (
         <Text className={cls.messageSender}>
           {user.name}
         </Text>
