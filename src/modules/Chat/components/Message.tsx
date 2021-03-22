@@ -4,6 +4,8 @@ import cx from 'classnames';
 import { ChatMessageRecord, UserInfoRecord, UserRecord } from 'dstnd-io';
 import { colors, fonts } from 'src/theme';
 import { Text } from 'src/components/Text';
+import Linkify from 'react-linkify';
+import {SecureLink} from 'react-secure-link';
 
 type Props = {
   myId: UserRecord['id'];
@@ -28,6 +30,9 @@ export const Message: React.FC<Props> = ({
         [cls.myMessageContentWrapper]: message.fromUserId === myId,
         [cls.otherMessageContentWrapper]: message.fromUserId !== myId,
       })}>
+        <Linkify componentDecorator={(href, text, key) => (
+            <SecureLink href={href} key={key}>{text}</SecureLink>
+        )}>
         <Text
           className={cx(cls.messageContent, {
             [cls.myMessageContent]: message.fromUserId === myId,
@@ -36,6 +41,7 @@ export const Message: React.FC<Props> = ({
         >
           {message.content}
         </Text>
+        </Linkify>
       </div>
       {message.fromUserId !== myId && (
         <Text className={cls.messageSender}>
