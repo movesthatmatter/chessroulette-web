@@ -1,4 +1,4 @@
-import { ChessGameColor, ChessGameState } from 'dstnd-io';
+import { ChessGameColor } from 'dstnd-io';
 import React, { useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
@@ -11,9 +11,10 @@ import cx from 'classnames';
 import { getRelativeMaterialScore } from './util';
 import { Events } from 'src/services/Analytics';
 import { noop } from 'src/lib/util';
+import { Game } from 'src/modules/Games/types';
 
 type Props = {
-  game: ChessGameState;
+  game: Game;
   homeColor: ChessGameColor;
   historyFocusedIndex?: number;
   onMoveClick?: (index: number) => void;

@@ -16,7 +16,7 @@ import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { minutes, seconds } from 'src/lib/time';
 import { AspectRatio, AspectRatioExplicit } from 'src/components/AspectRatio';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
-import { GameRecordMocker } from 'src/mocks/records/GameRecordMocker';
+import { GameMocker } from 'src/mocks/records';
 
 export default {
   component: GameRoomLayout,
@@ -25,7 +25,7 @@ export default {
 
 const peerMock = new PeerMocker();
 const roomMocker = new RoomMocker();
-const gameMocker = new GameRecordMocker();
+const gameMocker = new GameMocker();
 
 const peerA = peerMock.record();
 const peerB = peerMock.record();

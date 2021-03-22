@@ -2,14 +2,14 @@
 import React from 'react';
 import { ChessGameV2 } from './ChessGameV2';
 import 'react-chessground/dist/styles/chessground.css';
-import { GameRecordMocker } from 'src/mocks/records/GameRecordMocker';
+import { GameMocker } from 'src/mocks/records/GameMocker';
 
 export default {
   component: ChessGameV2,
   title: 'Modules/Games/Chess/components/Chess Game V2',
 };
 
-const gameMocker = new GameRecordMocker();
+const gameMocker = new GameMocker();
 
 export const fromStartingPosition = () =>
   React.createElement(() => {

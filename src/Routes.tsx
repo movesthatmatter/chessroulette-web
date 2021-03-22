@@ -8,6 +8,7 @@ import { OAuthCallbackPage } from './services/Oauth2/components/OAuthCallbackPag
 import { FacebookAuthCallbackPage } from './vendors/facebook';
 import { PeerProvider } from './providers/PeerProvider';
 import { SocketProvider } from './providers/SocketProvider';
+import { GamesArchivePage } from './modules/GamesArchive';
 
 type Props = {};
 
@@ -27,6 +28,12 @@ export const Routes: React.FC<Props> = () => {
         key={location.key}
         exact
         component={FacebookAuthCallbackPage}
+      />
+      <Route
+        path="/user/games"
+        key={location.key}
+        exact
+        component={GamesArchivePage}
       />
 
       <SocketProvider>

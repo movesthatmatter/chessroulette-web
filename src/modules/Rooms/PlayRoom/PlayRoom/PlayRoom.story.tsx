@@ -8,7 +8,6 @@ import {
   AsyncResult,
   chessGameActions,
   ChessGameStateStarted,
-  GameRecord,
   GuestUserRecord,
   UserRecord,
 } from 'dstnd-io';
@@ -20,6 +19,8 @@ import { SocketProvider } from 'src/providers/SocketProvider';
 import { PlayRoom } from './PlayRoom';
 import { authenticateAsNewGuest } from 'src/services/Authentication/resources';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
+import { GameMocker } from 'src/mocks/records';
+import { Game } from 'src/modules/Games';
 
 export default {
   component: PlayRoom,
@@ -28,6 +29,7 @@ export default {
 
 const peerMock = new PeerMocker();
 const roomMocker = new RoomMocker();
+const gameMocker = new GameMocker();
 
 export const defaultStory = () => (
   <Grommet theme={defaultTheme} full>
@@ -52,14 +54,14 @@ export const defaultStory = () => (
 
           const homeColor = 'white';
 
-          const [currentGame] = useState<GameRecord>({
-            id: '1',
+          const currentGame = {
+            ...gameMocker.pending(),
             ...chessGameActions.prepareGame({
               players: [me.user, opponent.user],
               preferredColor: homeColor,
               timeLimit: 'blitz',
             }),
-          });
+          };
 
           const publicRoom = roomMocker.withProps({
             me,
@@ -123,7 +125,7 @@ export const withSwitchingSides = () => (
         React.createElement(() => {
           const [me, setMe] = useState<Peer>();
           const [opponent, setOpponent] = useState<Peer>();
-          const [game, setGame] = useState<GameRecord>();
+          const [game, setGame] = useState<Game>();
           const [publicRoom, setPublicRoom] = useState<RoomWithPlayActivity>();
 
           const userToPeer = (user: UserRecord) => ({
@@ -151,7 +153,8 @@ export const withSwitchingSides = () => (
               const opponent = userToPeer(opponentUser.guest);
 
               const nextGame = {
-                id: '1',
+                // id: '1',
+                ...gameMocker.pending(),
                 ...chessGameActions.prepareGame({
                   players: [me.user, opponent.user],
                   preferredColor: 'white',
@@ -206,7 +209,7 @@ export const withSwitchingSides = () => (
                   // TODO this will be done via redux actions
 
                   setGame((prev) => ({
-                    ...prev as GameRecord,
+                    ...prev as Game,
                     ...chessGameActions.move(prev as ChessGameStateStarted, {
                       move,
                       movedAt: toISODateTime(new Date()),
