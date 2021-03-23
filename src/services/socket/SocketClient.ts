@@ -71,7 +71,6 @@ type SendableMessagesMap = {
   leaveRoomRequest: LeaveRoomRequestPayload;
 
   //Chat
-  // TO-DO - put back the type from dstnd-io.
   broadcastChatMessage: BroadcastChatMessagePayload;
 
   // Game

@@ -1,6 +1,6 @@
 import { Layer } from 'grommet';
-import { AppsRounded , Chat} from 'grommet-icons';
-import React, { useRef, useState, useEffect} from 'react';
+import { AppsRounded, Chat } from 'grommet-icons';
+import React, { useRef, useState, useEffect } from 'react';
 import { NavigationHeader } from 'src/components/Navigation';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { Text } from 'src/components/Text';
@@ -26,7 +26,7 @@ import { GameActions } from '../components/GameActions';
 import { ChatContainer } from 'src/modules/Chat';
 import { ChatIconWithBadge } from 'src/modules/Chat/components/ChatIconWithBadge';
 import { useSelector } from 'react-redux';
-import {selectChatHistory, selectUserID} from 'src/providers/PeerProvider/redux/selectors';
+import { selectChatHistory, selectUserID } from 'src/providers/PeerProvider/redux/selectors';
 
 type Props = LayoutProps;
 
@@ -44,13 +44,13 @@ export const MobileLayout: React.FC<Props> = (props) => {
   const newMessageCounter = useRef(0);
   const [showMobileGameActionsMenu, setShowMobileGameActionsMenu] = useState(false);
 
-  const [showChatWindow, setShowChatWindow ] = useState(false);
+  const [showChatWindow, setShowChatWindow] = useState(false);
   // This should be container width
   const windowWidth = useWindowWidth();
 
   useEffect(() => {
     if (chatHistory && !showChatWindow) {
-      if (chatHistory.messages.length > 0 && chatHistory.messages[0].fromUserId !== me ){
+      if (chatHistory.messages.length > 0 && chatHistory.messages[0].fromUserId !== me) {
         newMessageCounter.current += 1;
       }
     }
@@ -58,7 +58,7 @@ export const MobileLayout: React.FC<Props> = (props) => {
 
   useEffect(() => {
     newMessageCounter.current = 0;
-  },[])
+  }, []);
 
   function markMessagesAsRead() {
     newMessageCounter.current = 0;
@@ -106,11 +106,15 @@ export const MobileLayout: React.FC<Props> = (props) => {
                   right: 0,
                 }}
               >
-                <div ref={mobileChatButton} style={{backgroundColor:'transparent'}}>
-                 <ChatIconWithBadge color={colors.white} onClick={() => {
-                   markMessagesAsRead();
-                   setShowChatWindow(true)}}
-                    newMessages={newMessageCounter.current}/>
+                <div ref={mobileChatButton} style={{ backgroundColor: 'transparent' }}>
+                  <ChatIconWithBadge
+                    color={colors.white}
+                    onClick={() => {
+                      markMessagesAsRead();
+                      setShowChatWindow(true);
+                    }}
+                    newMessages={newMessageCounter.current}
+                  />
                 </div>
                 <div ref={mobileGameActionsRef}>
                   <AppsRounded
@@ -119,7 +123,7 @@ export const MobileLayout: React.FC<Props> = (props) => {
                     className={cls.mobileGameActionsButtonIcon}
                   />
                 </div>
-                {showMobileGameActionsMenu && mobileGameActionsRef.current &&  (
+                {showMobileGameActionsMenu && mobileGameActionsRef.current && (
                   <Layer
                     responsive={false}
                     position="bottom"
@@ -146,27 +150,26 @@ export const MobileLayout: React.FC<Props> = (props) => {
                         setShowMobileGameActionsMenu(false);
                       }}
                       onResign={() => {
-                        props.onResign()
+                        props.onResign();
                         setShowMobileGameActionsMenu(false);
                       }}
                       className={cls.mobileGameActionButtonsContainer}
                     />
                   </Layer>
                 )}
-                {
-                  showChatWindow && mobileChatButton.current && (
-                    <Layer 
-                    style={{borderRadius:'18px', left:'10px', bottom: '10px',}} 
-                    responsive={false} 
-                    position='bottom-left' 
-                    animation='slide' 
-                    onClickOutside={() => setShowChatWindow(false)}>
-                      <div className={cls.chatContainer}>
-                      <ChatContainer/>
-                      </div>
-                    </Layer>
-                  )
-                }
+                {showChatWindow && mobileChatButton.current && (
+                  <Layer
+                    style={{ borderRadius: '18px', left: '10px', bottom: '10px' }}
+                    responsive={false}
+                    position="bottom-left"
+                    animation="slide"
+                    onClickOutside={() => setShowChatWindow(false)}
+                  >
+                    <div className={cls.chatContainer}>
+                      <ChatContainer />
+                    </div>
+                  </Layer>
+                )}
               </div>
             </div>
           )}
@@ -181,7 +184,9 @@ export const MobileLayout: React.FC<Props> = (props) => {
               <PlayerBox
                 player={props.opponentAsPlayer}
                 timeLeft={opponentTimeLeft}
-                active={game.state === 'started' && game.lastMoveBy !== props.opponentAsPlayer.color}
+                active={
+                  game.state === 'started' && game.lastMoveBy !== props.opponentAsPlayer.color
+                }
                 gameTimeLimit={game.timeLimit}
                 material={materialScore[props.opponentAsPlayer.color]}
                 onTimerFinished={props.onTimerFinished}
@@ -253,10 +258,10 @@ const useStyles = createUseStyles({
   mobileMainContainer: {
     paddingBottom: '8px',
   },
-  chatContainer:{
-    padding:'10px',
+  chatContainer: {
+    padding: '10px',
     height: '400px',
-    overflow:'hidden',
+    overflow: 'hidden',
   },
   mobileBoard: {
     ...floatingShadow,

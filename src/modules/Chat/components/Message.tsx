@@ -5,7 +5,7 @@ import { ChatMessageRecord, UserInfoRecord, UserRecord } from 'dstnd-io';
 import { colors, fonts } from 'src/theme';
 import { Text } from 'src/components/Text';
 import Linkify from 'react-linkify';
-import {SecureLink} from 'react-secure-link';
+import { SecureLink } from 'react-secure-link';
 
 type Props = {
   myId: UserRecord['id'];
@@ -14,41 +14,40 @@ type Props = {
   sameUser: boolean;
 };
 
-export const Message: React.FC<Props> = ({
-  myId,
-  message,
-  user,
-  sameUser
-}) => {
+export const Message: React.FC<Props> = ({ myId, message, user, sameUser }) => {
   const cls = useStyles();
 
   return (
     <div
       className={cx(cls.message, {
-        [cls.myMessage]: message.fromUserId=== myId,
+        [cls.myMessage]: message.fromUserId === myId,
       })}
     >
-      <div className={cx(cls.messageContentWrapper, {
-        [cls.myMessageContentWrapper]: message.fromUserId === myId,
-        [cls.otherMessageContentWrapper]: message.fromUserId !== myId,
-      })}>
-        <Linkify componentDecorator={(href, text, key) => (
-            <SecureLink href={href} key={key}>{text}</SecureLink>
-        )}>
-        <Text
-          className={cx(cls.messageContent, {
-            [cls.myMessageContent]: message.fromUserId === myId,
-            [cls.otherMessageContent]: message.fromUserId !== myId,
-          })}
+      <div
+        className={cx(cls.messageContentWrapper, {
+          [cls.myMessageContentWrapper]: message.fromUserId === myId,
+          [cls.otherMessageContentWrapper]: message.fromUserId !== myId,
+        })}
+      >
+        <Linkify
+          componentDecorator={(href, text, key) => (
+            <SecureLink href={href} key={key}>
+              {text}
+            </SecureLink>
+          )}
         >
-          {message.content}
-        </Text>
+          <Text
+            className={cx(cls.messageContent, {
+              [cls.myMessageContent]: message.fromUserId === myId,
+              [cls.otherMessageContent]: message.fromUserId !== myId,
+            })}
+          >
+            {message.content}
+          </Text>
         </Linkify>
       </div>
       {message.fromUserId !== myId && !sameUser && (
-        <Text className={cls.messageSender}>
-          {user.name}
-        </Text>
+        <Text className={cls.messageSender}>{user.name}</Text>
       )}
     </div>
   );

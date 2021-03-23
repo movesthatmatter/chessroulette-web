@@ -55,14 +55,18 @@ export const Countdown: React.FC<Props> = ({ onFinished = () => noop, ...props }
     <>
       {timeLeft > 0 ? (
         <Text className={cls.text}>
-          <Text className={cx(cls.text, cls.major, props.active && cls.textActive, {
-            [cls.countdownMilliseconds] : timeLeft < minutes(1),
-          })}>
+          <Text
+            className={cx(cls.text, cls.major, props.active && cls.textActive, {
+              [cls.countdownMilliseconds]: timeLeft < minutes(1),
+            })}
+          >
             {dateFormat(timeLeft, timeLeftToFormatMajor(timeLeft))}:
           </Text>
-          <Text className={cx(cls.text, cls.minor, props.active && cls.textActive,{
-            [cls.countdownMilliseconds] : timeLeft < minutes(1),
-          })}>
+          <Text
+            className={cx(cls.text, cls.minor, props.active && cls.textActive, {
+              [cls.countdownMilliseconds]: timeLeft < minutes(1),
+            })}
+          >
             {dateFormat(timeLeft, timeLeftToFormatMinor(timeLeft))}
           </Text>
         </Text>
@@ -103,7 +107,7 @@ const useStyles = createUseStyles({
     fontWeight: 300,
   },
   paused: {},
-  countdownMilliseconds : {
+  countdownMilliseconds: {
     color: colors.negative,
-  }
+  },
 });

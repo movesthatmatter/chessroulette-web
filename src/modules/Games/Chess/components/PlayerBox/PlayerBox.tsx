@@ -1,7 +1,7 @@
 import { ChessGameState, ChessPlayer } from 'dstnd-io';
 import { Box } from 'grommet';
 
-import React , {useRef} from 'react';
+import React, { useRef } from 'react';
 import { Avatar } from 'src/components/Avatar';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
@@ -13,7 +13,7 @@ import { Countdown } from '../Countdown';
 type Props = {
   player: ChessPlayer;
   timeLeft: ChessGameState['timeLeft']['black'] | ChessGameState['timeLeft']['white'];
-  active: boolean,
+  active: boolean;
   gameTimeLimit: ChessGameState['timeLimit'];
   material?: number;
   onTimerFinished?: () => void;
@@ -32,39 +32,37 @@ export const PlayerBox: React.FC<Props> = ({
   const containerDimensions = useContainerDimensions(boxContainerRef);
 
   return (
-    <Box fill className={cls.container} direction={containerDimensions.width > 170 ? 'row' : 'column'} ref={boxContainerRef}>
+    <Box
+      fill
+      className={cls.container}
+      direction={containerDimensions.width > 170 ? 'row' : 'column'}
+      ref={boxContainerRef}
+    >
       <Box fill direction="row">
         <Avatar>
           <Mutunachi mid={player.user.avatarId} />
         </Avatar>
         <Box className={cls.playerInfo}>
-          <Text className={cls.playerNameText}>
-            {player.user.name}
-          </Text>
-          <div style={{
-            flex: 1,
-            display: 'flex',
-          }}>
-            <Text size="small1">
-              {material > 0 && `+${material}`}
-            </Text>
+          <Text className={cls.playerNameText}>{player.user.name}</Text>
+          <div
+            style={{
+              flex: 1,
+              display: 'flex',
+            }}
+          >
+            <Text size="small1">{material > 0 && `+${material}`}</Text>
           </div>
         </Box>
       </Box>
       {gameTimeLimit !== 'untimed' && (
-        <Countdown
-          timeLeft={timeLeft}
-          active={active}
-          onFinished={props.onTimerFinished}
-        />
+        <Countdown timeLeft={timeLeft} active={active} onFinished={props.onTimerFinished} />
       )}
     </Box>
   );
 };
 
 const useStyles = createUseStyles({
-  container: {
-  },
+  container: {},
   playerInfo: {
     marginLeft: '8px',
   },
