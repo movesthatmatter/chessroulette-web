@@ -38,7 +38,6 @@ import {
   JoinedGameUpdatedPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
-import {MessagePayloadWithId} from 'typings/MessagePayloadWithId';
 
 type ReceivableMessagesMap = {
   peerJoinedRoom: PeerJoinedRoomPayload;
@@ -73,7 +72,7 @@ type SendableMessagesMap = {
 
   //Chat
   // TO-DO - put back the type from dstnd-io.
-  broadcastChatMessage: MessagePayloadWithId;
+  broadcastChatMessage: BroadcastChatMessagePayload;
 
   // Game
   gameResignationRequestPayload: GameResignationRequestPayload;

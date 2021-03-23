@@ -7,7 +7,7 @@ import { useInterval } from 'src/lib/hooks';
 import { Text } from 'src/components/Text';
 import { timeLeftToFormatMajor, timeLeftToFormatMinor, timeLeftToInterval } from './util';
 import { text } from 'src/theme/text';
-import { maxMediaQuery, onlyMobile } from 'src/theme';
+import { colors, defaultTheme, maxMediaQuery, onlyMobile } from 'src/theme';
 import { minutes } from 'src/lib/time';
 
 type Props = {
@@ -104,6 +104,6 @@ const useStyles = createUseStyles({
   },
   paused: {},
   countdownMilliseconds : {
-    color: 'red',
+    color: colors.negative,
   }
 });

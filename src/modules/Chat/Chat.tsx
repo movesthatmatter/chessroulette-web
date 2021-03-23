@@ -22,7 +22,6 @@ export type ChatProps = {
 
 export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) => {
   const cls = useStyles();
-  console.log('history', history);
   const [input, setInput] = useState('');
 
   return (
