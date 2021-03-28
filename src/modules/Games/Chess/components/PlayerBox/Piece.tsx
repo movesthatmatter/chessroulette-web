@@ -1,11 +1,12 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { fonts } from 'src/theme';
-import { pieces } from '../ChessBoard/assets/chessPiecesChessrouletteTheme';
 import cx from 'classnames';
 
 type Props = {
-  type: keyof typeof pieces;
+  // Changed during a refactoing
+  // type: keyof typeof pieces;
+  type: string;
   count?: number;
   className?: string;
 };
@@ -18,7 +19,7 @@ export const Piece: React.FC<Props> = ({
 
   return (
     <div className={cx(cls.container, props.className)}>
-      <img src={pieces[props.type]} className={cls.image}/>
+      {/* <img src={pieces[props.type]} className={cls.image}/> */}
       {count > 1 && (
         <div className={cls.text}>x{count}</div>
       )}
