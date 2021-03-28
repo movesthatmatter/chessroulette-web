@@ -40,20 +40,19 @@ export const GameHistory: React.FC<Props> = ({
   const [focus, setFocus] = useState<PairedIndex>([0, 0]);
 
   useEffect(() => {
-    if (game.pgn) {
-      const history = pgnToHistory(game.pgn);
-      const pairedHistory = toPairedHistory(history);
+    if (game.history) {
+      const pairedHistory = toPairedHistory(game.history);
 
       // Set the history in reverse so I can display history scrolled to the end
       //  using flex-direction: 'column-reverse' which reverses it by default
       const historyInReverse = arrReverse(pairedHistory);
 
       setPairedHistory(historyInReverse);
-      setFocus(linearToPairedIndex(history, focusedIndex));
+      setFocus(linearToPairedIndex(game.history, focusedIndex));
     } else {
       setPairedHistory([]);
     }
-  }, [game.pgn, focusedIndex]);
+  }, [game.history, focusedIndex]);
 
   return (
     <div className={cx(cls.container, props.className)}>

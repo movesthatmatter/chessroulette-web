@@ -37,9 +37,11 @@ export class GameMocker {
   }
 
   withProps(props: Partial<GameRecord>) {
+    const gameRecordFromProps = gameRecordMocker.withProps(props);
+
     return {
       ...this.record(),
-      ...props,
+      ...gameRecordFromProps,
     } as Game;
   }
 }

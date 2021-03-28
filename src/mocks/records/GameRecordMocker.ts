@@ -40,9 +40,11 @@ export class GameRecordMocker {
   }
 
   withProps(props: Partial<GameRecord>) {
+    const gameStateFromProps = chessGameStateMocker.withProps(props);
+
     return {
       ...this.record(),
-      ...props,
+      ...gameStateFromProps,
     } as GameRecord;
   }
 }
