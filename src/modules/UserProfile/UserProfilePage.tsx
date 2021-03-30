@@ -16,6 +16,8 @@ import { borderRadius, colors, floatingShadow, fonts } from 'src/theme';
 import { FacebookAuthButton } from 'src/vendors/facebook';
 import { LichessAuthButton } from 'src/vendors/lichess';
 import { updateUserAction } from 'src/services/Authentication/actions';
+import { AsyncResultWrapper, Ok } from 'dstnd-io';
+import { delay } from 'fp-ts/lib/Task';
 
 type Props = {};
 
@@ -42,6 +44,12 @@ export const UserProfilePage: React.FC<Props> = (props) => {
             }}
             initialModel={user}
             onSubmit={(model) => {
+              if (model.firstName === user.firstName || model.lastName === user.lastName){
+                return new AsyncResultWrapper(async () => {
+                  setEditMode(false);
+                  return Ok.EMPTY;
+                });
+              }
               return updateUser({
                 firstName : model.firstName,
                 lastName:  model.lastName,
@@ -67,7 +75,6 @@ export const UserProfilePage: React.FC<Props> = (props) => {
                       label="Done"
                       type='positive'
                       onClick={() => {
-                        console.log('submittiin', p);
                         p.submit();
                       }}
                     />
@@ -129,7 +136,7 @@ export const UserProfilePage: React.FC<Props> = (props) => {
                         mid={user.avatarId}
                         style={{ width: '150px', marginBottom: '20px' }}
                       />
-                      <div style={{alignSelf: 'center'}}>
+                      {/* <div style={{alignSelf: 'center'}}>
                       <Button
                         label="Choose"
                         type="secondary"
@@ -137,7 +144,7 @@ export const UserProfilePage: React.FC<Props> = (props) => {
                           setShowAvatarModal(true)
                         }}
                       />
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
