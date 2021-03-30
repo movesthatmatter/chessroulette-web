@@ -1,24 +1,21 @@
-import { Avatar } from 'grommet';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button } from 'src/components/Button';
 import { Form } from 'src/components/Form';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { AuthenticatedPage } from 'src/components/Page';
-import { Text } from 'src/components/Text';
 import { TextInput } from 'src/components/TextInput';
-import {TextInput as GrommetTextInput} from 'grommet';
 import { createUseStyles } from 'src/lib/jss';
 import { validator } from 'src/lib/validator';
 import {
   connectExternalAccountEffect,
-  updateAuthenticatedUser,
-  useAuthenticatedUser,
+  refreshAuthenticatedUser,
 } from 'src/services/Authentication';
+import {updateUser} from 'src/services/Authentication/resources'
 import { borderRadius, colors, floatingShadow, fonts } from 'src/theme';
 import { FacebookAuthButton } from 'src/vendors/facebook';
 import { LichessAuthButton } from 'src/vendors/lichess';
-import { AsyncResultWrapper, Ok } from 'dstnd-io';
+import { updateUserAction } from 'src/services/Authentication/actions';
 
 type Props = {};
 
@@ -26,87 +23,122 @@ export const UserProfilePage: React.FC<Props> = (props) => {
   const cls = useStyles();
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+
   useEffect(() => {
     // Make sure the user is up to date
-    dispatch(updateAuthenticatedUser());
+    dispatch(refreshAuthenticatedUser());
   }, []);
 
   return (
+    <>
     <AuthenticatedPage
       render={({ user }) => {
         return (
-          <Form<{ firstName: string; lastName: string; email: string }>
+          <Form<{ firstName: string; lastName: string}>
             validator={{
               firstName: [validator.rules.name(), validator.messages.firstName],
               lastName: [validator.rules.name(), validator.messages.lastName],
-              email: [validator.rules.email(), validator.messages.email],
             }}
-            onSubmit={() => {
-              return new AsyncResultWrapper(async () => {
-                return Ok.EMPTY;
-              });
+            initialModel={user}
+            onSubmit={(model) => {
+              return updateUser({
+                firstName : model.firstName,
+                lastName:  model.lastName,
+              })
+              .mapErr((e) => {
+                return {
+                  type: 'SubmissionGenericError',
+                  content: undefined,
+                } as const;
+              })
+              .map((user) => {
+                dispatch(updateUserAction({ user }));
+                setEditMode(false);
+              })
             }}
             render={(p) => (
               <div className={cls.wrapper}>
                 <div className={cls.titleContainer}>
                   <div className={cls.title}>My Profile</div>
-                  {editMode  
-                  ? < Button style={{width: '100px'}} label='Done' type='secondary' onClick={() => {
-                    console.log('submittiin', p);
-                    p.submit();
-                    setEditMode(false)
-                  }}/>
-                  : <Button style={{width: '100px'}}  label="Edit" type="secondary" withLoader onClick={() => setEditMode(true)}/>}
+                  {editMode ? (
+                    <Button
+                      style={{ width: '100px' }}
+                      label="Done"
+                      type='positive'
+                      onClick={() => {
+                        console.log('submittiin', p);
+                        p.submit();
+                      }}
+                    />
+                  ) : (
+                    <Button
+                      style={{ width: '100px' }}
+                      label="Edit"
+                      type="secondary"
+                      withLoader
+                      onClick={() => setEditMode(true)}
+                    />
+                  )}
                 </div>
                 <div className={cls.detailsContainer}>
                   <div className={cls.fieldWrapper}>
                     <div className={cls.field}>First Name: </div>
                     <div className={cls.propertyContainer}>
-                      {editMode 
-                      ? <TextInput
-                      className={cls.input}
-                      value={p.model.firstName}
-                      placeholder={user.firstName}
-                      onChange={(e) => p.onChange('firstName', e.target.value)}
-                      onBlur={() => p.validateField('firstName')}
-                      validationError={p.errors.validationErrors?.firstName}
-                      /> 
-                      : <div className={cls.property}>{user.firstName}</div>}
+                      {editMode ? (
+                        <TextInput
+                          className={cls.input}
+                          value={p.model.firstName}
+                          placeholder={user.firstName}
+                          onChange={(e) => p.onChange('firstName', e.target.value)}
+                          onBlur={() => p.validateField('firstName')}
+                          validationError={p.errors.validationErrors?.firstName}
+                        />
+                      ) : (
+                        <div className={cls.property}>{user.firstName}</div>
+                      )}
                     </div>
                   </div>
                   <div className={cls.fieldWrapper}>
                     <div className={cls.field}>Last Name: </div>
                     <div className={cls.propertyContainer}>
-                      {editMode 
-                      ? <TextInput
-                      className={cls.input}
-                      value={p.model.lastName}
-                      placeholder={user.lastName}
-                      onChange={(e) => p.onChange('lastName', e.target.value)}
-                      onBlur={() => p.validateField('lastName')}
-                      validationError={p.errors.validationErrors?.lastName}
-                      /> 
-                      : <div className={cls.property}>{user.lastName}</div>}
+                      {editMode ? (
+                        <TextInput
+                          className={cls.input}
+                          value={p.model.lastName}
+                          placeholder={user.lastName}
+                          onChange={(e) => p.onChange('lastName', e.target.value)}
+                          onBlur={() => p.validateField('lastName')}
+                          validationError={p.errors.validationErrors?.lastName}
+                        />
+                      ) : (
+                        <div className={cls.property}>{user.lastName}</div>
+                      )}
                     </div>
                   </div>
                   <div className={cls.fieldWrapper}>
                     <div className={cls.field}>E-mail: </div>
                     <div className={cls.propertyContainer}>
-                      {editMode 
-                      ? <TextInput
-                      className={cls.input}
-                      value={p.model.email}
-                      placeholder={user.email}
-                      onChange={(e) => p.onChange('email', e.target.value)}
-                      onBlur={() => p.validateField('email')}
-                      validationError={p.errors.validationErrors?.email}
-                      /> 
-                      : <div className={cls.property}>{user.email}</div>}
+                        <div className={cls.property}>{user.email}</div>
                     </div>
                   </div>
                   <div className={cls.fieldWrapper}>
                     <div className={cls.field}>Avatar: </div>
-                    <Mutunachi mid={user.avatarId} style={{ width: '150px' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'center' }}>
+                      <Mutunachi
+                        mid={user.avatarId}
+                        style={{ width: '150px', marginBottom: '20px' }}
+                      />
+                      <div style={{alignSelf: 'center'}}>
+                      <Button
+                        label="Choose"
+                        type="secondary"
+                        onClick={() => {
+                          setShowAvatarModal(true)
+                        }}
+                      />
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div style={{ paddingTop: 30 }}>
@@ -151,6 +183,7 @@ export const UserProfilePage: React.FC<Props> = (props) => {
         );
       }}
     ></AuthenticatedPage>
+    </>
   );
 };
 
@@ -190,8 +223,8 @@ const useStyles = createUseStyles({
     width: '230px',
     padding: '6px',
   },
-  input:{
-    marginBottom:'0px',
+  input: {
+    marginBottom: '0px',
   },
   property: {
     marginLeft: '10px',
