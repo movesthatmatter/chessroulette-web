@@ -127,7 +127,8 @@ const useStyles = createUseStyles({
         }
   },
   active:{
-      color:colors.primary
+      color:colors.white,
+      backgroundColor: colors.primary
   },
   page : {
       padding: '0px 10px',

@@ -4,6 +4,9 @@ const primaryLight = '#A9C1FD';
 const primaryLightest = '#EBF0FF';
 const primaryDark = '#366BEF';
 
+const chessBoardDark = '#7e9ac7';
+const chessBoardLight = '#dee5f0';
+
 const attention = '#FAC032';
 const attentionLight = '#FCDF98';
 const attentionDarker = '#EFAD0A';
@@ -64,4 +67,7 @@ export const colors = {
   neutralDark,
   neutralDarker,
   neutralDarkest,
+
+  chessBoardDark,
+  chessBoardLight
 };

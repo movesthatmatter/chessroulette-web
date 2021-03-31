@@ -58,6 +58,18 @@ const subtitle2: CSSProperties = {
   lineHeight: '20px',
 };
 
+const largeNormal : CSSProperties = {
+  fontSize: '18px',
+  fontWeight:'normal',
+  lineHeight: '26px'
+}
+
+const largeBold : CSSProperties = {
+  fontSize: '18px',
+  fontWeight:'bolder',
+  lineHeight:'26px',
+}
+
 export const fonts = {
   small1,
   small2,
@@ -68,4 +80,7 @@ export const fonts = {
 
   subtitle1,
   subtitle2,
+
+  largeBold,
+  largeNormal
 };
