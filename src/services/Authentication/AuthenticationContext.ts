@@ -1,6 +1,5 @@
+import { GuestUserRecord, RegisteredUserRecord } from 'dstnd-io';
 import { createContext } from 'react';
-import { AuthenticationState } from './reducer';
+// import { AuthenticationState } from './reducer';
 
-export const AuthenticationContext = createContext<AuthenticationState>({
-  authenticationType: 'none',
-});
+export const AuthenticationContext = createContext<RegisteredUserRecord | GuestUserRecord | undefined>(undefined);

@@ -9,67 +9,67 @@ import {
 } from './resources';
 import { authentication } from './authentication';
 
-export const authenticateWithAccessTokenEffect = (accessToken: string) => async (dispatch: Dispatch) => {
+export const authenticateEffect = (accessToken: string) => async (dispatch: Dispatch) => {
   // Persist the Auth Token outside of Redux
   //  so other services (outside of the DOM) have access to it
   //  like the Http
   // Needs to be done before the getUser() is called
   //  so the access token can be used by the http instance
-  await authentication.persistAccessToken(accessToken);
+  await authentication.create({
+    isGuest: false,
+    accessToken,
+  });
 
-  return getUser()
-    .map((user) => {
-      dispatch(setUserAction({ user, accessToken }));
+  return getUser().map((user) => {
+    dispatch(unsetUserAction());
 
-      return user;
-    });
-}
+    dispatch(setUserAction({ user, accessToken }));
 
-export const authenticateAsGuestEffect = () => async (dispatch: Dispatch) => {
-  // Reset the possible stale current user to make sure it's never used
+    return user;
+  });
+};
+
+export const authenticateAsGuestEffect = (guest?: GuestUserRecord) => async (
+  dispatch: Dispatch
+) => {
+  const guestResult = guest
+    ? authenticateAsExistentGuest({ guestUser: guest })
+    : authenticateAsNewGuest();
+
+  guestResult.map(async ({ guest }) => {
+    await authentication.create(guest);
+    
+    // Reset the possible stale current user to make sure it's never used
+    dispatch(unsetUserAction());
+    dispatch(setGuestUserAction(guest));
+  });
+};
+
+export const deauthenticate = () => async (dispatch: Dispatch) => {
+  await authentication.remove();
+
   dispatch(unsetUserAction());
 
-  // Remove the Auth Token
-  await authentication.removeAccessToken();
-
+  // TODO: For now automatically "authenticate" as guest
   return (await authenticateAsNewGuest()).map(({ guest }) => {
     dispatch(setGuestUserAction(guest));
 
-    return guest;
+    return undefined;
   });
-}
-
-export const authenticateAsExistentGuestEffect = (
-  guestUser: GuestUserRecord
-) => async (dispatch: Dispatch) => {
-  // Reset the possible stale current user to make sure it's never used
-  dispatch(unsetUserAction());
-
-  // Remove the Auth Token
-  await authentication.removeAccessToken();
-
-  return authenticateAsExistentGuest({ guestUser })
-    .map(({ guest }) => {
-      dispatch(setGuestUserAction(guest));
-
-      return guest;
-    });
-}
+};
 
 export const updateAuthenticatedUser = () => async (dispatch: Dispatch) => {
-  return getUser()
-    .map((user) => {
-      dispatch(updateUserAction({ user }));
+  return getUser().map((user) => {
+    dispatch(updateUserAction({ user }));
 
-      return user;
-    });
-}
+    return user;
+  });
+};
 
-export const connectExternalAccountEffect = (
-  req: Parameters<typeof connectExternalAccount>[0],
-) => (dispatch: Dispatch) => {
-  return connectExternalAccount(req)
-    .map((user) => {
-      dispatch(updateUserAction({ user }));
-    });
-}
+export const connectExternalAccountEffect = (req: Parameters<typeof connectExternalAccount>[0]) => (
+  dispatch: Dispatch
+) => {
+  return connectExternalAccount(req).map((user) => {
+    dispatch(updateUserAction({ user }));
+  });
+};

@@ -4,7 +4,9 @@ import { AuthenticationContext } from './AuthenticationContext';
 import { AuthenticationStateGuest, AuthenticationStateUser } from './reducer';
 
 type Props = {
-  renderAuthenticated?: (user: AuthenticationStateUser['user'] | AuthenticationStateGuest['user']) => React.ReactElement;
+  renderAuthenticated?: (
+    user: AuthenticationStateUser['user'] | AuthenticationStateGuest['user']
+  ) => React.ReactElement;
   renderNotAuthenticated?: () => React.ReactElement;
 };
 
@@ -14,17 +16,9 @@ export const AuthenticationConsumer: React.FC<Props> = ({
 }) => {
   const contextState = useContext(AuthenticationContext);
 
-  if (contextState.authenticationType === 'none') {
-    return (
-      <>
-        {renderNotAuthenticated()}
-      </>
-    );
+  if (!contextState) {
+    return <>{renderNotAuthenticated()}</>;
   }
 
-  return (
-    <>
-      {renderAuthenticated(contextState.user)}
-    </>
-  );
+  return <>{renderAuthenticated(contextState)}</>;
 };

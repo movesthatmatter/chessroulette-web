@@ -1,31 +1,57 @@
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selectAuthentication } from './selectors';
+import { authentication, AuthenticationRecord } from './authentication';
+// import { selectAuthentication } from './selectors';
 
-export const useAuthentication = () => useSelector(selectAuthentication);
 
-export const useAnyUser = () => {
-  const auth = useSelector(selectAuthentication);
+export const usePersistedAuthentication = () => {
+  const [state, setState] = useState<AuthenticationRecord>();
 
-  return auth.authenticationType !== 'none' ? auth.user : undefined;
-};
+  useEffect(() => {
+    authentication.get()
+      .map((record) => {
+        setState(record);
+      });
+  }, []);
 
-// This Returns a Registered User, not a Guest
-export const useAuthenticatedUser = () => {
-  const user = useAnyUser();
+  useEffect(() => {
+    authentication.onUpdated((nextRecord) => {
+      setState(nextRecord);
+    });
+  }, []);
 
-  if (user?.isGuest === false) {
-    return user;
-  }
+  return state;
+}
 
-  return undefined;
-};
+// @Deprecate in favor of usePersisteedAuthentication and rename that useaAuehtntication
+//  in order to havee only one source of truth.
+//  This way there will be no redux for the authneticaation any more, b/c the current
+//  redux will be renamed to User
+// export const useAuthentication = () => useSelector(selectAuthentication);
 
-export const useUserAuthentication = () => {
-  const auth = useAuthentication();
+// export const useAnyUser = () => {
+//   const auth = useSelector(selectAuthentication);
 
-  if (auth.authenticationType === 'user') {
-    return auth;
-  }
+//   return auth.authenticationType !== 'none' ? auth.user : undefined;
+// };
 
-  return undefined;
-};
+// // This Returns a Registered User, not a Guest
+// export const useAuthenticatedUser = () => {
+//   const user = useAnyUser();
+
+//   if (user?.isGuest === false) {
+//     return user;
+//   }
+
+//   return undefined;
+// };
+
+// export const useUserAuthentication = () => {
+//   const auth = useAuthentication();
+
+//   if (auth.authenticationType === 'user') {
+//     return auth;
+//   }
+
+//   return undefined;
+// };
