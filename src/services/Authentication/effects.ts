@@ -1,11 +1,12 @@
 import { Dispatch } from 'redux';
-import { GuestUserRecord } from 'dstnd-io';
+import { GuestUserRecord, RegisteredUserRecord, UserInfoRecord, UserRecord } from 'dstnd-io';
 import { setGuestUserAction, setUserAction, unsetUserAction, updateUserAction } from './actions';
 import {
   authenticateAsExistentGuest,
   getUser,
   authenticateAsNewGuest,
   connectExternalAccount,
+  updateUser
 } from './resources';
 import { authentication } from './authentication';
 
@@ -56,7 +57,7 @@ export const authenticateAsExistentGuestEffect = (
     });
 }
 
-export const updateAuthenticatedUser = () => async (dispatch: Dispatch) => {
+export const refreshAuthenticatedUser = () => async (dispatch: Dispatch) => {
   return getUser()
     .map((user) => {
       dispatch(updateUserAction({ user }));

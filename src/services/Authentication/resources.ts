@@ -25,6 +25,12 @@ export const createUser = (req: Resources.Util.RequestOf<typeof userRegistration
   return userRegistrationResource.request(req, (data) => http.post('/api/auth/register', data));
 }
 
+const {resource : userUpdateResource } = Resources.Collections.User.UserUpdate;
+
+export const updateUser = (req : Resources.Util.RequestOf<typeof userUpdateResource>) => {
+  return userUpdateResource.request(req, (data) => {
+    return http.post('/api/users', data)})
+} 
 const { resource: getUserResource } = Resources.Collections.User.GetUser;
 
 export const getUser = () => {
