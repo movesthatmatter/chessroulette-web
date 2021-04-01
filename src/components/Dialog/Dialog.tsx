@@ -6,6 +6,7 @@ import { Button, ButtonProps } from '../Button';
 import { Text } from 'src/components/Text';
 import { hasOwnProperty, noop } from 'src/lib/util';
 import { FormClose } from 'grommet-icons';
+import cx from 'classnames';
 
 type DangerouslySetInnerHTML = { __html: string };
 
@@ -20,6 +21,7 @@ export type DialogProps = {
   hasCloseButton?: boolean;
   onClose?: () => void;
   target?: LayerProps['target'];
+  contentContainerClass?: string;
 };
 
 const isDangerouslySetHtml = (t: unknown): t is DangerouslySetInnerHTML =>
@@ -28,6 +30,7 @@ const isDangerouslySetHtml = (t: unknown): t is DangerouslySetInnerHTML =>
 export const Dialog: React.FC<DialogProps> = ({
   hasCloseButton = true,
   onClose = noop,
+  contentContainerClass,
   ...props
 }) => {
   const cls = useStyles();
@@ -44,7 +47,7 @@ export const Dialog: React.FC<DialogProps> = ({
       //  the content weirdly! 
       animation={false}
       target={props.target}
-      modal={true}
+      modal
       responsive={false}
     >
       <div className={cls.top}>
@@ -57,7 +60,7 @@ export const Dialog: React.FC<DialogProps> = ({
       </div>
       {props.title && <div className={cls.title}>{props.title}</div>}
       {props.graphic}
-      <div className={cls.contentWrapper}>
+      <div className={cx(cls.contentWrapper, contentContainerClass)}>
         {(typeof props.content === 'string' || isDangerouslySetHtml(props.content)) ? (
           <div className={cls.contentTextWrapper}>
             {typeof props.content === 'string' ? (

@@ -14,20 +14,22 @@ export default {
 
 export const defaultStory = () => (
   <Grommet theme={defaultTheme}>
-    <RegistrationForm
-      userInfo={{
-        type: 'internal',
-        email: 'sample@email.com',
-      }}
-      onSubmit={() => {
-        action('on submit')();
+    <div style={{ width: 420 }}>
+      <RegistrationForm
+        userInfo={{
+          type: 'internal',
+          email: 'sample@email.com',
+        }}
+        onSubmit={() => {
+          action('on submit')();
 
-        return new AsyncResultWrapper(async () => {
-          await delay(2 * 1000);
+          return new AsyncResultWrapper(async () => {
+            await delay(2 * 1000);
 
-          return Ok.EMPTY;
-        });
-      }}
-    />
+            return Ok.EMPTY;
+          });
+        }}
+      />
+    </div>
   </Grommet>
 );

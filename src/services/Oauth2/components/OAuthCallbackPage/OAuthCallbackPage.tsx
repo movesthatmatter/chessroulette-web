@@ -1,6 +1,7 @@
 import { ExternalVendor } from 'dstnd-io';
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, { useEffect } from 'react';
+import { Button } from 'src/components/Button';
 import { WindowWithOnTokenReceived } from '../../types';
 
 type Props = {
@@ -17,7 +18,13 @@ export const OAuthCallbackPage: React.FC<Props> = (props) => {
       } else if (props.vendor === 'lichess') {
         (window.opener as WindowWithOnTokenReceived).onTokenReceivedLichess?.(token);
       }
-      window.close();
+
+      // HACK: If the timer isn't here, the react-popout component in which
+      // this component is rendered throws:
+      //   Error: unmountComponentAtNode(...): Target container is not a DOM element.
+      setTimeout(() => {
+        window.close();
+      }, 200);
     }
   }, []);
 

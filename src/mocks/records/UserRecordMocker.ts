@@ -42,21 +42,7 @@ export class UserRecordMocker {
       name,
       avatarId: String(getRandomInt(1, 18)),
       profilePicUrl: undefined,
-      // externalAccountId,
-      // externalAccountType: 'lichess',
-      // externalAccountInfo: {
-      //   email,
-      //   id: externalAccountId,
-      //   username: chance.name(),
-      //   perfs: {
-      //     rapid: this.lichessPerf(),
-      //     blitz: this.lichessPerf(),
-      //     bullet: this.lichessPerf(),
-      //     correspondence: this.lichessPerf(),
-      //     classical: this.lichessPerf(),
-      //     puzzle: this.lichessPerf(),
-      //   },
-      // },
+      externalAccounts: undefined,
     };
   }
 

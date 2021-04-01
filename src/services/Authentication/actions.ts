@@ -9,6 +9,13 @@ export const setUserAction = createAction(
   }) => resolve(p),
 );
 
+export const updateUserAction = createAction(
+  'updateUserAction',
+  (resolve) => (p: {
+    user: RegisteredUserRecord;
+  }) => resolve(p),
+);
+
 export const unsetUserAction = createAction('unsetUserAction');
 
 export const setGuestUserAction = createAction(
