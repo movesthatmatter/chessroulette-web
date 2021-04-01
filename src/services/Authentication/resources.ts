@@ -43,12 +43,14 @@ const {
   resource: guestAuthenticationResource,
 } = Resources.Collections.Authentication.GuestAuthentication;
 
+// TODO: Does the name for this make sense? is it authenticating?
 export const authenticateAsNewGuest = () => {
   return guestAuthenticationResource.request({
     guestUser: null,
   }, (data) => http.post('/api/auth/guest', data));
 }
 
+// TODO: Does the name for this mae sense? is it authenticating?
 export const authenticateAsExistentGuest = (
   req: Resources.Util.RequestOf<typeof guestAuthenticationResource>
 ) => {

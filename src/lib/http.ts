@@ -1,10 +1,9 @@
 import axios, {
   AxiosRequestConfig,
-  AxiosInterceptorManager,
-  AxiosResponse,
+    AxiosResponse,
 } from 'axios';
 import config from 'src/config';
-import { authentication } from 'src/services/Authentication';
+import { authenticationService } from 'src/services/Authentication';
 
 export const getHttpInstance = (opts?: AxiosRequestConfig) => {
   const instance = axios.create(opts);
@@ -77,18 +76,33 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
 
   // Add the Authentication Header
   instance.interceptors.request.use(async (request) => {
-    const accessTokenResult = await authentication
-      .getAccessToken()
+    const accessTokenResult = await authenticationService
+      .get()
       .resolve();
 
-    if (accessTokenResult.ok) {
+    if (accessTokenResult.ok && !accessTokenResult.val.isGuest) {
       request.headers = {
         ...request.headers,
-        'auth-token': accessTokenResult.val,
+        'auth-token': accessTokenResult.val.accessToken,
       }
     }
 
     return request;
+  });
+
+  instance.interceptors.response.use(undefined, (e) => {
+    if (e instanceof Error) {
+
+      // This isn't the best way to check the error, but it works for now!
+      // Anytime the server returns a 401 it means the Authenticated User isn't correct
+      //  so just deauthenticate it!
+      // A better approach would be to get the payload from the server and check against it!
+      if (e.message === 'Request failed with status code 401') {
+        authenticationService.remove();
+      }
+    }
+
+    return Promise.reject(e);
   });
 
   return instance;
