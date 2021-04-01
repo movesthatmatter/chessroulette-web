@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { authenticateAsGuestEffect, selectAuthentication } from 'src/services/Authentication';
+import { selectAuthentication } from 'src/services/Authentication';
 import { colors, floatingShadow, fonts, hardBorderRadius, text } from 'src/theme';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { Avatar } from 'src/components/Avatar';
@@ -165,9 +165,7 @@ export const UserMenu: React.FC<Props> = ({
                   }}
                 />
                 <div
-                  onClick={() => {
-                    dispatch(authenticateAsGuestEffect());
-                  }}
+                  onClick={() => {}}
                   className={cls.link}
                   onMouseOver={() => setSignOutOver(true)}
                   onMouseOut={() => setSignOutOver(false)}
