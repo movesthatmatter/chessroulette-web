@@ -7,7 +7,6 @@ import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { RegistrationForm, RegistrationUserInfo } from '../../components/RegistrationForm';
 import { VerificationForm } from '../../components/VerificationForm';
 import * as resources from '../../resources';
-import { authenticateWithAccessTokenEffect } from '../../effects';
 import { keyInObject } from 'src/lib/util';
 import { AsyncResult, CreateUserAccountRequestPayload, RegisteredUserRecord } from 'dstnd-io';
 import { CodeVerificationForm } from '../../components/CodeVerificationForm';
@@ -15,6 +14,7 @@ import { UserAccountInfo } from '../../types';
 import { colors } from 'src/theme';
 import { Emoji } from 'src/components/Emoji';
 import capitalize from 'capitalize';
+import { useAuthenticationService } from '../../useAuthentication';
 
 
 type Props = {
@@ -49,6 +49,7 @@ type Steps = VerificationStep | RegistrationStep | ExternalConnectionStep;
 
 export const AuthenticationDialog: React.FC<Props> = (props) => {
   const cls = useStyles();
+  const authenticationService = useAuthenticationService();
   // Todo, there could be a prop determining this
   const [currentStepState, setCurrentStepState] = useState<Steps>({
     name: 'VerificationStep',
@@ -79,7 +80,10 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
       })
       .map((r) => {
         if (r.status === 'ExistentUser') {
-          dispatch(authenticateWithAccessTokenEffect(r.accessToken));
+          authenticationService.create({
+            isGuest: false,
+            accessToken: r.accessToken,
+          });
         } else if (r.status === 'InexistentUser') {
           if (input.type === 'internal') {
             setCurrentStepState({
@@ -161,7 +165,10 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
                 } as const;
               })
               .map((r) => {
-                dispatch(authenticateWithAccessTokenEffect(r.accessToken));
+                authenticationService.create({
+                  isGuest: false,
+                  accessToken: r.accessToken,
+                });
               });
           }}
         />
