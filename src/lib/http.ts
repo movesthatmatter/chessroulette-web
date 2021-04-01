@@ -1,6 +1,6 @@
 import axios, {
   AxiosRequestConfig,
-    AxiosResponse,
+  AxiosResponse,
 } from 'axios';
 import config from 'src/config';
 import { authenticationService } from 'src/services/Authentication';
@@ -83,7 +83,7 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
     if (accessTokenResult.ok && !accessTokenResult.val.isGuest) {
       request.headers = {
         ...request.headers,
-        'auth-token': accessTokenResult.val.accessToken,
+        'Authorization': `Bearer ${accessTokenResult.val.accessToken}`,
       }
     }
 
