@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { Button, ButtonProps } from 'src/components/Button';
 import { AuthenticationDialog } from '../AuthenticationDialog';
 
-
 type Props = Omit<ButtonProps, 'onClick' | 'click' | 'type' | 'label'> & {
   label?: string;
-}
+};
 
 export const AuthenticationButton: React.FC<Props> = ({
   label = 'My Account',
@@ -27,9 +26,17 @@ export const AuthenticationButton: React.FC<Props> = ({
         style={{
           marginBottom: 0,
         }}
+        withBadge={{
+          color: 'negative',
+          text: 'New',
+        }}
         {...restButtonProps}
       />
-      <AuthenticationDialog key={dialogUniqKey} visible={showDialog} onClose={() => setShowDialog(false)} />
+      <AuthenticationDialog
+        key={dialogUniqKey}
+        visible={showDialog}
+        onClose={() => setShowDialog(false)}
+      />
     </>
   );
 };

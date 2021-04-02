@@ -16,6 +16,14 @@ const userRecordMocker = new UserRecordMocker();
 const userA = userRecordMocker.record(false);
 
 export const defaultStory = () => (
+  <StorybookReduxProvider initialState={{}}>
+    <Grommet theme={defaultTheme} full>
+      <LandingPage />
+    </Grommet>
+  </StorybookReduxProvider>
+);
+
+export const withUser = () => (
   <StorybookReduxProvider
     initialState={{
       authentication: {

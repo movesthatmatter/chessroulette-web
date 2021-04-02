@@ -44,7 +44,7 @@ export const UserMenu: React.FC<Props> = ({
   const [profileOver, setProfileOver] = useState(false);
   const [gamesOver, setGamesOver] = useState(false);
   const [signOutOver, setSignOutOver] = useState(false);
-  const location = useLocation();
+  // const location = useLocation();
   const dispatch = useDispatch();
 
   useOnClickOutside(menuRef, () => {
@@ -117,10 +117,10 @@ export const UserMenu: React.FC<Props> = ({
               <div className={cls.linkWrapper}>
                 <div
                   className={cls.largeDot}
-                  style={{
-                    width: profileOver || location.pathname === '/user' ? '100%' : '18px',
-                    transition: 'width 0.5s ease-in-out',
-                  }}
+                  // style={{
+                  //   width: profileOver || location.pathname === '/user' ? '100%' : '18px',
+                  //   transition: 'width 0.5s ease-in-out',
+                  // }}
                 />
                 <NavLink
                   to="/user"
@@ -138,10 +138,10 @@ export const UserMenu: React.FC<Props> = ({
               <div className={cls.linkWrapper}>
                 <div
                   className={cls.largeDot}
-                  style={{
-                    width: gamesOver || location.pathname === '/user/games' ? '100%' : '18px',
-                    transition: 'width 0.5s ease-in-out',
-                  }}
+                  // style={{
+                  //   width: gamesOver || location.pathname === '/user/games' ? '100%' : '18px',
+                  //   transition: 'width 0.5s ease-in-out',
+                  // }}
                 />
                 <NavLink
                   to="/user/games"
