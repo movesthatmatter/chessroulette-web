@@ -1,18 +1,19 @@
 import { ChessGameState, ChessPlayer } from 'dstnd-io';
 import { Box } from 'grommet';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { Avatar } from 'src/components/Avatar';
+import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { floatingShadow, fonts } from 'src/theme';
+import { floatingShadow, fonts, maxMediaQuery, minMediaQuery } from 'src/theme';
 import { Countdown } from '../Countdown';
 
 type Props = {
   player: ChessPlayer;
   timeLeft: ChessGameState['timeLeft']['black'] | ChessGameState['timeLeft']['white'];
-  active: boolean,
+  active: boolean;
   gameTimeLimit: ChessGameState['timeLimit'];
   material?: number;
   onTimerFinished?: () => void;
@@ -27,33 +28,34 @@ export const PlayerBox: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
+  const boxContainerRef = useRef(null);
+  const containerDimensions = useContainerDimensions(boxContainerRef);
 
   return (
-    <Box fill className={cls.container} direction="row">
+    <Box
+      fill
+      className={cls.container}
+      direction={containerDimensions.width > 170 ? 'row' : 'column'}
+      ref={boxContainerRef}
+    >
       <Box fill direction="row">
         <Avatar>
           <Mutunachi mid={player.user.avatarId} />
         </Avatar>
         <Box className={cls.playerInfo}>
-          <Text className={cls.playerNameText}>
-            {player.user.name}
-          </Text>
-          <div style={{
-            flex: 1,
-            display: 'flex',
-          }}>
-            <Text size="small1">
-              {material > 0 && `+${material}`}
-            </Text>
+          <Text className={cls.playerNameText}>{player.user.name}</Text>
+          <div
+            style={{
+              flex: 1,
+              display: 'flex',
+            }}
+          >
+            <Text size="small1">{material > 0 && `+${material}`}</Text>
           </div>
         </Box>
       </Box>
       {gameTimeLimit !== 'untimed' && (
-        <Countdown
-          timeLeft={timeLeft}
-          active={active}
-          onFinished={props.onTimerFinished}
-        />
+        <Countdown timeLeft={timeLeft} active={active} onFinished={props.onTimerFinished} />
       )}
     </Box>
   );

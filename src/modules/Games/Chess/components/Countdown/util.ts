@@ -21,7 +21,7 @@ export const timeLeftToFormatMinor = (timeLeftMs: number) => {
   //   return 'l';
   // }
   if (timeLeftMs < minutes(1)) {
-    return 'l';
+    return 'L';
   }
   if (timeLeftMs < hours(1)) {
     return 'ss';

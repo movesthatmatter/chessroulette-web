@@ -1,7 +1,7 @@
 import { GuestUserRecord, RegisteredUserRecord } from 'dstnd-io';
 import { createReducer } from 'deox';
 import { GenericStateSlice } from 'src/redux/types';
-import { setGuestUserAction, setUserAction, unsetUserAction } from './actions';
+import { setGuestUserAction, setUserAction, unsetUserAction, updateUserAction } from './actions';
 
 export type AuthenticationStateNone = {
   authenticationType: 'none';
@@ -35,6 +35,16 @@ const reducer = createReducer(
         authenticationType: 'user',
         user: payload.user,
         accessToken: payload.accessToken,
+      };
+    }),
+    handleAction(updateUserAction, (state, { payload }) => {
+      if (state.authenticationType !== 'user') {
+        return state;
+      }
+
+      return {
+        ...state,
+        user: payload.user,
       };
     }),
     handleAction(setGuestUserAction, (_, { payload }) => {

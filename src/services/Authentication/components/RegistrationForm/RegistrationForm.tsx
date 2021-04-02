@@ -45,7 +45,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
     };
 
   return (
-    <div className={cls.container}>
+    <div>
       <div className={cls.infoTextWrapper}>
         <Text size="body1" className={cls.infoText}>
           I just need to know a bit more about you.
@@ -75,7 +75,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
                     : 'What\'s your email?'
               }
               placeholder="beth.harmon@queens.gambit"
-              readOnly={props.userInfo.type === 'internal' && props.userInfo.email.length > 0}
+              readOnly
               value={p.model.email}
               onChange={(e) => p.onChange('email', e.target.value)}
               validationError={p.errors.validationErrors?.email || p.errors.submissionValidationErrors?.email}
@@ -113,9 +113,6 @@ export const RegistrationForm: React.FC<Props> = (props) => {
 };
 
 const useStyles = createUseStyles({
-  container: {
-    marginBottom: '-32px',
-  },
   infoTextWrapper: {
     textAlign: 'center',
     paddingBottom: '24px',

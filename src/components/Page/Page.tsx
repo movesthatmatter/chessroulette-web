@@ -4,11 +4,11 @@ import { Logo } from 'src/components/Logo';
 import { Footer } from '../Footer';
 import { NavigationMenu } from '../Navigation/NavigationMenu';
 
-type Props = {
+export type PageProps = {
   logoAsLink?: boolean;
 };
 
-export const Page: React.FC<Props> = ({ logoAsLink = true, ...props }) => {
+export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
   const cls = useStyles();
 
   return (

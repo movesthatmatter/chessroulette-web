@@ -29,7 +29,6 @@ export const ChatContainer: React.FC<Props> = (chatProps) => {
               fromUserId: room.me.user.id,
               sentAt: toISODateTime(new Date()),
             };
-
             request({
               kind: 'broadcastChatMessage',
               content: payload,
