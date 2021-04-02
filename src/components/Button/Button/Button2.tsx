@@ -10,6 +10,7 @@ import { CSSProperties } from 'src/lib/jss/types';
 import Loader from 'react-loaders';
 import 'loaders.css';
 import { AsyncResult } from 'dstnd-io';
+import { Badge, BadgeProps } from 'src/components/Badge';
 
 export type ButtonProps = {
   type?: ButtonType;
@@ -26,6 +27,7 @@ export type ButtonProps = {
   style?: CSSProperties;
   onClick: (() => void) | (() => Promise<any>) | (() => AsyncResult<any, any>);
   withLoader?: boolean;
+  withBadge?: BadgeProps;
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -85,6 +87,9 @@ export const Button: React.FC<ButtonProps> = ({
         }}
       >
         <>
+          {props.withBadge && (
+            <Badge {...props.withBadge} className={cls.badge}/>
+          )}
           <Text
             className={cls.label}
             style={{
@@ -117,7 +122,9 @@ export const Button: React.FC<ButtonProps> = ({
 
 const useStyles = createUseStyles({
   ...buttonStyles,
-  container: {},
+  container: {
+    position: 'relative',
+  },
   containerFull: {
     flex: 1,
   },
@@ -181,5 +188,11 @@ const useStyles = createUseStyles({
   },
   loader: {
     transform: 'scale(.5)',
+  },
+  badge: {
+    position: 'absolute',
+    top: '-10px',
+    left: '-14px',
+    zIndex: 1,
   },
 });
