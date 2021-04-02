@@ -8,6 +8,7 @@ import { UserMenu } from './UserMenu';
 import { useFeedbackDialog } from '../FeedbackDialog/useFeedbackDialog';
 import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton, LogoutButton } from 'src/services/Authentication/widgets';
+import { Badge } from '../Badge';
 
 type Props = {
   className?: string;
@@ -72,7 +73,10 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className={cx(cls.onlyMobile)}>
-        <Menu className={cls.drawerOpenBtn} onClick={() => setOpen((prev) => !prev)} />
+        <div className={cls.menuWrapper}>
+          <Badge text="New" color="negative" className={cls.newBadge}/>
+          <Menu className={cls.drawerOpenBtn} onClick={() => setOpen((prev) => !prev)} />
+        </div>
         <div className={cx(cls.mobileOverlay, open && cls.mobileOverlayOpened)}>
           <div
             className={cx(cls.overlayBkg, open && cls.overlayBkgOpened)}
@@ -237,5 +241,14 @@ const useStyles = createUseStyles({
   mobileAuthenticationButton: {
     display: 'flex',
     justifyContent: 'flex-end',
+  },
+
+  menuWrapper: {
+    position: 'relative',
+  },
+  newBadge: {
+    position: 'absolute',
+    zIndex: 1,
+    transform: 'scale(.9) translate(-20px, -5px)'
   },
 });
