@@ -1,8 +1,8 @@
 import { ChessInstance, ShortMove, Piece, Square } from 'chess.js';
 import { Result, Ok, Err } from 'ts-results';
 import { getNewChessGame } from './sdk';
-import { ChessGameState, ChessGameStatePgn, chessGameUtils, ChessMove, ChessPlayer, GameRecord, UserRecord } from 'dstnd-io';
-import { FullMove, HalfMove, History, PairedMove, PairedHistory } from './types';
+import { ChessGameStatePgn, chessGameUtils, ChessHistory, ChessMove, ChessPlayer, GameRecord, UserRecord } from 'dstnd-io';
+import { FullMove, HalfMove, PairedMove, PairedHistory } from './types';
 import { flatten } from 'src/lib/util';
 import { getOppositePlayer, getPlayer } from 'src/modules/GameRoomV2/util';
 import { getRelativeMaterialScore } from '../components/GameStateWidget/util';
@@ -45,8 +45,8 @@ export const isFullMove = (pm: unknown): pm is FullMove => Array.isArray(pm) && 
 export const isHalfMove = (pm: unknown): pm is HalfMove => Array.isArray(pm) && pm.length === 1;
 export const isPairedMove = (pm: unknown): pm is PairedMove => isFullMove(pm) || isHalfMove(pm);
 
-export const toPairedHistory = (moves: History): PairedHistory =>
-  moves.reduce((prev, next) => {
+export const toPairedHistory = (history: ChessHistory): PairedHistory =>
+  history.reduce((prev, next) => {
     if (prev.length === 0) {
       return [[next]];
     }
@@ -62,14 +62,14 @@ export const toPairedHistory = (moves: History): PairedHistory =>
     return [...prevWithoutLastMove, nextFullMove];
   }, [] as PairedHistory);
 
-export const pairedHistoryToHistory = (ph: PairedHistory): History =>
-  (flatten(ph) as unknown) as History;
+export const pairedHistoryToHistory = (ph: PairedHistory): ChessHistory =>
+  (flatten(ph) as unknown) as ChessHistory;
 
 // [0] - The PairedMove index
 // [1] - The color/side index
 export type PairedIndex = [number, number];
 
-export const linearToPairedIndex = (history: History, index: number): PairedIndex => {
+export const linearToPairedIndex = (history: ChessHistory, index: number): PairedIndex => {
   const diff = history.length - 1 - index;
 
   return [Math.floor(diff / 2), diff % 2];
@@ -77,9 +77,9 @@ export const linearToPairedIndex = (history: History, index: number): PairedInde
 
 export const pairedToLinearIndex = (index: PairedIndex) => index[0] * 2 + index[1];
 
-export const reversedLinearIndex = (history: History, index: number) => history.length - index - 1;
+export const reversedLinearIndex = (history: ChessHistory, index: number) => history.length - index - 1;
 
-export const historyToPgn = (moves: History): ChessGameStatePgn =>
+export const historyToPgn = (moves: ChessHistory): ChessGameStatePgn =>
   toPairedHistory(moves)
     .map((pm, index) =>
       isFullMove(pm) ? `${index + 1}. ${pm[0].san} ${pm[1].san}` : `${index + 1}. ${pm[0].san}`
@@ -91,7 +91,7 @@ export const pgnToFen = (pgn: ChessGameStatePgn) => getNewChessGame(pgn).fen();
 export const pgnToHistory = (pgn: ChessGameStatePgn) =>
   getNewChessGame(pgn).history({ verbose: true });
 
-export const historyToFen = (h: History) => pgnToFen(historyToPgn(h));
+export const historyToFen = (h: ChessHistory) => pgnToFen(historyToPgn(h));
 
 export const inCheckMate = (pgn: ChessGameStatePgn) => getNewChessGame(pgn).in_checkmate();
 export const inCheck = (pgn: ChessGameStatePgn) => getNewChessGame(pgn).in_check();

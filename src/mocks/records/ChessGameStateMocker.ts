@@ -5,14 +5,67 @@ import {
   ChessGameStatePending,
   ChessGameStateStarted,
   ChessGameStateStopped,
+  ChessHistory,
   ChessPlayerBlack,
   ChessPlayerWhite,
 } from 'dstnd-io';
 import { UserRecordMocker } from './UserRecordMocker';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { getNewChessGame } from 'src/modules/Games/Chess/lib';
+import { getRandomInt } from 'src/lib/util';
 
 const userRecordMock = new UserRecordMocker();
+
+const pgnToChessHistory = (
+  pgn: string,
+  timeLimit: {
+    white: number;
+    black: number;
+  },
+  clockRange: {
+    minSeconds: number;
+    maxSeconds: number;
+  } = {
+    minSeconds: 0,
+    maxSeconds: 3,
+  }
+): ChessHistory => {
+  const instance = getNewChessGame(pgn);
+
+  const r = instance.history({ verbose: true }).reduce(
+    (prev, { promotion, ...move }) => {
+      const color = move.color === 'b' ? 'black' : 'white';
+      const clock = prev.clocks[color] - (getRandomInt(clockRange.minSeconds, clockRange.maxSeconds) * 1000);
+
+      return {
+        ...prev,
+        clocks: {
+          ...prev.clocks,
+          [color]: clock,
+        },
+        moves: [
+          ...prev.moves,
+          {
+            ...move,
+            color: move.color === 'b' ? 'black' : 'white',
+            clock,
+            ...(promotion &&
+              promotion !== 'k' && {
+                promotion,
+              }),
+          } as const,
+        ],
+      };
+    },
+    {
+      clocks: timeLimit,
+      moves: [] as ChessHistory,
+    }
+  );
+
+  return r.moves;
+};
 
 export class ChessGameStateMocker {
   record(state: ChessGameState['state'] = 'pending'): ChessGameState {
@@ -32,6 +85,7 @@ export class ChessGameStateMocker {
         white: chessGameTimeLimitMsMap.blitz,
         black: chessGameTimeLimitMsMap.blitz,
       },
+      history: undefined,
       pgn: undefined,
       players: [whitePlayer, blackPlayer],
       winner: undefined,
@@ -42,12 +96,17 @@ export class ChessGameStateMocker {
       lastActivityAt: undefined,
     };
 
+    const startedPgn = '1. e4 e5 2. Qf3 Na6';
     const now = new Date();
 
     const started: ChessGameStateStarted = {
       ...pending,
       state: 'started',
-      pgn: '1. e4 e5 2. Qf3 Na6',
+      pgn: startedPgn,
+      history: pgnToChessHistory(startedPgn, {
+        white: chessGameTimeLimitMsMap.blitz,
+        black: chessGameTimeLimitMsMap.blitz,
+      }),
       winner: undefined,
       lastMoveBy: 'white',
       lastMoveAt: toISODateTime(now),
@@ -65,10 +124,16 @@ export class ChessGameStateMocker {
         lastActivityAt: toISODateTime(now),
       };
     } else if (state === 'finished') {
+      const finishedPgn = '1. e4 e5 2. Qf3 Na6 3. Bc4 h6 4. Qxf7#';
+
       return {
         ...started,
         state: 'finished',
-        pgn: '1. e4 e5 2. Qf3 Na6 3. Bc4 h6 4. Qxf7#',
+        pgn: finishedPgn,
+        history: pgnToChessHistory(finishedPgn, {
+          white: chessGameTimeLimitMsMap.blitz,
+          black: chessGameTimeLimitMsMap.blitz,
+        }),
         winner: 'white',
       };
     } else if (state === 'stopped') {
@@ -105,9 +170,19 @@ export class ChessGameStateMocker {
   }
 
   withProps(props: Partial<ChessGameState>): ChessGameState {
-    return {
+    const mergedGameState = {
       ...this.record(),
       ...props,
+    };
+
+    return {
+      ...mergedGameState,
+      ...(props.pgn && {
+        history: pgnToChessHistory(props.pgn, {
+          white: chessGameTimeLimitMsMap[mergedGameState.timeLimit],
+          black: chessGameTimeLimitMsMap[mergedGameState.timeLimit],
+        }),
+      }),
     } as ChessGameState;
   }
 }
