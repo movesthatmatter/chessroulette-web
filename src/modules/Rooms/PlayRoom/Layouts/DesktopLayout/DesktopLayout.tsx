@@ -120,6 +120,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                 height: `${TOP_HEIGHT}px`,
               }}
             >
+              <div style={{ paddingTop: '16px' }} />
               <UserMenu reversed />
             </div>
             <div
