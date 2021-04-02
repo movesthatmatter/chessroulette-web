@@ -44,6 +44,7 @@ const useStyles = createUseStyles({
     display: 'block',
     float: 'left',
     borderRadius: '16px',
-    padding: '1px 6px 0px',
+    padding: '1px 6px 2px',
+    lineHeight: '13px',
   },
 });

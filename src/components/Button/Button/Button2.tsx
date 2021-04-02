@@ -122,9 +122,12 @@ export const Button: React.FC<ButtonProps> = ({
 
 const useStyles = createUseStyles({
   ...buttonStyles,
-  container: {
+  button: {
+    ...buttonStyles.button,
     position: 'relative',
+    zIndex: 0,
   },
+  container: {},
   containerFull: {
     flex: 1,
   },

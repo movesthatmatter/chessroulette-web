@@ -112,6 +112,8 @@ const useStyles = createUseStyles({
 
     transform: 'translateX(-100%)',
     overflow: 'hidden',
+
+    zIndex: 999,
   },
   mobileOverlayOpened: {
     transform: 'translateX(0)',
