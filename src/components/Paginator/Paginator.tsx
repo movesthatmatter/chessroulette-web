@@ -6,20 +6,18 @@ import cx from 'classnames';
 import { borderRadius, colors, floatingShadow } from 'src/theme';
 
 type Props = {
+  totalPages : number;
   pageSize: number;
-  items : Game[];
-  onChangePage : (items: Game[]) => void;
+  onChangePage : (pageNumber : number) => void;
 };
 export const Paginator = ({ 
+    totalPages,
     pageSize = 5,
-    items,
     onChangePage
 }: Props) => {
 
   const cls = useStyles();
   const [pager, setPager] = useState({
-      startIndex : 1,
-      endIndex : 1,
       pages : [1],
       totalPages : 1,
       startPage: 1,
@@ -28,24 +26,22 @@ export const Paginator = ({
   });
 
   useEffect(() => {
-    if (items.length > 0){
+    if (totalPages > 0){
         setPage(1)
     }
-  },[items])
+  },[totalPages])
 
   const setPage = (page : number) => {
       if (page < 1 || page > pager.totalPages){
           return;
       }
       const updatedPager = getPager(page);
-      const pageOfItems = items.slice(updatedPager.startIndex, updatedPager.endIndex + 1)
       setPager(updatedPager);
-      onChangePage(pageOfItems);
+      onChangePage(updatedPager.currentPage);
   }
   
   const getPager = (currentPage : number) => {
     let startPage : number, endPage : number;
-    const totalPages = Math.ceil(items.length / pageSize);
     if (totalPages <= 10){
         startPage = 1;
         endPage = totalPages;
@@ -61,15 +57,13 @@ export const Paginator = ({
             endPage = currentPage + 4;
         }
     }
-    const startIndex = (currentPage - 1 ) * pageSize;
-    const endIndex = Math.min(startIndex + pageSize -1, items.length - 1);
     const pages = createRange(startPage, endPage);
-    return {startIndex, endIndex, pages, totalPages, startPage, endPage, currentPage}
+    return {pages, totalPages, startPage, endPage, currentPage}
   }
   
-  if (!pager.pages || pager.pages.length <= 1){
+  /* if (!pager.pages || pager.pages.length <= 1){
       return null;
-  }
+  } */
   return (
       <div className={cls.pagination}>
           <div className={cx(cls.currentPage, {
