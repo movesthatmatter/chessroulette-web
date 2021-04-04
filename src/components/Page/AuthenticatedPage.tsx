@@ -1,8 +1,9 @@
 import { RegisteredUserRecord } from 'dstnd-io';
 import React, { ReactNode } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useAuthenticatedUser } from 'src/services/Authentication';
+import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationDialog } from 'src/services/Authentication/widgets';
+import { AwesomeLoaderPage } from '../AwesomeLoader';
 import { Page, PageProps } from './Page';
 
 type Props = PageProps & {
@@ -13,10 +14,14 @@ export const AuthenticatedPage: React.FC<Props> = ({
   render,
   ...props
 }) => {
-  const user = useAuthenticatedUser();
-  const history = useHistory()
+  const history = useHistory();
+  const authentication = useAuthentication();
 
-  if (!user) {
+  if (authentication.authenticationType === 'none') {
+    return <AwesomeLoaderPage />
+  }
+
+  if (authentication.authenticationType === 'guest') {
     return (
       <AuthenticationDialog visible onClose={() => {
         history.replace('/');
@@ -24,7 +29,7 @@ export const AuthenticatedPage: React.FC<Props> = ({
     );
   }
 
-  const children = render ? render({ user }) : props.children;
+  const children = render ? render({ user: authentication.user }) : props.children;
 
   return (
     <Page {...props} children={children} />
