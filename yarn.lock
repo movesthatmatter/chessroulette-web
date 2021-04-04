@@ -6666,9 +6666,9 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#0.1.7-5":
-  version "0.1.7-5"
-  resolved "https://github.com/dstnd/dstnd-io.git#d0b25a3a266a05062258ee25fe70fdad8f32d3df"
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#d180995":
+  version "0.1.7-6"
+  resolved "https://github.com/dstnd/dstnd-io.git#d18099573c000a57d1c55a87e360734ea4d31c0c"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"
@@ -6676,6 +6676,7 @@ dotenv@^6.2.0:
     fp-ts "^2.8.2"
     io-ts "2.2.10"
     io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.3"
+    io-ts-types "^0.5.16"
     jest "^26.4.2"
     ts-results "^3.0.0"
     typescript "4.0.2"
@@ -9305,6 +9306,11 @@ io-ts-types@^0.5.10:
   version "0.5.11"
   resolved "https://registry.yarnpkg.com/io-ts-types/-/io-ts-types-0.5.11.tgz#475e8680bfacee05f450c64f3b0b89f4a790dd58"
   integrity sha512-BqWYAvcSOxnKWIAYAcqF6nS+zhWRb6W+oezF2FzFt8+5a6b8PHNXmbOiV3MwRDY1G6FIctMo71QtIrExLT7LCQ==
+
+io-ts-types@^0.5.16:
+  version "0.5.16"
+  resolved "https://registry.yarnpkg.com/io-ts-types/-/io-ts-types-0.5.16.tgz#e9eed75371e217c97050cc507915e8eedc250946"
+  integrity sha512-h9noYVfY9rlbmKI902SJdnV/06jgiT2chxG6lYDxaYNp88HscPi+SBCtmcU+m0E7WT5QSwt7sIMj93+qu0FEwQ==
 
 io-ts@2.2.10, io-ts@^2.2.10:
   version "2.2.10"

@@ -41,23 +41,25 @@ export const GamesArchivePage: React.FC<Props> = (props) => {
   const cls = useStyles();
   const user = useAuthenticatedUser();
   const [games, setGames] = useState<Game[]>([]);
-  const pageSize = 2;
+  const pageSize = 3;
   const [totalPages, setTotalPages] = useState(0);
   const [index, setIndex] = useState(0);
 
-  if (!user) {
-    return null;
-  }
-
   useEffect(() => {
+    if (!user) {
+      return;
+    }
     setIndex(0);
   }, [user]);
 
   useEffect(() => {
+    if (!user) {
+      return;
+    }
     getUserGames({ 
       userId: user.id,
       pageSize,
-      currentIndex: Math.ceil(games.length / pageSize) + 1
+      currentIndex: index
     }).map((gameRecords) => {
       setGames(gameRecords.items.map(gameRecordToGame));
       if (totalPages === 0){
@@ -65,7 +67,10 @@ export const GamesArchivePage: React.FC<Props> = (props) => {
       }
     });
   },[index])
-
+  
+  if (!user) {
+    return null;
+  }
   return (
     <Page>
       <div className={cls.container}>
@@ -135,7 +140,7 @@ export const GamesArchivePage: React.FC<Props> = (props) => {
             );
           })}
         </div>
-        <div className={cls.paginatorContainer}>
+         <div className={cls.paginatorContainer}>
            <Paginator
             pageSize={pageSize}
             totalPages={totalPages}
@@ -143,7 +148,7 @@ export const GamesArchivePage: React.FC<Props> = (props) => {
               setIndex(page);
             }}
           />
-        </div>
+        </div> 
       </div>
     </Page>
   );
@@ -205,7 +210,7 @@ const useStyles = createUseStyles({
     alignItems:'center',
   },
   nameContainer:{
-    width : '200px',
+    width : '40%',
     textAlign:'center',
   },
   vs: {
