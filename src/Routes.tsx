@@ -7,8 +7,7 @@ import { ChallengeOrRoomPage } from './modules/Challenges/ChallengeOrRoomPage';
 import { FacebookAuthCallbackPage } from './vendors/facebook';
 import { PeerProvider } from './providers/PeerProvider';
 import { SocketProvider } from './providers/SocketProvider';
-import { GamesArchivePage } from './modules/GamesArchive';
-import { UserProfilePage } from './modules/UserProfile';
+import { UserProfilePage } from './modules/User';
 
 type Props = {};
 
@@ -30,18 +29,11 @@ export const Routes: React.FC<Props> = () => {
         component={FacebookAuthCallbackPage}
       />
       <Route
-        path="/user"
+        path="/user/:section"
         key={location.key}
         exact
         component={UserProfilePage}
       />
-      <Route
-        path="/user/games"
-        key={location.key}
-        exact
-        component={GamesArchivePage}
-      />
-
       <SocketProvider>
         <PeerProvider>
           <Route exact strict path="/stats" key={location.key} component={StatsPage} />
