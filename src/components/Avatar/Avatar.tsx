@@ -4,6 +4,8 @@ import { AvatarProps as GAvatarProps } from 'grommet';
 import { colors } from 'src/theme';
 import { AspectRatio } from '../AspectRatio';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
+import { getBoxShadow } from 'src/theme/util';
+import hexToRgba from 'hex-to-rgba';
 
 type Props = GAvatarProps & {
   className?: string;
@@ -37,14 +39,17 @@ export const Avatar: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
 
+  const bkgColor = getColor(props.mutunachiId);
+
   return (
-    <div className={cls.container}>
+    <div>
       <div
         className={cls.mask}
         style={{
           width: size,
-          background: getColor(props.mutunachiId),
+          background: bkgColor,
           border: `1px solid ${darkMode ? colors.neutralLightest : colors.neutralLightest}`,
+          boxShadow: getBoxShadow(0, 2, 16, 0, hexToRgba(bkgColor, 0.3)),
         }}
       >
         <AspectRatio aspectRatio={1}>
