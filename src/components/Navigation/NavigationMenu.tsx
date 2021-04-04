@@ -52,7 +52,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
             e.preventDefault();
 
             setOpen(false);
-            feedbackDialog.forcefullyShowAllSteps()
+            feedbackDialog.forcefullyShowAllSteps();
           }}
         >
           Leave Feedback
@@ -65,17 +65,20 @@ export const NavigationMenu: React.FC<Props> = (props) => {
     <div className={cx(cls.container, props.className)}>
       <div className={cls.desktopMenu}>
         <div className={cx(cls.linksContainer)}>{menuContent}</div>
-        <div className={cls.authMenu}>
-          {auth.authenticationType === 'user'
-            ? <UserMenu reversed withDropMenu />
-            : <AuthenticationButton />
-          }
-        </div>
+        {auth.authenticationType !== 'none' && (
+          <div className={cls.authMenu}>
+            {auth.authenticationType === 'user' ? (
+              <UserMenu reversed withDropMenu />
+            ) : (
+              <AuthenticationButton />
+            )}
+          </div>
+        )}
       </div>
       <div className={cx(cls.onlyMobile)}>
-        <div className={cls.menuWrapper}>
-          <Badge text="New" color="negative" className={cls.newBadge}/>
-          <Menu className={cls.drawerOpenBtn} onClick={() => setOpen((prev) => !prev)} />
+        <div className={cls.menuWrapper} onClick={() => setOpen((prev) => !prev)}>
+          <Badge text="New" color="negative" className={cls.newBadge} />
+          <Menu className={cls.drawerOpenBtn} />
         </div>
         <div className={cx(cls.mobileOverlay, open && cls.mobileOverlayOpened)}>
           <div
@@ -87,15 +90,17 @@ export const NavigationMenu: React.FC<Props> = (props) => {
               <FormClose onClick={() => setOpen(false)} className={cls.drawerCloseBtn} />
               <div className={cls.drawerMenuContent}>
                 <div className={cls.drawerUserMenuWrapper}>
-                  {auth.authenticationType === 'user'
-                    ? <UserMenu reversed withDropMenu />
-                    : <AuthenticationButton containerClassName={cls.mobileAuthenticationButton} />
-                  }
+                  {auth.authenticationType === 'user' ? (
+                    <UserMenu reversed withDropMenu />
+                  ) : (
+                    <AuthenticationButton
+                      containerClassName={cls.mobileAuthenticationButton}
+                      onClick={() => setOpen(false)}
+                    />
+                  )}
                 </div>
                 <div className={cls.drawerLinksContainer}>{menuContent}</div>
-                {auth.authenticationType === 'user' && (
-                  <LogoutButton full type="secondary" />
-                )}
+                {auth.authenticationType === 'user' && <LogoutButton full type="secondary" />}
               </div>
             </div>
           </div>
@@ -249,6 +254,6 @@ const useStyles = createUseStyles({
   newBadge: {
     position: 'absolute',
     zIndex: 1,
-    transform: 'scale(.9) translate(-20px, -5px)'
+    transform: 'scale(.9) translate(-20px, -5px)',
   },
 });
