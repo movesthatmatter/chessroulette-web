@@ -2,8 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { AuthenticatedPage } from 'src/components/Page';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, text } from 'src/theme';
-import { GamesArchive } from '../GamesArchive/GamesArchive';
+import { colors, text } from 'src/theme';import { GamesArchive } from '../GamesArchive';
 import { Menu } from './components/Menu';
 import { UserDetails } from './sections/UserDetails';
 
@@ -40,7 +39,7 @@ export const UserProfilePage: React.FC<Props> = (props) => {
               <UserDetails user={user} />
             )}
             {params.section === 'games' && (
-              <GamesArchive user={user} />
+              <GamesArchive userId={user.id} />
             )}
           </div>
         </div>
