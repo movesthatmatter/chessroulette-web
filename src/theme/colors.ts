@@ -24,7 +24,7 @@ const black = '#25282B';
 
 const neutral = '#DFE5EF';
 const neutralLight = '#DBDDE0';
-const neutralLighter = '#E8E8E8';
+const neutralLighter = '#E6ECF5';
 const neutralLightest = '#F6F8FB';
 const neutralDark = '#CACCCF';
 const neutralDarker = '#A0A4A8';
