@@ -39,9 +39,7 @@ export const PlayerBox: React.FC<Props> = ({
       ref={boxContainerRef}
     >
       <Box fill direction="row">
-        <Avatar>
-          <Mutunachi mid={player.user.avatarId} />
-        </Avatar>
+        <Avatar mutunachiId={Number(player.user.avatarId)} />
         <Box className={cls.playerInfo}>
           <Text className={cls.playerNameText}>{player.user.name}</Text>
           <div
