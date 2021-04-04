@@ -4,14 +4,14 @@ import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { selectAuthentication } from 'src/services/Authentication';
 import { colors, floatingShadow, fonts, hardBorderRadius, text } from 'src/theme';
-import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { Avatar } from 'src/components/Avatar';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import { PeerState, usePeerState } from 'src/providers/PeerProvider';
 import { LogoutButton } from 'src/services/Authentication/widgets';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Menu } from 'src/modules/User/components/Menu';
 
 type Props = {
   darkMode?: boolean;
@@ -41,11 +41,6 @@ export const UserMenu: React.FC<Props> = ({
   const peerState = usePeerState();
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuOpened, setMenuOpened] = useState(false);
-  const [profileOver, setProfileOver] = useState(false);
-  const [gamesOver, setGamesOver] = useState(false);
-  const [signOutOver, setSignOutOver] = useState(false);
-  // const location = useLocation();
-  const dispatch = useDispatch();
 
   useOnClickOutside(menuRef, () => {
     setMenuOpened(false);
@@ -68,9 +63,12 @@ export const UserMenu: React.FC<Props> = ({
           },
         })}
       >
-        <Avatar className={cls.avatar} darkMode={darkMode} hasBorder={darkMode}>
-          <Mutunachi mid={auth.user.avatarId} />
-        </Avatar>
+        <Avatar
+          className={cls.avatar}
+          darkMode={darkMode}
+          hasBorder={darkMode}
+          mutunachiId={Number(auth.user.avatarId)}
+        />
         <div className={cls.spacer} />
         <Box
           direction="column"
@@ -115,66 +113,16 @@ export const UserMenu: React.FC<Props> = ({
             <div className={cls.openedMenuLabelWrapper}>{labelContent}</div>
             <div className={cls.menuContent}>
               <div className={cls.linkWrapper}>
-                <div
-                  className={cls.largeDot}
-                  // style={{
-                  //   width: profileOver || location.pathname === '/user' ? '100%' : '18px',
-                  //   transition: 'width 0.5s ease-in-out',
-                  // }}
-                />
-                <NavLink
-                  to="/user"
-                  className={cls.link}
-                  onMouseOver={() => setProfileOver(true)}
-                  onMouseOut={() => setProfileOver(false)}
-                  onFocus={() => setProfileOver(true)}
-                  onBlur={() => setProfileOver(false)}
-                  activeStyle={{ color: colors.white }}
-                  exact
-                >
+                <Link to="/user/profile" className={cls.link}>
                   My Profile
-                </NavLink>
+                </Link>
               </div>
               <div className={cls.linkWrapper}>
-                <div
-                  className={cls.largeDot}
-                  // style={{
-                  //   width: gamesOver || location.pathname === '/user/games' ? '100%' : '18px',
-                  //   transition: 'width 0.5s ease-in-out',
-                  // }}
-                />
-                <NavLink
-                  to="/user/games"
-                  className={cls.link}
-                  onMouseOver={() => setGamesOver(true)}
-                  onMouseOut={() => setGamesOver(false)}
-                  onFocus={() => setGamesOver(true)}
-                  onBlur={() => setGamesOver(false)}
-                  activeStyle={{ color: colors.white }}
-                  exact
-                >
+                <Link to="/user/games" className={cls.link}>
                   My Games
-                </NavLink>
+                </Link>
               </div>
-              <div className={cls.linkWrapper}>
-                <div
-                  className={cls.largeDot}
-                  style={{
-                    width: signOutOver ? '100%' : '18px',
-                    transition: 'width 0.5s ease-in-out',
-                  }}
-                />
-                <div
-                  onClick={() => {}}
-                  className={cls.link}
-                  onMouseOver={() => setSignOutOver(true)}
-                  onMouseOut={() => setSignOutOver(false)}
-                  onFocus={() => setSignOutOver(true)}
-                  onBlur={() => setSignOutOver(false)}
-                >
-                  Sign Out
-                </div>
-              </div>
+              <LogoutButton full type="secondary" />
             </div>
           </div>
         )}
@@ -212,13 +160,6 @@ const useStyles = createUseStyles({
     borderRadius: '50%',
     display: 'inline-block',
   },
-  largeDot: {
-    height: '18px',
-    width: '18px',
-    backgroundColor: colors.primary,
-    borderRadius: '16px',
-    marginLeft: '46%',
-  },
   userNameWrapper: {},
 
   menuWrapper: {
@@ -255,27 +196,21 @@ const useStyles = createUseStyles({
   },
 
   linkWrapper: {
-    padding: '6px 0px 16px',
+    padding: '8px 20px 16px',
     alignSelf: 'center',
     textAlign: 'right',
-    position: 'relative',
-    display: 'flex',
   },
   link: {
     textTransform: 'capitalize',
     textDecoration: 'none',
     color: colors.neutralDarkest,
     fontFamily: 'Lato, Open Sans, sans serif',
-    fontSize: '15px',
+    fontSize: '16px',
     textAlign: 'right',
-    position: 'absolute',
-    top: '5px',
-    right: '10px',
-    marginLeft: '10px',
+
     '&:hover': {
-      // borderBottom: `3px solid ${text.primaryColor}`,
-      cursor: 'pointer',
-      color: colors.white,
+      borderBottom: `3px solid ${text.primaryColor}`,
+      color: text.primaryColor,
     },
   },
 });
