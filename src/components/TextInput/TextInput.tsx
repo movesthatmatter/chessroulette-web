@@ -1,9 +1,11 @@
 import React from 'react';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { colors } from 'src/theme';
+import { colors, effects } from 'src/theme';
 import { TextInput as GTextInput } from 'grommet';
 import { Text } from '../Text/Text';
 import cx from 'classnames';
+import { getBoxShadow } from 'src/theme/util';
+import hexToRgba from 'hex-to-rgba';
 
 
 type Props = Omit<React.ComponentProps<typeof GTextInput>, | 'plain' | 'size' | 'ref'> & {
@@ -27,14 +29,14 @@ export const TextInput: React.FC<Props> = ({
           <Text size="small2">{label}</Text>
         </div>
       )}
-      <div className={cx(cls.inputWrapper, props.validationError && cls.errorInputWrapper)}>
+      <div className={cx(cls.inputWrapper)}>
         <GTextInput
           value={value}
           plain
           size="small"
           className={cx(
             cls.textInput,
-            props.readOnly && cls.readonly,
+            props.validationError && cls.errorInput,
           )}
           {...props}
         />
@@ -50,7 +52,7 @@ export const TextInput: React.FC<Props> = ({
 
 const useStyles = createUseStyles({
   container: {
-    marginBottom: '16px',
+    marginBottom: '12px',
 
     ...{
       '&:first-child $labelWrapper': {
@@ -61,18 +63,27 @@ const useStyles = createUseStyles({
   labelWrapper: {
     paddingBottom: '4px',
     paddingLeft: '12px',
-    marginTop: '-12px',
   },
-  inputWrapper: {
-    border: `1px solid ${colors.neutral}`,
-    borderRadius: '40px',
-    overflow: 'hidden',
-  },
-  errorInputWrapper: {
-    borderColor: colors.negative,
-  },
+  inputWrapper: {},
   textInput: {
+    ...{
+      '&:read-only': {
+        ...makeImportant({
+          background: colors.neutralLighter,
+        }),
+        '&:focus': {
+          boxShadow: 'none',
+        }
+      },
+      '&:focus': {
+        ...effects.floatingShadow,
+      }
+    } as CSSProperties,
     ...makeImportant({
+      border: `1px solid ${colors.neutral}`,
+      borderRadius: '40px',
+      backgroundColor: colors.white,
+
       fontSize: '13px',
       fontWeight: 'normal',
       height: '32px',
@@ -84,9 +95,10 @@ const useStyles = createUseStyles({
       WebkitTouchCallout: 'default',
     }),
   },
-  readonly: {
+  errorInput: {
     ...makeImportant({
-      background: colors.neutralLightest,
+      borderColor: colors.negative,
+      boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(colors.negative, 0.08)),
     }),
   },
   errorMessageWrapper: {
