@@ -1,65 +1,77 @@
 import capitalize from 'capitalize';
-import { RegisteredUserRecord, UserRecord } from 'dstnd-io';
+import { RegisteredUserRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { ClipboardCopy } from 'src/components/ClipboardCopy';
-import { Paginator } from 'src/components/Paginator/Paginator';
+import { Paginator } from 'src/components/Pagination/Paginator';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, floatingShadow, fonts } from 'src/theme';
-import { getPlayer, getPlayerColor } from '../GameRoomV2/util';
+import { colors, floatingShadow, fonts, softBorderRadius } from 'src/theme';
+import { getPlayerColor } from '../GameRoomV2/util';
 import { ChessBoard } from '../Games/Chess/components/ChessBoardV2';
 import { gameRecordToGame, pgnToFen } from '../Games/Chess/lib';
 import { Game } from '../Games/types';
 import { getUserGames } from './resources';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChessKnight } from '@fortawesome/free-solid-svg-icons';
+import { spacers } from 'src/theme/spacers';
+import { AwesomeLoader } from 'src/components/AwesomeLoader';
+import { getGameResult } from './util';
+import { WithPagination } from 'src/components/Pagination';
 
 type Props = {
   userId: RegisteredUserRecord['id'];
+  pageSize?: number;
 };
 
-const getGameResult = (game: Game, userId: UserRecord['id']) => {
-  if (game.winner === '1/2') {
-    return 'Draw';
-  }
-
-  const winningColor = game.winner;
-
-  const userPlayer = getPlayer(userId, game.players);
-
-  if (!userPlayer) {
-    return `${capitalize(winningColor || '')} Won`;
-  }
-
-  if (userPlayer.color === game.winner) {
-    return 'Won';
-  }
-
-  return 'Lost';
-};
-
-export const GamesArchive: React.FC<Props> = (props) => {
+export const GamesArchive: React.FC<Props> = ({ userId, pageSize = 1 }) => {
   const cls = useStyles();
   const [games, setGames] = useState<Game[]>([]);
-  const pageSize = 3;
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [exhausted, setExhausted] = useState(false);
 
   useEffect(() => {
+    // Reset the index if when the user changes
     setIndex(0);
-  }, [props.userId]);
+  }, [userId]);
 
   useEffect(() => {
+    console.log("use effect runs");
+    if (exhausted) {
+      console.log("use effect run stopped");
+      return;
+    }
+    
+    setLoading(true);
+
     getUserGames({
-      userId: props.userId,
+      userId,
       pageSize,
       currentIndex: index,
-    }).map((gameRecords) => {
-      setGames(gameRecords.items.map(gameRecordToGame));
-      if (totalPages === 0) {
+    })
+      .map((gameRecords) => {
+        setGames(gameRecords.items.map(gameRecordToGame));
+
+        // if (totalPages === 0) {
+          console.log('total pages', Math.ceil(gameRecords.itemsTotal / pageSize))
+          // setTotalPages(Math.ceil(gameRecords.itemsTotal / pageSize));
+        // }
         setTotalPages(Math.ceil(gameRecords.itemsTotal / pageSize));
-      }
-    });
-  }, [index]);
+
+        // // console.log('left', (index * pageSize) + gameRecords.items.length);
+        // // console.log('res', gameRecords.itemsTotal);
+        setExhausted((index * pageSize) + gameRecords.items.length === gameRecords.itemsTotal);
+        
+        setLoading(false);
+      })
+      // .mapErr(() => {
+      //   setLoading(false);
+      // });
+  }, [index, userId, pageSize, exhausted]);
+
+  if (loading) {
+    return <AwesomeLoader />;
+  }
 
   return (
     <div className={cls.container}>
@@ -131,13 +143,13 @@ export const GamesArchive: React.FC<Props> = (props) => {
                       }
                     />
                   </div>
-                  <div className={cls.gameResult}>{getGameResult(game, props.userId)}</div>
+                  <div className={cls.gameResult}>{getGameResult(game, userId)}</div>
                 </div>
               </div>
               <div className={cls.chessboardContainer}>
                 <ChessBoard
                   fen={pgnToFen(game.pgn || '')}
-                  orientation={getPlayerColor(props.userId, game.players)}
+                  orientation={getPlayerColor(userId, game.players)}
                   size={140}
                   coordinates={false}
                   viewOnly
@@ -148,13 +160,15 @@ export const GamesArchive: React.FC<Props> = (props) => {
         })}
       </div>
       <div className={cls.paginatorContainer}>
-        <Paginator
+        {/* <Paginator
           pageSize={pageSize}
           totalPages={totalPages}
+          currentPage={index}
           onChangePage={(page) => {
+            // console.log("page changed", page);
             setIndex(page);
           }}
-        />
+        /> */}
       </div>
     </div>
   );
@@ -165,21 +179,26 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
-    marginTop: '20px',
+    // marginTop: '20px',
   },
   gameContainer: {
     display: 'flex',
     flexDirection: 'row',
-    borderBottom: `1px solid ${colors.neutralLight}`,
-    padding: '16px 0',
+
+    // padding: '16px 0',
     justifyContent: 'space-between',
     alignItems: 'center',
     background: colors.white,
-    // padding: spacer
+    padding: spacers.default,
+    marginBottom: spacers.large,
+    // borderRadius: borderRadius
+    ...softBorderRadius,
+    border: `1px solid ${colors.neutral}`,
+    ...floatingShadow,
 
     '&:last-child': {
-      borderBottom: 0,
-    }
+      // borderBottom: 0,
+    },
   },
   gameContainerWrapper: {
     flex: 1,
