@@ -70,19 +70,26 @@ export class Form<
   constructor(props: Props<ValidationModel>) {
     super(props);
 
-    this.state = {
-      model: (this.props.initialModel || {}) as ValidationModel,
-      canSubmit: Object.keys(this.props.validator).length === 0,
-
-      errors: {},
-      hasErrors: false,
-      hasChanges: false,
-    };
+    this.state = this.getFreshState();
 
     this.validateField = this.validateField.bind(this);
     this.validate = this.validate.bind(this);
     this.onChange = this.onChange.bind(this);
     this.submit = this.submit.bind(this);
+  }
+
+  private getFreshState() {
+    const model = (this.props.initialModel || {}) as ValidationModel;
+
+    return {
+      model,
+      commitedModel: model,
+      canSubmit: Object.keys(this.props.validator).length === 0,
+
+      errors: {},
+      hasErrors: false,
+      hasChanges: false,
+    }
   }
 
   private async validate() {
@@ -126,6 +133,11 @@ export class Form<
   }
 
   private validateField(field: keyof ValidationModel) {
+    if (!this.props.validator[field]) {
+      // If the field doesn't have a validator just return!
+      return;
+    }
+
     const [validate, message] = this.props.validator[field];
 
     const inputValue = this.state.model[field];
@@ -280,7 +292,17 @@ export class Form<
     });
   }
 
-  componentDidUpdate(_: Props<ValidationModel>, prevState: State<ValidationModel>) {
+  componentDidUpdate(prevProps: Props<ValidationModel>, prevState: State<ValidationModel>) {
+    // TODO: Does it need an dee equality check??
+    //  If the initial model is stored in the state it shouldn't create another instance
+    //  which means it should be ok!
+    if (prevProps.initialModel !== this.props.initialModel) {
+      // Reset the state if the initial model has changed
+      //  The initial model in this case acts as the commited model,
+      //  since on save the new resource updates
+      this.setState(this.getFreshState());
+    }
+
     if (
       this.props.onValidationErrorsUpdated &&
       !objectEquals(prevState.errors.validationErrors, this.state.errors.validationErrors)
