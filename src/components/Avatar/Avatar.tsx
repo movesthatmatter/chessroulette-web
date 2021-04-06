@@ -6,6 +6,8 @@ import { AspectRatio } from '../AspectRatio';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { getBoxShadow } from 'src/theme/util';
 import hexToRgba from 'hex-to-rgba';
+import cx from 'classnames';
+
 
 type Props = GAvatarProps & {
   className?: string;
@@ -44,7 +46,7 @@ export const Avatar: React.FC<Props> = ({
   return (
     <div>
       <div
-        className={cls.mask}
+        className={cx(cls.mask, className)}
         style={{
           width: size,
           background: bkgColor,
