@@ -1,8 +1,8 @@
 import React from 'react';
-import { colors, effects, fonts, text } from 'src/theme';
+import { colors, effects, fonts, onlyMobile, text } from 'src/theme';
 import Select, { Props as SelectProps } from 'react-select';
 import { noop } from 'src/lib/util';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { Text } from 'src/components/Text';
 import cx from 'classnames';
 import { getBoxShadow } from 'src/theme/util';
@@ -72,6 +72,11 @@ export const SelectInput: React.FC<Props> = ({
               },
               fontSize: '14px',
             }),
+            valueContainer: (prev) => ({
+              ...prev,
+              paddingLeft: '11px',
+              paddingRight: '11px',
+            }),
             singleValue: (prev) => ({
               ...prev,
               ...fonts.small1,
@@ -80,6 +85,12 @@ export const SelectInput: React.FC<Props> = ({
               ...prev,
               fontSize: '14px',
               minHeight: '32px',
+
+              ...onlyMobile({
+                ...makeImportant({
+                  minHeight: '28px',
+                }),
+              }),
 
               ...(state.isFocused
                 ? effects.floatingShadow
@@ -112,6 +123,13 @@ export const SelectInput: React.FC<Props> = ({
               ...prev,
               paddingTop: '5px',
               paddingBottom: '5px',
+
+              ...onlyMobile({
+                ...makeImportant({
+                  paddingTop: '3px',
+                  paddingBottom: '4px',
+                }),
+              }),
             }),
             indicatorSeparator: () => ({
               display: 'none',
@@ -120,6 +138,13 @@ export const SelectInput: React.FC<Props> = ({
             placeholder: () => ({
               color: text.disabledColor,
               fontSize: '13px',
+
+              ...onlyMobile({
+                ...makeImportant({
+                  fontSize: '12px',
+                  lineHeight: '16px',
+                }),
+              }),
             }),
           }}
         />

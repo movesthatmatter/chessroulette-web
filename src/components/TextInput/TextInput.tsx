@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { colors, effects } from 'src/theme';
+import { colors, effects, onlyMobile, onlySmallMobile } from 'src/theme';
 import { TextInput as GTextInput } from 'grommet';
 import { Text } from '../Text/Text';
 import cx from 'classnames';
@@ -54,6 +54,10 @@ const useStyles = createUseStyles({
   container: {
     marginBottom: '12px',
 
+    ...onlyMobile({
+      marginBottom: '2px',
+    }),
+
     ...{
       '&:first-child $labelWrapper': {
         marginTop: '0', // Remove the Negative Margin for the first element!
@@ -63,6 +67,10 @@ const useStyles = createUseStyles({
   labelWrapper: {
     paddingBottom: '4px',
     paddingLeft: '12px',
+
+    ...onlyMobile({
+      paddingBottom: 0,
+    }),
   },
   inputWrapper: {},
   textInput: {
@@ -93,6 +101,13 @@ const useStyles = createUseStyles({
       userSelect: 'auto',
       WebkitTapHighlightColor: 'initial',
       WebkitTouchCallout: 'default',
+    }),
+
+    ...onlyMobile({
+      ...makeImportant({
+        fontSize: '12px',
+        height: '28px',
+      }),
     }),
   },
   errorInput: {

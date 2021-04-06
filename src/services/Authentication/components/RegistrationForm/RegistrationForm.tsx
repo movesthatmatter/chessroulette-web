@@ -1,5 +1,5 @@
 import { AsyncResult, CountryCode } from 'dstnd-io';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button } from 'src/components/Button';
 import { Form, FormError, SubmissionErrors } from 'src/components/Form';
 import { SelectInput } from 'src/components/Input/SelectInput';
@@ -8,7 +8,7 @@ import { TextInput } from 'src/components/TextInput';
 import { createUseStyles } from 'src/lib/jss';
 import { validator } from 'src/lib/validator';
 import { GetCountries } from 'src/services/Location';
-import { colors } from 'src/theme';
+import { colors, onlyMobile } from 'src/theme';
 
 export type RegistrationUserInfo =
   | {
@@ -59,7 +59,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
     <div>
       <div className={cls.infoTextWrapper}>
         <Text size="body1" className={cls.infoText}>
-          I just need to know a bit more about you.
+          I see your email is <strong>{props.userInfo.email}</strong> but I need to know a few more things...
         </Text>
       </div>
       <Form<Model>
@@ -75,7 +75,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
         validateOnChange
         render={(p) => (
           <>
-            <TextInput
+            {/* <TextInput
               label={
                 props.userInfo.type === 'internal' && props.userInfo.email.length > 0
                   ? 'I already know your Email'
@@ -90,9 +90,9 @@ export const RegistrationForm: React.FC<Props> = (props) => {
               validationError={
                 p.errors.validationErrors?.email || p.errors.submissionValidationErrors?.email
               }
-            />
+            /> */}
             <TextInput
-              label="Pick a Username"
+              label="Let's pick a great Username"
               placeholder="bethHarmon"
               value={p.model.username}
               onChange={(e) => p.onChange('username', e.target.value)}
@@ -127,7 +127,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
               render={({ countries, isLoading, fetch }) => (
                 <SelectInput
                   multiple
-                  label="Aaand where do you live?"
+                  label="Where do you live?"
                   placeholder="Bolivia"
                   options={
                     countries &&
@@ -168,6 +168,11 @@ const useStyles = createUseStyles({
   infoTextWrapper: {
     textAlign: 'center',
     paddingBottom: '24px',
+
+    ...onlyMobile({
+      lineHeight: '16px',
+      paddingBottom: '12px',
+    }),
   },
   infoText: {
     color: colors.neutralDarker,

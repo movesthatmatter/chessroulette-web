@@ -62,7 +62,7 @@ export const CodeVerificationForm: React.FC<Props> = (props) => {
               message={p.errors.submissionGenericError || p.errors.submissionValidationErrors?.code || ''}
             />
           )}
-          <div style={{ paddingBottom: '16px' }} />
+          {/* <div style={{ paddingBottom: '16px' }} /> */}
           <Button
             label="Verify"
             full

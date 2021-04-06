@@ -1,6 +1,6 @@
 import { Layer, LayerProps } from 'grommet';
 import React from 'react';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { colors, floatingShadow, fonts, onlyMobile, softBorderRadius } from 'src/theme';
 import { Button, ButtonProps } from '../Button';
 import { Text } from 'src/components/Text';
@@ -119,8 +119,11 @@ const useStyles = createUseStyles({
     position: 'relative',
 
     ...onlyMobile({
-      width: '84% !important',
-      maxWidth: 'none !important',
+      ...makeImportant({
+        width: '84%',
+        maxWidth: 'none',
+        paddingBottom: '12px',
+      }),
     }),
   },
   top: {
@@ -152,6 +155,12 @@ const useStyles = createUseStyles({
     paddingLeft: '32px',
     paddingRight: '32px',
     paddingBottom: '32px',
+
+    ...onlyMobile({
+      paddingLeft: '18px',
+      paddingRight: '18px',
+      paddingBottom: '18px',
+    }),
   },
   contentTextWrapper: {
     textAlign: 'center',

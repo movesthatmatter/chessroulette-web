@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ButtonType } from '../type';
 import { Icon as GIcon } from 'grommet-icons';
 import cx from 'classnames';
 import { buttonStyles } from '../styles/styles';
-import { borderRadius, colors } from 'src/theme';
+import { borderRadius, colors, onlyMobile } from 'src/theme';
 import { Text } from 'src/components/Text';
 import { CSSProperties } from 'src/lib/jss/types';
 import Loader from 'react-loaders';
@@ -163,11 +163,26 @@ const useStyles = createUseStyles({
     width: '100%',
     paddingRight: '16px',
     paddingLeft: '16px',
+
+    ...onlyMobile({
+      ...makeImportant({
+        fontSize: '12px',
+        lineHeight: '28px',
+        paddingRight: '13px',
+        paddingLeft: '13px',
+      }),
+    }),
   },
   iconWrapper: {
     height: '32px',
     padding: '0 8px',
     marginLeft: '-8px',
+
+    ...onlyMobile({
+      ...makeImportant({
+        height: '28px',
+      }),
+    }),
 
     ...borderRadius,
 

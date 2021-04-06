@@ -11,7 +11,7 @@ import { keyInObject } from 'src/lib/util';
 import { AsyncResult, CreateUserAccountRequestPayload, RegisteredUserRecord } from 'dstnd-io';
 import { CodeVerificationForm } from '../../components/CodeVerificationForm';
 import { UserAccountInfo } from '../../types';
-import { colors } from 'src/theme';
+import { colors, onlyMobile } from 'src/theme';
 import { Emoji } from 'src/components/Emoji';
 import capitalize from 'capitalize';
 import { useAuthenticationService } from '../../useAuthentication';
@@ -140,7 +140,7 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
       )
     }),
     registration: (s: RegistrationStep['state']) => ({
-      title: `Yey! We'll be best friends!`,
+      title: `Heey, you're new around here!`,
       graphic: <Mutunachi mid="11" className={cls.mutunachi} />,
       content: (
         <RegistrationForm
@@ -239,13 +239,14 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
 const useStyles = createUseStyles({
   container: {},
   contentContainer: {
+    paddingTop: '16px',
     paddingBottom: 0,
   },
   facebookButton: {
     paddingBottom: 0,
   },
   mutunachiContainer: {
-    width: '60%',
+    width: '50%',
     maxWidth: '300px',
     margin: '0 auto',
   },
@@ -255,6 +256,10 @@ const useStyles = createUseStyles({
   infoTextWrapper: {
     textAlign: 'center',
     paddingBottom: '24px',
+
+    ...onlyMobile({
+      paddingBottom: '12px',
+    }),
   },
   infoText: {
     color: colors.neutralDarker,

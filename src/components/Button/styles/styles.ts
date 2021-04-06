@@ -1,5 +1,5 @@
 import { CSSProperties } from 'src/lib/jss/types';
-import { borderRadius, colors } from 'src/theme';
+import { borderRadius, colors, onlyMobile } from 'src/theme';
 import { buttonEffects } from './effects';
 import hexToRGBA from 'hex-to-rgba';
 import { makeImportant } from 'src/lib/jss';
@@ -40,6 +40,14 @@ const button: CSSProperties = {
       ...buttonEffects.onClickTransition['&:disabled'],
     },
   },
+
+  ...onlyMobile({
+    ...makeImportant({
+      height: '28px',
+      lineHeight: '28px',
+      marginBottom: '13px',
+    }),
+  }),
 };
 
 const iconButton: CSSProperties = {
@@ -65,9 +73,21 @@ const clear: CSSProperties = {
       color: `${colors.neutralDarkest} !important`,
       // fontWeight: 200,
       lineHeight: '28px',
+
+      ...onlyMobile({
+        ...makeImportant({
+          lineHeight: '26px',
+        }),
+      }),
     },
     '& $iconWrapper': {
-      height: '30px',
+      height: '26px',
+
+      ...onlyMobile({
+        ...makeImportant({
+          height: '26px',
+        }),
+      }),
     },
     '& $icon': {
       // color: `${colors.black} !important`,
