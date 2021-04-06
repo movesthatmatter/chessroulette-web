@@ -2,28 +2,35 @@ import React from 'react';
 import { Button } from 'src/components/Button';
 import { Form } from 'src/components/Form';
 import { TextInput } from 'src/components/TextInput';
-import { createUseStyles, CSSProperties } from 'src/lib/jss';
+import { createUseStyles } from 'src/lib/jss';
 import { validator } from 'src/lib/validator';
 import { updateUser } from 'src/services/Authentication/resources';
 import { updateUserAction } from 'src/services/Authentication/actions';
-import { RegisteredUserRecord } from 'dstnd-io';
+import { CountryCode, RegisteredUserRecord } from 'dstnd-io';
 import { useDispatch } from 'react-redux';
 import { Avatar } from 'src/components/Avatar';
 import { Hr } from 'src/components/Hr';
+import { GetCountries } from 'src/services/Location';
+import { SelectInput } from 'src/components/Input/SelectInput';
 
 type Props = {
   user: RegisteredUserRecord;
+};
+
+type Model = {
+  firstName: string;
+  lastName: string;
+  countryCode: CountryCode;
+  countryName: string;
 };
 
 export const UserDetails: React.FC<Props> = ({ user }) => {
   const cls = useStyles();
   const dispatch = useDispatch();
 
-  console.log("user detais");
-
   return (
     <div className={cls.container}>
-      <Avatar mutunachiId={Number(user.avatarId)} size="20%" />
+      <Avatar mutunachiId={Number(user.avatarId)} className={cls.avatar} size="35%" />
       <div className={cls.spacer} />
       <div className={cls.requiredFieldsContainer}>
         <TextInput
@@ -35,36 +42,31 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
         />
         <TextInput
           label="Username"
-          value="beth.harmon"
+          value={user.username}
           readOnly
           placeholder="beth.harmon"
           className={cls.input}
         />
       </div>
-      <div
-        style={{
-          paddingBottom: '24px',
-        }}
-      />
-      <Hr text="Optional Details" />
-      <div
-        style={{
-          paddingBottom: '24px',
-        }}
-      />
-      <Form<Pick<RegisteredUserRecord, 'firstName' | 'lastName' | 'email'>>
+      <Form<Model>
         validator={{
           firstName: [validator.rules.name(), validator.messages.firstName],
           lastName: [validator.rules.name(), validator.messages.lastName],
+          countryCode: [validator.rules.notEmpty(), validator.messages.notEmpty],
         }}
-        initialModel={user}
+        initialModel={{
+          ...user,
+          countryCode: user.country?.code,
+          countryName: user.country?.name,
+        }}
         validateOnChange
-        onSubmit={(model) => {
-          return updateUser({
+        onSubmit={(model) =>
+          updateUser({
             firstName: model.firstName,
             lastName: model.lastName,
+            countryCode: model.countryCode,
           })
-            .mapErr((e) => {
+            .mapErr(() => {
               return {
                 type: 'SubmissionGenericError',
                 content: undefined,
@@ -72,8 +74,8 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
             })
             .map((user) => {
               dispatch(updateUserAction({ user }));
-            });
-        }}
+            })
+        }
         render={(p) => (
           <>
             <div className={cls.formContainer}>
@@ -103,22 +105,55 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                   }
                 />
               </div>
-              <div className={cls.inputWrapper}>
+              {/* <div className={cls.inputWrapper}>
                 <TextInput
                   label="Prefered Language"
                   value="English"
                   placeholder="English"
                   className={cls.input}
                 />
-              </div>
-              <div className={cls.inputWrapper}>
-                <TextInput
-                  label="Country"
-                  value="Brazil"
-                  placeholder="Brazil"
-                  className={cls.input}
-                />
-              </div>
+              </div> */}
+              <GetCountries
+                render={({ countries, isLoading, fetch }) => (
+                  <div className={cls.inputWrapper}>
+                    <SelectInput
+                      multiple
+                      label="Aaand where do you live?"
+                      placeholder="Bolivia"
+                      options={
+                        countries &&
+                        Object.values(countries).map(({ name, code }) => ({
+                          label: name,
+                          value: code,
+                        }))
+                      }
+                      value={
+                        p.model.countryCode && p.model.countryName
+                          ? {
+                              label: p.model.countryName,
+                              value: p.model.countryCode,
+                            }
+                          : undefined
+                      }
+                      isLoading={isLoading}
+                      menuPlacement="top"
+                      onFocus={() => {
+                        if (!(countries || isLoading)) {
+                          fetch();
+                        }
+                      }}
+                      onSelect={({ value, label }) => {
+                        p.onChange('countryCode', value);
+                        p.onChange('countryName', label);
+                      }}
+                      validationError={
+                        p.errors.validationErrors?.countryCode ||
+                        p.errors.submissionValidationErrors?.countryCode
+                      }
+                    />
+                  </div>
+                )}
+              />
             </div>
             <div className={cls.inputWrapper}>
               <Button
@@ -139,32 +174,18 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
 const useStyles = createUseStyles({
   container: {
     height: '100%',
+    width: '50%',
   },
+  avatar: {},
   spacer: {
-    marginBottom: '48px',
+    marginBottom: '24px',
   },
-  requiredFieldsContainer: {
-    width: 'calc(50% - 12px)',
-  },
+  requiredFieldsContainer: {},
   formContainer: {
     paddingBottom: '16px',
     display: 'flex',
-    flexWrap: 'wrap',
+    flexDirection: 'column',
   },
-  inputWrapper: {
-    flex: '0 1 50%',
-    ...({
-      '&:nth-child(odd)': {
-        '& $input': {
-          paddingRight: '12px',
-        },
-      },
-      '&:nth-child(even)': {
-        '& $input': {
-          paddingLeft: '12px',
-        },
-      },
-    } as CSSProperties),
-  },
+  inputWrapper: {},
   input: {},
 });

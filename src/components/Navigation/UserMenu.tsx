@@ -8,10 +8,8 @@ import { Avatar } from 'src/components/Avatar';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import { PeerState, usePeerState } from 'src/providers/PeerProvider';
-import { LogoutButton } from 'src/services/Authentication/widgets';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { Link } from 'react-router-dom';
-import { Menu } from 'src/modules/User/components/Menu';
 
 type Props = {
   darkMode?: boolean;
@@ -122,7 +120,6 @@ export const UserMenu: React.FC<Props> = ({
                   My Games
                 </Link>
               </div>
-              <LogoutButton full type="secondary" />
             </div>
           </div>
         )}

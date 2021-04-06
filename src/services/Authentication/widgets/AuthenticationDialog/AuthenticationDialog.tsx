@@ -150,6 +150,8 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
               firstName: input.firstName,
               lastName: input.lastName,
               verificationToken: s.verificationToken,
+              username: input.username,
+              countryCode: input.countryCode,
             })
               .mapErr((e) => {
                 if (e.type === 'ValidationErrors') {

@@ -100,7 +100,6 @@ export const NavigationMenu: React.FC<Props> = (props) => {
                   )}
                 </div>
                 <div className={cls.drawerLinksContainer}>{menuContent}</div>
-                {auth.authenticationType === 'user' && <LogoutButton full type="secondary" />}
               </div>
             </div>
           </div>
