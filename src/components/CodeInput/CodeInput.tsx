@@ -1,7 +1,7 @@
 import React from 'react';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import ReactCodeInput from 'react-verification-code-input';
-import { colors, defaultTheme } from 'src/theme';
+import { colors, defaultTheme, fonts, onlyMobile } from 'src/theme';
 import cx from 'classnames';
 
 type Props = Omit<
@@ -56,6 +56,10 @@ const useStyles = createUseStyles({
 
           borderRadius: '8px',
           border: `1px solid ${colors.neutral}`,
+        }),
+
+        ...onlyMobile({
+          fontSize: '16px',
         }),
 
         '&:first-child': {

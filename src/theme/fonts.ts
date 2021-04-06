@@ -33,12 +33,22 @@ const body1: CSSProperties = {
   fontSize: '16px',
   fontWeight: 'normal',
   lineHeight: '24px',
+
+  ...onlyMobile({
+    fontSize: '13px',
+    lineHeight: '16px',
+  }),
 };
 
 const body2: CSSProperties = {
   fontSize: '14px',
   fontWeight: 'normal',
   lineHeight: '20px',
+
+  ...onlyMobile({
+    fontSize: '11px',
+    lineHeight: '12px',
+  }),
 };
 
 const subtitle1: CSSProperties = {
@@ -49,13 +59,18 @@ const subtitle1: CSSProperties = {
   ...onlyMobile({
     fontSize: '13px',
     lineHeight: '16px',
-  })
+  }),
 };
 
 const subtitle2: CSSProperties = {
   fontSize: '14px',
   fontWeight: 700,
   lineHeight: '20px',
+
+  ...onlyMobile({
+    fontSize: '11px',
+    lineHeight: '13px',
+  }),
 };
 
 const largeNormal : CSSProperties = {
