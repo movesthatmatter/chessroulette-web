@@ -1,5 +1,5 @@
 import { Box } from 'grommet';
-import React, { LegacyRef, useRef } from 'react';
+import React, { LegacyRef, useRef, useState, useEffect } from 'react';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
@@ -16,6 +16,8 @@ import { ChatContainer } from 'src/modules/Chat';
 import { LayoutProps } from '../types';
 import { RoomDetails } from '../components/RoomDetails';
 import { ExitRoomButton } from '../components/ExitRoomButton/ExitRoomButton';
+import { getOppositePlayer, getPlayer } from 'src/modules/GameRoomV2/util';
+import { ChessPlayer } from 'dstnd-io';
 
 type Props = LayoutProps;
 
@@ -26,6 +28,18 @@ export const DesktopLayout: React.FC<Props> = (props) => {
   const cls = useStyles();
   const dialogTarget = useRef();
   const { game } = props;
+  const [gameReadyToPlay, setGameReadyToPlay] = useState(false);
+  const getMePlayer = getPlayer(props.room.me.id, game.players);
+  const getOtherPlayer = getOppositePlayer(getMePlayer as ChessPlayer, game.players);
+
+  useEffect(() => {
+    if (props.room && props.room.peersCount > 0) {
+      setGameReadyToPlay(Object
+        .values(props.room.peersIncludingMe)
+        .filter(p => p.id === getOtherPlayer?.user.id)
+        .length > 0)
+    }
+  }, [props.room.peersIncludingMe, props.room.peersCount]);
 
   return (
     <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
@@ -116,16 +130,17 @@ export const DesktopLayout: React.FC<Props> = (props) => {
           </div>
         )}
         getGameComponent={({ container }) => (
-          <ChessGameV2
-            game={game}
-            onMove={({ move, pgn }) => {
-              props.onMove(move, pgn, [], props.homeColor);
-            }}
-            size={container.width}
-            homeColor={props.homeColor}
-            playable={props.canIPlay}
-            className={cls.board}
-          />
+            <ChessGameV2
+              game={game}
+              onMove={({ move, pgn }) => {
+                props.onMove(move, pgn, [], props.homeColor);
+              }}
+              size={container.width}
+              homeColor={props.homeColor}
+              playable={props.canIPlay}
+              className={cls.board}
+              viewOnly={!gameReadyToPlay}
+            />
         )}
         getRightSideComponent={({ container }) => (
           <div className={cx(cls.side, cls.rightSide)}>

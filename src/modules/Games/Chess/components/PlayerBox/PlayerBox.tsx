@@ -28,15 +28,12 @@ export const PlayerBox: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
-  const boxContainerRef = useRef(null);
-  const containerDimensions = useContainerDimensions(boxContainerRef);
 
   return (
     <Box
       fill
       className={cls.container}
-      direction={containerDimensions.width > 170 ? 'row' : 'column'}
-      ref={boxContainerRef}
+      direction='row'
     >
       <Box fill direction="row">
         <Avatar mutunachiId={Number(player.user.avatarId)} />
