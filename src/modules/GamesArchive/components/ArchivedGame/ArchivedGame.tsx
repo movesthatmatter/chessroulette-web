@@ -1,6 +1,13 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, floatingShadow, softBorderRadius } from 'src/theme';
+import {
+  colors,
+  floatingShadow,
+  hideOnMobile,
+  MOBILE_BREAKPOINT,
+  onlyDesktop,
+  softBorderRadius,
+} from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { Avatar } from 'src/components/Avatar';
@@ -13,6 +20,7 @@ import { otherChessColor } from 'src/modules/Games/Chess/util';
 import dateformat from 'dateformat';
 import capitalize from 'capitalize';
 import { ClipboardCopy } from 'src/components/ClipboardCopy';
+import { useWindowWidth } from '@react-hook/window-size';
 
 type Props = {
   game: GameRecordFinished | GameRecordStopped;
@@ -42,9 +50,11 @@ const getResult = (game: GameRecordFinished | GameRecordStopped) => {
 
 export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   const cls = useStyles();
+  const windowWidth = useWindowWidth();
 
   // console.log('game', game)
   const result = getResult(game);
+  const avatarSize = windowWidth < MOBILE_BREAKPOINT ? '32px' : '72px';
 
   return (
     <div
@@ -76,10 +86,8 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
             <div className={cx(cls.side, cls.leftSide)}>
               <div className={cls.filler}>
                 <Emoji
-                  symbol={
-                    result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji
-                  }
-                  className={cls.emoji}
+                  symbol={result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji}
+                  className={cx(cls.emoji, cls.onlyDesktop)}
                 />
               </div>
               <div className={cx(cls.playerInfo, cls.playerInfoLeftSide)}>
@@ -95,7 +103,7 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
                 >
                   {player.user.name}
                 </Text>
-                <Avatar mutunachiId={Number(player.user.avatarId)} size="78px" />
+                <Avatar mutunachiId={Number(player.user.avatarId)} size={avatarSize} />
               </div>
             </div>
           );
@@ -115,7 +123,7 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
             return (
               <>
                 <div className={cx(cls.playerInfo, cls.playerInfoRightSide)}>
-                  <Avatar mutunachiId={Number(player.user.avatarId)} size="78px" />
+                  <Avatar mutunachiId={Number(player.user.avatarId)} size={avatarSize} />
                   <Text
                     className={cls.playerName}
                     style={
@@ -131,10 +139,8 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
                 </div>
                 <div className={cls.filler}>
                   <Emoji
-                    symbol={
-                      result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji
-                    }
-                    className={cls.emoji}
+                    symbol={result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji}
+                    className={cx(cls.emoji, cls.onlyDesktop)}
                   />
                 </div>
               </>
@@ -144,10 +150,10 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
       </div>
       <div className={cls.bottom}>
         <div className={cls.resultWrapper}>
-          <Text size="small2">{result}</Text>
+          <Text size="subtitle1">{result}</Text>
         </div>
         <div className={cls.pgnWrapper}>
-          <ClipboardCopy value={game.pgn || ''} />
+          <ClipboardCopy value={game.pgn} />
         </div>
       </div>
     </div>
@@ -177,7 +183,7 @@ const useStyles = createUseStyles({
   leftSide: {},
   rightSide: {},
   middleSide: {
-    width: spacers.larger,
+    width: '60px',
     display: 'flex',
     alignItems: 'center',
     justifyItems: 'center',
@@ -197,7 +203,9 @@ const useStyles = createUseStyles({
     paddingTop: spacers.default,
   },
   pgnWrapper: {
-    
+    ...onlyDesktop({
+      width: '45%',
+    }),
   },
   resultWrapper: {
     display: 'flex',
@@ -220,12 +228,14 @@ const useStyles = createUseStyles({
   playerName: {
     paddingLeft: spacers.default,
     paddingRight: spacers.default,
-    fontSize: '14px',
   },
   emoji: {
     fontSize: '48px',
   },
   vsEmoji: {
     fontSize: '32px',
+  },
+  onlyDesktop: {
+    ...hideOnMobile,
   },
 });

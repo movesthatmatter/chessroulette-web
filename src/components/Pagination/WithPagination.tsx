@@ -10,6 +10,8 @@ type RenderProps<TItem> = {
   totalPages: number;
   pageSize: number;
   isLoading: boolean;
+  isReady: boolean;
+  isEmpty: boolean;
 };
 
 type Props<TItem> = {
@@ -29,6 +31,7 @@ type State<TItem> = {
   pageSize: number;
   totalPages: number;
   isLoading: boolean;
+  isReady: boolean;
 };
 
 export class WithPagination<TItem> extends React.Component<Props<TItem>, State<TItem>> {
@@ -41,6 +44,7 @@ export class WithPagination<TItem> extends React.Component<Props<TItem>, State<T
       pageSize: props.initialPageSize || 10,
       totalPages: 1,
       isLoading: false,
+      isReady: false,
     };
   }
 
@@ -60,10 +64,14 @@ export class WithPagination<TItem> extends React.Component<Props<TItem>, State<T
           items: r.items,
           totalPages: Math.ceil(r.itemsTotal / this.state.pageSize),
           isLoading: false,
+          isReady: true,
         });
       })
       .mapErr(() => {
-        this.setState({ isLoading: false });
+        this.setState({
+          isLoading: false,
+          isReady: true,
+        });
       });
   }
 
@@ -93,6 +101,8 @@ export class WithPagination<TItem> extends React.Component<Props<TItem>, State<T
       totalPages: this.state.totalPages,
       pageSize: this.state.pageSize,
       isLoading: this.state.isLoading,
+      isReady: this.state.isReady,
+      isEmpty: this.state.isReady && this.state.items.length === 0,
     });
   }
 }
