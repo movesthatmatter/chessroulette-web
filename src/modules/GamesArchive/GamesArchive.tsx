@@ -1,162 +1,148 @@
 import capitalize from 'capitalize';
-import { RegisteredUserRecord, UserRecord } from 'dstnd-io';
+import { AsyncResult, AsyncResultWrapper, Ok, RegisteredUserRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { ClipboardCopy } from 'src/components/ClipboardCopy';
-import { Paginator } from 'src/components/Paginator/Paginator';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, floatingShadow, fonts } from 'src/theme';
-import { getPlayer, getPlayerColor } from '../GameRoomV2/util';
+import { colors, defaultTheme, floatingShadow, fonts, softBorderRadius } from 'src/theme';
+import { getPlayerColor } from '../GameRoomV2/util';
 import { ChessBoard } from '../Games/Chess/components/ChessBoardV2';
 import { gameRecordToGame, pgnToFen } from '../Games/Chess/lib';
 import { Game } from '../Games/types';
 import { getUserGames } from './resources';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChessKnight } from '@fortawesome/free-solid-svg-icons';
+import { spacers } from 'src/theme/spacers';
+import { AwesomeLoader } from 'src/components/AwesomeLoader';
+import { getGameResult } from './util';
+import { WithPagination } from 'src/components/Pagination';
+import { Grommet } from 'grommet';
+import { game } from 'dstnd-io/dist/metadata';
 
 type Props = {
   userId: RegisteredUserRecord['id'];
+  pageSize?: number;
 };
 
-const getGameResult = (game: Game, userId: UserRecord['id']) => {
-  if (game.winner === '1/2') {
-    return 'Draw';
-  }
-
-  const winningColor = game.winner;
-
-  const userPlayer = getPlayer(userId, game.players);
-
-  if (!userPlayer) {
-    return `${capitalize(winningColor || '')} Won`;
-  }
-
-  if (userPlayer.color === game.winner) {
-    return 'Won';
-  }
-
-  return 'Lost';
-};
-
-export const GamesArchive: React.FC<Props> = (props) => {
+export const GamesArchive: React.FC<Props> = ({ userId, pageSize = 1 }) => {
   const cls = useStyles();
-  const [games, setGames] = useState<Game[]>([]);
-  const pageSize = 3;
-  const [totalPages, setTotalPages] = useState(0);
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    setIndex(0);
-  }, [props.userId]);
-
-  useEffect(() => {
-    getUserGames({
-      userId: props.userId,
-      pageSize,
-      currentIndex: index,
-    }).map((gameRecords) => {
-      setGames(gameRecords.items.map(gameRecordToGame));
-      if (totalPages === 0) {
-        setTotalPages(Math.ceil(gameRecords.itemsTotal / pageSize));
-      }
-    });
-  }, [index]);
+  const [loading, setLoading] = useState(false);
 
   return (
-    <div className={cls.container}>
-      <div className={cls.gameContainerWrapper}>
-        {games.map((game) => {
-          const date = new Date(game.createdAt);
+      <WithPagination<Game>
+        getItems={(p) => {
+          setLoading(true);
+          return getUserGames({
+            userId,
+            pageSize: p.pageSize,
+            currentIndex: p.pageIndex,
+          }).map((games) => {
+            setLoading(false);
+            return {
+              items: games.items.map(gameRecordToGame),
+              itemsTotal: games.itemsTotal,
+              currentIndex: games.currentIndex,
+            };
+          });
+        }}
+        render={(r) => {
+          if (loading) {
+            return <AwesomeLoader />;
+          }
           return (
-            <div className={cls.gameContainer} key={game.id}>
-              <div className={cls.infoContainer}>
-                <div className={cls.gameTypeAndDate}>
-                  <div style={{ flex: 1 }}>
-                    <div className={cls.gameType}>
-                      Game Type -
-                      <span style={{ fontWeight: 'bold' }}>{capitalize(game.timeLimit)}</span>
+            <div className={cls.container}>
+              <div className={cls.gameContainerWrapper}>
+                {r.items.map((game) => {
+                  const date = new Date(game.createdAt);
+                  return (
+                    <div className={cls.gameContainer} key={game.id}>
+                      <div className={cls.infoContainer}>
+                        <div className={cls.gameTypeAndDate}>
+                          <div style={{ flex: 1 }}>
+                            <div className={cls.gameType}>
+                              Game Type -
+                              <span style={{ fontWeight: 'bold' }}>
+                                {capitalize(game.timeLimit)}
+                              </span>
+                            </div>
+                            <div className={cls.date}>
+                              {date.toLocaleDateString('en-US') +
+                                ' - ' +
+                                date.toLocaleString('en-US', {
+                                  hour: 'numeric',
+                                  minute: 'numeric',
+                                  hour12: true,
+                                })}
+                            </div>
+                          </div>
+                          <div className={cls.pgn}>
+                            <ClipboardCopy value={game.pgn || ''} />
+                          </div>
+                        </div>
+                        <div className={cls.gameDetails}>
+                          <div className={cls.opponentsContainer}>
+                            <FontAwesomeIcon
+                              icon={faChessKnight}
+                              size="lg"
+                              color={game.players[0].color}
+                              className={
+                                game.players[0].color === 'white'
+                                  ? cls.chessPieceWhite
+                                  : cls.chessPieceBlack
+                              }
+                            />
+                            <span
+                              className={cls.nameContainer}
+                              style={{
+                                fontWeight:
+                                  game.players[0].color === game.winner ? 'bolder' : 'normal',
+                              }}
+                            >
+                              {game.players[0].user.name}
+                            </span>
+                            <span className={cls.vs}>
+                              {'  '}vs{'  '}
+                            </span>
+                            <span
+                              className={cls.nameContainer}
+                              style={{
+                                fontWeight:
+                                  game.players[1].color === game.winner ? 'bolder' : 'normal',
+                              }}
+                            >
+                              {game.players[1].user.name}
+                            </span>
+                            <FontAwesomeIcon
+                              icon={faChessKnight}
+                              size="lg"
+                              color={game.players[1].color}
+                              className={
+                                game.players[1].color === 'white'
+                                  ? cls.chessPieceWhite
+                                  : cls.chessPieceBlack
+                              }
+                            />
+                          </div>
+                          <div className={cls.gameResult}>{getGameResult(game, userId)}</div>
+                        </div>
+                      </div>
+                      <div className={cls.chessboardContainer}>
+                        <ChessBoard
+                          fen={pgnToFen(game.pgn || '')}
+                          orientation={getPlayerColor(userId, game.players)}
+                          size={140}
+                          coordinates={false}
+                          viewOnly
+                        />
+                      </div>
                     </div>
-                    <div className={cls.date}>
-                      {date.toLocaleDateString('en-US') +
-                        ' - ' +
-                        date.toLocaleString('en-US', {
-                          hour: 'numeric',
-                          minute: 'numeric',
-                          hour12: true,
-                        })}
-                    </div>
-                  </div>
-                  <div className={cls.pgn}>
-                    <ClipboardCopy value={game.pgn || ''} />
-                  </div>
-                </div>
-                <div className={cls.gameDetails}>
-                  <div className={cls.opponentsContainer}>
-                    <FontAwesomeIcon
-                      icon={faChessKnight}
-                      size="lg"
-                      color={game.players[0].color}
-                      className={
-                        game.players[0].color === 'white'
-                          ? cls.chessPieceWhite
-                          : cls.chessPieceBlack
-                      }
-                    />
-                    <span
-                      className={cls.nameContainer}
-                      style={{
-                        fontWeight: game.players[0].color === game.winner ? 'bolder' : 'normal',
-                      }}
-                    >
-                      {game.players[0].user.name}
-                    </span>
-                    <span className={cls.vs}>
-                      {'  '}vs{'  '}
-                    </span>
-                    <span
-                      className={cls.nameContainer}
-                      style={{
-                        fontWeight: game.players[1].color === game.winner ? 'bolder' : 'normal',
-                      }}
-                    >
-                      {game.players[1].user.name}
-                    </span>
-                    <FontAwesomeIcon
-                      icon={faChessKnight}
-                      size="lg"
-                      color={game.players[1].color}
-                      className={
-                        game.players[1].color === 'white'
-                          ? cls.chessPieceWhite
-                          : cls.chessPieceBlack
-                      }
-                    />
-                  </div>
-                  <div className={cls.gameResult}>{getGameResult(game, props.userId)}</div>
-                </div>
+                  );
+                })}
               </div>
-              <div className={cls.chessboardContainer}>
-                <ChessBoard
-                  fen={pgnToFen(game.pgn || '')}
-                  orientation={getPlayerColor(props.userId, game.players)}
-                  size={140}
-                  coordinates={false}
-                  viewOnly
-                />
-              </div>
+              {r.paginator}
             </div>
           );
-        })}
-      </div>
-      <div className={cls.paginatorContainer}>
-        <Paginator
-          pageSize={pageSize}
-          totalPages={totalPages}
-          onChangePage={(page) => {
-            setIndex(page);
-          }}
-        />
-      </div>
-    </div>
+        }}
+      />
   );
 };
 
@@ -165,21 +151,26 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
-    marginTop: '20px',
+    // marginTop: '20px',
   },
   gameContainer: {
     display: 'flex',
     flexDirection: 'row',
-    borderBottom: `1px solid ${colors.neutralLight}`,
-    padding: '16px 0',
+
+    // padding: '16px 0',
     justifyContent: 'space-between',
     alignItems: 'center',
     background: colors.white,
-    // padding: spacer
+    padding: spacers.default,
+    marginBottom: spacers.large,
+    // borderRadius: borderRadius
+    ...softBorderRadius,
+    border: `1px solid ${colors.neutral}`,
+    ...floatingShadow,
 
     '&:last-child': {
-      borderBottom: 0,
-    }
+      // borderBottom: 0,
+    },
   },
   gameContainerWrapper: {
     flex: 1,
