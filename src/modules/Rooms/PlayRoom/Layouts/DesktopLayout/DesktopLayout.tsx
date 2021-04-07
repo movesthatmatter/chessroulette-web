@@ -121,7 +121,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
               }}
             >
               <div style={{ paddingTop: '16px' }} />
-              <UserMenu reversed />
+              <UserMenu reversed withDropMenu linksTarget="blank" />
             </div>
             <div
               className={cls.sideContent}

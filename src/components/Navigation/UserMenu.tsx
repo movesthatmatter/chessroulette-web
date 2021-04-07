@@ -15,6 +15,7 @@ type Props = {
   darkMode?: boolean;
   reversed?: boolean;
   withDropMenu?: boolean;
+  linksTarget?: 'blank' | 'self';
 };
 
 const getStatusColor = (peerState: PeerState) => {
@@ -33,6 +34,7 @@ export const UserMenu: React.FC<Props> = ({
   darkMode = false,
   reversed = false,
   withDropMenu = false,
+  linksTarget = 'self',
 }) => {
   const cls = useStyles();
   const auth = useSelector(selectAuthentication);
@@ -102,7 +104,7 @@ export const UserMenu: React.FC<Props> = ({
     </Box>
   );
 
-  if (withDropMenu) {
+  if (withDropMenu && auth.authenticationType === 'user') {
     return (
       <div className={cx(menuOpened && cls.menuWrapper)}>
         {labelContent}
@@ -111,12 +113,20 @@ export const UserMenu: React.FC<Props> = ({
             <div className={cls.openedMenuLabelWrapper}>{labelContent}</div>
             <div className={cls.menuContent}>
               <div className={cls.linkWrapper}>
-                <Link to="/user/profile" className={cls.link}>
+                <Link
+                  to="/user/profile"
+                  className={cls.link}
+                  {...(linksTarget === 'blank' && { target: '_blank' })}
+                >
                   My Profile
                 </Link>
               </div>
               <div className={cls.linkWrapper}>
-                <Link to="/user/games" className={cls.link}>
+                <Link
+                  to="/user/games"
+                  className={cls.link}
+                  {...(linksTarget === 'blank' && { target: '_blank' })}
+                >
                   My Games
                 </Link>
               </div>
