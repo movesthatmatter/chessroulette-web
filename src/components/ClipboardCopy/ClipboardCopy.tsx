@@ -12,9 +12,10 @@ type Props = {
   // @deprecate This doesnt work in some environemnts (ios)
   autoCopy?: boolean;
   onCopied?: () => void;
+  copyButtonLabel?: string;
 };
 
-export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, ...props }) => {
+export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, copyButtonLabel, ...props }) => {
   const cls = useStyles();
   const [copied, setCopied] = useState(false);
 
@@ -36,7 +37,12 @@ export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, ...props }) =>
     <Box direction="row" className={cx(cls.container, copied && cls.containerCopied)} fill>
       <TextInput value={props.value} plain size="small" className={cls.textInput} />
       <Button
-        icon={<Copy color={colors.neutralDarkest} className={cls.copyIcon} />}
+        {...copyButtonLabel ? {
+          label: <div className={cls.buttonLabelWrapper}>{copyButtonLabel}</div>,
+          icon: <Copy color={colors.neutralDarkest} className={cls.copyIcon} />,
+        } : {
+          icon: <Copy color={colors.neutralDarkest} className={cls.copyIcon} />,
+        }}
         className={cx(cls.copyButton)}
         size="small"
         plain
@@ -69,6 +75,13 @@ const useStyles = createUseStyles({
       WebkitTapHighlightColor: 'initial',
       WebkitTouchCallout: 'default',
     }),
+
+    ...onlyMobile({
+      ...makeImportant({
+        fontSize: '12px',
+        height: '28px',
+      }),
+    }),
   },
   copyButton: {
     background: `${colors.neutral} !important`,
@@ -95,5 +108,9 @@ const useStyles = createUseStyles({
     ...onlyMobile({
       width: '14px !important',
     }),
+  },
+  buttonLabelWrapper: {
+    color: colors.neutralDarkest,
+    whiteSpace: 'nowrap',
   },
 });
