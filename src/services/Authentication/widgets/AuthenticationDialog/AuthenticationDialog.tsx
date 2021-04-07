@@ -16,34 +16,33 @@ import { Emoji } from 'src/components/Emoji';
 import capitalize from 'capitalize';
 import { useAuthenticationService } from '../../useAuthentication';
 
-
 type Props = {
   visible: boolean;
   onClose?: () => void;
 };
 
 type VerificationStep = {
-  name: 'VerificationStep',
-  state: undefined,
+  name: 'VerificationStep';
+  state: undefined;
 };
 
 type RegistrationStep = {
-  name: 'RegistrationStep',
+  name: 'RegistrationStep';
   state: {
-    registrationUserInfo: RegistrationUserInfo,
+    registrationUserInfo: RegistrationUserInfo;
     verificationToken: string;
     verifiedExternalVendorInfo?: CreateUserAccountRequestPayload['data']['external'];
-  },
+  };
 };
 
 type ExternalConnectionStep = {
-  name: 'ExternalAccountConnectionStep',
+  name: 'ExternalAccountConnectionStep';
   state: {
     vendor: NonNullable<CreateUserAccountRequestPayload['data']['external']>['vendor'];
     email: RegisteredUserRecord['email'];
     accessToken: string;
-  }
-}
+  };
+};
 
 type Steps = VerificationStep | RegistrationStep | ExternalConnectionStep;
 
@@ -55,8 +54,6 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
     name: 'VerificationStep',
     state: undefined,
   });
-
-  const dispatch = useDispatch();
 
   const authenticate = (input: UserAccountInfo) => {
     return resources
@@ -71,7 +68,7 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
               },
             },
           } as const;
-        };
+        }
 
         return {
           type: 'SubmissionGenericError',
@@ -100,24 +97,24 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
                 registrationUserInfo: {
                   type: 'external',
                   email: r.external.user.email,
-                  ...keyInObject(r.external.user, 'firstName') && {
+                  ...(keyInObject(r.external.user, 'firstName') && {
                     firstName: r.external.user.firstName,
-                  },
-                  ...keyInObject(r.external.user, 'lastName') && {
+                  }),
+                  ...(keyInObject(r.external.user, 'lastName') && {
                     firstName: r.external.user.lastName,
-                  },
+                  }),
                 },
                 verifiedExternalVendorInfo: {
                   vendor: input.vendor,
                   accessToken: input.accessToken,
                 },
                 verificationToken: r.verificationToken,
-              }
+              },
             });
           }
         } else if (
-          r.status === 'InexistentExternalUserMatchesExistentUser:Email'
-          && input.type === 'external'
+          r.status === 'InexistentExternalUserMatchesExistentUser:Email' &&
+          input.type === 'external'
         ) {
           setCurrentStepState({
             name: 'ExternalAccountConnectionStep',
@@ -129,15 +126,13 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
           });
         }
       });
-  }
+  };
 
   const steps = {
     verification: (_: undefined) => ({
       title: `I'm so excited to meet you!`,
       graphic: <Mutunachi mid="1" className={cls.mutunachi} />,
-      content: (
-        <VerificationForm onSubmit={authenticate} />
-      )
+      content: <VerificationForm onSubmit={authenticate} />,
     }),
     registration: (s: RegistrationStep['state']) => ({
       title: `Heey, you're new around here!`,
@@ -146,13 +141,14 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
         <RegistrationForm
           userInfo={s.registrationUserInfo}
           onSubmit={(input) => {
-            return resources.createUser({
-              firstName: input.firstName,
-              lastName: input.lastName,
-              verificationToken: s.verificationToken,
-              username: input.username,
-              countryCode: input.countryCode,
-            })
+            return resources
+              .createUser({
+                firstName: input.firstName,
+                lastName: input.lastName,
+                verificationToken: s.verificationToken,
+                username: input.username,
+                countryCode: input.countryCode,
+              })
               .mapErr((e) => {
                 if (e.type === 'ValidationErrors') {
                   return {
@@ -183,30 +179,36 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
         <CodeVerificationForm
           emailToBeVerified={s.email}
           onSubmit={(input) => {
-            return authenticate(input)
-              // Send a request to connect the external account
-              // TODO: In the future this should be handled on the server!
-              .map(AsyncResult.passThrough(() => {
-                resources.connectExternalAccount({
-                  vendor: s.vendor,
-                  accessToken: s.accessToken,
-                });
-              }))
+            return (
+              authenticate(input)
+                // Send a request to connect the external account
+                // TODO: In the future this should be handled on the server!
+                .map(
+                  AsyncResult.passThrough(() => {
+                    resources.connectExternalAccount({
+                      vendor: s.vendor,
+                      accessToken: s.accessToken,
+                    });
+                  })
+                )
+            );
           }}
-          infoText={(
+          infoText={
             <>
               It looks like the email attached to your <strong>{capitalize(s.vendor)}</strong>
               {` `}account belongs to somebody else!
               <br />
               <br />
-              If that's you please verify it by entering the code I sent to <strong>{s.email}</strong>
-              {` `}<Emoji symbol="😎" />
+              If that's you please verify it by entering the code I sent to{' '}
+              <strong>{s.email}</strong>
+              {` `}
+              <Emoji symbol="😎" />
             </>
-          )}
+          }
         />
       ),
     }),
-  }
+  };
 
   const currentStep = (() => {
     if (currentStepState.name === 'VerificationStep') {
@@ -225,11 +227,11 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
       visible={props.visible}
       title={currentStep.title}
       onClose={props.onClose}
-      graphic={(
-        <AspectRatio aspectRatio={1} className={cls.mutunachiContainer}>
-          {currentStep.graphic}
-        </AspectRatio>
-      )}
+      graphic={
+        // <AspectRatio aspectRatio={1} className={cls.mutunachiContainer}>
+        <div className={cls.mutunachiContainer}>{currentStep.graphic}</div>
+        // </AspectRatio>
+      }
       content={currentStep.content}
       contentContainerClass={cls.contentContainer}
     />

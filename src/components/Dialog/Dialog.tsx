@@ -110,19 +110,22 @@ const useStyles = createUseStyles({
   container: {
     ...floatingShadow,
     ...softBorderRadius,
-    borderRadius: '8px !important',
-    minWidth: '200px !important',
-    maxWidth: '360px !important',
-    width: '50% !important',
     padding: 0,
-    paddingBottom: '24px !important',
     position: 'relative',
+
+    ...makeImportant({
+      paddingBottom: '24px',
+      borderRadius: '8px',
+      minWidth: '200px',
+      maxWidth: '360px',
+      width: '50%',
+    }),
 
     ...onlyMobile({
       ...makeImportant({
         width: '84%',
         maxWidth: 'none',
-        paddingBottom: '12px',
+        paddingBottom: '16px',
       }),
     }),
   },
@@ -174,6 +177,11 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
     paddingLeft: '32px',
     paddingRight: '32px',
+
+    ...onlyMobile({
+      paddingLeft: '18px',
+      paddingRight: '18px',
+    }),
   },
   buttonContainer: {
     marginLeft: '16px',
@@ -190,7 +198,9 @@ const useStyles = createUseStyles({
     },
   },
   button: {
-    paddingBottom: 0,
-    marginBottom: 0,
+    ...makeImportant({
+      paddingBottom: 0,
+      marginBottom: 0,
+    }),
   },
 });

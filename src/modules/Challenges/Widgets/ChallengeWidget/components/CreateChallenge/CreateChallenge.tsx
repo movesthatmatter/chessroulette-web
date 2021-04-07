@@ -30,10 +30,8 @@ export const CreateChallenge: React.FC<CreateChallengeProps> = ({ gameSpecs, onU
   return (
     <div className={cls.container}>
       <Box margin={{ bottom: 'small' }}>
-        <Text size="small1" className={cls.label}>
-          Time Limit
-        </Text>
         <SelectInput
+          label="Time Limit"
           options={Object.keys(metadata.game.chessGameTimeLimitMsMap).map((k) => {
             const timeLimit = (chessGameTimeLimitMsMap as any)[k];
 
@@ -67,10 +65,8 @@ export const CreateChallenge: React.FC<CreateChallengeProps> = ({ gameSpecs, onU
         />
       </Box>
       <Box>
-        <Text size="small1" className={cls.label}>
-          Preffered Color
-        </Text>
         <SelectInput
+          label="Preferred Color"
           options={metadata.game.chessGamePrefferedColorOptionList.map((k) => ({
             label: capitalize(k),
             value: k,

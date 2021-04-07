@@ -14,7 +14,7 @@ export default {
 
 export const defaultStory = () => (
   <Grommet theme={defaultTheme}>
-    <div style={{ width: 420 }}>
+    <div style={{ maxWidth: 420 }}>
       <RegistrationForm
         userInfo={{
           type: 'internal',

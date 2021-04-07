@@ -27,15 +27,15 @@ export const LogoutButton: React.FC<Props> = ({ ...buttonProps }) => {
         contentContainerClass={cls.dialogContentContainer}
         content={
           <>
-            <Text size="small1">
+            <Text size="body1">
               I'm not gonna get upset! At all...
             </Text>
             <Emoji symbol="🥺" />
             <br/>
             <br/>
-            <AspectRatio aspectRatio={1} className={cls.mutunachiContainer}>
+            <div className={cls.mutunachiContainer}>
               <Mutunachi mid="10" />
-            </AspectRatio>
+            </div>
           </>
         }
         // graphic={
@@ -67,7 +67,7 @@ export const LogoutButton: React.FC<Props> = ({ ...buttonProps }) => {
 
 const useStyles = createUseStyles({
   mutunachiContainer: {
-    width: '60%',
+    width: '40%',
     maxWidth: '300px',
     margin: '0 auto',
   },
