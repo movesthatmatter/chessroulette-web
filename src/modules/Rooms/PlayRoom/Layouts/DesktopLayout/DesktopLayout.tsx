@@ -14,6 +14,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { ChatContainer } from 'src/modules/Chat';
 import { LayoutProps } from '../types';
+import { RoomDetails } from '../components/RoomDetails';
+import { ExitRoomButton } from '../components/ExitRoomButton/ExitRoomButton';
 
 type Props = LayoutProps;
 
@@ -43,9 +45,21 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                 flex: 1,
                 paddingLeft: '16px',
                 paddingTop: '16px',
+                flexDirection: 'row',
+                display: 'flex',
               }}
             >
-              <NavigationHeader />
+              <div style={{ flex: 1 }}>
+                <NavigationHeader />
+              </div>
+              <div
+                style={{
+                  height: `${TOP_HEIGHT}px`,
+                  paddingRight: '30px',
+                }}
+              >
+                <UserMenu reversed withDropMenu linksTarget="blank" />
+              </div>
             </div>
             <div
               style={{
@@ -121,7 +135,21 @@ export const DesktopLayout: React.FC<Props> = (props) => {
               }}
             >
               <div style={{ paddingTop: '16px' }} />
-              <UserMenu reversed withDropMenu linksTarget="blank" />
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <RoomDetails />
+                <div
+                  style={{
+                    flex: 1,
+                  }}
+                />
+                <ExitRoomButton />
+              </div>
             </div>
             <div
               className={cls.sideContent}

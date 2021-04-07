@@ -4,12 +4,13 @@ import React, { useRef, useState, useEffect } from 'react';
 import { NavigationHeader } from 'src/components/Navigation';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { Text } from 'src/components/Text';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { MobileGameRoomLayout } from 'src/modules/GameRoomV2/GameRoomLayout/MobileGameRoomLayout';
 import {
   colors,
   floatingShadow,
   fonts,
+  hardBorderRadius,
   onlyMobile,
   onlySmallMobile,
   SMALL_MOBILE_BREAKPOINT,
@@ -159,15 +160,17 @@ export const MobileLayout: React.FC<Props> = (props) => {
                 )}
                 {showChatWindow && mobileChatButton.current && (
                   <Layer
-                    style={{ borderRadius: '18px', left: '10px', bottom: '10px' }}
+                    // style={{ borderRadius: '18px', left: '10px', bottom: '10px' }}
+                    modal={false}
                     responsive={false}
                     position="bottom-left"
                     animation="slide"
+                    className={cls.chatContainer}
                     onClickOutside={() => setShowChatWindow(false)}
                   >
-                    <div className={cls.chatContainer}>
+                    {/* <div className={cls.chatContainer}> */}
                       <ChatContainer />
-                    </div>
+                    {/* </div> */}
                   </Layer>
                 )}
               </div>
@@ -259,9 +262,20 @@ const useStyles = createUseStyles({
     paddingBottom: '8px',
   },
   chatContainer: {
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '54%',
     padding: '10px',
-    height: '400px',
-    overflow: 'hidden',
+    ...makeImportant({
+      ...hardBorderRadius,
+      borderBottomLeftRadius: 0,
+      borderBottomRightRadius: 0,
+      overflow: 'hidden',
+      // backgroundColor: 'rgba(255, 255, 255, .9)',
+      // opacity: .95,
+    }),
+    // height: '400px',
   },
   mobileBoard: {
     ...floatingShadow,
