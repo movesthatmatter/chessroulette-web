@@ -12,6 +12,7 @@ import { Avatar } from 'src/components/Avatar';
 import { Hr } from 'src/components/Hr';
 import { GetCountries } from 'src/services/Location';
 import { SelectInput } from 'src/components/Input/SelectInput';
+import { onlyDesktop, onlyMobile } from 'src/theme';
 
 type Props = {
   user: RegisteredUserRecord;
@@ -30,82 +31,85 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
 
   return (
     <div className={cls.container}>
-      <Avatar mutunachiId={Number(user.avatarId)} className={cls.avatar} size="35%" />
-      <div className={cls.spacer} />
-      <div className={cls.requiredFieldsContainer}>
-        <TextInput
-          label="Email"
-          value={user.email}
-          readOnly
-          placeholder="beth.harmon@queens.gambit"
-          className={cls.input}
-        />
-        <TextInput
-          label="Username"
-          value={user.username}
-          readOnly
-          placeholder="beth.harmon"
-          className={cls.input}
-        />
+      <div className={cls.avatarWrapper}>
+        <Avatar mutunachiId={Number(user.avatarId)} className={cls.avatar} size="35%" />
       </div>
-      <Form<Model>
-        validator={{
-          firstName: [validator.rules.name(), validator.messages.firstName],
-          lastName: [validator.rules.name(), validator.messages.lastName],
-          countryCode: [validator.rules.notEmpty(), validator.messages.notEmpty],
-        }}
-        initialModel={{
-          ...user,
-          countryCode: user.country?.code,
-          countryName: user.country?.name,
-        }}
-        validateOnChange
-        onSubmit={(model) =>
-          updateUser({
-            firstName: model.firstName,
-            lastName: model.lastName,
-            countryCode: model.countryCode,
-          })
-            .mapErr(() => {
-              return {
-                type: 'SubmissionGenericError',
-                content: undefined,
-              } as const;
+      <div className={cls.spacer} />
+      <div className={cls.fieldsContainer}>
+        <div className={cls.requiredFieldsContainer}>
+          <TextInput
+            label="Email"
+            value={user.email}
+            readOnly
+            placeholder="beth.harmon@queens.gambit"
+            className={cls.input}
+          />
+          <TextInput
+            label="Username"
+            value={user.username}
+            readOnly
+            placeholder="beth.harmon"
+            className={cls.input}
+          />
+        </div>
+        <Form<Model>
+          validator={{
+            firstName: [validator.rules.name(), validator.messages.firstName],
+            lastName: [validator.rules.name(), validator.messages.lastName],
+            countryCode: [validator.rules.notEmpty(), validator.messages.notEmpty],
+          }}
+          initialModel={{
+            ...user,
+            countryCode: user.country?.code,
+            countryName: user.country?.name,
+          }}
+          validateOnChange
+          onSubmit={(model) =>
+            updateUser({
+              firstName: model.firstName,
+              lastName: model.lastName,
+              countryCode: model.countryCode,
             })
-            .map((user) => {
-              dispatch(updateUserAction({ user }));
-            })
-        }
-        render={(p) => (
-          <>
-            <div className={cls.formContainer}>
-              <div className={cls.inputWrapper}>
-                <TextInput
-                  label="First Name"
-                  value={p.model.firstName}
-                  placeholder="Beth"
-                  className={cls.input}
-                  onChange={({ target }) => p.onChange('firstName', target.value)}
-                  validationError={
-                    p.errors.validationErrors?.firstName ||
-                    p.errors.submissionValidationErrors?.firstName
-                  }
-                />
-              </div>
-              <div className={cls.inputWrapper}>
-                <TextInput
-                  label="Last Name"
-                  value={p.model.lastName}
-                  placeholder="Beth"
-                  className={cls.input}
-                  onChange={({ target }) => p.onChange('lastName', target.value)}
-                  validationError={
-                    p.errors.validationErrors?.lastName ||
-                    p.errors.submissionValidationErrors?.lastName
-                  }
-                />
-              </div>
-              {/* <div className={cls.inputWrapper}>
+              .mapErr(() => {
+                return {
+                  type: 'SubmissionGenericError',
+                  content: undefined,
+                } as const;
+              })
+              .map((user) => {
+                dispatch(updateUserAction({ user }));
+              })
+          }
+          render={(p) => (
+            <>
+              <div className={cls.formContainer}>
+                <div className={cls.inputWrapper}>
+                  <TextInput
+                    label="First Name"
+                    value={p.model.firstName}
+                    placeholder="Beth"
+                    className={cls.input}
+                    onChange={({ target }) => p.onChange('firstName', target.value)}
+                    validationError={
+                      p.errors.validationErrors?.firstName ||
+                      p.errors.submissionValidationErrors?.firstName
+                    }
+                  />
+                </div>
+                <div className={cls.inputWrapper}>
+                  <TextInput
+                    label="Last Name"
+                    value={p.model.lastName}
+                    placeholder="Beth"
+                    className={cls.input}
+                    onChange={({ target }) => p.onChange('lastName', target.value)}
+                    validationError={
+                      p.errors.validationErrors?.lastName ||
+                      p.errors.submissionValidationErrors?.lastName
+                    }
+                  />
+                </div>
+                {/* <div className={cls.inputWrapper}>
                 <TextInput
                   label="Prefered Language"
                   value="English"
@@ -113,60 +117,62 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                   className={cls.input}
                 />
               </div> */}
-              <GetCountries
-                render={({ countries, isLoading, fetch }) => (
-                  <div className={cls.inputWrapper}>
-                    <SelectInput
-                      multiple
-                      label="Aaand where do you live?"
-                      placeholder="Bolivia"
-                      options={
-                        countries &&
-                        Object.values(countries).map(({ name, code }) => ({
-                          label: name,
-                          value: code,
-                        }))
-                      }
-                      value={
-                        p.model.countryCode && p.model.countryName
-                          ? {
-                              label: p.model.countryName,
-                              value: p.model.countryCode,
-                            }
-                          : undefined
-                      }
-                      isLoading={isLoading}
-                      menuPlacement="top"
-                      onFocus={() => {
-                        if (!(countries || isLoading)) {
-                          fetch();
+                <GetCountries
+                  render={({ countries, isLoading, fetch }) => (
+                    <div className={cls.inputWrapper}>
+                      <SelectInput
+                        multiple
+                        label="Aaand where do you live?"
+                        placeholder="Bolivia"
+                        options={
+                          countries &&
+                          Object.values(countries).map(({ name, code }) => ({
+                            label: name,
+                            value: code,
+                          }))
                         }
-                      }}
-                      onSelect={({ value, label }) => {
-                        p.onChange('countryCode', value);
-                        p.onChange('countryName', label);
-                      }}
-                      validationError={
-                        p.errors.validationErrors?.countryCode ||
-                        p.errors.submissionValidationErrors?.countryCode
-                      }
-                    />
-                  </div>
-                )}
-              />
-            </div>
-            <div className={cls.inputWrapper}>
-              <Button
-                label="Save Changes"
-                withLoader
-                disabled={!p.canSubmit}
-                type="positive"
-                onClick={p.submit}
-              />
-            </div>
-          </>
-        )}
-      />
+                        value={
+                          p.model.countryCode && p.model.countryName
+                            ? {
+                                label: p.model.countryName,
+                                value: p.model.countryCode,
+                              }
+                            : undefined
+                        }
+                        isLoading={isLoading}
+                        menuPlacement="top"
+                        onFocus={() => {
+                          if (!(countries || isLoading)) {
+                            fetch();
+                          }
+                        }}
+                        onSelect={({ value, label }) => {
+                          p.onChange('countryCode', value);
+                          p.onChange('countryName', label);
+                        }}
+                        validationError={
+                          p.errors.validationErrors?.countryCode ||
+                          p.errors.submissionValidationErrors?.countryCode
+                        }
+                      />
+                    </div>
+                  )}
+                />
+              </div>
+              <div className={cls.inputWrapper}>
+                <Button
+                  label="Save Changes"
+                  withLoader
+                  full
+                  disabled={!p.canSubmit}
+                  type="positive"
+                  onClick={p.submit}
+                />
+              </div>
+            </>
+          )}
+        />
+      </div>
     </div>
   );
 };
@@ -174,9 +180,24 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
 const useStyles = createUseStyles({
   container: {
     height: '100%',
-    width: '50%',
+    // display: 'flex',
+    // flexDirection: 'row',
+
+    ...onlyDesktop({
+      width: '50%',
+    }),
   },
-  avatar: {},
+  avatarWrapper: {
+    // flex: .7,
+  },
+  avatar: {
+    ...onlyMobile({
+      margin: '0 auto',
+    }),
+  },
+  fieldsContainer: {
+    flex: 1,
+  },
   spacer: {
     marginBottom: '24px',
   },

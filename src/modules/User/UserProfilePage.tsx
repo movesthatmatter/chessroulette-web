@@ -2,9 +2,11 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { AuthenticatedPage } from 'src/components/Page';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, text } from 'src/theme';import { GamesArchive } from '../GamesArchive';
+import { colors, hideOnMobile, onlyDesktop, text } from 'src/theme';
+import { GamesArchive } from '../GamesArchive';
 import { Menu } from './components/Menu';
 import { UserDetails } from './sections/UserDetails';
+import cx from 'classnames';
 
 type Props = {};
 
@@ -26,9 +28,9 @@ export const UserProfilePage: React.FC<Props> = (props) => {
   return (
     <AuthenticatedPage
       render={({ user }) => (
-        <div className={cls.container}>
+        <div className={cx(cls.container)}>
           <Menu
-            containerClassName={cls.menuContainer}
+            containerClassName={cx(cls.menuContainer, cls.onlyDesktop)}
             current={params.section}
             sections={sections}
             activeLinkClassName={cls.activeMenuLink}
@@ -64,7 +66,10 @@ const useStyles = createUseStyles({
   },
   sectionContainer: {
     flex: 1,
-    paddingLeft: '48px',
+    width: '100%',
+    ...onlyDesktop({
+      paddingLeft: '48px',
+    }),
   },
   menuLink: {
     display: 'block',
@@ -83,5 +88,8 @@ const useStyles = createUseStyles({
     borderRight: `3px solid ${text.primaryColor}`,
     color: text.primaryColor,
     fontWeight: 'bold',
-  }
+  },
+  onlyDesktop: {
+    ...hideOnMobile,
+  },
 });

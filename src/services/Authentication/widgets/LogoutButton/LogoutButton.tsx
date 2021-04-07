@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 import { useAuthenticationService } from '../../useAuthentication';
 import { Dialog } from 'src/components/Dialog/Dialog';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
-import { AspectRatio } from 'src/components/AspectRatio';
 import { createUseStyles } from 'src/lib/jss';
 import { Text } from 'src/components/Text';
 import { Emoji } from 'src/components/Emoji';
@@ -19,7 +18,11 @@ export const LogoutButton: React.FC<Props> = ({ ...buttonProps }) => {
 
   return (
     <>
-      <Button label="Log out" onClick={() => setShowConfirmation(true)} {...buttonProps} />
+      <Button
+        label="Log out"
+        onClick={() => setShowConfirmation(true)}
+        {...buttonProps}
+      />
       <Dialog
         visible={showConfrmation}
         onClose={() => setShowConfirmation(false)}
@@ -27,12 +30,10 @@ export const LogoutButton: React.FC<Props> = ({ ...buttonProps }) => {
         contentContainerClass={cls.dialogContentContainer}
         content={
           <>
-            <Text size="body1">
-              I'm not gonna get upset! At all...
-            </Text>
+            <Text size="body1">I'm not gonna get upset! At all...</Text>
             <Emoji symbol="🥺" />
-            <br/>
-            <br/>
+            <br />
+            <br />
             <div className={cls.mutunachiContainer}>
               <Mutunachi mid="10" />
             </div>
@@ -53,7 +54,7 @@ export const LogoutButton: React.FC<Props> = ({ ...buttonProps }) => {
           },
           {
             type: 'secondary',
-            label: 'I\'m staying!',
+            label: "I'm staying!",
             full: true,
             onClick: () => {
               setShowConfirmation(false);

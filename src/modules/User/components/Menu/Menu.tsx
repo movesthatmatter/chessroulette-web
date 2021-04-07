@@ -3,6 +3,7 @@ import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { LogoutButton } from 'src/services/Authentication/widgets';
 import { Link } from 'react-router-dom';
+import { spacers } from 'src/theme/spacers';
 
 type Section = {
   route: string;
@@ -33,9 +34,9 @@ export const Menu: React.FC<Props> = (props) => {
             {display}
           </Link>
         ))}
-      </div>
-      <div className={cls.logoutButtonWrapper}>
-        <LogoutButton clear full className={cls.logoutButton} />
+        <div className={cls.logoutButtonWrapper}>
+          <LogoutButton clear full type="secondary" className={cls.logoutButton} />
+        </div>
       </div>
     </div>
   );
@@ -47,6 +48,7 @@ const useStyles = createUseStyles({
     flex: 1,
   },
   logoutButtonWrapper: {
+    paddingTop: spacers.largest,
     paddingRight: '16px',
   },
   logoutButton: {
