@@ -1,9 +1,11 @@
 import { RegisteredUserRecord } from 'dstnd-io';
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { connectExternalAccountEffect } from 'src/services/Authentication';
-import { borderRadius, colors, floatingShadow } from 'src/theme';
+import { colors } from 'src/theme';
+import { spacers } from 'src/theme/spacers';
 import { FacebookAuthButton } from 'src/vendors/facebook';
 import { LichessAuthButton } from 'src/vendors/lichess';
 
@@ -11,21 +13,23 @@ type Props = {
   user: RegisteredUserRecord;
 };
 
-export const Authentication: React.FC<Props> = ({ user }) => {
+export const UserConnections: React.FC<Props> = ({ user }) => {
   const cls = useStyles();
   const dispatch = useDispatch();
 
   return (
     <div className={cls.container}>
-      <div style={{ paddingTop: 30 }}>
-        <div style={{ width: '270px', marginBottom: '30px' }}>Connected Accounts:</div>
+      <div className={cls.item}>
+        <Text>Lichess</Text>
+        <div style={{ flex: 1 }} />
         {user.externalAccounts?.lichess?.userId ? (
-          <div className={cls.lichessConnected}>Lichess</div>
+          <Text size="body2">Connected</Text>
         ) : (
           <LichessAuthButton
-            full
             label="Connect Lichess"
-            type="secondary"
+            size="medium"
+            type="primary"
+            style={{ marginBottom: 0 }}
             onSuccess={async (accessToken) => {
               dispatch(
                 connectExternalAccountEffect({
@@ -36,12 +40,17 @@ export const Authentication: React.FC<Props> = ({ user }) => {
             }}
           />
         )}
+      </div>
+      <div className={cls.item}>
+        <Text>Facebook</Text>
+        <div style={{ flex: 1 }} />
         {user.externalAccounts?.facebook?.userId ? (
-          <div className={cls.facebookConnected}>Facebook</div>
+          <Text size="body2">Connected</Text>
         ) : (
           <FacebookAuthButton
             label="Connect Facebook"
-            full
+            size="medium"
+            style={{ marginBottom: 0 }}
             onSuccess={async (accessToken) => {
               dispatch(
                 connectExternalAccountEffect({
@@ -59,22 +68,12 @@ export const Authentication: React.FC<Props> = ({ user }) => {
 
 const useStyles = createUseStyles({
   container: {},
-  lichessConnected: {
-    backgroundColor: colors.secondary,
-    padding: '8px',
-    ...borderRadius,
-    ...floatingShadow,
-    color: colors.neutralDarkest,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  facebookConnected: {
-    backgroundColor: colors.primary,
-    padding: '8px',
-    ...borderRadius,
-    ...floatingShadow,
-    color: colors.white,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  item: {
+    paddingBottom: spacers.large,
+    paddingTop: spacers.large,
+    borderBottom: `1px solid ${colors.neutralDark}`,
+    display: 'flex',
+    alignContent: 'center',
+    alignItems: 'center',
   },
 });

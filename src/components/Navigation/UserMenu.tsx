@@ -121,11 +121,11 @@ export const UserMenu: React.FC<Props> = ({
             <div className={cls.menuContent}>
               <div className={cls.linkWrapper}>
                 <Link
-                  to="/user/profile"
+                  to="/user/details"
                   className={cls.link}
                   {...(linksTarget === 'blank' && { target: '_blank' })}
                 >
-                  My Profile
+                  My Details
                 </Link>
               </div>
               <div className={cls.linkWrapper}>
