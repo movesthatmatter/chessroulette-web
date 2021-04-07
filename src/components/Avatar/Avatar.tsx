@@ -14,6 +14,7 @@ type Props = GAvatarProps & {
   hasBorder?: boolean;
   darkMode?: boolean;
   size?: string | number;
+  monochrome?: boolean;
 
   // TODO: Make it a union tag when we support profile pics
   mutunachiId: number;
@@ -36,12 +37,13 @@ export const Avatar: React.FC<Props> = ({
   hasBorder = false,
   darkMode = false,
   size = 32,
+  monochrome = false,
 
   ...props
 }) => {
   const cls = useStyles();
 
-  const bkgColor = getColor(props.mutunachiId);
+  const bkgColor = monochrome ? colors.neutralLighter : getColor(props.mutunachiId);
 
   return (
     <div>
