@@ -10,6 +10,8 @@ import cx from 'classnames';
 import { PeerState, usePeerState } from 'src/providers/PeerProvider';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { Link } from 'react-router-dom';
+import { FormDown } from 'grommet-icons';
+import { spacers } from 'src/theme/spacers';
 
 type Props = {
   darkMode?: boolean;
@@ -63,6 +65,11 @@ export const UserMenu: React.FC<Props> = ({
           },
         })}
       >
+        {/* {withDropMenu && (
+          <div className={cls.downIconWrapper}>
+            <FormDown />
+          </div>
+        )} */}
         <Avatar
           className={cls.avatar}
           darkMode={darkMode}
@@ -87,7 +94,7 @@ export const UserMenu: React.FC<Props> = ({
                 display: reversed ? 'none' : 'inline-block',
               }}
             />
-            {auth.user.isGuest ? ' Guest ' : ' User '}
+            {auth.user.isGuest ? ' Guest ' : ` @${auth.user.username} `}
             {peerState.status === 'open' &&
               peerState.hasJoinedRoom &&
               `| ${peerState.room.name} Room `}
@@ -219,5 +226,10 @@ const useStyles = createUseStyles({
       borderBottom: `3px solid ${text.primaryColor}`,
       color: text.primaryColor,
     },
+  },
+  downIconWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingLeft: spacers.smaller,
   },
 });
