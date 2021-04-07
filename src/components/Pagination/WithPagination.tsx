@@ -9,6 +9,7 @@ type RenderProps<TItem> = {
   pageIndex: number;
   totalPages: number;
   pageSize: number;
+  isLoading: boolean;
 };
 
 type Props<TItem> = {
@@ -27,6 +28,7 @@ type State<TItem> = {
   pageIndex: number;
   pageSize: number;
   totalPages: number;
+  isLoading: boolean;
 };
 
 export class WithPagination<TItem> extends React.Component<Props<TItem>, State<TItem>> {
@@ -38,6 +40,7 @@ export class WithPagination<TItem> extends React.Component<Props<TItem>, State<T
       pageIndex: props.initialPageIndex || 0,
       pageSize: props.initialPageSize || 10,
       totalPages: 1,
+      isLoading: false,
     };
   }
 
@@ -46,15 +49,22 @@ export class WithPagination<TItem> extends React.Component<Props<TItem>, State<T
   }
 
   private getCurrentItems() {
-    this.props.getItems({
-      pageSize: this.state.pageSize,
-      pageIndex: this.state.pageIndex,
-    }).map((r) => {
-      this.setState({
-        items: r.items,
-        totalPages: Math.ceil(r.itemsTotal / this.state.pageSize),
+    this.setState({ isLoading: true });
+    this.props
+      .getItems({
+        pageSize: this.state.pageSize,
+        pageIndex: this.state.pageIndex,
       })
-    });
+      .map((r) => {
+        this.setState({
+          items: r.items,
+          totalPages: Math.ceil(r.itemsTotal / this.state.pageSize),
+          isLoading: false,
+        });
+      })
+      .mapErr(() => {
+        this.setState({ isLoading: false });
+      });
   }
 
   render() {
@@ -64,11 +74,14 @@ export class WithPagination<TItem> extends React.Component<Props<TItem>, State<T
         pageSize={this.state.pageSize}
         pageIndex={this.state.pageIndex}
         onChangePage={(nextPageIndex) => {
-          this.setState({
-            pageIndex: nextPageIndex,
-          }, () => {
-            this.getCurrentItems();
-          });
+          this.setState(
+            {
+              pageIndex: nextPageIndex,
+            },
+            () => {
+              this.getCurrentItems();
+            }
+          );
         }}
       />
     );
@@ -79,6 +92,7 @@ export class WithPagination<TItem> extends React.Component<Props<TItem>, State<T
       pageIndex: this.state.pageIndex,
       totalPages: this.state.totalPages,
       pageSize: this.state.pageSize,
+      isLoading: this.state.isLoading,
     });
   }
 }
