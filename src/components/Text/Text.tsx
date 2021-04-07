@@ -4,14 +4,14 @@ import { fonts } from 'src/theme';
 import cx from 'classnames';
 
 type Props = (JSX.IntrinsicElements['span'] & JSX.IntrinsicElements['p']) & {
-  size?: 'small1' | 'small2' | 'body1' | 'body2';
+  size?: 'small1' | 'small2' | 'body1' | 'body2' | 'subtitle1' | 'subtitle2';
   style?: CSSProperties;
   className?: string;
   asParagraph?: boolean;
   asLink?: boolean;
 };
 
-export const Text: React.FC<Props> = ({ size, className, asParagraph, asLink, ...props }) => {
+export const Text: React.FC<Props> = ({ size = 'body1', className, asParagraph, asLink, ...props }) => {
   const cls = useStyles();
 
   if (asParagraph) {
