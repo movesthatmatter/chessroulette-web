@@ -4,7 +4,7 @@ import { NavigationHeader, UserMenu } from 'src/components/Navigation';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { GameRoomLayout } from 'src/modules/GameRoomV2/GameRoomLayout/GameRoomLayout';
-import { colors, floatingShadow, fonts, softBorderRadius } from 'src/theme';
+import { borderRadius, colors, floatingShadow, fonts, softBorderRadius } from 'src/theme';
 import cx from 'classnames';
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 import { GameActions } from '../components/GameActions';
@@ -18,6 +18,7 @@ import { RoomDetails } from '../components/RoomDetails';
 import { ExitRoomButton } from '../components/ExitRoomButton/ExitRoomButton';
 import { getOppositePlayer, getPlayer } from 'src/modules/GameRoomV2/util';
 import { ChessPlayer } from 'dstnd-io';
+import { PlayerPendingOverlay } from 'src/components/PlayerPendingOverlay/PlayerPendingOverlay';
 
 type Props = LayoutProps;
 
@@ -31,6 +32,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
   const [gameReadyToPlay, setGameReadyToPlay] = useState(false);
   const getMePlayer = getPlayer(props.room.me.id, game.players);
   const getOtherPlayer = getOppositePlayer(getMePlayer as ChessPlayer, game.players);
+  const chessboardRef = useRef();
 
   useEffect(() => {
     if (props.room && props.room.peersCount > 0) {
@@ -130,6 +132,8 @@ export const DesktopLayout: React.FC<Props> = (props) => {
           </div>
         )}
         getGameComponent={({ container }) => (
+          <>
+            <Box fill style={{width : 'fit-content', height: 'fit-content', ...borderRadius}} ref={chessboardRef as any}>
             <ChessGameV2
               game={game}
               onMove={({ move, pgn }) => {
@@ -141,6 +145,10 @@ export const DesktopLayout: React.FC<Props> = (props) => {
               className={cls.board}
               viewOnly={!gameReadyToPlay}
             />
+            </Box>
+            {!gameReadyToPlay && <PlayerPendingOverlay target={chessboardRef.current} 
+            size={Math.ceil(container.width / 4)}/>}
+          </>
         )}
         getRightSideComponent={({ container }) => (
           <div className={cx(cls.side, cls.rightSide)}>

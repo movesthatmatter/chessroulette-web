@@ -11,9 +11,11 @@ import { colors, effects } from 'src/theme';
 type Props = {
   minimal?: boolean;
   size?: string | number;
+  sayings? : Array<string>;
+  className? :string;
 };
 
-const sayings = [
+const defaultSayings = [
   'Loading...',
 
   'Jumping through many hoops',
@@ -25,11 +27,11 @@ const sayings = [
   'Establishing connection...',
 ];
 
-const getRandomSaying = () => sayings[getRandomInt(0, sayings.length - 1)];
+const getRandomSaying = (s : Array<string>) => s[getRandomInt(0, s.length - 1)];
 
 const shuffleMids = () => shuffle(range(18, 0));
 
-export const AwesomeLoader: React.FC<Props> = ({ size = 200, minimal }) => {
+export const AwesomeLoader: React.FC<Props> = ({ sayings = defaultSayings, size = 200, minimal, className }) => {
   const cls = useStyles();
   const [shuffled, setShuffled] = useState(shuffleMids());
   const [index, setIndex] = useState(0);
@@ -44,7 +46,7 @@ export const AwesomeLoader: React.FC<Props> = ({ size = 200, minimal }) => {
   }, 2000);
 
   return (
-    <div className={cls.container}>
+    <div className={cx(cls.container, className)}>
       <div className={cls.mask} style={{ width: size }}>
         <AspectRatio aspectRatio={1}>
           <div className={cls.animationBox}>
@@ -54,7 +56,7 @@ export const AwesomeLoader: React.FC<Props> = ({ size = 200, minimal }) => {
           </div>
         </AspectRatio>
       </div>
-      {minimal || <Text className={cls.text}>{getRandomSaying()}</Text>}
+      {minimal || <Text className={cls.text}>{getRandomSaying(sayings)}</Text>}
     </div>
   );
 };

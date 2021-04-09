@@ -21,6 +21,7 @@ export type DialogProps = {
   hasCloseButton?: boolean;
   onClose?: () => void;
   target?: LayerProps['target'];
+  className?: string;
   contentContainerClass?: string;
 };
 
@@ -31,6 +32,7 @@ export const Dialog: React.FC<DialogProps> = ({
   hasCloseButton = true,
   onClose = noop,
   contentContainerClass,
+  className,
   ...props
 }) => {
   const cls = useStyles();
@@ -41,7 +43,7 @@ export const Dialog: React.FC<DialogProps> = ({
 
   return (
     <Layer
-      className={cls.container}
+      className={cx(cls.container, className)}
       position="center"
       // Note: Took the animation out because during the transition it renders
       //  the content weirdly! 
@@ -154,7 +156,6 @@ const useStyles = createUseStyles({
     paddingBottom: '16px',
   },
   contentWrapper: {
-    // background: 'red',
     paddingLeft: '32px',
     paddingRight: '32px',
     paddingBottom: '32px',

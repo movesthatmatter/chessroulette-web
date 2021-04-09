@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import Chessground, { ChessgroundProps } from 'react-chessground';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import 'react-chessground/dist/styles/chessground.css';
@@ -12,16 +12,22 @@ export type ChessBoardProps = Omit<ChessgroundProps, 'width' | 'height'> & {
 
 export const ChessBoard: React.FC<ChessBoardProps> = (props) => {
   const cls = useStyles();
-  const timeStamp = new Date().getTime();
+  const [uniqueKey, setUniquKey] = useState(new Date().getTime())
+  
+  useEffect(() => {
+    setUniquKey(new Date().getTime());
+  },[props.viewOnly])
+
   return (
-    <div className={cx(cls.container, props.className)} style={{
+    <div className={cx(cls.container, props.className)} 
+    style={{
       ...props.size && {
         width: props.size,
         height: props.size,
       }
     }}>
       <Chessground
-        key={timeStamp}
+        key={uniqueKey}
         resizable={false}
         draggable={{
           enabled: true,
