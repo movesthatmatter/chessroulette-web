@@ -9,6 +9,7 @@ import { timeLeftToFormatMajor, timeLeftToFormatMinor, timeLeftToInterval } from
 import { text } from 'src/theme/text';
 import { colors, defaultTheme, maxMediaQuery, onlyMobile } from 'src/theme';
 import { minutes } from 'src/lib/time';
+import { useWindowWidth } from '@react-hook/window-size';
 
 type Props = {
   // TODO: this needs a refactoring
@@ -25,6 +26,7 @@ export const Countdown: React.FC<Props> = ({ onFinished = () => noop, ...props }
   const [finished, setFinished] = useState(false as boolean);
   const [timeLeft, setTimeLeft] = useState(props.timeLeft);
   const [interval, setInterval] = useState(timeLeftToInterval(props.timeLeft));
+  const width = useWindowWidth();
 
   useInterval(
     () => {
@@ -88,7 +90,7 @@ const useStyles = createUseStyles({
     fontSize: '32px',
     lineHeight: '32px',
     color: text.disabledColor,
-    ...maxMediaQuery(1000, {
+    ...maxMediaQuery(1300, {
       fontSize: '24px',
       lineHeight: '24px',
     }),
