@@ -1,4 +1,4 @@
-import React, { Ref } from 'react';
+import React from 'react';
 import { ChessInstance, Square } from 'chess.js';
 import { getNewChessGame, toChessColor } from '../../lib';
 import { toDests } from './util';

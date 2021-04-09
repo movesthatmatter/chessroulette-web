@@ -26,22 +26,23 @@ export const PlayerPendingOverlay = ({ target, className, size }: Props) => {
   const cls = useStyles();
   const date = new Date().getTime();
   return (
-      <Layer
-        key={date}
-        plain
-        modal
-        target={target}
-        animation={false}
-        position="center"
-        className={cls.container}
-      >
-        <div className={cx(cls.contentWrapper, className)}>
-          <Text size='body1' className={cls.contentText}>Waiting for your friend to join.</Text>
-          <br/>
-          <AwesomeLoader sayings={sayings} className={cls.loader} size={size} />
-          
-        </div>
-      </Layer>
+    <Layer
+      key={date}
+      plain
+      modal
+      target={target}
+      animation={false}
+      position="center"
+      className={cls.container}
+    >
+      <div className={cx(cls.contentWrapper, className)}>
+        <Text size="body1" className={cls.contentText}>
+          Waiting for your friend to join.
+        </Text>
+        <br />
+        <AwesomeLoader sayings={sayings} className={cls.loader} size={size} />
+      </div>
+    </Layer>
   );
 };
 
@@ -49,7 +50,7 @@ const useStyles = createUseStyles({
   container: {
     width: '300px',
     textAlign: 'center',
-    boxShadow : '0 16px 50px rgb(4 9 37 / 75%)',
+    boxShadow: '0 16px 50px rgb(4 9 37 / 75%)',
     borderRadius: '8px !important',
     minWidth: '250px !important',
     maxWidth: '360px !important',
@@ -65,8 +66,6 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
   },
-  contentText: {
-    
-  },
+  contentText: {},
   loader: {},
 });

@@ -12,7 +12,11 @@ export type ChessBoardProps = Omit<ChessgroundProps, 'width' | 'height'> & {
 
 export const ChessBoard: React.FC<ChessBoardProps> = (props) => {
   const cls = useStyles();
-  const timeStamp = new Date().getTime();
+  const [uniqueKey, setUniquKey] = useState(new Date().getTime())
+  
+  useEffect(() => {
+    setUniquKey(new Date().getTime());
+  },[props.viewOnly])
 
   return (
     <div className={cx(cls.container, props.className)} 
@@ -23,7 +27,7 @@ export const ChessBoard: React.FC<ChessBoardProps> = (props) => {
       }
     }}>
       <Chessground
-        key={timeStamp}
+        key={uniqueKey}
         resizable={false}
         draggable={{
           enabled: true,
