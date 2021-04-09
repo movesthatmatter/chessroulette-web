@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Ref } from 'react';
 import { ChessInstance, Square } from 'chess.js';
 import { getNewChessGame, toChessColor } from '../../lib';
 import { toDests } from './util';
@@ -103,7 +103,7 @@ export class ChessGameV2 extends React.Component<Props, State> {
 
   render() {
     const chessState = this.state.uncommited || this.state.current;
-    
+
     return (
       <ChessBoard
         // Reset the Board anytime the game changes
