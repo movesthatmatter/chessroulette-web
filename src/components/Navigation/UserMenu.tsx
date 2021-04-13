@@ -95,9 +95,6 @@ export const UserMenu: React.FC<Props> = ({
               }}
             />
             {auth.user.isGuest ? ' Guest ' : ` @${auth.user.username} `}
-            {peerState.status === 'open' &&
-              peerState.hasJoinedRoom &&
-              `| ${peerState.room.name} Room `}
             <div
               className={cls.dot}
               style={{
