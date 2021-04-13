@@ -40,7 +40,7 @@ export const GamesArchive: React.FC<Props> = ({ userId, pageSize = 4 }) => {
           <div className={cls.container}>
             <div className={cls.gameContainerWrapper}>
               {r.items.map((game) => (
-                <ArchivedGame game={game} />
+                <ArchivedGame game={game} myUserId={userId} />
               ))}
               {r.isEmpty && !r.isLoading && (
                 <div className={cls.emptyMessageWrapper}>

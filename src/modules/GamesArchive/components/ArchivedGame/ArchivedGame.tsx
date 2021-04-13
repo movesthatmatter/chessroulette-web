@@ -21,6 +21,7 @@ import dateformat from 'dateformat';
 import capitalize from 'capitalize';
 import { ClipboardCopy } from 'src/components/ClipboardCopy';
 import { useWindowWidth } from '@react-hook/window-size';
+import { getPlayer } from 'src/modules/GameRoomV2/util';
 
 type Props = {
   game: GameRecordFinished | GameRecordStopped;
@@ -48,20 +49,42 @@ const getResult = (game: GameRecordFinished | GameRecordStopped) => {
   return 'Game Ended in Check Mate!';
 };
 
+const getMyResult = (game: GameRecordFinished | GameRecordStopped, myId: string) => {
+  const meAsPlayer = getPlayer(myId, game.players);
+
+  if (!meAsPlayer) {
+    return undefined;
+  }
+
+  if (game.winner === '1/2') {
+    return 'draw' as const;
+  }
+
+  return (game.winner === meAsPlayer.color)
+    ? 'won' as const
+    : 'lost' as const;
+}
+
 export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   const cls = useStyles();
   const windowWidth = useWindowWidth();
 
-  // console.log('game', game)
   const result = getResult(game);
   const avatarSize = windowWidth < MOBILE_BREAKPOINT ? '32px' : '72px';
+
+  const myUserResult = myUserId ? getMyResult(game, myUserId) : undefined;
+  const borderLeftColor = myUserResult ?({
+    'won': colors.positive,
+    'lost': colors.negative,
+    'draw': colors.primary,
+  })[myUserResult] : colors.neutral;
 
   return (
     <div
       className={cls.container}
       style={{
-        borderLeft: `4px solid ${colors.primary}`,
-        // borderRight: `4px solid ${colors}`,
+        borderLeft: `4px solid ${colors.neutral}`,
+        borderLeftColor,
       }}
     >
       <div className={cls.top}>
