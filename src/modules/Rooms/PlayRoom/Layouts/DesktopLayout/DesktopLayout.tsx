@@ -66,7 +66,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
               }}
             >
               <div style={{ flex: 1 }}>
-                <NavigationHeader />
+                <NavigationHeader logoAsLink={false} />
               </div>
               <div
                 style={{
