@@ -1,11 +1,11 @@
 import { Layer, LayerProps } from 'grommet';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { AwesomeLoader } from '../AwesomeLoader';
-import { Text } from '../Text';
+import { AwesomeLoader } from '../../../../../../components/AwesomeLoader';
+import { Text } from '../../../../../../components/Text';
 import cx from 'classnames';
 import { colors, floatingShadow, fonts, onlyMobile, softBorderRadius } from 'src/theme';
-import { Dialog } from '../Dialog/Dialog';
+import { Dialog } from '../../../../../../components/Dialog/Dialog';
 
 type Props = {
   target?: LayerProps['target'];
@@ -36,10 +36,9 @@ export const PlayerPendingOverlay = ({ target, className, size }: Props) => {
       className={cls.container}
     >
       <div className={cx(cls.contentWrapper, className)}>
-        <Text size="body1" className={cls.contentText}>
-          Waiting for your friend to join.
-        </Text>
-        <br />
+        <div className={cls.contentText}>
+          Waiting for your opponent...
+        </div>
         <AwesomeLoader sayings={sayings} className={cls.loader} size={size} />
       </div>
     </Layer>
@@ -66,6 +65,12 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
   },
-  contentText: {},
+  contentText: {
+    ...fonts.subtitle1,
+    textAlign: 'center',
+    paddingLeft: '32px',
+    paddingRight: '32px',
+    paddingBottom: '16px',
+  },
   loader: {},
 });

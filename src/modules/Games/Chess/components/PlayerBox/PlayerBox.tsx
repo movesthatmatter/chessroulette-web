@@ -1,13 +1,10 @@
+import React from 'react';
 import { ChessGameState, ChessPlayer } from 'dstnd-io';
 import { Box } from 'grommet';
-
-import React, { useRef } from 'react';
 import { Avatar } from 'src/components/Avatar';
-import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
-import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { floatingShadow, fonts, maxMediaQuery, minMediaQuery } from 'src/theme';
+import { floatingShadow, fonts } from 'src/theme';
 import { Countdown } from '../Countdown';
 
 type Props = {

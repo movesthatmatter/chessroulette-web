@@ -2,7 +2,7 @@ import { Box } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { Button } from 'src/components/Button';
-import { PlayerPendingOverlay } from 'src/components/PlayerPendingOverlay/PlayerPendingOverlay';
+import { PlayerPendingOverlay } from 'src/modules/Rooms/PlayRoom/Layouts/components/PlayerPendingOverlay/PlayerPendingOverlay';
 import { ChessBoard } from './ChessBoardV2';
 
 export default {

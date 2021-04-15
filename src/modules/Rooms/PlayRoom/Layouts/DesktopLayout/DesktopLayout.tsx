@@ -1,5 +1,5 @@
 import { Box } from 'grommet';
-import React, { LegacyRef, useRef, useState, useEffect } from 'react';
+import React, { LegacyRef, useRef } from 'react';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
@@ -16,32 +16,30 @@ import { ChatContainer } from 'src/modules/Chat';
 import { LayoutProps } from '../types';
 import { RoomDetails } from '../components/RoomDetails';
 import { ExitRoomButton } from '../components/ExitRoomButton/ExitRoomButton';
-import { getOppositePlayer, getPlayer } from 'src/modules/GameRoomV2/util';
-import { ChessPlayer } from 'dstnd-io';
-import { PlayerPendingOverlay } from 'src/components/PlayerPendingOverlay/PlayerPendingOverlay';
+import { PlayerPendingOverlay } from 'src/modules/Rooms/PlayRoom/Layouts/components/PlayerPendingOverlay/PlayerPendingOverlay';
+import { Game } from 'src/modules/Games';
+import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 
 type Props = LayoutProps;
 
 const TOP_HEIGHT = 80;
 const BOTTOM_HEIGHT = 80;
 
+const areBothPlayersJoined = ({ peersIncludingMe }: RoomWithPlayActivity, game: Game) => {
+  const [playerA, playerB] = game.players;
+
+  return playerA.user.id in peersIncludingMe && playerB.user.id in peersIncludingMe;
+};
+
 export const DesktopLayout: React.FC<Props> = (props) => {
   const cls = useStyles();
   const dialogTarget = useRef();
-  const { game } = props;
-  const [gameReadyToPlay, setGameReadyToPlay] = useState(false);
-  const getMePlayer = getPlayer(props.room.me.id, game.players);
-  const getOtherPlayer = getOppositePlayer(getMePlayer as ChessPlayer, game.players);
   const chessboardRef = useRef();
 
-  useEffect(() => {
-    if (props.room && props.room.peersCount > 0) {
-      setGameReadyToPlay(Object
-        .values(props.room.peersIncludingMe)
-        .filter(p => p.id === getOtherPlayer?.user.id)
-        .length > 0)
-    }
-  }, [props.room.peersIncludingMe, props.room.peersCount]);
+  const { game } = props;
+
+  const bothPlayersJoined = areBothPlayersJoined(props.room, game);
+  const playable = bothPlayersJoined;
 
   return (
     <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
@@ -133,21 +131,29 @@ export const DesktopLayout: React.FC<Props> = (props) => {
         )}
         getGameComponent={({ container }) => (
           <>
-            <Box fill style={{width : 'fit-content', height: 'fit-content', ...borderRadius}} ref={chessboardRef as any}>
-            <ChessGameV2
-              game={game}
-              onMove={({ move, pgn }) => {
-                props.onMove(move, pgn, [], props.homeColor);
-              }}
-              size={container.width}
-              homeColor={props.homeColor}
-              playable={props.canIPlay}
-              className={cls.board}
-              viewOnly={!gameReadyToPlay}
-            />
+            <Box
+              fill
+              style={{ width: 'fit-content', height: 'fit-content', ...borderRadius }}
+              ref={chessboardRef as any}
+            >
+              <ChessGameV2
+                game={game}
+                onMove={({ move, pgn }) => {
+                  props.onMove(move, pgn, [], props.homeColor);
+                }}
+                size={container.width}
+                homeColor={props.homeColor}
+                // playable={props.canIPlay}
+                playable={playable}
+                className={cls.board}
+              />
             </Box>
-            {!gameReadyToPlay && <PlayerPendingOverlay target={chessboardRef.current} 
-            size={Math.ceil(container.width / 4)}/>}
+            {!bothPlayersJoined && game.state === 'pending' && (
+              <PlayerPendingOverlay
+                target={chessboardRef.current}
+                size={Math.ceil(container.width / 4)}
+              />
+            )}
           </>
         )}
         getRightSideComponent={({ container }) => (

@@ -32,15 +32,9 @@ export const RoomDetails: React.FC<Props> = (props) => {
         >
           <Text size="small2">Room:</Text>
           <Text size="small1">{` ${peerState.room.name}  `}</Text>
-          <div
-            className={cls.dot}
-            style={{
-              backgroundColor: getStatusColor(peerState),
-            }}
-          />
           <br />
-          <Text size="small2">Peers:</Text>
-          <Text size="small1">{` ${peerState.room.peersCount}`}</Text>
+          <Text size="small2">Active Peers:</Text>
+          <Text size="small1">{` ${Object.keys(peerState.room.peersIncludingMe).length}`}</Text>
         </div>
       )}
     </div>

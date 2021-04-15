@@ -102,13 +102,15 @@ export class ChessGameV2 extends React.Component<Props, State> {
   }
 
   render() {
+    const { game, playable, orientation, homeColor, ...boardProps } = this.props;
     const chessState = this.state.uncommited || this.state.current;
 
     return (
       <ChessBoard
         // Reset the Board anytime the game changes
-        key={this.props.game.id}
-        {...this.props}
+        key={game.id}
+        {...boardProps}
+        viewOnly={!playable}
         fen={chessState.fen}
         turnColor={chessState.turn}
         check={chessState.inCheck}
@@ -116,7 +118,7 @@ export class ChessGameV2 extends React.Component<Props, State> {
         coordinates
         movable={this.calcMovable()}
         lastMove={chessState.lastMove && [chessState.lastMove.from, chessState.lastMove.to]}
-        orientation={this.props.orientation || this.props.homeColor}
+        orientation={orientation || homeColor}
         onMove={(orig, dest) => {
           const nextMove: ChessMove = {
             from: orig as Square,
