@@ -39,7 +39,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
   const { game } = props;
 
   const bothPlayersJoined = areBothPlayersJoined(props.room, game);
-  const playable = bothPlayersJoined;
+  const playable = bothPlayersJoined && props.canIPlay;
 
   return (
     <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
