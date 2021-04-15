@@ -77,9 +77,9 @@ export const Countdown: React.FC<Props> = ({ onFinished = () => noop, gameTimeCl
           </Text>
         </Text>
       ) : (
-        <Text className={cx(cls.text)}>
-          <Text className={cx(cls.text, cls.major)}>0:</Text>
-          <Text className={cx(cls.text, cls.minor)}>00</Text>
+        <Text className={cx(cls.text, cls.countdownMilliseconds)}>
+          <Text className={cx(cls.text, cls.major, cls.countdownMilliseconds)}>0:</Text>
+          <Text className={cx(cls.text, cls.minor, cls.countdownMilliseconds)}>00</Text>
         </Text>
       )}
     </>
