@@ -9,6 +9,6 @@ export const validateDigits = (count: number, input: string) => {
   return new RegExp(`^[0-9]\{${count}\}$`, 'g').test(input);
 };
 
-export const username = (s: string) => /^[a-z0-9_-]{3,24}$/.test(s);
+export const username = (s: string) => /^[a-zA-Z0-9_-]{3,24}$/.test(s);
 
 export const notEmpty = (s?: string) => !!(s && s.length > 0);
