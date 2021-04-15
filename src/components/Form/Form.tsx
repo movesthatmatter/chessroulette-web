@@ -29,7 +29,7 @@ export type SubmissionErrors<ValidationModel extends BaseModel> =
 type Props<Model extends BaseModel, ValidationModel extends Model = Model> = {
   onSubmit: (model: ValidationModel) => AsyncResult<void, SubmissionErrors<ValidationModel>>;
   onValidationErrorsUpdated?: (validationErrors?: ValidationErrors<ValidationModel>) => void;
-  validator: {
+  validator?: {
     [k in keyof Partial<ValidationModel>]: [(i: string) => boolean, string];
   };
   initialModel?: Partial<Model>;
@@ -84,31 +84,35 @@ export class Form<
     return {
       model,
       commitedModel: model,
-      canSubmit: Object.keys(this.props.validator).length === 0,
+      canSubmit: Object.keys(this.props.validator || {}).length === 0,
 
       errors: {},
       hasErrors: false,
       hasChanges: false,
-    }
+    };
   }
 
-  private async validate() {
-    const validationErrors = objectKeys(this.props.validator).reduce((prev, nextField) => {
-      const [validate, message] = this.props.validator[nextField];
-
-      const inputValue = this.state.model[nextField];
-
-      if (!validate(inputValue)) {
-        return {
-          ...prev,
-          [nextField]: message,
-        };
-      }
-
-      return prev;
-    }, {} as NonNullable<ValidationErrors<ValidationModel>>);
-
+  private validate() {
     return new Promise((resolve) => {
+      const { validator } = this.props;
+
+      const validationErrors = validator
+        ? objectKeys(validator).reduce((prev, nextField) => {
+            const [validate, message] = validator[nextField];
+
+            const inputValue = this.state.model[nextField];
+
+            if (!validate(inputValue)) {
+              return {
+                ...prev,
+                [nextField]: message,
+              };
+            }
+
+            return prev;
+          }, {} as NonNullable<ValidationErrors<ValidationModel>>)
+        : {} as NonNullable<ValidationErrors<ValidationModel>>;
+
       this.setState((prev) => {
         const nextState = {
           ...prev,
@@ -119,21 +123,18 @@ export class Form<
           },
         };
 
-        this.setState(
-          {
-            ...nextState,
-            hasErrors: this.calculateHasErrors(nextState),
-            hasChanges: this.calculateHasChanges(nextState),
-            canSubmit: this.calculateCanSubmit(nextState),
-          },
-          resolve
-        );
-      });
+        return {
+          ...nextState,
+          hasErrors: this.calculateHasErrors(nextState),
+          hasChanges: this.calculateHasChanges(nextState),
+          canSubmit: this.calculateCanSubmit(nextState),
+        };
+      }, resolve);
     });
   }
 
   private validateField(field: keyof ValidationModel) {
-    if (!this.props.validator[field]) {
+    if (!(this.props.validator && this.props.validator[field])) {
       // If the field doesn't have a validator just return!
       return;
     }
@@ -215,7 +216,7 @@ export class Form<
       return {
         ...nextState,
         hasErrors: this.calculateHasErrors(nextState),
-        canSubmit: this.calculateHasErrors(nextState),
+        canSubmit: this.calculateCanSubmit(nextState),
       };
     });
 
@@ -264,7 +265,7 @@ export class Form<
                     ...nextState,
                     canSubmit: this.calculateCanSubmit(nextState),
                     hasChanges: this.calculateHasChanges(nextState),
-                    hasErrors: this.calculateCanSubmit(nextState),
+                    hasErrors: this.calculateHasErrors(nextState),
                   };
                 });
               } else if (e.type === 'SubmissionGenericError') {
@@ -281,7 +282,7 @@ export class Form<
                     ...nextState,
                     canSubmit: this.calculateCanSubmit(nextState),
                     hasChanges: this.calculateHasChanges(nextState),
-                    hasErrors: this.calculateCanSubmit(nextState),
+                    hasErrors: this.calculateHasErrors(nextState),
                   };
                 });
               }
