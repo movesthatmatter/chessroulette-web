@@ -27,11 +27,7 @@ export const PlayerBox: React.FC<Props> = ({
   const cls = useStyles();
 
   return (
-    <Box
-      fill
-      className={cls.container}
-      direction='row'
-    >
+    <Box fill className={cls.container} direction="row">
       <Box fill direction="row">
         <Avatar mutunachiId={Number(player.user.avatarId)} />
         <Box className={cls.playerInfo}>
@@ -47,7 +43,12 @@ export const PlayerBox: React.FC<Props> = ({
         </Box>
       </Box>
       {gameTimeLimit !== 'untimed' && (
-        <Countdown timeLeft={timeLeft} active={active} onFinished={props.onTimerFinished} />
+        <Countdown
+          timeLeft={timeLeft}
+          active={active}
+          onFinished={props.onTimerFinished}
+          gameTimeClass={gameTimeLimit}
+        />
       )}
     </Box>
   );

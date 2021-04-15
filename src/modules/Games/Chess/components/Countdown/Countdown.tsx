@@ -10,23 +10,27 @@ import { text } from 'src/theme/text';
 import { colors, defaultTheme, maxMediaQuery, onlyMobile } from 'src/theme';
 import { minutes } from 'src/lib/time';
 import { useWindowWidth } from '@react-hook/window-size';
+import { GameRecord } from 'dstnd-io';
+import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 
 type Props = {
   // TODO: this needs a refactoring
   //  as it should take te lsat move and total time in account
   //  that's all! and do any calculation here
+  gameTimeClass: GameRecord['timeLimit'];
   timeLeft: number;
   active: boolean;
   onFinished?: () => void;
   className?: string;
 };
 
-export const Countdown: React.FC<Props> = ({ onFinished = () => noop, ...props }) => {
+export const Countdown: React.FC<Props> = ({ onFinished = () => noop, gameTimeClass, ...props }) => {
   const cls = useStyles();
   const [finished, setFinished] = useState(false as boolean);
   const [timeLeft, setTimeLeft] = useState(props.timeLeft);
   const [interval, setInterval] = useState(timeLeftToInterval(props.timeLeft));
-  const width = useWindowWidth();
+
+  const gameTimeClassInMs = chessGameTimeLimitMsMap[gameTimeClass];
 
   useInterval(
     () => {
@@ -59,17 +63,17 @@ export const Countdown: React.FC<Props> = ({ onFinished = () => noop, ...props }
         <Text className={cls.text}>
           <Text
             className={cx(cls.text, cls.major, props.active && cls.textActive, {
-              [cls.countdownMilliseconds]: timeLeft < minutes(1),
+              [cls.countdownMilliseconds]: gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
             })}
           >
-            {dateFormat(timeLeft, timeLeftToFormatMajor(timeLeft))}:
+            {dateFormat(timeLeft, timeLeftToFormatMajor(gameTimeClassInMs, timeLeft))}:
           </Text>
           <Text
             className={cx(cls.text, cls.minor, props.active && cls.textActive, {
-              [cls.countdownMilliseconds]: timeLeft < minutes(1),
+              [cls.countdownMilliseconds]: gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
             })}
           >
-            {dateFormat(timeLeft, timeLeftToFormatMinor(timeLeft))}
+            {dateFormat(timeLeft, timeLeftToFormatMinor(gameTimeClassInMs, timeLeft))}
           </Text>
         </Text>
       ) : (
