@@ -102,7 +102,13 @@ export class ChessGameV2 extends React.Component<Props, State> {
   }
 
   render() {
-    const { game, playable, orientation, homeColor, ...boardProps } = this.props;
+    const {
+      game,
+      playable,
+      orientation,
+      homeColor,
+      ...boardProps
+    } = this.props;
     const chessState = this.state.uncommited || this.state.current;
 
     return (

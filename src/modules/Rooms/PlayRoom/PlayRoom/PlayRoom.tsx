@@ -1,5 +1,5 @@
 import { useWindowWidth } from '@react-hook/window-size';
-import { ChessGameColor, ChessGameStatePgn, ChessMove, GameRecord } from 'dstnd-io';
+import { ChessGameColor, ChessGameStatePgn, ChessMove } from 'dstnd-io';
 import React, { useState } from 'react';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { GameStateDialog } from 'src/modules/Games/Chess/components/GameStateDialog';
@@ -8,6 +8,8 @@ import { MOBILE_BREAKPOINT } from 'src/theme';
 import { DesktopLayout, ChessGameHistory, MobileLayout } from '../Layouts';
 import { getPlayerStats } from 'src/modules/Games/Chess/lib';
 import { Game } from 'src/modules/Games';
+import { AwesomeLoader } from 'src/components/AwesomeLoader';
+import { DialogContentProps } from 'src/components/Dialog';
 
 type Props = {
   room: RoomWithPlayActivity;
@@ -31,6 +33,28 @@ type Props = {
   onGameStatusCheck: () => void;
 };
 
+const areBothPlayersJoined = ({ peersIncludingMe }: RoomWithPlayActivity, game: Game) => {
+  const [playerA, playerB] = game.players;
+
+  return playerA.user.id in peersIncludingMe && playerB.user.id in peersIncludingMe;
+};
+
+const canShowWaitingForOpponentNotification = (room: RoomWithPlayActivity, game: Game) => {
+  const bothPlayersJoined = areBothPlayersJoined(room, game);
+
+  return !bothPlayersJoined && game.state === 'pending';
+}
+
+const sayings = [
+  'Loading...',
+  'Your opponent is just getting ready',
+  `Let's hope your friend is not scared of a challenge`,
+  'Establishing connection...',
+  `Patience is a virtue.. I guess`,
+  `Get ready, your friend is on the way.`,
+  `Still time to polish your chess`,
+];
+
 export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
   const windowWidth = useWindowWidth();
   // TODO: This isn't really used yet!
@@ -42,6 +66,24 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
 
   const playerStats = getPlayerStats(game, props.room.me.id);
   const homeColor = playerStats.player?.color || 'white';
+
+  const bothPlayersJoined = areBothPlayersJoined(props.room, game);
+  const playable = bothPlayersJoined && playerStats.canPlay;
+
+  const getWaitingForOpponentNotificationDialog = (p: { size?: number }): DialogContentProps => ({
+    title: 'Waiting for opponent...',
+    hasCloseButton: false,
+    content: <AwesomeLoader sayings={sayings} size={p.size ? p.size / 4 : 50} />,
+    buttons: [{
+      label: 'Abort Game',
+      type: 'secondary',
+      onClick: () => props.onAbort(),
+    }],
+  });
+
+  const getCurrentNotification = canShowWaitingForOpponentNotification(props.room, game)
+    ? getWaitingForOpponentNotificationDialog
+    : undefined;
 
   const content = () => {
     if (windowWidth <= MOBILE_BREAKPOINT) {
@@ -58,9 +100,10 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
           onHistoryIndexUpdated={() => {}}
           historyIndex={gameDisplayedHistoryIndex}
           homeColor={homeColor}
-          canIPlay={playerStats.canPlay}
+          playable={playable}
           opponentAsPlayer={playerStats.opponent}
           meAsPlayer={playerStats.player}
+          gameNotificationDialog={getCurrentNotification}
         />
       );
     }
@@ -78,9 +121,10 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
         onHistoryIndexUpdated={() => {}}
         historyIndex={gameDisplayedHistoryIndex}
         homeColor={homeColor}
-        canIPlay={playerStats.canPlay}
+        playable={playable}
         opponentAsPlayer={playerStats.opponent}
         meAsPlayer={playerStats.player}
+        gameNotificationDialog={getCurrentNotification}
       />
     );
   };

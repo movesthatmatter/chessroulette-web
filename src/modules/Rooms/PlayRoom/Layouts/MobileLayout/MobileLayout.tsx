@@ -1,5 +1,5 @@
 import { Layer } from 'grommet';
-import { AppsRounded, Chat } from 'grommet-icons';
+import { AppsRounded } from 'grommet-icons';
 import React, { useRef, useState, useEffect } from 'react';
 import { NavigationHeader } from 'src/components/Navigation';
 import { StreamingBox } from 'src/components/StreamingBox';
@@ -11,7 +11,6 @@ import {
   floatingShadow,
   fonts,
   hardBorderRadius,
-  onlyMobile,
   onlySmallMobile,
   SMALL_MOBILE_BREAKPOINT,
   softBorderRadius,
@@ -202,10 +201,11 @@ export const MobileLayout: React.FC<Props> = (props) => {
               onMove={({ move, pgn }) => {
                 props.onMove(move, pgn, [], props.homeColor);
               }}
-              playable={props.canIPlay}
+              playable={props.playable}
               homeColor={props.homeColor}
               size={dimensions.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 24)}
               className={cls.mobileBoard}
+              notificationDialog={props.gameNotificationDialog}
             />
           </div>
           {props.meAsPlayer && (
