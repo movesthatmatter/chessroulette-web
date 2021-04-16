@@ -35,7 +35,7 @@ export const MobileGameRoomLayout: React.FC<Props> = (props) => {
             })}
           </div>
           <div className={cls.mainContainer}>
-            {props.getMainArea({width: containerDimensions.width, height: containerDimensions.height})}
+            {props.getMainArea({width: containerDimensions.width, height: containerDimensions.height - topContainerDimensions.height })}
           </div>
         </div>
       </div>

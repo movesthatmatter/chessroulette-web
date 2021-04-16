@@ -30,15 +30,8 @@ import { selectChatHistory, selectUserID } from 'src/providers/PeerProvider/redu
 
 type Props = LayoutProps;
 
-export const MobileLayout: React.FC<Props> = (props) => {
+export const MobileLayout: React.FC<Props> = ({ game, ...props }) => {
   const cls = useStyles();
-
-  const { game } = props;
-
-  const mobileGameActionsRef = useRef<HTMLDivElement>(null);
-
-  const mobileChatButton = useRef<HTMLDivElement>(null);
-
   const chatHistory = useSelector(selectChatHistory);
   const me = useSelector(selectUserID);
   const newMessageCounter = useRef(0);
@@ -106,24 +99,21 @@ export const MobileLayout: React.FC<Props> = (props) => {
                   right: 0,
                 }}
               >
-                <div ref={mobileChatButton} style={{ backgroundColor: 'transparent' }}>
-                  <ChatIconWithBadge
-                    color={colors.white}
-                    onClick={() => {
-                      markMessagesAsRead();
-                      setShowChatWindow(true);
-                    }}
-                    newMessages={newMessageCounter.current}
-                  />
-                </div>
-                <div ref={mobileGameActionsRef}>
-                  <AppsRounded
-                    color={colors.white}
-                    onClick={() => setShowMobileGameActionsMenu(true)}
-                    className={cls.mobileGameActionsButtonIcon}
-                  />
-                </div>
-                {showMobileGameActionsMenu && mobileGameActionsRef.current && (
+                <ChatIconWithBadge
+                  color={colors.white}
+                  onClick={() => {
+                    markMessagesAsRead();
+                    setShowChatWindow(true);
+                  }}
+                  newMessagesCount={newMessageCounter.current}
+                />
+                <div style={{ paddingBottom: '4px' }} />
+                <AppsRounded
+                  color={colors.white}
+                  onClick={() => setShowMobileGameActionsMenu(true)}
+                  className={cls.mobileGameActionsButtonIcon}
+                />
+                {showMobileGameActionsMenu && (
                   <Layer
                     responsive={false}
                     position="bottom"
@@ -155,21 +145,6 @@ export const MobileLayout: React.FC<Props> = (props) => {
                       }}
                       className={cls.mobileGameActionButtonsContainer}
                     />
-                  </Layer>
-                )}
-                {showChatWindow && mobileChatButton.current && (
-                  <Layer
-                    // style={{ borderRadius: '18px', left: '10px', bottom: '10px' }}
-                    modal={false}
-                    responsive={false}
-                    position="bottom-left"
-                    animation="slide"
-                    className={cls.chatContainer}
-                    onClickOutside={() => setShowChatWindow(false)}
-                  >
-                    {/* <div className={cls.chatContainer}> */}
-                      <ChatContainer />
-                    {/* </div> */}
                   </Layer>
                 )}
               </div>
@@ -221,6 +196,21 @@ export const MobileLayout: React.FC<Props> = (props) => {
               />
             </div>
           )}
+          {showChatWindow && (
+            <Layer
+              modal={true}
+              responsive={false}
+              position="bottom"
+              animation="slide"
+              className={cls.chatContainer}
+              style={{
+                height: dimensions.height,
+              }}
+              onClickOutside={() => setShowChatWindow(false)}
+            >
+              <ChatContainer />
+            </Layer>
+          )}
         </div>
       )}
     />
@@ -228,7 +218,9 @@ export const MobileLayout: React.FC<Props> = (props) => {
 };
 
 const useStyles = createUseStyles({
-  container: {},
+  container: {
+    position: 'relative',
+  },
   // Mobile
   mobileGameActionsButtonIcon: {
     ...floatingShadow,
@@ -263,20 +255,14 @@ const useStyles = createUseStyles({
     paddingBottom: '8px',
   },
   chatContainer: {
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: '54%',
-    padding: '10px',
+    width: 'calc(100% - 16px)',
+    padding: '8px',
     ...makeImportant({
       ...hardBorderRadius,
       borderBottomLeftRadius: 0,
       borderBottomRightRadius: 0,
       overflow: 'hidden',
-      // backgroundColor: 'rgba(255, 255, 255, .9)',
-      // opacity: .95,
     }),
-    // height: '400px',
   },
   mobileBoard: {
     ...floatingShadow,

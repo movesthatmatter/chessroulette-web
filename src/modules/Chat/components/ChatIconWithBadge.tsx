@@ -1,20 +1,23 @@
 import React from 'react';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { Chat } from 'grommet-icons';
-import { colors } from 'src/theme';
+import { Badge } from 'src/components/Badge';
 
 type Props = {
   onClick: () => void;
   color: CSSProperties['color'];
   style?: CSSProperties;
-  newMessages: number;
+  newMessagesCount: number;
 };
-export const ChatIconWithBadge = ({ color, onClick, style, newMessages }: Props) => {
+export const ChatIconWithBadge: React.FC<Props> = ({ color, onClick, style, newMessagesCount }) => {
   const cls = useStyles();
+
   return (
-    <div className={cls.iconContainer}>
-      <Chat color={color} onClick={onClick} style={style} />
-      {newMessages > 0 && <div className={cls.badgeContainer}>{newMessages.toString()}</div>}
+    <div className={cls.iconContainer} onClick={onClick}>
+      <Chat color={color} style={style} />
+      {newMessagesCount > 0 && (
+        <Badge text={String(newMessagesCount)} color="primary" className={cls.badgeContainer} />
+      )}
     </div>
   );
 };
@@ -27,12 +30,5 @@ const useStyles = createUseStyles({
     position: 'absolute',
     left: '24px',
     bottom: '47px',
-    backgroundColor: colors.primary,
-    color: 'white',
-    display: 'flex',
-    justifyContent: 'center',
-    width: '20px',
-    height: '20px',
-    borderRadius: '50%',
   },
 });
