@@ -182,6 +182,45 @@ export const withSwitchingSides = () => (
             });
           }, []);
 
+
+          const switchPlayers = () => {
+            const prevMe = me;
+            const prevOpponent = opponent;
+
+            // setMe(prevOpponent);
+            // setOpponent(prevMe);
+            setPublicRoom((prev) => {
+              if (!prev) {
+                return prev;
+              }
+
+              if (!(prevMe && prevOpponent)) {
+                return prev;
+              }
+
+              return {
+                ...prev,
+                me: prevOpponent,
+                peers: {
+                  [prevMe.id]: prevMe,
+                },
+              }
+            });
+
+            setGame((prev) => {
+              if (!prev) {
+                return prev;
+              }
+
+              return {
+                ...prev,
+                players: [prev.players[1], prev.players[0]],
+              }
+            })
+
+            console.log('switched', me?.id, opponent?.id);
+          }
+
           if (!(me && opponent && publicRoom && game)) {
             return (
               <div>
@@ -215,6 +254,8 @@ export const withSwitchingSides = () => (
                       movedAt: toISODateTime(new Date()),
                     }),
                   }));
+
+                  switchPlayers();
                 }}
                 onAbort={action('onAbort')}
                 onDrawAccepted={action('onDrawAccepted')}

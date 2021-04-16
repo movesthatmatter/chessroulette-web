@@ -197,7 +197,8 @@ export const MobileLayout: React.FC<Props> = (props) => {
           )}
           <div className={cls.mobileChessGameWrapper}>
             <ChessGameV2
-              game={game}
+              id={game.id}
+              pgn={game.pgn}
               onMove={({ move, pgn }) => {
                 props.onMove(move, pgn, [], props.homeColor);
               }}

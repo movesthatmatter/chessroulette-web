@@ -192,3 +192,15 @@ export const gameRecordToGame = <T extends ChessGameState>(g: T) => ({
   ...g,
   captured: chessGameUtils.getCapturedPiecesFromPgn(g.pgn),
 }) as GameFromGameState<T>;
+
+export const getGameFromHistory = (history: ChessHistory = []) => {
+  const instance = getNewChessGame();
+
+  // TODO: This might not be the most efficient 
+  //  but it's ok for now to ensure the validaty of the pgn
+  history.forEach((move) => {
+    instance.move(move);
+  });
+
+  return instance;
+};

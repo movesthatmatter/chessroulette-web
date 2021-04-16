@@ -19,7 +19,7 @@ export const fromStartingPosition = () =>
     // const [fen, setFen] = useState('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
     const game = gameMocker.pending();
 
-    return <ChessGameV2 game={game} homeColor="black" onMove={({ fen }) => {}} />;
+    return <ChessGameV2 id={game.id} pgn={game.pgn} homeColor="black" onMove={({ fen }) => {}} />;
   });
 
 export const withGameStarted = () =>
@@ -27,7 +27,15 @@ export const withGameStarted = () =>
     // const [fen, setFen] = useState('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
     const game = gameMocker.started();
 
-    return <ChessGameV2 game={game} size={400} homeColor="black" onMove={({ fen }) => {}} />;
+    return (
+      <ChessGameV2
+        id={game.id}
+        pgn={game.pgn}
+        size={400}
+        homeColor="black"
+        onMove={({ fen }) => {}}
+      />
+    );
   });
 
 export const withNotification = () =>
@@ -38,7 +46,8 @@ export const withNotification = () =>
     return (
       <Grommet theme={defaultTheme}>
         <ChessGameV2
-          game={game}
+          id={game.id}
+          pgn={game.pgn}
           size={400}
           homeColor="black"
           onMove={({ fen }) => {}}

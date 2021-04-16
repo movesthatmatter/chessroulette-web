@@ -17,7 +17,7 @@ type Props = {
   game: Game;
   homeColor: ChessGameColor;
   historyFocusedIndex?: number;
-  onMoveClick?: (index: number) => void;
+  onHistoryFocusedIndexChanged?: (index: number) => void;
   onTimerFinished?: (color: ChessGameColor) => void;
 };
 
@@ -81,7 +81,7 @@ export const GameStateWidget: React.FC<Props> = ({
         <GameHistory
           game={game}
           focusedIndex={props.historyFocusedIndex}
-          onMoveClick={props.onMoveClick}
+          onFocusedIndexChanged={props.onHistoryFocusedIndexChanged}
         />
       </div>
       <div className={cls.player}>

@@ -106,6 +106,7 @@ export const withTimeFinished = () => (
                 lastMoveAt: toISODateTime(new Date()),
               })}
             onTimerFinished={action('onTimerFinished')}
+            onHistoryFocusedIndexChanged={action('onHistoryFocusedIndexChanged')}
           />
         </div>
       </div>

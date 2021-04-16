@@ -1,6 +1,6 @@
+import React, { useState, useEffect } from 'react';
 import { useWindowWidth } from '@react-hook/window-size';
-import { ChessGameColor, ChessGameStatePgn, ChessMove } from 'dstnd-io';
-import React, { useState } from 'react';
+import { ChessGameColor, ChessGameStatePgn, ChessHistory, ChessMove } from 'dstnd-io';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { GameStateDialog } from 'src/modules/Games/Chess/components/GameStateDialog';
 import { useSoundEffects } from 'src/modules/Games/Chess';
@@ -10,6 +10,7 @@ import { getPlayerStats } from 'src/modules/Games/Chess/lib';
 import { Game } from 'src/modules/Games';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { DialogContentProps } from 'src/components/Dialog';
+import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 
 type Props = {
   room: RoomWithPlayActivity;
@@ -43,7 +44,7 @@ const canShowWaitingForOpponentNotification = (room: RoomWithPlayActivity, game:
   const bothPlayersJoined = areBothPlayersJoined(room, game);
 
   return !bothPlayersJoined && game.state === 'pending';
-}
+};
 
 const sayings = [
   'Loading...',
@@ -57,8 +58,24 @@ const sayings = [
 
 export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
   const windowWidth = useWindowWidth();
-  // TODO: This isn't really used yet!
   const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
+  const [displayedPgn, setDisplayedPgn] = useState<Game['pgn']>();
+
+  useEffect(() => {
+    if (!game.history || game.history.length === 0 || gameDisplayedHistoryIndex === 0) {
+      setDisplayedPgn(undefined);
+      return;
+    }
+
+    const nextPgn = chessHistoryToSimplePgn(game.history.slice(0, -gameDisplayedHistoryIndex));
+
+    setDisplayedPgn(nextPgn);
+  }, [game, gameDisplayedHistoryIndex]);
+
+  useEffect(() => {
+    // Reset the displayed if the game updates!
+    setGameDisplayedHistoryIndex(0);
+  }, [game])
 
   // TODO: Need to make sure the given game has the same id as the activity game id
 
@@ -74,11 +91,13 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
     title: 'Waiting for opponent...',
     hasCloseButton: false,
     content: <AwesomeLoader sayings={sayings} size={p.size ? p.size / 4 : 50} />,
-    buttons: [{
-      label: 'Abort Game',
-      type: 'secondary',
-      onClick: () => props.onAbort(),
-    }],
+    buttons: [
+      {
+        label: 'Abort Game',
+        type: 'secondary',
+        onClick: () => props.onAbort(),
+      },
+    ],
   });
 
   const getCurrentNotification = canShowWaitingForOpponentNotification(props.room, game)
@@ -97,8 +116,9 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
           onRematchOffer={props.onRematchOffer}
           onResign={props.onResign}
           onTimerFinished={props.onTimerFinished}
-          onHistoryIndexUpdated={() => {}}
+          onHistoryIndexUpdated={setGameDisplayedHistoryIndex}
           historyIndex={gameDisplayedHistoryIndex}
+          displayedPgn={displayedPgn}
           homeColor={homeColor}
           playable={playable}
           opponentAsPlayer={playerStats.opponent}
@@ -118,8 +138,9 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
         onRematchOffer={props.onRematchOffer}
         onResign={props.onResign}
         onTimerFinished={props.onTimerFinished}
-        onHistoryIndexUpdated={() => {}}
+        onHistoryIndexUpdated={setGameDisplayedHistoryIndex}
         historyIndex={gameDisplayedHistoryIndex}
+        displayedPgn={displayedPgn}
         homeColor={homeColor}
         playable={playable}
         opponentAsPlayer={playerStats.opponent}

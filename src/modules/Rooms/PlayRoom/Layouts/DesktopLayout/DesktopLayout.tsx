@@ -101,7 +101,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                 game={game}
                 homeColor={props.homeColor}
                 historyFocusedIndex={props.historyIndex}
-                onMoveClick={props.onHistoryIndexUpdated}
+                onHistoryFocusedIndexChanged={props.onHistoryIndexUpdated}
                 // TODO: This should probably be seperate from the GameStateWidget
                 //  something like a hook so it can be used without a view component
                 onTimerFinished={props.onTimerFinished}
@@ -124,7 +124,8 @@ export const DesktopLayout: React.FC<Props> = (props) => {
             ref={chessboardRef as any}
           >
             <ChessGameV2
-              game={game}
+              id={game.id}
+              pgn={props.displayedPgn === undefined ? game.pgn : props.displayedPgn}
               onMove={({ move, pgn }) => {
                 props.onMove(move, pgn, [], props.homeColor);
               }}
