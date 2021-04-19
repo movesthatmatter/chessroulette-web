@@ -1,5 +1,5 @@
 import { Box } from 'grommet';
-import React, { LegacyRef, useRef, useState, useEffect } from 'react';
+import React, { LegacyRef, useRef } from 'react';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
@@ -14,10 +14,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { ChatContainer } from 'src/modules/Chat';
 import { LayoutProps } from '../types';
-import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoardV2';
-import { getOppositePlayer, getPlayer } from 'src/modules/GameRoomV2/util';
-import { ChessPlayer } from 'dstnd-io';
-import { PlayerPendingOverlay } from 'src/components/PlayerPendingOverlay/PlayerPendingOverlay';
+import { RoomDetails } from '../components/RoomDetails';
+import { ExitRoomButton } from '../components/ExitRoomButton/ExitRoomButton';
 
 type Props = LayoutProps;
 
@@ -27,20 +25,9 @@ const BOTTOM_HEIGHT = 80;
 export const DesktopLayout: React.FC<Props> = (props) => {
   const cls = useStyles();
   const dialogTarget = useRef();
-  const { game } = props;
-  const [gameReadyToPlay, setGameReadyToPlay] = useState(false);
-  const getMePlayer = getPlayer(props.room.me.id, game.players);
-  const getOtherPlayer = getOppositePlayer(getMePlayer as ChessPlayer, game.players);
   const chessboardRef = useRef();
 
-  useEffect(() => {
-    if (props.room && props.room.peersCount > 0) {
-      setGameReadyToPlay(Object
-        .values(props.room.peersIncludingMe)
-        .filter(p => p.id === getOtherPlayer?.user.id)
-        .length > 0)
-    }
-  }, [props.room.peersIncludingMe, props.room.peersCount]);
+  const { game } = props;
 
   return (
     <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
@@ -60,9 +47,21 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                 flex: 1,
                 paddingLeft: '16px',
                 paddingTop: '16px',
+                flexDirection: 'row',
+                display: 'flex',
               }}
             >
-              <NavigationHeader />
+              <div style={{ flex: 1 }}>
+                <NavigationHeader logoAsLink={false} />
+              </div>
+              <div
+                style={{
+                  height: `${TOP_HEIGHT}px`,
+                  paddingRight: '30px',
+                }}
+              >
+                <UserMenu reversed withDropMenu linksTarget="blank" />
+              </div>
             </div>
             <div
               style={{
@@ -102,7 +101,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                 game={game}
                 homeColor={props.homeColor}
                 historyFocusedIndex={props.historyIndex}
-                onMoveClick={props.onHistoryIndexUpdated}
+                onHistoryFocusedIndexChanged={props.onHistoryIndexUpdated}
                 // TODO: This should probably be seperate from the GameStateWidget
                 //  something like a hook so it can be used without a view component
                 onTimerFinished={props.onTimerFinished}
@@ -119,23 +118,24 @@ export const DesktopLayout: React.FC<Props> = (props) => {
           </div>
         )}
         getGameComponent={({ container }) => (
-          <>
-            <Box fill style={{width : 'fit-content', height: 'fit-content', ...borderRadius}} ref={chessboardRef as any}>
+          <Box
+            fill
+            style={{ width: 'fit-content', height: 'fit-content', ...borderRadius }}
+            ref={chessboardRef as any}
+          >
             <ChessGameV2
-              game={game}
+              id={game.id}
+              pgn={props.displayedPgn === undefined ? game.pgn : props.displayedPgn}
               onMove={({ move, pgn }) => {
                 props.onMove(move, pgn, [], props.homeColor);
               }}
               size={container.width}
               homeColor={props.homeColor}
-              playable={props.canIPlay}
+              playable={props.playable}
               className={cls.board}
-              viewOnly={!gameReadyToPlay}
+              notificationDialog={props.gameNotificationDialog}
             />
-            </Box>
-            {!gameReadyToPlay && <PlayerPendingOverlay target={chessboardRef.current} 
-            size={Math.ceil(container.width / 4)}/>}
-          </>
+          </Box>
         )}
         getRightSideComponent={({ container }) => (
           <div className={cx(cls.side, cls.rightSide)}>
@@ -144,7 +144,22 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                 height: `${TOP_HEIGHT}px`,
               }}
             >
-              <UserMenu reversed />
+              <div style={{ paddingTop: '16px' }} />
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <RoomDetails />
+                <div
+                  style={{
+                    flex: 1,
+                  }}
+                />
+                <ExitRoomButton />
+              </div>
             </div>
             <div
               className={cls.sideContent}

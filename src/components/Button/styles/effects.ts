@@ -1,16 +1,7 @@
 import hexToRGBA from 'hex-to-rgba';
 import { colors } from 'src/theme';
+import { getBoxShadow } from 'src/theme/util';
 
-
-const getBoxShadow = (
-  x: number,
-  y: number,
-  blur: number,
-  inset: number,
-  color: string,
-) => {
-  return `${x}px ${y}px ${blur}px ${inset}px ${color}`;
-};
 
 const primaryButtonShadow = {
   boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(colors.primary, 0.26)),

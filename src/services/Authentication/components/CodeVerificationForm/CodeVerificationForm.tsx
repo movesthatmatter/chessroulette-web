@@ -6,9 +6,10 @@ import { Form, FormError, SubmissionErrors } from 'src/components/Form';
 import { validator } from 'src/lib/validator';
 import { CodeInput } from 'src/components/CodeInput';
 import { Text } from 'src/components/Text';
-import { colors } from 'src/theme';
+import { colors, onlyMobile, SMALL_MOBILE_BREAKPOINT } from 'src/theme';
 import { Emoji } from 'src/components/Emoji';
 import { AsyncResult } from 'dstnd-io';
+import { useWindowWidth } from '@react-hook/window-size';
 
 
 type Props = {
@@ -23,6 +24,10 @@ type Model = {
 
 export const CodeVerificationForm: React.FC<Props> = (props) => {
   const cls = useStyles();
+
+  const windowWidth = useWindowWidth();
+
+  const codeInputFieldSize = windowWidth < SMALL_MOBILE_BREAKPOINT ? 36 : 45;
 
   return (
     <Form<Model>
@@ -50,14 +55,14 @@ export const CodeVerificationForm: React.FC<Props> = (props) => {
               p.onChange('code', input);
             }}
             // onComplete={debounce(p.submit, 250)}
-            fieldSize={45}
+            fieldSize={codeInputFieldSize}
           />
           {(p.errors.submissionGenericError || p.errors.submissionValidationErrors?.code) && (
             <FormError
               message={p.errors.submissionGenericError || p.errors.submissionValidationErrors?.code || ''}
             />
           )}
-          <div style={{ paddingBottom: '16px' }} />
+          {/* <div style={{ paddingBottom: '16px' }} /> */}
           <Button
             label="Verify"
             full
@@ -76,6 +81,10 @@ const useStyles = createUseStyles({
   infoTextWrapper: {
     textAlign: 'center',
     paddingBottom: '24px',
+
+    ...onlyMobile({
+      lineHeight: '16px',
+    }),
   },
   infoText: {
     color: colors.neutralDarker,

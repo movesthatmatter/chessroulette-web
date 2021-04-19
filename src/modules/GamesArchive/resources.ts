@@ -1,11 +1,8 @@
 import { Resources } from 'dstnd-io';
 import { http } from 'src/lib/http';
 
+const { resource: getUserGamesResource } = Resources.Collections.Game.GetUserGames;
 
-const {
-  resource: getUserGamesResource,
-} = Resources.Collections.Game.GetMyGames;
-
-export const getMyGames = () => {
-  return getUserGamesResource.request(undefined, () => http.get(`api/games`));
-}
+export const getUserGames = (req: Resources.Util.RequestOf<typeof getUserGamesResource>) => {
+  return getUserGamesResource.request(req, (params) => http.get(`api/games`, { params }));
+};

@@ -1,12 +1,20 @@
 import { ChessInstance, ShortMove, Piece, Square } from 'chess.js';
 import { Result, Ok, Err } from 'ts-results';
 import { getNewChessGame } from './sdk';
-import { ChessGameStatePgn, chessGameUtils, ChessHistory, ChessMove, ChessPlayer, GameRecord, UserRecord } from 'dstnd-io';
+import {
+  ChessGameState,
+  ChessGameStatePgn,
+  chessGameUtils,
+  ChessHistory,
+  ChessMove,
+  ChessPlayer,
+  UserRecord,
+} from 'dstnd-io';
 import { FullMove, HalfMove, PairedMove, PairedHistory } from './types';
 import { flatten } from 'src/lib/util';
 import { getOppositePlayer, getPlayer } from 'src/modules/GameRoomV2/util';
 import { getRelativeMaterialScore } from '../components/GameStateWidget/util';
-import { Game } from '../../types';
+import { Game, GameFromGameState } from '../../types';
 
 export const getStartingPgn = () => getNewChessGame().pgn();
 export const getStartingFen = () => getNewChessGame().fen();
@@ -77,7 +85,8 @@ export const linearToPairedIndex = (history: ChessHistory, index: number): Paire
 
 export const pairedToLinearIndex = (index: PairedIndex) => index[0] * 2 + index[1];
 
-export const reversedLinearIndex = (history: ChessHistory, index: number) => history.length - index - 1;
+export const reversedLinearIndex = (history: ChessHistory, index: number) =>
+  history.length - index - 1;
 
 export const historyToPgn = (moves: ChessHistory): ChessGameStatePgn =>
   toPairedHistory(moves)
@@ -146,10 +155,7 @@ type UserAsPlayerStats =
       materialScore: undefined;
     } & {});
 
-export const getPlayerStats = (
-  game: Game,
-  userId: UserRecord['id']
-): UserAsPlayerStats => {
+export const getPlayerStats = (game: Game, userId: UserRecord['id']): UserAsPlayerStats => {
   const player = getPlayer(userId, game.players);
 
   if (player) {
@@ -182,7 +188,19 @@ export const getPlayerStats = (
   };
 };
 
-export const gameRecordToGame = (g: GameRecord): Game => ({
+export const gameRecordToGame = <T extends ChessGameState>(g: T) => ({
   ...g,
   captured: chessGameUtils.getCapturedPiecesFromPgn(g.pgn),
-});
+}) as GameFromGameState<T>;
+
+export const getGameFromHistory = (history: ChessHistory = []) => {
+  const instance = getNewChessGame();
+
+  // TODO: This might not be the most efficient 
+  //  but it's ok for now to ensure the validaty of the pgn
+  history.forEach((move) => {
+    instance.move(move);
+  });
+
+  return instance;
+};

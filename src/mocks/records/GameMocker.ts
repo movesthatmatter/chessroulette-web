@@ -2,8 +2,13 @@ import {
   ChessGameState,
   GameRecord,
   chessGameUtils,
+  ChessGameStateFinished,
+  ChessGameStateStopped,
+  ChessGameStateNeverStarted,
+  ChessGameStateStarted,
+  ChessGameStatePending,
 } from 'dstnd-io';
-import { Game } from 'src/modules/Games';
+import { Game, GameFromGameState } from 'src/modules/Games';
 import { GameRecordMocker } from './GameRecordMocker';
 
 const gameRecordMocker = new GameRecordMocker();
@@ -17,23 +22,23 @@ export class GameMocker {
   }
 
   pending() {
-    return this.record('pending');
+    return this.record('pending') as GameFromGameState<ChessGameStatePending>;
   }
 
   started() {
-    return this.record('started');
+    return this.record('started') as GameFromGameState<ChessGameStateStarted>;
   }
 
   finished() {
-    return this.record('finished');
+    return this.record('finished') as GameFromGameState<ChessGameStateFinished>;
   }
 
   stopped() {
-    return this.record('stopped');
+    return this.record('stopped') as GameFromGameState<ChessGameStateStopped>;
   }
 
   neverStarted() {
-    return this.record('neverStarted');
+    return this.record('neverStarted') as GameFromGameState<ChessGameStateNeverStarted>;
   }
 
   withProps(props: Partial<GameRecord>) {

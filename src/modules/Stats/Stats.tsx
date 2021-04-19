@@ -1,7 +1,7 @@
 import { Box } from 'grommet';
 import React, { ReactNode } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import dateformat from 'dateformat'
+import dateformat from 'dateformat';
 import { StatsTable } from './components';
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
 

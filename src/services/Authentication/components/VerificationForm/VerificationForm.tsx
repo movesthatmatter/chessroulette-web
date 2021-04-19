@@ -89,8 +89,9 @@ export const VerificationForm: React.FC<Props> = (props) => {
                   }
                 />
                 {p.errors.submissionGenericError && <FormError message={p.errors.submissionGenericError} />}
+                <div style={{ paddingBottom: '6px' }} />
                 <Button
-                  label="Send Email"
+                  label="Send Verification"
                   full
                   type="positive"
                   withLoader

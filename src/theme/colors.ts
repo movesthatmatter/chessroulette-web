@@ -4,6 +4,9 @@ const primaryLight = '#A9C1FD';
 const primaryLightest = '#EBF0FF';
 const primaryDark = '#366BEF';
 
+const chessBoardDark = '#7e9ac7';
+const chessBoardLight = '#dee5f0';
+
 const attention = '#FAC032';
 const attentionLight = '#FCDF98';
 const attentionDarker = '#EFAD0A';
@@ -21,7 +24,7 @@ const black = '#25282B';
 
 const neutral = '#DFE5EF';
 const neutralLight = '#DBDDE0';
-const neutralLighter = '#E8E8E8';
+const neutralLighter = '#E6ECF5';
 const neutralLightest = '#F6F8FB';
 const neutralDark = '#CACCCF';
 const neutralDarker = '#A0A4A8';
@@ -64,4 +67,7 @@ export const colors = {
   neutralDark,
   neutralDarker,
   neutralDarkest,
+
+  chessBoardDark,
+  chessBoardLight
 };

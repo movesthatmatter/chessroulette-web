@@ -1,6 +1,8 @@
 import Chance from 'chance';
 import { UserRecord, GuestUserRecord, RegisteredUserRecord } from 'dstnd-io';
-import { getRandomInt } from 'src/lib/util';
+import { getRandomInt, objectKeys } from 'src/lib/util';
+import { countries } from 'countries-list';
+import camelcase from 'camelcase';
 
 const chance = new Chance();
 
@@ -26,12 +28,15 @@ export class UserRecordMocker {
         name,
         avatarId: String(getRandomInt(1, 18)),
         isGuest: true,
-        sid: String((new Date().getTime())),
+        sid: String(new Date().getTime()),
       };
     }
 
     const email = chance.email();
     const externalAccountId = chance.guid();
+
+    const countryCode = objectKeys(countries)[getRandomInt(0, Object.keys(countries).length - 1)];
+    const country = countries[countryCode];
 
     return {
       id,
@@ -43,6 +48,16 @@ export class UserRecordMocker {
       avatarId: String(getRandomInt(1, 18)),
       profilePicUrl: undefined,
       externalAccounts: undefined,
+      username:  camelcase(`${chance.profession()} ${chance.animal()} ${chance.integer({ min: 1, max: 999 })}`),
+      country: {
+        name: country.name,
+        languages: country.languages,
+        phone: country.phone,
+        currency: country.currency,
+        flagEmoji: country.emoji,
+        flagEmojiU: country.emojiU,
+        code: countryCode,
+      },
     };
   }
 
@@ -55,7 +70,7 @@ export class UserRecordMocker {
 
   withProps<TIsGuest extends boolean = false>(
     props: Partial<Omit<UserRecord, 'isGuest'>>,
-    isGuest: TIsGuest = false as TIsGuest,
+    isGuest: TIsGuest = false as TIsGuest
   ): TIsGuest extends false ? RegisteredUserRecord : GuestUserRecord {
     return {
       ...this.record(isGuest),

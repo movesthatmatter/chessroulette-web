@@ -226,14 +226,19 @@ export const withChessGame = () => (
                   }}
                 />
               )}
-              getGameComponent={({ container }) => (
-                <ChessGameV2
-                  homeColor="black"
-                  playable
-                  game={gameMocker.record()}
-                  onMove={action('on move')}
-                />
-              )}
+              getGameComponent={({ container }) => {
+                const game = gameMocker.record();
+
+                return (
+                  <ChessGameV2
+                    homeColor="black"
+                    playable
+                    pgn={game.pgn}
+                    id={game.id}
+                    onMove={action('on move')}
+                  />
+                );
+              }}
               getLeftSideComponent={() => <></>}
               getRightSideComponent={({ container }) => (
                 <div
@@ -342,9 +347,8 @@ const LayoutComponent: React.FC<{
                         padding: 0,
                       }}
                     >
-                      Top: {d.top.width}px / {d.top.height}px | Bottom:{' '}
-                      {d.bottom.width}px / {d.bottom.height}px | Main:{' '}
-                      {d.main.width}px / {d.main.height}px
+                      Top: {d.top.width}px / {d.top.height}px | Bottom: {d.bottom.width}px /{' '}
+                      {d.bottom.height}px | Main: {d.main.width}px / {d.main.height}px
                     </p>
                     <p
                       style={{
@@ -458,7 +462,7 @@ export const multipleResolutions = () => (
         bottom={30}
         aspectRatio={{ width: 4, height: 3 }}
       />
-       <LayoutComponent
+      <LayoutComponent
         containerWidth={400}
         top={80}
         bottom={30}

@@ -1,13 +1,10 @@
+import React from 'react';
 import { ChessGameState, ChessPlayer } from 'dstnd-io';
 import { Box } from 'grommet';
-
-import React, { useRef } from 'react';
 import { Avatar } from 'src/components/Avatar';
-import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
-import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { floatingShadow, fonts, maxMediaQuery, minMediaQuery } from 'src/theme';
+import { floatingShadow, fonts } from 'src/theme';
 import { Countdown } from '../Countdown';
 
 type Props = {
@@ -30,15 +27,9 @@ export const PlayerBox: React.FC<Props> = ({
   const cls = useStyles();
 
   return (
-    <Box
-      fill
-      className={cls.container}
-      direction='row'
-    >
+    <Box fill className={cls.container} direction="row">
       <Box fill direction="row">
-        <Avatar>
-          <Mutunachi mid={player.user.avatarId} />
-        </Avatar>
+        <Avatar mutunachiId={Number(player.user.avatarId)} />
         <Box className={cls.playerInfo}>
           <Text className={cls.playerNameText}>{player.user.name}</Text>
           <div
@@ -52,7 +43,12 @@ export const PlayerBox: React.FC<Props> = ({
         </Box>
       </Box>
       {gameTimeLimit !== 'untimed' && (
-        <Countdown timeLeft={timeLeft} active={active} onFinished={props.onTimerFinished} />
+        <Countdown
+          timeLeft={timeLeft}
+          active={active}
+          onFinished={props.onTimerFinished}
+          gameTimeClass={gameTimeLimit}
+        />
       )}
     </Box>
   );

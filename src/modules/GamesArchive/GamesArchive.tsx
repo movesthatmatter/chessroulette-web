@@ -1,84 +1,96 @@
-import capitalize from 'capitalize';
-import { RegisteredUserRecord, UserRecord } from 'dstnd-io';
+import { RegisteredUserRecord, GameRecordFinished, GameRecordStopped } from 'dstnd-io';
 import React from 'react';
-import { ClipboardCopy } from 'src/components/ClipboardCopy';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, CSSProperties } from 'src/lib/jss';
+import { gameRecordToGame } from '../Games/Chess/lib';
+import { getUserGames } from './resources';
+import { AwesomeLoader } from 'src/components/AwesomeLoader';
+import { WithPagination } from 'src/components/Pagination';
+import { ArchivedGame } from './components/ArchivedGame';
+import { Text } from 'src/components/Text';
+import Loader from 'react-loaders';
 import { colors } from 'src/theme';
-import { getPlayer } from '../GameRoomV2/util';
-import { ChessBoard } from '../Games/Chess/components/ChessBoardV2';
-import { pgnToFen } from '../Games/Chess/lib';
-import { Game } from '../Games/types';
+import { AwesomeError } from 'src/components/AwesomeError';
 
 type Props = {
-  user: RegisteredUserRecord;
-  games: Game[];
+  userId: RegisteredUserRecord['id'];
+  pageSize?: number;
 };
 
-const getGameResult = (game: Game, userId: UserRecord['id']) => {
-  if (game.winner === '1/2') {
-    return 'Draw';
-  }
-
-  const winningColor = game.winner;
-
-  const userPlayer = getPlayer(userId, game.players);
-
-  if (!userPlayer) {
-    return `${capitalize(winningColor || '')} Won`;
-  }
-
-  if (userPlayer.color === game.winner) {
-    return 'Won';
-  }
-
-  return 'Lost';
-}
-
-export const GamesArchive: React.FC<Props> = ({
-  user,
-  games,
-}) => {
+export const GamesArchive: React.FC<Props> = ({ userId, pageSize = 4 }) => {
   const cls = useStyles();
 
   return (
-    <div className={cls.container}>
-      {games.map((game) => (
-        <div className={cls.gameContainer} key={game.id}>
-          <div>
-            {game.createdAt}
-          </div>
-          <div>
-            {`${game.players[0].user.firstName} ${game.players[0].user.lastName}`}
-            {` - `}
-            {`${game.players[1].user.firstName} ${game.players[1].user.lastName}`}
-          </div>
-          <div className={cls.gameResult}>
-            {getGameResult(game, user.id)}
-          </div>
-          <div>
-            <div>
-              <ClipboardCopy
-                value={game.pgn || ''}
-              />
+    <WithPagination<GameRecordFinished | GameRecordStopped>
+      initialPageSize={pageSize}
+      getItems={(p) =>
+        getUserGames({
+          userId,
+          pageSize: p.pageSize,
+          currentIndex: p.pageIndex,
+        }).map((games) => {
+          return {
+            items: games.items.map(gameRecordToGame),
+            itemsTotal: games.itemsTotal,
+            currentIndex: games.currentIndex,
+          };
+        })
+      }
+      render={(r) => {
+        return (
+          <div className={cls.container}>
+            <div className={cls.gameContainerWrapper}>
+              {r.items.map((game) => (
+                <ArchivedGame game={game} myUserId={userId} />
+              ))}
+              {r.isEmpty && !r.isLoading && (
+                <div className={cls.emptyMessageWrapper}>
+                  <Text className={cls.emptyMessage}>You have no games!</Text>
+                </div>
+              )}
+              {r.isLoading && (
+                <div className={cls.loadingWrapper}>
+                  <Loader type="ball-pulse" active innerClassName={cls.loader} />
+                </div>
+              )}
             </div>
+            {r.isReady && !r.isEmpty && r.paginator}
           </div>
-          <div>
-            <ChessBoard fen={pgnToFen(game.pgn || '')} size={125} coordinates={false} />
-          </div>
-        </div>
-      ))}
-    </div>
+        );
+      }}
+    />
   );
 };
 
 const useStyles = createUseStyles({
-  container: {},
-  gameContainer: {
+  container: {
     display: 'flex',
-    flexDirection: 'row',
-    borderBottom: `1px solid ${colors.neutralLight}`,
-    padding: '16px',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    height: '100%',
   },
-  gameResult: {},
+  gameContainerWrapper: {
+    flex: 1,
+  },
+  loadingWrapper: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loader: {
+    transform: 'scale(.7)',
+    ...({
+      '& > div': {
+        backgroundColor: `${colors.primary} !important`,
+      },
+    } as CSSProperties['nestedKey']),
+  },
+  emptyMessageWrapper: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    height: '100%',
+  },
+  emptyMessage: {
+    color: colors.neutralDarker,
+  },
 });

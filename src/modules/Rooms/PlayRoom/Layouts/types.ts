@@ -1,6 +1,7 @@
 import { Move } from 'chess.js';
-import { ChessGameColor, ChessGameStatePgn, ChessMove, ChessPlayer } from 'dstnd-io';
+import { ChessGameColor, ChessGameStatePgn, ChessHistory, ChessMove, ChessPlayer } from 'dstnd-io';
 import { Game } from 'src/modules/Games';
+import { ChessBoardProps } from 'src/modules/Games/Chess/components/ChessBoardV2';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 
 export type ChessGameHistory = Move[];
@@ -10,6 +11,7 @@ export type LayoutProps = {
   game: Game;
   historyIndex: number;
   onHistoryIndexUpdated: (i: number) => void;
+  displayedPgn?: Game['pgn'];
 
   onMove: (
     m: ChessMove,
@@ -29,5 +31,8 @@ export type LayoutProps = {
   homeColor: ChessGameColor;
   meAsPlayer?: ChessPlayer;
   opponentAsPlayer?: ChessPlayer;
-  canIPlay: boolean;
+  playable: boolean;
+  // canIPlay: boolean;
+
+  gameNotificationDialog?: ChessBoardProps['notificationDialog'];
 };

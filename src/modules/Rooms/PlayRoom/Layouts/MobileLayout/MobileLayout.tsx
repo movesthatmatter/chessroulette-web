@@ -1,16 +1,16 @@
 import { Layer } from 'grommet';
-import { AppsRounded, Chat } from 'grommet-icons';
+import { AppsRounded } from 'grommet-icons';
 import React, { useRef, useState, useEffect } from 'react';
 import { NavigationHeader } from 'src/components/Navigation';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { Text } from 'src/components/Text';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { MobileGameRoomLayout } from 'src/modules/GameRoomV2/GameRoomLayout/MobileGameRoomLayout';
 import {
   colors,
   floatingShadow,
   fonts,
-  onlyMobile,
+  hardBorderRadius,
   onlySmallMobile,
   SMALL_MOBILE_BREAKPOINT,
   softBorderRadius,
@@ -30,15 +30,8 @@ import { selectChatHistory, selectUserID } from 'src/providers/PeerProvider/redu
 
 type Props = LayoutProps;
 
-export const MobileLayout: React.FC<Props> = (props) => {
+export const MobileLayout: React.FC<Props> = ({ game, ...props }) => {
   const cls = useStyles();
-
-  const { game } = props;
-
-  const mobileGameActionsRef = useRef<HTMLDivElement>(null);
-
-  const mobileChatButton = useRef<HTMLDivElement>(null);
-
   const chatHistory = useSelector(selectChatHistory);
   const me = useSelector(selectUserID);
   const newMessageCounter = useRef(0);
@@ -106,24 +99,21 @@ export const MobileLayout: React.FC<Props> = (props) => {
                   right: 0,
                 }}
               >
-                <div ref={mobileChatButton} style={{ backgroundColor: 'transparent' }}>
-                  <ChatIconWithBadge
-                    color={colors.white}
-                    onClick={() => {
-                      markMessagesAsRead();
-                      setShowChatWindow(true);
-                    }}
-                    newMessages={newMessageCounter.current}
-                  />
-                </div>
-                <div ref={mobileGameActionsRef}>
-                  <AppsRounded
-                    color={colors.white}
-                    onClick={() => setShowMobileGameActionsMenu(true)}
-                    className={cls.mobileGameActionsButtonIcon}
-                  />
-                </div>
-                {showMobileGameActionsMenu && mobileGameActionsRef.current && (
+                <ChatIconWithBadge
+                  color={colors.white}
+                  onClick={() => {
+                    markMessagesAsRead();
+                    setShowChatWindow(true);
+                  }}
+                  newMessagesCount={newMessageCounter.current}
+                />
+                <div style={{ paddingBottom: '4px' }} />
+                <AppsRounded
+                  color={colors.white}
+                  onClick={() => setShowMobileGameActionsMenu(true)}
+                  className={cls.mobileGameActionsButtonIcon}
+                />
+                {showMobileGameActionsMenu && (
                   <Layer
                     responsive={false}
                     position="bottom"
@@ -157,19 +147,6 @@ export const MobileLayout: React.FC<Props> = (props) => {
                     />
                   </Layer>
                 )}
-                {showChatWindow && mobileChatButton.current && (
-                  <Layer
-                    style={{ borderRadius: '18px', left: '10px', bottom: '10px' }}
-                    responsive={false}
-                    position="bottom-left"
-                    animation="slide"
-                    onClickOutside={() => setShowChatWindow(false)}
-                  >
-                    <div className={cls.chatContainer}>
-                      <ChatContainer />
-                    </div>
-                  </Layer>
-                )}
               </div>
             </div>
           )}
@@ -195,14 +172,16 @@ export const MobileLayout: React.FC<Props> = (props) => {
           )}
           <div className={cls.mobileChessGameWrapper}>
             <ChessGameV2
-              game={game}
+              id={game.id}
+              pgn={game.pgn}
               onMove={({ move, pgn }) => {
                 props.onMove(move, pgn, [], props.homeColor);
               }}
-              playable={props.canIPlay}
+              playable={props.playable}
               homeColor={props.homeColor}
               size={dimensions.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 24)}
               className={cls.mobileBoard}
+              notificationDialog={props.gameNotificationDialog}
             />
           </div>
           {props.meAsPlayer && (
@@ -217,6 +196,21 @@ export const MobileLayout: React.FC<Props> = (props) => {
               />
             </div>
           )}
+          {showChatWindow && (
+            <Layer
+              modal={true}
+              responsive={false}
+              position="bottom"
+              animation="slide"
+              className={cls.chatContainer}
+              style={{
+                height: dimensions.height,
+              }}
+              onClickOutside={() => setShowChatWindow(false)}
+            >
+              <ChatContainer />
+            </Layer>
+          )}
         </div>
       )}
     />
@@ -224,7 +218,9 @@ export const MobileLayout: React.FC<Props> = (props) => {
 };
 
 const useStyles = createUseStyles({
-  container: {},
+  container: {
+    position: 'relative',
+  },
   // Mobile
   mobileGameActionsButtonIcon: {
     ...floatingShadow,
@@ -259,9 +255,14 @@ const useStyles = createUseStyles({
     paddingBottom: '8px',
   },
   chatContainer: {
-    padding: '10px',
-    height: '400px',
-    overflow: 'hidden',
+    width: 'calc(100% - 16px)',
+    padding: '8px',
+    ...makeImportant({
+      ...hardBorderRadius,
+      borderBottomLeftRadius: 0,
+      borderBottomRightRadius: 0,
+      overflow: 'hidden',
+    }),
   },
   mobileBoard: {
     ...floatingShadow,

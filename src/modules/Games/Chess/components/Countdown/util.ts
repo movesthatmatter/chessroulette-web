@@ -1,33 +1,37 @@
-import {
-  minutes, hours, seconds, milliseconds, second,
-} from 'src/lib/time';
+import { GameRecord } from 'dstnd-io';
+import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { minutes, hours, seconds, milliseconds, second } from 'src/lib/time';
 
-
-export const timeLeftToFormatMajor = (timeLeftMs: number) => {
-  if (timeLeftMs < seconds(10)) {
+export const timeLeftToFormatMajor = (
+  timeClassMs: number,
+  timeLeftMs: number,
+) => {
+  // If the time class is 1 minute or less then show the milliseconds
+  if (timeClassMs <= minutes(1) && timeLeftMs < minutes(1)) {
     return 'ss';
   }
-  if (timeLeftMs < minutes(1)) {
-    return 'ss';
-  }
+
   if (timeLeftMs < hours(1)) {
     return 'M';
   }
   return 'H';
 };
 
-export const timeLeftToFormatMinor = (timeLeftMs: number) => {
-  // if (timeLeftMs < seconds(10)) {
-  //   return 'l';
-  // }
-  if (timeLeftMs < minutes(1)) {
+export const timeLeftToFormatMinor = (
+  timeClassMs: number,
+  timeLeftMs: number
+) => {
+
+  // If the time class is 1 minute or less then show the milliseconds
+  if (timeClassMs <= minutes(1) && timeLeftMs <= minutes(1)) {
     return 'L';
   }
+
   if (timeLeftMs < hours(1)) {
     return 'ss';
   }
   return 'M';
-}
+};
 
 export const timeLeftToInterval = (timeLeftMs: number) => {
   // if (timeLeftMs < seconds(10)) {
