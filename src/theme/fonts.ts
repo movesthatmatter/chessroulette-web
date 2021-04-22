@@ -51,6 +51,17 @@ const body2: CSSProperties = {
   }),
 };
 
+const title1: CSSProperties = {
+  fontSize: '36px',
+  fontWeight: 700,
+  lineHeight: '36px',
+
+  ...onlyMobile({
+    fontSize: '18px',
+    lineHeight: '14px',
+  }),
+}
+
 const subtitle1: CSSProperties = {
   fontSize: '16px',
   fontWeight: 700,
@@ -92,6 +103,8 @@ export const fonts = {
 
   body1,
   body2,
+
+  title1,
 
   subtitle1,
   subtitle2,

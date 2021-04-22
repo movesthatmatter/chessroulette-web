@@ -8,6 +8,8 @@ import { FacebookAuthCallbackPage } from './vendors/facebook';
 import { PeerProvider } from './providers/PeerProvider';
 import { SocketProvider } from './providers/SocketProvider';
 import { UserProfilePage } from './modules/User';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { TOS } from './pages/TOS';
 
 type Props = {};
 
@@ -27,6 +29,18 @@ export const Routes: React.FC<Props> = () => {
         key={location.key}
         exact
         component={FacebookAuthCallbackPage}
+      />
+      <Route
+        path="/privacy-policy"
+        key={location.key}
+        exact
+        component={PrivacyPolicy}
+      />
+      <Route
+        path="/tos"
+        key={location.key}
+        exact
+        component={TOS}
       />
       <Route
         path="/user/:section"

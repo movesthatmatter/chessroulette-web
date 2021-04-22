@@ -9,6 +9,7 @@ import { SocketProvider } from './providers/SocketProvider';
 import config from './config';
 import { GA } from './services/Analytics';
 import { RouteEffects } from './RouteEffects';
+import { ScrollToTop } from './components/ScrollToTop';
 
 function App() {
   useEffect(() => {
@@ -30,6 +31,7 @@ function App() {
           <ThemeProvider theme={defaultTheme}>
             <Routes />
             <RouteEffects />
+            <ScrollToTop />
           </ThemeProvider>
         </JssProvider>
       </AuthenticationProvider>
