@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
-import { colors, onlyMobile } from 'src/theme';
+import { colors, effects, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Text } from '../Text';
 import { Link } from 'react-router-dom';
@@ -56,6 +56,16 @@ export const Footer: React.FC<Props> = () => {
 };
 
 const useStyles = createUseStyles({
+  topContainer: {
+    background: colors.neutralLightest,
+    paddingBottom: '8px',
+    ...effects.floatingShadow,
+    position: 'relative',
+  },
+  centralizeContent: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
   container: {
     background: colors.neutralLighter,
   },
@@ -65,7 +75,7 @@ const useStyles = createUseStyles({
     margin: '0 auto',
   },
   content: {
-    padding: '8px 16px 16px',
+    padding: '16px 16px',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -96,13 +106,5 @@ const useStyles = createUseStyles({
   },
   text: {
     color: colors.neutralDarkest,
-  },
-  topContainer: {
-    background: colors.neutralLightest,
-    paddingBottom: '8px',
-  },
-  centralizeContent: {
-    display: 'flex',
-    justifyContent: 'center',
   },
 });
