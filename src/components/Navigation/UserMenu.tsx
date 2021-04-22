@@ -95,13 +95,13 @@ export const UserMenu: React.FC<Props> = ({
               }}
             />
             {auth.user.isGuest ? ' Guest ' : ` @${auth.user.username} `}
-            <div
+            {/* <div
               className={cls.dot}
               style={{
                 backgroundColor: getStatusColor(peerState),
                 display: reversed ? 'inline-block' : 'none',
               }}
-            />
+            /> */}
           </Text>
         </Box>
       </Box>
