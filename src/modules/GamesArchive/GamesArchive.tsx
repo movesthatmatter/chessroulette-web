@@ -80,7 +80,7 @@ const useStyles = createUseStyles({
     transform: 'scale(.7)',
     ...({
       '& > div': {
-        backgroundColor: `${colors.primary} !important`,
+        backgroundColor: `${colors.primaryLight} !important`,
       },
     } as CSSProperties['nestedKey']),
   },
