@@ -6,11 +6,11 @@ import { html } from './policyHTML';
 
 type Props = {};
 
-export const PrivacyPolicy: React.FC<Props> = (props) => {
+export const PrivacyPolicy: React.FC<Props> = () => {
   const cls = useStyles();
 
   return (
-    <Page title="Privacy Policy">
+    <Page title="Privacy Policy" name="Privacy Policy">
       <div className={cls.container}>
         <article
           className={cls.article}

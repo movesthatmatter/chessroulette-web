@@ -4,7 +4,6 @@ import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
 import { Page } from './Page';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
-import { Router } from 'react-router-dom';
 
 export default {
   component: Page,
@@ -15,7 +14,8 @@ export const defaultStory = () => (
   <Grommet theme={defaultTheme}>
     <div style={{ width: '100%', height: '100vh' }}>
       <StorybookReduxProvider>
-        <Page />
+        <Page doNotTrack />
+        <Page name="Story" />
       </StorybookReduxProvider>
     </div>
   </Grommet>

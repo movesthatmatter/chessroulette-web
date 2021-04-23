@@ -7,6 +7,7 @@ import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { createUseStyles } from 'src/lib/jss';
 import { Text } from 'src/components/Text';
 import { Emoji } from 'src/components/Emoji';
+import { Events } from 'src/services/Analytics';
 
 type Props = Omit<ButtonProps, 'onClick' | 'label'> & {};
 
@@ -39,9 +40,6 @@ export const LogoutButton: React.FC<Props> = ({ ...buttonProps }) => {
             </div>
           </>
         }
-        // graphic={
-
-        // }
         buttonsStacked
         buttons={[
           {
@@ -49,6 +47,7 @@ export const LogoutButton: React.FC<Props> = ({ ...buttonProps }) => {
             label: 'Yes. Log me out!',
             onClick: () => {
               authenticationService.remove();
+              Events.trackDeauthenticated();
               history.replace('/');
             },
           },

@@ -33,8 +33,6 @@ export const DialogContent: React.FC<DialogContentProps> = ({
 }) => {
   const cls = useStyles();
 
-  console.log('hasCloseButton', hasCloseButton);
-
   return (
     <div>
       <div className={cls.top}>

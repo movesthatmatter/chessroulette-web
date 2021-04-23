@@ -35,7 +35,7 @@ export const RouteEffects: React.FC = () => {
 
   if (peerState.status === 'disconnected') {
     return (
-      <Page>
+      <Page doNotTrack>
         <Dialog
           visible
           title="You got disconnected!"

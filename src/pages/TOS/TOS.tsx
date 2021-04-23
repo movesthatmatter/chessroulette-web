@@ -6,11 +6,11 @@ import { html } from './tosHTML';
 
 type Props = {};
 
-export const TOS: React.FC<Props> = (props) => {
+export const TOS: React.FC<Props> = () => {
   const cls = useStyles();
 
   return (
-    <Page title="Terms of Service">
+    <Page title="Terms of Service" name="Terms of Service">
       <div className={cls.container}>
         <article
           className={cls.article}

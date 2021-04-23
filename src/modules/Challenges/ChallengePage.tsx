@@ -13,12 +13,8 @@ type Props = {
 };
 
 export const ChallengePage: React.FC<Props> = (props) => {
-  useEffect(() => {
-    Events.trackPageView('Challenge Page');
-  }, []);
-
   return (
-    <Page>
+    <Page doNotTrack name="Challenge Page">
       <ChallengeWidget
         challenge={props.challenge}
         onAccepted={props.onAccepted}

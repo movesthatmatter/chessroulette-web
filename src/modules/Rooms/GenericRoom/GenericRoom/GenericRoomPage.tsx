@@ -57,7 +57,7 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo }) => {
   //  make him go through the bouncer and have him join it!
   if (roomInfo && !bouncerState.ready) {
     return (
-      <Page>
+      <Page doNotTrack>
         <GenericRoomBouncer
           roomInfo={roomInfo}
           onCancel={() => history.push('/')}

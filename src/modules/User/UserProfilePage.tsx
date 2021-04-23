@@ -50,6 +50,7 @@ export const UserProfilePage: React.FC<Props> = (props) => {
 
   return (
     <AuthenticatedPage
+      name={`User/${currentSection.title}`}
       render={({ user }) => (
         <div className={cx(cls.container)}>
           <Menu

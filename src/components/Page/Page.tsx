@@ -1,17 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Logo } from 'src/components/Logo';
 import { Footer } from '../Footer';
 import { NavigationMenu } from '../Navigation/NavigationMenu';
 import { colors, fonts, text } from 'src/theme';
+import { Events } from 'src/services/Analytics';
 
 export type PageProps = {
+  // This name will be used on analytics
+  // name: string;
+
   logoAsLink?: boolean;
   title?: string;
-};
+} & ({
+  doNotTrack: true;
+  name?: string;
+} | {
+  doNotTrack?: false;
+  name: string;
+});
 
 export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
   const cls = useStyles();
+
+  useEffect(() => {
+    if (props.name) {
+      Events.trackPageView(props.name);
+    }
+  }, [props.name]);
 
   return (
     <div className={cls.root}>

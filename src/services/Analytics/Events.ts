@@ -214,4 +214,18 @@ export const Events = {
     action: 'Browser Not Supported Dialog Show',
     nonInteraction: true,
   }),
+
+  // Authentication
+  trackAuthenticated: (
+    type: 'login' | 'registration',
+    via: 'email' | 'facebook' | 'lichess'
+  ) => trackEvent({
+    category: EventCategory.App,
+    action: capitalize(type),
+    description: `Via ${capitalize(via)}`,
+  }),
+  trackDeauthenticated: () => trackEvent({
+    category: EventCategory.App,
+    action: 'Logout',
+  }),
 };

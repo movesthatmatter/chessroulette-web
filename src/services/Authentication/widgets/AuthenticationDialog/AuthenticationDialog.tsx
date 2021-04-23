@@ -15,6 +15,7 @@ import { colors, onlyMobile } from 'src/theme';
 import { Emoji } from 'src/components/Emoji';
 import capitalize from 'capitalize';
 import { useAuthenticationService } from '../../useAuthentication';
+import { Events } from 'src/services/Analytics';
 
 type Props = {
   visible: boolean;
@@ -77,10 +78,16 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
       })
       .map((r) => {
         if (r.status === 'ExistentUser') {
-          authenticationService.create({
-            isGuest: false,
-            accessToken: r.accessToken,
-          });
+          authenticationService
+            .create({
+              isGuest: false,
+              accessToken: r.accessToken,
+            })
+            .map(() => {
+              const via = input.type === 'external' ? input.vendor : 'email';
+
+              Events.trackAuthenticated('login', via);
+            });
         } else if (r.status === 'InexistentUser') {
           if (input.type === 'internal') {
             setCurrentStepState({
@@ -163,10 +170,15 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
                 } as const;
               })
               .map((r) => {
-                authenticationService.create({
-                  isGuest: false,
-                  accessToken: r.accessToken,
-                });
+                authenticationService
+                  .create({
+                    isGuest: false,
+                    accessToken: r.accessToken,
+                  }).map(() => {
+                    const via = s.verifiedExternalVendorInfo ? s.verifiedExternalVendorInfo.vendor : 'email';
+
+                    Events.trackAuthenticated('registration', via);
+                  });
               });
           }}
         />

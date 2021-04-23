@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Page } from 'src/components/Page';
 import { ChallengeButtonWidget } from 'src/modules/Challenges';
 import chessBackground from './assets/chess_icons.png';
 import { createUseStyles } from 'src/lib/jss';
 import { colors, minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
-import { Events } from 'src/services/Analytics';
 import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
 
@@ -13,12 +12,8 @@ type Props = {};
 export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
 
-  useEffect(() => {
-    Events.trackPageView('Home');
-  }, []);
-
   return (
-    <Page logoAsLink={false}>
+    <Page name="Home">
       <div className={cls.container}>
         <div className={cls.inner}>
           <div
