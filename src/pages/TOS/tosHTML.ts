@@ -1,6 +1,6 @@
 export const html = `
 <article>
-<p>Last updated: Apr 22, 2021 7:51 AM</p>
+<p>Last updated: Apr 27, 2021</p>
 <p>Please read this Terms of Service ("Terms," "Terms of Service") carefully before using the https://chessroulette.org Website (the "Website") operated by Moves That Matter LLC, a(n) Limited Liability Company formed in Wyoming, United States  ("us," "we," "our") as this Terms of Service contains important information regarding limitations of our liability. Your access to and use of this Website is conditional upon your acceptance of and compliance with these Terms. These Terms apply to everyone, including but not limited to visitors, users and others, who wish to access and use the Website.</p>
 
 <p>By accessing or using the Website, you agree to be bound by these Terms. If you disagree with any part of the Terms, then you do not have our permission to access or use the Website.</p>
@@ -83,7 +83,7 @@ We offer refunds on purchases made of the services offered on our Website. To qu
 
 <p>All contents of this Website are ©2021 Moves That Matter LLC or third parties. All rights reserved. Unless specified otherwise, this Website and all content and other materials on this Website including but not limited to all logos, designs, text, graphics, pictures, information, data, software, sound files and arrangement thereof (collectively, “Content”) are the proprietary property of Moves That Matter LLC and are either registered trademarks, trademarks or otherwise protected intellectual property of Moves That Matter LLC or third parties in the United States and/or other countries.</p>
 
-<p>If you are aware of a potential infringement of our intellectual property, please contact Gabriel Troia at gabriel@chessroulette.org. </p>
+<p>If you are aware of a potential infringement of our intellectual property, please contact Gabriel Troia at tosrequests@chessroulette.org. </p>
 
 <p>We respect the intellectual property rights of others. It is our policy to respond to any claim that Content posted on the Website infringes on the copyright, trademark or other intellectual property rights of any person or entity.</p>
 
@@ -98,7 +98,7 @@ We offer refunds on purchases made of the services offered on our Website. To qu
 <p>Please note that we will not process your complaint if it is not properly filled out or is incomplete. You may be held accountable for damages, including but not limited to costs and attorneys’ fees for any misrepresentation or bad faith claims regarding the infringement of your intellectual property rights by the Content on this Website.</p>
 
 <p>You may submit your claim to us by contacting us at:</p>
-<p>Moves That Matter LLC<br>Gabriel Troia<br>gabriel@chessroulette.org<br>999-999-9999<br>Wyoming<br><span class="text-uppercase">United States</span></p>
+<p>Moves That Matter LLC<br>Gabriel Troia<br>tosrequests@chessroulette.org<br>+1 917 722 5259<br>Wyoming<br><span class="text-uppercase">United States</span></p>
 
 <h2 class="">Governing law, severability, dispute resolution and venue</h2>
 
@@ -115,7 +115,6 @@ We offer refunds on purchases made of the services offered on our Website. To qu
 <p>We reserve the right to make changes to these Terms of Service at any time. We will not provide you with any notice when we make changes to this Terms of Service. </p>
 
 <h2 class="">Questions</h2>
-<p>If you have any questions about our Terms of Service, please contact us at gabriel@chessroulette.org.</p>
-
+<p>If you have any questions about our Terms of Service, please contact us at tosrequests@chessroulette.org.</p>
 </article>
 `;
