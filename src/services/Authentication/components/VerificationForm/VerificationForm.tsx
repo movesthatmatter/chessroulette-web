@@ -115,7 +115,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
             });
           }}
         />
-        <div style={{ width: '16px' }} />
+        {/* <div style={{ width: '16px' }} />
         <FacebookAuthButton
           label="Facebook"
           full
@@ -126,7 +126,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
               accessToken,
             });
           }}
-        />
+        /> */}
       </div>
     </div>
   );

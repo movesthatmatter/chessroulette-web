@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Dialog } from 'src/components/Dialog/Dialog';
 import { createUseStyles } from 'src/lib/jss';
-import { useDispatch } from 'react-redux';
-import { AspectRatio } from 'src/components/AspectRatio';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { RegistrationForm, RegistrationUserInfo } from '../../components/RegistrationForm';
 import { VerificationForm } from '../../components/VerificationForm';
@@ -254,9 +252,6 @@ const useStyles = createUseStyles({
   container: {},
   contentContainer: {
     paddingTop: '16px',
-    paddingBottom: 0,
-  },
-  facebookButton: {
     paddingBottom: 0,
   },
   mutunachiContainer: {

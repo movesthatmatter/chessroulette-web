@@ -41,7 +41,7 @@ export const UserConnections: React.FC<Props> = ({ user }) => {
           />
         )}
       </div>
-      <div className={cls.item}>
+      {/* <div className={cls.item}>
         <Text>Facebook</Text>
         <div style={{ flex: 1 }} />
         {user.externalAccounts?.facebook?.userId ? (
@@ -61,7 +61,7 @@ export const UserConnections: React.FC<Props> = ({ user }) => {
             }}
           />
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
