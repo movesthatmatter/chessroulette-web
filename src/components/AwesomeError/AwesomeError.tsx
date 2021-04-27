@@ -57,7 +57,7 @@ const useStyles = createUseStyles({
     }),
   },
   mutunachiContainer: {
-    width: '60%',
+    width: '40%',
     maxWidth: '300px',
     margin: '0 auto',
   },

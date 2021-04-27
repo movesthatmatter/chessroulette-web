@@ -35,6 +35,7 @@ import {
   StatsReaderIdentificationPayload,
   GameOfferingCancelRequestPayload,
   GameStatusCheckRequestPayload,
+  JoinedGameUpdatedPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
@@ -48,6 +49,9 @@ type ReceivableMessagesMap = {
   joinedRoomUpdated: JoinedRoomUpdatedPayload;
 
   ping: PingPayload;
+
+  // Game
+  joinedGameUpdatedPayload: JoinedGameUpdatedPayload,
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {

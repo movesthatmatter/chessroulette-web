@@ -1,36 +1,55 @@
-import React from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import Chessground, { ChessgroundProps } from 'react-chessground';
-import { createUseStyles, CSSProperties } from 'src/lib/jss';
+import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import 'react-chessground/dist/styles/chessground.css';
 import blueBoard from './assets/board/blue.svg';
 import cx from 'classnames';
+import { DialogContent, DialogContentProps } from 'src/components/Dialog';
+import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 
-export type ChessboardProps = Omit<ChessgroundProps, 'width' | 'height'> & {
+export type ChessBoardProps = Omit<ChessgroundProps, 'width' | 'height'> & {
   className?: string;
   size?: number;
+  notificationDialog?: (p: { size?: number }) => DialogContentProps;
 };
 
-export const Chessboard: React.FC<ChessboardProps> = (props) => {
+export const ChessBoard: React.FC<ChessBoardProps> = ({ notificationDialog, ...props }) => {
   const cls = useStyles();
+  const [uniqueKey, setUniquKey] = useState(new Date().getTime());
+
+  useEffect(() => {
+    setUniquKey(new Date().getTime());
+  }, [props.viewOnly]);
 
   return (
-    <div className={cx(cls.container, props.className)} style={{
-      ...props.size && {
-        width: props.size,
-        height: props.size,
-      }
-    }}>
+    <div
+      className={cx(cls.container, props.className)}
+      style={{
+        ...(props.size && {
+          width: props.size,
+          height: props.size,
+        }),
+      }}
+    >
       <Chessground
+        key={uniqueKey}
         resizable={false}
         draggable={{
           enabled: true,
         }}
-        {...props.size && {
+        {...(props.size && {
           width: props.size,
           height: props.size,
-        }}
+        })}
         {...props}
       />
+      {notificationDialog && (
+        <div className={cls.notificationLayer}>
+          <div className={cls.notificationContainer}>
+            <DialogContent {...notificationDialog({ size: props.size })} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -38,11 +57,8 @@ export const Chessboard: React.FC<ChessboardProps> = (props) => {
 const useStyles = createUseStyles({
   container: {
     padding: 0,
-    // position: 'relative',
+    position: 'relative',
 
-    // background: 'red',
-    // maxWidth: '100%',
-    // width: '100%',
     ...({
       '& .cg-wrap': {
         backgroundImage: `url(${blueBoard})`,
@@ -51,7 +67,7 @@ const useStyles = createUseStyles({
       '& cg-helper': {
         // Override the default "display: table" because the paddingBottom
         //  of a table doesn't always equal the width of the same element
-        display: 'block', 
+        display: 'block',
       },
 
       '& piece': {
@@ -93,5 +109,41 @@ const useStyles = createUseStyles({
         },
       },
     } as CSSProperties),
+  },
+  notificationLayer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    background: `rgba(0, 0, 0, .3)`,
+    zIndex: 9,
+
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationContainer: {
+    ...floatingShadow,
+    ...softBorderRadius,
+    padding: 0,
+    position: 'relative',
+    background: colors.white,
+
+    ...makeImportant({
+      paddingBottom: '24px',
+      borderRadius: '8px',
+      minWidth: '240px',
+      maxWidth: '360px',
+      width: '50%',
+    }),
+
+    ...onlyMobile({
+      ...makeImportant({
+        width: '84%',
+        maxWidth: 'none',
+        paddingBottom: '16px',
+      }),
+    }),
   },
 });

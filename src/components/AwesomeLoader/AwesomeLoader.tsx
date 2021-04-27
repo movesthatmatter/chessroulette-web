@@ -7,13 +7,16 @@ import { AspectRatio } from '../AspectRatio';
 import { Text } from 'src/components/Text';
 import cx from 'classnames';
 import { colors, effects } from 'src/theme';
+import { seconds } from 'src/lib/time';
 
 type Props = {
   minimal?: boolean;
   size?: string | number;
+  sayings? : Array<string>;
+  className? :string;
 };
 
-const sayings = [
+const defaultSayings = [
   'Loading...',
 
   'Jumping through many hoops',
@@ -25,11 +28,13 @@ const sayings = [
   'Establishing connection...',
 ];
 
-const getRandomSaying = () => sayings[getRandomInt(0, sayings.length - 1)];
+const getRandomSaying = (s : Array<string>) => s[getRandomInt(0, s.length - 1)];
 
 const shuffleMids = () => shuffle(range(18, 0));
 
-export const AwesomeLoader: React.FC<Props> = ({ size = 200, minimal }) => {
+const animationIntervalMs = seconds(3);
+
+export const AwesomeLoader: React.FC<Props> = ({ sayings = defaultSayings, size = 200, minimal, className }) => {
   const cls = useStyles();
   const [shuffled, setShuffled] = useState(shuffleMids());
   const [index, setIndex] = useState(0);
@@ -41,10 +46,10 @@ export const AwesomeLoader: React.FC<Props> = ({ size = 200, minimal }) => {
       setShuffled(shuffleMids);
       setIndex(0);
     }
-  }, 2000);
+  }, animationIntervalMs);
 
   return (
-    <div className={cls.container}>
+    <div className={cx(cls.container, className)}>
       <div className={cls.mask} style={{ width: size }}>
         <AspectRatio aspectRatio={1}>
           <div className={cls.animationBox}>
@@ -54,7 +59,7 @@ export const AwesomeLoader: React.FC<Props> = ({ size = 200, minimal }) => {
           </div>
         </AspectRatio>
       </div>
-      {minimal || <Text className={cls.text}>{getRandomSaying()}</Text>}
+      {minimal || <Text className={cls.text}>{getRandomSaying(sayings)}</Text>}
     </div>
   );
 };
@@ -86,7 +91,7 @@ const useStyles = createUseStyles({
   mutunachiContainer: {
     width: '33.33%',
     transform: 'translateX(200%)',
-    animation: '2000ms ease-in-out infinite',
+    animation: `${animationIntervalMs}ms ease-in-out infinite`,
     animationName: '$snapLeft',
   },
   mutunachi: {
@@ -98,10 +103,10 @@ const useStyles = createUseStyles({
     '0%': {
       transform: 'translateX(200%)',
     },
-    '25%': {
+    '20%': {
       transform: 'translateX(100%)',
     },
-    '75%': {
+    '80%': {
       transform: 'translateX(100%)',
     },
     '100%': {

@@ -4,7 +4,7 @@ import { NavigationHeader, UserMenu } from 'src/components/Navigation';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { GameRoomLayout } from 'src/modules/GameRoomV2/GameRoomLayout/GameRoomLayout';
-import { colors, floatingShadow, fonts, softBorderRadius } from 'src/theme';
+import { borderRadius, colors, floatingShadow, fonts, softBorderRadius } from 'src/theme';
 import cx from 'classnames';
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 import { GameActions } from '../components/GameActions';
@@ -14,6 +14,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { ChatContainer } from 'src/modules/Chat';
 import { LayoutProps } from '../types';
+import { RoomDetails } from '../components/RoomDetails';
+import { ExitRoomButton } from '../components/ExitRoomButton/ExitRoomButton';
 
 type Props = LayoutProps;
 
@@ -23,7 +25,9 @@ const BOTTOM_HEIGHT = 80;
 export const DesktopLayout: React.FC<Props> = (props) => {
   const cls = useStyles();
   const dialogTarget = useRef();
-  const { game } = props.room.activity;
+  const chessboardRef = useRef();
+
+  const { game } = props;
 
   return (
     <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
@@ -43,9 +47,21 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                 flex: 1,
                 paddingLeft: '16px',
                 paddingTop: '16px',
+                flexDirection: 'row',
+                display: 'flex',
               }}
             >
-              <NavigationHeader />
+              <div style={{ flex: 1 }}>
+                <NavigationHeader logoAsLink={false} />
+              </div>
+              <div
+                style={{
+                  height: `${TOP_HEIGHT}px`,
+                  paddingRight: '30px',
+                }}
+              >
+                <UserMenu reversed withDropMenu linksTarget="blank" />
+              </div>
             </div>
             <div
               style={{
@@ -82,10 +98,10 @@ export const DesktopLayout: React.FC<Props> = (props) => {
             <div style={{ height: '30%' }} />
             <div style={{ height: '40%' }}>
               <GameStateWidget
-                game={props.room.activity.game}
+                game={game}
                 homeColor={props.homeColor}
                 historyFocusedIndex={props.historyIndex}
-                onMoveClick={props.onHistoryIndexUpdated}
+                onHistoryFocusedIndexChanged={props.onHistoryIndexUpdated}
                 // TODO: This should probably be seperate from the GameStateWidget
                 //  something like a hook so it can be used without a view component
                 onTimerFinished={props.onTimerFinished}
@@ -102,16 +118,24 @@ export const DesktopLayout: React.FC<Props> = (props) => {
           </div>
         )}
         getGameComponent={({ container }) => (
-          <ChessGameV2
-            game={game}
-            onMove={({ move, pgn }) => {
-              props.onMove(move, pgn, [], props.homeColor);
-            }}
-            size={container.width}
-            homeColor={props.homeColor}
-            playable={props.canIPlay}
-            className={cls.board}
-          />
+          <Box
+            fill
+            style={{ width: 'fit-content', height: 'fit-content', ...borderRadius }}
+            ref={chessboardRef as any}
+          >
+            <ChessGameV2
+              id={game.id}
+              pgn={props.displayedPgn === undefined ? game.pgn : props.displayedPgn}
+              onMove={({ move, pgn }) => {
+                props.onMove(move, pgn, [], props.homeColor);
+              }}
+              size={container.width}
+              homeColor={props.homeColor}
+              playable={props.playable}
+              className={cls.board}
+              notificationDialog={props.gameNotificationDialog}
+            />
+          </Box>
         )}
         getRightSideComponent={({ container }) => (
           <div className={cx(cls.side, cls.rightSide)}>
@@ -120,7 +144,22 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                 height: `${TOP_HEIGHT}px`,
               }}
             >
-              <UserMenu reversed />
+              <div style={{ paddingTop: '16px' }} />
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <RoomDetails />
+                <div
+                  style={{
+                    flex: 1,
+                  }}
+                />
+                <ExitRoomButton />
+              </div>
             </div>
             <div
               className={cls.sideContent}

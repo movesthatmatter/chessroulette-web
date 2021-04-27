@@ -5,6 +5,11 @@ import { Events } from 'src/services/Analytics';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { PlayRoom } from 'src/modules/Rooms/PlayRoom/PlayRoom/PlayRoom';
+import { chessGameUtils } from 'dstnd-io';
+import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
+import { Game } from 'src/modules/Games';
+import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
+
 
 type Props = {
   room: RoomWithPlayActivity;
@@ -14,13 +19,16 @@ export const PlayRoomPage: React.FC<Props> = ({ room }) => {
   const peerState = usePeerState();
   const [connectionAttempt, setConnectionAttempt] = useState(false);
 
+  // TODO: This could be in redux but it's ok for now!
+  const [game, setGame] = useState<Game>();
+
   const request: SocketClient['send'] = (payload) => {
     // TODO: Look into what to do if not open!
     // THE ui should actually change and not allow interactions, but ideally
     //  the room still shows!
     // TODO: That should actually be somewhere global maybe!
     if (peerState.status === 'open') {
-      peerState.client.send(payload);
+      peerState.client.sendMessage(payload);
     }
   };
 
@@ -43,15 +51,46 @@ export const PlayRoomPage: React.FC<Props> = ({ room }) => {
   // Leave the Room on unmount
   useEffect(() => leaveRoom, []);
 
+  // Subscribe to Game Updates
+  useEffect(() => {
+    if (peerState.status === 'open') {
+      // Automatically Join the game for now!
+      // In the future this might be differed to the User or other actions
+      //  depending on the requirements
+      // TODO: Also, the game could not be considered ready to start until
+      //  it's joined by both players or something alike!
+      // This could also help with the idea of creating new games from inside the room
+      //  between different peers than the ones that created & accepted the challenge
+      request(gameActions.join());
+
+      const unsubscribers = [
+        peerState.client.onMessage((payload) => {
+          if (payload.kind === 'joinedGameUpdated') {
+            setGame(gameRecordToGame(payload.content));
+          }
+        }),
+      ];
+
+      return () => {
+        unsubscribers.forEach((unsubscribe) => unsubscribe());
+      }
+    }
+  }, [peerState.status]);
+
   // Analytics
   useEffect(() => {
     Events.trackPageView('Play Room');
   }, []);
 
+  if (!game) {
+    return <AwesomeLoaderPage />;
+  }
+
   return (
     <PlayRoom
       key={room.id}
       room={room}
+      game={game}
       onMove={(nextMove, _, history, color) => {
         request(gameActions.move(nextMove));
 

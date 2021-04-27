@@ -8,9 +8,15 @@ export class UserInfoMocker {
   record(): UserInfoRecord {
     const id = String(chance.integer({ min: 1 }));
 
+    const firstName = chance.first();
+    const lastName = chance.last();
+    const name = `${firstName} ${lastName}`;
+
     return {
       id,
-      name: chance.name(),
+      firstName,
+      lastName,
+      name,
       avatarId: String(getRandomInt(0, 18)),
     };
   }

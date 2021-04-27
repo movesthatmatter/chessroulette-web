@@ -1,7 +1,7 @@
 import { ChallengeRecord, RoomRecord, UserRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { noop } from 'src/lib/util';
-import { useAuthenticatedUser } from 'src/services/Authentication';
+import { useAnyUser, useAuthenticatedUser } from 'src/services/Authentication';
 import { AcceptChallengeDialog } from './components/AcceptChallenge';
 import { CreateChallengeDialog } from './components/CreateChallenge';
 import { PendingChallengeDialog } from './components/PendingChallenge';
@@ -75,7 +75,7 @@ export const ChallengeWidget: React.FC<Props> = ({
     };
   };
 
-  const user = useAuthenticatedUser();
+  const user = useAnyUser();
   const [state, setState] = useState<State | undefined>(undefined);
 
   useEffect(() => {

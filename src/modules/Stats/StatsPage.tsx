@@ -10,7 +10,7 @@ export const StatsPage: React.FC<Props> = (props) => {
   const cls = useStyles();
 
   return (
-    <Page>
+    <Page doNotTrack>
       <StatsContainer />
     </Page>
   );

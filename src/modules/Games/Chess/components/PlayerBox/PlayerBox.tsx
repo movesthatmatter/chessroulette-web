@@ -1,9 +1,7 @@
+import React from 'react';
 import { ChessGameState, ChessPlayer } from 'dstnd-io';
 import { Box } from 'grommet';
-
-import React from 'react';
 import { Avatar } from 'src/components/Avatar';
-import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, fonts } from 'src/theme';
@@ -12,7 +10,7 @@ import { Countdown } from '../Countdown';
 type Props = {
   player: ChessPlayer;
   timeLeft: ChessGameState['timeLeft']['black'] | ChessGameState['timeLeft']['white'];
-  active: boolean,
+  active: boolean;
   gameTimeLimit: ChessGameState['timeLimit'];
   material?: number;
   onTimerFinished?: () => void;
@@ -31,20 +29,16 @@ export const PlayerBox: React.FC<Props> = ({
   return (
     <Box fill className={cls.container} direction="row">
       <Box fill direction="row">
-        <Avatar>
-          <Mutunachi mid={player.user.avatarId} />
-        </Avatar>
+        <Avatar mutunachiId={Number(player.user.avatarId)} />
         <Box className={cls.playerInfo}>
-          <Text className={cls.playerNameText}>
-            {player.user.name}
-          </Text>
-          <div style={{
-            flex: 1,
-            display: 'flex',
-          }}>
-            <Text size="small1">
-              {material > 0 && `+${material}`}
-            </Text>
+          <Text className={cls.playerNameText}>{player.user.name}</Text>
+          <div
+            style={{
+              flex: 1,
+              display: 'flex',
+            }}
+          >
+            <Text size="small1">{material > 0 && `+${material}`}</Text>
           </div>
         </Box>
       </Box>
@@ -53,6 +47,7 @@ export const PlayerBox: React.FC<Props> = ({
           timeLeft={timeLeft}
           active={active}
           onFinished={props.onTimerFinished}
+          gameTimeClass={gameTimeLimit}
         />
       )}
     </Box>

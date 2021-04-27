@@ -4,15 +4,16 @@ import { getNewChessGame, toChessColor } from '../../lib';
 import { toDests } from './util';
 import {
   ChessGameColor,
-  ChessGameState,
   ChessGameStateFen,
   ChessGameStatePgn,
   ChessMove,
+  GameRecord,
 } from 'dstnd-io';
-import { Chessboard, ChessboardProps } from '../ChessBoardV2';
+import { ChessBoard, ChessBoardProps } from '../ChessBoardV2';
 
-type Props = Omit<ChessboardProps, 'onMove' | 'fen'> & {
-  game: ChessGameState;
+type Props = Omit<ChessBoardProps, 'onMove' | 'fen'> & {
+  id: GameRecord['id'];
+  pgn: GameRecord['pgn'];
   homeColor: ChessGameColor;
   orientation?: ChessGameColor;
   playable?: boolean;
@@ -54,7 +55,7 @@ export class ChessGameV2 extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.chess.load_pgn(this.props.game.pgn || '');
+    this.chess.load_pgn(this.props.pgn || '');
 
     this.state = {
       current: getCurrentChessState(this.chess),
@@ -63,7 +64,7 @@ export class ChessGameV2 extends React.Component<Props, State> {
 
   // Keeps the Component State and the Chess Instnce in sync
   private commit() {
-    if (!this.props.game.pgn) {
+    if (!this.props.pgn) {
       this.chess.reset();
 
       const nextChessState = getCurrentChessState(this.chess);
@@ -73,7 +74,7 @@ export class ChessGameV2 extends React.Component<Props, State> {
         uncommited: undefined,
       });
     } else {
-      const loaded = this.chess.load_pgn(this.props.game.pgn);
+      const loaded = this.chess.load_pgn(this.props.pgn);
 
       if (loaded) {
         const nextChessState = getCurrentChessState(this.chess);
@@ -88,7 +89,7 @@ export class ChessGameV2 extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     // If there are changes in the props commit them
-    if (prevProps.game.pgn !== this.props.game.pgn) {
+    if (prevProps.pgn !== this.props.pgn) {
       this.commit();
     }
   }
@@ -102,13 +103,22 @@ export class ChessGameV2 extends React.Component<Props, State> {
   }
 
   render() {
+    const {
+      pgn,
+      id,
+      playable,
+      orientation,
+      homeColor,
+      ...boardProps
+    } = this.props;
     const chessState = this.state.uncommited || this.state.current;
 
     return (
-      <Chessboard
-        // Reset the Board anytime the color changes
-        key={this.props.homeColor}
-        {...this.props}
+      <ChessBoard
+        // Reset the Board anytime the game changes
+        key={id}
+        {...boardProps}
+        viewOnly={!playable}
         fen={chessState.fen}
         turnColor={chessState.turn}
         check={chessState.inCheck}
@@ -116,7 +126,7 @@ export class ChessGameV2 extends React.Component<Props, State> {
         coordinates
         movable={this.calcMovable()}
         lastMove={chessState.lastMove && [chessState.lastMove.from, chessState.lastMove.to]}
-        orientation={this.props.orientation || this.props.homeColor}
+        orientation={orientation || homeColor}
         onMove={(orig, dest) => {
           const nextMove: ChessMove = {
             from: orig as Square,

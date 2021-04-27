@@ -1,62 +1,73 @@
-import {
-  io,
-  AuthenticationResponsePayload,
-  authenticationResponsePayload,
-  AuthenticationRequestPayload,
-  GuestAuthenticationResponsePayload,
-  guestAuthenticationResponsePayload,
-  GuestAuthenticationRequestPayload,
-  GuestUserRecord,
-  Result, 
-  Err,
-} from 'dstnd-io';
-import { getHttpInstance } from 'src/lib/http';
-import config from 'src/config';
+import { AsyncResultWrapper, Err, Ok, Resources } from 'dstnd-io';
+import { http } from 'src/lib/http';
 
-const http = getHttpInstance({
-  baseURL: `${config.HTTP_ENDPOINT}/api/auth`,
-});
+const {
+  resource: emailVerificationResource,
+} = Resources.Collections.Authentication.EmailVerification;
 
-type ApiError = 'BadRequest' | 'BadResponse';
-
-export const authenticate = async (
-  req: AuthenticationRequestPayload,
-): Promise<Result<AuthenticationResponsePayload, ApiError>> => {
-  try {
-    const { data } = await http.post('/', req);
-
-    return io
-      .toResult(authenticationResponsePayload.decode(data))
-      .mapErr(() => 'BadResponse');
-  } catch (e) {
-    return new Err('BadRequest');
-  }
+export const verifyEmail = (req: Resources.Util.RequestOf<typeof emailVerificationResource>) => {
+  return emailVerificationResource.request(req, (data) => http.post('api/auth/verify-email', data));
 };
 
-export const authenticateAsGuest = async (): Promise<
-  Result<GuestAuthenticationResponsePayload, ApiError>
-> => {
-  try {
-    const { data } = await http.post('/guest');
+// Rename this resurce to !authenticate instead of UserCheck!
+const { resource: userCheckResource } = Resources.Collections.Authentication.Authenticate;
 
-    return io
-      .toResult(guestAuthenticationResponsePayload.decode(data))
-      .mapErr(() => 'BadResponse');
-  } catch (e) {
-    return new Err('BadRequest');
-  }
+export const authenticate = (req: Resources.Util.RequestOf<typeof userCheckResource>) => {
+  return userCheckResource.request(req, (data) => http.post('/api/auth', data));
 };
 
-export const authenticateAsExistentGuest = async (
-  req: GuestAuthenticationRequestPayload,
-): Promise<Result<GuestAuthenticationResponsePayload, ApiError>> => {
-  try {
-    const { data } = await http.post('/guest', req);
+const {
+  resource: userRegistrationResource,
+} = Resources.Collections.Authentication.UserRegistration;
 
-    return io
-      .toResult(guestAuthenticationResponsePayload.decode(data))
-      .mapErr(() => 'BadResponse');
-  } catch (e) {
-    return new Err('BadRequest');
-  }
+export const createUser = (req: Resources.Util.RequestOf<typeof userRegistrationResource>) => {
+  return userRegistrationResource.request(req, (data) => http.post('/api/auth/register', data));
+};
+
+const { resource: userUpdateResource } = Resources.Collections.User.UserUpdate;
+
+export const updateUser = (req: Resources.Util.RequestOf<typeof userUpdateResource>) => {
+  return userUpdateResource.request(req, (data) => {
+    return http.post('/api/users', data);
+  });
+};
+const { resource: getUserResource } = Resources.Collections.User.GetUser;
+
+export const getUser = () => {
+  return getUserResource.request(undefined, () => {
+    return http.get('/api/users');
+  });
+};
+
+const {
+  resource: guestAuthenticationResource,
+} = Resources.Collections.Authentication.GuestAuthentication;
+
+// TODO: Does the name for this make sense? is it authenticating?
+export const authenticateAsNewGuest = () => {
+  return guestAuthenticationResource.request(
+    {
+      guestUser: null,
+    },
+    (data) => http.post('/api/auth/guest', data)
+  );
+};
+
+// TODO: Does the name for this mae sense? is it authenticating?
+export const authenticateAsExistentGuest = (
+  req: Resources.Util.RequestOf<typeof guestAuthenticationResource>
+) => {
+  return guestAuthenticationResource.request(req, (data) => http.post('/api/auth/guest', data));
+};
+
+const {
+  resource: connectExternalAccountResource,
+} = Resources.Collections.User.ConnectExternalAccount;
+
+export const connectExternalAccount = (
+  req: Resources.Util.RequestOf<typeof connectExternalAccountResource>
+) => {
+  return connectExternalAccountResource.request(req, (data) =>
+    http.post(`api/users/connect-external-account`, data)
+  );
 };

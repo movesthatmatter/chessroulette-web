@@ -39,3 +39,21 @@ export const minimal = () => (
     </Grommet>
   </div>
 );
+
+export const gamePendingSayings = () => (
+  <div style={{ width: '300px' }}>
+    <Grommet theme={defaultTheme}>
+      <AwesomeLoader
+        sayings={[
+          'Loading...',
+          'Your opponent is just getting ready',
+          `Let's hope your friend is not scared of a challenge`,
+          'Establishing connection...',
+          `Patience is a virtue.. I guess`,
+          `Get ready, your friend is on the way.`,
+          `Still time to polish your chess`,
+        ]}
+      />
+    </Grommet>
+  </div>
+);

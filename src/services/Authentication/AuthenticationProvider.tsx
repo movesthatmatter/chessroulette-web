@@ -1,34 +1,51 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-// import { createNewGuestUser } from './effects';
-import { selectAuthentication } from './selectors';
-import { AuthenticationContext } from './AuthenticationContext';
-import {
-  authenticateAsGuestEffect,
-  authenticateExistentUserEffect,
-  authenticateAsExistentGuestEffect,
-} from './effects';
+import { useDispatch } from 'react-redux';
+import { setGuestUserAction, setUserAction } from './actions';
+import * as resources from './resources';
+import { useAuthenticationService } from './useAuthentication';
 
-type Props = {};
-
-export const AuthenticationProvider: React.FC<Props> = (props) => {
-  const authentication = useSelector(selectAuthentication);
+export const AuthenticationProvider: React.FC = (props) => {
+  const authService = useAuthenticationService();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (authentication.authenticationType === 'user') {
-      dispatch(authenticateExistentUserEffect(authentication.user.id));
-    } else if (authentication.authenticationType === 'guest') {
-      dispatch(authenticateAsExistentGuestEffect(authentication.user));
-    } else {
-      dispatch(authenticateAsGuestEffect());
+    if (!authService.ready) {
+      return;
     }
-  }, []);
+
+    if (!authService.state) {
+      resources
+        .authenticateAsNewGuest()
+        // Create the authentication with the new guest but don't
+        //  publish a new auth update to not start an infinite loop
+        .flatMap(({ guest }) => authService.createSilently(guest))
+        .map((guest) => dispatch(setGuestUserAction(guest)));
+
+      return;
+    }
+
+    if (authService.state.isGuest) {
+      resources
+        .authenticateAsExistentGuest({ guestUser: authService.state })
+        // Create the authentication with the new guest but don't
+        //  publish a new auth update to not start an infinite loop
+        .flatMap(({ guest }) => authService.createSilently(guest))
+        .map((guest) => {
+          dispatch(setGuestUserAction(guest));
+        });
+
+      return;
+    }
+
+    const { accessToken } = authService.state;
+
+    resources
+      .getUser()
+      .map((user) => {
+        dispatch(setUserAction({ user, accessToken }));
+      });
+  }, [authService]);
 
   // TODO: There should probably be different logic based on the auth state
-  return (
-    <AuthenticationContext.Provider value={authentication}>
-      {props.children}
-    </AuthenticationContext.Provider>
-  );
+  return <>{props.children}</>;
 };

@@ -1,9 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import React, { useRef } from 'react';
 import { Box, Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
-import { ChessGame } from 'src/modules/Games/Chess';
+import { ChessGameV2 } from 'src/modules/Games/Chess/components/ChessGameV2';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
@@ -16,7 +17,7 @@ import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { minutes, seconds } from 'src/lib/time';
 import { AspectRatio, AspectRatioExplicit } from 'src/components/AspectRatio';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
-import { ChessGameStateMocker } from 'src/mocks/records';
+import { GameMocker } from 'src/mocks/records';
 
 export default {
   component: GameRoomLayout,
@@ -25,7 +26,7 @@ export default {
 
 const peerMock = new PeerMocker();
 const roomMocker = new RoomMocker();
-const gameMocker = new ChessGameStateMocker();
+const gameMocker = new GameMocker();
 
 const peerA = peerMock.record();
 const peerB = peerMock.record();
@@ -225,14 +226,19 @@ export const withChessGame = () => (
                   }}
                 />
               )}
-              getGameComponent={({ container }) => (
-                <ChessGame
-                  homeColor="black"
-                  playable
-                  game={gameMocker.record()}
-                  getBoardSize={() => container.width}
-                />
-              )}
+              getGameComponent={({ container }) => {
+                const game = gameMocker.record();
+
+                return (
+                  <ChessGameV2
+                    homeColor="black"
+                    playable
+                    pgn={game.pgn}
+                    id={game.id}
+                    onMove={action('on move')}
+                  />
+                );
+              }}
               getLeftSideComponent={() => <></>}
               getRightSideComponent={({ container }) => (
                 <div
@@ -341,9 +347,8 @@ const LayoutComponent: React.FC<{
                         padding: 0,
                       }}
                     >
-                      Top: {d.top.width}px / {d.top.height}px | Bottom:{' '}
-                      {d.bottom.width}px / {d.bottom.height}px | Main:{' '}
-                      {d.main.width}px / {d.main.height}px
+                      Top: {d.top.width}px / {d.top.height}px | Bottom: {d.bottom.width}px /{' '}
+                      {d.bottom.height}px | Main: {d.main.width}px / {d.main.height}px
                     </p>
                     <p
                       style={{
@@ -457,7 +462,7 @@ export const multipleResolutions = () => (
         bottom={30}
         aspectRatio={{ width: 4, height: 3 }}
       />
-       <LayoutComponent
+      <LayoutComponent
         containerWidth={400}
         top={80}
         bottom={30}

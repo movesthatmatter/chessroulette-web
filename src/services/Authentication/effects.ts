@@ -1,62 +1,22 @@
 import { Dispatch } from 'redux';
+import { updateUserAction } from './actions';
 import {
-  UserRecord,
-  AuthenticationViaExternalAccountRequestPayload,
-  GuestUserRecord,
-} from 'dstnd-io';
-import { setUserAction, unsetUserAction } from './actions';
-import {
-  authenticate,
-  authenticateAsGuest,
-  authenticateAsExistentGuest,
+  getUser,
+  connectExternalAccount,
 } from './resources';
 
-export const authenticateExistentUserEffect = (
-  userId: UserRecord['id']
-) => async (dispatch: Dispatch) => {
-  // Reset the possible stale current user to make sure it's never used
-  dispatch(unsetUserAction());
-
-  return (await authenticate({ userId })).map(({ user }) => {
-    dispatch(setUserAction(user));
+export const refreshAuthenticatedUser = () => async (dispatch: Dispatch) => {
+  return getUser().map((user) => {
+    dispatch(updateUserAction({ user }));
 
     return user;
   });
-}
+};
 
-export const authenticateViaExternalAccountEffect = (
-  opts: AuthenticationViaExternalAccountRequestPayload
-) => async (dispatch: Dispatch) => {
-  // Reset the possible stale current user to make sure it's never used
-  dispatch(unsetUserAction());
-
-  return (await authenticate(opts)).map(({ user }) => {
-    dispatch(setUserAction(user));
-
-    return user;
+export const connectExternalAccountEffect = (req: Parameters<typeof connectExternalAccount>[0]) => (
+  dispatch: Dispatch
+) => {
+  return connectExternalAccount(req).map((user) => {
+    dispatch(updateUserAction({ user }));
   });
-}
-
-export const authenticateAsGuestEffect = () => async (dispatch: Dispatch) => {
-  // Reset the possible stale current user to make sure it's never used
-  dispatch(unsetUserAction());
-
-  return (await authenticateAsGuest()).map(({ guest }) => {
-    dispatch(setUserAction(guest));
-
-    return guest;
-  });
-}
-
-export const authenticateAsExistentGuestEffect = (
-  guestUser: GuestUserRecord
-) => async (dispatch: Dispatch) => {
-  // Reset the possible stale current user to make sure it's never used
-  dispatch(unsetUserAction());
-
-  return (await authenticateAsExistentGuest({ guestUser })).map(({ guest }) => {
-    dispatch(setUserAction(guest));
-
-    return guest;
-  });
-}
+};

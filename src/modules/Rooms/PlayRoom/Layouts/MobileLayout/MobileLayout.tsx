@@ -1,15 +1,16 @@
 import { Layer } from 'grommet';
 import { AppsRounded } from 'grommet-icons';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { NavigationHeader } from 'src/components/Navigation';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { Text } from 'src/components/Text';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { MobileGameRoomLayout } from 'src/modules/GameRoomV2/GameRoomLayout/MobileGameRoomLayout';
 import {
   colors,
   floatingShadow,
   fonts,
+  hardBorderRadius,
   onlySmallMobile,
   SMALL_MOBILE_BREAKPOINT,
   softBorderRadius,
@@ -22,20 +23,39 @@ import { getRelativeMaterialScore } from 'src/modules/Games/Chess/components/Gam
 import { ChessGameV2 } from 'src/modules/Games/Chess/components/ChessGameV2';
 import { useWindowWidth } from '@react-hook/window-size';
 import { GameActions } from '../components/GameActions';
+import { ChatContainer } from 'src/modules/Chat';
+import { ChatIconWithBadge } from 'src/modules/Chat/components/ChatIconWithBadge';
+import { useSelector } from 'react-redux';
+import { selectChatHistory, selectUserID } from 'src/providers/PeerProvider/redux/selectors';
 
 type Props = LayoutProps;
 
-export const MobileLayout: React.FC<Props> = (props) => {
+export const MobileLayout: React.FC<Props> = ({ game, ...props }) => {
   const cls = useStyles();
-
-  const { game } = props.room.activity;
-
-  const mobileGameActionsRef = useRef<HTMLDivElement>(null);
-
+  const chatHistory = useSelector(selectChatHistory);
+  const me = useSelector(selectUserID);
+  const newMessageCounter = useRef(0);
   const [showMobileGameActionsMenu, setShowMobileGameActionsMenu] = useState(false);
 
+  const [showChatWindow, setShowChatWindow] = useState(false);
   // This should be container width
   const windowWidth = useWindowWidth();
+
+  useEffect(() => {
+    if (chatHistory && !showChatWindow) {
+      if (chatHistory.messages.length > 0 && chatHistory.messages[0].fromUserId !== me) {
+        newMessageCounter.current += 1;
+      }
+    }
+  }, [chatHistory?.messages]);
+
+  useEffect(() => {
+    newMessageCounter.current = 0;
+  }, []);
+
+  function markMessagesAsRead() {
+    newMessageCounter.current = 0;
+  }
 
   // TODO: These shouldn't be here!
   // TOODO: In fact the whole notion of timeleft is conceptualy wrong here.
@@ -79,14 +99,21 @@ export const MobileLayout: React.FC<Props> = (props) => {
                   right: 0,
                 }}
               >
-                <div ref={mobileGameActionsRef}>
-                  <AppsRounded
-                    color={colors.white}
-                    onClick={() => setShowMobileGameActionsMenu(true)}
-                    className={cls.mobileGameActionsButtonIcon}
-                  />
-                </div>
-                {showMobileGameActionsMenu && mobileGameActionsRef.current && (
+                <ChatIconWithBadge
+                  color={colors.white}
+                  onClick={() => {
+                    markMessagesAsRead();
+                    setShowChatWindow(true);
+                  }}
+                  newMessagesCount={newMessageCounter.current}
+                />
+                <div style={{ paddingBottom: '4px' }} />
+                <AppsRounded
+                  color={colors.white}
+                  onClick={() => setShowMobileGameActionsMenu(true)}
+                  className={cls.mobileGameActionsButtonIcon}
+                />
+                {showMobileGameActionsMenu && (
                   <Layer
                     responsive={false}
                     position="bottom"
@@ -113,7 +140,7 @@ export const MobileLayout: React.FC<Props> = (props) => {
                         setShowMobileGameActionsMenu(false);
                       }}
                       onResign={() => {
-                        props.onResign()
+                        props.onResign();
                         setShowMobileGameActionsMenu(false);
                       }}
                       className={cls.mobileGameActionButtonsContainer}
@@ -134,7 +161,9 @@ export const MobileLayout: React.FC<Props> = (props) => {
               <PlayerBox
                 player={props.opponentAsPlayer}
                 timeLeft={opponentTimeLeft}
-                active={game.state === 'started' && game.lastMoved !== props.opponentAsPlayer.color}
+                active={
+                  game.state === 'started' && game.lastMoveBy !== props.opponentAsPlayer.color
+                }
                 gameTimeLimit={game.timeLimit}
                 material={materialScore[props.opponentAsPlayer.color]}
                 onTimerFinished={props.onTimerFinished}
@@ -143,14 +172,16 @@ export const MobileLayout: React.FC<Props> = (props) => {
           )}
           <div className={cls.mobileChessGameWrapper}>
             <ChessGameV2
-              game={props.room.activity.game}
+              id={game.id}
+              pgn={game.pgn}
               onMove={({ move, pgn }) => {
                 props.onMove(move, pgn, [], props.homeColor);
               }}
-              playable={props.canIPlay}
+              playable={props.playable}
               homeColor={props.homeColor}
               size={dimensions.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 24)}
               className={cls.mobileBoard}
+              notificationDialog={props.gameNotificationDialog}
             />
           </div>
           {props.meAsPlayer && (
@@ -158,12 +189,27 @@ export const MobileLayout: React.FC<Props> = (props) => {
               <PlayerBox
                 player={props.meAsPlayer}
                 timeLeft={myTimeLeft}
-                active={game.state === 'started' && game.lastMoved !== props.meAsPlayer.color}
+                active={game.state === 'started' && game.lastMoveBy !== props.meAsPlayer.color}
                 gameTimeLimit={game.timeLimit}
                 material={materialScore[props.meAsPlayer.color]}
                 onTimerFinished={props.onTimerFinished}
               />
             </div>
+          )}
+          {showChatWindow && (
+            <Layer
+              modal={true}
+              responsive={false}
+              position="bottom"
+              animation="slide"
+              className={cls.chatContainer}
+              style={{
+                height: dimensions.height,
+              }}
+              onClickOutside={() => setShowChatWindow(false)}
+            >
+              <ChatContainer />
+            </Layer>
           )}
         </div>
       )}
@@ -172,7 +218,9 @@ export const MobileLayout: React.FC<Props> = (props) => {
 };
 
 const useStyles = createUseStyles({
-  container: {},
+  container: {
+    position: 'relative',
+  },
   // Mobile
   mobileGameActionsButtonIcon: {
     ...floatingShadow,
@@ -205,6 +253,16 @@ const useStyles = createUseStyles({
   },
   mobileMainContainer: {
     paddingBottom: '8px',
+  },
+  chatContainer: {
+    width: 'calc(100% - 16px)',
+    padding: '8px',
+    ...makeImportant({
+      ...hardBorderRadius,
+      borderBottomLeftRadius: 0,
+      borderBottomRightRadius: 0,
+      overflow: 'hidden',
+    }),
   },
   mobileBoard: {
     ...floatingShadow,

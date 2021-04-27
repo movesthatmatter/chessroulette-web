@@ -1,6 +1,8 @@
 import Chance from 'chance';
 import { UserRecord, GuestUserRecord, RegisteredUserRecord } from 'dstnd-io';
-import { getRandomInt } from 'src/lib/util';
+import { getRandomInt, objectKeys } from 'src/lib/util';
+import { countries } from 'countries-list';
+import camelcase from 'camelcase';
 
 const chance = new Chance();
 
@@ -14,39 +16,47 @@ export class UserRecordMocker {
   public record(isGuest = false): UserRecord {
     const id = chance.guid().slice(0, 4);
 
+    const firstName = chance.first();
+    const lastName = chance.last();
+    const name = `${firstName} ${lastName}`;
+
     if (isGuest) {
       return {
         id,
-        name: chance.name(),
+        firstName,
+        lastName,
+        name,
         avatarId: String(getRandomInt(1, 18)),
         isGuest: true,
-        sid: String((new Date().getTime())),
+        sid: String(new Date().getTime()),
       };
     }
 
     const email = chance.email();
     const externalAccountId = chance.guid();
 
+    const countryCode = objectKeys(countries)[getRandomInt(0, Object.keys(countries).length - 1)];
+    const country = countries[countryCode];
+
     return {
       id,
       isGuest: false,
       email,
-      name: chance.name(),
+      firstName,
+      lastName,
+      name,
       avatarId: String(getRandomInt(1, 18)),
-      externalAccountId,
-      externalAccountType: 'lichess',
-      externalAccountInfo: {
-        email,
-        id: externalAccountId,
-        username: chance.name(),
-        perfs: {
-          rapid: this.lichessPerf(),
-          blitz: this.lichessPerf(),
-          bullet: this.lichessPerf(),
-          correspondence: this.lichessPerf(),
-          classical: this.lichessPerf(),
-          puzzle: this.lichessPerf(),
-        },
+      profilePicUrl: undefined,
+      externalAccounts: undefined,
+      username:  camelcase(`${chance.profession()} ${chance.animal()} ${chance.integer({ min: 1, max: 999 })}`),
+      country: {
+        name: country.name,
+        languages: country.languages,
+        phone: country.phone,
+        currency: country.currency,
+        flagEmoji: country.emoji,
+        flagEmojiU: country.emojiU,
+        code: countryCode,
       },
     };
   }
@@ -60,8 +70,8 @@ export class UserRecordMocker {
 
   withProps<TIsGuest extends boolean = false>(
     props: Partial<Omit<UserRecord, 'isGuest'>>,
-    isGuest: TIsGuest = false as TIsGuest,
-  ): TIsGuest extends false ? RegisteredUserRecord: GuestUserRecord  {
+    isGuest: TIsGuest = false as TIsGuest
+  ): TIsGuest extends false ? RegisteredUserRecord : GuestUserRecord {
     return {
       ...this.record(isGuest),
       ...props,

@@ -11,20 +11,14 @@ export default {
 
 export const defaultStory = () => (
   <Box>
-    <Avatar>
-      <Mutunachi mid="2"/>
-    </Avatar>
-    <Avatar>
-      <Mutunachi mid="4"/>
-    </Avatar>
-    <Avatar>
-      <Mutunachi mid="5"/>
-    </Avatar>
-    <Avatar>
-      <Mutunachi mid="1"/>
-    </Avatar>
-    <Avatar>
-      <Mutunachi mid="9"/>
-    </Avatar>
+    <Avatar mutunachiId={2} size="128px" />
+    <br/>
+    <Avatar mutunachiId={4} />
+    <br/>
+    <Avatar mutunachiId={5} size="200px" />
+    <br/>
+    <Avatar mutunachiId={1} />
+    <br/>
+    <Avatar mutunachiId={9} size="32px" />
   </Box>
 );

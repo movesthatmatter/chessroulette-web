@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { Icon as GIcon } from 'grommet-icons';
-import { borderRadius, colors } from 'src/theme';
+import { borderRadius, colors, onlyMobile } from 'src/theme';
 import cx from 'classnames';
 import { ButtonType } from '../type';
 import { buttonStyles } from '../styles/styles';
@@ -78,12 +78,30 @@ export const IconButton: React.FC<Props> = ({
 
 const useStyles = createUseStyles({
   ...buttonStyles,
+  button: {
+    ...buttonStyles.button,
+    ...onlyMobile({
+      ...makeImportant({
+        height: '28px',
+        width: '28px',
+        lineHeight: '28px',
+        marginBottom: '13px',
+      }),
+    }),
+  },
   clear: {
     ...buttonStyles.clear,
   },
   iconWrapper: {
     width: '32px',
     height: '32px',
+
+    ...onlyMobile({
+      ...makeImportant({
+        width: '28px',
+        height: '28px',
+      }),
+    }),
 
     ...borderRadius,
 
@@ -96,6 +114,13 @@ const useStyles = createUseStyles({
     stroke: `${colors.white} !important`,
     width: '16px !important',
     height: '16px !important',
+
+    ...onlyMobile({
+      ...makeImportant({
+        width: '14px',
+        height: '14px',
+      }),
+    }),
   },
   loadingWrapper: {
     position: 'absolute',

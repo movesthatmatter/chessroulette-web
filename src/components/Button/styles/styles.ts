@@ -1,5 +1,5 @@
 import { CSSProperties } from 'src/lib/jss/types';
-import { borderRadius, colors } from 'src/theme';
+import { borderRadius, colors, onlyMobile } from 'src/theme';
 import { buttonEffects } from './effects';
 import hexToRGBA from 'hex-to-rgba';
 import { makeImportant } from 'src/lib/jss';
@@ -40,6 +40,14 @@ const button: CSSProperties = {
       ...buttonEffects.onClickTransition['&:disabled'],
     },
   },
+
+  ...onlyMobile({
+    ...makeImportant({
+      height: '28px',
+      lineHeight: '28px',
+      marginBottom: '13px',
+    }),
+  }),
 };
 
 const iconButton: CSSProperties = {
@@ -65,9 +73,21 @@ const clear: CSSProperties = {
       color: `${colors.neutralDarkest} !important`,
       // fontWeight: 200,
       lineHeight: '28px',
+
+      ...onlyMobile({
+        ...makeImportant({
+          lineHeight: '26px',
+        }),
+      }),
     },
     '& $iconWrapper': {
-      height: '30px',
+      height: '26px',
+
+      ...onlyMobile({
+        ...makeImportant({
+          height: '26px',
+        }),
+      }),
     },
     '& $icon': {
       // color: `${colors.black} !important`,
@@ -105,6 +125,7 @@ const primary: CSSProperties = {
   ...({
     '&$clear': {
       borderColor: `${colors.primary} !important`,
+      ...buttonEffects.primaryClearButtonShadow,
     },
     '&$clear$hasLoader $loader > div': {
       backgroundColor: `${colors.primary} !important`,
@@ -136,6 +157,7 @@ const secondary: CSSProperties = {
   ...({
     '&$clear': {
       borderColor: `${colors.secondary} !important`,
+      ...buttonEffects.secondaryClearButtonShadow,
     },
     '&$clear$hasLoader $loader > div': {
       backgroundColor: `${colors.secondary} !important`,
@@ -175,6 +197,7 @@ const positive: CSSProperties = {
   ...({
     '&$clear': {
       borderColor: `${colors.positive} !important`,
+      ...buttonEffects.positiveClearButtonShadow,
     },
     '&$clear$iconButton $icon': {
       fill: `${colors.positive} !important`,
@@ -206,6 +229,7 @@ const negative: CSSProperties = {
   ...({
     '&$clear': {
       borderColor: `${colors.negative} !important`,
+      ...buttonEffects.negativeClearButtonShadow,
     },
     '&$clear$hasLoader $loader > div': {
       backgroundColor: `${colors.negative} !important`,
@@ -237,6 +261,7 @@ const attention: CSSProperties = {
   ...({
     '&$clear': {
       borderColor: `${colors.attention} !important`,
+      ...buttonEffects.attentionClearButtonShadow,
     },
     '&$clear$iconButton $icon': {
       fill: `${colors.attention} !important`,

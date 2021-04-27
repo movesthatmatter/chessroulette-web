@@ -3,7 +3,7 @@ import { Text } from 'src/components/Text';
 import React, { useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { arrReverse, noop } from 'src/lib/util';
+import { arrReverse, keyInObject, noop } from 'src/lib/util';
 import { Emoji } from 'src/components/Emoji';
 import capitalize from 'capitalize';
 import { otherChessColor } from 'src/modules/Games/Chess/util';
@@ -12,27 +12,27 @@ import { CSSProperties } from 'src/lib/jss/types';
 import {
   PairedIndex,
   PairedHistory,
-  pgnToHistory,
   toPairedHistory,
   linearToPairedIndex,
   pairedToLinearIndex,
   reversedLinearIndex,
   pairedHistoryToHistory,
 } from '../../lib';
+import useEventListener from '@use-it/event-listener';
 
 type Props = {
   game: ChessGameState;
   className?: string;
   showRows?: number;
   focusedIndex?: number;
-  onMoveClick? (nextIndex: number): void;
+  onFocusedIndexChanged? (nextIndex: number): void;
 };
 
 export const GameHistory: React.FC<Props> = ({
   game,
   showRows = 4,
   focusedIndex = 0,
-  onMoveClick = noop,
+  onFocusedIndexChanged = noop,
   ...props
 }) => {
   const cls = useStyles();
@@ -40,20 +40,39 @@ export const GameHistory: React.FC<Props> = ({
   const [focus, setFocus] = useState<PairedIndex>([0, 0]);
 
   useEffect(() => {
-    if (game.pgn) {
-      const history = pgnToHistory(game.pgn);
-      const pairedHistory = toPairedHistory(history);
+    if (game.history) {
+      const pairedHistory = toPairedHistory(game.history);
 
       // Set the history in reverse so I can display history scrolled to the end
       //  using flex-direction: 'column-reverse' which reverses it by default
       const historyInReverse = arrReverse(pairedHistory);
 
       setPairedHistory(historyInReverse);
-      setFocus(linearToPairedIndex(history, focusedIndex));
+      setFocus(linearToPairedIndex(game.history, focusedIndex));
     } else {
       setPairedHistory([]);
     }
-  }, [game.pgn, focusedIndex]);
+  }, [game.history, focusedIndex]);
+
+  useEventListener('keydown', (event: object) => {
+    if (!keyInObject(event, 'key')) {
+      return;
+    }
+
+    if (!game.history) {
+      return;
+    }
+
+    if (event.key === 'ArrowRight') {
+      if (focusedIndex > 0) {
+        onFocusedIndexChanged(focusedIndex - 1);
+      }
+    } else if (event.key === 'ArrowLeft') {
+      if (focusedIndex < game.history.length - 1) {
+        onFocusedIndexChanged(focusedIndex + 1);
+      }
+    }
+  });
 
   return (
     <div className={cx(cls.container, props.className)}>
@@ -109,7 +128,7 @@ export const GameHistory: React.FC<Props> = ({
                   pairedHistoryToHistory(pairedHistory),
                   pairedToLinearIndex([pairedHistory.length - index - 1, 0])
                 );
-                onMoveClick(nextIndex);
+                onFocusedIndexChanged(nextIndex);
               }}
             >
               {pairedMove[0].san}
@@ -123,7 +142,7 @@ export const GameHistory: React.FC<Props> = ({
                   pairedHistoryToHistory(pairedHistory),
                   pairedToLinearIndex([pairedHistory.length - index - 1, 1])
                 );
-                onMoveClick(nextIndex);
+                onFocusedIndexChanged(nextIndex);
               }}
             >
               {pairedMove[1]?.san}

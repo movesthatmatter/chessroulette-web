@@ -74,16 +74,6 @@ export const SocketProvider: React.FC<Props> = (props) => {
       return undefined;
     }
 
-    // Handle Heartbeats
-    const intervalId = setInterval(() => {
-      // This is needed because the server(Heroku) closes the connection
-      //  if it's idle for 55 seconds
-      contextState.socket?.send({
-        kind: 'ping',
-        content: randomId(),
-      });
-    }, HEARTBEAT_INTERVAL);
-
     // Handle Connection Closing
     const unsubscribeFromOnClose = contextState.socket.onClose(() => {
       // Set the ContextState to init if closed
@@ -91,8 +81,6 @@ export const SocketProvider: React.FC<Props> = (props) => {
     });
 
     return () => {
-      clearInterval(intervalId);
-
       unsubscribeFromOnClose();
 
       // Make sure that the connection closes if the Provider unmounts

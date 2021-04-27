@@ -4,25 +4,26 @@ import { fonts } from 'src/theme';
 import cx from 'classnames';
 
 type Props = (JSX.IntrinsicElements['span'] & JSX.IntrinsicElements['p']) & {
-  size?: 'small1' | 'small2' | 'body1' | 'body2';
+  size?: 'small1' | 'small2' | 'body1' | 'body2' | 'subtitle1' | 'subtitle2';
   style?: CSSProperties;
   className?: string;
   asParagraph?: boolean;
+  asLink?: boolean;
 };
 
-export const Text: React.FC<Props> = ({ size, className, asParagraph, ...props }) => {
+export const Text: React.FC<Props> = ({ size = 'body1', className, asParagraph, asLink, ...props }) => {
   const cls = useStyles();
 
   if (asParagraph) {
     return (
-      <p {...props} className={cx(size && cls[size], className)}>
+      <p {...props} className={cx(size && cls[size], asLink && cls.asLink, className)}>
         {props.children}
       </p>
     );
   }
 
   return (
-    <span {...props} className={cx(size && cls[size], className)}>
+    <span {...props} className={cx(size && cls[size], asLink && cls.asLink, className)}>
       {props.children}
     </span>
   );
@@ -30,5 +31,8 @@ export const Text: React.FC<Props> = ({ size, className, asParagraph, ...props }
 
 const useStyles = createUseStyles({
   container: {},
+  asLink: {
+    cursor: 'pointer',
+  },
   ...fonts,
 });

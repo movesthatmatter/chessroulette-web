@@ -12,7 +12,7 @@ type Props = {
   roomInfo: RoomRecord;
 };
 
-export const GenericRoomPage: React.FC<Props> = ({ roomInfo, ...props }) => {
+export const GenericRoomPage: React.FC<Props> = ({ roomInfo }) => {
   const peerState = usePeerState();
   const [room, setRoom] = useState<Room | undefined>(
     peerState.status === 'open' && peerState.hasJoinedRoom ? peerState.room : undefined
@@ -39,7 +39,7 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo, ...props }) => {
 
     if (peerState.status === 'open') {
       // This call will eventually get a peerState room
-      peerState.client.send({
+      peerState.client.sendMessage({
         kind: 'joinRoomRequest',
         content: {
           roomId: roomInfo.id,
@@ -57,7 +57,7 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo, ...props }) => {
   //  make him go through the bouncer and have him join it!
   if (roomInfo && !bouncerState.ready) {
     return (
-      <Page>
+      <Page doNotTrack>
         <GenericRoomBouncer
           roomInfo={roomInfo}
           onCancel={() => history.push('/')}

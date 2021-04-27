@@ -118,8 +118,9 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
     return next;
   }),
 
-  handleAction(removeMeAction, () => {
+  handleAction(removeMeAction, (state) => {
     return {
+      ...state,
       me: undefined,
       room: undefined,
     };

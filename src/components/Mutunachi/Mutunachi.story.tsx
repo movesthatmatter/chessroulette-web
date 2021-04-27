@@ -34,5 +34,6 @@ export const defaultStory = () => (
     <Mutunachi mid={16} style={{ width: '120px' }} />
     <Mutunachi mid={17} style={{ width: '120px' }} />
     <Mutunachi mid={18} style={{ width: '120px' }} />
+    <Mutunachi mid={19} style={{ width: '120px' }} />
   </div>
 );

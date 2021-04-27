@@ -18,10 +18,10 @@ const options = [
 ];
 
 export const defaultStory = () => (
-  <div style={{ width: '300px' }}>
+  <div style={{ maxWidth: '300px' }}>
     <Grommet theme={defaultTheme}>
       <SelectInput
-        placeholder="Placeholder"
+        placeholder="Just my placeholder"
         // value="option 1"
         options={options}
         onChange={action('on change')}

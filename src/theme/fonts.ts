@@ -33,13 +33,34 @@ const body1: CSSProperties = {
   fontSize: '16px',
   fontWeight: 'normal',
   lineHeight: '24px',
+
+  ...onlyMobile({
+    fontSize: '13px',
+    lineHeight: '16px',
+  }),
 };
 
 const body2: CSSProperties = {
   fontSize: '14px',
   fontWeight: 'normal',
   lineHeight: '20px',
+
+  ...onlyMobile({
+    fontSize: '11px',
+    lineHeight: '12px',
+  }),
 };
+
+const title1: CSSProperties = {
+  fontSize: '36px',
+  fontWeight: 700,
+  lineHeight: '36px',
+
+  ...onlyMobile({
+    fontSize: '18px',
+    lineHeight: '14px',
+  }),
+}
 
 const subtitle1: CSSProperties = {
   fontSize: '16px',
@@ -49,14 +70,31 @@ const subtitle1: CSSProperties = {
   ...onlyMobile({
     fontSize: '13px',
     lineHeight: '16px',
-  })
+  }),
 };
 
 const subtitle2: CSSProperties = {
   fontSize: '14px',
   fontWeight: 700,
   lineHeight: '20px',
+
+  ...onlyMobile({
+    fontSize: '11px',
+    lineHeight: '13px',
+  }),
 };
+
+const largeNormal : CSSProperties = {
+  fontSize: '18px',
+  fontWeight:'normal',
+  lineHeight: '26px'
+}
+
+const largeBold : CSSProperties = {
+  fontSize: '18px',
+  fontWeight:'bolder',
+  lineHeight:'26px',
+}
 
 export const fonts = {
   small1,
@@ -66,6 +104,11 @@ export const fonts = {
   body1,
   body2,
 
+  title1,
+
   subtitle1,
   subtitle2,
+
+  largeBold,
+  largeNormal
 };

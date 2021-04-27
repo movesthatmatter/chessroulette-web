@@ -14,7 +14,7 @@ export default {
 
 const userMocker = new UserRecordMocker();
 
-const user = userMocker.record();
+const user = userMocker.record(true);
 
 export const defaultStory = () => (
   <SocketProvider>
@@ -23,7 +23,8 @@ export const defaultStory = () => (
         socket.send({
           kind: 'userIdentification',
           content: {
-            userId: user.id,
+            isGuest: true,
+            guestUserId: user.id,
           },
         })
       }}

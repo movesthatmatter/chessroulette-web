@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ButtonType } from '../type';
 import { Icon as GIcon } from 'grommet-icons';
 import cx from 'classnames';
 import { buttonStyles } from '../styles/styles';
-import { borderRadius, colors } from 'src/theme';
+import { borderRadius, colors, onlyMobile } from 'src/theme';
 import { Text } from 'src/components/Text';
 import { CSSProperties } from 'src/lib/jss/types';
 import Loader from 'react-loaders';
 import 'loaders.css';
 import { AsyncResult } from 'dstnd-io';
+import { Badge, BadgeProps } from 'src/components/Badge';
 
 export type ButtonProps = {
   type?: ButtonType;
@@ -26,6 +27,7 @@ export type ButtonProps = {
   style?: CSSProperties;
   onClick: (() => void) | (() => Promise<any>) | (() => AsyncResult<any, any>);
   withLoader?: boolean;
+  withBadge?: BadgeProps;
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -85,6 +87,9 @@ export const Button: React.FC<ButtonProps> = ({
         }}
       >
         <>
+          {props.withBadge && (
+            <Badge {...props.withBadge} className={cls.badge}/>
+          )}
           <Text
             className={cls.label}
             style={{
@@ -117,6 +122,11 @@ export const Button: React.FC<ButtonProps> = ({
 
 const useStyles = createUseStyles({
   ...buttonStyles,
+  button: {
+    ...buttonStyles.button,
+    position: 'relative',
+    zIndex: 0,
+  },
   container: {},
   containerFull: {
     flex: 1,
@@ -153,11 +163,26 @@ const useStyles = createUseStyles({
     width: '100%',
     paddingRight: '16px',
     paddingLeft: '16px',
+
+    ...onlyMobile({
+      ...makeImportant({
+        fontSize: '12px',
+        lineHeight: '28px',
+        paddingRight: '13px',
+        paddingLeft: '13px',
+      }),
+    }),
   },
   iconWrapper: {
     height: '32px',
     padding: '0 8px',
     marginLeft: '-8px',
+
+    ...onlyMobile({
+      ...makeImportant({
+        height: '28px',
+      }),
+    }),
 
     ...borderRadius,
 
@@ -181,5 +206,11 @@ const useStyles = createUseStyles({
   },
   loader: {
     transform: 'scale(.5)',
+  },
+  badge: {
+    position: 'absolute',
+    top: '-10px',
+    left: '-14px',
+    zIndex: 1,
   },
 });
