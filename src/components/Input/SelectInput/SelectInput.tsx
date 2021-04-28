@@ -37,7 +37,7 @@ export const SelectInput: React.FC<Props> = ({
       <div className={cx(cls.inputWrapper)}>
         <Select
           {...props}
-          isSearchable={false}
+          isSearchable={true}
           onChange={(value, actionType) => {
             onChange(value, actionType);
 

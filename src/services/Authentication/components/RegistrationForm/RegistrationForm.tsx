@@ -124,17 +124,17 @@ export const RegistrationForm: React.FC<Props> = (props) => {
               }
             />
             <GetCountries
-              render={({ countries, isLoading, fetch }) => (
+              render={({ countries,countriesForDisplay, isLoading, fetch }) => (
                 <SelectInput
                   multiple
                   label="Where do you live?"
                   placeholder="Bolivia"
                   options={
                     countries &&
-                    Object.values(countries).map((c) => ({
+                    countriesForDisplay.map(c => ({
                       label: c.name,
                       value: c.code,
-                    })).sort((a, b) => a.label.localeCompare(b.label))
+                    }))
                   }
                   isLoading={isLoading}
                   menuPlacement="top"
