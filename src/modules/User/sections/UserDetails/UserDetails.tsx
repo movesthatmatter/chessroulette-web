@@ -129,7 +129,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                           Object.values(countries).map(({ name, code }) => ({
                             label: name,
                             value: code,
-                          }))
+                          })).sort((a, b) => a.label.localeCompare(b.label))
                         }
                         value={
                           p.model.countryCode && p.model.countryName

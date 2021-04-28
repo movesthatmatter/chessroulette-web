@@ -134,7 +134,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
                     Object.values(countries).map((c) => ({
                       label: c.name,
                       value: c.code,
-                    }))
+                    })).sort((a, b) => a.label.localeCompare(b.label))
                   }
                   isLoading={isLoading}
                   menuPlacement="top"
