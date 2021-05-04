@@ -9,6 +9,7 @@ export const maxMediaQuery = (breakPoint: number, css: CSSProperties) => ({
 
 export const MOBILE_BREAKPOINT = 599;
 export const SMALL_MOBILE_BREAKPOINT = 374;
+export const LARGE_DESKTOP = 1000;
 
 export const onlyMobile = (css: CSSProperties) => maxMediaQuery(MOBILE_BREAKPOINT, css);
 export const onlyDesktop = (css: CSSProperties) => minMediaQuery(MOBILE_BREAKPOINT, css);

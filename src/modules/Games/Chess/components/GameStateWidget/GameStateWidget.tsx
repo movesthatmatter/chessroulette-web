@@ -89,6 +89,7 @@ export const GameStateWidget: React.FC<Props> = ({
           <>
             <div className={cls.spacer} />
             <PlayerBox
+              reverse
               player={myPlayer}
               timeLeft={myTimeLeft}
               active={game.state === 'started' && game.lastMoveBy !== myPlayer.color}
