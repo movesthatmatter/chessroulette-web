@@ -1,6 +1,5 @@
 import {
   GameJoinRequestPayload,
-  GameAbortionRequestPayload,
   GameMoveRequestPayload,
   ChessMove,
   GameResignationRequestPayload,
@@ -19,10 +18,7 @@ export const gameActions = {
     kind: 'gameJoinRequest',
     content: undefined,
   }),
-  abort: (): GameAbortionRequestPayload => ({
-    kind: 'gameAbortionRequest',
-    content: undefined,
-  }),
+
   move: (move: ChessMove): GameMoveRequestPayload => ({
     kind: 'gameMoveRequest',
     content: move,

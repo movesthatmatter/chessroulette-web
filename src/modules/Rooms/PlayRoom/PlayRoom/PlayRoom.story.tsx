@@ -96,7 +96,6 @@ export const defaultStory = () => (
                     room={publicRoom}
                     game={currentGame}
                     onMove={action('on move')}
-                    onAbort={action('onAbort')}
                     onDrawAccepted={action('onDrawAccepted')}
                     onDrawDenied={action('onDrawDenied')}
                     onOfferDraw={action('onOfferDraw')}
@@ -257,7 +256,6 @@ export const withSwitchingSides = () => (
 
                   switchPlayers();
                 }}
-                onAbort={action('onAbort')}
                 onDrawAccepted={action('onDrawAccepted')}
                 onDrawDenied={action('onDrawDenied')}
                 onOfferDraw={action('onOfferDraw')}

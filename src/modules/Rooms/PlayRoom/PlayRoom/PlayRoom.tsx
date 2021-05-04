@@ -22,7 +22,6 @@ type Props = {
     color: ChessGameColor
   ) => void;
   onResign: () => void;
-  onAbort: () => void;
   onOfferDraw: () => void;
   onDrawAccepted: () => void;
   onDrawDenied: () => void;
@@ -92,11 +91,7 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
     hasCloseButton: false,
     content: <AwesomeLoader sayings={sayings} size={p.size ? p.size / 4 : 50} />,
     buttons: [
-      {
-        label: 'Abort Game',
-        type: 'secondary',
-        onClick: () => props.onAbort(),
-      },
+
     ],
   });
 
@@ -111,7 +106,6 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
           room={props.room}
           game={game}
           onMove={props.onMove}
-          onAbort={props.onAbort}
           onOfferDraw={props.onOfferDraw}
           onRematchOffer={props.onRematchOffer}
           onResign={props.onResign}
@@ -133,7 +127,6 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
         room={props.room}
         game={game}
         onMove={props.onMove}
-        onAbort={props.onAbort}
         onOfferDraw={props.onOfferDraw}
         onRematchOffer={props.onRematchOffer}
         onResign={props.onResign}

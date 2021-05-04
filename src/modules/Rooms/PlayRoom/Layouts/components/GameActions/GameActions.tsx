@@ -8,7 +8,6 @@ import cx from 'classnames';
 type Props = {
   game: ChessGameState;
   onRematchOffer: () => void;
-  onAbort: () => void;
   onResign: () => void;
   onOfferDraw: () => void;
   className?: string;
@@ -40,20 +39,6 @@ export const GameActions: React.FC<Props> = ({ game, isMobile = false, ...props 
           actionType="positive"
           icon={Refresh}
           onSubmit={() => props.onRematchOffer()}
-          className={cls.gameActionButton}
-          {...dynamicProps}
-        />
-      );
-    }
-
-    if (game.state === 'pending') {
-      return (
-        <ActionButton
-          type="primary"
-          label="Abort"
-          actionType="negative"
-          icon={Halt}
-          onSubmit={() => props.onAbort()}
           className={cls.gameActionButton}
           {...dynamicProps}
         />
