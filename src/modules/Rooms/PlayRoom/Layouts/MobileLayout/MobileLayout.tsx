@@ -127,10 +127,6 @@ export const MobileLayout: React.FC<Props> = ({ game, ...props }) => {
                     <GameActions
                       isMobile={true}
                       game={game}
-                      onAbort={() => {
-                        props.onAbort();
-                        setShowMobileGameActionsMenu(false);
-                      }}
                       onOfferDraw={() => {
                         props.onOfferDraw();
                         setShowMobileGameActionsMenu(false);

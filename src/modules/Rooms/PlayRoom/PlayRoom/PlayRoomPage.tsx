@@ -122,11 +122,6 @@ export const PlayRoomPage: React.FC<Props> = ({ room }) => {
 
         Events.trackResigned();
       }}
-      onAbort={() => {
-        request(gameActions.abort());
-
-        Events.trackAborted();
-      }}
       onRematchOffer={() => {
         request(gameActions.offerRematch());
 

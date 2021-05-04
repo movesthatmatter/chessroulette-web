@@ -109,7 +109,6 @@ export const DesktopLayout: React.FC<Props> = (props) => {
             </div>
             <GameActions
               game={game}
-              onAbort={props.onAbort}
               onRematchOffer={props.onRematchOffer}
               onOfferDraw={props.onOfferDraw}
               onResign={props.onResign}

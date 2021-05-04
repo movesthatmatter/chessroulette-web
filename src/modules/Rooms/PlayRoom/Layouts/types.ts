@@ -20,7 +20,6 @@ export type LayoutProps = {
     color: ChessGameColor
   ) => void;
   onResign: () => void;
-  onAbort: () => void;
   onOfferDraw: () => void;
   onRematchOffer: () => void;
 

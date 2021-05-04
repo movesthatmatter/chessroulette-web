@@ -30,7 +30,6 @@ type GameEndedReason =
   | 'Check Mate'
   | 'Draw Accepted'
   | 'Resignation'
-  | 'Abortion'
   | 'Time Finished'
   | 'Stalemate'
   | 'Threefold Repetition';
@@ -123,12 +122,6 @@ export const Events = {
     trackEvent({
       category: EventCategory.PlayerChess,
       action: 'Resigned',
-    }),
-
-  trackAborted: () =>
-    trackEvent({
-      category: EventCategory.PlayerChess,
-      action: 'Aborted',
     }),
 
   trackRematchOffered: () =>
