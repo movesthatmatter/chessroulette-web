@@ -69,7 +69,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
   }
 
   if (resourceState === 'error') {
-    return <AwesomeErrorPage errorType="resourceNotFound" />;
+    return <AwesomeErrorPage errorType='missingChallengeError' />;
   }
 
   // This should be something more specific!
