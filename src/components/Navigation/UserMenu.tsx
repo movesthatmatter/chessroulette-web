@@ -81,28 +81,34 @@ export const UserMenu: React.FC<Props> = ({
           direction="column"
           style={{
             textAlign: reversed ? 'right' : 'left',
+            alignSelf: auth.user.isGuest ? 'auto' : 'center'
           }}
         >
-          <Text className={cls.userNameText} size="small2">
-            {auth.user.name}
+          <Text
+            style={auth.user.isGuest ? { ...fonts.small2 } : { ...fonts.body2 }}
+            size={auth.user.isGuest ? 'small2' : 'body2'}
+          >
+            {auth.user.isGuest ? auth.user.name : auth.user.username}
           </Text>
-          <Text className={cls.userType}>
-            <div
-              className={cls.dot}
-              style={{
-                backgroundColor: getStatusColor(peerState),
-                display: reversed ? 'none' : 'inline-block',
-              }}
-            />
-            {auth.user.isGuest ? ' Guest ' : ` @${auth.user.username} `}
-            {/* <div
+          {auth.user.isGuest && (
+            <Text className={cls.userType}>
+              <div
+                className={cls.dot}
+                style={{
+                  backgroundColor: getStatusColor(peerState),
+                  display: reversed ? 'none' : 'inline-block',
+                }}
+              />
+              Guest
+              {/* <div
               className={cls.dot}
               style={{
                 backgroundColor: getStatusColor(peerState),
                 display: reversed ? 'inline-block' : 'none',
               }}
             /> */}
-          </Text>
+            </Text>
+          )}
         </Box>
       </Box>
     </Box>
@@ -157,9 +163,6 @@ const useStyles = createUseStyles({
   },
   spacer: {
     width: '8px',
-  },
-  userNameText: {
-    ...fonts.small2,
   },
   userType: {
     ...fonts.small1,
