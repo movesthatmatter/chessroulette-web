@@ -1,4 +1,6 @@
-import { CapturedPiecesRecord } from "dstnd-io";
+import { ActivePiecesRecord } from 'dstnd-io';
+import { objectKeys } from 'src/lib/util';
+import { Game } from 'src/modules/Games/types';
 
 const pointsByMaterial = {
   p: 1,
@@ -8,43 +10,29 @@ const pointsByMaterial = {
   q: 9,
 };
 
-const getMaterialLossInPointsBySide = (captured: CapturedPiecesRecord[keyof CapturedPiecesRecord]) => {
-  return Object.keys(captured).reduce((prev, next) => {
-    const nextPiece = next as keyof typeof captured;
-    const count = captured[nextPiece];
-
-    if (count === 0) {
-      return prev;
-    }
-
-    return prev - (pointsByMaterial[nextPiece] * count);
+const calculatePointsBySide = (activePieces: ActivePiecesRecord[keyof ActivePiecesRecord]) => {
+  return objectKeys(activePieces).reduce((prev, pieceType) => {
+    return prev + activePieces[pieceType] * pointsByMaterial[pieceType];
   }, 0);
-}
+};
 
-export const getRelativeMaterialScore = (captured?: CapturedPiecesRecord) => {
-  if (!captured) {
-    return {
-      white: 0,
-      black: 0,
-    }
-  }
-
-  const blackMaterialLoss = getMaterialLossInPointsBySide(captured['black']);
-  const whiteMateriaLoss = getMaterialLossInPointsBySide(captured['white']);
+export const getRelativeMaterialScore = (game: Game) => {
+  const blackPoints = calculatePointsBySide(game.activePieces.black);
+  const whitePoints = calculatePointsBySide(game.activePieces.white);
 
   // Normalize the points
-  const diff = Math.abs(blackMaterialLoss - whiteMateriaLoss);
+  const diff = Math.abs(blackPoints - whitePoints);
 
-  if (whiteMateriaLoss > blackMaterialLoss) {
-    return { white: diff, black: 0 };
+  if (blackPoints > whitePoints) {
+    return { white: 0, black: diff };
   }
 
-  if (blackMaterialLoss > whiteMateriaLoss) {
-    return { white: 0, black: diff };
+  if (whitePoints > blackPoints) {
+    return { white: diff, black: 0 };
   }
 
   return {
     white: 0,
     black: 0,
-  }
-}
+  };
+};

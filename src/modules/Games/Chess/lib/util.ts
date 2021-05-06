@@ -160,7 +160,7 @@ export const getPlayerStats = (game: Game, userId: UserRecord['id']): UserAsPlay
 
   if (player) {
     const opponent = getOppositePlayer(player, game.players);
-    const materialScore = getRelativeMaterialScore(game.captured);
+    const materialScore = getRelativeMaterialScore(game);
 
     const canPlay =
       // I must have an opponent to be able to play
@@ -188,15 +188,17 @@ export const getPlayerStats = (game: Game, userId: UserRecord['id']): UserAsPlay
   };
 };
 
-export const gameRecordToGame = <T extends ChessGameState>(g: T) => ({
-  ...g,
-  captured: chessGameUtils.getCapturedPiecesFromPgn(g.pgn),
-}) as GameFromGameState<T>;
+export const gameRecordToGame = <T extends ChessGameState>(g: T) => {
+  return {
+    ...g,
+    activePieces: chessGameUtils.getActivePieces(chessGameUtils.simplePGNtoMoves(g.pgn || '')),
+  } as GameFromGameState<T>;
+};
 
 export const getGameFromHistory = (history: ChessHistory = []) => {
   const instance = getNewChessGame();
 
-  // TODO: This might not be the most efficient 
+  // TODO: This might not be the most efficient
   //  but it's ok for now to ensure the validaty of the pgn
   history.forEach((move) => {
     instance.move(move);

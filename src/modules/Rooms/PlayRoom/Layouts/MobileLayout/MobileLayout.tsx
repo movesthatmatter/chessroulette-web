@@ -72,7 +72,7 @@ export const MobileLayout: React.FC<Props> = ({ game, ...props }) => {
       ? game.timeLeft[otherChessColor(props.homeColor)] -
         (now.getTime() - new Date(game.lastMoveAt).getTime())
       : game.timeLeft[otherChessColor(props.homeColor)];
-  const materialScore = getRelativeMaterialScore(game.captured);
+  const materialScore = getRelativeMaterialScore(game);
 
   return (
     <MobileGameRoomLayout
