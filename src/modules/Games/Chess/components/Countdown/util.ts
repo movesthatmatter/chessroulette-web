@@ -12,7 +12,7 @@ export const timeLeftToFormatMajor = (
   }
 
   if (timeLeftMs < hours(1)) {
-    return 'M';
+    return 'MM';
   }
   return 'H';
 };
@@ -30,7 +30,7 @@ export const timeLeftToFormatMinor = (
   if (timeLeftMs < hours(1)) {
     return 'ss';
   }
-  return 'M';
+  return 'MM';
 };
 
 export const timeLeftToInterval = (timeLeftMs: number) => {
