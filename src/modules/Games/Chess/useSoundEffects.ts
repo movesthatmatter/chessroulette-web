@@ -57,7 +57,8 @@ export const useSoundEffects = (game: Game) => {
       howl.current.play('game_started');
     }
     // on Move with Capture
-    else if (prevGame.current.captured && !objectEquals(game.captured, prevGame.current.captured)) {
+    // TODO: Here add another sound for Promotion
+    else if (prevGame.current.activePieces && !objectEquals(game.activePieces, prevGame.current.activePieces)) {
       howl.current.play('captured');
     }
     // on Regular Move
