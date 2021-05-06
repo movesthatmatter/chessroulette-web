@@ -98,6 +98,8 @@ export const DesktopLayout: React.FC<Props> = (props) => {
             <div style={{ height: '30%' }} />
             <div style={{ height: '40%' }}>
               <GameStateWidget
+                // This is needed for the countdown to reset the interval !! 
+                key={game.id}
                 game={game}
                 homeColor={props.homeColor}
                 historyFocusedIndex={props.historyIndex}

@@ -57,7 +57,6 @@ export const GameStateWidget: React.FC<Props> = ({
       ? game.timeLeft[otherChessColor(homeColor)] -
         (now.getTime() - new Date(game.lastMoveAt).getTime())
       : game.timeLeft[otherChessColor(homeColor)];
-
   const materialScore = getRelativeMaterialScore(game.captured);
 
   return (

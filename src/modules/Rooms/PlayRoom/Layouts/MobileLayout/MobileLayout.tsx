@@ -159,6 +159,8 @@ export const MobileLayout: React.FC<Props> = ({ game, ...props }) => {
           {props.opponentAsPlayer && (
             <div className={cx(cls.mobilePlayerWrapper, cls.mobileAwayPlayerWrapper)}>
               <PlayerBox
+                // This is needed for the countdown to reset the interval !! 
+                key={`${game.id}-${props.opponentAsPlayer.color}`}
                 player={props.opponentAsPlayer}
                 timeLeft={opponentTimeLeft}
                 active={
@@ -187,6 +189,8 @@ export const MobileLayout: React.FC<Props> = ({ game, ...props }) => {
           {props.meAsPlayer && (
             <div className={cx(cls.mobilePlayerWrapper, cls.mobileHomePlayerWrapper)}>
               <PlayerBox
+                // This is needed for the countdown to reset the interval !! 
+                key={`${game.id}-${props.meAsPlayer.color}`}
                 player={props.meAsPlayer}
                 timeLeft={myTimeLeft}
                 active={game.state === 'started' && game.lastMoveBy !== props.meAsPlayer.color}
