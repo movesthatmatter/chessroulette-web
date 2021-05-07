@@ -8,9 +8,6 @@ const allModuleReducers = {
   ...authentication,
   ...peerProvider,
   ...session,
-
-  // This should be saved in the session at least, for the camera agreed
-  //  and other consents!
   ...roomBouncer,
 };
 
