@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ButtonType } from '../type';
 import { Icon as GIcon } from 'grommet-icons';
@@ -27,6 +27,7 @@ export type ButtonProps = {
   style?: CSSProperties;
   onClick: (() => void) | (() => Promise<any>) | (() => AsyncResult<any, any>);
   withLoader?: boolean;
+  isLoading?: boolean;
   withBadge?: BadgeProps;
 };
 
@@ -36,12 +37,17 @@ export const Button: React.FC<ButtonProps> = ({
   full = false,
   reverse = false,
   withLoader = false,
+  isLoading: isLoadingProp = false,
   size = 'auto',
   ...props
 }) => {
   const cls = useStyles();
   const Icon = props.icon;
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(isLoadingProp);
+
+  useEffect(() => {
+    setIsLoading(isLoadingProp);
+  }, [isLoadingProp]);
 
   return (
     <div className={cx(cls.container, props.containerClassName, full && cls.containerFull)}>

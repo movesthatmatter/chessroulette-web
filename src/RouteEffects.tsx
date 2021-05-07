@@ -9,7 +9,8 @@ import { usePeerState } from './providers/PeerProvider';
 import { SocketConsumer } from './providers/SocketProvider';
 import { toRoomUrlPath } from './lib/util';
 import { ChallengeWidget } from './modules/Challenges/Widgets/ChallengeWidget/ChallengeWidget';
-import { BrowserNotSupportedDialog, useGenericRoomBouncer } from './modules/Rooms/GenericRoom';
+import { BrowserNotSupportedDialog } from './modules/Rooms/GenericRoom';
+import { useBrowserSupportCheck } from './modules/Rooms/GenericRoom/GenericRoomBouncer/useBrowserSupportCheck';
 
 type ActivityState =
   | {
@@ -29,7 +30,7 @@ export const RouteEffects: React.FC = () => {
   const history = useHistory();
   const [activityState, setActivityState] = useState<ActivityState>({ activity: 'none' });
   const feedbackDialog = useFeedbackDialog();
-  const { state: bouncerState } = useGenericRoomBouncer();
+  const { isBrowserSupported } = useBrowserSupportCheck();
 
   const onChallengeOrRoomPage = (slug: string) => history.location.pathname.indexOf(slug) > -1;
 
@@ -57,7 +58,8 @@ export const RouteEffects: React.FC = () => {
     );
   }
 
-  if (!bouncerState.browserIsSupported) {
+  // TODO: Add the browser is supported check back!
+  if (!isBrowserSupported) {
     return <BrowserNotSupportedDialog visible />;
   }
 
