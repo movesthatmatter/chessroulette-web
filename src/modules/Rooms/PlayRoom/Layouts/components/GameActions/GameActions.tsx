@@ -3,6 +3,8 @@ import React from 'react';
 import { ActionButton } from 'src/components/Button';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { Refresh, Halt, Flag, Split } from 'grommet-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHandsHelping, faHandHolding, faHandshake, faHandshakeAltSlash } from '@fortawesome/free-solid-svg-icons';
 import cx from 'classnames';
 
 type Props = {
@@ -52,19 +54,19 @@ export const GameActions: React.FC<Props> = ({ game, isMobile = false, ...props 
       );
     }
 
-    if (game.state === 'pending') {
-      return (
-        <ActionButton
-          type="primary"
-          label="Abort"
-          actionType="negative"
-          icon={Halt}
-          onSubmit={() => props.onAbort()}
-          className={cls.gameActionButton}
-          {...dynamicProps}
-        />
-      );
-    }
+    // if (game.state === 'pending') {
+    //   return (
+    //     <ActionButton
+    //       type="primary"
+    //       label="Abort"
+    //       actionType="negative"
+    //       icon={Halt}
+    //       onSubmit={() => props.onAbort()}
+    //       className={cls.gameActionButton}
+    //       {...dynamicProps}
+    //     />
+    //   );
+    // }
 
     if (game.state === 'started') {
       return (
@@ -82,7 +84,7 @@ export const GameActions: React.FC<Props> = ({ game, isMobile = false, ...props 
             type="primary"
             label="Offer Draw"
             actionType="positive"
-            icon={Split}
+            iconComponent={<FontAwesomeIcon icon={faHandshakeAltSlash} color="#fff" />}
             onSubmit={() => props.onOfferDraw()}
             disabled={props.roomActivity.offer?.type === 'draw'}
             className={cls.gameActionButton}

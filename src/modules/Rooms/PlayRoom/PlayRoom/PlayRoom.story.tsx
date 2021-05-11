@@ -59,7 +59,7 @@ export const defaultStory = () => (
             ...chessGameActions.prepareGame({
               players: [me.user, opponent.user],
               preferredColor: homeColor,
-              timeLimit: 'blitz',
+              timeLimit: 'blitz5',
             }),
           };
 
@@ -158,7 +158,7 @@ export const withSwitchingSides = () => (
                 ...chessGameActions.prepareGame({
                   players: [me.user, opponent.user],
                   preferredColor: 'white',
-                  timeLimit: 'blitz',
+                  timeLimit: 'blitz5',
                 }),
               };
 

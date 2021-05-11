@@ -9,9 +9,17 @@ export class ChallengeMocker {
     const id = String(chance.integer({ min: 1 }));
     const createdBy = String(chance.integer({ min: 1 }));
     const timeLimits: (ChallengeRecord['gameSpecs']['timeLimit'])[] = [
-      'bullet',
-      'blitz',
-      'rapid',
+      'bullet30',
+      'bullet1',
+      'blitz2',
+      'blitz3',
+      'blitz5',
+      'rapid10',
+      'rapid15',
+      'rapid20',
+      'rapid30',
+      'rapid45',
+      'rapid60',
       'untimed',
     ];
     const preferredColorOptions: (ChallengeRecord['gameSpecs']['preferredColor'])[] = [
