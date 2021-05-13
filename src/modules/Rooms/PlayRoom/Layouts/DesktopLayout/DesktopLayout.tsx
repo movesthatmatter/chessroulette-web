@@ -1,5 +1,5 @@
 import { Box } from 'grommet';
-import React, { LegacyRef, useRef } from 'react';
+import React, { LegacyRef, useRef, useState } from 'react';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
@@ -16,6 +16,8 @@ import { ChatContainer } from 'src/modules/Chat';
 import { LayoutProps } from '../types';
 import { RoomDetails } from '../components/RoomDetails';
 import { ExitRoomButton } from '../components/ExitRoomButton/ExitRoomButton';
+import { TabComponent } from '../components/TabComponent/TabComponent';
+import { ActivityLog } from '../../../RoomActivity/ActivityLog';
 
 type Props = LayoutProps;
 
@@ -179,43 +181,58 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                   containerClassName={cls.streamingBox}
                 />
               </div>
-              <div
-                style={{
-                  paddingTop: '16px',
-                  paddingBottom: '16px',
-                  borderBottom: '1px solid',
-                  borderColor: colors.neutral,
-                }}
-              >
-                <Text
-                  style={{
-                    ...fonts.subtitle2,
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={faComment}
-                    size="lg"
-                    color={colors.neutral}
-                    style={{
-                      marginRight: '8px',
-                    }}
-                  />
-                  Messages
-                </Text>
-              </div>
-              <div
-                style={{
-                  borderColor: colors.neutral,
-                  overflow: 'hidden',
-                  flex: 1,
-                }}
-              >
-                <ChatContainer
-                  inputContainerStyle={{
-                    height: `${BOTTOM_HEIGHT + container.verticalPadding}px`,
-                  }}
-                />
-              </div>
+              <TabComponent
+                tabs={[
+                  {
+                    title: 'Activity Log',
+                    content: (
+                      <div
+                        style={{
+                          borderColor: colors.neutral,
+                          overflow: 'hidden',
+                          flex: 1,
+                        }}
+                      >
+                        <ActivityLog 
+                        
+                        inputContainerStyle={{
+                            height: `${BOTTOM_HEIGHT + container.verticalPadding}px`,
+                          }}
+                          game={game}/>
+                      </div>
+                    ),
+                    icon: null,
+                  },
+                  {
+                    title: 'Messages',
+                    content: (
+                      <div
+                        style={{
+                          borderColor: colors.neutral,
+                          overflow: 'hidden',
+                          flex: 1,
+                        }}
+                      >
+                        <ChatContainer
+                          inputContainerStyle={{
+                            height: `${BOTTOM_HEIGHT + container.verticalPadding}px`,
+                          }}
+                        />
+                      </div>
+                    ),
+                    icon: (
+                      <FontAwesomeIcon
+                        icon={faComment}
+                        size="lg"
+                        color={colors.neutral}
+                        style={{
+                          marginRight: '8px',
+                        }}
+                      />
+                    ),
+                  },
+                ]}
+              />
             </div>
           </div>
         )}

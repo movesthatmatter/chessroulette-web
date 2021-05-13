@@ -1,5 +1,6 @@
 import { createReducer } from 'deox';
 import { PeerRecord, RoomRecord } from 'dstnd-io';
+import { Notification } from '../types';
 import { GenericStateSlice } from 'src/redux/types';
 import { Peer, Room } from '../types';
 import {
@@ -13,6 +14,7 @@ import {
   removePeerStreamAction,
   closePeerChannelsAction,
 } from './actions';
+import { addNotification, clearLog, resolveNotification } from './notificationActions';
 
 export type State =
   | {
@@ -22,6 +24,7 @@ export type State =
   | {
       me: Peer;
       room: undefined | Room;
+      activityLog: Notification[];
     };
 
 export const initialState: State = {
@@ -80,6 +83,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       ...(payload.joinedRoom && {
         room: getNewRoom(nextMe, payload.joinedRoom),
       }),
+      activityLog: [],
     };
   }),
 
@@ -313,6 +317,37 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       },
     };
   }),
+  handleAction(addNotification, (state, { payload }) => {
+    if (!state.room) {
+      return state;
+    }
+
+    const updatedLog = [...state.activityLog, payload.notification];
+    return {
+      ...state,
+      activityLog: updatedLog,
+    };
+  }),
+  // handleAction(resolveNotification, (state, {payload}) => {
+  //   const {id, resolution} = payload;
+  //   const newLog = state.activityLog.map(log => {
+  //     if (log.id === id){
+  //       const updatedEntry : Notification = {...log, resolved : resolution};
+  //       return updatedEntry;
+  //     }
+  //     return log;
+  //   })
+  //   return {
+  //     ...state,
+  //     activityLog: newLog
+  //   }
+  // }),
+  // handleAction(clearLog, (state) => {
+  //   return {
+  //     ...state,
+  //     activityLog: []
+  //   };
+  // }),
 ]);
 
 export const stateSliceByKey = {
