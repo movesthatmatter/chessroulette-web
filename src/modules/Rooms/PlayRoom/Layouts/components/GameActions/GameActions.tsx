@@ -1,4 +1,4 @@
-import { ChessGameState } from 'dstnd-io';
+import { ChessGameState, RoomActivityRecord, RoomPlayActivityRecord } from 'dstnd-io';
 import React from 'react';
 import { ActionButton } from 'src/components/Button';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
@@ -7,6 +7,7 @@ import cx from 'classnames';
 
 type Props = {
   game: ChessGameState;
+  roomActivity: RoomPlayActivityRecord;
   onRematchOffer: () => void;
   onAbort: () => void;
   onResign: () => void;
@@ -32,6 +33,10 @@ export const GameActions: React.FC<Props> = ({ game, isMobile = false, ...props 
           reverse: true,
         };
 
+    // const currentOffer = props.roomActivity.type === 'play'
+    //   ? 
+    //   : undefined;
+
     if (game.state === 'finished' || game.state === 'stopped' || game.state === 'neverStarted') {
       return (
         <ActionButton
@@ -41,6 +46,7 @@ export const GameActions: React.FC<Props> = ({ game, isMobile = false, ...props 
           icon={Refresh}
           onSubmit={() => props.onRematchOffer()}
           className={cls.gameActionButton}
+          disabled={props.roomActivity.offer?.type === 'rematch'}
           {...dynamicProps}
         />
       );
@@ -78,6 +84,7 @@ export const GameActions: React.FC<Props> = ({ game, isMobile = false, ...props 
             actionType="positive"
             icon={Split}
             onSubmit={() => props.onOfferDraw()}
+            disabled={props.roomActivity.offer?.type === 'draw'}
             className={cls.gameActionButton}
             {...dynamicProps}
           />

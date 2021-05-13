@@ -3,6 +3,7 @@ import {
   RoomRecord,
   RoomWithPlayActivityRecord,
   RoomWithNoActivityRecord,
+  UserInfoRecord,
 } from 'dstnd-io';
 import { ISODateTime } from 'io-ts-isodatetime';
 import { ButtonProps } from 'src/components/Button';
@@ -19,21 +20,50 @@ export type Peer = PeerRecord & {
   };
 };
 
-type Value<T, K extends keyof T> = T[K];
+export type OfferType = NonNullable<RoomWithPlayActivity['activity']['offer']>['type']
 
-export type OfferType = Value<
-  Pick<NonNullable<RoomWithPlayActivity['activity']['offer']>, 'type'>,
-  'type'
-> | 'resign' | 'win' | 'loss';
-
-export type Notification = {
+type BaseNotification = {
   id: string;
-  timestamp: ISODateTime; 
-  type: OfferType;
+  timestamp: ISODateTime;
   content: string;
-  // buttons?: Pick<ButtonProps, 'type' | 'label'>[];
-  // resolved?: undefined | boolean;
+}
+
+export type OfferNotification = BaseNotification & {
+  type: 'offer',
+  oferType: OfferType;
+  byUser: UserInfoRecord;
+  toUser: UserInfoRecord;
+  status: 'pending' | 'withdrawn' | 'accepted';
 };
+
+export type InfoNotification = BaseNotification & {
+  type: 'info',
+  infoType: 'resign' | 'win' | 'loss' | 'cancel' | 'accept';
+};
+
+export type Notification = OfferNotification | InfoNotification;
+
+// export type RematchOfferNotification = BaseNotification & {
+//   type: 'rematchOffer';
+//   byUser: UserInfoRecord;
+//   toUser: UserInfoRecord;
+// };
+
+// export type DrawNotification = BaseNotification & {
+//   type: 'drawOffer';
+//   byUser: UserInfoRecord;
+//   toUser: UserInfoRecord;
+// };
+
+// export type Notification = {
+//   id: string;
+//   timestamp: ISODateTime; 
+//   content: string;
+//   type: OfferType | 'resign' | 'win' | 'loss';
+//   // buttons?: Pick<ButtonProps, 'type' | 'label'>[];
+//   // resolved?: undefined | boolean;
+// };
+
 
 export type Room = RoomRecord & {
   me: Peer;

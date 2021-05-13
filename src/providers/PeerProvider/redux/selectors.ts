@@ -10,6 +10,11 @@ export const selectUserID = (state: ModuleStateSlice) => state.peerProvider.me?.
 
 export const selectRoomActivity = (state: ModuleStateSlice) => state.peerProvider.room?.activity;
 
+// export const selectRoomActivityOffer = (state: ModuleStateSlice) =>
+//   state.peerProvider.room?.activity.type === 'play'
+//     ? state.peerProvider.room?.activity.offer
+//     : undefined;
+
 export const selectRoom = (state: ModuleStateSlice) => state.peerProvider.room;
 
 export const selectActivityLog = (state: ModuleStateSlice) => {

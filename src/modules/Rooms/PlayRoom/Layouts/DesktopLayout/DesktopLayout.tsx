@@ -116,6 +116,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
               onOfferDraw={props.onOfferDraw}
               onResign={props.onResign}
               className={cls.gameActionsContainer}
+              roomActivity={props.room.activity}
             />
           </div>
         )}

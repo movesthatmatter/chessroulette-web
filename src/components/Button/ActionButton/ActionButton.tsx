@@ -26,6 +26,7 @@ export type ActionButtonProps = {
   hideLabelUntilHover?: boolean;
   withLoader?: boolean;
   full?: boolean;
+  disabled?: boolean;
 };
 
 export const ActionButton: React.FC<ActionButtonProps> = ({
@@ -104,6 +105,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
         isLoading && cls.hasLoader,
         className
       )}
+      disabled={props.disabled}
       type="submit"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(!hideLabelUntilHover)}

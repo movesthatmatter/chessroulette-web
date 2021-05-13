@@ -1,39 +1,125 @@
 import capitalize from 'capitalize';
-import { RoomRecord, UserRecord } from 'dstnd-io';
+import { RoomActivityRecord, RoomRecord, UserRecord } from 'dstnd-io';
 import { toISODateTime } from 'io-ts-isodatetime';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Game } from 'src/modules/Games';
-import { addNotification } from '../redux/notificationActions';
+import usePrevious from 'use-previous';
+import { addNotification, updateOfferNotification } from '../redux/notificationActions';
 import { selectActivityLog, selectPeerProviderState, selectRoomActivity } from '../redux/selectors';
+import { OfferNotification, RoomWithPlayActivity } from '../types';
+
+// const getNotificationOfferId = (o: NonNullable<RoomWithPlayActivity['activity']['offer']>) => 
+//   `offer-${o.type}-${o.content.byUser.id}-${o.content.toUser.id}`;
+
+// const getNotificationIdFromOffer = (
+//   offer: NonNullable<RoomWithPlayActivity['activity']['offer']>,
+//   prevOffer: RoomWithPlayActivity['activity']['offer'],
+// ) => {
+//   const nextId = getNotificationOfferId(offer);
+//   const prevId = prevOffer ? `${getNotificationOfferId(prevOffer)}-` : '';
+
+//   if (nextId === prevId) {
+//     return `${prevId}${nextId}`;
+//   }
+// };
 
 export const useNotification = (game: Game) => {
-  // const { room, me } = useSelector(selectPeerProviderState);
+  const { me } = useSelector(selectPeerProviderState);
 
   const roomActivity = useSelector(selectRoomActivity);
+
+  const prevGame = usePrevious<Game>(game);
+
+  const currentOffer = roomActivity?.type === 'play' ? roomActivity.offer : undefined;
+  const prevOffer = usePrevious(currentOffer);
+
   const activityLog = useSelector(selectActivityLog);
 
   const dispatch = useDispatch();
 
+  // useEffect(() => {
+  //   if (game.state === 'stopped' && game.winner === '1/2'){
+
+  //   }
+  // },[game.state])
+
+  // useEffect(() => {
+
+  // }, [game, prevGame]);
+
+  const currentGameAndOffer = useState({
+    game,
+    currentOffer,
+  })
+
   useEffect(() => {
-    console.log('room activity update', roomActivity);
+
+  }, [game, currentOffer])
+
+  // console.log()
+  useEffect(() => {
+    console.log('game changed', game);
+  }, [game]);
+
+  useEffect(() => {
+    console.log('prev game changed', prevGame);
+  }, [prevGame]);
+
+  useEffect(() => {
+    // if (!(roomActivity && roomActivity.type === 'play')) {
+    //   return;
+    // }
+    if (!prevGame) {
+      return;
+    }
+
+    // console.log('room activity update', roomActivity);
     const now = new Date();
 
-    if (roomActivity && roomActivity.type === 'play' && roomActivity.offer) {
-      switch (roomActivity.offer.type) {
+    console.group('big use effect');
+    console.log('game', game);
+    console.log('prev game', prevGame);
+    console.log('offer', currentOffer);
+    console.log('prev offer', prevOffer);
+    console.groupEnd();
+
+    if (!currentOffer && prevOffer) {
+      console.group('draw offer voided');
+      console.log('game', game);
+      console.log('prev game', prevGame);
+      console.groupEnd();
+
+      if (prevOffer.type === 'rematch') {
+        dispatch(updateOfferNotification({
+          notificationId: prevOffer.id,
+          status: (prevGame.id !== game.id) ? 'accepted' : 'withdrawn',
+        }));
+      } else if (prevOffer.type === 'draw' && prevGame.state !== game.state) {
+        dispatch(updateOfferNotification({
+          notificationId: prevOffer.id,
+          status: (game.state === 'stopped' && game.winner === '1/2') ? 'accepted' : 'withdrawn',
+        }));
+      }
+    } else if (currentOffer) {
+      switch (currentOffer.type) {
         case 'draw':
           dispatch(
             addNotification({
               notification: {
-                id: now.getTime().toString(),
+                // id: now.getTime().toString(),
+                id: currentOffer.id,
                 timestamp: toISODateTime(now),
-                type: roomActivity.offer.type,
-                // content: roomActivity.offer.content.byUserId === myUser.id
+                type: 'offer',
+                status: 'pending',
+                oferType: 'draw',
+                byUser: currentOffer.content.byUser,
+                toUser: currentOffer.content.toUser,
+                // type: currentOffer.type,
+                // content: currentOffer.content.byUserId === myUser.id
                 //     ? `You offered a draw`
-                //     : `${capitalize(roomActivity.offer.content.by)} offers you draw!`,
-                content: `${roomActivity.offer.content.byUser.name} offered ${
-                  roomActivity.offer.content.toUser.name
-                } a draw`,
+                //     : `${capitalize(currentOffer.content.by)} offers you draw!`,
+                content: `${currentOffer.content.byUser.name} offered ${currentOffer.content.toUser.name} a draw`,
                 // resolved : undefined,
                 // buttons: [{
                 //     type : 'primary',
@@ -50,16 +136,20 @@ export const useNotification = (game: Game) => {
           dispatch(
             addNotification({
               notification: {
-                id: now.getTime().toString(),
+                // id: now.getTime().toString(),
+                id: currentOffer.id,
                 timestamp: toISODateTime(now),
-                type: roomActivity.offer.type,
+                // type: currentOffer.type,
+                type: 'offer',
+                oferType: 'rematch',
+                byUser: currentOffer.content.byUser,
+                toUser: currentOffer.content.toUser,
+                status: 'pending',
                 // content: (
-                //   <div>{capitalize(roomActivity.offer.content.by)} send you a rematch offer!</div>
+                //   <div>{capitalize(currentOffer.content.by)} send you a rematch offer!</div>
                 // ),
-                // content: `${capitalize(roomActivity.offer.content.by)} is asking for a rematch!`,
-                content: `${roomActivity.offer.content.byUser.name} is asking ${
-                  roomActivity.offer.content.toUser.name
-                } for a rematch`,
+                // content: `${capitalize(currentOffer.content.by)} is asking for a rematch!`,
+                content: `${currentOffer.content.byUser.name} is asking ${currentOffer.content.toUser.name} for a rematch`,
                 // resolved: undefined,
                 // buttons: [
                 //   {
@@ -77,5 +167,5 @@ export const useNotification = (game: Game) => {
           break;
       }
     }
-  }, [roomActivity]);
+  }, [currentOffer, prevOffer, game, prevGame]);
 };
