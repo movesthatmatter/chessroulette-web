@@ -30,7 +30,7 @@ type BaseNotification = {
 
 export type OfferNotification = BaseNotification & {
   type: 'offer',
-  oferType: OfferType;
+  offerType: OfferType;
   byUser: UserInfoRecord;
   toUser: UserInfoRecord;
   status: 'pending' | 'withdrawn' | 'accepted';

@@ -3,8 +3,9 @@ import { useSelector } from 'react-redux';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { Game } from 'src/modules/Games';
 import { NotificationItem } from 'src/modules/Rooms/RoomActivity/Notification/NotificationItem';
-import { selectActivityLog, selectMyPeer } from 'src/providers/PeerProvider';
+import { OfferNotification, selectActivityLog, selectMyPeer } from 'src/providers/PeerProvider';
 import { useNotification } from 'src/providers/PeerProvider/hooks/useNotification';
+import { useGameActions } from '../PlayRoom/Layouts/components/GameActions/useGameActions';
 
 type Props = {
     inputContainerStyle : CSSProperties | undefined;
@@ -16,6 +17,8 @@ export const ActivityLog: React.FC<Props> = (props) => {
   const cls = useStyles();
   const activityLog = useSelector(selectActivityLog);
   const myPeer = useSelector(selectMyPeer);
+
+  const gameActions = useGameActions();
   
   useNotification(props.game);
 
@@ -29,15 +32,23 @@ export const ActivityLog: React.FC<Props> = (props) => {
         <NotificationItem
           notification={entry}
           me={myPeer.user}
-          onAcceptOffer={() => {
-            console.log('accepted ', entry);
+          onAcceptOffer={({ offerType }) => {
+            if (offerType === 'draw') {
+              gameActions.onDrawAccepted();
+            }
+            else if (offerType === 'rematch') {
+              gameActions.onRematchAccepted();
+            }
           }}
-          onDenyOffer={() => {
-            console.log('denied ', entry);
+          onDenyOffer={({ offerType }) => {
+            if (offerType === 'draw') {
+              gameActions.onDrawDenied();
+            }
+            else if (offerType === 'rematch') {
+              gameActions.onRematchDenied();
+            }
           }}
-          onCancelOffer={() => {
-            console.log('canceled ', entry);
-          }}
+          onCancelOffer={gameActions.onOfferCanceled}
         />
       ))}
     </div>

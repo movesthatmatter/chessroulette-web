@@ -12,9 +12,9 @@ type Props = {
   notification: Notification;
   me: UserRecord;
 
-  onCancelOffer: () => void;
-  onAcceptOffer: () => void;
-  onDenyOffer: () => void;
+  onCancelOffer: (n: OfferNotification) => void;
+  onAcceptOffer: (n: OfferNotification) => void;
+  onDenyOffer: (n: OfferNotification) => void;
 };
 
 function returnCurrentDate(): string {
@@ -38,7 +38,7 @@ export const NotificationItem: React.FC<Props> = ({
 
   const content = ((notification) => {
     const key = notification.type === 'offer'
-    ? `${notification.type}-${notification.oferType}-${notification.status}`
+    ? `${notification.type}-${notification.offerType}-${notification.status}`
     : `${notification.type}-${notification.infoType}`
 
     const dict = ({
@@ -81,7 +81,7 @@ export const NotificationItem: React.FC<Props> = ({
                 label="Cancel"
                 style={{ marginRight: '10px' }}
                 size="small"
-                onClick={props.onCancelOffer}
+                onClick={() => props.onCancelOffer(notification)}
               />
             )}
             {notification.type === 'offer' && notification.toUser.id === me.id && (
@@ -91,14 +91,14 @@ export const NotificationItem: React.FC<Props> = ({
                 label="Deny"
                 style={{ marginRight: '10px' }}
                 size="small"
-                onClick={props.onDenyOffer}
+                onClick={() => props.onDenyOffer(notification)}
               />
               <Button
                 type="primary"
                 label="Accept"
                 style={{ marginRight: '10px' }}
                 size="small"
-                onClick={props.onAcceptOffer}
+                onClick={() => props.onAcceptOffer(notification)}
               />
               </>
             )}
