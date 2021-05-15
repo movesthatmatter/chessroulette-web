@@ -11,7 +11,7 @@ import { GameActions } from '../components/GameActions';
 import { ChessGameV2 } from 'src/modules/Games/Chess/components/ChessGameV2';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faListAlt } from '@fortawesome/free-solid-svg-icons';
 import { ChatContainer } from 'src/modules/Chat';
 import { LayoutProps } from '../types';
 import { RoomDetails } from '../components/RoomDetails';
@@ -190,8 +190,10 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                       <div
                         style={{
                           borderColor: colors.neutral,
-                          overflow: 'hidden',
-                          flex: 1,
+                          marginBottom:'50px',
+                          overflowY:'scroll',
+                          scrollBehavior:'smooth',
+                          
                         }}
                       >
                         <ActivityLog 
@@ -202,7 +204,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                           game={game}/>
                       </div>
                     ),
-                    icon: null,
+                    icon:  faListAlt
                   },
                   {
                     title: 'Messages',
@@ -221,16 +223,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                         />
                       </div>
                     ),
-                    icon: (
-                      <FontAwesomeIcon
-                        icon={faComment}
-                        size="lg"
-                        color={colors.neutral}
-                        style={{
-                          marginRight: '8px',
-                        }}
-                      />
-                    ),
+                    icon: faComment
                   },
                 ]}
               />

@@ -32,6 +32,7 @@ export const ActivityLog: React.FC<Props> = (props) => {
         <NotificationItem
           notification={entry}
           me={myPeer.user}
+          game={props.game}
           onAcceptOffer={({ offerType }) => {
             if (offerType === 'draw') {
               gameActions.onDrawAccepted();
@@ -57,6 +58,7 @@ export const ActivityLog: React.FC<Props> = (props) => {
 
 const useStyles = createUseStyles({
   container: {
-    marginTop:'10px',
+    display:'flex',
+    flexDirection:'column-reverse'
   },
 });

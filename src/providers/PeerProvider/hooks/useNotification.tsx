@@ -6,6 +6,8 @@ import { Game } from 'src/modules/Games';
 import usePrevious from 'use-previous';
 import { addNotification, updateOfferNotification } from '../redux/notificationActions';
 import { selectRoomActivity } from '../redux/selectors';
+import { getPlayer, getPlayerByColor } from 'src/modules/GameRoomV2/util';
+import { toISODate } from 'src/lib/date';
 
 /*
  * The debounce is need in order to ensure that both the game and the room
@@ -13,10 +15,7 @@ import { selectRoomActivity } from '../redux/selectors';
  * between the time the room update gets triggered vs the game and so there
  * is a discrpency in the logic that determines the notification states.
  */
-const useDebouncedGameAndOffer = (
-  game: Game,
-  waitInterval = 300
-) => {
+const useDebouncedGameAndOffer = (game: Game, waitInterval = 300) => {
   const roomActivity = useSelector(selectRoomActivity);
   const offer = roomActivity?.type === 'play' ? roomActivity.offer : undefined;
 
@@ -41,6 +40,63 @@ export const useNotification = (game: Game) => {
 
   useEffect(() => {
     const now = new Date();
+
+    if (currentGameAndOfferZip.game.state === 'finished') {
+      if (
+        currentGameAndOfferZip.game.winner === 'black' ||
+        currentGameAndOfferZip.game.winner === 'white'
+      ) {
+        dispatch(
+          addNotification({
+            notification: {
+              type: 'info',
+              infoType: 'win',
+              id: `${currentGameAndOfferZip.game.id}-${currentGameAndOfferZip.game.winner}-win`,
+              timestamp: toISODateTime(now),
+              content: `${
+                getPlayerByColor(
+                  currentGameAndOfferZip.game.winner,
+                  currentGameAndOfferZip.game.players
+                )?.user.name
+              } has won`,
+            },
+          })
+        );
+      }
+    }
+
+    if (currentGameAndOfferZip.game.state === 'stopped') {
+      if (currentGameAndOfferZip.game.winner === '1/2') {
+        dispatch(
+          addNotification({
+            notification: {
+              type: 'info',
+              infoType: 'draw',
+              id: `${currentGameAndOfferZip.game.id}-draw`,
+              timestamp: toISODateTime(now),
+              content: 'Game has ended in a draw',
+            },
+          })
+        );
+      } else {
+        dispatch(
+          addNotification({
+            notification: {
+              type: 'info',
+              infoType: 'resign',
+              id: `${currentGameAndOfferZip.game.id}-${currentGameAndOfferZip.game.winner}-resign`,
+              timestamp: toISODateTime(now),
+              content: `${
+                getPlayerByColor(
+                  currentGameAndOfferZip.game.lastMoveBy,
+                  currentGameAndOfferZip.game.players
+                )?.user.name
+              } has resigned.`,
+            },
+          })
+        );
+      }
+    }
 
     if (!currentGameAndOfferZip.offer && prevGameAndOfferZip?.offer) {
       const { offer: prevOffer } = prevGameAndOfferZip;
@@ -85,7 +141,6 @@ export const useNotification = (game: Game) => {
                 offerType: 'draw',
                 byUser: currentOffer.content.byUser,
                 toUser: currentOffer.content.toUser,
-                content: `${currentOffer.content.byUser.name} offered ${currentOffer.content.toUser.name} a draw`,
               },
             })
           );
@@ -101,7 +156,6 @@ export const useNotification = (game: Game) => {
                 byUser: currentOffer.content.byUser,
                 toUser: currentOffer.content.toUser,
                 status: 'pending',
-                content: `${currentOffer.content.byUser.name} is asking ${currentOffer.content.toUser.name} for a rematch`,
               },
             })
           );

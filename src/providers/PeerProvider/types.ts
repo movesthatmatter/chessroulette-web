@@ -25,7 +25,6 @@ export type OfferType = NonNullable<RoomWithPlayActivity['activity']['offer']>['
 type BaseNotification = {
   id: string;
   timestamp: ISODateTime;
-  content: string;
 }
 
 export type OfferNotification = BaseNotification & {
@@ -38,7 +37,8 @@ export type OfferNotification = BaseNotification & {
 
 export type InfoNotification = BaseNotification & {
   type: 'info',
-  infoType: 'resign' | 'win' | 'loss' | 'cancel' | 'accept';
+  infoType: 'resign' | 'win' | 'draw';
+  content : string;
 };
 
 export type Notification = OfferNotification | InfoNotification;

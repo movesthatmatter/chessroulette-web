@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { colors, fonts } from 'src/theme';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComment, faListAlt, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 type TabProps = {
   content: string | React.ReactNode;
-  icon: React.ReactNode | null;
+  icon: IconProp | null;
   title: string;
 };
 
@@ -17,17 +20,27 @@ export const TabComponent: React.FC<TabComponentProps> = ({ tabs }) => {
   const cls = useStyles();
   const [currentTab, setCurrentTab] = useState(0);
   return (
-    <div className={cls.container}>
+    <>
       <div className={cls.tabBar}>
         {tabs.map((tab, index) => (
           <>
             <div className={cls.tabButton} onClick={() => setCurrentTab(index)}>
               <Text
-                style={{
+                style={currentTab === index ? {
                   ...fonts.subtitle2,
+                } : {
+                  ...fonts.subtitle2,
+                  fontWeight:'normal'
                 }}
               >
-                {tab.icon}
+                {tab.icon && <FontAwesomeIcon
+                        icon={tab.icon}
+                        size="lg"
+                        color={currentTab === index ? colors.primary :  colors.neutral}
+                        style={{
+                          marginRight: '8px',
+                        }}
+                />}
                 {tab.title}
               </Text>
             </div>
@@ -35,7 +48,7 @@ export const TabComponent: React.FC<TabComponentProps> = ({ tabs }) => {
         ))}
       </div>
       {tabs[currentTab].content}
-    </div>
+    </>
   );
 };
 
@@ -43,7 +56,7 @@ const useStyles = createUseStyles({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    height : '100%'
+    height:'100%',
   },
   tabBar: {
     display: 'flex',
@@ -53,7 +66,10 @@ const useStyles = createUseStyles({
   tabButton: {
     paddingTop: '16px',
     paddingBottom: '8px',
-    borderBottom: '1px solid',
     borderColor: colors.neutral,
+    '&:hover':{
+      borderBottom: '2px solid',
+      cursor:'pointer'
+    }
   },
 });

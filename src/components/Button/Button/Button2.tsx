@@ -23,7 +23,7 @@ export type ButtonProps = {
   full?: boolean;
   containerClassName?: string;
   className?: string;
-  size?: 'auto' | 'small' | 'medium' | 'large';
+  size?: 'auto' | 'small' | 'medium' | 'large' | 'xsmall';
   style?: CSSProperties;
   onClick: (() => void) | (() => Promise<any>) | (() => AsyncResult<any, any>);
   withLoader?: boolean;
@@ -147,6 +147,9 @@ const useStyles = createUseStyles({
   },
   small: {
     minWidth: '100px',
+  },
+  xsmall : {
+    minWidth: '60px',
   },
   medium: {
     minWidth: '180px',
