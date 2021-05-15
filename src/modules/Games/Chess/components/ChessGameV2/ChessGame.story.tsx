@@ -1,11 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React from 'react';
+import React, { useState } from 'react';
 import { ChessGameV2 } from './ChessGameV2';
 import 'react-chessground/dist/styles/chessground.css';
 import { GameMocker } from 'src/mocks/records/GameMocker';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
+import {
+  chessGameActions,
+  ChessGameColor,
+} from 'dstnd-io';
+import { toISODateTime } from 'io-ts-isodatetime';
+import { Game } from 'src/modules/Games/types';
+import { action } from '@storybook/addon-actions';
 
 export default {
   component: ChessGameV2,
@@ -26,6 +33,33 @@ export const fromStartingPosition = () =>
         homeColor="black"
         onMove={({ fen }) => {}}
         size={400}
+      />
+    );
+  });
+
+export const playable = () =>
+  React.createElement(() => {
+    const [game, setGame] = useState<Game>(gameMocker.pending());
+    const [turn, setTurn] = useState<ChessGameColor>('white');
+
+    return (
+      <ChessGameV2
+        id={game.id}
+        pgn={game.pgn}
+        size={600}
+        homeColor={turn}
+        playable
+        onMove={(m) => {
+          if (game.state === 'pending' || game.state === 'started') {
+            setGame((prev) => ({
+              ...prev,
+              ...chessGameActions.move(game, { move: m.move, movedAt: toISODateTime(new Date()) }),
+            }));
+            setTurn((prev) => (prev === 'white' ? 'black' : 'white'));
+
+            action('on move')(m);
+          }
+        }}
       />
     );
   });

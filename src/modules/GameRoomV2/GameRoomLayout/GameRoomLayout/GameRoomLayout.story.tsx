@@ -236,7 +236,7 @@ export const withChessGame = () => (
                     pgn={game.pgn}
                     id={game.id}
                     onMove={action('on move')}
-                    size={500}
+                    size={container.width}
                   />
                 );
               }}
