@@ -1,5 +1,5 @@
-import { Pubsy } from '.';
-import { delay } from '../time';
+import { Pubsy } from '..';
+import { delay } from '../../time';
 
 type GenericChannelTypesMap = {[k: string]: any}
 let pubsy: Pubsy<GenericChannelTypesMap>;

@@ -193,7 +193,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                           marginBottom:'50px',
                           overflowY:'scroll',
                           scrollBehavior:'smooth',
-                          
+                          marginTop: '20px'
                         }}
                       >
                         <ActivityLog 

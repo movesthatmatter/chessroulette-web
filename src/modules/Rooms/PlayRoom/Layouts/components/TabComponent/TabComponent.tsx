@@ -67,6 +67,7 @@ const useStyles = createUseStyles({
     paddingTop: '16px',
     paddingBottom: '8px',
     borderColor: colors.neutral,
+    borderBottom: '2px solid transparent',
     '&:hover':{
       borderBottom: '2px solid',
       cursor:'pointer'

@@ -1,21 +1,15 @@
-import capitalize from 'capitalize';
 import { format } from 'date-fns';
 import { UserRecord } from 'dstnd-io';
 import { ISODateTime } from 'io-ts-isodatetime';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Button, ButtonProps } from 'src/components/Button';
+import { Button } from 'src/components/Button';
 import { createUseStyles } from 'src/lib/jss';
-import { noop } from 'src/lib/util';
-import { getOppositePlayer, getPlayerByColor } from 'src/modules/GameRoomV2/util';
 import { Game } from 'src/modules/Games';
 import {
-  InfoNotification,
   Notification,
   OfferNotification,
-  selectActivityLog,
 } from 'src/providers/PeerProvider';
-import { colors, fonts } from 'src/theme';
+import { fonts } from 'src/theme';
 
 type Props = {
   notification: Notification;
@@ -25,10 +19,6 @@ type Props = {
   onAcceptOffer: (n: OfferNotification) => void;
   onDenyOffer: (n: OfferNotification) => void;
 };
-
-function returnCurrentDate(time: ISODateTime): string {
-  return format(new Date(time), 'HH:mm:s a');
-}
 
 export const NotificationItem: React.FC<Props> = ({ notification, game, me, ...props }) => {
   const cls = useStyles();
@@ -44,8 +34,6 @@ export const NotificationItem: React.FC<Props> = ({ notification, game, me, ...p
     if (notification.type === 'offer') {
     const key = `${notification.type}-${notification.offerType}-${notification.status}`
         
-    console.log('notification ->', notification);
-    console.log('key -> ', key);
     const dict = {
       'offer-rematch-pending': (n: OfferNotification) =>
         `${n.byUser.name} is asking ${n.toUser.name} for a rematch`,
@@ -123,6 +111,5 @@ const useStyles = createUseStyles({
   container: {
     ...fonts.small1,
     marginBottom: '24px',
-    // borderLeft: `3px solid ${colors.attention}`,
   },
 });
