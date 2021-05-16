@@ -4,8 +4,9 @@ import { Box } from 'grommet';
 import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { floatingShadow, fonts } from 'src/theme';
+import { colors, floatingShadow, fonts } from 'src/theme';
 import { Countdown } from '../Countdown';
+import { PeerWithConnectionStatusDisplay } from 'src/providers/PeerProvider';
 
 type Props = {
   player: ChessPlayer;
@@ -31,7 +32,9 @@ export const PlayerBox: React.FC<Props> = ({
       <Box fill direction="row">
         <Avatar mutunachiId={Number(player.user.avatarId)} />
         <Box className={cls.playerInfo}>
-          <Text className={cls.playerNameText}>{player.user.name}</Text>
+          <Text className={cls.playerNameText}>
+            <PeerWithConnectionStatusDisplay peerUserInfo={player.user} />
+          </Text>
           <div
             style={{
               flex: 1,
@@ -70,5 +73,13 @@ const useStyles = createUseStyles({
   },
   piece: {
     marginRight: '3px',
+  },
+
+  dot: {
+    height: '8px',
+    width: '8px',
+    backgroundColor: colors.neutral,
+    borderRadius: '50%',
+    display: 'inline-block',
   },
 });

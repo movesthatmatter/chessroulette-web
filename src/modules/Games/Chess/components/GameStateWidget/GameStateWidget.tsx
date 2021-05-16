@@ -1,4 +1,4 @@
-import { ChessGameColor } from 'dstnd-io';
+import { ChessGameColor, UserRecord } from 'dstnd-io';
 import React, { useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
@@ -30,7 +30,7 @@ export const GameStateWidget: React.FC<Props> = ({
   const cls = useStyles();
 
   useEffect(() => {
-    if (!myPlayer) {
+    if (!homePlayer) {
       return;
     }
 
@@ -42,8 +42,8 @@ export const GameStateWidget: React.FC<Props> = ({
     }
   }, [game.state]);
 
-  const myPlayer = game ? getPlayerByColor(homeColor, game.players) : undefined;
-  const opponentPlayer = game
+  const homePlayer = game ? getPlayerByColor(homeColor, game.players) : undefined;
+  const awayPlayer = game
     ? getPlayerByColor(otherChessColor(homeColor), game.players)
     : undefined;
 
@@ -62,15 +62,15 @@ export const GameStateWidget: React.FC<Props> = ({
   return (
     <div className={cls.container}>
       <div className={cx(cls.player, cls.playerTop)}>
-        {opponentPlayer && (
+        {awayPlayer && (
           <>
             <PlayerBox
-              player={opponentPlayer}
+              player={awayPlayer}
               timeLeft={opponentTimeLeft}
-              active={game.state === 'started' && game.lastMoveBy !== opponentPlayer.color}
+              active={game.state === 'started' && game.lastMoveBy !== awayPlayer.color}
               gameTimeLimit={game.timeLimit}
-              material={materialScore[opponentPlayer.color]}
-              onTimerFinished={() => onTimerFinished(opponentPlayer.color)}
+              material={materialScore[awayPlayer.color]}
+              onTimerFinished={() => onTimerFinished(awayPlayer.color)}
             />
             <div className={cls.spacer} />
           </>
@@ -84,16 +84,16 @@ export const GameStateWidget: React.FC<Props> = ({
         />
       </div>
       <div className={cls.player}>
-        {myPlayer && (
+        {homePlayer && (
           <>
             <div className={cls.spacer} />
             <PlayerBox
-              player={myPlayer}
+              player={homePlayer}
               timeLeft={myTimeLeft}
-              active={game.state === 'started' && game.lastMoveBy !== myPlayer.color}
+              active={game.state === 'started' && game.lastMoveBy !== homePlayer.color}
               gameTimeLimit={game.timeLimit}
-              material={materialScore[myPlayer.color]}
-              onTimerFinished={() => onTimerFinished(myPlayer.color)}
+              material={materialScore[homePlayer.color]}
+              onTimerFinished={() => onTimerFinished(homePlayer.color)}
             />
           </>
         )}
