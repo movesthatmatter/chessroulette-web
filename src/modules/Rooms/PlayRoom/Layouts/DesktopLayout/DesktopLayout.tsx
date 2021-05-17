@@ -1,16 +1,14 @@
 import { Box } from 'grommet';
-import React, { LegacyRef, useRef, useState } from 'react';
+import React, { LegacyRef, useRef } from 'react';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
-import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { GameRoomLayout } from 'src/modules/GameRoomV2/GameRoomLayout/GameRoomLayout';
-import { borderRadius, colors, floatingShadow, fonts, softBorderRadius } from 'src/theme';
+import { borderRadius, colors, floatingShadow, softBorderRadius } from 'src/theme';
 import cx from 'classnames';
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 import { GameActions } from '../components/GameActions';
 import { ChessGameV2 } from 'src/modules/Games/Chess/components/ChessGameV2';
 import { StreamingBox } from 'src/components/StreamingBox';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faListAlt } from '@fortawesome/free-solid-svg-icons';
 import { ChatContainer } from 'src/modules/Chat';
 import { LayoutProps } from '../types';
@@ -109,15 +107,18 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                 onTimerFinished={props.onTimerFinished}
               />
             </div>
-            <GameActions
-              game={game}
-              onAbort={props.onAbort}
-              onRematchOffer={props.onRematchOffer}
-              onOfferDraw={props.onOfferDraw}
-              onResign={props.onResign}
-              className={cls.gameActionsContainer}
-              roomActivity={props.room.activity}
-            />
+            {props.meAsPlayer && (
+              <GameActions
+                game={game}
+                player={props.meAsPlayer}
+                onAbort={props.onAbort}
+                onRematchOffer={props.onRematchOffer}
+                onOfferDraw={props.onOfferDraw}
+                onResign={props.onResign}
+                className={cls.gameActionsContainer}
+                roomActivity={props.room.activity}
+              />
+            )}
           </div>
         )}
         getGameComponent={({ container }) => (
@@ -189,22 +190,32 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                     content: (
                       <div
                         style={{
-                          borderColor: colors.neutral,
-                          marginBottom:'50px',
-                          overflowY:'scroll',
-                          scrollBehavior:'smooth',
-                          marginTop: '20px'
+                          overflow: 'hidden',
+                          flex: 1,
                         }}
                       >
-                        <ActivityLog 
-                        
-                        inputContainerStyle={{
-                            height: `${BOTTOM_HEIGHT + container.verticalPadding}px`,
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            height: '100%',
                           }}
-                          game={game}/>
+                        >
+                          <ActivityLog
+                            containerStyle={{
+                              flex: 1,
+                              height: '100%',
+                              borderBottom: `1px solid ${colors.neutral}`
+                            }}
+                            game={game}
+                          />
+                          <div style={{
+                            height: `${BOTTOM_HEIGHT + container.verticalPadding - 1}px`,
+                          }} />
+                        </div>
                       </div>
                     ),
-                    icon:  faListAlt
+                    icon: faListAlt,
                   },
                   {
                     title: 'Messages',
@@ -223,7 +234,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                         />
                       </div>
                     ),
-                    icon: faComment
+                    icon: faComment,
                   },
                 ]}
               />
