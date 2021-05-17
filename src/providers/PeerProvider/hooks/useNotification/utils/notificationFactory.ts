@@ -1,11 +1,12 @@
 import { toISODateTime } from 'io-ts-isodatetime';
 import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
 import { Game } from 'src/modules/Games';
-import {
-  Notification,
-  OfferNotification,
-  RoomWithPlayActivity,
-} from '../../types';
+import { Notification, OfferNotification, RoomWithPlayActivity } from '../../../types';
+
+type NotificationDependencies = {
+  game?: Game;
+  offer?: RoomWithPlayActivity['activity']['offer'];
+};
 
 type NotificationFactoryReturn =
   | {
@@ -18,48 +19,56 @@ type NotificationFactoryReturn =
       notification: Notification;
     };
 
-export const notificationFactory = (
-  game: Game,
-  offer?: RoomWithPlayActivity['activity']['offer'],
-  prevOffer?: RoomWithPlayActivity['activity']['offer'],
-): NotificationFactoryReturn | undefined => {
+export const notificationFactory = ({
+  prev,
+  current,
+}: {
+  prev: NotificationDependencies;
+  current: NotificationDependencies;
+}): NotificationFactoryReturn | undefined => {
+
+  // Later on this could be another notification
+  if (!current.game) {
+    return undefined;
+  }
+  
   const now = new Date();
 
-  if (!offer && prevOffer) {
-    if (prevOffer.type === 'rematch') {
+  if (!current.offer && prev.offer) {
+    if (prev.offer.type === 'rematch') {
       return {
         type: 'update',
-        id: prevOffer.id,
-        status: prevOffer.content.gameId !== game.id ? 'accepted' : 'withdrawn',
+        id: prev.offer.id,
+        status: prev.offer.content.gameId !== current.game.id ? 'accepted' : 'withdrawn',
       };
-    } else if (prevOffer.type === 'draw') {
-      if (game.state === 'stopped' && game.winner === '1/2') {
+    } else if (prev.offer.type === 'draw') {
+      if (current.game.state === 'stopped' && current.game.winner === '1/2') {
         return {
           type: 'update',
-          id: prevOffer.id,
+          id: prev.offer.id,
           status: 'accepted',
         };
       } else {
         return {
           type: 'update',
-          id: prevOffer.id,
+          id: prev.offer.id,
           status: 'withdrawn',
         };
       }
     }
-  } else if (offer) {
-    switch (offer.type) {
+  } else if (current.offer) {
+    switch (current.offer.type) {
       case 'draw':
         return {
           type: 'add',
           notification: {
-            id: offer.id,
+            id: current.offer.id,
             timestamp: toISODateTime(now),
             type: 'offer',
             status: 'pending',
             offerType: 'draw',
-            byUser: offer.content.byUser,
-            toUser: offer.content.toUser,
+            byUser: current.offer.content.byUser,
+            toUser: current.offer.content.toUser,
           },
         };
         break;
@@ -67,12 +76,12 @@ export const notificationFactory = (
         return {
           type: 'add',
           notification: {
-            id: offer.id,
             timestamp: toISODateTime(now),
+            id: current.offer.id,
             type: 'offer',
             offerType: 'rematch',
-            byUser: offer.content.byUser,
-            toUser: offer.content.toUser,
+            byUser: current.offer.content.byUser,
+            toUser: current.offer.content.toUser,
             status: 'pending',
           },
         };
@@ -80,40 +89,44 @@ export const notificationFactory = (
     }
   }
 
-  if (game.state === 'finished') {
-    if (game.winner === 'black' || game.winner === 'white') {
+  // if (current.game.state === 'started')
+  if (current.game.state === 'finished') {
+    if (current.game.winner === 'black' || current.game.winner === 'white') {
       return {
         type: 'add',
         notification: {
           type: 'info',
           infoType: 'win',
-          id: `${game.id}-${game.winner}-win`,
+          id: `${current.game.id}-${current.game.winner}-win`,
           timestamp: toISODateTime(now),
-          content: `${getPlayerByColor(game.winner, game.players)?.user.name} has won`,
+          content: `${
+            getPlayerByColor(current.game.winner, current.game.players)?.user.name
+          } has won`,
         },
       };
     }
-    if (game.winner === '1/2') {
+    if (current.game.winner === '1/2') {
       return {
         type: 'add',
         notification: {
           type: 'info',
           infoType: 'draw',
-          id: `${game.id}-draw`,
+          id: `${current.game.id}-draw`,
           timestamp: toISODateTime(now),
           content: 'Game Ended in a Draw by Stalemate!',
         },
       };
     }
   }
-  if (game.state === 'stopped') {
-    if (game.winner === '1/2') {
+
+  if (current.game.state === 'stopped') {
+    if (current.game.winner === '1/2') {
       return {
         type: 'add',
         notification: {
           type: 'info',
           infoType: 'draw',
-          id: `${game.id}-draw`,
+          id: `${current.game.id}-draw`,
           timestamp: toISODateTime(now),
           content: 'Game has ended in a draw',
         },
@@ -124,9 +137,11 @@ export const notificationFactory = (
         notification: {
           type: 'info',
           infoType: 'resign',
-          id: `${game.id}-${game.winner}-resign`,
+          id: `${current.game.id}-${current.game.winner}-resign`,
           timestamp: toISODateTime(now),
-          content: `${getPlayerByColor(game.lastMoveBy, game.players)?.user.name} has resigned`,
+          content: `${
+            getPlayerByColor(current.game.lastMoveBy, current.game.players)?.user.name
+          } has resigned`,
         },
       };
     }
