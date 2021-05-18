@@ -1,10 +1,10 @@
-import { Box } from 'grommet';
 import React, { LegacyRef, useRef } from 'react';
+import { Box } from 'grommet';
+import cx from 'classnames';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
 import { createUseStyles } from 'src/lib/jss';
 import { GameRoomLayout } from 'src/modules/GameRoomV2/GameRoomLayout/GameRoomLayout';
 import { borderRadius, colors, floatingShadow, softBorderRadius } from 'src/theme';
-import cx from 'classnames';
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 import { GameActions } from '../components/GameActions';
 import { ChessGameV2 } from 'src/modules/Games/Chess/components/ChessGameV2';
@@ -15,7 +15,7 @@ import { LayoutProps } from '../types';
 import { RoomDetails } from '../components/RoomDetails';
 import { ExitRoomButton } from '../components/ExitRoomButton/ExitRoomButton';
 import { TabComponent } from '../components/TabComponent/TabComponent';
-import { ActivityLog } from '../../../RoomActivity/ActivityLog';
+import { ActivityLog } from 'src/modules/ActivityLog';
 
 type Props = LayoutProps;
 
@@ -190,29 +190,17 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                     content: (
                       <div
                         style={{
+                          borderColor: colors.neutral,
                           overflow: 'hidden',
                           flex: 1,
                         }}
                       >
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            height: '100%',
-                          }}
-                        >
-                          <ActivityLog
-                            containerStyle={{
-                              flex: 1,
-                              height: '100%',
-                              borderBottom: `1px solid ${colors.neutral}`
-                            }}
-                            game={game}
-                          />
-                          <div style={{
+                        <ActivityLog
+                          bottomContainerStyle={{
                             height: `${BOTTOM_HEIGHT + container.verticalPadding - 1}px`,
-                          }} />
-                        </div>
+                          }}
+                          game={game}
+                        />
                       </div>
                     ),
                     icon: faListAlt,
