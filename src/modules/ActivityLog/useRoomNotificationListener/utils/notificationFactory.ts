@@ -1,11 +1,16 @@
+import { metadata, RoomWithPlayActivityRecord } from 'dstnd-io';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
 import { Game } from 'src/modules/Games';
-import { Notification, OfferNotification, RoomWithPlayActivity } from '../../../types';
+import HumanizeDuration from 'humanize-duration';
+import { getUserDisplayName } from 'src/modules/User';
+import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { Notification, OfferNotification } from '../../types';
+
 
 type NotificationDependencies = {
   game?: Game;
-  offer?: RoomWithPlayActivity['activity']['offer'];
+  offer?: RoomWithPlayActivityRecord['activity']['offer'];
 };
 
 type NotificationFactoryReturn =
@@ -19,6 +24,11 @@ type NotificationFactoryReturn =
       notification: Notification;
     };
 
+const formatTimeLimit = HumanizeDuration.humanizer({
+  largest: 2,
+  round: true,
+});
+
 export const notificationFactory = ({
   prev,
   current,
@@ -26,12 +36,11 @@ export const notificationFactory = ({
   prev: NotificationDependencies;
   current: NotificationDependencies;
 }): NotificationFactoryReturn | undefined => {
-
   // Later on this could be another notification
   if (!current.game) {
     return undefined;
   }
-  
+
   const now = new Date();
 
   if (!current.offer && prev.offer) {
@@ -71,7 +80,6 @@ export const notificationFactory = ({
             toUser: current.offer.content.toUser,
           },
         };
-        break;
       case 'rematch':
         return {
           type: 'add',
@@ -85,11 +93,42 @@ export const notificationFactory = ({
             status: 'pending',
           },
         };
-        break;
     }
   }
 
-  // if (current.game.state === 'started')
+  // // A pending Game
+  // if (current.game.state === 'pending' && (prev.game?.state !== 'pending')) {
+  //   return {
+  //     type: 'add',
+  //     notification: {
+  //       type: 'info',
+  //       infoType: 'draw',
+  //       id: `${current.game.id}-pending`, // TODO: Refactor
+  //       timestamp: toISODateTime(now),
+  //       content: `Waiting for ${getPlayerByColor('white', current.game.players)?.user.name} to move`,
+  //     },
+  //   };
+  // }
+
+  // A new game has started
+  // TODO: Not Tested!
+  if (current.game.state === 'started' && (!prev.game || prev.game.state === 'pending')) {
+    return {
+      type: 'add',
+      notification: {
+        type: 'info',
+        infoType: 'draw',
+        id: `${current.game.id}-new`, // TODO: Refactor
+        timestamp: toISODateTime(now),
+        content: `A new ${formatTimeLimit(
+          metadata.game.chessGameTimeLimitMsMap[current.game.timeLimit]
+        )} game has started between ${getUserDisplayName(
+          current.game.players[0].user
+        )} & ${getUserDisplayName(current.game.players[1].user)}`,
+      },
+    };
+  }
+
   if (current.game.state === 'finished') {
     if (current.game.winner === 'black' || current.game.winner === 'white') {
       return {
@@ -99,9 +138,9 @@ export const notificationFactory = ({
           infoType: 'win',
           id: `${current.game.id}-${current.game.winner}-win`,
           timestamp: toISODateTime(now),
-          content: `${
-            getPlayerByColor(current.game.winner, current.game.players)?.user.name
-          } has won`,
+          content: `${getUserDisplayName(
+            getPlayerByColor(current.game.winner, current.game.players).user
+          )} won!`,
         },
       };
     }
@@ -139,9 +178,11 @@ export const notificationFactory = ({
           infoType: 'resign',
           id: `${current.game.id}-${current.game.winner}-resign`,
           timestamp: toISODateTime(now),
-          content: `${
-            getPlayerByColor(current.game.lastMoveBy, current.game.players)?.user.name
-          } has resigned`,
+          content: `${getUserDisplayName(
+            getPlayerByColor(otherChessColor(current.game.winner), current.game.players).user
+          )} has resigned. ${getUserDisplayName(
+            getPlayerByColor(current.game.winner, current.game.players).user
+          )} won!`,
         },
       };
     }

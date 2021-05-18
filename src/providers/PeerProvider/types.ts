@@ -3,10 +3,7 @@ import {
   RoomRecord,
   RoomWithPlayActivityRecord,
   RoomWithNoActivityRecord,
-  UserInfoRecord,
 } from 'dstnd-io';
-import { ISODateTime } from 'io-ts-isodatetime';
-import { ButtonProps } from 'src/components/Button';
 import { PeerConnectionStatus } from 'src/services/peers';
 
 export type RoomCredentials = {
@@ -19,51 +16,6 @@ export type Peer = PeerRecord & {
     channels: PeerConnectionStatus['channels'];
   };
 };
-
-export type OfferType = NonNullable<RoomWithPlayActivity['activity']['offer']>['type']
-
-type BaseNotification = {
-  id: string;
-  timestamp: ISODateTime;
-}
-
-export type OfferNotification = BaseNotification & {
-  type: 'offer',
-  offerType: OfferType;
-  byUser: UserInfoRecord;
-  toUser: UserInfoRecord;
-  status: 'pending' | 'withdrawn' | 'accepted';
-};
-
-export type InfoNotification = BaseNotification & {
-  type: 'info',
-  infoType: 'resign' | 'win' | 'draw';
-  content : string;
-};
-
-export type Notification = OfferNotification | InfoNotification;
-
-// export type RematchOfferNotification = BaseNotification & {
-//   type: 'rematchOffer';
-//   byUser: UserInfoRecord;
-//   toUser: UserInfoRecord;
-// };
-
-// export type DrawNotification = BaseNotification & {
-//   type: 'drawOffer';
-//   byUser: UserInfoRecord;
-//   toUser: UserInfoRecord;
-// };
-
-// export type Notification = {
-//   id: string;
-//   timestamp: ISODateTime; 
-//   content: string;
-//   type: OfferType | 'resign' | 'win' | 'loss';
-//   // buttons?: Pick<ButtonProps, 'type' | 'label'>[];
-//   // resolved?: undefined | boolean;
-// };
-
 
 export type Room = RoomRecord & {
   me: Peer;

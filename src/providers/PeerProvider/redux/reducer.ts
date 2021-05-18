@@ -1,6 +1,5 @@
 import { createReducer } from 'deox';
 import { PeerRecord, RoomRecord } from 'dstnd-io';
-import { InfoNotification, Notification } from '../types';
 import { GenericStateSlice } from 'src/redux/types';
 import { Peer, Room } from '../types';
 import {
@@ -14,7 +13,6 @@ import {
   removePeerStreamAction,
   closePeerChannelsAction,
 } from './actions';
-import { addNotification,  updateOfferNotification } from './notificationActions';
 
 export type State =
   | {
@@ -24,7 +22,6 @@ export type State =
   | {
       me: Peer;
       room: undefined | Room;
-      activityLog: Record<Notification['id'], Notification>;
     };
 
 export const initialState: State = {
@@ -313,35 +310,6 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
         peersIncludingMe: {
           ...state.room.peersIncludingMe,
           [nextPeer.id]: nextPeer,
-        },
-      },
-    };
-  }),
-  handleAction(addNotification, (state, { payload }) => {
-    if (!state.room) {
-      return state;
-    }
-
-    return {
-      ...state,
-      activityLog: {
-        ...state.activityLog,
-        [payload.notification.id]: payload.notification,
-      },
-    };
-  }),
-  handleAction(updateOfferNotification, (state, { payload }) => {
-    if (!state.room) {
-      return state;
-    }
-    
-    return {
-      ...state,
-      activityLog: {
-        ...state.activityLog,
-        [payload.notificationId]: {
-          ...state.activityLog[payload.notificationId],
-          status: payload.status,
         },
       },
     };

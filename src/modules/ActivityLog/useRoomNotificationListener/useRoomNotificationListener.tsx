@@ -1,13 +1,16 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Game } from 'src/modules/Games';
-import { addNotification, updateOfferNotification } from '../../redux/notificationActions';
-import { selectRoomActivity } from '../../redux/selectors';
 import { notificationFactory } from './utils/notificationFactory';
 import { useStateWithPrev } from 'src/lib/hooks/useStateWithPrev';
 import useDebouncedEffect from 'use-debounced-effect';
+import {
+  addNotificationAction,
+  updateOfferNotificationAction,
+} from '../redux/actions';
+import { selectRoomActivity } from 'src/providers/PeerProvider';
 
-export const useNotification = (game: Game) => {
+export const useRoomNotificationListener = (game: Game) => {
   const dispatch = useDispatch();
   const roomActivity = useSelector(selectRoomActivity);
   const offer = roomActivity?.type === 'play' ? roomActivity.offer : undefined;
@@ -29,10 +32,10 @@ export const useNotification = (game: Game) => {
     }
 
     if (nextNotification.type === 'add') {
-      dispatch(addNotification({ notification: nextNotification.notification }));
+      dispatch(addNotificationAction({ notification: nextNotification.notification }));
     } else if (nextNotification.type === 'update') {
       dispatch(
-        updateOfferNotification({
+        updateOfferNotificationAction({
           notificationId: nextNotification.id,
           status: nextNotification.status,
         })
