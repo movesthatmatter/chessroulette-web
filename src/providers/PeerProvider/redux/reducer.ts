@@ -80,7 +80,6 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       ...(payload.joinedRoom && {
         room: getNewRoom(nextMe, payload.joinedRoom),
       }),
-      activityLog: {},
     };
   }),
 
