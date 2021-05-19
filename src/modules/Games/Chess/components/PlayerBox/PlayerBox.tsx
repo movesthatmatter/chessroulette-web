@@ -6,6 +6,7 @@ import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, fonts } from 'src/theme';
 import { Countdown } from '../Countdown';
+import { PeerWithConnectionStatusDisplay } from 'src/providers/PeerProvider';
 
 type Props = {
   player: ChessPlayer;
@@ -31,7 +32,9 @@ export const PlayerBox: React.FC<Props> = ({
       <Box fill direction="row">
         <Avatar mutunachiId={Number(player.user.avatarId)} />
         <Box className={cls.playerInfo}>
-          <Text className={cls.playerNameText}>{player.user.name}</Text>
+          <Text className={cls.playerNameText}>
+            <PeerWithConnectionStatusDisplay peerUserInfo={player.user} />
+          </Text>
           <div
             style={{
               flex: 1,
@@ -67,8 +70,5 @@ const useStyles = createUseStyles({
   },
   playerNameText: {
     ...fonts.small2,
-  },
-  piece: {
-    marginRight: '3px',
   },
 });
