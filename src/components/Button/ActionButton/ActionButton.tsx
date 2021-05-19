@@ -7,19 +7,17 @@ import { Icon as GIcon } from 'grommet-icons';
 import { borderRadius } from 'src/theme/effects';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { hasOwnProperty, noop } from 'src/lib/util';
-import { buttonEffects } from '../styles/effects';
 import { ButtonType } from '../type';
 import { buttonStyles } from '../styles/styles';
 import { AsyncResult } from 'dstnd-io';
 import Loader from 'react-loaders';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'loaders.css';
 
 export type ActionButtonProps = {
   type: ButtonType;
   label: string;
   reverse?: boolean;
-  actionType: 'positive' | 'negative';
+  actionType: 'positive' | 'negative' | 'attention';
   confirmation?: string;
   onSubmit: (() => void) | (() => Promise<any>) | (() => AsyncResult<any, any>);
   className?: string;
@@ -120,7 +118,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
         cls.button,
         props.disabled || cls[props.type],
         full && cls.full,
-        focused && (props.actionType === 'negative' ? cls.confirmNegative : cls.confirmPositive),
+        focused && cls[props.actionType],
         isLoading && cls.hasLoader,
         className
       )}
@@ -146,7 +144,6 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
         },
       })}
       style={{
-        // backgroundColor: colors[props.type],
         ...(props.reverse && {
           flexDirection: 'row-reverse',
         }),
@@ -248,15 +245,6 @@ const useStyles = createUseStyles({
     stroke: `${colors.white} !important`,
     width: '16px !important',
     height: '16px !important',
-  },
-
-  confirmPositive: {
-    backgroundColor: `${colors.positive} !important`,
-    ...buttonEffects.positiveButtonShadow,
-  },
-  confirmNegative: {
-    backgroundColor: `${colors.negative} !important`,
-    ...buttonEffects.negativeButtonShadow,
   },
   loadingWrapper: {
     position: 'absolute',
