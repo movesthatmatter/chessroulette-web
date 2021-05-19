@@ -1,7 +1,7 @@
 import React from 'react';
-import { ChessInstance, Square } from 'chess.js';
+import { ChessInstance } from 'chess.js';
 import { getNewChessGame, toChessColor } from '../../lib';
-import { toDests } from './util';
+import { isPromotableMove, toDests } from './util';
 import {
   ChessGameColor,
   ChessGameStateFen,
@@ -35,6 +35,7 @@ type ChessState = {
 type State = {
   current: ChessState;
   uncommited?: ChessState;
+  pendingPromotionalMove?: ChessBoardProps['promotionalMove'];
 };
 
 const getCurrentChessState = (chess: ChessInstance): ChessState => {
@@ -103,14 +104,7 @@ export class ChessGameV2 extends React.Component<ChessGameV2Props, State> {
   }
 
   render() {
-    const {
-      pgn,
-      id,
-      playable,
-      orientation,
-      homeColor,
-      ...boardProps
-    } = this.props;
+    const { pgn, id, playable, orientation, homeColor, ...boardProps } = this.props;
     const chessState = this.state.uncommited || this.state.current;
 
     return (
@@ -127,28 +121,68 @@ export class ChessGameV2 extends React.Component<ChessGameV2Props, State> {
         movable={this.calcMovable()}
         lastMove={chessState.lastMove && [chessState.lastMove.from, chessState.lastMove.to]}
         orientation={orientation || homeColor}
-        onMove={(orig, dest) => {
-          const nextMove: ChessMove = {
-            from: orig as Square,
-            to: dest as Square,
-            promotion: 'q', // TODO: Fix
-          };
-          const valid = this.chess.move(nextMove);
+        onMove={async (nextMove) => {
+          this.setState({
+            pendingPromotionalMove: undefined,
+          });
 
-          if (valid) {
-            const nextChessState = getCurrentChessState(this.chess);
+          const movedPiece = this.chess.get(nextMove.from);
+
+          // If the move is a promotional move:
+          //  - save a temporary chess state
+          //  - show the Promotional Dialog inside the ChessBoard
+          //  - and wait for the player to select the Piece to promote
+          if (!nextMove.promotion && movedPiece && isPromotableMove(movedPiece, nextMove)) {
+            console.log('is prmotoavle')
+
+            const uncommitableChess = getNewChessGame(this.state.current.pgn);
+
+            const valid = uncommitableChess.move({
+              ...nextMove,
+              promotion: 'q',
+            });
+
+            if (!valid) {
+              return;
+            }
 
             this.setState({
-              uncommited: nextChessState,
+              pendingPromotionalMove: {
+                ...nextMove,
+                color: toChessColor(movedPiece.color),
+              },
+              uncommited: {
+                ...getCurrentChessState(uncommitableChess),
+                // This is needed since, as a workaround not to revert the promoting move until 
+                //  the player makes a selection, the temporarily promoted piece is a Queen,
+                //  and sometimes it can give a check - which of course is incorrect therefore
+                //  it must not show
+                inCheck: false,
+              },
             });
 
-            this.props.onMove({
-              move: nextMove,
-              fen: nextChessState.fen,
-              pgn: nextChessState.pgn,
-            });
+            return;
           }
+
+          const valid = this.chess.move(nextMove);
+
+          if (!valid) {
+            return;
+          }
+
+          const nextChessState = getCurrentChessState(this.chess);
+
+          this.setState({
+            uncommited: nextChessState,
+          });
+
+          this.props.onMove({
+            move: nextMove,
+            fen: nextChessState.fen,
+            pgn: nextChessState.pgn,
+          });
         }}
+        promotionalMove={this.state.pendingPromotionalMove}
       />
     );
   }
