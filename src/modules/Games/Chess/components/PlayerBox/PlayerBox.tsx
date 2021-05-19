@@ -26,7 +26,6 @@ export const PlayerBox: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
-
   return (
     <Box fill className={cls.container} direction="row">
       <Box fill direction="row">
