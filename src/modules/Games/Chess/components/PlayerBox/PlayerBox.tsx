@@ -4,7 +4,7 @@ import { Box } from 'grommet';
 import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, floatingShadow, fonts } from 'src/theme';
+import { floatingShadow, fonts } from 'src/theme';
 import { Countdown } from '../Countdown';
 import { PeerWithConnectionStatusDisplay } from 'src/providers/PeerProvider';
 
@@ -70,16 +70,5 @@ const useStyles = createUseStyles({
   },
   playerNameText: {
     ...fonts.small2,
-  },
-  piece: {
-    marginRight: '3px',
-  },
-
-  dot: {
-    height: '8px',
-    width: '8px',
-    backgroundColor: colors.neutral,
-    borderRadius: '50%',
-    display: 'inline-block',
   },
 });
