@@ -43,7 +43,7 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
         <div className={cls.inputContainer}>
           <div className={cls.inputBoxWrapper}>
             <textarea
-              placeholder="Message Here"
+              placeholder="Type your message here"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               className={cls.inputBox}
