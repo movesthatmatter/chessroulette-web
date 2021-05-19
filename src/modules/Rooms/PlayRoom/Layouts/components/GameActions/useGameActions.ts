@@ -29,6 +29,17 @@ export const useGameActions = () => {
         Events.trackGameStarted(color);
       }
     },
+
+    onOfferChallenge: (p: Parameters<typeof gameActions.offerChallenge>[0]) => {
+      request(gameActions.offerChallenge(p));
+    },
+    onChallengeAccepted: () => {
+      request(gameActions.acceptChallenge());
+    },
+    onChallengeDenied: () => {
+      request(gameActions.denyChallenge());
+    },
+
     onOfferDraw: () => {
       request(gameActions.offerDraw());
 
@@ -44,6 +55,7 @@ export const useGameActions = () => {
 
       Events.trackDrawDenied();
     },
+
     onResign: () => {
       request(gameActions.resign());
 
@@ -54,8 +66,9 @@ export const useGameActions = () => {
 
       Events.trackAborted();
     },
-    onRematchOffer: () => {
-      request(gameActions.offerRematch());
+
+    onRematchOffer: (p: Parameters<typeof gameActions.offerRematch>[0]) => {
+      request(gameActions.offerRematch(p));
 
       Events.trackRematchOffered();
     },
@@ -69,8 +82,11 @@ export const useGameActions = () => {
 
       Events.trackRematchDenied();
     },
+
     onOfferCanceled: () => request(gameActions.cancelOffer()),
+
     onTimerFinished: () => request(gameActions.statusCheck()),
+
     onGameStatusCheck: () => request(gameActions.statusCheck()),
   };
 };

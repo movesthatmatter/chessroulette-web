@@ -279,8 +279,15 @@ describe('REMATCH OFFERS notifications', () => {
         },
       },
     });
-    const offer: RoomPlayActivityRecord['offer'] =
-      room.activity.type === 'play' ? room.activity.offer : undefined;
+
+    const offer = room.activity.type === 'play' ? room.activity.offer : undefined;
+
+    // This is redundant but just for the sake of checking the types
+    expect(offer?.type).toBe('rematch');
+    if (offer?.type !== 'rematch') {
+      return;
+    }
+
     const notification = notificationFactory({
       current: {
         game,
@@ -304,7 +311,6 @@ describe('REMATCH OFFERS notifications', () => {
       return;
     }
 
-    expect(notification.notification.offerType).toBe('rematch');
     expect(notification.notification.status).toBe('pending');
     expect(notification.notification.byUser).toEqual(
       game.players.filter((player) => player.color === 'white')[0].user

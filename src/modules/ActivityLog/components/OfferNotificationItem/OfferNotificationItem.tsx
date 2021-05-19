@@ -8,7 +8,6 @@ import { getUserDisplayName } from 'src/modules/User';
 import { spacers } from 'src/theme/spacers';
 import { OfferNotification } from '../../types';
 
-
 type Props = {
   notification: OfferNotification;
   className?: string;
@@ -18,6 +17,7 @@ type Props = {
   onDenyOffer: (n: OfferNotification) => void;
 };
 
+/// TODO: I'm not happy with this as it doesn't fail at compile time!
 const dict = {
   'offer-rematch-pending': (n: OfferNotification) =>
     `${getUserDisplayName(n.byUser)} is asking ${getUserDisplayName(n.toUser)} for a rematch`,
@@ -31,6 +31,14 @@ const dict = {
     `${getUserDisplayName(n.byUser)}'s draw offer was sent into the void`,
   'offer-draw-accepted': (n: OfferNotification) =>
     `${getUserDisplayName(n.toUser)} accepted the draw offer`,
+  'offer-challenge-pending': (n: OfferNotification) =>
+    `${getUserDisplayName(n.byUser)} is challenging ${getUserDisplayName(
+      n.toUser
+    )} to a new game. TODO: Add Game Specs`,
+  'offer-challenge-withdrawn': (n: OfferNotification) =>
+    `${getUserDisplayName(n.byUser)}'s challenge offer was sent into the void`,
+  'offer-challenge-accepted': (n: OfferNotification) =>
+    `${getUserDisplayName(n.toUser)} accepted ${getUserDisplayName(n.byUser)}'s challenge offer`,
 };
 
 const getContent = (notification: OfferNotification) => {
@@ -52,14 +60,15 @@ export const OfferNotificationItem: React.FC<Props> = ({
   const needsAttention = notification.status === 'pending' && notification.toUser.id === me.id;
 
   return (
-    <div
-      className={cx(cls.container, needsAttention && cls.attention, className)}
-    >
+    <div className={cx(cls.container, needsAttention && cls.attention, className)}>
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
-          textAlign: 'right',
+          textAlign:
+            notification.byUser.id === me.id && notification.status === 'pending'
+              ? 'left'
+              : 'right',
         }}
       >
         {content}
@@ -69,7 +78,10 @@ export const OfferNotificationItem: React.FC<Props> = ({
             style={{
               display: 'flex',
               flexDirection: 'row',
-              justifyContent: 'flex-end',
+              justifyContent:
+                notification.byUser.id === me.id && notification.status === 'pending'
+                  ? 'flex-start'
+                  : 'flex-end',
               marginTop: spacers.small,
             }}
           >

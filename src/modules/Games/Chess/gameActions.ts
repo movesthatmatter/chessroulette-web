@@ -12,11 +12,34 @@ import {
   GameRematchDenyRequestPayload,
   GameOfferingCancelRequestPayload,
   GameStatusCheckRequestPayload,
+  GameChallengeOfferingRequestPayload,
+  GameChallengeDenyRequestPayload,
+  GameChallengeAcceptRequestPayload,
+  GameSpecsRecord,
 } from 'dstnd-io';
+
+export type OfferRematchProps = {
+  gameSpecs?: GameSpecsRecord;
+};
 
 export const gameActions = {
   join: (): GameJoinRequestPayload => ({
     kind: 'gameJoinRequest',
+    content: undefined,
+  }),
+  offerChallenge: (
+    content: GameChallengeOfferingRequestPayload['content']
+  ): GameChallengeOfferingRequestPayload => ({
+    kind: 'gameChallengeOfferingRequest',
+    content,
+  }),
+  acceptChallenge: (): GameChallengeAcceptRequestPayload => ({
+    kind: 'gameChallengeAcceptRequest',
+    content: undefined,
+  }),
+  denyChallenge: (
+  ): GameChallengeDenyRequestPayload => ({
+    kind: 'gameChallengeDenyRequest',
     content: undefined,
   }),
   abort: (): GameAbortionRequestPayload => ({
@@ -44,9 +67,9 @@ export const gameActions = {
     kind: 'gameResignationRequest',
     content: undefined,
   }),
-  offerRematch: (): GameRematchOfferingRequestPayload => ({
+  offerRematch: ({ gameSpecs }: OfferRematchProps): GameRematchOfferingRequestPayload => ({
     kind: 'gameRematchOfferingRequest',
-    content: undefined,
+    content: gameSpecs ? { gameSpecs } : undefined,
   }),
   acceptRematch: (): GameRematchAcceptRequestPayload => ({
     kind: 'gameRematchAcceptRequest',

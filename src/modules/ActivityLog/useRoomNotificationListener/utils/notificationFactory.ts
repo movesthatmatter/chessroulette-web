@@ -7,7 +7,6 @@ import { getUserDisplayName } from 'src/modules/User';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { Notification, OfferNotification } from '../../types';
 
-
 type NotificationDependencies = {
   game?: Game;
   offer?: RoomWithPlayActivityRecord['activity']['offer'];
@@ -40,7 +39,7 @@ export const notificationFactory = ({
   if (!current.game) {
     return undefined;
   }
-
+  //  const [notifications, setnotifications] = useState<Notification[]>()
   const now = new Date();
 
   if (!current.offer && prev.offer) {
@@ -57,13 +56,27 @@ export const notificationFactory = ({
           id: prev.offer.id,
           status: 'accepted',
         };
-      } else {
+      }
+
+      return {
+        type: 'update',
+        id: prev.offer.id,
+        status: 'withdrawn',
+      };
+    } else if (prev.offer.type === 'challenge') {
+      if (current.game.id !== prev.game?.id) {
         return {
           type: 'update',
           id: prev.offer.id,
-          status: 'withdrawn',
+          status: 'accepted',
         };
       }
+
+      return {
+        type: 'update',
+        id: prev.offer.id,
+        status: 'withdrawn',
+      };
     }
   } else if (current.offer) {
     switch (current.offer.type) {
@@ -88,6 +101,19 @@ export const notificationFactory = ({
             id: current.offer.id,
             type: 'offer',
             offerType: 'rematch',
+            byUser: current.offer.content.byUser,
+            toUser: current.offer.content.toUser,
+            status: 'pending',
+          },
+        };
+      case 'challenge':
+        return {
+          type: 'add',
+          notification: {
+            timestamp: toISODateTime(now),
+            id: current.offer.id,
+            type: 'offer',
+            offerType: 'challenge',
             byUser: current.offer.content.byUser,
             toUser: current.offer.content.toUser,
             status: 'pending',
