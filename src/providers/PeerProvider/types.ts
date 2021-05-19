@@ -9,7 +9,7 @@ import { PeerConnectionStatus } from 'src/services/peers';
 export type RoomCredentials = {
   id: string;
   code?: string;
-}
+};
 
 export type Peer = PeerRecord & {
   connection: {

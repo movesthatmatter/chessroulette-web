@@ -1,21 +1,21 @@
-import { Box } from 'grommet';
 import React, { LegacyRef, useRef } from 'react';
+import { Box } from 'grommet';
+import cx from 'classnames';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
-import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { GameRoomLayout } from 'src/modules/GameRoomV2/GameRoomLayout/GameRoomLayout';
-import { borderRadius, colors, floatingShadow, fonts, softBorderRadius } from 'src/theme';
-import cx from 'classnames';
+import { borderRadius, colors, floatingShadow, softBorderRadius } from 'src/theme';
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 import { GameActions } from '../components/GameActions';
-import { ChessGameV2 } from 'src/modules/Games/Chess/components/ChessGameV2';
 import { StreamingBox } from 'src/components/StreamingBox';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faListAlt } from '@fortawesome/free-solid-svg-icons';
 import { ChatContainer } from 'src/modules/Chat';
 import { LayoutProps } from '../types';
 import { RoomDetails } from '../components/RoomDetails';
 import { ExitRoomButton } from '../components/ExitRoomButton/ExitRoomButton';
+import { TabComponent } from '../components/TabComponent/TabComponent';
+import { ActivityLog } from 'src/modules/ActivityLog';
+import { GenericGame } from 'src/modules/Games/GenericGame';
 
 type Props = LayoutProps;
 
@@ -109,14 +109,14 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                 onTimerFinished={props.onTimerFinished}
               />
             </div>
-            <GameActions
-              game={game}
-              onAbort={props.onAbort}
-              onRematchOffer={props.onRematchOffer}
-              onOfferDraw={props.onOfferDraw}
-              onResign={props.onResign}
-              className={cls.gameActionsContainer}
-            />
+            {props.meAsPlayer && (
+              <GameActions
+                game={game}
+                myPlayer={props.meAsPlayer}
+                className={cls.gameActionsContainer}
+                roomActivity={props.room.activity}
+              />
+            )}
           </div>
         )}
         getGameComponent={({ container }) => (
@@ -125,14 +125,12 @@ export const DesktopLayout: React.FC<Props> = (props) => {
             style={{ width: 'fit-content', height: 'fit-content', ...borderRadius }}
             ref={chessboardRef as any}
           >
-            <ChessGameV2
-              id={game.id}
-              pgn={props.displayedPgn === undefined ? game.pgn : props.displayedPgn}
-              onMove={({ move, pgn }) => {
-                props.onMove(move, pgn, [], props.homeColor);
-              }}
-              size={container.width}
+            <GenericGame
+              // Reset the State each time the game id changes
+              key={game.id}
+              game={game}
               homeColor={props.homeColor}
+              size={container.width}
               playable={props.playable}
               className={cls.board}
               notificationDialog={props.gameNotificationDialog}
@@ -181,43 +179,49 @@ export const DesktopLayout: React.FC<Props> = (props) => {
                   containerClassName={cls.streamingBox}
                 />
               </div>
-              <div
-                style={{
-                  paddingTop: '16px',
-                  paddingBottom: '16px',
-                  borderBottom: '1px solid',
-                  borderColor: colors.neutral,
-                }}
-              >
-                <Text
-                  style={{
-                    ...fonts.subtitle2,
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={faComment}
-                    size="lg"
-                    color={colors.neutral}
-                    style={{
-                      marginRight: '8px',
-                    }}
-                  />
-                  Messages
-                </Text>
-              </div>
-              <div
-                style={{
-                  borderColor: colors.neutral,
-                  overflow: 'hidden',
-                  flex: 1,
-                }}
-              >
-                <ChatContainer
-                  inputContainerStyle={{
-                    height: `${BOTTOM_HEIGHT + container.verticalPadding}px`,
-                  }}
-                />
-              </div>
+              <TabComponent
+                tabs={[
+                  {
+                    title: 'Activity Log',
+                    content: (
+                      <div
+                        style={{
+                          borderColor: colors.neutral,
+                          overflow: 'hidden',
+                          flex: 1,
+                        }}
+                      >
+                        <ActivityLog
+                          bottomContainerStyle={{
+                            height: `${BOTTOM_HEIGHT + container.verticalPadding - 1}px`,
+                          }}
+                          game={game}
+                        />
+                      </div>
+                    ),
+                    icon: faListAlt,
+                  },
+                  {
+                    title: 'Messages',
+                    content: (
+                      <div
+                        style={{
+                          borderColor: colors.neutral,
+                          overflow: 'hidden',
+                          flex: 1,
+                        }}
+                      >
+                        <ChatContainer
+                          inputContainerStyle={{
+                            height: `${BOTTOM_HEIGHT + container.verticalPadding}px`,
+                          }}
+                        />
+                      </div>
+                    ),
+                    icon: faComment,
+                  },
+                ]}
+              />
             </div>
           </div>
         )}

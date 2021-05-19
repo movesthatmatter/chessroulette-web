@@ -1,53 +1,130 @@
 import { createReducer, createAction } from 'deox';
+import { RoomRecord } from 'dstnd-io';
 import { GenericStateSlice } from 'src/redux/types';
 
-export type State = {
-  // Cqmera & Mic Permissions
-  permissionsRequestAgreed: boolean;
-  permissionsGranted: boolean;
-  browserIsSupported: boolean;
-  confirmedRoomJoin: boolean;
+export type State =
+  | null
+  | {
+      // Browser Support
+      browserIsSupported: undefined | boolean;
 
-  ready: boolean;
-}
+      // Browser Camera/Mic Permissions
+      permissionsRequestAgreed: undefined | boolean;
+      permissionsGranted: undefined | boolean;
 
-export const initialState: State = {
-  permissionsRequestAgreed: false,
-  permissionsGranted: false,
-  confirmedRoomJoin: false,
+      // Room Permissions
+      confirmedRoomJoin: {
+        status: boolean;
+        roomSlug: RoomRecord['id'];
+      } | {
+        status: undefined;
+      };
 
-  // This is true by default until a check called from
-  // a specific place sets it to false!
-  browserIsSupported: true,
+      // All
+      ready: boolean;
+    };
 
-  // TODO: Add
-  // loggedInIfRandom: false
+export const initialState: State = null;
 
-  ready: false,
-};
-
+export const checkRoomAction = createAction(
+  'CheckRoom',
+  (resolve) => (p: { roomSlug: RoomRecord['slug'] }) => resolve(p)
+);
 export const agreePermissionsRequestAction = createAction('AgreePermissionsRequest');
 export const grantPermissionsAction = createAction('GrantPermisssions');
+export const refusePermissionsAction = createAction('RefusePermisssions');
 export const refuseBrowserSuppport = createAction('RefuseBrowserSuppport');
-export const confirmJoiningRoomAction = createAction('ConfirmJoiningRoomAction');
+export const confirmJoiningRoomAction = createAction(
+  'ConfirmJoiningRoomAction',
+  (resolve) => (p: { roomSlug: RoomRecord['slug'] }) => resolve(p),
+);
 
-const getReadyFlag = (state: State) => {
-  return state.permissionsGranted && state.confirmedRoomJoin && state.browserIsSupported;
-}
+const getReadyFlag = (state: Omit<NonNullable<State>, 'ready'>) => {
+  return !!(
+    state
+    && state.permissionsGranted
+    && state.confirmedRoomJoin.status
+    && state.browserIsSupported
+  );
+};
 
-export const reducer = createReducer(initialState as State, (handleAction) => ([
+export const reducer = createReducer(initialState as State, (handleAction) => [
+  // handleAction(checkRoomAction),
+  handleAction(checkRoomAction, (state, { payload }) => {
+    // If the rooms are the same just return the prev state
+    if (
+      state
+      && state.confirmedRoomJoin.status
+      && state.confirmedRoomJoin.roomSlug === payload.roomSlug
+    ) {
+      return state;
+    }
+
+    const nextState: Omit<NonNullable<State>, 'ready'> = {
+      // Default to true until a check called from
+      // a specific place sets it to false!
+      // TODO: Maybe move from here?
+      browserIsSupported: state ? state.browserIsSupported : true,
+
+      // Camera & Mic Permissions
+      // If the Browser checks were already made for another room,
+      //  there's no point to ask them again!
+      // TODO: This should probably have an expiry limit of max 24h
+      permissionsRequestAgreed: state?.permissionsRequestAgreed,
+      permissionsGranted: state?.permissionsGranted,
+
+      // Room Permissions
+      // When the room changes the User has to explicityly join it at lease once!
+      // confirmedRoomJoin: false,
+      confirmedRoomJoin: {
+        roomSlug: payload.roomSlug,
+        status: false,
+      },
+    };
+
+    return {
+      ...nextState,
+
+      // All
+      ready: getReadyFlag(nextState),
+    };
+  }),
+
   handleAction(agreePermissionsRequestAction, (state) => {
+    if (!state) {
+      return state;
+    }
+
     const nextState = {
       ...state,
       permissionsRequestAgreed: true,
+    } as const;
+
+    return {
+      ...nextState,
+      ready: getReadyFlag(nextState),
+    };
+  }),
+  handleAction(refusePermissionsAction, (state) => {
+    if (!state) {
+      return state;
+    }
+
+    const nextState = {
+      ...state,
+      permissionsGranted: false,
     };
 
     return {
       ...nextState,
       ready: getReadyFlag(nextState),
-    }
+    };
   }),
   handleAction(grantPermissionsAction, (state) => {
+    if (!state) {
+      return state;
+    }
+
     const nextState = {
       ...state,
       permissionsGranted: true,
@@ -56,9 +133,13 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
     return {
       ...nextState,
       ready: getReadyFlag(nextState),
-    }
+    };
   }),
   handleAction(refuseBrowserSuppport, (state) => {
+    if (!state) {
+      return state;
+    }
+
     const nextState = {
       ...state,
       browserIsSupported: false,
@@ -67,20 +148,27 @@ export const reducer = createReducer(initialState as State, (handleAction) => ([
     return {
       ...nextState,
       ready: getReadyFlag(nextState),
-    }
+    };
   }),
-  handleAction(confirmJoiningRoomAction, (state) => {
-    const nextState = {
+  handleAction(confirmJoiningRoomAction, (state, { payload }) => {
+    if (!state) {
+      return state;
+    }
+
+    const nextState: State = {
       ...state,
-      confirmedRoomJoin: true,
+      confirmedRoomJoin: {
+        status: true,
+        roomSlug: payload.roomSlug,
+      },
     };
 
     return {
       ...nextState,
       ready: getReadyFlag(nextState),
-    }
-  })
-]));
+    };
+  }),
+]);
 
 export const stateSliceByKey = {
   roomBouncer: reducer,

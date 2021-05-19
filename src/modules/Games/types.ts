@@ -1,9 +1,16 @@
-import { CapturedPiecesRecord, ChessGameState, GameRecord, GameRecordFromGameState } from 'dstnd-io';
+import {
+  ActivePiecesRecord,
+  ChessGameState,
+  GameRecord,
+  GameRecordFromGameState,
+} from 'dstnd-io';
 
 export type Game = GameRecord & {
-  captured: CapturedPiecesRecord;
+  activePieces: ActivePiecesRecord;
 };
 
-export type GameFromGameState<TGameState extends ChessGameState> = GameRecordFromGameState<TGameState> & {
-  captured: CapturedPiecesRecord;
+export type GameFromGameState<
+  TGameState extends ChessGameState
+> = GameRecordFromGameState<TGameState> & {
+  activePieces: ActivePiecesRecord;
 };

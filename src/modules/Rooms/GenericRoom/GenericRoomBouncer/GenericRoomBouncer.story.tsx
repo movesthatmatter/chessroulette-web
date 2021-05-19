@@ -24,7 +24,10 @@ export const defaultStory = () =>
         <StorybookReduxProvider
           initialState={{
             roomBouncer: {
-              confirmedRoomJoin: false,
+              confirmedRoomJoin: {
+                roomSlug: '1',
+                status: false,
+              },
               permissionsGranted: false,
               permissionsRequestAgreed: false,
               browserIsSupported: false,

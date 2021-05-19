@@ -11,6 +11,8 @@ type Props = Omit<ChatProps, 'onSend' | 'messages' | 'myId' | 'history'>;
 
 export const ChatContainer: React.FC<Props> = (chatProps) => {
   return (
+    // TODO: Maybe it's better for this to be taken from redux!
+    //  As the Room already contains it!
     <PeerConsumer
       renderFallback={(r) => {
         if (r.state === 'error') {

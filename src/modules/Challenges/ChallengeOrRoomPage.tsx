@@ -49,7 +49,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
   }
 
   if (roomInfo) {
-    return <GenericRoomPage roomInfo={roomInfo} />;
+    return <GenericRoomPage roomInfo={roomInfo} key={roomInfo.slug} />;
   }
 
   const goBackOrHome = () => {

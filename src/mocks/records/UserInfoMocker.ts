@@ -1,6 +1,7 @@
 import Chance from 'chance';
 import { UserInfoRecord } from 'dstnd-io';
 import { getRandomInt } from 'src/lib/util';
+import { getAllCountries } from 'src/services/Location/resources';
 
 const chance = new Chance();
 
@@ -18,6 +19,18 @@ export class UserInfoMocker {
       lastName,
       name,
       avatarId: String(getRandomInt(0, 18)),
+      country: {
+        code: 'US',
+        name: 'United States',
+        currency: 'USD',
+        languages: ['english'],
+        flagEmoji: '',
+        flagEmojiU: '',
+        phone: '',
+      },
+      username: `${chance.animal}.${chance.city}`,
+      isGuest: false,
+      profilePicUrl: '',
     };
   }
 
@@ -25,6 +38,6 @@ export class UserInfoMocker {
     return {
       ...this.record(),
       ...props,
-    };
+    } as UserInfoRecord;
   }
 }

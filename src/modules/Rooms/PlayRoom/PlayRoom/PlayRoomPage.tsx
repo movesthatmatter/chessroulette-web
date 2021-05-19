@@ -67,6 +67,8 @@ export const PlayRoomPage: React.FC<Props> = ({ room }) => {
         peerState.client.onMessage((payload) => {
           if (payload.kind === 'joinedGameUpdated') {
             setGame(gameRecordToGame(payload.content));
+          } else if (payload.kind === 'joinedRoomAndGameUpdated'){
+            setGame(gameRecordToGame(payload.content.game));
           }
         }),
       ];
@@ -128,7 +130,8 @@ export const PlayRoomPage: React.FC<Props> = ({ room }) => {
         Events.trackAborted();
       }}
       onRematchOffer={() => {
-        request(gameActions.offerRematch());
+        // TODO: Fix or remove
+        // request(gameActions.offerRematch());
 
         Events.trackRematchOffered();
       }}

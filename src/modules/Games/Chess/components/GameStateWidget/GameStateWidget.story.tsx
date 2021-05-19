@@ -35,7 +35,7 @@ export const defaultStory = () => (
         game={
           gameMocker.withProps({
             state: 'pending',
-            timeLimit: 'blitz',
+            timeLimit: 'blitz5',
             players: [
               {
                 color: 'white',
@@ -85,7 +85,7 @@ export const withTimeFinished = () => (
             game={
               gameMocker.withProps({
                 state: 'stopped',
-                timeLimit: 'blitz',
+                timeLimit: 'blitz5',
                 players: [
                   {
                     color: 'white',
@@ -128,7 +128,7 @@ export const withGameStarted = () => (
         homeColor="black"
         game={gameMocker.withProps({
           state: 'started',
-          timeLimit: 'blitz',
+          timeLimit: 'blitz5',
           players: [
             {
               color: 'white',

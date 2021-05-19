@@ -1,6 +1,6 @@
 import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { defaultTheme } from 'src/theme';
 import { ActionButton } from './ActionButton';
 import { Anchor, Upload } from 'grommet-icons';
@@ -68,6 +68,21 @@ export const defaultStory = () => (
             onSubmit={action('on submit action a')}
           />
         </div>
+        <div
+          style={{
+            marginBottom: '16px',
+          }}
+        >
+          <ActionButton
+            type="attention"
+            actionType="negative"
+            label="No Hover Action A"
+            hideLabelUntilHover={false}
+            disabled
+            icon={Anchor}
+            onSubmit={action('on submit action a')}
+          />
+        </div>
       </div>
       <div
         style={{
@@ -131,6 +146,25 @@ export const defaultStory = () => (
               actionType="negative"
               label="No Hover Action B"
               icon={Upload}
+              reverse
+              hideLabelUntilHover={false}
+              onSubmit={action('on submit action b')}
+            />
+          </div>
+          <div
+            style={{
+              marginBottom: '16px',
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <ActionButton
+              type="primary"
+              actionType="negative"
+              label="No Hover Action B"
+              icon={Upload}
+              disabled
               reverse
               hideLabelUntilHover={false}
               onSubmit={action('on submit action b')}
@@ -285,3 +319,109 @@ export const defaultStory = () => (
     </div>
   </Grommet>
 );
+
+export const diablingOnFirstClickStory = () =>
+  React.createElement(() => {
+    const [isDisabled, setIsDisabled] = useState(false);
+
+    useEffect(action(`Disabled: ${isDisabled}`), [isDisabled]);
+
+    return (
+      <Grommet theme={defaultTheme}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div
+            style={{
+              width: '300px',
+              // padding: '0 32px',
+            }}
+          >
+            <h5>Aligned Left</h5>
+            <div
+              style={{
+                marginBottom: '16px',
+              }}
+            >
+              <ActionButton
+                type="primary"
+                actionType="positive"
+                label="Action A"
+                icon={Anchor}
+                disabled={isDisabled}
+                onFirstClick={() => {
+                  action('Going to disable')();
+                  setTimeout(() => {
+                    setIsDisabled(true);
+                  }, 1000);
+                }}
+                onSubmit={() => {
+                  action('on submit action a')();
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </Grommet>
+    );
+  });
+
+  export const enablingAfterTwoSecondsStory = () =>
+  React.createElement(() => {
+    const [isDisabled, setIsDisabled] = useState(true);
+
+    useEffect(action(`Disabled: ${isDisabled}`), [isDisabled]);
+
+    useEffect(() => {
+      setTimeout(() => {
+        setIsDisabled(false);
+      }, 2 * 1000);
+    }, [])
+
+    return (
+      <Grommet theme={defaultTheme}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div
+            style={{
+              width: '300px',
+              // padding: '0 32px',
+            }}
+          >
+            <h5>Aligned Left</h5>
+            <div
+              style={{
+                marginBottom: '16px',
+              }}
+            >
+              <ActionButton
+                type="primary"
+                actionType="positive"
+                label="Action A"
+                icon={Anchor}
+                disabled={isDisabled}
+                onFirstClick={() => {
+                  action('On First Click')();
+                  // setTimeout(() => {
+                  //   setIsDisabled(true);
+                  // }, 1000);
+                }}
+                onSubmit={() => {
+                  action('On Submit')();
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </Grommet>
+    );
+  });
