@@ -19,7 +19,15 @@ export const fromStartingPosition = () =>
     // const [fen, setFen] = useState('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
     const game = gameMocker.pending();
 
-    return <ChessGameV2 id={game.id} pgn={game.pgn} homeColor="black" onMove={({ fen }) => {}} />;
+    return (
+      <ChessGameV2
+        id={game.id}
+        pgn={game.pgn}
+        homeColor="black"
+        onMove={({ fen }) => {}}
+        size={400}
+      />
+    );
   });
 
 export const withGameStarted = () =>

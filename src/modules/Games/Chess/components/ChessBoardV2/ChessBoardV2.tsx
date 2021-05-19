@@ -9,7 +9,7 @@ import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme'
 
 export type ChessBoardProps = Omit<ChessgroundProps, 'width' | 'height'> & {
   className?: string;
-  size?: number;
+  size: number;
   notificationDialog?: (p: { size?: number }) => DialogContentProps;
 };
 
