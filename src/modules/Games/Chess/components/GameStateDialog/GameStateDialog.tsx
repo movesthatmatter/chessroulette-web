@@ -7,8 +7,8 @@ import { Emoji } from 'src/components/Emoji';
 import { useFeedbackDialog } from 'src/components/FeedbackDialog/useFeedbackDialog';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { Text } from 'src/components/Text';
-import { otherChessColor } from 'src/modules/Games/Chess/util';
 import { getPlayerByColor } from '../../../../GameRoomV2/util';
+import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 
 type Props = {
   roomActivity: RoomWithPlayActivity['activity'];

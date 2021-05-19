@@ -16,12 +16,12 @@ import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import HumanizeDuration from 'humanize-duration';
 import { GameRecordFinished, GameRecordStopped, RegisteredUserRecord } from 'dstnd-io';
 import { Emoji } from 'src/components/Emoji';
-import { otherChessColor } from 'src/modules/Games/Chess/util';
 import dateformat from 'dateformat';
 import capitalize from 'capitalize';
 import { ClipboardCopy } from 'src/components/ClipboardCopy';
 import { useWindowWidth } from '@react-hook/window-size';
 import { getPlayer } from 'src/modules/GameRoomV2/util';
+import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 
 type Props = {
   game: GameRecordFinished | GameRecordStopped;

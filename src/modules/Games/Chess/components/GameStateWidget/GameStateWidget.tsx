@@ -1,9 +1,8 @@
-import { ChessGameColor, UserRecord } from 'dstnd-io';
+import { ChessGameColor } from 'dstnd-io';
 import React, { useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
 import { floatingShadow, softBorderRadius } from 'src/theme/effects';
-import { otherChessColor } from '../../util';
 import { colors, fonts } from 'src/theme';
 import { PlayerBox } from '../PlayerBox/PlayerBox';
 import { GameHistory } from '../GameHistory';
@@ -12,6 +11,7 @@ import { getRelativeMaterialScore } from './util';
 import { Events } from 'src/services/Analytics';
 import { noop } from 'src/lib/util';
 import { Game } from 'src/modules/Games/types';
+import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 
 type Props = {
   game: Game;

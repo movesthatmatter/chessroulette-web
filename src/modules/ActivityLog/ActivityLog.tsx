@@ -4,7 +4,7 @@ import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { Game } from 'src/modules/Games';
 import { selectMyPeer } from 'src/providers/PeerProvider';
 import { colors } from 'src/theme';
-import { useGameActions } from '../Rooms/PlayRoom/Layouts/components/GameActions/useGameActions';
+import { useGameActions } from 'src/modules/Games/GameActions';
 import { InfoNotificationItem } from './components/InfoNotificationItem';
 import { OfferNotificationItem } from './components/OfferNotificationItem';
 import { selectCurrentRoomActivityLog } from './redux/selectors';

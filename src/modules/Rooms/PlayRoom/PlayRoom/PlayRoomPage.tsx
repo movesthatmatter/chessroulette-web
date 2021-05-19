@@ -1,14 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { gameActions } from 'src/modules/Games/Chess/gameActions';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { Events } from 'src/services/Analytics';
-import { SocketClient } from 'src/services/socket/SocketClient';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { PlayRoom } from 'src/modules/Rooms/PlayRoom/PlayRoom/PlayRoom';
-import { chessGameUtils } from 'dstnd-io';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { Game } from 'src/modules/Games';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
+import { useGameActions } from 'src/modules/Games/GameActions';
 
 
 type Props = {
@@ -19,18 +17,11 @@ export const PlayRoomPage: React.FC<Props> = ({ room }) => {
   const peerState = usePeerState();
   const [connectionAttempt, setConnectionAttempt] = useState(false);
 
+  // TODO: Move all the game actions/updates/state in modules/ChessGame
+  const gameActions = useGameActions();
+
   // TODO: This could be in redux but it's ok for now!
   const [game, setGame] = useState<Game>();
-
-  const request: SocketClient['send'] = (payload) => {
-    // TODO: Look into what to do if not open!
-    // THE ui should actually change and not allow interactions, but ideally
-    //  the room still shows!
-    // TODO: That should actually be somewhere global maybe!
-    if (peerState.status === 'open') {
-      peerState.client.sendMessage(payload);
-    }
-  };
 
   const connectToRoom = useCallback(() => {
     if (peerState.status === 'open' && peerState.hasJoinedRoom && !connectionAttempt) {
@@ -61,7 +52,8 @@ export const PlayRoomPage: React.FC<Props> = ({ room }) => {
       //  it's joined by both players or something alike!
       // This could also help with the idea of creating new games from inside the room
       //  between different peers than the ones that created & accepted the challenge
-      request(gameActions.join());
+      // request(gameActions.join());
+      gameActions.onJoin();
 
       const unsubscribers = [
         peerState.client.onMessage((payload) => {
@@ -93,61 +85,6 @@ export const PlayRoomPage: React.FC<Props> = ({ room }) => {
       key={room.id}
       room={room}
       game={game}
-      onMove={(nextMove, _, history, color) => {
-        request(gameActions.move(nextMove));
-
-        // Track Game Started for both Colors
-        if (
-          (color === 'white' && history.length === 1) ||
-          (color === 'black' && history.length === 2)
-        ) {
-          Events.trackGameStarted(color);
-        }
-      }}
-      onOfferDraw={() => {
-        request(gameActions.offerDraw());
-
-        Events.trackDrawOffered();
-      }}
-      onDrawAccepted={() => {
-        request(gameActions.acceptDraw());
-
-        Events.trackDrawAccepted();
-      }}
-      onDrawDenied={() => {
-        request(gameActions.denyDraw());
-
-        Events.trackDrawDenied();
-      }}
-      onResign={() => {
-        request(gameActions.resign());
-
-        Events.trackResigned();
-      }}
-      onAbort={() => {
-        request(gameActions.abort());
-
-        Events.trackAborted();
-      }}
-      onRematchOffer={() => {
-        // TODO: Fix or remove
-        // request(gameActions.offerRematch());
-
-        Events.trackRematchOffered();
-      }}
-      onRematchAccepted={() => {
-        request(gameActions.acceptRematch());
-
-        Events.trackRematchAccepted();
-      }}
-      onRematchDenied={() => {
-        request(gameActions.denyRematch());
-
-        Events.trackRematchDenied();
-      }}
-      onOfferCanceled={() => request(gameActions.cancelOffer())}
-      onTimerFinished={() => request(gameActions.statusCheck())}
-      onGameStatusCheck={() => request(gameActions.statusCheck())}
     />
   );
 };

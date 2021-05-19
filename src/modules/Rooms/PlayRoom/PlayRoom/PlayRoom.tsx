@@ -1,37 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useWindowWidth } from '@react-hook/window-size';
-import { ChessGameColor, ChessGameStatePgn, ChessHistory, ChessMove } from 'dstnd-io';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
-import { GameStateDialog } from 'src/modules/Games/Chess/components/GameStateDialog';
-import { useSoundEffects } from 'src/modules/Games/Chess';
 import { MOBILE_BREAKPOINT } from 'src/theme';
-import { DesktopLayout, ChessGameHistory, MobileLayout } from '../Layouts';
 import { getPlayerStats } from 'src/modules/Games/Chess/lib';
 import { Game } from 'src/modules/Games';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { DialogContentProps } from 'src/components/Dialog';
 import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
+import { PlayRoomMobile } from './PlayRoomMobile';
+import { PlayRoomDesktop } from './PlayRoomDesktop';
 
 type Props = {
   room: RoomWithPlayActivity;
   game: Game;
-  onMove: (
-    m: ChessMove,
-    pgn: ChessGameStatePgn,
-    history: ChessGameHistory,
-    color: ChessGameColor
-  ) => void;
-  onResign: () => void;
-  onAbort: () => void;
-  onOfferDraw: () => void;
-  onDrawAccepted: () => void;
-  onDrawDenied: () => void;
-  onRematchOffer: () => void;
-  onRematchAccepted: () => void;
-  onRematchDenied: () => void;
-  onOfferCanceled: () => void;
-  onTimerFinished: () => void;
-  onGameStatusCheck: () => void;
 };
 
 const areBothPlayersJoined = ({ peersIncludingMe }: RoomWithPlayActivity, game: Game) => {
@@ -79,7 +60,7 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
 
   // TODO: Need to make sure the given game has the same id as the activity game id
 
-  useSoundEffects(game);
+  // useSoundEffects(game);
 
   const playerStats = getPlayerStats(game, props.room.me.id);
   const homeColor = playerStats.player?.color || 'white';
@@ -92,11 +73,12 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
     hasCloseButton: false,
     content: <AwesomeLoader sayings={sayings} size={p.size ? p.size / 4 : 50} />,
     buttons: [
-      {
-        label: 'Abort Game',
-        type: 'secondary',
-        onClick: () => props.onAbort(),
-      },
+      // TODO: Add back
+      // {
+      //   label: 'Abort Game',
+      //   type: 'secondary',
+      //   onClick: () => props.onAbort(),
+      // },
     ],
   });
 
@@ -107,15 +89,9 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
   const content = () => {
     if (windowWidth <= MOBILE_BREAKPOINT) {
       return (
-        <MobileLayout
+        <PlayRoomMobile
           room={props.room}
           game={game}
-          onMove={props.onMove}
-          onAbort={props.onAbort}
-          onOfferDraw={props.onOfferDraw}
-          onRematchOffer={props.onRematchOffer}
-          onResign={props.onResign}
-          onTimerFinished={props.onTimerFinished}
           onHistoryIndexUpdated={setGameDisplayedHistoryIndex}
           historyIndex={gameDisplayedHistoryIndex}
           displayedPgn={displayedPgn}
@@ -129,15 +105,9 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
     }
 
     return (
-      <DesktopLayout
+      <PlayRoomDesktop
         room={props.room}
         game={game}
-        onMove={props.onMove}
-        onAbort={props.onAbort}
-        onOfferDraw={props.onOfferDraw}
-        onRematchOffer={props.onRematchOffer}
-        onResign={props.onResign}
-        onTimerFinished={props.onTimerFinished}
         onHistoryIndexUpdated={setGameDisplayedHistoryIndex}
         historyIndex={gameDisplayedHistoryIndex}
         displayedPgn={displayedPgn}

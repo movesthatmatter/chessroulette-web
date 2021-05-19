@@ -1,233 +1,219 @@
-import React, { LegacyRef, useRef } from 'react';
-import { Box } from 'grommet';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import cx from 'classnames';
-import { NavigationHeader, UserMenu } from 'src/components/Navigation';
 import { createUseStyles } from 'src/lib/jss';
-import { GameRoomLayout } from 'src/modules/GameRoomV2/GameRoomLayout/GameRoomLayout';
-import { borderRadius, colors, floatingShadow, softBorderRadius } from 'src/theme';
-import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
-import { GameActions } from '../components/GameActions';
-import { StreamingBox } from 'src/components/StreamingBox';
-import { faComment, faListAlt } from '@fortawesome/free-solid-svg-icons';
-import { ChatContainer } from 'src/modules/Chat';
-import { LayoutProps } from '../types';
-import { RoomDetails } from '../components/RoomDetails';
-import { ExitRoomButton } from '../components/ExitRoomButton/ExitRoomButton';
-import { TabComponent } from '../components/TabComponent/TabComponent';
-import { ActivityLog } from 'src/modules/ActivityLog';
-import { GenericGame } from 'src/modules/Games/GenericGame';
+import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
+import { getLayoutSizes, Ratios, isMobile as getIsMobile } from './util';
 
-type Props = LayoutProps;
+type ContainerDimensions = {
+  width: number;
+  height: number;
+  verticalPadding: number;
+  horizontalPadding: number;
+}
 
-const TOP_HEIGHT = 80;
-const BOTTOM_HEIGHT = 80;
+type ExtendedDimensions = {
+  container: ContainerDimensions;
+  top: ContainerDimensions;
+  main: ContainerDimensions;
+  bottom: ContainerDimensions;
+  center: ContainerDimensions;
+  left: ContainerDimensions;
+  right: ContainerDimensions;
+  isMobile: boolean;
+}
 
-export const DesktopLayout: React.FC<Props> = (props) => {
+type Props = {
+  getGameComponent: (d: ExtendedDimensions) => ReactNode;
+  getRightSideComponent: (d: ExtendedDimensions) => ReactNode;
+  getLeftSideComponent: (d: ExtendedDimensions) => ReactNode;
+  getTopComponent: (d: ExtendedDimensions) => ReactNode;
+  getBottomComponent: (d: ExtendedDimensions) => ReactNode;
+  // getMobileComponent: () => ReactNode;
+  topHeight: number;
+  bottomHeight: number;
+  offsets?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
+  minSpaceBetween?: number;
+  ratios?: Partial<Ratios>;
+  className?: string;
+  addRemainingTo?: 'left' | 'center' | 'right' | 'space-between';
+};
+
+export const DesktopLayout: React.FC<Props> = ({
+  offsets = {
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  minSpaceBetween = 0,
+  className,
+  ...props
+}) => {
   const cls = useStyles();
-  const dialogTarget = useRef();
-  const chessboardRef = useRef();
+  const containerRef = useRef(null);
+  const containerDimensions = useContainerDimensions(containerRef);
 
-  const { game } = props;
+  const horizontalOffset = (offsets.right || 0) + (offsets?.left || 0);
+  const verticalOffset = (offsets?.top || 0) + (offsets?.bottom || 0);
+  const [isMobile, setIsMobile] = useState(getIsMobile(containerDimensions));
+
+  const getLayout = () => {
+    if (!containerDimensions.updated) {
+      return {
+        leftSide: 0,
+        gameArea: 0,
+        rightSide: 0,
+        remaining: 0,
+      }
+    }
+
+    const width = containerDimensions.width - horizontalOffset - (minSpaceBetween * 2);
+    const height = containerDimensions.height - verticalOffset;
+
+    return getLayoutSizes(
+      {
+        width,
+        height,
+      },
+      {
+        leftSide: 0.5,
+        gameArea: 1,
+        rightSide: 0.5,
+        ...props.ratios,
+      }
+    );
+  };
+
+  const [layout, setLayout] = useState(() => getLayout());
+
+  useEffect(() => {
+    setLayout(getLayout());
+    setIsMobile(getIsMobile(containerDimensions));
+  }, [containerDimensions]);
+
+  const verticalPadding = (containerDimensions.height - layout.gameArea);
+
+  const occupiedWidth = Math.floor((layout.leftSide + layout.gameArea + layout.rightSide) + (minSpaceBetween * 2));
+
+  const extendedDimensions: Omit<ExtendedDimensions, 'container'> = {
+    left: {
+      width: layout.leftSide,
+      height: layout.gameArea,
+      horizontalPadding: 0,
+      verticalPadding,
+    },
+    right: {
+      width: layout.rightSide,
+      height: layout.gameArea,
+      horizontalPadding: 0,
+      verticalPadding,
+    },
+    center: {
+      width: layout.gameArea,
+      height: layout.gameArea,
+      horizontalPadding: 0,
+      verticalPadding,
+    },
+    main: {
+      width: occupiedWidth,
+      height: containerDimensions.height,
+      horizontalPadding: containerDimensions.width - occupiedWidth,
+      verticalPadding,
+    },
+    top: {
+      width: containerDimensions.width,
+      height: props.topHeight,
+      horizontalPadding: 0,
+      verticalPadding,
+    },
+    bottom: {
+      width: containerDimensions.width,
+      height: props.bottomHeight,
+      horizontalPadding: 0,
+      verticalPadding,
+    },
+    isMobile,
+  };
 
   return (
-    <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
-      <GameRoomLayout
-        className={cls.layout}
-        ratios={{
-          leftSide: 1.2,
-          gameArea: 3,
-          rightSide: 2,
-        }}
-        minSpaceBetween={30}
-        topHeight={TOP_HEIGHT}
-        getTopComponent={({ right }) => (
-          <Box fill direction="row" style={{ height: '100%' }}>
-            <div
-              style={{
-                flex: 1,
-                paddingLeft: '16px',
-                paddingTop: '16px',
-                flexDirection: 'row',
-                display: 'flex',
-              }}
-            >
-              <div style={{ flex: 1 }}>
-                <NavigationHeader logoAsLink={false} />
-              </div>
-              <div
-                style={{
-                  height: `${TOP_HEIGHT}px`,
-                  paddingRight: '30px',
-                }}
-              >
-                <UserMenu reversed withDropMenu linksTarget="blank" />
-              </div>
-            </div>
-            <div
-              style={{
-                width: right.width,
-              }}
-            />
-          </Box>
-        )}
-        bottomHeight={BOTTOM_HEIGHT}
-        getBottomComponent={() => null}
-        // getBottomComponent={({ right, left, main }) => (
-        //   <div
-        //     style={{
-        //       display: 'flex',
-        //       flexDirection: 'row',
-        //     }}
-        //   >
-        //     <div style={{ width: left.width }} />
-        //     <div style={{ width: main.width }}>
-        //       <Footer />
-        //     </div>
-        //     <div style={{ width: right.width }} />
-        //   </div>
-        // )}
-        getLeftSideComponent={({ container, main }) => (
-          <div
-            className={cx(cls.side, cls.leftSide)}
+    <div className={cx(cls.container, className)}>
+      <div className={cls.top} style={{
+        height: props.topHeight,
+      }}>
+        {props.getTopComponent({
+          ...extendedDimensions,
+          container: extendedDimensions.top,
+        })}
+      </div>
+      <div className={cls.contentContainer} ref={containerRef} style={{
+          // This is needed so the flex works correctly on the content children
+          height: `calc(100% - ${props.topHeight + props.bottomHeight}px)`,
+        }}>
+        <div className={cls.content}>
+          <aside
+            className={cls.side}
             style={{
-              flex: 1,
-              height: container.height,
-              paddingLeft: `${main.horizontalPadding < 32 ? 32 - main.horizontalPadding : 0}px`,
+              width: `${layout.leftSide}px`,
+              marginRight: minSpaceBetween,
+              height: `100%`,
             }}
           >
-            <div style={{ height: '30%' }} />
-            <div style={{ height: '40%' }}>
-              <GameStateWidget
-                // This is needed for the countdown to reset the interval !! 
-                key={game.id}
-                game={game}
-                homeColor={props.homeColor}
-                historyFocusedIndex={props.historyIndex}
-                onHistoryFocusedIndexChanged={props.onHistoryIndexUpdated}
-                // TODO: This should probably be seperate from the GameStateWidget
-                //  something like a hook so it can be used without a view component
-                onTimerFinished={props.onTimerFinished}
-              />
-            </div>
-            {props.meAsPlayer && (
-              <GameActions
-                game={game}
-                myPlayer={props.meAsPlayer}
-                className={cls.gameActionsContainer}
-                roomActivity={props.room.activity}
-              />
-            )}
-          </div>
-        )}
-        getGameComponent={({ container }) => (
-          <Box
-            fill
-            style={{ width: 'fit-content', height: 'fit-content', ...borderRadius }}
-            ref={chessboardRef as any}
+            {props.getLeftSideComponent({
+              ...extendedDimensions,
+              container: extendedDimensions.left,
+            })}
+          </aside>
+          <main
+            className={cls.gameArea}
+            style={{
+              width: `${layout.gameArea}px`,
+              height: `100%`,
+            }}
           >
-            <GenericGame
-              // Reset the State each time the game id changes
-              key={game.id}
-              game={game}
-              homeColor={props.homeColor}
-              size={container.width}
-              playable={props.playable}
-              className={cls.board}
-              notificationDialog={props.gameNotificationDialog}
-            />
-          </Box>
-        )}
-        getRightSideComponent={({ container }) => (
-          <div className={cx(cls.side, cls.rightSide)}>
-            <div
-              style={{
-                height: `${TOP_HEIGHT}px`,
-              }}
-            >
-              <div style={{ paddingTop: '16px' }} />
-              <div
-                style={{
-                  flex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <RoomDetails />
-                <div
-                  style={{
-                    flex: 1,
-                  }}
-                />
-                <ExitRoomButton />
-              </div>
-            </div>
-            <div
-              className={cls.sideContent}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                flex: 1,
-                overflow: 'hidden',
-                alignItems: 'stretch',
-                height: '100%',
-              }}
-            >
-              <div>
-                <StreamingBox
-                  room={props.room}
-                  focusedPeerId={!!props.meAsPlayer ? props.opponentAsPlayer?.user.id : undefined}
-                  containerClassName={cls.streamingBox}
-                />
-              </div>
-              <TabComponent
-                tabs={[
-                  {
-                    title: 'Activity Log',
-                    content: (
-                      <div
-                        style={{
-                          borderColor: colors.neutral,
-                          overflow: 'hidden',
-                          flex: 1,
-                        }}
-                      >
-                        <ActivityLog
-                          bottomContainerStyle={{
-                            height: `${BOTTOM_HEIGHT + container.verticalPadding - 1}px`,
-                          }}
-                          game={game}
-                        />
-                      </div>
-                    ),
-                    icon: faListAlt,
-                  },
-                  {
-                    title: 'Messages',
-                    content: (
-                      <div
-                        style={{
-                          borderColor: colors.neutral,
-                          overflow: 'hidden',
-                          flex: 1,
-                        }}
-                      >
-                        <ChatContainer
-                          inputContainerStyle={{
-                            height: `${BOTTOM_HEIGHT + container.verticalPadding}px`,
-                          }}
-                        />
-                      </div>
-                    ),
-                    icon: faComment,
-                  },
-                ]}
-              />
-            </div>
-          </div>
-        )}
-      />
+            {props.getGameComponent({
+              ...extendedDimensions,
+              container: extendedDimensions.center,
+            })}
+          </main>
+          <aside
+            className={cls.side}
+            style={{
+              width: `${layout.rightSide}px`,
+              marginLeft: Math.max(minSpaceBetween, layout.remaining / 2),
+              
+              // This is a hack to go above the top & bottom components
+              //  But ideally it could be done better!
+              height: `calc(100% + ${props.topHeight + props.bottomHeight}px)`,
+              marginTop: -props.topHeight,
+              position: 'relative',
+            }}
+          >
+            {props.getRightSideComponent({
+              ...extendedDimensions,
+              container: extendedDimensions.right,
+            })}
+          </aside>
+        </div>
+      </div>
+      <div className={cls.bottom} style={{
+        height: props.bottomHeight,
+      }}>
+        {props.getBottomComponent({
+          ...extendedDimensions,
+          container: extendedDimensions.bottom,
+        })}
+      </div>
     </div>
   );
+};
+
+const transitionsEffect = {
+  // transition: 'all 150ms ease-in',
 };
 
 const useStyles = createUseStyles({
@@ -237,41 +223,31 @@ const useStyles = createUseStyles({
 
     display: 'flex',
     flexDirection: 'column',
-    background: '#F6F8FB',
   },
-  layout: {},
-  board: {
-    ...floatingShadow,
-    ...softBorderRadius,
-    overflow: 'hidden',
+  top: {
+    ...transitionsEffect,
   },
-  playButtonsContainer: {
-    padding: '1em 0',
+  contentContainer: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+  },
+  content: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
+  },
+  gameArea: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    ...transitionsEffect,
   },
   side: {
-    display: 'flex',
-    height: '100%',
-    flexDirection: 'column',
+    ...transitionsEffect,
   },
-  sideContent: {},
-  leftSide: {},
-  rightSide: {
-    background: colors.white,
-    paddingLeft: '30px',
-    paddingRight: '30px',
-  },
-  sideBottom: {
-    flex: 1,
-  },
-  chatContainer: {
-    height: '100%',
-    background: 'white',
-  },
-  gameActionsContainer: {
-    height: '30%',
-  },
-  streamingBox: {
-    ...softBorderRadius,
-    overflow: 'hidden',
-  },
+  bottom: {
+    ...transitionsEffect,
+  }
 });

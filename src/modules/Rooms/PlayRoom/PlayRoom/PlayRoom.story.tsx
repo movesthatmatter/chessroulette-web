@@ -95,18 +95,18 @@ export const defaultStory = () => (
                   <PlayRoom
                     room={publicRoom}
                     game={currentGame}
-                    onMove={action('on move')}
-                    onAbort={action('onAbort')}
-                    onDrawAccepted={action('onDrawAccepted')}
-                    onDrawDenied={action('onDrawDenied')}
-                    onOfferDraw={action('onOfferDraw')}
-                    onRematchAccepted={action('onRematchAccepted')}
-                    onRematchDenied={action('onRematchDenied')}
-                    onRematchOffer={action('onRematchOffer')}
-                    onResign={action('onResign')}
-                    onOfferCanceled={action('onOfferCancel')}
-                    onTimerFinished={action('onTimerFinished')}
-                    onGameStatusCheck={action('onStatusCheck')}
+                    // onMove={action('on move')}
+                    // onAbort={action('onAbort')}
+                    // onDrawAccepted={action('onDrawAccepted')}
+                    // onDrawDenied={action('onDrawDenied')}
+                    // onOfferDraw={action('onOfferDraw')}
+                    // onRematchAccepted={action('onRematchAccepted')}
+                    // onRematchDenied={action('onRematchDenied')}
+                    // onRematchOffer={action('onRematchOffer')}
+                    // onResign={action('onResign')}
+                    // onOfferCanceled={action('onOfferCancel')}
+                    // onTimerFinished={action('onTimerFinished')}
+                    // onGameStatusCheck={action('onStatusCheck')}
                   />
                 </PeerProvider>
               </SocketProvider>
@@ -244,30 +244,30 @@ export const withSwitchingSides = () => (
               <PlayRoom
                 room={publicRoom}
                 game={game}
-                onMove={(move) => {
-                  // TODO this will be done via redux actions
+                // onMove={(move) => {
+                //   // TODO this will be done via redux actions
 
-                  setGame((prev) => ({
-                    ...prev as Game,
-                    ...chessGameActions.move(prev as ChessGameStateStarted, {
-                      move,
-                      movedAt: toISODateTime(new Date()),
-                    }),
-                  }));
+                //   setGame((prev) => ({
+                //     ...prev as Game,
+                //     ...chessGameActions.move(prev as ChessGameStateStarted, {
+                //       move,
+                //       movedAt: toISODateTime(new Date()),
+                //     }),
+                //   }));
 
-                  switchPlayers();
-                }}
-                onAbort={action('onAbort')}
-                onDrawAccepted={action('onDrawAccepted')}
-                onDrawDenied={action('onDrawDenied')}
-                onOfferDraw={action('onOfferDraw')}
-                onRematchAccepted={action('onRematchAccepted')}
-                onRematchDenied={action('onRematchDenied')}
-                onRematchOffer={action('onRematchOffer')}
-                onResign={action('onResign')}
-                onOfferCanceled={action('onOfferCancel')}
-                onTimerFinished={action('onTimerFinished')}
-                onGameStatusCheck={action('onStatusCheck')}
+                //   switchPlayers();
+                // }}
+                // onAbort={action('onAbort')}
+                // onDrawAccepted={action('onDrawAccepted')}
+                // onDrawDenied={action('onDrawDenied')}
+                // onOfferDraw={action('onOfferDraw')}
+                // onRematchAccepted={action('onRematchAccepted')}
+                // onRematchDenied={action('onRematchDenied')}
+                // onRematchOffer={action('onRematchOffer')}
+                // onResign={action('onResign')}
+                // onOfferCanceled={action('onOfferCancel')}
+                // onTimerFinished={action('onTimerFinished')}
+                // onGameStatusCheck={action('onStatusCheck')}
               />
             </StorybookReduxProvider>
           );
