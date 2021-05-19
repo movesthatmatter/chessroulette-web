@@ -130,7 +130,8 @@ export const PlayRoomPage: React.FC<Props> = ({ room }) => {
         Events.trackAborted();
       }}
       onRematchOffer={() => {
-        request(gameActions.offerRematch());
+        // TODO: Fix or remove
+        // request(gameActions.offerRematch());
 
         Events.trackRematchOffered();
       }}
