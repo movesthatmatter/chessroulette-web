@@ -85,7 +85,7 @@ export const GameStateDialog: React.FC<Props> = ({ roomActivity, game, myPlayer,
           buttons={[
             {
               label: 'Ok',
-              type: 'primary',
+              type: 'secondary',
               onClick: () => setGameResultSeen(true),
             },
           ]}
@@ -97,7 +97,7 @@ export const GameStateDialog: React.FC<Props> = ({ roomActivity, game, myPlayer,
   }
 
   // me as sender
-  if (myPlayer && roomActivity.offer.content.by === myPlayer.color) {
+  if (myPlayer && roomActivity.offer.content.byUser.id === myPlayer.user.id) {
     return (
       <Dialog
         target={props.target}

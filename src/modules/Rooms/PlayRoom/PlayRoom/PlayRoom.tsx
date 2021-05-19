@@ -153,7 +153,7 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
   return (
     <>
       {content()}
-      <GameStateDialog
+      {/* <GameStateDialog
         roomActivity={props.room.activity}
         game={game}
         onOfferCanceled={props.onOfferCanceled}
@@ -162,7 +162,7 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
         onRematchAccepted={props.onRematchAccepted}
         onRematchDenied={props.onRematchDenied}
         myPlayer={playerStats.player}
-      />
+      /> */}
     </>
   );
 };

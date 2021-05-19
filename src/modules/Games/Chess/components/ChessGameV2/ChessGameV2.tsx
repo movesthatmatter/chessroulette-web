@@ -11,7 +11,7 @@ import {
 } from 'dstnd-io';
 import { ChessBoard, ChessBoardProps } from '../ChessBoardV2';
 
-type Props = Omit<ChessBoardProps, 'onMove' | 'fen'> & {
+export type ChessGameV2Props = Omit<ChessBoardProps, 'onMove' | 'fen'> & {
   id: GameRecord['id'];
   pgn: GameRecord['pgn'];
   homeColor: ChessGameColor;
@@ -49,10 +49,10 @@ const getCurrentChessState = (chess: ChessInstance): ChessState => {
   };
 };
 
-export class ChessGameV2 extends React.Component<Props, State> {
+export class ChessGameV2 extends React.Component<ChessGameV2Props, State> {
   private chess = getNewChessGame();
 
-  constructor(props: Props) {
+  constructor(props: ChessGameV2Props) {
     super(props);
 
     this.chess.load_pgn(this.props.pgn || '');
@@ -87,7 +87,7 @@ export class ChessGameV2 extends React.Component<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate(prevProps: ChessGameV2Props) {
     // If there are changes in the props commit them
     if (prevProps.pgn !== this.props.pgn) {
       this.commit();

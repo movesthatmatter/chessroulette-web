@@ -20,13 +20,13 @@ import cx from 'classnames';
 import { PlayerBox } from 'src/modules/Games/Chess/components/PlayerBox';
 import { otherChessColor } from 'src/modules/Games/Chess/util';
 import { getRelativeMaterialScore } from 'src/modules/Games/Chess/components/GameStateWidget/util';
-import { ChessGameV2 } from 'src/modules/Games/Chess/components/ChessGameV2';
 import { useWindowWidth } from '@react-hook/window-size';
 import { GameActions } from '../components/GameActions';
 import { ChatContainer } from 'src/modules/Chat';
 import { ChatIconWithBadge } from 'src/modules/Chat/components/ChatIconWithBadge';
 import { useSelector } from 'react-redux';
 import { selectChatHistory, selectUserID } from 'src/providers/PeerProvider/redux/selectors';
+import { GenericGame } from 'src/modules/Games/GenericGame';
 
 type Props = LayoutProps;
 
@@ -108,44 +108,37 @@ export const MobileLayout: React.FC<Props> = ({ game, ...props }) => {
                   newMessagesCount={newMessageCounter.current}
                 />
                 <div style={{ paddingBottom: '4px' }} />
-                <AppsRounded
-                  color={colors.white}
-                  onClick={() => setShowMobileGameActionsMenu(true)}
-                  className={cls.mobileGameActionsButtonIcon}
-                />
-                {showMobileGameActionsMenu && (
-                  <Layer
-                    responsive={false}
-                    position="bottom"
-                    animation="slide"
-                    className={cls.mobileGameActionMenuLayer}
-                    onClickOutside={() => setShowMobileGameActionsMenu(false)}
-                  >
-                    <Text size="small2" className={cls.mobileDialogTitle}>
-                      What's your next move?
-                    </Text>
-                    <GameActions
-                      isMobile={true}
-                      game={game}
-                      onAbort={() => {
-                        props.onAbort();
-                        setShowMobileGameActionsMenu(false);
-                      }}
-                      onOfferDraw={() => {
-                        props.onOfferDraw();
-                        setShowMobileGameActionsMenu(false);
-                      }}
-                      onRematchOffer={() => {
-                        props.onRematchOffer();
-                        setShowMobileGameActionsMenu(false);
-                      }}
-                      onResign={() => {
-                        props.onResign();
-                        setShowMobileGameActionsMenu(false);
-                      }}
-                      className={cls.mobileGameActionButtonsContainer}
+                {props.meAsPlayer && (
+                  <>
+                    <AppsRounded
+                      color={colors.white}
+                      onClick={() => setShowMobileGameActionsMenu(true)}
+                      className={cls.mobileGameActionsButtonIcon}
                     />
-                  </Layer>
+                    {showMobileGameActionsMenu && (
+                      <Layer
+                        responsive={false}
+                        position="bottom"
+                        animation="slide"
+                        className={cls.mobileGameActionMenuLayer}
+                        onClickOutside={() => setShowMobileGameActionsMenu(false)}
+                      >
+                        <Text size="small2" className={cls.mobileDialogTitle}>
+                          What's your next move?
+                        </Text>
+                        <GameActions
+                          isMobile={true}
+                          myPlayer={props.meAsPlayer}
+                          roomActivity={props.room.activity}
+                          game={game}
+                          onActionTaken={() => {
+                            setShowMobileGameActionsMenu(false);
+                          }}
+                          className={cls.mobileGameActionButtonsContainer}
+                        />
+                      </Layer>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -171,12 +164,9 @@ export const MobileLayout: React.FC<Props> = ({ game, ...props }) => {
             </div>
           )}
           <div className={cls.mobileChessGameWrapper}>
-            <ChessGameV2
-              id={game.id}
-              pgn={game.pgn}
-              onMove={({ move, pgn }) => {
-                props.onMove(move, pgn, [], props.homeColor);
-              }}
+            <GenericGame
+              key={game.id}
+              game={game}
               playable={props.playable}
               homeColor={props.homeColor}
               size={dimensions.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 24)}

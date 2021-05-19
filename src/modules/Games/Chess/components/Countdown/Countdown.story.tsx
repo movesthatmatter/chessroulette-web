@@ -13,12 +13,12 @@ export default {
 
 export const bullet = () => (
   <Grommet theme={defaultTheme}>
-    <Countdown timeLeft={seconds(56)} active gameTimeClass="bullet"/>
+    <Countdown timeLeft={seconds(56)} active gameTimeClass="bullet30"/>
   </Grommet>
 );
 
 export const blitz = () => (
   <Grommet theme={defaultTheme}>
-    <Countdown timeLeft={minutes(1.03)} active gameTimeClass="blitz"/>
+    <Countdown timeLeft={minutes(1.03)} active gameTimeClass="blitz2"/>
   </Grommet>
 );

@@ -17,8 +17,9 @@ export const getPlayerColor = (userId: string, players: ChessGameState['players'
   return 'white';
 };
 
-export const getPlayerByColor = (color: ChessGameColor, players: ChessGameState['players']) =>
-  players.find((p) => p.color === color);
+export const getPlayerByColor = (color: ChessGameColor, players: ChessGameState['players']) => {
+  return players[0].color === color ? players[0] : players[1];
+};
 
 export const getPlayer = (
   userId: string,
