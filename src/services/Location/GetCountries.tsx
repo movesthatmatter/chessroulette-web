@@ -5,6 +5,7 @@ import { useCountries } from './useCountries';
 type Props = {
   render: (p: {
     countries: Record<CountryCode, Country> | undefined;
+    countriesForDisplay : Country[];
     isLoading: boolean;
     fetch: () => void;
   }) => void;
