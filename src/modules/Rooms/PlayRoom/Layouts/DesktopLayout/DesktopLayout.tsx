@@ -7,7 +7,6 @@ import { GameRoomLayout } from 'src/modules/GameRoomV2/GameRoomLayout/GameRoomLa
 import { borderRadius, colors, floatingShadow, softBorderRadius } from 'src/theme';
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 import { GameActions } from '../components/GameActions';
-import { ChessGameV2 } from 'src/modules/Games/Chess/components/ChessGameV2';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { faComment, faListAlt } from '@fortawesome/free-solid-svg-icons';
 import { ChatContainer } from 'src/modules/Chat';
@@ -16,6 +15,7 @@ import { RoomDetails } from '../components/RoomDetails';
 import { ExitRoomButton } from '../components/ExitRoomButton/ExitRoomButton';
 import { TabComponent } from '../components/TabComponent/TabComponent';
 import { ActivityLog } from 'src/modules/ActivityLog';
+import { GenericGame } from 'src/modules/Games/GenericGame';
 
 type Props = LayoutProps;
 
@@ -110,11 +110,7 @@ export const DesktopLayout: React.FC<Props> = (props) => {
             {props.meAsPlayer && (
               <GameActions
                 game={game}
-                player={props.meAsPlayer}
-                onAbort={props.onAbort}
-                onRematchOffer={props.onRematchOffer}
-                onOfferDraw={props.onOfferDraw}
-                onResign={props.onResign}
+                myPlayer={props.meAsPlayer}
                 className={cls.gameActionsContainer}
                 roomActivity={props.room.activity}
               />
@@ -127,14 +123,12 @@ export const DesktopLayout: React.FC<Props> = (props) => {
             style={{ width: 'fit-content', height: 'fit-content', ...borderRadius }}
             ref={chessboardRef as any}
           >
-            <ChessGameV2
-              id={game.id}
-              pgn={props.displayedPgn === undefined ? game.pgn : props.displayedPgn}
-              onMove={({ move, pgn }) => {
-                props.onMove(move, pgn, [], props.homeColor);
-              }}
-              size={container.width}
+            <GenericGame
+              // Reset the State each time the game id changes
+              key={game.id}
+              game={game}
               homeColor={props.homeColor}
+              size={container.width}
               playable={props.playable}
               className={cls.board}
               notificationDialog={props.gameNotificationDialog}
