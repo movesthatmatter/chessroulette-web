@@ -1,17 +1,17 @@
-import React, { LegacyRef, useRef } from 'react';
+import React from 'react';
 import { Box } from 'grommet';
 import cx from 'classnames';
 import { NavigationHeader, UserMenu } from 'src/components/Navigation';
 import { createUseStyles } from 'src/lib/jss';
 import { borderRadius, colors, floatingShadow, softBorderRadius } from 'src/theme';
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
-import { GameActions } from '../../../Games/GameActions';
+import { GameActions, useGameActions } from '../../../Games/GameActions';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { faComment, faListAlt } from '@fortawesome/free-solid-svg-icons';
 import { ChatContainer } from 'src/modules/Chat';
 import { RoomDetails } from '../../components/RoomDetails';
 import { ExitRoomButton } from '../../components/ExitRoomButton/ExitRoomButton';
-import { TabComponent } from '../../../../components/Tabs/Tabs';
+import { Tabs } from 'src//components/Tabs';
 import { ActivityLog } from 'src/modules/ActivityLog';
 import { ChessGame } from 'src/modules/Games/Chess';
 import { PlayProps } from './types';
@@ -22,17 +22,13 @@ type Props = PlayProps;
 const TOP_HEIGHT = 80;
 const BOTTOM_HEIGHT = 80;
 
-export const PlayRoomDesktop: React.FC<Props> = (props) => {
+export const PlayRoomDesktop: React.FC<Props> = ({ game, ...props }) => {
   const cls = useStyles();
-  const dialogTarget = useRef();
-  const chessboardRef = useRef();
-
-  const { game } = props;
+  const gameActions = useGameActions();
 
   return (
-    <div className={cls.container} ref={dialogTarget as LegacyRef<any>}>
+    <div className={cls.container}>
       <DesktopLayout
-        className={cls.layout}
         ratios={{
           leftSide: 1.2,
           gameArea: 3,
@@ -74,7 +70,7 @@ export const PlayRoomDesktop: React.FC<Props> = (props) => {
         getBottomComponent={() => null}
         getLeftSideComponent={({ container, main }) => (
           <div
-            className={cx(cls.side, cls.leftSide)}
+            className={cls.side}
             style={{
               flex: 1,
               height: container.height,
@@ -84,7 +80,7 @@ export const PlayRoomDesktop: React.FC<Props> = (props) => {
             <div style={{ height: '30%' }} />
             <div style={{ height: '40%' }}>
               <GameStateWidget
-                // This is needed for the countdown to reset the interval !! 
+                // This is needed for the countdown to reset the interval !!
                 key={game.id}
                 game={game}
                 homeColor={props.homeColor}
@@ -92,8 +88,7 @@ export const PlayRoomDesktop: React.FC<Props> = (props) => {
                 onHistoryFocusedIndexChanged={props.onHistoryIndexUpdated}
                 // TODO: This should probably be seperate from the GameStateWidget
                 //  something like a hook so it can be used without a view component
-                // TODO: Add it back. Removed on May 19th 2021
-                // onTimerFinished={props.onTimerFinished}
+                onTimerFinished={gameActions.onTimerFinished}
               />
             </div>
             {props.meAsPlayer && (
@@ -107,11 +102,7 @@ export const PlayRoomDesktop: React.FC<Props> = (props) => {
           </div>
         )}
         getGameComponent={({ container }) => (
-          <Box
-            fill
-            style={{ width: 'fit-content', height: 'fit-content', ...borderRadius }}
-            ref={chessboardRef as any}
-          >
+          <Box fill style={{ width: 'fit-content', height: 'fit-content', ...borderRadius }}>
             <ChessGame
               // Reset the State each time the game id changes
               key={game.id}
@@ -149,7 +140,6 @@ export const PlayRoomDesktop: React.FC<Props> = (props) => {
               </div>
             </div>
             <div
-              className={cls.sideContent}
               style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -166,7 +156,7 @@ export const PlayRoomDesktop: React.FC<Props> = (props) => {
                   containerClassName={cls.streamingBox}
                 />
               </div>
-              <TabComponent
+              <Tabs
                 tabs={[
                   {
                     title: 'Activity Log',
@@ -226,7 +216,6 @@ const useStyles = createUseStyles({
     flexDirection: 'column',
     background: '#F6F8FB',
   },
-  layout: {},
   board: {
     ...floatingShadow,
     ...softBorderRadius,
@@ -240,15 +229,10 @@ const useStyles = createUseStyles({
     height: '100%',
     flexDirection: 'column',
   },
-  sideContent: {},
-  leftSide: {},
   rightSide: {
     background: colors.white,
     paddingLeft: '30px',
     paddingRight: '30px',
-  },
-  sideBottom: {
-    flex: 1,
   },
   chatContainer: {
     height: '100%',

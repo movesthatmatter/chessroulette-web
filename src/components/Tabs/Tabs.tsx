@@ -12,11 +12,11 @@ type TabProps = {
   title: string;
 };
 
-type TabComponentProps = {
+type TabsProps = {
   tabs: TabProps[];
 };
 
-export const TabComponent: React.FC<TabComponentProps> = ({ tabs }) => {
+export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const cls = useStyles();
   const [currentTab, setCurrentTab] = useState(0);
   return (

@@ -7,11 +7,11 @@ import { colors } from 'src/theme';
 type Dimensions = {
   width: number;
   height: number;
-}
+};
 
 type Props = {
-  getTopArea: (dimensions: Dimensions) => React.ReactNode;
-  getMainArea: (dimensions: Dimensions) => React.ReactNode;
+  getTopArea: (d: { container: Dimensions; mainAreaContainer: Dimensions }) => React.ReactNode;
+  getMainArea: (d: { container: Dimensions; topAreaContainer: Dimensions }) => React.ReactNode;
 };
 
 export const MobileLayout: React.FC<Props> = (props) => {
@@ -23,6 +23,16 @@ export const MobileLayout: React.FC<Props> = (props) => {
   const topContainerRef = useRef<HTMLDivElement>(null);
   const topContainerDimensions = useContainerDimensions(topContainerRef);
 
+  const dimensions = {
+    mainArea: {
+      width: containerDimensions.width,
+      height: containerDimensions.height - topContainerDimensions.height,
+    },
+    topArea: {
+      width: topContainerDimensions.width,
+      height: topContainerDimensions.height,
+    },
+  };
 
   return (
     <Div100vh className={cls.container}>
@@ -30,12 +40,15 @@ export const MobileLayout: React.FC<Props> = (props) => {
         <div className={cls.main} ref={containerRef}>
           <div className={cls.topContainer} ref={topContainerRef}>
             {props.getTopArea({
-              width: topContainerDimensions.width,
-              height: topContainerDimensions.height,
+              container: dimensions.topArea,
+              mainAreaContainer: dimensions.mainArea,
             })}
           </div>
           <div className={cls.mainContainer}>
-            {props.getMainArea({width: containerDimensions.width, height: containerDimensions.height - topContainerDimensions.height })}
+            {props.getMainArea({
+              container: dimensions.mainArea,
+              topAreaContainer: dimensions.topArea,
+            })}
           </div>
         </div>
       </div>

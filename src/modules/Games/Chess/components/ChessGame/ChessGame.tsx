@@ -4,6 +4,7 @@ import { ChessBoard, ChessBoardProps } from '../ChessBoard';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { useSoundEffects } from '../../hooks';
 
+
 type Props = Omit<ChessBoardProps, 'onMove' | 'id' | 'pgn'> & {
   game: Game; // This for now always works only with chess
   displayedPgn?: string;

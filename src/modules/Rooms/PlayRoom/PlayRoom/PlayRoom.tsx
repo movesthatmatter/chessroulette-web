@@ -9,6 +9,7 @@ import { DialogContentProps } from 'src/components/Dialog';
 import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 import { PlayRoomMobile } from './PlayRoomMobile';
 import { PlayRoomDesktop } from './PlayRoomDesktop';
+import { useGameActions } from 'src/modules/Games/GameActions';
 
 type Props = {
   room: RoomWithPlayActivity;
@@ -41,6 +42,8 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
   const windowWidth = useWindowWidth();
   const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
   const [displayedPgn, setDisplayedPgn] = useState<Game['pgn']>();
+  const gameActions = useGameActions();
+
 
   useEffect(() => {
     if (!game.history || game.history.length === 0 || gameDisplayedHistoryIndex === 0) {
@@ -73,12 +76,11 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
     hasCloseButton: false,
     content: <AwesomeLoader sayings={sayings} size={p.size ? p.size / 4 : 50} />,
     buttons: [
-      // TODO: Add back
-      // {
-      //   label: 'Abort Game',
-      //   type: 'secondary',
-      //   onClick: () => props.onAbort(),
-      // },
+      {
+        label: 'Abort Game',
+        type: 'secondary',
+        onClick: () => gameActions.onAbort(),
+      },
     ],
   });
 

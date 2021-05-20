@@ -1,63 +1,32 @@
-import { Layer } from 'grommet';
-import { AppsRounded } from 'grommet-icons';
-import React, { useRef, useState, useEffect } from 'react';
+import React from 'react';
 import { NavigationHeader } from 'src/components/Navigation';
 import { StreamingBox } from 'src/components/StreamingBox';
-import { Text } from 'src/components/Text';
-import { createUseStyles, makeImportant } from 'src/lib/jss';
+import { createUseStyles } from 'src/lib/jss';
 import {
-  colors,
   floatingShadow,
-  fonts,
-  hardBorderRadius,
   onlySmallMobile,
   SMALL_MOBILE_BREAKPOINT,
   softBorderRadius,
 } from 'src/theme';
 import { PlayProps } from './types';
-import cx from 'classnames';
 import { PlayerBox } from 'src/modules/Games/Chess/components/PlayerBox';
 import { getRelativeMaterialScore } from 'src/modules/Games/Chess/components/GameStateWidget/util';
 import { useWindowWidth } from '@react-hook/window-size';
-import { GameActions, useGameActions } from '../../../Games/GameActions';
-import { ChatContainer } from 'src/modules/Chat';
-import { ChatIconWithBadge } from 'src/modules/Chat/components/ChatIconWithBadge';
-import { useSelector } from 'react-redux';
-import { selectChatHistory, selectUserID } from 'src/providers/PeerProvider/redux/selectors';
+import { useGameActions } from '../../../Games/GameActions';
 import { ChessGame } from 'src/modules/Games/Chess/components/ChessGame';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { MobileLayout } from '../Layouts';
+import { MobileChatWidget } from './widgets/MobileChatWidget';
+import { MobileGameActionsWidget } from './widgets/MobileGameActionsWidget';
 
 type Props = PlayProps;
 
 export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
   const cls = useStyles();
-  const chatHistory = useSelector(selectChatHistory);
-  const me = useSelector(selectUserID);
-  const newMessageCounter = useRef(0);
-  const [showMobileGameActionsMenu, setShowMobileGameActionsMenu] = useState(false);
-
   const gameActions = useGameActions();
 
-  const [showChatWindow, setShowChatWindow] = useState(false);
   // This should be container width
   const windowWidth = useWindowWidth();
-
-  useEffect(() => {
-    if (chatHistory && !showChatWindow) {
-      if (chatHistory.messages.length > 0 && chatHistory.messages[0].fromUserId !== me) {
-        newMessageCounter.current += 1;
-      }
-    }
-  }, [chatHistory?.messages]);
-
-  useEffect(() => {
-    newMessageCounter.current = 0;
-  }, []);
-
-  function markMessagesAsRead() {
-    newMessageCounter.current = 0;
-  }
 
   // TODO: These shouldn't be here!
   // TOODO: In fact the whole notion of timeleft is conceptualy wrong here.
@@ -82,7 +51,7 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
         <StreamingBox
           room={props.room}
           focusedPeerId={!!props.meAsPlayer ? props.opponentAsPlayer?.user.id : undefined}
-          aspectRatio={dimensions}
+          aspectRatio={dimensions.container}
           headerOverlay={() => <NavigationHeader />}
           mainOverlay={() => (
             <div
@@ -93,7 +62,7 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
               }}
             >
               <div
-                className={cls.mobileGameActionsContainer}
+                className={cls.iconButtonsContainer}
                 style={{
                   position: 'absolute',
                   bottom: 0,
@@ -101,46 +70,14 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
                   right: 0,
                 }}
               >
-                <ChatIconWithBadge
-                  color={colors.white}
-                  onClick={() => {
-                    markMessagesAsRead();
-                    setShowChatWindow(true);
-                  }}
-                  newMessagesCount={newMessageCounter.current}
-                />
-                <div style={{ paddingBottom: '4px' }} />
+                <MobileChatWidget containerHeight={dimensions.mainAreaContainer.height} />
+                <div />
                 {props.meAsPlayer && (
-                  <>
-                    <AppsRounded
-                      color={colors.white}
-                      onClick={() => setShowMobileGameActionsMenu(true)}
-                      className={cls.mobileGameActionsButtonIcon}
-                    />
-                    {showMobileGameActionsMenu && (
-                      <Layer
-                        responsive={false}
-                        position="bottom"
-                        animation="slide"
-                        className={cls.mobileGameActionMenuLayer}
-                        onClickOutside={() => setShowMobileGameActionsMenu(false)}
-                      >
-                        <Text size="small2" className={cls.mobileDialogTitle}>
-                          What's your next move?
-                        </Text>
-                        <GameActions
-                          isMobile={true}
-                          myPlayer={props.meAsPlayer}
-                          roomActivity={props.room.activity}
-                          game={game}
-                          onActionTaken={() => {
-                            setShowMobileGameActionsMenu(false);
-                          }}
-                          className={cls.mobileGameActionButtonsContainer}
-                        />
-                      </Layer>
-                    )}
-                  </>
+                  <MobileGameActionsWidget
+                    roomActivity={props.room.activity}
+                    game={game}
+                    myPlayer={props.meAsPlayer}
+                  />
                 )}
               </div>
             </div>
@@ -152,9 +89,9 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
       getMainArea={(dimensions) => (
         <div className={cls.mobileMainContainer}>
           {props.opponentAsPlayer && (
-            <div className={cx(cls.mobilePlayerWrapper, cls.mobileAwayPlayerWrapper)}>
+            <div className={cls.mobilePlayerWrapper}>
               <PlayerBox
-                // This is needed for the countdown to reset the interval !! 
+                // This is needed for the countdown to reset the interval !!
                 key={`${game.id}-${props.opponentAsPlayer.color}`}
                 player={props.opponentAsPlayer}
                 timeLeft={opponentTimeLeft}
@@ -173,15 +110,15 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
               game={game}
               playable={props.playable}
               homeColor={props.homeColor}
-              size={dimensions.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 24)}
+              size={dimensions.container.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 24)}
               className={cls.mobileBoard}
               notificationDialog={props.gameNotificationDialog}
             />
           </div>
           {props.meAsPlayer && (
-            <div className={cx(cls.mobilePlayerWrapper, cls.mobileHomePlayerWrapper)}>
+            <div className={cls.mobilePlayerWrapper}>
               <PlayerBox
-                // This is needed for the countdown to reset the interval !! 
+                // This is needed for the countdown to reset the interval !!
                 key={`${game.id}-${props.meAsPlayer.color}`}
                 player={props.meAsPlayer}
                 timeLeft={myTimeLeft}
@@ -192,21 +129,6 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
               />
             </div>
           )}
-          {showChatWindow && (
-            <Layer
-              modal={true}
-              responsive={false}
-              position="bottom"
-              animation="slide"
-              className={cls.chatContainer}
-              style={{
-                height: dimensions.height,
-              }}
-              onClickOutside={() => setShowChatWindow(false)}
-            >
-              <ChatContainer />
-            </Layer>
-          )}
         </div>
       )}
     />
@@ -214,51 +136,15 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
 };
 
 const useStyles = createUseStyles({
-  container: {
-    position: 'relative',
-  },
-  // Mobile
-  mobileGameActionsButtonIcon: {
-    ...floatingShadow,
-  },
-  mobileGameActionsContainer: {
+  iconButtonsContainer: {
     padding: '0 12px 4px',
 
     ...onlySmallMobile({
       padding: '0 8px 4px',
     }),
   },
-  mobileGameActionMenuLayer: {
-    ...softBorderRadius,
-    ...floatingShadow,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-    width: '100%',
-
-    justifyContent: 'center',
-    alignItems: 'center',
-
-    padding: '16px 0 8px',
-  },
-  mobileGameActionButtonsContainer: {
-    width: '70%',
-    padding: '16px',
-  },
-  mobileDialogTitle: {
-    ...fonts.subtitle1,
-  },
   mobileMainContainer: {
     paddingBottom: '8px',
-  },
-  chatContainer: {
-    width: 'calc(100% - 16px)',
-    padding: '8px',
-    ...makeImportant({
-      ...hardBorderRadius,
-      borderBottomLeftRadius: 0,
-      borderBottomRightRadius: 0,
-      overflow: 'hidden',
-    }),
   },
   mobileBoard: {
     ...floatingShadow,
@@ -280,6 +166,4 @@ const useStyles = createUseStyles({
       padding: '0 8px',
     }),
   },
-  mobileAwayPlayerWrapper: {},
-  mobileHomePlayerWrapper: {},
 });
