@@ -4,10 +4,7 @@ import { Game } from 'src/modules/Games';
 import { notificationFactory } from './utils/notificationFactory';
 import { useStateWithPrev } from 'src/lib/hooks/useStateWithPrev';
 import useDebouncedEffect from 'use-debounced-effect';
-import {
-  addNotificationAction,
-  updateOfferNotificationAction,
-} from '../redux/actions';
+import { addNotificationAction, resolveOfferNotificationAction } from '../redux/actions';
 import { selectRoomActivity } from 'src/providers/PeerProvider';
 
 export const useRoomNotificationListener = (game: Game) => {
@@ -33,9 +30,9 @@ export const useRoomNotificationListener = (game: Game) => {
 
     if (nextNotification.type === 'add') {
       dispatch(addNotificationAction({ notification: nextNotification.notification }));
-    } else if (nextNotification.type === 'update') {
+    } else if (nextNotification.type === 'update' && nextNotification.status !== 'pending') {
       dispatch(
-        updateOfferNotificationAction({
+        resolveOfferNotificationAction({
           notificationId: nextNotification.id,
           status: nextNotification.status,
         })

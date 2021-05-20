@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { Game } from 'src/modules/Games';
@@ -8,20 +8,35 @@ import { useGameActions } from 'src/modules/Games/GameActions';
 import { InfoNotificationItem } from './components/InfoNotificationItem';
 import { OfferNotificationItem } from './components/OfferNotificationItem';
 import { selectCurrentRoomActivityLog } from './redux/selectors';
-import { useRoomNotificationListener } from './useRoomNotificationListener';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
   game: Game;
 };
 
+const processLog = (log: ReturnType<typeof selectCurrentRoomActivityLog>) => {
+  const sorted = Object.values(log.history).sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
+
+  if (log.pending) {
+    // Always add the pending notification in the first spot
+    return [log.pending, ...sorted];
+  }
+
+  return sorted;
+};
+
 export const ActivityLog: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const activityLog = useSelector(selectCurrentRoomActivityLog);
   const myPeer = useSelector(selectMyPeer);
   const gameActions = useGameActions();
+  const activityLog = useSelector(selectCurrentRoomActivityLog);
+  const [log, setLog] = useState(processLog(activityLog));
 
-  useRoomNotificationListener(props.game);
+  useEffect(() => {
+    setLog(processLog(activityLog));
+  }, [activityLog]);
 
   if (!myPeer) {
     return null;
@@ -30,48 +45,46 @@ export const ActivityLog: React.FC<Props> = (props) => {
   return (
     <div className={cls.container}>
       <div className={cls.scroller}>
-        {Object.values(activityLog)
-          .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-          .map((notification) => {
-            if (notification.type === 'info') {
-              return (
-                <InfoNotificationItem
-                  key={notification.id}
-                  notification={notification}
-                  me={myPeer.user}
-                />
-              );
-            }
-
+        {log.map((notification) => {
+          if (notification.type === 'info') {
             return (
-              <OfferNotificationItem
+              <InfoNotificationItem
                 key={notification.id}
                 notification={notification}
                 me={myPeer.user}
-                onAcceptOffer={({ offerType }) => {
-                  if (offerType === 'draw') {
-                    gameActions.onDrawAccepted();
-                  } else if (offerType === 'rematch') {
-                    gameActions.onRematchAccepted();
-                  } else if (offerType === 'challenge') {
-                    gameActions.onChallengeAccepted();
-                  }
-                }}
-                onDenyOffer={({ offerType }) => {
-                  if (offerType === 'draw') {
-                    gameActions.onDrawDenied();
-                  } else if (offerType === 'rematch') {
-                    gameActions.onRematchDenied();
-                  } else if (offerType === 'challenge') {
-                    gameActions.onChallengeDenied();
-                  }
-                }}
-                onCancelOffer={gameActions.onOfferCanceled}
               />
             );
-          })}
+          }
+
+          return (
+            <OfferNotificationItem
+              key={notification.id}
+              notification={notification}
+              me={myPeer.user}
+              onAcceptOffer={({ offerType }) => {
+                if (offerType === 'draw') {
+                  gameActions.onDrawAccepted();
+                } else if (offerType === 'rematch') {
+                  gameActions.onRematchAccepted();
+                } else if (offerType === 'challenge') {
+                  gameActions.onChallengeAccepted();
+                }
+              }}
+              onDenyOffer={({ offerType }) => {
+                if (offerType === 'draw') {
+                  gameActions.onDrawDenied();
+                } else if (offerType === 'rematch') {
+                  gameActions.onRematchDenied();
+                } else if (offerType === 'challenge') {
+                  gameActions.onChallengeDenied();
+                }
+              }}
+              onCancelOffer={gameActions.onOfferCanceled}
+            />
+          );
+        })}
       </div>
-      <div style={props.bottomContainerStyle} className={cls.bottomPart}/>
+      <div style={props.bottomContainerStyle} className={cls.bottomPart} />
     </div>
   );
 };
@@ -95,5 +108,5 @@ const useStyles = createUseStyles({
   bottomPart: {
     borderTop: 'solid 1px',
     borderColor: colors.neutral,
-  }
+  },
 });

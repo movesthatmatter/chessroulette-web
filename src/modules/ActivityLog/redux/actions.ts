@@ -6,10 +6,14 @@ export const addNotificationAction = createAction(
   (resolve) => (p: { notification: Notification }) => resolve(p)
 );
 
-export const updateOfferNotificationAction = createAction(
-  'UpdateOfferNotification',
-  (resolve) => (p: { notificationId: Notification['id']; status: OfferNotification['status'] }) =>
-    resolve(p)
+type NonPendingOfferNotificationStatus = Exclude<OfferNotification['status'], 'pending'>;
+
+export const resolveOfferNotificationAction = createAction(
+  'ResolveOfferNotification',
+  (resolve) => (p: {
+    notificationId: Notification['id'];
+    status: NonPendingOfferNotificationStatus;
+  }) => resolve(p)
 );
 
 export const clearLogAction = createAction('ClearLog');

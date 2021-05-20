@@ -1,43 +1,76 @@
 import { createReducer } from 'deox';
 import { GenericStateSlice } from 'src/redux/types';
-import { addNotificationAction, updateOfferNotificationAction, clearLogAction } from './actions';
-import { Notification } from 'src/modules/ActivityLog/types';
+import {
+  addNotificationAction,
+  clearLogAction,
+  resolveOfferNotificationAction,
+} from './actions';
+import { Notification, OfferNotification } from 'src/modules/ActivityLog/types';
 import { removeMeAction, removeRoomAction } from 'src/providers/PeerProvider/redux/actions';
 
 export type State = {
-  currentRoom: Record<Notification['id'], Notification>;
+  currentRoom: {
+    history: Record<Notification['id'], Notification>;
+    pending?: OfferNotification;
+  };
 };
 
 export const initialState: State = {
-  currentRoom: {},
+  currentRoom: {
+    history: {},
+  },
 };
 
 export const reducer = createReducer(initialState as State, (handleAction) => [
   handleAction(addNotificationAction, (state, { payload }) => {
+    if (payload.notification.type === 'offer' && payload.notification.status === 'pending') {
+      return {
+        ...state,
+        currentRoom: {
+          ...state.currentRoom,
+          pending: payload.notification,
+        },
+      };
+    }
+
     return {
       ...state,
       currentRoom: {
         ...state.currentRoom,
-        [payload.notification.id]: payload.notification,
-      },
-    };
-  }),
-  handleAction(updateOfferNotificationAction, (state, { payload }) => {
-    return {
-      ...state,
-      currentRoom: {
-        ...state.currentRoom,
-        [payload.notificationId]: {
-          ...state.currentRoom[payload.notificationId],
-          status: payload.status,
+        history: {
+          ...state.currentRoom.history,
+          [payload.notification.id]: payload.notification,
         },
       },
     };
   }),
+  handleAction(resolveOfferNotificationAction, (state, { payload }) => {
+    if (state.currentRoom.pending && state.currentRoom.pending.id === payload.notificationId) {
+      return {
+        ...state,
+        currentRoom: {
+          ...state.currentRoom,
+          history: {
+            ...state.currentRoom.history,
+            [payload.notificationId]: {
+              ...state.currentRoom.pending,
+              status: payload.status,
+            },
+          },
+          pending: undefined,
+        },
+      };
+    }
+
+    return state;
+  }),
 
   handleAction([removeMeAction, removeRoomAction, clearLogAction], () => {
     return {
-      currentRoom: {},
+      currentRoom: {
+        history: {},
+        pending: undefined,
+      },
     };
   }),
 ]);

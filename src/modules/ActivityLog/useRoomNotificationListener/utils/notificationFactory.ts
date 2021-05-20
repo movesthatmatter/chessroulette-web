@@ -1,11 +1,11 @@
 import { metadata, RoomWithPlayActivityRecord } from 'dstnd-io';
 import { toISODateTime } from 'io-ts-isodatetime';
-import { getPlayerByColor } from 'src/modules/GameRoomV2/util';
 import { Game } from 'src/modules/Games';
 import HumanizeDuration from 'humanize-duration';
 import { getUserDisplayName } from 'src/modules/User';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { Notification, OfferNotification } from '../../types';
+import { getPlayerByColor } from 'src/modules/Games/Chess/lib';
 
 type NotificationDependencies = {
   game?: Game;
