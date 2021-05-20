@@ -114,6 +114,7 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
                 key={game.id}
                 game={game}
                 playable={props.playable}
+                displayedPgn={props.displayedPgn}
                 homeColor={props.homeColor}
                 size={
                   dimensions.container.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 24)

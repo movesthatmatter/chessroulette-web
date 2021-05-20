@@ -107,6 +107,7 @@ export const PlayRoomDesktop: React.FC<Props> = ({ game, ...props }) => {
               // Reset the State each time the game id changes
               key={game.id}
               game={game}
+              displayedPgn={props.displayedPgn}
               homeColor={props.homeColor}
               size={container.width}
               playable={props.playable}
