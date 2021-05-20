@@ -1,41 +1,45 @@
+import { UserRecord } from 'dstnd-io';
 import { Layer } from 'grommet';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ChatContainer } from 'src/modules/Chat';
 import { ChatIconWithBadge } from 'src/modules/Chat/components/ChatIconWithBadge';
-import { selectChatHistory, selectMyPeer } from 'src/providers/PeerProvider';
+import { selectChatHistory } from 'src/providers/PeerProvider';
 import { colors, hardBorderRadius } from 'src/theme';
+import { spacers } from 'src/theme/spacers';
 
 type Props = {
   containerHeight: number;
+  myUserId: UserRecord['id'];
 };
 
-export const MobileChatWidget: React.FC<Props> = ({ containerHeight }) => {
+export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight }) => {
   const cls = useStyles();
   const chatHistory = useSelector(selectChatHistory);
-  const [showChatWindow, setShowChatWindow] = useState(false);
-  const newMessageCounter = useRef(0);
-  const myPeer = useSelector(selectMyPeer);
+  const [newMessageCounter, setNewMessageCounter] = useState(0);
+  const [show, setShow] = useState(false);
+  const [closedAt, setClosedAt] = useState(new Date());
 
   useEffect(() => {
-    if (chatHistory && !showChatWindow) {
-      if (
-        chatHistory.messages.length > 0 &&
-        chatHistory.messages[0].fromUserId !== myPeer?.user.id
-      ) {
-        newMessageCounter.current += 1;
-      }
+    if (chatHistory && !show) {
+      const unreadMessages = chatHistory.messages.filter(
+        (m) => myUserId !== m.fromUserId && new Date(m.sentAt).getTime() > closedAt.getTime()
+      );
+
+      setNewMessageCounter(unreadMessages.length);
     }
-  }, [chatHistory?.messages]);
+  }, [chatHistory?.messages, closedAt]);
 
   useEffect(() => {
-    newMessageCounter.current = 0;
-  }, []);
+    if (show === false) {
+      setClosedAt(new Date());
+    }
+  }, [show]);
 
-  function markMessagesAsRead() {
-    newMessageCounter.current = 0;
-  }
+  const markMessagesAsRead = () => {
+    setNewMessageCounter(0);
+  };
 
   return (
     <>
@@ -43,11 +47,12 @@ export const MobileChatWidget: React.FC<Props> = ({ containerHeight }) => {
         color={colors.white}
         onClick={() => {
           markMessagesAsRead();
-          setShowChatWindow(true);
+
+          setShow(true);
         }}
-        newMessagesCount={newMessageCounter.current}
+        newMessagesCount={newMessageCounter}
       />
-      {showChatWindow && (
+      {show && (
         <Layer
           modal={true}
           responsive={false}
@@ -57,7 +62,9 @@ export const MobileChatWidget: React.FC<Props> = ({ containerHeight }) => {
           style={{
             height: containerHeight,
           }}
-          onClickOutside={() => setShowChatWindow(false)}
+          onClickOutside={() => {
+            setShow(false);
+          }}
         >
           <ChatContainer />
         </Layer>
@@ -69,8 +76,8 @@ export const MobileChatWidget: React.FC<Props> = ({ containerHeight }) => {
 const useStyles = createUseStyles({
   container: {},
   chatContainer: {
-    width: 'calc(100% - 16px)',
-    padding: '8px',
+    width: `calc(100% - ${spacers.default})`,
+    padding: spacers.small,
     ...makeImportant({
       ...hardBorderRadius,
       borderBottomLeftRadius: 0,

@@ -72,7 +72,10 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
                     right: 0,
                   }}
                 >
-                  <MobileChatWidget containerHeight={dimensions.mainAreaContainer.height} />
+                  <MobileChatWidget
+                    containerHeight={dimensions.mainAreaContainer.height}
+                    myUserId={props.room.me.id}
+                  />
                   <div />
                   {props.meAsPlayer && (
                     <MobileGameActionsWidget

@@ -12,7 +12,6 @@ type Props = Omit<ChessBoardProps, 'onMove' | 'id' | 'pgn'> & {
 
 export const ChessGame: React.FC<Props> = ({ game, displayedPgn, ...chessGameProps }) => {
   const actions = useGameActions();
-
   useSoundEffects(game);
 
   return (
