@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
-import { colors, fonts } from 'src/theme';
+import { colors, fonts, text } from 'src/theme';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { spacers } from 'src/theme/spacers';
 
 type TabProps = {
-  content: string | React.ReactNode;
-  icon: IconProp | null;
   title: string;
+  icon: IconProp | null;
+  content: string | React.ReactNode;
 };
 
 type TabsProps = {
@@ -19,40 +19,36 @@ type TabsProps = {
 export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   const cls = useStyles();
   const [currentTab, setCurrentTab] = useState(0);
+
   return (
     <>
       <div className={cls.tabBar}>
         {tabs.map((tab, index) => (
-          <>
-            <div className={cls.tabButton} onClick={() => setCurrentTab(index)}>
-              <Text
-                className={cls.tabButtonText}
-                style={
-                  currentTab === index
-                    ? {
-                        ...fonts.subtitle2,
-                      }
-                    : {
-                        ...fonts.subtitle2,
-                        fontWeight: 'normal',
-                      }
-                }
-              >
-                {tab.icon && (
-                  <FontAwesomeIcon
-                    icon={tab.icon}
-                    className={cls.tabButtonIcon}
-                    size="lg"
-                    color={currentTab === index ? colors.primary : colors.neutral}
-                    style={{
-                      marginRight: '8px',
-                    }}
-                  />
-                )}
-                {tab.title}
-              </Text>
-            </div>
-          </>
+          <div className={cls.tabButton} onClick={() => setCurrentTab(index)}>
+            <Text
+              size="subtitle2"
+              className={cls.tabButtonText}
+              style={
+                currentTab !== index
+                  ? {
+                      color: colors.neutralDarker,
+                    }
+                  : {
+                      color: text.baseColor,
+                    }
+              }
+            >
+              {tab.icon && (
+                <FontAwesomeIcon
+                  icon={tab.icon}
+                  className={cls.tabButtonIcon}
+                  size="lg"
+                  color={currentTab === index ? colors.primary : colors.neutral}
+                />
+              )}
+              {tab.title}
+            </Text>
+          </div>
         ))}
       </div>
       {tabs[currentTab].content}
@@ -61,14 +57,16 @@ export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
 };
 
 const useStyles = createUseStyles({
-  container: {},
   tabBar: {
     display: 'flex',
     flexDirection: 'row',
     borderBottom: `1px solid ${colors.neutral}`,
   },
+  iconWrapper: {
+    marginRight: spacers.small,
+  },
   tabButton: {
-    paddingTop: spacers.larger,
+    paddingTop: spacers.default,
     paddingBottom: spacers.default,
     marginRight: spacers.default,
     borderColor: colors.neutral,
@@ -79,16 +77,19 @@ const useStyles = createUseStyles({
         '& $tabButtonText': {
           ...makeImportant({
             ...fonts.subtitle2,
+            color: text.baseColor,
           }),
         },
         '& $tabButtonIcon': {
           ...makeImportant({
-            color: colors.primaryLight,
+            color: colors.primary,
           }),
         },
       } as NestedCSSElement),
     },
   },
   tabButtonText: {},
-  tabButtonIcon: {},
+  tabButtonIcon: {
+    marginRight: spacers.small,
+  },
 });

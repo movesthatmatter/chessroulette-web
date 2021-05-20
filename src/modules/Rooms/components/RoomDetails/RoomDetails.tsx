@@ -21,7 +21,7 @@ export const RoomDetails: React.FC<Props> = () => {
           <Text size="small2">Room:</Text>
           <Text size="small1">{` ${peerState.room.name}  `}</Text>
           <br />
-          <Text size="small2">Active Peers:</Text>
+          <Text size="small2">Active Members:</Text>
           <Text size="small1">{` ${Object.keys(peerState.room.peersIncludingMe).length}`}</Text>
         </div>
       )}

@@ -7,7 +7,7 @@ import { borderRadius, colors, floatingShadow, softBorderRadius } from 'src/them
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 import { GameActions, useGameActions } from '../../../Games/GameActions';
 import { StreamingBox } from 'src/components/StreamingBox';
-import { faComment, faListAlt } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faListAlt, faList } from '@fortawesome/free-solid-svg-icons';
 import { ChatContainer } from 'src/modules/Chat';
 import { RoomDetails } from '../../components/RoomDetails';
 import { ExitRoomButton } from '../../components/ExitRoomButton/ExitRoomButton';
@@ -132,11 +132,7 @@ export const PlayRoomDesktop: React.FC<Props> = ({ game, ...props }) => {
                 }}
               >
                 <RoomDetails />
-                <div
-                  style={{
-                    flex: 1,
-                  }}
-                />
+                <div style={{ flex: 1 }} />
                 <ExitRoomButton />
               </div>
             </div>
@@ -177,7 +173,7 @@ export const PlayRoomDesktop: React.FC<Props> = ({ game, ...props }) => {
                         />
                       </div>
                     ),
-                    icon: faListAlt,
+                    icon: faList,
                   },
                   {
                     title: 'Messages',
