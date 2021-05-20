@@ -2,6 +2,7 @@ import { ChessInstance, ShortMove, Piece, Square } from 'chess.js';
 import { Result, Ok, Err } from 'ts-results';
 import { getNewChessGame } from './sdk';
 import {
+  ChessGameColor,
   ChessGameState,
   ChessGameStatePgn,
   chessGameUtils,
@@ -12,7 +13,6 @@ import {
 } from 'dstnd-io';
 import { FullMove, HalfMove, PairedMove, PairedHistory } from './types';
 import { flatten } from 'src/lib/util';
-import { getOppositePlayer, getPlayer } from 'src/modules/GameRoomV2/util';
 import { getRelativeMaterialScore } from '../components/GameStateWidget/util';
 import { Game, GameFromGameState } from '../../types';
 
@@ -205,4 +205,37 @@ export const getGameFromHistory = (history: ChessHistory = []) => {
   });
 
   return instance;
+};
+
+// A Safe way to get the opponent from the given player
+// If the given player is not actually part of players then return undefined
+//  since now there can be no opposite
+export const getOppositePlayer = (fromPlayer: ChessPlayer, players: ChessGameState['players']) => {
+  if (!isPlayer(fromPlayer.user.id, players)) {
+    return undefined;
+  }
+
+  return players[0].user.id === fromPlayer.user.id ? players[1] : players[0];
+};
+
+export const isPlayer = (userId: string, players: ChessGameState['players']) =>
+  !!players.find((p) => p.user.id === userId);
+
+export const getPlayer = (
+  userId: string,
+  players: ChessGameState['players']
+): ChessPlayer | undefined => {
+  if (players[0].user.id === userId) {
+    return players[0];
+  }
+
+  if (players[1]?.user.id === userId) {
+    return players[1];
+  }
+
+  return undefined;
+};
+
+export const getPlayerByColor = (color: ChessGameColor, players: ChessGameState['players']) => {
+  return players[0].color === color ? players[0] : players[1];
 };

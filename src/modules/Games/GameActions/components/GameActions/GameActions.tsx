@@ -5,13 +5,13 @@ import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { Refresh, Flag, Edit } from 'grommet-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHandshakeAltSlash } from '@fortawesome/free-solid-svg-icons';
-import cx from 'classnames';
-import { getOppositePlayer } from 'src/modules/GameRoomV2/util';
-import { useGameActions } from '../../hooks/useGameActions';
 import { spacers } from 'src/theme/spacers';
-import { ConfirmNewGameAction } from '../ConfirmNewGameAction';
-import { getUserDisplayName } from 'src/modules/User';
 import { noop } from 'src/lib/util';
+import { getUserDisplayName } from 'src/modules/User';
+import cx from 'classnames';
+import { useGameActions } from '../../hooks/useGameActions';
+import { ConfirmNewGameAction } from '../ConfirmNewGameAction';
+import { getOppositePlayer } from '../../../Chess/lib';
 
 
 type Props = {

@@ -18,6 +18,7 @@ import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { MobileLayout } from '../Layouts';
 import { MobileChatWidget } from './widgets/MobileChatWidget';
 import { MobileGameActionsWidget } from './widgets/MobileGameActionsWidget';
+import { GameStateDialog } from 'src/modules/Games/components/GameStateDialog';
 
 type Props = PlayProps;
 
@@ -46,92 +47,103 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
   const materialScore = getRelativeMaterialScore(game);
 
   return (
-    <MobileLayout
-      getTopArea={(dimensions) => (
-        <StreamingBox
-          room={props.room}
-          focusedPeerId={!!props.meAsPlayer ? props.opponentAsPlayer?.user.id : undefined}
-          aspectRatio={dimensions.container}
-          headerOverlay={() => <NavigationHeader />}
-          mainOverlay={() => (
-            <div
-              style={{
-                width: '100%',
-                height: '100%',
-                position: 'relative',
-              }}
-            >
+    <>
+      <MobileLayout
+        getTopArea={(dimensions) => (
+          <StreamingBox
+            room={props.room}
+            focusedPeerId={!!props.meAsPlayer ? props.opponentAsPlayer?.user.id : undefined}
+            aspectRatio={dimensions.container}
+            headerOverlay={() => <NavigationHeader />}
+            mainOverlay={() => (
               <div
-                className={cls.iconButtonsContainer}
                 style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
+                  width: '100%',
+                  height: '100%',
+                  position: 'relative',
                 }}
               >
-                <MobileChatWidget containerHeight={dimensions.mainAreaContainer.height} />
-                <div />
-                {props.meAsPlayer && (
-                  <MobileGameActionsWidget
-                    roomActivity={props.room.activity}
-                    game={game}
-                    myPlayer={props.meAsPlayer}
-                  />
-                )}
+                <div
+                  className={cls.iconButtonsContainer}
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                  }}
+                >
+                  <MobileChatWidget containerHeight={dimensions.mainAreaContainer.height} />
+                  <div />
+                  {props.meAsPlayer && (
+                    <MobileGameActionsWidget
+                      roomActivity={props.room.activity}
+                      game={game}
+                      myPlayer={props.meAsPlayer}
+                    />
+                  )}
+                </div>
               </div>
+            )}
+            // Account for the rounded border
+            footerOverlay={() => <div style={{ height: '16px' }} />}
+          />
+        )}
+        getMainArea={(dimensions) => (
+          <div className={cls.mobileMainContainer}>
+            {props.opponentAsPlayer && (
+              <div className={cls.mobilePlayerWrapper}>
+                <PlayerBox
+                  // This is needed for the countdown to reset the interval !!
+                  key={`${game.id}-${props.opponentAsPlayer.color}`}
+                  player={props.opponentAsPlayer}
+                  timeLeft={opponentTimeLeft}
+                  active={
+                    game.state === 'started' && game.lastMoveBy !== props.opponentAsPlayer.color
+                  }
+                  gameTimeLimit={game.timeLimit}
+                  material={materialScore[props.opponentAsPlayer.color]}
+                  onTimerFinished={gameActions.onTimerFinished}
+                />
+              </div>
+            )}
+            <div className={cls.mobileChessGameWrapper}>
+              <ChessGame
+                key={game.id}
+                game={game}
+                playable={props.playable}
+                homeColor={props.homeColor}
+                size={
+                  dimensions.container.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 24)
+                }
+                className={cls.mobileBoard}
+                notificationDialog={props.gameNotificationDialog}
+              />
             </div>
-          )}
-          // Account for the rounded border
-          footerOverlay={() => <div style={{ height: '16px' }} />}
+            {props.meAsPlayer && (
+              <div className={cls.mobilePlayerWrapper}>
+                <PlayerBox
+                  // This is needed for the countdown to reset the interval !!
+                  key={`${game.id}-${props.meAsPlayer.color}`}
+                  player={props.meAsPlayer}
+                  timeLeft={myTimeLeft}
+                  active={game.state === 'started' && game.lastMoveBy !== props.meAsPlayer.color}
+                  gameTimeLimit={game.timeLimit}
+                  material={materialScore[props.meAsPlayer.color]}
+                  onTimerFinished={gameActions.onTimerFinished}
+                />
+              </div>
+            )}
+          </div>
+        )}
+      />
+      {props.meAsPlayer && (
+        <GameStateDialog
+          roomActivity={props.room.activity}
+          game={game}
+          myPlayer={props.meAsPlayer}
         />
       )}
-      getMainArea={(dimensions) => (
-        <div className={cls.mobileMainContainer}>
-          {props.opponentAsPlayer && (
-            <div className={cls.mobilePlayerWrapper}>
-              <PlayerBox
-                // This is needed for the countdown to reset the interval !!
-                key={`${game.id}-${props.opponentAsPlayer.color}`}
-                player={props.opponentAsPlayer}
-                timeLeft={opponentTimeLeft}
-                active={
-                  game.state === 'started' && game.lastMoveBy !== props.opponentAsPlayer.color
-                }
-                gameTimeLimit={game.timeLimit}
-                material={materialScore[props.opponentAsPlayer.color]}
-                onTimerFinished={gameActions.onTimerFinished}
-              />
-            </div>
-          )}
-          <div className={cls.mobileChessGameWrapper}>
-            <ChessGame
-              key={game.id}
-              game={game}
-              playable={props.playable}
-              homeColor={props.homeColor}
-              size={dimensions.container.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 24)}
-              className={cls.mobileBoard}
-              notificationDialog={props.gameNotificationDialog}
-            />
-          </div>
-          {props.meAsPlayer && (
-            <div className={cls.mobilePlayerWrapper}>
-              <PlayerBox
-                // This is needed for the countdown to reset the interval !!
-                key={`${game.id}-${props.meAsPlayer.color}`}
-                player={props.meAsPlayer}
-                timeLeft={myTimeLeft}
-                active={game.state === 'started' && game.lastMoveBy !== props.meAsPlayer.color}
-                gameTimeLimit={game.timeLimit}
-                material={materialScore[props.meAsPlayer.color]}
-                onTimerFinished={gameActions.onTimerFinished}
-              />
-            </div>
-          )}
-        </div>
-      )}
-    />
+    </>
   );
 };
 

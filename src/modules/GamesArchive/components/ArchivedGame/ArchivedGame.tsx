@@ -20,8 +20,8 @@ import dateformat from 'dateformat';
 import capitalize from 'capitalize';
 import { ClipboardCopy } from 'src/components/ClipboardCopy';
 import { useWindowWidth } from '@react-hook/window-size';
-import { getPlayer } from 'src/modules/GameRoomV2/util';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { getPlayer } from 'src/modules/Games/Chess/lib';
 
 type Props = {
   game: GameRecordFinished | GameRecordStopped;
