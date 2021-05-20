@@ -1,35 +1,42 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
 import { colors, fonts, text } from 'src/theme';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { spacers } from 'src/theme/spacers';
+import { noop } from 'src/lib/util';
 
 type TabProps = {
   title: string;
-  icon: IconProp | null;
+  icon: IconProp;
   content: string | React.ReactNode;
 };
 
 type TabsProps = {
   tabs: TabProps[];
+  currentTabIndex: number;
+  onTabChanged: (nextIndex: number) => void;
 };
 
-export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
+export const Tabs: React.FC<TabsProps> = ({ tabs, onTabChanged = noop, currentTabIndex = 0 }) => {
   const cls = useStyles();
-  const [currentTab, setCurrentTab] = useState(0);
 
   return (
     <>
       <div className={cls.tabBar}>
         {tabs.map((tab, index) => (
-          <div className={cls.tabButton} onClick={() => setCurrentTab(index)}>
+          <div
+            className={cls.tabButton}
+            onClick={() => {
+              onTabChanged(index);
+            }}
+          >
             <Text
               size="subtitle2"
               className={cls.tabButtonText}
               style={
-                currentTab !== index
+                currentTabIndex !== index
                   ? {
                       color: colors.neutralDarker,
                     }
@@ -43,7 +50,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
                   icon={tab.icon}
                   className={cls.tabButtonIcon}
                   size="lg"
-                  color={currentTab === index ? colors.primary : colors.neutral}
+                  color={currentTabIndex === index ? colors.primary : colors.neutral}
                 />
               )}
               {tab.title}
@@ -51,7 +58,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
           </div>
         ))}
       </div>
-      {tabs[currentTab].content}
+      {tabs[currentTabIndex].content}
     </>
   );
 };

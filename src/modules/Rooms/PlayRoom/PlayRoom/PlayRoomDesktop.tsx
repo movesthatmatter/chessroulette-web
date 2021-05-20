@@ -7,15 +7,12 @@ import { borderRadius, colors, floatingShadow, softBorderRadius } from 'src/them
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 import { GameActions, useGameActions } from '../../../Games/GameActions';
 import { StreamingBox } from 'src/components/StreamingBox';
-import { faComment, faListAlt, faList } from '@fortawesome/free-solid-svg-icons';
-import { ChatContainer } from 'src/modules/Chat';
 import { RoomDetails } from '../../components/RoomDetails';
 import { ExitRoomButton } from '../../components/ExitRoomButton/ExitRoomButton';
-import { Tabs } from 'src//components/Tabs';
-import { ActivityLog } from 'src/modules/ActivityLog';
 import { ChessGame } from 'src/modules/Games/Chess';
 import { PlayProps } from './types';
 import { DesktopLayout } from '../Layouts';
+import { RoomTabsWidget } from './widgets/RoomTabsWidget';
 
 type Props = PlayProps;
 
@@ -153,48 +150,10 @@ export const PlayRoomDesktop: React.FC<Props> = ({ game, ...props }) => {
                   containerClassName={cls.streamingBox}
                 />
               </div>
-              <Tabs
-                tabs={[
-                  {
-                    title: 'Activity Log',
-                    content: (
-                      <div
-                        style={{
-                          borderColor: colors.neutral,
-                          overflow: 'hidden',
-                          flex: 1,
-                        }}
-                      >
-                        <ActivityLog
-                          bottomContainerStyle={{
-                            height: `${BOTTOM_HEIGHT + container.verticalPadding - 1}px`,
-                          }}
-                          game={game}
-                        />
-                      </div>
-                    ),
-                    icon: faList,
-                  },
-                  {
-                    title: 'Messages',
-                    content: (
-                      <div
-                        style={{
-                          borderColor: colors.neutral,
-                          overflow: 'hidden',
-                          flex: 1,
-                        }}
-                      >
-                        <ChatContainer
-                          inputContainerStyle={{
-                            height: `${BOTTOM_HEIGHT + container.verticalPadding}px`,
-                          }}
-                        />
-                      </div>
-                    ),
-                    icon: faComment,
-                  },
-                ]}
+              <RoomTabsWidget
+                game={game}
+                me={props.room.me.user}
+                bottomContainerHeight={BOTTOM_HEIGHT + container.verticalPadding - 1}
               />
             </div>
           </div>
