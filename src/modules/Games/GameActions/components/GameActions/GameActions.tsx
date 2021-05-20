@@ -31,10 +31,7 @@ export const GameActions: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
-
   const actions = useGameActions();
-
-  // TODO: Start using the useGameActions hook!
 
   const content = () => {
     const dynamicProps = isMobile
@@ -78,6 +75,11 @@ export const GameActions: React.FC<Props> = ({
             />
           ) : (
             <ConfirmNewGameAction
+              // This is needed in order to reset the state if the Dialog already opened
+              //  but another offer just came in. This ensures the client is not able to send
+              //  2 notifications at the same time.
+              //  TODO: But the server should take care of that as well
+              key={props.roomActivity.offer?.id}
               title="Rematch"
               content={{
                 __html: `Challenge <strong>${getUserDisplayName(
@@ -144,6 +146,11 @@ export const GameActions: React.FC<Props> = ({
             />
           ) : (
             <ConfirmNewGameAction
+              // This is needed in order to reset the state if the Dialog already opened
+              //  but another offer just came in. This ensures the client is not able to send
+              //  2 notifications at the same time.
+              //  TODO: But the server should take care of that as well
+              key={props.roomActivity.offer?.id}
               title="Edit Game"
               content={{
                 __html: `Create a new game with <strong>${getUserDisplayName(
@@ -163,6 +170,7 @@ export const GameActions: React.FC<Props> = ({
                   type="primary"
                   label="Edit Game"
                   actionType="positive"
+                  disabled={props.roomActivity.offer?.type === 'challenge'}
                   confirmation="Edit Game"
                   icon={Edit}
                   onFirstClick={p.onConfirm}
