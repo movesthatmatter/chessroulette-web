@@ -8,7 +8,7 @@ import { getUserDisplayName } from 'src/modules/User';
 import { spacers } from 'src/theme/spacers';
 import { OfferNotification } from '../../types';
 import { Avatar } from 'src/components/Avatar';
-import { Checkmark, Close } from 'grommet-icons';
+import { Checkmark, Close, FormClose } from 'grommet-icons';
 
 type Props = {
   notification: OfferNotification;
@@ -57,7 +57,7 @@ const dict = {
   'offer-challenge-pending': (n: OfferNotification) => (
     <div>
       <strong>{getUserDisplayName(n.byUser)}</strong> is challenging{' '}
-      <strong>{getUserDisplayName(n.toUser)}</strong> to a new game. TODO: Add Game Specs
+      <strong>{getUserDisplayName(n.toUser)}</strong> to a new game.
     </div>
   ),
   'offer-challenge-withdrawn': (n: OfferNotification) => (
@@ -105,69 +105,67 @@ export const OfferNotificationItem: React.FC<Props> = ({
         <div
           style={{
             display: 'flex',
-            flexDirection: notification.byUser.id === me.id ? 'row-reverse' : 'row',
+            flexDirection: notification.byUser.id === me.id ? 'row' : 'row-reverse',
             alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
-          <Avatar
-            mutunachiId={Number(notification.byUser.avatarId)}
-            className={cx({
-              [cls.avatarLeft]: notification.byUser.id === me.id,
-              [cls.avatarRight]: notification.byUser.id !== me.id,
-            })}
-          />
           <div
             style={{
-              textAlign: notification.byUser.id === me.id ? 'right' : 'left',
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: notification.byUser.id === me.id ? 'row' : 'row-reverse',
             }}
           >
-            {content}
+            <Avatar
+              mutunachiId={Number(notification.byUser.avatarId)}
+              className={cx({
+                [cls.avatarLeft]: notification.byUser.id !== me.id,
+                [cls.avatarRight]: notification.byUser.id === me.id,
+              })}
+            />
+            <div
+              style={{
+                textAlign: notification.byUser.id === me.id ? 'left' : 'right',
+              }}
+            >
+              {content}
+            </div>
           </div>
-          {(notification.status === 'pending') && (notification.byUser.id === me.id) && 
-            (
-              <div style={{marginRight: spacers.small}}>
-              <IconButton
-                type='secondary'
-                icon={Close}
-                className={cls.attentionButton}
-                clear
-                onSubmit={() => props.onCancelOffer(notification)}
-              />
-              </div>
-            )
-          }
+          {notification.status === 'pending' && notification.byUser.id === me.id && (
+            <IconButton
+              type="primary"
+              icon={Close}
+              className={cls.attentionButton}
+              clear
+              onSubmit={() => props.onCancelOffer(notification)}
+            />
+          )}
         </div>
 
-        {notification.status === 'pending' && (
+        {notification.status === 'pending' && notification.toUser.id === me.id && (
           <div
             style={{
               display: 'flex',
               flexDirection: 'row',
-              justifyContent:
-                notification.byUser.id === me.id && notification.status === 'pending'
-                  ? 'flex-start'
-                  : 'flex-end',
+              justifyContent: 'flex-end',
               marginTop: spacers.small,
             }}
           >
-            {notification.toUser.id === me.id && (
-              <>
-                <IconButton
-                  type='negative'
-                  icon={Close}
-                  className={cls.denyButton}
-                  clear
-                  onSubmit={() => props.onDenyOffer(notification)}
-                />
-                <IconButton
-                  type="primary"
-                  icon={Checkmark}
-                  className={cls.attentionButton}
-                  clear
-                  onSubmit={() => props.onAcceptOffer(notification)}
-                />
-              </>
-            )}
+            <IconButton
+              type="primary"
+              icon={Close}
+              className={cls.denyButton}
+              clear
+              onSubmit={() => props.onDenyOffer(notification)}
+            />
+            <IconButton
+              type="primary"
+              icon={Checkmark}
+              className={cls.attentionButton}
+              // clear
+              onSubmit={() => props.onAcceptOffer(notification)}
+            />
           </div>
         )}
       </div>
@@ -181,7 +179,7 @@ const useStyles = createUseStyles({
     marginBottom: spacers.large,
   },
   attention: {
-    borderRight: `3px solid ${colors.negative}`,
+    borderRight: `3px solid ${colors.negativeLight}`,
     paddingRight: spacers.default,
   },
   avatarLeft: {
@@ -192,17 +190,17 @@ const useStyles = createUseStyles({
   },
   denyButton: {
     marginRight: spacers.small,
-    height:'30px',
-    width:'30px',
+    height: '30px',
+    width: '30px',
     ...makeImportant({
       marginBottom: 0,
-    })
+    }),
   },
   attentionButton: {
-    height:'30px',
-    width:'30px',
+    height: '30px',
+    width: '30px',
     ...makeImportant({
       marginBottom: 0,
-    })
-  }
+    }),
+  },
 });

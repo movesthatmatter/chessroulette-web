@@ -6,7 +6,7 @@ import cx from 'classnames';
 import { spacers } from 'src/theme/spacers';
 import { InfoNotification } from '../../types';
 import { hasOwnProperty } from 'src/lib/util';
-import {DangerouslySetInnerHTML} from '../../types';
+import { DangerouslySetInnerHTML } from '../../types';
 import { Text } from 'src/components/Text';
 
 type Props = {
@@ -30,10 +30,11 @@ export const InfoNotificationItem: React.FC<Props> = ({ notification, me, classN
           textAlign: 'right',
         }}
       >
-        {isDangerouslySetHtml(notification.content)
-        ? <Text size='small1' dangerouslySetInnerHTML={notification.content}/>
-        : <Text size='small1'>{notification.content}</Text>
-        }
+        {isDangerouslySetHtml(notification.content) ? (
+          <Text size="small1" dangerouslySetInnerHTML={notification.content} />
+        ) : (
+          <Text size="small1">{notification.content}</Text>
+        )}
       </div>
     </div>
   );
