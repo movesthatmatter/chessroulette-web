@@ -165,7 +165,7 @@ const useStyles = createUseStyles({
       },
 
       '& .cg-wrap coords.ranks': {
-        top: '-5%',
+        top: '-4.5%',
         left: '.5%',
         '& coord': {
           textTransform: 'none',
@@ -189,6 +189,22 @@ const useStyles = createUseStyles({
           '&:nth-child(even)': {
             color: '#8ca2ad',
           },
+        },
+      },
+
+      // Reverse it for black orientation
+      '& .orientation-black coords.ranks coord': {
+        color: '#8ca2ad !important',
+
+        '&:nth-child(even)': {
+          color: '#dee3e6 !important',
+        },
+      },
+      '& .orientation-black coords.files coord': {
+        color: '#8ca2ad !important',
+
+        '&:nth-child(even)': {
+          color: '#dee3e6 !important',
         },
       },
     } as CSSProperties),

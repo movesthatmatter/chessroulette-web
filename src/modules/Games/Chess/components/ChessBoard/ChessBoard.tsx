@@ -117,7 +117,6 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         turnColor={chessState.turn}
         check={chessState.inCheck}
         resizable
-        coordinates
         movable={this.calcMovable()}
         lastMove={chessState.lastMove && [chessState.lastMove.from, chessState.lastMove.to]}
         orientation={orientation || homeColor}
