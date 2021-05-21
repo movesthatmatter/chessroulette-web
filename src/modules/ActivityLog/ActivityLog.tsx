@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { Game } from 'src/modules/Games';
@@ -33,10 +33,17 @@ export const ActivityLog: React.FC<Props> = (props) => {
   const gameActions = useGameActions();
   const activityLog = useSelector(selectCurrentRoomActivityLog);
   const [log, setLog] = useState(processLog(activityLog));
+  const dummy = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setLog(processLog(activityLog));
   }, [activityLog]);
+
+  useEffect(() => {
+    if (dummy && dummy.current){
+      dummy.current.scrollIntoView({behavior: 'smooth'});
+    }
+  },[log])
 
   if (!myPeer) {
     return null;
@@ -45,6 +52,7 @@ export const ActivityLog: React.FC<Props> = (props) => {
   return (
     <div className={cls.container}>
       <div className={cls.scroller}>
+        <div ref={dummy}/>
         {log.map((notification) => {
           if (notification.type === 'info') {
             return (

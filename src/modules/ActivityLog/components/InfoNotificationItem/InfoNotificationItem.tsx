@@ -5,12 +5,18 @@ import { fonts } from 'src/theme';
 import cx from 'classnames';
 import { spacers } from 'src/theme/spacers';
 import { InfoNotification } from '../../types';
+import { hasOwnProperty } from 'src/lib/util';
+import { DangerouslySetInnerHTML } from '../../types';
+import { Text } from 'src/components/Text';
 
 type Props = {
   notification: InfoNotification;
   className?: string;
   me: UserRecord;
 };
+
+const isDangerouslySetHtml = (t: unknown): t is DangerouslySetInnerHTML =>
+  typeof t === 'object' && hasOwnProperty(t || {}, '__html');
 
 export const InfoNotificationItem: React.FC<Props> = ({ notification, me, className }) => {
   const cls = useStyles();
@@ -24,7 +30,11 @@ export const InfoNotificationItem: React.FC<Props> = ({ notification, me, classN
           textAlign: 'right',
         }}
       >
-        {notification.content}
+        {isDangerouslySetHtml(notification.content) ? (
+          <Text size="small1" dangerouslySetInnerHTML={notification.content} />
+        ) : (
+          <Text size="small1">{notification.content}</Text>
+        )}
       </div>
     </div>
   );

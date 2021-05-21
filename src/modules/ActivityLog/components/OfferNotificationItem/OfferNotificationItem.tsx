@@ -1,12 +1,14 @@
 import React from 'react';
 import { UserRecord } from 'dstnd-io';
-import { Button } from 'src/components/Button';
-import { createUseStyles } from 'src/lib/jss';
+import { Button, IconButton } from 'src/components/Button';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { colors, fonts } from 'src/theme';
 import cx from 'classnames';
 import { getUserDisplayName } from 'src/modules/User';
 import { spacers } from 'src/theme/spacers';
 import { OfferNotification } from '../../types';
+import { Avatar } from 'src/components/Avatar';
+import { Checkmark, Close, FormClose } from 'grommet-icons';
 
 type Props = {
   notification: OfferNotification;
@@ -19,32 +21,62 @@ type Props = {
 
 /// TODO: I'm not happy with this as it doesn't fail at compile time!
 const dict = {
-  'offer-rematch-pending': (n: OfferNotification) =>
-    `${getUserDisplayName(n.byUser)} is asking ${getUserDisplayName(n.toUser)} for a rematch`,
-  'offer-rematch-withdrawn': (n: OfferNotification) =>
-    `${getUserDisplayName(n.byUser)}'s rematch offer was sent into the void`,
-  'offer-rematch-accepted': (n: OfferNotification) =>
-    `${getUserDisplayName(n.toUser)} accepted ${getUserDisplayName(n.byUser)}'s rematch offer`,
-  'offer-draw-pending': (n: OfferNotification) =>
-    `${getUserDisplayName(n.byUser)} is offering ${getUserDisplayName(n.toUser)} a draw`,
-  'offer-draw-withdrawn': (n: OfferNotification) =>
-    `${getUserDisplayName(n.byUser)}'s draw offer was sent into the void`,
-  'offer-draw-accepted': (n: OfferNotification) =>
-    `${getUserDisplayName(n.toUser)} accepted the draw offer`,
-  'offer-challenge-pending': (n: OfferNotification) =>
-    `${getUserDisplayName(n.byUser)} is challenging ${getUserDisplayName(
-      n.toUser
-    )} to a new game. TODO: Add Game Specs`,
-  'offer-challenge-withdrawn': (n: OfferNotification) =>
-    `${getUserDisplayName(n.byUser)}'s challenge offer was sent into the void`,
-  'offer-challenge-accepted': (n: OfferNotification) =>
-    `${getUserDisplayName(n.toUser)} accepted ${getUserDisplayName(n.byUser)}'s challenge offer`,
+  'offer-rematch-pending': (n: OfferNotification) => (
+    <div>
+      <strong>{getUserDisplayName(n.byUser)}</strong> is asking{' '}
+      <strong>{getUserDisplayName(n.toUser)}</strong> for a rematch
+    </div>
+  ),
+  'offer-rematch-withdrawn': (n: OfferNotification) => (
+    <div>
+      <strong>{getUserDisplayName(n.byUser)}</strong>'s rematch offer was sent into the void
+    </div>
+  ),
+  'offer-rematch-accepted': (n: OfferNotification) => (
+    <div>
+      <strong>{getUserDisplayName(n.toUser)}</strong> accepted{' '}
+      <strong>{getUserDisplayName(n.byUser)}</strong>'s rematch offer
+    </div>
+  ),
+  'offer-draw-pending': (n: OfferNotification) => (
+    <div>
+      <strong>{getUserDisplayName(n.byUser)}</strong> is offering{' '}
+      <strong>{getUserDisplayName(n.toUser)}</strong> a draw
+    </div>
+  ),
+  'offer-draw-withdrawn': (n: OfferNotification) => (
+    <div>
+      <strong>{getUserDisplayName(n.byUser)}</strong>'s draw offer was sent into the void
+    </div>
+  ),
+  'offer-draw-accepted': (n: OfferNotification) => (
+    <div>
+      <strong>{getUserDisplayName(n.toUser)}</strong> accepted the draw offer
+    </div>
+  ),
+  'offer-challenge-pending': (n: OfferNotification) => (
+    <div>
+      <strong>{getUserDisplayName(n.byUser)}</strong> is challenging{' '}
+      <strong>{getUserDisplayName(n.toUser)}</strong> to a new game.
+    </div>
+  ),
+  'offer-challenge-withdrawn': (n: OfferNotification) => (
+    <div>
+      <strong>{getUserDisplayName(n.byUser)}</strong>'s challenge offer was sent into the void
+    </div>
+  ),
+  'offer-challenge-accepted': (n: OfferNotification) => (
+    <div>
+      <strong>{getUserDisplayName(n.toUser)}</strong> accepted{' '}
+      <strong>{getUserDisplayName(n.byUser)}</strong>'s challenge offer
+    </div>
+  ),
 };
 
-const getContent = (notification: OfferNotification) => {
+const getContent = (notification: OfferNotification): React.ReactNode => {
   const key = `${notification.type}-${notification.offerType}-${notification.status}`;
 
-  return dict[key as keyof typeof dict](notification as any);
+  return dict[key as keyof typeof dict](notification);
 };
 
 export const OfferNotificationItem: React.FC<Props> = ({
@@ -54,7 +86,6 @@ export const OfferNotificationItem: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
-
   const content = getContent(notification);
 
   const needsAttention = notification.status === 'pending' && notification.toUser.id === me.id;
@@ -71,47 +102,70 @@ export const OfferNotificationItem: React.FC<Props> = ({
               : 'right',
         }}
       >
-        {content}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: notification.byUser.id === me.id ? 'row' : 'row-reverse',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: notification.byUser.id === me.id ? 'row' : 'row-reverse',
+            }}
+          >
+            <Avatar
+              mutunachiId={Number(notification.byUser.avatarId)}
+              className={cx({
+                [cls.avatarLeft]: notification.byUser.id !== me.id,
+                [cls.avatarRight]: notification.byUser.id === me.id,
+              })}
+            />
+            <div
+              style={{
+                textAlign: notification.byUser.id === me.id ? 'left' : 'right',
+              }}
+            >
+              {content}
+            </div>
+          </div>
+          {notification.status === 'pending' && notification.byUser.id === me.id && (
+            <IconButton
+              type="primary"
+              icon={Close}
+              className={cls.attentionButton}
+              clear
+              onSubmit={() => props.onCancelOffer(notification)}
+            />
+          )}
+        </div>
 
-        {notification.status === 'pending' && (
+        {notification.status === 'pending' && notification.toUser.id === me.id && (
           <div
             style={{
               display: 'flex',
               flexDirection: 'row',
-              justifyContent:
-                notification.byUser.id === me.id && notification.status === 'pending'
-                  ? 'flex-start'
-                  : 'flex-end',
+              justifyContent: 'flex-end',
               marginTop: spacers.small,
             }}
           >
-            {notification.byUser.id === me.id && (
-              <Button
-                type="secondary"
-                label="Cancel"
-                size="xsmall"
-                style={{ marginBottom: 0 }}
-                onClick={() => props.onCancelOffer(notification)}
-              />
-            )}
-            {notification.toUser.id === me.id && (
-              <>
-                <Button
-                  type="secondary"
-                  label="Deny"
-                  style={{ marginRight: spacers.small, marginBottom: 0 }}
-                  size="xsmall"
-                  onClick={() => props.onDenyOffer(notification)}
-                />
-                <Button
-                  type="primary"
-                  label="Accept"
-                  size="xsmall"
-                  style={{ marginBottom: 0 }}
-                  onClick={() => props.onAcceptOffer(notification)}
-                />
-              </>
-            )}
+            <IconButton
+              type="primary"
+              icon={Close}
+              className={cls.denyButton}
+              clear
+              onSubmit={() => props.onDenyOffer(notification)}
+            />
+            <IconButton
+              type="primary"
+              icon={Checkmark}
+              className={cls.attentionButton}
+              // clear
+              onSubmit={() => props.onAcceptOffer(notification)}
+            />
           </div>
         )}
       </div>
@@ -125,7 +179,28 @@ const useStyles = createUseStyles({
     marginBottom: spacers.large,
   },
   attention: {
-    borderRight: `5px solid ${colors.negative}`,
+    borderRight: `3px solid ${colors.negativeLight}`,
     paddingRight: spacers.default,
+  },
+  avatarLeft: {
+    marginLeft: spacers.small,
+  },
+  avatarRight: {
+    marginRight: spacers.small,
+  },
+  denyButton: {
+    marginRight: spacers.small,
+    height: '30px',
+    width: '30px',
+    ...makeImportant({
+      marginBottom: 0,
+    }),
+  },
+  attentionButton: {
+    height: '30px',
+    width: '30px',
+    ...makeImportant({
+      marginBottom: 0,
+    }),
   },
 });
