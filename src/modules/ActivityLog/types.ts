@@ -3,6 +3,7 @@ import { ISODateTime } from 'io-ts-isodatetime';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 
 export type OfferType = NonNullable<RoomWithPlayActivity['activity']['offer']>['type'];
+export type DangerouslySetInnerHTML = { __html: string };
 
 type BaseNotification = {
   id: string;
@@ -20,7 +21,7 @@ export type OfferNotification = BaseNotification & {
 export type InfoNotification = BaseNotification & {
   type: 'info';
   infoType: 'resign' | 'win' | 'draw' | 'newGame';
-  content: string;
+  content: string | DangerouslySetInnerHTML;
 };
 
 export type Notification = OfferNotification | InfoNotification;

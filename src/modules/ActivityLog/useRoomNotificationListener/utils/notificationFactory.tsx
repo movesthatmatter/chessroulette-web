@@ -1,3 +1,4 @@
+import React from 'react';
 import { metadata, RoomWithPlayActivityRecord } from 'dstnd-io';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { Game } from 'src/modules/Games';
@@ -146,11 +147,13 @@ export const notificationFactory = ({
         infoType: 'draw',
         id: `${current.game.id}-new`, // TODO: Refactor
         timestamp: toISODateTime(now),
-        content: `A new ${formatTimeLimit(
-          metadata.game.chessGameTimeLimitMsMap[current.game.timeLimit]
-        )} game has started between ${getUserDisplayName(
-          current.game.players[0].user
-        )} & ${getUserDisplayName(current.game.players[1].user)}`,
+        content: {
+          __html: `<div>A new ${formatTimeLimit(
+            metadata.game.chessGameTimeLimitMsMap[current.game.timeLimit]
+          )} game has started between <strong>${getUserDisplayName(
+            current.game.players[0].user
+          )}</strong> & <strong>${getUserDisplayName(current.game.players[1].user)}</strong></div>`
+        },
       },
     };
   }
@@ -164,9 +167,11 @@ export const notificationFactory = ({
           infoType: 'win',
           id: `${current.game.id}-${current.game.winner}-win`,
           timestamp: toISODateTime(now),
-          content: `${getUserDisplayName(
-            getPlayerByColor(current.game.winner, current.game.players).user
-          )} won!`,
+          content: {
+            __html : `<div><strong>${getUserDisplayName(
+              getPlayerByColor(current.game.winner, current.game.players).user
+            )}</strong> won!</div>`
+          },
         },
       };
     }
@@ -178,7 +183,7 @@ export const notificationFactory = ({
           infoType: 'draw',
           id: `${current.game.id}-draw`,
           timestamp: toISODateTime(now),
-          content: 'Game Ended in a Draw by Stalemate!',
+          content: `Game has ended in a draw by stalemate!`,
         },
       };
     }
@@ -193,7 +198,7 @@ export const notificationFactory = ({
           infoType: 'draw',
           id: `${current.game.id}-draw`,
           timestamp: toISODateTime(now),
-          content: 'Game has ended in a draw',
+          content: `Game has ended in a draw`,
         },
       };
     } else {
@@ -204,11 +209,13 @@ export const notificationFactory = ({
           infoType: 'resign',
           id: `${current.game.id}-${current.game.winner}-resign`,
           timestamp: toISODateTime(now),
-          content: `${getUserDisplayName(
-            getPlayerByColor(otherChessColor(current.game.winner), current.game.players).user
-          )} has resigned. ${getUserDisplayName(
-            getPlayerByColor(current.game.winner, current.game.players).user
-          )} won!`,
+          content: {
+            __html: `<div><strong>${getUserDisplayName(
+              getPlayerByColor(otherChessColor(current.game.winner), current.game.players).user
+            )}</strong> has resigned. <strong>${getUserDisplayName(
+              getPlayerByColor(current.game.winner, current.game.players).user
+            )}</strong> won!</div>`
+          },
         },
       };
     }

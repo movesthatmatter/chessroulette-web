@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
 import { ChessBoard } from './ChessBoard';
-import 'src/modules/Games/Chess/components/ChessBoard/node_modules/react-chessground/dist/styles/chessground.css';
+//import 'src/modules/Games/Chess/components/ChessBoard/node_modules/react-chessground/dist/styles/chessground.css';
 import { GameMocker } from 'src/mocks/records/GameMocker';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
