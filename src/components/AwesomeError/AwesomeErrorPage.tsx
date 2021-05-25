@@ -8,10 +8,10 @@ type Props = {
 
 export const AwesomeErrorPage: React.FC<Props> = (props) => {
   const cls = useStyles();
-
+  
   return (
     <div className={cls.container}>
-      <AwesomeError errorType={props.errorType} />
+      <AwesomeError errorType={props.errorType}/>
     </div>
   );
 };
