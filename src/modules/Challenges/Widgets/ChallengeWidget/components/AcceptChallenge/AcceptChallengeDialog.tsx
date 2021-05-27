@@ -22,9 +22,9 @@ export const AcceptChallengeDialog: React.FC<Props> = ({
   ...props
 }) => {
   // TODO: Add them back
-  const { isBrowserSupported, checkBrowserSupport } = useBrowserSupportCheck();
+  const { isBrowserUnsupported, checkBrowserSupport } = useBrowserSupportCheck();
 
-  if (!isBrowserSupported) {
+  if (isBrowserUnsupported) {
     return null;
   }
 
@@ -48,7 +48,7 @@ export const AcceptChallengeDialog: React.FC<Props> = ({
           onClick: () => {
             // Make sure the browser is supported 
             //  before accepting the challenge
-            // This is important because if the challenge gets created in the current unsupported brwoser
+            // This is important because if the challenge gets created in the current unsupported browser
             //  and the User has to change Browsers, he won't be a Player anymore since he'll 
             //  join as different Guest User
             if (checkBrowserSupport()) {

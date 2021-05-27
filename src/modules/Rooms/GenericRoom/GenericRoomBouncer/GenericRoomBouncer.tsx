@@ -39,7 +39,7 @@ export const GenericRoomBouncer: React.FC<Props> = ({
   }
 
   // let the Global Bouncer Dialog deal with it!
-  if (!bouncer.state?.browserIsSupported) {
+  if (bouncer.state?.browserIsUnsupported) {
     return null;
   }
 
@@ -124,7 +124,7 @@ export const GenericRoomBouncer: React.FC<Props> = ({
 
   return (
     <Dialog
-      visible={!bouncer.state.ready}
+      visible={!bouncer.state?.ready}
       hasCloseButton={false}
       title={dialogState.title}
       content={dialogState.content}

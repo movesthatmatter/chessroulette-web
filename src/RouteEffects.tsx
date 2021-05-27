@@ -30,7 +30,7 @@ export const RouteEffects: React.FC = () => {
   const history = useHistory();
   const [activityState, setActivityState] = useState<ActivityState>({ activity: 'none' });
   const feedbackDialog = useFeedbackDialog();
-  const { isBrowserSupported } = useBrowserSupportCheck();
+  const { isBrowserUnsupported } = useBrowserSupportCheck();
 
   const onChallengeOrRoomPage = (slug: string) => history.location.pathname.indexOf(slug) > -1;
 
@@ -58,8 +58,7 @@ export const RouteEffects: React.FC = () => {
     );
   }
 
-  // TODO: Add the browser is supported check back!
-  if (!isBrowserSupported) {
+  if (isBrowserUnsupported) {
     return <BrowserNotSupportedDialog visible />;
   }
 
@@ -67,6 +66,8 @@ export const RouteEffects: React.FC = () => {
     return <FeedbackDialog />;
   }
 
+  // May 27 2021
+  // TODO: Why is this here??? Do we need it?
   return (
     <SocketConsumer
       onMessage={(msg) => {

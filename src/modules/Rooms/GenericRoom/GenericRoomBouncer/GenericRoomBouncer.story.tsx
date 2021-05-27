@@ -30,7 +30,7 @@ export const defaultStory = () =>
               },
               permissionsGranted: false,
               permissionsRequestAgreed: false,
-              browserIsSupported: false,
+              browserIsUnsupported: true,
               ready: false,
             },
           }}

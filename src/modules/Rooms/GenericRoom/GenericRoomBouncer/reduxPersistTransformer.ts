@@ -5,13 +5,22 @@ export const setGenericRoomBouncerPersistTransform = createTransform(
   // transform state on its way to being serialized and persisted.
   (inboundState: NonNullable<ModuleState>, key) => {
     // Remove the permissionsGranted
-    const { permissionsGranted, ready, ...persistableInboundState } = inboundState || {};
+    const {
+      permissionsGranted,
+      ready,
+      // Remove the browserIsUnsupported so the checkBrowser happens each time
+      browserIsUnsupported,
+      ...persistableInboundState
+    } = inboundState || {};
 
-    return persistableInboundState;
+    return {
+      ...persistableInboundState,
+      browserIsUnsupported: undefined,
+    };
   },
   // transform state being rehydrated
   (outboundState: Omit<NonNullable<ModuleState>, 'permissionsGranted' | 'ready'>, key) => {
-    // convert mySet back to a Set.
+    // convert back
     return {
       ...initialState,
       ...outboundState,

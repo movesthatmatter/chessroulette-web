@@ -5,20 +5,21 @@ import {
   grantPermissionsAction,
   confirmJoiningRoomAction,
   agreePermissionsRequestAction,
-  refuseBrowserSuppport,
   checkRoomAction,
   refusePermissionsAction,
 } from './reducer';
-import isWebViewUA from 'is-ua-webview';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectroomBouncerState } from './selectors';
 import { AsyncResult, RoomRecord } from 'dstnd-io';
+import { useBrowserSupportCheck } from './useBrowserSupportCheck';
 
-export const useGenericRoomBouncer = (roomSlug: RoomRecord['slug'], checkOnMount = false) => {
+export const useGenericRoomBouncer = (roomSlug: RoomRecord['slug']) => {
   const state = useSelector(selectroomBouncerState);
   const [permissionsCheckLoading, setPermissionsCheckLoading] = useState(false);
   const dispatch = useDispatch();
   const AVStreaming = useInstance<AVStreaming>(getAVStreaming);
+
+  const browserSupport = useBrowserSupportCheck();
 
   const agreeWithPermissionsRequest = () => {
     dispatch(agreePermissionsRequestAction());
@@ -27,9 +28,8 @@ export const useGenericRoomBouncer = (roomSlug: RoomRecord['slug'], checkOnMount
   const checkPermissions = () => {
     setPermissionsCheckLoading(true);
 
-    return AVStreaming
-      .hasPermission()
-      .map(AsyncResult.passThrough((granted) => {
+    return AVStreaming.hasPermission().map(
+      AsyncResult.passThrough((granted) => {
         if (granted) {
           dispatch(grantPermissionsAction());
         } else {
@@ -37,45 +37,27 @@ export const useGenericRoomBouncer = (roomSlug: RoomRecord['slug'], checkOnMount
         }
 
         setPermissionsCheckLoading(false);
-      }));
+      })
+    );
   };
 
-  const checkBrowserSupport = () => {
-    const supported = !isWebViewUA(navigator.userAgent);
-
-    if (!supported) {
-      dispatch(refuseBrowserSuppport());
-    }
-
-    return supported;
-  };
-
-  const checkAll = () => {
-    return checkBrowserSupport() && checkPermissions();
-  };
+  const checkAll = () => browserSupport.checkBrowserSupport() && checkPermissions();
 
   const confirm = () => {
-    dispatch(confirmJoiningRoomAction({ roomSlug }));
+    dispatch(confirmJoiningRoomAction({ roomSlug }));
   };
 
   // This always has to go before other onMount checks!
   useEffect(() => {
     // This only cares about the initial state
     if (state && state.permissionsGranted === undefined) {
-      checkPermissions()
-        .map(() => {
-          dispatch(checkRoomAction({ roomSlug }));
-        });
+      checkPermissions().map(() => {
+        dispatch(checkRoomAction({ roomSlug }));
+      });
     } else {
       dispatch(checkRoomAction({ roomSlug }));
     }
   }, []);
-
-  // useEffect(() => {
-  //   if (checkOnMount) {
-  //     checkAll();
-  //   }
-  // }, [checkOnMount]);
 
   return {
     state,
@@ -83,7 +65,7 @@ export const useGenericRoomBouncer = (roomSlug: RoomRecord['slug'], checkOnMount
     agreeWithPermissionsRequest,
     checkPermissions,
     checkAll,
-    checkBrowserSupport,
+    checkBrowserSupport: () => browserSupport.checkBrowserSupport(),
     confirm,
 
     dangerouslyGrantPermissions: () => {

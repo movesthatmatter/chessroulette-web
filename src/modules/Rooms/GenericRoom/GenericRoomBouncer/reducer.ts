@@ -2,27 +2,30 @@ import { createReducer, createAction } from 'deox';
 import { RoomRecord } from 'dstnd-io';
 import { GenericStateSlice } from 'src/redux/types';
 
-export type State =
-  | null
-  | {
-      // Browser Support
-      browserIsSupported: undefined | boolean;
+export type State = null | {
+  // Browser Support
+  // By default is undefined. Only if checked and made sure it's unsupported
+  //  does it become true! This way all the website works, until
+  //  a place which needs to ensure browser support, checks it and fails!
+  browserIsUnsupported: undefined | boolean;
 
-      // Browser Camera/Mic Permissions
-      permissionsRequestAgreed: undefined | boolean;
-      permissionsGranted: undefined | boolean;
+  // Browser Camera/Mic Permissions
+  permissionsRequestAgreed: undefined | boolean;
+  permissionsGranted: undefined | boolean;
 
-      // Room Permissions
-      confirmedRoomJoin: {
+  // Room Permissions
+  confirmedRoomJoin:
+    | {
         status: boolean;
         roomSlug: RoomRecord['id'];
-      } | {
+      }
+    | {
         status: undefined;
       };
 
-      // All
-      ready: boolean;
-    };
+  // All
+  ready: boolean;
+};
 
 export const initialState: State = null;
 
@@ -36,26 +39,27 @@ export const refusePermissionsAction = createAction('RefusePermisssions');
 export const refuseBrowserSuppport = createAction('RefuseBrowserSuppport');
 export const confirmJoiningRoomAction = createAction(
   'ConfirmJoiningRoomAction',
-  (resolve) => (p: { roomSlug: RoomRecord['slug'] }) => resolve(p),
+  (resolve) => (p: { roomSlug: RoomRecord['slug'] }) => resolve(p)
 );
 
 const getReadyFlag = (state: Omit<NonNullable<State>, 'ready'>) => {
   return !!(
-    state
-    && state.permissionsGranted
-    && state.confirmedRoomJoin.status
-    && state.browserIsSupported
+    state &&
+    state.permissionsGranted &&
+    state.confirmedRoomJoin &&
+    state.confirmedRoomJoin.status &&
+    state.browserIsUnsupported !== true
   );
 };
 
 export const reducer = createReducer(initialState as State, (handleAction) => [
-  // handleAction(checkRoomAction),
   handleAction(checkRoomAction, (state, { payload }) => {
     // If the rooms are the same just return the prev state
     if (
-      state
-      && state.confirmedRoomJoin.status
-      && state.confirmedRoomJoin.roomSlug === payload.roomSlug
+      state &&
+      state.confirmedRoomJoin &&
+      state.confirmedRoomJoin.status &&
+      state.confirmedRoomJoin.roomSlug === payload.roomSlug
     ) {
       return state;
     }
@@ -64,7 +68,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       // Default to true until a check called from
       // a specific place sets it to false!
       // TODO: Maybe move from here?
-      browserIsSupported: state ? state.browserIsSupported : true,
+      browserIsUnsupported: state?.browserIsUnsupported,
 
       // Camera & Mic Permissions
       // If the Browser checks were already made for another room,
@@ -75,7 +79,6 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
 
       // Room Permissions
       // When the room changes the User has to explicityly join it at lease once!
-      // confirmedRoomJoin: false,
       confirmedRoomJoin: {
         roomSlug: payload.roomSlug,
         status: false,
@@ -142,7 +145,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
 
     const nextState = {
       ...state,
-      browserIsSupported: false,
+      browserIsUnsupported: true,
     };
 
     return {
