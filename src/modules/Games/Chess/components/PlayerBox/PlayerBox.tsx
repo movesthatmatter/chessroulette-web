@@ -4,8 +4,9 @@ import { Box } from 'grommet';
 import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { floatingShadow, fonts } from 'src/theme';
+import { floatingShadow, fonts, LARGE_DESKTOP } from 'src/theme';
 import { Countdown } from '../Countdown';
+import { useWindowWidth } from '@react-hook/window-size';
 
 type Props = {
   player: ChessPlayer;
@@ -14,6 +15,7 @@ type Props = {
   gameTimeLimit: ChessGameState['timeLimit'];
   material?: number;
   onTimerFinished?: () => void;
+  reverse? : boolean;
 };
 
 export const PlayerBox: React.FC<Props> = ({
@@ -22,13 +24,15 @@ export const PlayerBox: React.FC<Props> = ({
   active,
   gameTimeLimit,
   material = 0,
+  reverse = false,
   ...props
 }) => {
   const cls = useStyles();
-
+  const width = useWindowWidth();
+  const isLargeDesktop = LARGE_DESKTOP < width;
   return (
-    <Box fill className={cls.container} direction="row">
-      <Box fill direction="row">
+    <Box fill className={cls.container} direction={isLargeDesktop? 'row' : reverse ? 'column-reverse' : 'column'}>
+      <Box fill direction="row" style={{alignItems: 'center'}}>
         <Avatar mutunachiId={Number(player.user.avatarId)} />
         <Box className={cls.playerInfo}>
           <Text className={cls.playerNameText}>{player.user.name}</Text>

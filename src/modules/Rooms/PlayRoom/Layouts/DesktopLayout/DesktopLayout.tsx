@@ -16,6 +16,8 @@ import { ChatContainer } from 'src/modules/Chat';
 import { LayoutProps } from '../types';
 import { RoomDetails } from '../components/RoomDetails';
 import { ExitRoomButton } from '../components/ExitRoomButton/ExitRoomButton';
+import {LARGE_DESKTOP} from 'src/theme/mediaQueries';
+import { useWindowWidth } from '@react-hook/window-size';
 
 type Props = LayoutProps;
 
@@ -26,6 +28,8 @@ export const DesktopLayout: React.FC<Props> = (props) => {
   const cls = useStyles();
   const dialogTarget = useRef();
   const chessboardRef = useRef();
+  const width = useWindowWidth();
+  const isLargeDesktop = LARGE_DESKTOP < width;
 
   const { game } = props;
 
@@ -95,8 +99,8 @@ export const DesktopLayout: React.FC<Props> = (props) => {
               paddingLeft: `${main.horizontalPadding < 32 ? 32 - main.horizontalPadding : 0}px`,
             }}
           >
-            <div style={{ height: '30%' }} />
-            <div style={{ height: '40%' }}>
+            {isLargeDesktop && <div style={{ height: '30%' }} />}
+            <div style={isLargeDesktop ? { height: '40%' } : {}}>
               <GameStateWidget
                 game={game}
                 homeColor={props.homeColor}
