@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { noop } from 'src/lib/util';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
 import cx from 'classnames';
 import dateFormat from 'dateformat';
 import { useInterval } from 'src/lib/hooks';
 import { Text } from 'src/components/Text';
 import { timeLeftToFormatMajor, timeLeftToFormatMinor, timeLeftToInterval } from './util';
 import { text } from 'src/theme/text';
-import { colors, defaultTheme, maxMediaQuery, onlyMobile } from 'src/theme';
+import { colors, maxMediaQuery, onlyMobile } from 'src/theme';
 import { minutes } from 'src/lib/time';
-import { useWindowWidth } from '@react-hook/window-size';
 import { GameRecord } from 'dstnd-io';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 
@@ -66,8 +65,9 @@ export const Countdown: React.FC<Props> = ({ onFinished = () => noop, gameTimeCl
               [cls.countdownMilliseconds]: gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
             })}
           >
-            {dateFormat(timeLeft, timeLeftToFormatMajor(gameTimeClassInMs, timeLeft))}:
+            {dateFormat(timeLeft, timeLeftToFormatMajor(gameTimeClassInMs, timeLeft))}
           </Text>
+          <Text className={cx(cls.text, cls.major, props.active && (cls.textActive, cls.blink))}>:</Text>
           <Text
             className={cx(cls.text, cls.minor, props.active && cls.textActive, {
               [cls.countdownMilliseconds]: gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
@@ -115,5 +115,16 @@ const useStyles = createUseStyles({
   paused: {},
   countdownMilliseconds: {
     color: colors.negative,
+  },
+  blink: {
+    animation: '$blink 1s steps(5, start) infinite',
+    color: text.primaryColor,
+  },
+  '@keyframes blink': {
+    ...{
+      to: {
+        visibility: 'hidden',
+      }
+    } as NestedCSSElement,
   },
 });
