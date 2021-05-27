@@ -45,7 +45,7 @@ export const PlayRoomDesktop: React.FC<Props> = ({ game, ...props }) => {
               }}
             >
               <div style={{ flex: 1 }}>
-                <NavigationHeader logoAsLink={false} />
+                <NavigationHeader />
               </div>
               <div
                 style={{
