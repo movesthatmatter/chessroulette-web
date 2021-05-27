@@ -6,6 +6,7 @@ import { colors, fonts } from 'src/theme';
 import { Text } from 'src/components/Text';
 import Linkify from 'react-linkify';
 import { SecureLink } from 'react-secure-link';
+import { getUserDisplayName } from 'src/modules/User';
 
 type Props = {
   myId: UserRecord['id'];
@@ -47,7 +48,7 @@ export const Message: React.FC<Props> = ({ myId, message, fromUser, canShowUserI
         </Linkify>
       </div>
       {message.fromUserId !== myId && canShowUserInfo && (
-        <Text className={cls.messageSender}>{fromUser.name}</Text>
+        <Text className={cls.messageSender}>{getUserDisplayName(fromUser)}</Text>
       )}
     </div>
   );

@@ -4,6 +4,7 @@ import { createUseStyles } from 'src/lib/jss';
 import dateformat from 'dateformat';
 import { StatsTable } from './components';
 import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
+import { getUserDisplayName } from '../User';
 
 type Props = {
   rooms: RoomStatsRecord[];
@@ -37,7 +38,7 @@ export const Stats: React.FC<Props> = (props) => {
             {
               Object
                 .values(r.peers)
-                .map((peer) => peer.user.name)
+                .map((peer) => getUserDisplayName(peer.user))
                 .join(', ')
             }
           </>
@@ -52,7 +53,7 @@ export const Stats: React.FC<Props> = (props) => {
   >> = {
     id: null,
     name: {
-      format: (p) => p.user.name,
+      format: (p) => getUserDisplayName(p.user),
     },
     joinedRoomId: null,
     joinedRoomAt: null,

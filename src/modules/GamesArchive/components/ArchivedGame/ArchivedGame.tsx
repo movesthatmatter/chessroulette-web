@@ -22,6 +22,7 @@ import { ClipboardCopy } from 'src/components/ClipboardCopy';
 import { useWindowWidth } from '@react-hook/window-size';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { getPlayer } from 'src/modules/Games/Chess/lib';
+import { getUserDisplayName } from 'src/modules/User';
 
 type Props = {
   game: GameRecordFinished | GameRecordStopped;
@@ -124,7 +125,7 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
                       : undefined
                   }
                 >
-                  {player.user.name}
+                  {getUserDisplayName(player.user)}
                 </Text>
                 <Avatar mutunachiId={Number(player.user.avatarId)} size={avatarSize} />
               </div>
@@ -157,7 +158,7 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
                         : undefined
                     }
                   >
-                    {player.user.name}
+                    {getUserDisplayName(player.user)}
                   </Text>
                 </div>
                 <div className={cls.filler}>

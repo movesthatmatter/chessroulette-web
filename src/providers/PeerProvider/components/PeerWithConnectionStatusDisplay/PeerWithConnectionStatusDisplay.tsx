@@ -7,6 +7,7 @@ import { spacers } from 'src/theme/spacers';
 import { Room } from '../../types';
 import { selectPeerProviderState } from '../../redux/selectors';
 import { keyInObject } from 'src/lib/util';
+import { getUserDisplayName } from 'src/modules/User';
 
 type Props = {
   // TODO: this might change to something else
@@ -47,7 +48,7 @@ export const PeerWithConnectionStatusDisplay: React.FC<Props> = ({ peerUserInfo 
           }}
         />
       )}
-      {peerUserInfo.name}
+      {getUserDisplayName(peerUserInfo)}
     </div>
   );
 };
