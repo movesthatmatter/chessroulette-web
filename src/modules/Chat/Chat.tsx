@@ -27,17 +27,15 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
   return (
     <div className={cx(cls.container, props.className)} style={props.style}>
       <div className={cls.messageHistory}>
-        {history.messages.map((msg, index) => {
-          return (
-            <Message
-              sameUser={history.messages[index - 1]?.fromUserId === msg.fromUserId}
-              key={`${msg.fromUserId}-${msg.sentAt}`}
-              message={msg}
-              myId={myId}
-              user={history.usersInfo[msg.fromUserId]}
-            />
-          );
-        })}
+        {history.messages.map((msg, index) => (
+          <Message
+            key={`${msg.fromUserId}-${msg.sentAt}`}
+            message={msg}
+            myId={myId}
+            canShowUserInfo={history.messages[index - 1]?.fromUserId !== msg.fromUserId}
+            fromUser={history.usersInfo[msg.fromUserId]}
+          />
+        ))}
       </div>
       <div style={props.inputContainerStyle} className={cls.bottomPart}>
         <div className={cls.inputContainer}>

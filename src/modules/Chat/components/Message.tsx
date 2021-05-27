@@ -9,12 +9,12 @@ import { SecureLink } from 'react-secure-link';
 
 type Props = {
   myId: UserRecord['id'];
+  fromUser: UserInfoRecord;
   message: ChatMessageRecord;
-  user: UserInfoRecord;
-  sameUser: boolean;
+  canShowUserInfo?: boolean;
 };
 
-export const Message: React.FC<Props> = ({ myId, message, user, sameUser }) => {
+export const Message: React.FC<Props> = ({ myId, message, fromUser, canShowUserInfo = true }) => {
   const cls = useStyles();
 
   return (
@@ -46,8 +46,8 @@ export const Message: React.FC<Props> = ({ myId, message, user, sameUser }) => {
           </Text>
         </Linkify>
       </div>
-      {message.fromUserId !== myId && !sameUser && (
-        <Text className={cls.messageSender}>{user.name}</Text>
+      {message.fromUserId !== myId && canShowUserInfo && (
+        <Text className={cls.messageSender}>{fromUser.name}</Text>
       )}
     </div>
   );
