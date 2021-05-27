@@ -1,21 +1,30 @@
 import { FormClose } from 'grommet-icons';
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Dialog } from 'src/components/Dialog';
 import { Emoji } from 'src/components/Emoji';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { colors } from 'src/theme';
+import { useOnLeaveRoute } from './useOnLeaveRoute';
 
 type Props = {};
 
 export const ExitRoomButton: React.FC<Props> = () => {
   const cls = useStyles();
   const [showConfrmation, setShowConfirmation] = useState(false);
+  const history = useHistory();
+
+  const unblockRouteTransition = useOnLeaveRoute(() => {
+    setShowConfirmation(true);
+
+    return false;
+  });
 
   return (
     <div className={cls.container}>
-      <FormClose className={cls.exitIcon} onClick={() => setShowConfirmation(true)}/>
+      <FormClose className={cls.exitIcon} onClick={() => history.push('/')} />
       <Dialog
         visible={showConfrmation}
         onClose={() => setShowConfirmation(false)}
@@ -37,9 +46,7 @@ export const ExitRoomButton: React.FC<Props> = () => {
           {
             type: 'negative',
             label: 'Yes. Let me go!',
-            onClick: () => {
-              window.location.href = '/';
-            },
+            onClick: () => unblockRouteTransition(),
           },
           {
             type: 'secondary',

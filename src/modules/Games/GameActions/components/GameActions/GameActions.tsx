@@ -86,6 +86,10 @@ export const GameActions: React.FC<Props> = ({
                   otherPlayer.user
                 )}</strong> to a Rematch or create a New Game below`,
               }}
+              prevGameSpecs={{
+                timeLimit: game.timeLimit,
+                preferredColor: otherPlayer.color,
+              }}
               submitButton={(p) =>
                 p.isRematchable
                   ? {
@@ -156,6 +160,10 @@ export const GameActions: React.FC<Props> = ({
                 __html: `Create a new game with <strong>${getUserDisplayName(
                   otherPlayer.user
                 )}</strong>`,
+              }}
+              prevGameSpecs={{
+                timeLimit: game.timeLimit,
+                preferredColor: myPlayer.color,
               }}
               submitButton={{
                 label: 'Submit',

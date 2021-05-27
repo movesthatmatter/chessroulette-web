@@ -5,6 +5,7 @@ import logoWhite from 'src/assets/logo_white.svg';
 import { onlyMobile, text } from 'src/theme';
 import { Badge } from '../Badge';
 import cx from 'classnames';
+import { Link } from 'react-router-dom';
 
 type Props = {
   asLink?: boolean;
@@ -14,16 +15,9 @@ type Props = {
 export const Logo: React.FC<Props> = ({ asLink = true, darkMode = false }) => {
   const cls = useStyles();
 
-  return (
-    <a
-      {...{
-        ...(asLink && {
-          href: '/',
-        }),
-      }}
-      className={cls.container}
-    >
-      <img src={darkMode ? logoWhite : logo} alt="logo" className={cls.img} />
+  const content = (
+    <div className={cls.container}>
+      <img src={darkMode ? logoWhite : logo} alt="Chessroulette Logo" className={cls.img} />
       <Badge
         text="Beta"
         textSize="small2"
@@ -34,8 +28,10 @@ export const Logo: React.FC<Props> = ({ asLink = true, darkMode = false }) => {
         )}
         color="primary"
       />
-    </a>
+    </div>
   );
+
+  return asLink ? <Link to="/">{content}</Link> : content;
 };
 
 const useStyles = createUseStyles({

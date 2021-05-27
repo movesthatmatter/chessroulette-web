@@ -83,7 +83,7 @@
     "react-loaders": "^3.0.1",
     "react-popout": "^1.0.2",
     "react-redux": "^7.2.0",
-    "react-router-dom": "^5.1.2",
+    "react-router-dom": "v5.2",
     "react-scripts": "3.4.1",
     "react-secure-link": "^3.0.2",
     "react-select": "^3.1.0",
