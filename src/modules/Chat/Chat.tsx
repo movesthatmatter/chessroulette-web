@@ -3,7 +3,7 @@ import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { ChatHistoryRecord } from 'dstnd-io';
 import { Message } from './components';
-import { colors, onlyMobile, onlySmallMobile } from 'src/theme';
+import { colors, onlySmallMobile } from 'src/theme';
 import { IconButton } from 'src/components/Button';
 import { Send } from 'grommet-icons';
 import { CSSProperties } from 'src/lib/jss/types';
@@ -27,22 +27,21 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
   return (
     <div className={cx(cls.container, props.className)} style={props.style}>
       <div className={cls.messageHistory}>
-        {history.messages.map((msg, index) => {
-          return (
+        {history.messages.map((msg, index) => (
           <Message
-            sameUser={history.messages[index - 1]?.fromUserId === msg.fromUserId}
             key={`${msg.fromUserId}-${msg.sentAt}`}
             message={msg}
             myId={myId}
-            user={history.usersInfo[msg.fromUserId]}
+            canShowUserInfo={history.messages[index - 1]?.fromUserId !== msg.fromUserId}
+            fromUser={history.usersInfo[msg.fromUserId]}
           />
-        )})}
+        ))}
       </div>
       <div style={props.inputContainerStyle} className={cls.bottomPart}>
         <div className={cls.inputContainer}>
           <div className={cls.inputBoxWrapper}>
             <textarea
-              placeholder="Message Here"
+              placeholder="Type your message here"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               className={cls.inputBox}
@@ -90,8 +89,8 @@ const useStyles = createUseStyles({
     marginTop: '10px',
     scrollBehavior: 'smooth',
   },
-  bottomPart:{
-    ...onlySmallMobile({height: '50px'}),
+  bottomPart: {
+    ...onlySmallMobile({ height: '50px' }),
   },
   inputContainer: {
     borderTop: 'solid 1px',

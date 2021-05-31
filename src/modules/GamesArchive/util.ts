@@ -1,6 +1,6 @@
 import capitalize from 'capitalize';
 import { ChessGameState, UserRecord } from 'dstnd-io';
-import { getPlayer } from '../GameRoomV2/util';
+import { getPlayer } from '../Games/Chess/lib';
 
 export const getGameResult = (game: ChessGameState, userId: UserRecord['id']) => {
   if (game.winner === '1/2') {

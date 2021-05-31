@@ -10,10 +10,7 @@ export type DialogProps = {
   target?: LayerProps['target'];
 } & DialogContentProps;
 
-export const Dialog: React.FC<DialogProps> = ({
-  className,
-  ...props
-}) => {
+export const Dialog: React.FC<DialogProps> = ({ className, ...props }) => {
   const cls = useStyles();
 
   if (!props.visible) {
@@ -25,7 +22,7 @@ export const Dialog: React.FC<DialogProps> = ({
       className={cx(cls.container, className)}
       position="center"
       // Note: Took the animation out because during the transition it renders
-      //  the content weirdly! 
+      //  the content weirdly!
       animation={false}
       target={props.target}
       modal

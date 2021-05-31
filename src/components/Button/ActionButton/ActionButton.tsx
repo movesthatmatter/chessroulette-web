@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { colors } from 'src/theme/colors';
 import { Text } from 'src/components/Text';
@@ -6,8 +6,7 @@ import cx from 'classnames';
 import { Icon as GIcon } from 'grommet-icons';
 import { borderRadius } from 'src/theme/effects';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
-import { hasOwnProperty } from 'src/lib/util';
-import { buttonEffects } from '../styles/effects';
+import { hasOwnProperty, noop } from 'src/lib/util';
 import { ButtonType } from '../type';
 import { buttonStyles } from '../styles/styles';
 import { AsyncResult } from 'dstnd-io';
@@ -16,23 +15,34 @@ import 'loaders.css';
 
 export type ActionButtonProps = {
   type: ButtonType;
-  icon: GIcon;
   label: string;
   reverse?: boolean;
-  actionType: 'positive' | 'negative';
+  actionType: 'positive' | 'negative' | 'attention';
   confirmation?: string;
   onSubmit: (() => void) | (() => Promise<any>) | (() => AsyncResult<any, any>);
   className?: string;
   hideLabelUntilHover?: boolean;
   withLoader?: boolean;
   full?: boolean;
-};
+  disabled?: boolean;
+  onFirstClick?: () => void;
+} & (
+  | {
+      icon: GIcon;
+      iconComponent?: null;
+    }
+  | {
+      iconComponent: React.ReactNode;
+      icon?: null;
+    }
+);
 
 export const ActionButton: React.FC<ActionButtonProps> = ({
   className,
   hideLabelUntilHover = true,
   withLoader = false,
   full = false,
+  onFirstClick = noop,
   ...props
 }) => {
   const Icon = props.icon;
@@ -58,6 +68,14 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   }, [focused, isLoading]);
 
   useOnClickOutside(wrapperRef, onClickedOutsideCB);
+
+  useEffect(() => {
+    if (props.disabled) {
+      setFocused(false);
+      setHovered(false);
+      setIsLoading(false);
+    }
+  }, [props.disabled]);
 
   const submit = () => {
     const result = props.onSubmit();
@@ -91,44 +109,48 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
         setHovered(!hideLabelUntilHover);
       });
     }
-  }
+  };
 
   return (
     <button
       ref={wrapperRef}
       className={cx(
         cls.button,
-        cls[props.type],
+        props.disabled || cls[props.type],
         full && cls.full,
-        focused && (props.actionType === 'negative' ? cls.confirmNegative : cls.confirmPositive),
+        focused && cls[props.actionType],
         isLoading && cls.hasLoader,
         className
       )}
+      disabled={props.disabled}
       type="submit"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(!hideLabelUntilHover)}
-      onClick={() => {
-        if (isLoading) {
-          return;
-        }
-
-        setFocused((prev) => {
-          if (prev) {
-            submit();
+      {...(props.disabled || {
+        onMouseEnter: () => setHovered(true),
+        onMouseLeave: () => setHovered(!hideLabelUntilHover),
+        onClick: () => {
+          if (isLoading) {
+            return;
           }
 
-          return !prev;
-        });
-      }}
+          setFocused((prev) => {
+            if (prev) {
+              submit();
+            } else {
+              onFirstClick();
+            }
+
+            return !prev;
+          });
+        },
+      })}
       style={{
-        // backgroundColor: colors[props.type],
         ...(props.reverse && {
           flexDirection: 'row-reverse',
         }),
       }}
     >
       <div className={cls.iconWrapper}>
-        <Icon className={cls.icon} />
+        {Icon ? <Icon className={cls.icon} /> : props.iconComponent}
       </div>
       {(hovered || focused) && (
         <div
@@ -156,13 +178,16 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
             {focused ? confirmation : props.label}
           </Text>
           {isLoading && (
-            <div className={cls.label} style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-            }}>
+            <div
+              className={cls.label}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+              }}
+            >
               <Loader type="ball-pulse" active innerClassName={cls.loader} />
             </div>
           )}
@@ -220,15 +245,6 @@ const useStyles = createUseStyles({
     stroke: `${colors.white} !important`,
     width: '16px !important',
     height: '16px !important',
-  },
-
-  confirmPositive: {
-    backgroundColor: `${colors.positive} !important`,
-    ...buttonEffects.positiveButtonShadow,
-  },
-  confirmNegative: {
-    backgroundColor: `${colors.negative} !important`,
-    ...buttonEffects.negativeButtonShadow,
   },
   loadingWrapper: {
     position: 'absolute',

@@ -17,7 +17,7 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo }) => {
   const [room, setRoom] = useState<Room | undefined>(
     peerState.status === 'open' && peerState.hasJoinedRoom ? peerState.room : undefined
   );
-  const { state: bouncerState } = useGenericRoomBouncer();
+  const { state: bouncerState } = useGenericRoomBouncer(roomInfo.slug);
   const history = useHistory();
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo }) => {
   }, [peerState]);
 
   useEffect(() => {
-    if (!bouncerState.ready) {
+    if (!bouncerState?.ready) {
       return;
     }
 
@@ -47,15 +47,22 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo }) => {
         },
       });
     }
-  }, [bouncerState.ready]);
+  }, [bouncerState?.ready, peerState.status]);
 
   if (room) {
-    return <GenericRoom room={room} />;
+    return (
+      <GenericRoomBouncer
+        roomInfo={roomInfo}
+        onCancel={() => history.push('/')}
+      >
+        <GenericRoom room={room} />
+      </GenericRoomBouncer>
+    );
   }
 
   // If the user hasn't joined the existent Room yet
   //  make him go through the bouncer and have him join it!
-  if (roomInfo && !bouncerState.ready) {
+  if (roomInfo && !bouncerState?.ready) {
     return (
       <Page doNotTrack>
         <GenericRoomBouncer

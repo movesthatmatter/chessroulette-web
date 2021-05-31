@@ -13,6 +13,7 @@ import { Hr } from 'src/components/Hr';
 import { GetCountries } from 'src/services/Location';
 import { SelectInput } from 'src/components/Input/SelectInput';
 import { onlyDesktop, onlyMobile } from 'src/theme';
+import { SearchBar } from 'src/components/SearchBar/SearchBar';
 
 type Props = {
   user: RegisteredUserRecord;
@@ -118,7 +119,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                 />
               </div> */}
                 <GetCountries
-                  render={({ countries, isLoading, fetch }) => (
+                  render={({ countries, countriesForDisplay, isLoading, fetch }) => (
                     <div className={cls.inputWrapper}>
                       <SelectInput
                         multiple
@@ -126,9 +127,9 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                         placeholder="Bolivia"
                         options={
                           countries &&
-                          Object.values(countries).map(({ name, code }) => ({
-                            label: name,
-                            value: code,
+                          countriesForDisplay.map(c => ({
+                            label: c.name,
+                            value: c.code,
                           }))
                         }
                         value={
@@ -155,6 +156,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                           p.errors.submissionValidationErrors?.countryCode
                         }
                       />
+                      
                     </div>
                   )}
                 />

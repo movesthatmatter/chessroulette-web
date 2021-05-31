@@ -93,6 +93,8 @@ export class SocketConnectionHandler extends Component<Props> {
             }
           } else if (msg.kind === 'joinedRoomUpdated') {
             dispatch(updateRoomAction({ room: msg.content }));
+          } else if (msg.kind === 'joinedRoomAndGameUpdated') {
+            dispatch(updateRoomAction({ room: msg.content.room }));
           } else if (msg.kind === 'joinRoomSuccess') {
             dispatch(
               createRoomAction({

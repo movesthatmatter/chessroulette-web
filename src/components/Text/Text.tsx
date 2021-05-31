@@ -3,7 +3,7 @@ import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { fonts } from 'src/theme';
 import cx from 'classnames';
 
-type Props = (JSX.IntrinsicElements['span'] & JSX.IntrinsicElements['p']) & {
+export type TextProps = (JSX.IntrinsicElements['span'] & JSX.IntrinsicElements['p']) & {
   size?: 'small1' | 'small2' | 'body1' | 'body2' | 'subtitle1' | 'subtitle2';
   style?: CSSProperties;
   className?: string;
@@ -11,7 +11,13 @@ type Props = (JSX.IntrinsicElements['span'] & JSX.IntrinsicElements['p']) & {
   asLink?: boolean;
 };
 
-export const Text: React.FC<Props> = ({ size = 'body1', className, asParagraph, asLink, ...props }) => {
+export const Text: React.FC<TextProps> = ({
+  size = 'body1',
+  className,
+  asParagraph,
+  asLink,
+  ...props
+}) => {
   const cls = useStyles();
 
   if (asParagraph) {

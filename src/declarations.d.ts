@@ -16,3 +16,9 @@ declare module 'react-popout';
 declare module 'react-snapshot';
 
 declare module 'object-equals';
+
+declare module 'use-debounced-effect' {
+  import { DependencyList, EffectCallback } from 'react';
+
+  export default function useDebouncedEffect(effect: EffectCallback, delay: number, deps: DependencyList): void;
+}

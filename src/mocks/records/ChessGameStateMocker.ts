@@ -80,10 +80,10 @@ export class ChessGameStateMocker {
 
     const pending: ChessGameStatePending = {
       state: 'pending',
-      timeLimit: 'blitz',
+      timeLimit: 'blitz5',
       timeLeft: {
-        white: chessGameTimeLimitMsMap.blitz,
-        black: chessGameTimeLimitMsMap.blitz,
+        white: chessGameTimeLimitMsMap.blitz3,
+        black: chessGameTimeLimitMsMap.blitz3,
       },
       history: undefined,
       pgn: undefined,
@@ -104,8 +104,8 @@ export class ChessGameStateMocker {
       state: 'started',
       pgn: startedPgn,
       history: pgnToChessHistory(startedPgn, {
-        white: chessGameTimeLimitMsMap.blitz,
-        black: chessGameTimeLimitMsMap.blitz,
+        white: chessGameTimeLimitMsMap.blitz3,
+        black: chessGameTimeLimitMsMap.blitz3,
       }),
       winner: undefined,
       lastMoveBy: 'white',
@@ -131,8 +131,8 @@ export class ChessGameStateMocker {
         state: 'finished',
         pgn: finishedPgn,
         history: pgnToChessHistory(finishedPgn, {
-          white: chessGameTimeLimitMsMap.blitz,
-          black: chessGameTimeLimitMsMap.blitz,
+          white: chessGameTimeLimitMsMap.blitz3,
+          black: chessGameTimeLimitMsMap.blitz3,
         }),
         winner: 'white',
       };

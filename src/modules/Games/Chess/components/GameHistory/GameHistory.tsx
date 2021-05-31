@@ -6,7 +6,6 @@ import cx from 'classnames';
 import { arrReverse, keyInObject, noop } from 'src/lib/util';
 import { Emoji } from 'src/components/Emoji';
 import capitalize from 'capitalize';
-import { otherChessColor } from 'src/modules/Games/Chess/util';
 import { Box } from 'grommet';
 import { CSSProperties } from 'src/lib/jss/types';
 import {
@@ -19,6 +18,7 @@ import {
   pairedHistoryToHistory,
 } from '../../lib';
 import useEventListener from '@use-it/event-listener';
+import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 
 type Props = {
   game: ChessGameState;
