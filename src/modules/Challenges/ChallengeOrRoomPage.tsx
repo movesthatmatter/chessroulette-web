@@ -9,6 +9,7 @@ import { GenericRoomPage } from 'src/modules/Rooms/GenericRoom';
 import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication';
 import { ChallengePage } from './ChallengePage';
+import { AwesomeErrorWithAction } from 'src/components/AwesomeErrorWithAction/AwesomeErrorWithAction';
 
 type Props = {};
 
@@ -49,7 +50,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
   }
 
   if (roomInfo) {
-    return <GenericRoomPage roomInfo={roomInfo} />;
+    return <GenericRoomPage roomInfo={roomInfo} key={roomInfo.slug} />;
   }
 
   const goBackOrHome = () => {
@@ -69,7 +70,22 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
   }
 
   if (resourceState === 'error') {
-    return <AwesomeErrorPage errorType="resourceNotFound" />;
+    return (
+      <AwesomeErrorWithAction
+        title={`Ooops, it looks like the challenge doesn't exist anymore!`}
+        desc="Why not create a new challenge?"
+        mid="5"
+        buttons={[
+          {
+            type: 'primary',
+            label: 'OK',
+            onClick: () => {
+              history.push('/');
+            },
+          },
+        ]}
+      />
+    );
   }
 
   // This should be something more specific!

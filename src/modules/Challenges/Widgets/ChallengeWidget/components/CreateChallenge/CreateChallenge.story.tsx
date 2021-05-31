@@ -15,7 +15,7 @@ export const defaultStory = () => (
     <Box pad="medium" align="center">
       <CreateChallenge
         gameSpecs={{
-          timeLimit: 'blitz',
+          timeLimit: 'blitz3',
           preferredColor: 'black',
         }}
         onUpdated={action('on update')}

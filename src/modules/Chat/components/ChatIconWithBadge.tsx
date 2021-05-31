@@ -13,22 +13,25 @@ export const ChatIconWithBadge: React.FC<Props> = ({ color, onClick, style, newM
   const cls = useStyles();
 
   return (
-    <div className={cls.iconContainer} onClick={onClick}>
+    <div className={cls.container} onClick={onClick}>
       <Chat color={color} style={style} />
       {newMessagesCount > 0 && (
-        <Badge text={String(newMessagesCount)} color="primary" className={cls.badgeContainer} />
+        <div>
+          <Badge text={String(newMessagesCount)} color="primary" className={cls.badge} />
+        </div>
       )}
     </div>
   );
 };
 
 const useStyles = createUseStyles({
-  iconContainer: {
-    display: 'flex',
+  container: {
+    position: 'relative',
+    display: 'inline-block',
   },
-  badgeContainer: {
+  badge: {
     position: 'absolute',
-    left: '24px',
-    bottom: '47px',
+    right: '-40%',
+    top: '-30%',
   },
 });

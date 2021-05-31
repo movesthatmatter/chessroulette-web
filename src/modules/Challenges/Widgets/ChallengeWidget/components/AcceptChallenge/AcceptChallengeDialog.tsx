@@ -3,6 +3,7 @@ import { AsyncResult, RoomRecord, UserRecord } from 'dstnd-io';
 import React from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
 import { useGenericRoomBouncer } from 'src/modules/Rooms/GenericRoom';
+import { useBrowserSupportCheck } from 'src/modules/Rooms/GenericRoom/GenericRoomBouncer/useBrowserSupportCheck';
 import { resources } from 'src/resources';
 import { AcceptChallengeProps } from './AcceptChallenge';
 
@@ -20,9 +21,10 @@ export const AcceptChallengeDialog: React.FC<Props> = ({
   user,
   ...props
 }) => {
-  const { state: bouncerState, checkBrowserSupport } = useGenericRoomBouncer();
+  // TODO: Add them back
+  const { isBrowserUnsupported, checkBrowserSupport } = useBrowserSupportCheck();
 
-  if (!bouncerState.browserIsSupported) {
+  if (isBrowserUnsupported) {
     return null;
   }
 
@@ -45,8 +47,8 @@ export const AcceptChallengeDialog: React.FC<Props> = ({
           label: 'Play',
           onClick: () => {
             // Make sure the browser is supported 
-            //  before creating the challenge
-            // This is important because if the challenge gets created in the current unsupported brwoser
+            //  before accepting the challenge
+            // This is important because if the challenge gets created in the current unsupported browser
             //  and the User has to change Browsers, he won't be a Player anymore since he'll 
             //  join as different Guest User
             if (checkBrowserSupport()) {

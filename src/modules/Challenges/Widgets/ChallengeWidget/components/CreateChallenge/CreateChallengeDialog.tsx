@@ -25,7 +25,7 @@ export const CreateChallengeDialog: React.FC<Props> = ({
   ...props
 }) => {
   const [gameSpecs, setGameSpecs] = useState<GameSpecsRecord>({
-    timeLimit: 'rapid',
+    timeLimit: 'rapid10',
     preferredColor: 'random',
   });
 

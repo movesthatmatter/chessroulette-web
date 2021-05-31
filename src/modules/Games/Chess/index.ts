@@ -1,1 +1,2 @@
-export * from './useSoundEffects';
+export * from './components/ChessGame';
+export * from './hooks/useSoundsEffects/useSoundEffects';

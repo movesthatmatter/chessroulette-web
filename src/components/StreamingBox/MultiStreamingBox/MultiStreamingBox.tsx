@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer } from 'react';
 import { FaceTime, FaceTimeProps } from 'src/components/FaceTime';
 import { createUseStyles } from 'src/lib/jss';
+import { getUserDisplayName } from 'src/modules/User';
 import { fonts, softBorderRadius } from 'src/theme';
 import { Streamer, StreamersMap } from '../types';
 import { Reel } from './components/Reel/Reel';
@@ -62,7 +63,7 @@ export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
     <div className={cls.container}>
       <FaceTime
         streamConfig={state.inFocus.streamingConfig}
-        label={state.reel.length > 0 ? state.inFocus.user.name : ''}
+        label={state.reel.length > 0 ? getUserDisplayName(state.inFocus.user) : ''}
         labelPosition="bottom-left"
         {...faceTimeProps}
       />

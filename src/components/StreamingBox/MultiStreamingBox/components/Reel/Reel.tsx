@@ -5,6 +5,7 @@ import cx from 'classnames';
 import { fonts, softBorderRadius } from 'src/theme';
 import { FaceTime, MyFaceTime } from 'src/components/FaceTime';
 import { Streamer } from '../../../types';
+import { getUserDisplayName } from 'src/modules/User';
 
 type Props = {
   reel: Streamer[];
@@ -40,7 +41,7 @@ export const Reel: React.FC<Props> = (props) => {
                   streamConfig={peer.streamingConfig}
                   className={cls.smallFacetime}
                   aspectRatio={{ width: 4, height: 3 }}
-                  label={peer.user.name}
+                  label={getUserDisplayName(peer.user)}
                   labelClassName={cls.smallFacetimeLabel}
                 />
                 <div className={cls.smallFacetimeBorder} />

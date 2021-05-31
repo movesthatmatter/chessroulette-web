@@ -1,7 +1,6 @@
 import {
   ChessGameState,
   GameRecord,
-  chessGameUtils,
   ChessGameStateFinished,
   ChessGameStateStopped,
   ChessGameStateNeverStarted,
@@ -17,7 +16,10 @@ export class GameMocker {
   record(state: ChessGameState['state'] = 'pending'): Game {
     return {
       ...gameRecordMocker.record(state),
-      captured: chessGameUtils.getCapturedPiecesFromPgn(''),
+      activePieces: {
+        white: { p: 8, n: 2, b: 2, r: 2, q: 1 },
+        black: { p: 8, n: 2, b: 2, r: 2, q: 1 },
+      },
     };
   }
 

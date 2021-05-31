@@ -2,6 +2,7 @@ import { ChessInstance, ShortMove, Piece, Square } from 'chess.js';
 import { Result, Ok, Err } from 'ts-results';
 import { getNewChessGame } from './sdk';
 import {
+  ChessGameColor,
   ChessGameState,
   ChessGameStatePgn,
   chessGameUtils,
@@ -12,7 +13,6 @@ import {
 } from 'dstnd-io';
 import { FullMove, HalfMove, PairedMove, PairedHistory } from './types';
 import { flatten } from 'src/lib/util';
-import { getOppositePlayer, getPlayer } from 'src/modules/GameRoomV2/util';
 import { getRelativeMaterialScore } from '../components/GameStateWidget/util';
 import { Game, GameFromGameState } from '../../types';
 
@@ -160,7 +160,7 @@ export const getPlayerStats = (game: Game, userId: UserRecord['id']): UserAsPlay
 
   if (player) {
     const opponent = getOppositePlayer(player, game.players);
-    const materialScore = getRelativeMaterialScore(game.captured);
+    const materialScore = getRelativeMaterialScore(game);
 
     const canPlay =
       // I must have an opponent to be able to play
@@ -188,19 +188,54 @@ export const getPlayerStats = (game: Game, userId: UserRecord['id']): UserAsPlay
   };
 };
 
-export const gameRecordToGame = <T extends ChessGameState>(g: T) => ({
-  ...g,
-  captured: chessGameUtils.getCapturedPiecesFromPgn(g.pgn),
-}) as GameFromGameState<T>;
+export const gameRecordToGame = <T extends ChessGameState>(g: T) => {
+  return {
+    ...g,
+    activePieces: chessGameUtils.getActivePieces(chessGameUtils.simplePGNtoMoves(g.pgn || '')),
+  } as GameFromGameState<T>;
+};
 
 export const getGameFromHistory = (history: ChessHistory = []) => {
   const instance = getNewChessGame();
 
-  // TODO: This might not be the most efficient 
+  // TODO: This might not be the most efficient
   //  but it's ok for now to ensure the validaty of the pgn
   history.forEach((move) => {
     instance.move(move);
   });
 
   return instance;
+};
+
+// A Safe way to get the opponent from the given player
+// If the given player is not actually part of players then return undefined
+//  since now there can be no opposite
+export const getOppositePlayer = (fromPlayer: ChessPlayer, players: ChessGameState['players']) => {
+  if (!isPlayer(fromPlayer.user.id, players)) {
+    return undefined;
+  }
+
+  return players[0].user.id === fromPlayer.user.id ? players[1] : players[0];
+};
+
+export const isPlayer = (userId: string, players: ChessGameState['players']) =>
+  !!players.find((p) => p.user.id === userId);
+
+export const getPlayer = (
+  userId: string,
+  players: ChessGameState['players']
+): ChessPlayer | undefined => {
+  if (players[0].user.id === userId) {
+    return players[0];
+  }
+
+  if (players[1]?.user.id === userId) {
+    return players[1];
+  }
+
+  return undefined;
+};
+
+export const getPlayerByColor = (color: ChessGameColor, players: ChessGameState['players']) => {
+  return players[0].color === color ? players[0] : players[1];
 };

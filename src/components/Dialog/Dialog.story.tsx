@@ -112,7 +112,10 @@ export const openOnDemand = () =>
               onClick: action('Okay'),
             },
           ]}
-          onClose={() => setShow(false)}
+          onClose={() => {
+            setShow(false);
+            action('on close')();
+          }}
         />
       </Grommet>
     );

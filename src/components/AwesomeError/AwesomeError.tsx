@@ -12,7 +12,7 @@ const errorsMap = {
   },
   genericError: {
     title: 'Ooops. Something went wrong!',
-    description: `I'm not sure what to advice. Hmm – Try Again?!`,
+    description: `I'm not sure what to advice. Hmm – Try Again?!`,
     mid: '3',
   },
 };

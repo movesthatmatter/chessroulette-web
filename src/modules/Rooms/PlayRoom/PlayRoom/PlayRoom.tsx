@@ -1,37 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useWindowWidth } from '@react-hook/window-size';
-import { ChessGameColor, ChessGameStatePgn, ChessHistory, ChessMove } from 'dstnd-io';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
-import { GameStateDialog } from 'src/modules/Games/Chess/components/GameStateDialog';
-import { useSoundEffects } from 'src/modules/Games/Chess';
 import { MOBILE_BREAKPOINT } from 'src/theme';
-import { DesktopLayout, ChessGameHistory, MobileLayout } from '../Layouts';
 import { getPlayerStats } from 'src/modules/Games/Chess/lib';
 import { Game } from 'src/modules/Games';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { DialogContentProps } from 'src/components/Dialog';
 import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
+import { PlayRoomMobile } from './PlayRoomMobile';
+import { PlayRoomDesktop } from './PlayRoomDesktop';
+import { useGameActions } from 'src/modules/Games/GameActions';
+import { useRoomNotificationListener } from 'src/modules/ActivityLog/useRoomNotificationListener';
 
 type Props = {
   room: RoomWithPlayActivity;
   game: Game;
-  onMove: (
-    m: ChessMove,
-    pgn: ChessGameStatePgn,
-    history: ChessGameHistory,
-    color: ChessGameColor
-  ) => void;
-  onResign: () => void;
-  onAbort: () => void;
-  onOfferDraw: () => void;
-  onDrawAccepted: () => void;
-  onDrawDenied: () => void;
-  onRematchOffer: () => void;
-  onRematchAccepted: () => void;
-  onRematchDenied: () => void;
-  onOfferCanceled: () => void;
-  onTimerFinished: () => void;
-  onGameStatusCheck: () => void;
 };
 
 const areBothPlayersJoined = ({ peersIncludingMe }: RoomWithPlayActivity, game: Game) => {
@@ -60,6 +43,7 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
   const windowWidth = useWindowWidth();
   const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
   const [displayedPgn, setDisplayedPgn] = useState<Game['pgn']>();
+  const gameActions = useGameActions();
 
   useEffect(() => {
     if (!game.history || game.history.length === 0 || gameDisplayedHistoryIndex === 0) {
@@ -75,12 +59,11 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
   useEffect(() => {
     // Reset the displayed if the game updates!
     setGameDisplayedHistoryIndex(0);
-  }, [game])
+  }, [game]);
+
+  useRoomNotificationListener(game);
 
   // TODO: Need to make sure the given game has the same id as the activity game id
-
-  useSoundEffects(game);
-
   const playerStats = getPlayerStats(game, props.room.me.id);
   const homeColor = playerStats.player?.color || 'white';
 
@@ -95,7 +78,7 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
       {
         label: 'Abort Game',
         type: 'secondary',
-        onClick: () => props.onAbort(),
+        onClick: () => gameActions.onAbort(),
       },
     ],
   });
@@ -104,40 +87,11 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
     ? getWaitingForOpponentNotificationDialog
     : undefined;
 
-  const content = () => {
-    if (windowWidth <= MOBILE_BREAKPOINT) {
-      return (
-        <MobileLayout
-          room={props.room}
-          game={game}
-          onMove={props.onMove}
-          onAbort={props.onAbort}
-          onOfferDraw={props.onOfferDraw}
-          onRematchOffer={props.onRematchOffer}
-          onResign={props.onResign}
-          onTimerFinished={props.onTimerFinished}
-          onHistoryIndexUpdated={setGameDisplayedHistoryIndex}
-          historyIndex={gameDisplayedHistoryIndex}
-          displayedPgn={displayedPgn}
-          homeColor={homeColor}
-          playable={playable}
-          opponentAsPlayer={playerStats.opponent}
-          meAsPlayer={playerStats.player}
-          gameNotificationDialog={getCurrentNotification}
-        />
-      );
-    }
-
+  if (windowWidth <= MOBILE_BREAKPOINT) {
     return (
-      <DesktopLayout
+      <PlayRoomMobile
         room={props.room}
         game={game}
-        onMove={props.onMove}
-        onAbort={props.onAbort}
-        onOfferDraw={props.onOfferDraw}
-        onRematchOffer={props.onRematchOffer}
-        onResign={props.onResign}
-        onTimerFinished={props.onTimerFinished}
         onHistoryIndexUpdated={setGameDisplayedHistoryIndex}
         historyIndex={gameDisplayedHistoryIndex}
         displayedPgn={displayedPgn}
@@ -148,21 +102,20 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
         gameNotificationDialog={getCurrentNotification}
       />
     );
-  };
+  }
 
   return (
-    <>
-      {content()}
-      <GameStateDialog
-        roomActivity={props.room.activity}
-        game={game}
-        onOfferCanceled={props.onOfferCanceled}
-        onDrawAccepted={props.onDrawAccepted}
-        onDrawDenied={props.onDrawDenied}
-        onRematchAccepted={props.onRematchAccepted}
-        onRematchDenied={props.onRematchDenied}
-        myPlayer={playerStats.player}
-      />
-    </>
+    <PlayRoomDesktop
+      room={props.room}
+      game={game}
+      onHistoryIndexUpdated={setGameDisplayedHistoryIndex}
+      historyIndex={gameDisplayedHistoryIndex}
+      displayedPgn={displayedPgn}
+      homeColor={homeColor}
+      playable={playable}
+      opponentAsPlayer={playerStats.opponent}
+      meAsPlayer={playerStats.player}
+      gameNotificationDialog={getCurrentNotification}
+    />
   );
 };
