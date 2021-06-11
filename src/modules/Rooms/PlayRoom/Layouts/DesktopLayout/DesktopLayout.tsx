@@ -3,6 +3,7 @@ import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
 import { getLayoutSizes, Ratios, isMobile as getIsMobile } from './util';
+import { useBodyClass } from 'src/lib/hooks/useBodyClass';
 
 type ContainerDimensions = {
   width: number;
@@ -61,6 +62,8 @@ export const DesktopLayout: React.FC<Props> = ({
   const horizontalOffset = (offsets.right || 0) + (offsets?.left || 0);
   const verticalOffset = (offsets?.top || 0) + (offsets?.bottom || 0);
   const [isMobile, setIsMobile] = useState(getIsMobile(containerDimensions));
+
+  useBodyClass([cls.disableBodyScroll]);
 
   const getLayout = () => {
     if (!containerDimensions.updated) {
@@ -223,6 +226,10 @@ const useStyles = createUseStyles({
 
     display: 'flex',
     flexDirection: 'column',
+  },
+  disableBodyScroll: {
+    // Prevent scroll bounciness on Mac
+    overflow: 'hidden',
   },
   top: {
     ...transitionsEffect,
