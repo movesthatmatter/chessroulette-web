@@ -98,8 +98,11 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
   private calcMovable() {
     return {
       free: false,
-      dests: toDests(this.chess),
+      // This is what determines wether a someone can move a piece!
+      dests: this.props.playable ? toDests(this.chess) : undefined,
       color: this.props.homeColor,
+      // Don't show the dests
+      showDests: false,
     } as const;
   }
 
@@ -112,7 +115,8 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         // Reset the Board anytime the game changes
         key={id}
         {...boardProps}
-        viewOnly={!playable}
+        disableContextMenu
+        viewOnly={false}
         fen={chessState.fen}
         turnColor={chessState.turn}
         check={chessState.inCheck}

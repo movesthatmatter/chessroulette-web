@@ -109,7 +109,6 @@ export const PlayRoomDesktop: React.FC<Props> = ({ game, ...props }) => {
               size={container.width}
               playable={props.playable}
               className={cls.board}
-              notificationDialog={props.gameNotificationDialog}
             />
           </Box>
         )}

@@ -1,12 +1,7 @@
 import { createReducer } from 'deox';
 import { GenericStateSlice } from 'src/redux/types';
-import {
-  addNotificationAction,
-  clearLogAction,
-  resolveOfferNotificationAction,
-} from './actions';
+import { addNotificationAction, clearLogAction, resolveOfferNotificationAction } from './actions';
 import { Notification, OfferNotification } from 'src/modules/ActivityLog/types';
-import { removeMeAction, removeRoomAction } from 'src/providers/PeerProvider/redux/actions';
 
 export type State = {
   currentRoom: {
@@ -65,7 +60,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
     return state;
   }),
 
-  handleAction([removeMeAction, removeRoomAction, clearLogAction], () => {
+  handleAction(clearLogAction, () => {
     return {
       currentRoom: {
         history: {},

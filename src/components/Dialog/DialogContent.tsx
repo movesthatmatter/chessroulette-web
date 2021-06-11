@@ -34,7 +34,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({
   const cls = useStyles();
 
   return (
-    <div>
+    <div className={className}>
       <div className={cls.top}>
         <div style={{ flex: 1 }} />
         {hasCloseButton && (
@@ -99,7 +99,6 @@ const useStyles = createUseStyles({
     position: 'relative',
 
     ...makeImportant({
-      paddingBottom: '24px',
       borderRadius: '8px',
       minWidth: '200px',
       maxWidth: '360px',
@@ -110,16 +109,22 @@ const useStyles = createUseStyles({
       ...makeImportant({
         width: '84%',
         maxWidth: 'none',
-        paddingBottom: '16px',
       }),
     }),
   },
   top: {
     height: '32px',
+    marginBottom: '-8px',
     display: 'flex',
     flexDirection: 'row',
     paddingLeft: '4px',
     paddingRight: '4px',
+
+    ...onlyMobile({
+      ...makeImportant({
+        marginBottom: '-16px',
+      }),
+    }),
   },
   exitButton: {
     display: 'flex',
@@ -137,6 +142,14 @@ const useStyles = createUseStyles({
     paddingLeft: '32px',
     paddingRight: '32px',
     paddingBottom: '16px',
+
+    ...onlyMobile({
+      ...makeImportant({
+        paddingLeft: '18px',
+        paddingRight: '18px',
+        paddingBottom: '12px',
+      }),
+    }),
   },
   contentWrapper: {
     paddingLeft: '32px',
@@ -161,10 +174,12 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
     paddingLeft: '32px',
     paddingRight: '32px',
+    paddingBottom: '24px',
 
     ...onlyMobile({
       paddingLeft: '18px',
       paddingRight: '18px',
+      paddingBottom: '16px',
     }),
   },
   buttonContainer: {

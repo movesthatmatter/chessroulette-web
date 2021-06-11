@@ -41,7 +41,6 @@ const useStyles = createUseStyles({
     position: 'relative',
 
     ...makeImportant({
-      paddingBottom: '24px',
       borderRadius: '8px',
       minWidth: '200px',
       maxWidth: '360px',
@@ -52,7 +51,6 @@ const useStyles = createUseStyles({
       ...makeImportant({
         width: '84%',
         maxWidth: 'none',
-        paddingBottom: '16px',
       }),
     }),
   },
