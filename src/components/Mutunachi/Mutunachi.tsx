@@ -25,6 +25,15 @@ import m17 from './assets/mutunachi_17.png';
 import m18 from './assets/mutunachi_18.png';
 import m19 from './assets/mutunachi_19.png';
 
+import m20 from './assets/mutunachi_20.png';
+import m21 from './assets/mutunachi_21.png';
+import m22 from './assets/mutunachi_22.png';
+import m23 from './assets/mutunachi_23.png';
+import m24 from './assets/mutunachi_24.png';
+import m25 from './assets/mutunachi_25.png';
+import m26 from './assets/mutunachi_26.png';
+import m27 from './assets/mutunachi_27.png';
+
 const map: {[k: string]: unknown} = {
   '0': m0,
   '1': m1,
@@ -46,6 +55,15 @@ const map: {[k: string]: unknown} = {
   '17': m17,
   '18': m18,
   '19': m19,
+
+  '20': m20,
+  '21': m21,
+  '22': m22,
+  '23': m23,
+  '24': m24,
+  '25': m25,
+  '26': m26,
+  '27': m27,
 };
 
 export type MutunachiProps = React.DetailedHTMLProps<

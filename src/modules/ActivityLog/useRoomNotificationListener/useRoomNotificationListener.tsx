@@ -4,7 +4,7 @@ import { Game } from 'src/modules/Games';
 import { notificationFactory } from './utils/notificationFactory';
 import { useStateWithPrev } from 'src/lib/hooks/useStateWithPrev';
 import useDebouncedEffect from 'use-debounced-effect';
-import { addNotificationAction, resolveOfferNotificationAction } from '../redux/actions';
+import { addNotificationAction, clearLogAction, resolveOfferNotificationAction } from '../redux/actions';
 import { selectRoomActivity } from 'src/providers/PeerProvider';
 
 export const useRoomNotificationListener = (game: Game) => {
@@ -39,4 +39,12 @@ export const useRoomNotificationListener = (game: Game) => {
       );
     }
   }, [gameAndOfferZipWithPrev]);
+
+  useEffect(() => {
+    return () => {
+      // Clear the Logs when the Listener gets unmounted
+      //  This should mean exiting the Room
+      dispatch(clearLogAction());
+    }
+  }, [])
 };

@@ -107,6 +107,7 @@ export const ConfirmNewGameAction: React.FC<Props> = ({
       <Dialog
         title={title}
         visible={isVisible}
+        hasCloseButton={false}
         content={
           <div>
             <div
@@ -130,10 +131,9 @@ export const ConfirmNewGameAction: React.FC<Props> = ({
       {props.render({
         onConfirm: () => {
           // Reset the state of the form!
-          //  Add anyother things that need to be reverted here as they come!
+          //  Add any other things that need to be reverted here as they come!
           setGameSpecs(prevGameSpecs);
 
-          
           setIsVisible(true);
         },
       })}

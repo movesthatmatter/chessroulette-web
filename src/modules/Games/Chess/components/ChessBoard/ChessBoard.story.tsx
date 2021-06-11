@@ -6,13 +6,11 @@ import { GameMocker } from 'src/mocks/records/GameMocker';
 import { Grommet } from 'grommet';
 import { defaultTheme } from 'src/theme';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
-import {
-  chessGameActions,
-  ChessGameColor,
-} from 'dstnd-io';
+import { chessGameActions, ChessGameColor } from 'dstnd-io';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { Game } from 'src/modules/Games/types';
 import { action } from '@storybook/addon-actions';
+import { DialogContent } from 'src/components/Dialog';
 
 export default {
   component: ChessBoard,
@@ -93,15 +91,19 @@ export const withNotification = () =>
           size={400}
           homeColor="black"
           onMove={({ fen }) => {}}
-          notificationDialog={(p) => ({
-            title: 'Waiting for opponent...',
-            content: (
-              <>
-                {/* <div className={cls.contentText}>Waiting for your opponent...</div> */}
-                <AwesomeLoader size={p.size ? p.size / 4 : 50} />
-              </>
-            ),
-          })}
+          overlayComponent={(p) => (
+            <DialogContent
+              {...{
+                title: 'Waiting for opponent...',
+                content: (
+                  <>
+                    {/* <div className={cls.contentText}>Waiting for your opponent...</div> */}
+                    <AwesomeLoader size={p.size ? p.size / 4 : 50} />
+                  </>
+                ),
+              }}
+            />
+          )}
         />
       </Grommet>
     );
