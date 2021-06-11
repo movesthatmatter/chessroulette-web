@@ -3,15 +3,16 @@ import { Game } from '../../../types';
 import { ChessBoard, ChessBoardProps } from '../ChessBoard';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { useSoundEffects } from '../../hooks';
+import { GameStateDialogConsumer } from 'src/modules/Games/components/GameStateDialog';
 
-
-type Props = Omit<ChessBoardProps, 'onMove' | 'id' | 'pgn'> & {
+export type ChessGameProps = Omit<ChessBoardProps, 'onMove' | 'id' | 'pgn' | 'overlayComponent'> & {
   game: Game; // This for now always works only with chess
   displayedPgn?: string;
 };
 
-export const ChessGame: React.FC<Props> = ({ game, displayedPgn, ...chessGameProps }) => {
+export const ChessGame: React.FC<ChessGameProps> = ({ game, displayedPgn, ...chessGameProps }) => {
   const actions = useGameActions();
+
   useSoundEffects(game);
 
   return (
@@ -22,6 +23,7 @@ export const ChessGame: React.FC<Props> = ({ game, displayedPgn, ...chessGamePro
         // TODO: Add the history here as well
         actions.onMove(move, [], chessGameProps.homeColor);
       }}
+      overlayComponent={<GameStateDialogConsumer />}
       {...chessGameProps}
     />
   );

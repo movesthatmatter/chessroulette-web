@@ -18,7 +18,6 @@ import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { MobileLayout } from '../Layouts';
 import { MobileChatWidget } from './widgets/MobileChatWidget';
 import { MobileGameActionsWidget } from './widgets/MobileGameActionsWidget';
-import { GameStateDialog } from 'src/modules/Games/components/GameStateDialog';
 
 type Props = PlayProps;
 
@@ -120,7 +119,6 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
                   dimensions.container.width - (windowWidth < SMALL_MOBILE_BREAKPOINT ? 60 : 24)
                 }
                 className={cls.mobileBoard}
-                notificationDialog={props.gameNotificationDialog}
               />
             </div>
             {props.meAsPlayer && (
@@ -140,13 +138,6 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
           </div>
         )}
       />
-      {props.meAsPlayer && (
-        <GameStateDialog
-          roomActivity={props.room.activity}
-          game={game}
-          myPlayer={props.meAsPlayer}
-        />
-      )}
     </>
   );
 };

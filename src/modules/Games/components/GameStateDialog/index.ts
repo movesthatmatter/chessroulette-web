@@ -1,1 +1,2 @@
-export * from './GameStateDialog';
+export * from './GameStateDialogConsumer';
+export * from './GameStateDialogProvider';

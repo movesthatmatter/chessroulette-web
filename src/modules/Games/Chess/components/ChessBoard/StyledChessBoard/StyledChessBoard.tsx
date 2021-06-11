@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Chessground, { ChessgroundProps } from 'react-chessground';
-import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
+import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import 'react-chessground/dist/styles/chessground.css';
 import blueBoard from '../assets/board/blue.svg';
 import cx from 'classnames';
-import { DialogContent, DialogContentProps } from 'src/components/Dialog';
-import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { ChessGameColor, ChessMove, PromotionalChessPieceType } from 'dstnd-io';
 import { Square } from 'chess.js';
 import { pieces } from '../pieces';
@@ -16,10 +14,10 @@ export type StyledChessBoardProps = Omit<
 > & {
   className?: string;
   size: number;
-  notificationDialog?: (p: { size?: number }) => DialogContentProps;
   onMove: (m: ChessMove) => void;
   orientation?: ChessGameColor;
   promotionalMove?: ChessMove & { color: ChessGameColor };
+  overlayComponent?: React.ReactNode | ((p: { size?: number }) => React.ReactNode);
 };
 
 const promotionalSquareToPercentage = (move: ChessMove, orientation: ChessGameColor) => {
@@ -41,7 +39,6 @@ const promotionalSquareToPercentage = (move: ChessMove, orientation: ChessGameCo
 };
 
 export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
-  notificationDialog,
   promotionalMove,
   orientation = 'white',
   onMove,
@@ -130,13 +127,7 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
           </div>
         </div>
       )}
-      {notificationDialog && (
-        <div className={cls.notificationLayer}>
-          <div className={cls.notificationContainer}>
-            <DialogContent {...notificationDialog({ size: props.size })} />
-          </div>
-        </div>
-      )}
+      {props.overlayComponent}
     </div>
   );
 };
@@ -208,42 +199,6 @@ const useStyles = createUseStyles({
         },
       },
     } as CSSProperties),
-  },
-  notificationLayer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    background: `rgba(0, 0, 0, .3)`,
-    zIndex: 9,
-
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  notificationContainer: {
-    ...floatingShadow,
-    ...softBorderRadius,
-    padding: 0,
-    position: 'relative',
-    background: colors.white,
-
-    ...makeImportant({
-      paddingBottom: '24px',
-      borderRadius: '8px',
-      minWidth: '240px',
-      maxWidth: '360px',
-      width: '50%',
-    }),
-
-    ...onlyMobile({
-      ...makeImportant({
-        width: '84%',
-        maxWidth: 'none',
-        paddingBottom: '16px',
-      }),
-    }),
   },
   promoDialogLayer: {
     position: 'absolute',
