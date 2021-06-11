@@ -5,8 +5,7 @@ import { GameStateDialogContext } from './GameStateDialogContext';
 export const GameStateDialogConsumer: React.FC = () => {
   const context = useContext(GameStateDialogContext);
 
-  // TODO: Ensure the myPlayer actually needs to be enforced
-  if (!(context && context.myPlayer)) {
+  if (!context) {
     return null;
   }
 

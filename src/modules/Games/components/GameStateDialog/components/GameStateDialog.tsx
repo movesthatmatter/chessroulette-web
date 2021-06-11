@@ -23,7 +23,7 @@ export type GameStateDialogContentProps = {
   isMobile: boolean;
   room: RoomWithPlayActivity;
   game: Game;
-  myPlayer: ChessPlayer;
+  myPlayer?: ChessPlayer;
   target?: DialogProps['target'];
 };
 
@@ -71,14 +71,41 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
   }, [gameResultSeen, game.state, game.winner, myPlayer]);
 
   const content = (() => {
-    // TODO: Not sure this should be showing even if there is a pending offer
+    if (isWaitingForOpponent(room, game)) {
+      return (
+        <DialogContent
+          title="Waiting for opponent!"
+          hasCloseButton={false}
+          graphic={
+            <div
+              style={{
+                textAlign: 'center',
+                paddingBottom: '16px',
+              }}
+            >
+              <Mutunachi
+                mid={20}
+                style={{
+                  width: '60%',
+                  display: 'inline',
+                }}
+              />
+            </div>
+          }
+          content="But first let me take a nap..."
+        />
+      );
+    }
+
     if (!activityLog.pending) {
       if ((game.state === 'finished' || game.state === 'stopped') && !gameResultSeen) {
         return (
           <DialogContent
             title="Game Ended"
             content={
-              <Box align="center">
+              <Box align="center" style={{
+                textAlign: 'center',
+              }}>
                 {game.state === 'finished' && (
                   <Text>
                     {game.winner === '1/2' ? (
@@ -99,12 +126,17 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
                       'Game Ended in a Draw!'
                     ) : (
                       <>
+
                         <strong>
                           {getUserDisplayName(
                             getPlayerByColor(otherChessColor(game.winner), game.players).user
                           )}
                         </strong>{' '}
-                        resigned!
+                        has resigned.{' '}
+                        <strong>
+                          {getUserDisplayName(getPlayerByColor(game.winner, game.players).user)}
+                        </strong>{' '}
+                        won!
                       </>
                     )}
                   </Text>
@@ -112,21 +144,26 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
               </Box>
             }
             onClose={() => setGameResultSeen(true)}
-            buttons={[
-              // {
-              //   label: 'Ok',
-              //   type: 'secondary',
-              //   onClick: () => setGameResultSeen(true),
-              // },
-              {
-                label: 'Rematch',
-                type: 'positive',
-                onClick: () => {
-                  setGameResultSeen(true);
-                  gameActions.onRematchOffer({});
-                },
-              },
-            ]}
+            buttons={
+              myPlayer
+                ? [
+                    {
+                      label: 'Rematch',
+                      type: 'positive',
+                      onClick: () => {
+                        setGameResultSeen(true);
+                        gameActions.onRematchOffer({});
+                      },
+                    },
+                  ]
+                : [
+                    {
+                      label: 'Ok',
+                      type: 'secondary',
+                      onClick: () => setGameResultSeen(true),
+                    },
+                  ]
+            }
           />
         );
       }
@@ -153,43 +190,20 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
       }
     }
 
-    if (isWaitingForOpponent(room, game)) {
-      return (
-        <DialogContent
-          title="Waiting for your opponent!"
-          hasCloseButton={false}
-          graphic={
-            <div
-              style={{
-                textAlign: 'center',
-                paddingBottom: '16px',
-              }}
-            >
-              <Mutunachi
-                mid={20}
-                style={
-                  {
-                    width: '60%',
-                    display: 'inline',
-                  }
-                }
-              />
-            </div>
-          }
-          content="But first let me take a nap..."
-        />
-      );
+    // Don't show the offers on desktop as the ActivityLog takes care of it
+    if (!isMobile) {
+      return null;
     }
 
-    // Don't show the rest on desktop
-    if (!isMobile) {
+    // If only watcher don's show the offers
+    if (!myPlayer) {
       return null;
     }
 
     // me as sender
     if (
       activityLog.pending?.status === 'pending' &&
-      activityLog.pending.byUser.id === myPlayer.user.id
+      activityLog.pending.byUser.id === myPlayer?.user.id
     ) {
       return (
         <DialogContent
