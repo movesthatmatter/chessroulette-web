@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useWindowWidth } from '@react-hook/window-size';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
-import { MOBILE_BREAKPOINT } from 'src/theme';
 import { getPlayerStats } from 'src/modules/Games/Chess/lib';
 import { Game } from 'src/modules/Games';
 import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
@@ -9,6 +7,7 @@ import { PlayRoomMobile } from './PlayRoomMobile';
 import { PlayRoomDesktop } from './PlayRoomDesktop';
 import { useRoomNotificationListener } from 'src/modules/ActivityLog/useRoomNotificationListener';
 import { GameStateDialogProvider } from 'src/modules/Games/components/GameStateDialog';
+import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 
 type Props = {
   room: RoomWithPlayActivity;
@@ -22,9 +21,9 @@ const areBothPlayersJoined = ({ peersIncludingMe }: RoomWithPlayActivity, game: 
 };
 
 export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
-  const windowWidth = useWindowWidth();
   const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
   const [displayedPgn, setDisplayedPgn] = useState<Game['pgn']>();
+  const deviceSize = useDeviceSize();
 
   useEffect(() => {
     if (!game.history || game.history.length === 0 || gameDisplayedHistoryIndex === 0) {
@@ -49,16 +48,15 @@ export const PlayRoom: React.FC<Props> = ({ game, ...props }) => {
   const homeColor = playerStats.player?.color || 'white';
   const bothPlayersJoined = areBothPlayersJoined(props.room, game);
   const playable = bothPlayersJoined && playerStats.canPlay;
-  const isMobile = windowWidth <= MOBILE_BREAKPOINT;
 
   return (
     <GameStateDialogProvider
       room={props.room}
       game={game}
       myPlayer={playerStats.player}
-      isMobile={isMobile}
+      isMobile={deviceSize.isMobile}
     >
-      {isMobile ? (
+      {deviceSize.isMobile ? (
         <PlayRoomMobile
           room={props.room}
           game={game}
