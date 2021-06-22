@@ -89,6 +89,7 @@
     "react-secure-link": "^3.0.2",
     "react-select": "^3.1.0",
     "react-transition-group": "^4.3.0",
+    "react-twitch-embed-video": "^3.0.0",
     "react-use-fb-login": "^1.0.7",
     "react-use-web-share": "^1.0.2",
     "react-verification-code-input": "^1.2.9",

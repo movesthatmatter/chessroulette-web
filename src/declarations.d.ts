@@ -22,3 +22,5 @@ declare module 'use-debounced-effect' {
 
   export default function useDebouncedEffect(effect: EffectCallback, delay: number, deps: DependencyList): void;
 }
+
+declare module 'react-twitch-embed-video';
