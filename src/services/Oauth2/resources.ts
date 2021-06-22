@@ -1,7 +1,7 @@
 import {
   io,
-  LichessAuthenticationRedirectUrlPayload,
-  lichessAuthenticationRedirectUrlResponsePayload,
+  VendorsAuthenticationRedirectUrlPayload,
+  vendorsAuthenticationRedirectUrlResponsePayload,
   AsyncResultWrapper,
   Err,
   ExternalVendor,
@@ -12,12 +12,13 @@ import { http } from 'src/lib/http';
 type ApiError = 'BadRequest' | 'BadResponse';
 
 export const getRedirectUrl = (vendor: ExternalVendor) => {
-  return new AsyncResultWrapper<LichessAuthenticationRedirectUrlPayload, ApiError>(async () => {
+  return new AsyncResultWrapper<VendorsAuthenticationRedirectUrlPayload, ApiError>(async () => {
     try {
       const { data } = await http.get(`/vendors/${vendor}/oauth/url`);
 
       return io
-        .deserialize(lichessAuthenticationRedirectUrlResponsePayload, data)
+        .deserialize(
+         vendorsAuthenticationRedirectUrlResponsePayload, data)
         .mapErr(() => 'BadResponse');
     } catch (e) {
       return new Err('BadRequest');

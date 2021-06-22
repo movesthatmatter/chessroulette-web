@@ -4,7 +4,6 @@ import ReactPopout from 'react-popout';
 import { WindowWithOnTokenReceived } from '../../types';
 import { ExternalVendor } from 'dstnd-io';
 
-
 type Props = Omit<ButtonProps, 'onClick'> & {
   onSuccess: (token: string) => void;
   getOauthUrl: () => Promise<string>;
@@ -22,11 +21,15 @@ export const OAuthButton: React.FC<Props> = (props) => {
 
   // Provide the onTokenReceived method
   useEffect(() => {
-    const fnName = props.vendor === 'lichess' ? 'onTokenReceivedLichess' : 'onTokenReceivedFacebook';
+    const fnName =
+      props.vendor === 'lichess'
+        ? 'onTokenReceivedLichess'
+        : props.vendor === 'facebook'
+        ? 'onTokenReceivedFacebook'
+        : 'onTokenReceivedTwitch';
 
     (window.self as WindowWithOnTokenReceived)[fnName] = (token: string) => {
       if (typeof token === 'string') {
-
         // HACK: If the timer isn't here, the react-popout component in which
         // the OauthCallbackPage is rendered throws:
         //   Error: unmountComponentAtNode(...): Target container is not a DOM element.

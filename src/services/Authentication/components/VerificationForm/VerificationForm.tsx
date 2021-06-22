@@ -12,9 +12,11 @@ import { colors } from 'src/theme';
 import { FacebookAuthButton } from 'src/vendors/facebook/FacebookAuthButton/FacebookAuthButton';
 import { AsyncResult } from 'dstnd-io';
 import { CodeVerificationForm } from '../CodeVerificationForm';
-import { Text } from 'src/components/Text';
 import { Emoji } from 'src/components/Emoji';
-
+import { TwitchAuthButton } from 'src/vendors/twitch/TwitchAuthButton/TwitchAuthButton';
+import { spacers } from 'src/theme/spacers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faTwitch} from '@fortawesome/free-brands-svg-icons';
 
 type Model = {
   code: string;
@@ -102,7 +104,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
           />
         )}
       <Hr text="Or Continue With" />
-      <div className={cls.buttonRow}>
+      <div className={cls.buttonRows}>
         <LichessAuthButton
           full
           label="Lichess"
@@ -114,6 +116,25 @@ export const VerificationForm: React.FC<Props> = (props) => {
               accessToken,
             });
           }}
+        />
+        <div style={{height: spacers.smallPx}}/>
+        <TwitchAuthButton
+        full
+        label='Twitch'
+        type='primary'
+        onSuccess={(accessToken) =>{
+          props.onSubmit({
+            type: 'external',
+            vendor: 'twitch',
+            accessToken
+          })
+        }}
+        style={{backgroundColor: '#6441a5'}}
+        icon={() => <FontAwesomeIcon icon={faTwitch} color='white' size='lg'/>}
+        iconWrapperStyle={{
+          backgroundColor: 'rgba(255, 255, 255, 0)',
+          padding: '0px'
+        }}
         />
         {/* <div style={{ width: '16px' }} />
         <FacebookAuthButton
@@ -133,9 +154,9 @@ export const VerificationForm: React.FC<Props> = (props) => {
 };
 
 const useStyles = createUseStyles({
-  buttonRow: {
+  buttonRows: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'center',
     paddingTop: '16px',
   },

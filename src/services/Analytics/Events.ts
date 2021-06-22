@@ -218,7 +218,7 @@ export const Events = {
   // Authentication
   trackAuthenticated: (
     type: 'login' | 'registration',
-    via: 'email' | 'facebook' | 'lichess'
+    via: 'email' | 'facebook' | 'lichess' | 'twitch'
   ) => trackEvent({
     category: EventCategory.App,
     action: capitalize(type),
