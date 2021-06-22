@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createUseStyles, CSSProperties } from 'src/lib/jss';
+import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import { colors, text, hideOnDesktop, hideOnMobile, floatingShadow } from 'src/theme';
 import { Menu } from 'grommet-icons';
 import cx from 'classnames';
@@ -7,8 +7,9 @@ import { FormClose } from 'grommet-icons';
 import { UserMenu } from './UserMenu';
 import { useFeedbackDialog } from '../FeedbackDialog/useFeedbackDialog';
 import { useAuthentication } from 'src/services/Authentication';
-import { AuthenticationButton, LogoutButton } from 'src/services/Authentication/widgets';
+import { AuthenticationButton } from 'src/services/Authentication/widgets';
 import { Badge } from '../Badge';
+import { Link, useLocation } from 'react-router-dom';
 
 type Props = {
   className?: string;
@@ -19,9 +20,24 @@ export const NavigationMenu: React.FC<Props> = (props) => {
   const [open, setOpen] = useState(false);
   const feedbackDialog = useFeedbackDialog();
   const auth = useAuthentication();
+  const location = useLocation();
 
   const menuContent = (
     <>
+      <div className={cls.linkWrapper}>
+        <Link
+          to={'/live'}
+          className={cx(cls.link, location.pathname === '/live' && cls.activeLink)}
+        >
+          Live
+        </Link>
+        <Badge
+          color="negative"
+          text="New"
+          className={cls.linkBadge}
+          textClassName={cls.linkBadgeText}
+        />
+      </div>
       <div className={cls.linkWrapper}>
         <a
           className={cls.link}
@@ -77,7 +93,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
       </div>
       <div className={cx(cls.onlyMobile)}>
         <div className={cls.menuWrapper} onClick={() => setOpen((prev) => !prev)}>
-          <Badge text="New" color="negative" className={cls.newBadge} />
+          {/* <Badge text="New" color="negative" className={cls.newBadge} /> */}
           <Menu className={cls.drawerOpenBtn} />
         </div>
         <div className={cx(cls.mobileOverlay, open && cls.mobileOverlayOpened)}>
@@ -210,6 +226,19 @@ const useStyles = createUseStyles({
     paddingLeft: '20px',
     paddingRight: '20px',
     alignSelf: 'center',
+    position: 'relative',
+  },
+  linkBadge: {
+    position: 'absolute',
+    top: '-8px',
+    right: '-5px',
+  },
+  linkBadgeText: {
+    fontSize: '10px',
+    lineHeight: '13px',
+    ...makeImportant({
+      boxShadow: 'none',
+    }),
   },
   link: {
     textTransform: 'capitalize',
@@ -223,6 +252,10 @@ const useStyles = createUseStyles({
       borderBottom: `3px solid ${text.primaryColor}`,
       color: text.primaryColor,
     },
+  },
+  activeLink: {
+    borderBottom: `3px solid ${text.primaryColor}`,
+    color: text.primaryColor,
   },
 
   onlyMobile: {

@@ -10,6 +10,7 @@ import { SocketProvider } from './providers/SocketProvider';
 import { UserProfilePage } from './modules/User';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TOS } from './pages/TOS';
+import { LivePage } from './modules/Live';
 
 type Props = {};
 
@@ -47,6 +48,12 @@ export const Routes: React.FC<Props> = () => {
         key={location.key}
         exact
         component={UserProfilePage}
+      />
+      <Route
+        path="/live"
+        key={location.key}
+        exact
+        component={LivePage}
       />
       <SocketProvider>
         <PeerProvider>
