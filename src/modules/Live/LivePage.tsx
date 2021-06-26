@@ -8,27 +8,28 @@ import { effects } from 'src/theme';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { getCollaboratorsByPlatform } from './resources';
 import { CollaboratorRecord } from 'dstnd-io';
-
+import {
+  useGetStreamerCollectionWithLiveStatus,
+} from './twitchSDK/useGetStreamerCollectionWithLiveStatus';
+import { Hr } from 'src/components/Hr';
+import { Avatar } from 'src/components/Avatar';
+import { CollaboratorAsStreamer } from './types';
+import { console } from 'window-or-global';
 
 type Props = {};
 
-type StreamerCollection = {
-  featured: CollaboratorRecord;
-  restInRankedOrder: CollaboratorRecord[];
-};
-
-const processStreamers = ([
-  featured,
-  ...restInRankedOrder
-]: CollaboratorRecord[]): StreamerCollection => ({
-  featured,
-  restInRankedOrder,
+const toCollaboratorStreamer = (
+  c: CollaboratorRecord,
+  isLive: boolean
+): CollaboratorAsStreamer => ({
+  ...c,
+  isLive,
 });
 
 export const LivePage: React.FC<Props> = (props) => {
   const cls = useStyles();
   const deviceSize = useDeviceSize();
-  const [streamersCollection, setStreamersCollection] = useState<StreamerCollection>();
+  const [streamers, setStreamers] = useState<CollaboratorAsStreamer[]>([]);
 
   useEffect(() => {
     getCollaboratorsByPlatform({
@@ -36,21 +37,21 @@ export const LivePage: React.FC<Props> = (props) => {
       pageSize: 10,
       currentIndex: 0,
     }).map((r) => {
-      setStreamersCollection(processStreamers(r.items));
+      setStreamers(r.items.map((c) => toCollaboratorStreamer(c, false)));
     });
   }, []);
 
-  useEffect(() => {
-    console.log('streamersCollection', streamersCollection);
-  }, [streamersCollection]);
+  const streamersCollection = useGetStreamerCollectionWithLiveStatus(streamers);
+  // const streamersCollection = toStreamerCollectionByRank(streamers);
+
+  console.log('streamersCollection', streamersCollection);
 
   return (
     <Page name="Live">
-      {streamersCollection && (
+      {streamersCollection.featured && (
         <div className={cls.container}>
           <div className={cls.main}>
             <AspectRatio aspectRatio={{ width: 16, height: 9 }}>
-              {/* <div className={cls.videoContainer} /> */}
               <ReactTwitchEmbedVideo
                 channel={streamersCollection.featured.profileUrl}
                 layout="video"
@@ -62,14 +63,41 @@ export const LivePage: React.FC<Props> = (props) => {
             </AspectRatio>
             <div
               style={{
+                paddingTop: spacers.default,
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                }}
+              >
+                <div
+                  style={{
+                    paddingRight: spacers.default,
+                  }}
+                >
+                  <Avatar imageUrl={streamersCollection.featured.profilePicUrl || ''} size="60px" />
+                </div>
+                <div>
+                  <h2
+                    style={{
+                      marginTop: 0,
+                    }}
+                  >
+                    {streamersCollection.featured.profileUrl}
+                  </h2>
+                </div>
+              </div>
+              <Hr />
+            </div>
+            <div
+              style={{
                 height: spacers.large,
               }}
             />
             <div className={cls.streamerCollectionListMask}>
               <h3>Weekly Featured</h3>
-              {/* <Text size="subtitle1" asParagraph></Text> */}
-              {/* <br/>
-              <br/> */}
               <div className={cls.streamerCollectionList}>
                 {streamersCollection.restInRankedOrder.map((s) => (
                   <div
@@ -80,24 +108,27 @@ export const LivePage: React.FC<Props> = (props) => {
                       borderRadius: '16px',
                     }}
                   >
-                    <AspectRatio
-                      aspectRatio={{ width: 4, height: 3 }}
-                      // className={cls.aspect}
-                      // onClick={() => setStreamersCollection(getStreamers(s.twitch))}
-                    >
-                      {/* <div style={{}}> */}
-                      <img src={s.profilePicUrl} width="100%" />
-                      {/* </div> */}
-                      {/* <ReactTwitchEmbedVideo
-                      channel={s.profileUrl}
-                      layout="video"
-                      height="100%"
-                      width="100%"
-                      targetClass={cls.videoContainer}
-                      targetId={s.profilePicUrl}
-                      autoplay={false}
-                    /> */}
-                    </AspectRatio>
+                    <a href={`https://twitch.tv/p${s.profileUrl}`} target="_blank">
+                      <AspectRatio
+                        aspectRatio={{ width: 4, height: 3 }}
+                        // className={cls.aspect}
+                        // onClick={() => setStreamersCollection(getStreamers(s.twitch))}
+                      >
+                        <Avatar imageUrl={s.profilePicUrl || ''} size="60px" />
+                        {/* <div style={{}}> */}
+                        {/* <img src={s.profilePicUrl} width="100%" /> */}
+                        {/* </div> */}
+                        {/* <ReactTwitchEmbedVideo
+                        channel={s.profileUrl}
+                        layout="video"
+                        height="100%"
+                        width="100%"
+                        targetClass={cls.videoContainer}
+                        targetId={s.profilePicUrl}
+                        autoplay={false}
+                      /> */}
+                      </AspectRatio>
+                    </a>
                   </div>
                 ))}
               </div>
@@ -111,12 +142,14 @@ export const LivePage: React.FC<Props> = (props) => {
                 }}
               />
               <div className={cls.side}>
-                <iframe
-                  src={`https://www.twitch.tv/embed/${streamersCollection.featured.profileUrl}/chat?parent=localhost`}
-                  height="65%"
-                  width="100%"
-                  className={cls.chatContainer}
-                ></iframe>
+                {streamersCollection.featured.isLive && (
+                  <iframe
+                    src={`https://www.twitch.tv/embed/${streamersCollection.featured.profileUrl}/chat?parent=localhost`}
+                    height="65%"
+                    width="100%"
+                    className={cls.chatContainer}
+                  />
+                )}
               </div>
             </>
           )}
