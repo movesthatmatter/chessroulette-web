@@ -4,17 +4,19 @@ import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
 import { AspectRatio } from 'src/components/AspectRatio';
 import ReactTwitchEmbedVideo from 'react-twitch-embed-video';
 import { spacers } from 'src/theme/spacers';
-import { effects } from 'src/theme';
+import { colors, effects, text } from 'src/theme';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { getCollaboratorsByPlatform } from './resources';
 import { CollaboratorRecord } from 'dstnd-io';
 import {
+  toStreamerCollectionByRank,
   useGetStreamerCollectionWithLiveStatus,
 } from './twitchSDK/useGetStreamerCollectionWithLiveStatus';
 import { Hr } from 'src/components/Hr';
 import { Avatar } from 'src/components/Avatar';
 import { CollaboratorAsStreamer } from './types';
 import { console } from 'window-or-global';
+import { Text } from 'src/components/Text';
 
 type Props = {};
 
@@ -41,8 +43,8 @@ export const LivePage: React.FC<Props> = (props) => {
     });
   }, []);
 
-  const streamersCollection = useGetStreamerCollectionWithLiveStatus(streamers);
-  // const streamersCollection = toStreamerCollectionByRank(streamers);
+  // const streamersCollection = useGetStreamerCollectionWithLiveStatus(streamers);
+  const streamersCollection = toStreamerCollectionByRank(streamers);
 
   console.log('streamersCollection', streamersCollection);
 
@@ -104,17 +106,27 @@ export const LivePage: React.FC<Props> = (props) => {
                     className={cls.aspect}
                     style={{
                       overflow: 'hidden',
-                      backgroundColor: '#ededed',
-                      borderRadius: '16px',
+                      // backgroundColor: '#ededed',
+                      // borderRadius: '16px',
                     }}
                   >
                     <a href={`https://twitch.tv/p${s.profileUrl}`} target="_blank">
-                      <AspectRatio
+                      {/* <AspectRatio
                         aspectRatio={{ width: 4, height: 3 }}
                         // className={cls.aspect}
                         // onClick={() => setStreamersCollection(getStreamers(s.twitch))}
-                      >
-                        <Avatar imageUrl={s.profilePicUrl || ''} size="60px" />
+                      > */}
+                        <div style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                        }}>
+                          <Avatar imageUrl={s.profilePicUrl || ''} size="60px" />
+                          <div>
+                            <Text size="subtitle1" style={{
+                              color: text.baseColor,
+                            }}>{s.profileUrl}</Text>
+                          </div>
+                        </div>
                         {/* <div style={{}}> */}
                         {/* <img src={s.profilePicUrl} width="100%" /> */}
                         {/* </div> */}
@@ -127,7 +139,7 @@ export const LivePage: React.FC<Props> = (props) => {
                         targetId={s.profilePicUrl}
                         autoplay={false}
                       /> */}
-                      </AspectRatio>
+                      {/* </AspectRatio> */}
                     </a>
                   </div>
                 ))}
