@@ -1,12 +1,12 @@
 import {
   io,
-  LichessAuthenticationRedirectUrlPayload,
-  lichessAuthenticationRedirectUrlResponsePayload,
+  VendorsAuthenticationRedirectUrlPayload,
+  vendorsAuthenticationRedirectUrlResponsePayload,
   AsyncResultWrapper,
   Err,
-  VerifyLichessUserRequestPayload,
-  VerifyLichessUserResponsePayload,
-  verifyLichessUserResponsePayload,
+  VerifyUserRequestPayload,
+  VerifyLichessUserResponsePayload, 
+  verifyLichessUserResponsePayload, VerifyTwitchUserResponsePayload, verifyTwitchUserResponsePayload
 } from 'dstnd-io';
 import config from 'src/config';
 import { getHttpInstance } from 'src/lib/http';
@@ -19,12 +19,12 @@ type ApiError = 'BadRequest' | 'BadResponse';
 
 
 export const getRedirectUrl = () => {
-  return new AsyncResultWrapper<LichessAuthenticationRedirectUrlPayload, ApiError>(async () => {
+  return new AsyncResultWrapper<VendorsAuthenticationRedirectUrlPayload, ApiError>(async () => {
     try {
       const { data } = await http.get('/url');
 
       return io
-        .deserialize(lichessAuthenticationRedirectUrlResponsePayload, data)
+        .deserialize(vendorsAuthenticationRedirectUrlResponsePayload, data)
         .mapErr(() => 'BadResponse');
     } catch (e) {
       return new Err('BadRequest');
@@ -32,7 +32,7 @@ export const getRedirectUrl = () => {
   });
 }
 
-export const verifyLichessUser = (req: VerifyLichessUserRequestPayload) => {
+export const verifyLichessUser = (req: VerifyUserRequestPayload) => {
   return new AsyncResultWrapper<VerifyLichessUserResponsePayload, ApiError>(async () => {
     try {
       const { data } = await http.post('/verify', req);
@@ -45,3 +45,17 @@ export const verifyLichessUser = (req: VerifyLichessUserRequestPayload) => {
     }
   });
 };
+
+export const verifyTwitchUser = (req: VerifyTwitchUserResponsePayload) => {
+  return new AsyncResultWrapper<VerifyTwitchUserResponsePayload, ApiError>(async () => {
+    try {
+      const {data} = await http.post('/verify', req);
+
+      return io
+      .toResult(verifyTwitchUserResponsePayload.decode(data))
+      .mapErr(() => 'BadResponse')
+    } catch (e) {
+      return new Err('BadRequest')
+    }
+  })
+}

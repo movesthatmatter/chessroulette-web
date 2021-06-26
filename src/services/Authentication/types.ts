@@ -6,6 +6,6 @@ export type UserAccountInfo = {
   verificationCode: string;
 } | {
   type: 'external';
-  vendor: 'lichess' | 'facebook';
+  vendor: 'lichess' | 'facebook' | 'twitch';
   accessToken: string;
 };

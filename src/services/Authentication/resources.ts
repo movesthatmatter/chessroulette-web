@@ -13,7 +13,7 @@ export const verifyEmail = (req: Resources.Util.RequestOf<typeof emailVerificati
 const { resource: userCheckResource } = Resources.Collections.Authentication.Authenticate;
 
 export const authenticate = (req: Resources.Util.RequestOf<typeof userCheckResource>) => {
-  return userCheckResource.request(req, (data) => http.post('/api/auth', data));
+  return userCheckResource.request(req, (data) => http.post('/api/auth', data))
 };
 
 const {
@@ -67,7 +67,9 @@ const {
 export const connectExternalAccount = (
   req: Resources.Util.RequestOf<typeof connectExternalAccountResource>
 ) => {
-  return connectExternalAccountResource.request(req, (data) =>
-    http.post(`api/users/connect-external-account`, data)
+  return connectExternalAccountResource.request(req, (data) => {
+    return http.post(`api/users/connect-external-account`, data)
+
+  }
   );
 };

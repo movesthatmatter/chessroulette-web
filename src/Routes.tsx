@@ -10,6 +10,7 @@ import { SocketProvider } from './providers/SocketProvider';
 import { UserProfilePage } from './modules/User';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TOS } from './pages/TOS';
+import { TwitchCallbackPage } from './vendors/twitch/TwitchCallbackPage/TwitchCallBackPage';
 
 type Props = {};
 
@@ -29,6 +30,12 @@ export const Routes: React.FC<Props> = () => {
         key={location.key}
         exact
         component={FacebookAuthCallbackPage}
+      />
+      <Route
+        path="/vendors/twitch/auth/callback"
+        exact
+        key={location.key}
+        component={TwitchCallbackPage}
       />
       <Route
         path="/privacy-policy"
