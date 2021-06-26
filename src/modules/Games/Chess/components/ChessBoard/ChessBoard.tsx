@@ -22,6 +22,7 @@ export type ChessBoardProps = Omit<StyledChessBoardProps, 'onMove' | 'fen'> & {
   //  move to be saved first
   autoCommitMove?: boolean;
   onMove: (p: { move: ChessMove; fen: ChessGameStateFen; pgn: ChessGameStatePgn }) => void;
+  onPreMove?: (m: ChessMove) => void;
 };
 
 type ChessState = {
@@ -30,6 +31,7 @@ type ChessState = {
   turn: ChessGameColor;
   inCheck: boolean;
   lastMove: ChessMove | undefined;
+  isPreMovable: boolean;
 };
 
 type State = {
@@ -47,6 +49,7 @@ const getCurrentChessState = (chess: ChessInstance): ChessState => {
     turn: toChessColor(chess.turn()),
     inCheck: chess.in_check(),
     lastMove: history[history.length - 1] as ChessMove,
+    isPreMovable : history.length === 0 ? true : (history[history.length - 1].color !== chess.turn())
   };
 };
 
@@ -66,7 +69,7 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
   // Keeps the Component State and the Chess Instnce in sync
   private commit() {
     if (!this.props.pgn) {
-      this.chess.reset();
+      this.chess.reset(); 
 
       const nextChessState = getCurrentChessState(this.chess);
 
@@ -115,6 +118,7 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         // Reset the Board anytime the game changes
         key={id}
         {...boardProps}
+        premoveEnabled={this.state.current.isPreMovable}
         disableContextMenu
         viewOnly={false}
         fen={chessState.fen}
@@ -124,6 +128,11 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         movable={this.calcMovable()}
         lastMove={chessState.lastMove && [chessState.lastMove.from, chessState.lastMove.to]}
         orientation={orientation || homeColor}
+        onPreMove={async (nextMove) => {
+            if (this.props.onPreMove){
+              this.props.onPreMove(nextMove);
+            }
+        }}
         onMove={async (nextMove) => {
           this.setState({
             pendingPromotionalMove: undefined,
@@ -136,8 +145,6 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
           //  - show the Promotional Dialog inside the ChessBoard
           //  - and wait for the player to select the Piece to promote
           if (!nextMove.promotion && movedPiece && isPromotableMove(movedPiece, nextMove)) {
-            console.log('is prmotoavle')
-
             const uncommitableChess = getNewChessGame(this.state.current.pgn);
 
             const valid = uncommitableChess.move({

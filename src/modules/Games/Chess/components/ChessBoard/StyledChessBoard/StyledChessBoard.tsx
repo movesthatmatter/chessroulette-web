@@ -12,9 +12,11 @@ export type StyledChessBoardProps = Omit<
   ChessgroundProps,
   'width' | 'height' | 'onMove' | 'orientation'
 > & {
+  premoveEnabled?: boolean;
   className?: string;
   size: number;
   onMove: (m: ChessMove) => void;
+  onPreMove?: (m: ChessMove) => void;
   orientation?: ChessGameColor;
   promotionalMove?: ChessMove & { color: ChessGameColor };
   overlayComponent?: React.ReactNode | ((p: { size?: number }) => React.ReactNode);
@@ -42,6 +44,7 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
   promotionalMove,
   orientation = 'white',
   onMove,
+  onPreMove,
   ...props
 }) => {
   const cls = useStyles();
@@ -73,6 +76,9 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
       }}
     >
       <Chessground
+        premovable={{enabled: props.premoveEnabled, events: {
+          set: (org, dest) => onPreMove && onPreMove({to: dest as Square, from: org as Square})
+        }}}
         key={uniqueKey}
         resizable={false}
         draggable={{
