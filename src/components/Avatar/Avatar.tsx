@@ -8,17 +8,22 @@ import { getBoxShadow } from 'src/theme/util';
 import hexToRgba from 'hex-to-rgba';
 import cx from 'classnames';
 
-
 type Props = GAvatarProps & {
   className?: string;
   hasBorder?: boolean;
   darkMode?: boolean;
   size?: string | number;
   monochrome?: boolean;
-
-  // TODO: Make it a union tag when we support profile pics
-  mutunachiId: number;
-};
+} & (
+    | {
+        mutunachiId: number;
+        imageUrl?: undefined;
+      }
+    | {
+        mutunachiId?: undefined;
+        imageUrl: string;
+      }
+  );
 
 const bkgColors = [
   colors.negativeLight,
@@ -43,7 +48,8 @@ export const Avatar: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
 
-  const bkgColor = monochrome ? colors.neutralLighter : getColor(props.mutunachiId);
+  const bkgColor =
+    props.mutunachiId && !monochrome ? getColor(props.mutunachiId) : colors.neutralLighter;
 
   return (
     <div>
@@ -57,7 +63,11 @@ export const Avatar: React.FC<Props> = ({
         }}
       >
         <AspectRatio aspectRatio={1}>
-          <Mutunachi mid={props.mutunachiId} className={cls.mutunachiContainer} />
+          {props.mutunachiId ? (
+            <Mutunachi mid={props.mutunachiId} className={cls.mutunachiContainer} />
+          ) : (
+            <img src={props.imageUrl} className={cls.imageContainer} />
+          )}
         </AspectRatio>
       </div>
     </div>
@@ -75,5 +85,10 @@ const useStyles = createUseStyles({
   mutunachiContainer: {
     width: '70%',
     transform: 'translateX(20%) translateY(15%)',
+  },
+  imageContainer: {
+    width: '100%',
+    // width: '70%',
+    // transform: 'translateX(20%) translateY(15%)',
   },
 });

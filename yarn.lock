@@ -2604,6 +2604,11 @@
   resolved "https://registry.yarnpkg.com/@types/chess.js/-/chess.js-0.10.1.tgz#441f0c379ef6d37e3991dcbf3d5db00b44fdb891"
   integrity sha512-cuFMyrUYOWpKm5PRayvk22jLV3BOuWs7iJ7Q4PZJXMWoF7uhjWEojMS4GPk441gn4Ki9BHxbKsll7mrwJ3KT3g==
 
+"@types/chunk@^0.0.0":
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/@types/chunk/-/chunk-0.0.0.tgz#644651a09113cb500a8563f5c8a9de657aa292c9"
+  integrity sha512-8z7Z9E1UoxUfwb4SUuWZZCAa5T+vi2daACygqUed7NpPnq04CJo0L3l0heHh3R9fLi/pOUbfR/ZwHd2+YEQIxg==
+
 "@types/classnames@^2.2.10":
   version "2.2.10"
   resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.2.10.tgz#cc658ca319b6355399efc1f5b9e818f1a24bf999"
@@ -3052,6 +3057,13 @@
     "@types/uglify-js" "*"
     "@types/webpack-sources" "*"
     source-map "^0.6.0"
+
+"@types/window-or-global@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@types/window-or-global/-/window-or-global-1.0.4.tgz#cebf412eac8f64fe864bd3bd46ef2e33ff9e8133"
+  integrity sha512-+tJmApNoyWOxINwhTuMD8b9UegcB8HUSoLzBHPKIxq2XMnmUKCwPV2/+n8qkjkabx2diA68hDSAohESC9uC2kg==
+  dependencies:
+    "@types/node" "*"
 
 "@types/yargs-parser@*":
   version "15.0.0"
@@ -5218,6 +5230,11 @@ chrome-trace-event@^1.0.2:
   integrity sha512-9e/zx1jw7B4CO+c/RXoCsfg/x1AfUBioy4owYH0bJprEYAx5hRFLRhWBqHAG57D0ZM4H7vxbP7bPe0VwhQRYDQ==
   dependencies:
     tslib "^1.9.0"
+
+chunk@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/chunk/-/chunk-0.0.3.tgz#d4f7473e35439c543d1d209464c27839e2b51d7a"
+  integrity sha512-oGfwvhjGRW3Ks4GTdGoJhZWKEO1eomjOC26001R+5H0TIlP7vBCO+/XcNcPCA6ayYC7RQSq1/NsN4679Odcm5A==
 
 ci-info@^2.0.0:
   version "2.0.0"
