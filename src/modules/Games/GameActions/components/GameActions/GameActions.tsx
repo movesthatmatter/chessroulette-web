@@ -4,7 +4,7 @@ import { ActionButton, Button } from 'src/components/Button';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { Refresh, Flag, Edit } from 'grommet-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHandshakeAltSlash } from '@fortawesome/free-solid-svg-icons';
+import { faHandshakeAltSlash, faUndo } from '@fortawesome/free-solid-svg-icons';
 import { spacers } from 'src/theme/spacers';
 import { noop } from 'src/lib/util';
 import { getUserDisplayName } from 'src/modules/User';
@@ -237,6 +237,20 @@ export const GameActions: React.FC<Props> = ({
               disabled={props.roomActivity.offer?.type === 'draw'}
               className={cls.gameActionButton}
               {...dynamicProps}
+            />
+          )}
+          {(game.lastMoveBy === myPlayer.color) && (
+            <ActionButton
+            type='primary'
+            label='Takeback'
+            confirmation='Confirm'
+            actionType='attention'
+            iconComponent={<FontAwesomeIcon icon={faUndo} color='#fff'/>}
+            onSubmit={() => {
+              console.log('takeback submit')
+            }}
+            className={cls.gameActionButton}
+            {...dynamicProps}
             />
           )}
         </>
