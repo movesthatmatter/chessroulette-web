@@ -94,6 +94,19 @@ export const notificationFactory = ({
             toUser: current.offer.content.toUser,
           },
         };
+      case 'takeback':
+        return {
+          type: 'add',
+          notification: {
+            id: current.offer.id,
+            timestamp: toISODateTime(now),
+            type: 'offer',
+            status: 'pending',
+            offerType: 'takeback',
+            byUser: current.offer.content.byUser,
+            toUser: current.offer.content.toUser
+          }
+        }
       case 'rematch':
         return {
           type: 'add',

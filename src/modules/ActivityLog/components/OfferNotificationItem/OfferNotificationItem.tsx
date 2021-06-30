@@ -54,6 +54,22 @@ const dict = {
       <strong>{getUserDisplayName(n.toUser)}</strong> accepted the draw offer
     </div>
   ),
+  'offer-takeback-pending': (n:OfferNotification) => (
+    <div>
+      <strong>{getUserDisplayName(n.byUser)}</strong> is asking{' '}
+      <strong>{getUserDisplayName(n.toUser)}</strong> for a takeback
+    </div>
+  ),
+  'offer-takeback-accepted': (n:OfferNotification) => (
+    <div>
+      <strong>{getUserDisplayName(n.toUser)}</strong> accepted the takeback request
+    </div>
+  ),
+  'offer-takeback-deny' : (n:OfferNotification) => (
+    <div>
+      <strong>{getUserDisplayName(n.byUser)}</strong>'s request was sent into the void 
+    </div>
+  ),
   'offer-challenge-pending': (n: OfferNotification) => (
     <div>
       <strong>{getUserDisplayName(n.byUser)}</strong> is challenging{' '}
