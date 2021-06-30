@@ -86,6 +86,18 @@ export const useGameActions = () => {
       Events.trackRematchDenied();
     },
 
+    onTakebackOffer : () => {
+      request(gameActionPayloads.takebackOffer());
+    },
+
+    onTakebackAccepted: () => {
+      request(gameActionPayloads.acceptTakeback())
+    },
+
+    onTakebackDeny : () => {
+      request(gameActionPayloads.denyTakeback())
+    },
+
     onOfferCanceled: () => request(gameActionPayloads.cancelOffer()),
 
     onTimerFinished: () => request(gameActionPayloads.statusCheck()),

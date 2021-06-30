@@ -39,6 +39,7 @@ import {
   GameChallengeOfferingRequestPayload,
   GameChallengeAcceptRequestPayload,
   GameChallengeDenyRequestPayload,
+  GameTakebackOfferingRequestPayload, GameTakebackOfferingAcceptRequestPayload, GameTakebackOfferingDenyRequestPayload
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
@@ -83,6 +84,9 @@ type SendableMessagesMap = {
   gameDrawOfferingRequestPayload: GameDrawOfferingRequestPayload;
   gameDrawAcceptRequestPayload: GameDrawAcceptRequestPayload;
   gameDrawDenyRequestPayload: GameDrawDenyRequestPayload;
+  gameTakebackOfferingRequestPayload: GameTakebackOfferingRequestPayload;
+  gameTakebackAcceptRequestPayload: GameTakebackOfferingAcceptRequestPayload;
+  gameTakebackDenyRequestPayload: GameTakebackOfferingDenyRequestPayload;
   gameRematchOfferingRequestPayload: GameRematchOfferingRequestPayload;
   gameRematchDenyRequestPayload: GameRematchDenyRequestPayload;
   gameRematchAcceptRequestPayload: GameRematchAcceptRequestPayload;

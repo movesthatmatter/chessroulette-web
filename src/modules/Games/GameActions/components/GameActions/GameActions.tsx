@@ -247,8 +247,10 @@ export const GameActions: React.FC<Props> = ({
             actionType='attention'
             iconComponent={<FontAwesomeIcon icon={faUndo} color='#fff'/>}
             onSubmit={() => {
-              console.log('takeback submit')
+              actions.onTakebackOffer();
+              onActionTaken('onTakebackOffer');
             }}
+            disabled={props.roomActivity.offer?.type === 'takeback'}
             className={cls.gameActionButton}
             {...dynamicProps}
             />
