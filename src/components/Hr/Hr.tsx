@@ -15,9 +15,13 @@ export const Hr: React.FC<Props> = (props) => {
       <div className={cls.side}>
         <div className={cls.line} />
       </div>
-      <div className={cls.content}>
-        <Text size="small1" className={cls.text}>{props.text}</Text>
-      </div>
+      {props.text && (
+        <div className={cls.content}>
+          <Text size="small1" className={cls.text}>
+            {props.text}
+          </Text>
+        </div>
+      )}
       <div className={cls.side}>
         <div className={cls.line} />
       </div>

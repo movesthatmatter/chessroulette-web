@@ -4,19 +4,15 @@ import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
 import { AspectRatio } from 'src/components/AspectRatio';
 import ReactTwitchEmbedVideo from 'react-twitch-embed-video';
 import { spacers } from 'src/theme/spacers';
-import { colors, effects, text } from 'src/theme';
-import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
+import { effects, onlyDesktop, text } from 'src/theme';
 import { getCollaboratorsByPlatform } from './resources';
 import { CollaboratorRecord } from 'dstnd-io';
-import {
-  toStreamerCollectionByRank,
-  useGetStreamerCollectionWithLiveStatus,
-} from './twitchSDK/useGetStreamerCollectionWithLiveStatus';
+import { toStreamerCollectionByRank } from './twitchSDK/useGetStreamerCollectionWithLiveStatus';
 import { Hr } from 'src/components/Hr';
 import { Avatar } from 'src/components/Avatar';
 import { CollaboratorAsStreamer } from './types';
-import { console } from 'window-or-global';
 import { Text } from 'src/components/Text';
+import { AnchorLink } from 'src/components/AnchorLink';
 
 type Props = {};
 
@@ -30,7 +26,6 @@ const toCollaboratorStreamer = (
 
 export const LivePage: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const deviceSize = useDeviceSize();
   const [streamers, setStreamers] = useState<CollaboratorAsStreamer[]>([]);
 
   useEffect(() => {
@@ -43,10 +38,7 @@ export const LivePage: React.FC<Props> = (props) => {
     });
   }, []);
 
-  // const streamersCollection = useGetStreamerCollectionWithLiveStatus(streamers);
   const streamersCollection = toStreamerCollectionByRank(streamers);
-
-  console.log('streamersCollection', streamersCollection);
 
   return (
     <Page name="Live">
@@ -65,13 +57,14 @@ export const LivePage: React.FC<Props> = (props) => {
             </AspectRatio>
             <div
               style={{
-                paddingTop: spacers.default,
+                paddingTop: spacers.larger,
               }}
             >
               <div
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
+                  paddingBottom: spacers.large,
                 }}
               >
                 <div
@@ -82,13 +75,27 @@ export const LivePage: React.FC<Props> = (props) => {
                   <Avatar imageUrl={streamersCollection.featured.profilePicUrl || ''} size="60px" />
                 </div>
                 <div>
-                  <h2
-                    style={{
-                      marginTop: 0,
-                    }}
+                  <AnchorLink
+                    href={`https://twitch.tv/${streamersCollection.featured.profileUrl}`}
+                    target="_blank"
                   >
-                    {streamersCollection.featured.profileUrl}
-                  </h2>
+                    <h3
+                      style={{
+                        marginTop: 0,
+                        marginBlockEnd: '.2em',
+                      }}
+                    >
+                      {streamersCollection.featured.profileUrl}
+                    </h3>
+                  </AnchorLink>
+                  <Text size="body2">{streamersCollection.featured.about}</Text>
+                  {` `}
+                  <AnchorLink
+                    href={`https://twitch.tv/${streamersCollection.featured.profileUrl}/about`}
+                    target="_blank"
+                  >
+                    Learn More
+                  </AnchorLink>
                 </div>
               </div>
               <Hr />
@@ -99,54 +106,62 @@ export const LivePage: React.FC<Props> = (props) => {
               }}
             />
             <div className={cls.streamerCollectionListMask}>
-              <h3>Weekly Featured</h3>
+              <h3>Featured Collaborators</h3>
               <div className={cls.streamerCollectionList}>
                 {streamersCollection.restInRankedOrder.map((s) => (
                   <div
                     className={cls.aspect}
                     style={{
                       overflow: 'hidden',
-                      // backgroundColor: '#ededed',
-                      // borderRadius: '16px',
                     }}
                   >
-                    <a href={`https://twitch.tv/p${s.profileUrl}`} target="_blank">
-                      {/* <AspectRatio
-                        aspectRatio={{ width: 4, height: 3 }}
-                        // className={cls.aspect}
-                        // onClick={() => setStreamersCollection(getStreamers(s.twitch))}
-                      > */}
-                        <div style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                        }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                      }}
+                    >
+                      <div
+                        style={{
+                          paddingRight: spacers.default,
+                        }}
+                      >
+                        <AnchorLink href={`https://twitch.tv/${s.profileUrl}`} target="_blank">
                           <Avatar imageUrl={s.profilePicUrl || ''} size="60px" />
-                          <div>
-                            <Text size="subtitle1" style={{
-                              color: text.baseColor,
-                            }}>{s.profileUrl}</Text>
-                          </div>
-                        </div>
-                        {/* <div style={{}}> */}
-                        {/* <img src={s.profilePicUrl} width="100%" /> */}
-                        {/* </div> */}
-                        {/* <ReactTwitchEmbedVideo
-                        channel={s.profileUrl}
-                        layout="video"
-                        height="100%"
-                        width="100%"
-                        targetClass={cls.videoContainer}
-                        targetId={s.profilePicUrl}
-                        autoplay={false}
-                      /> */}
-                      {/* </AspectRatio> */}
-                    </a>
+                        </AnchorLink>
+                      </div>
+                      <div>
+                        <AnchorLink href={`https://twitch.tv/${s.profileUrl}`} target="_blank">
+                          <Text asLink size="subtitle1">
+                            {s.profileUrl}
+                          </Text>
+                        </AnchorLink>
+                        <Text
+                          size="body2"
+                          asParagraph
+                          style={{
+                            marginTop: '.2em',
+                            color: text.baseColor,
+                          }}
+                        >
+                          {(s.about || '').length > 75 ? `${s.about?.slice(0, 75)}...` : s.about}
+                          <br />
+                          <AnchorLink
+                            href={`https://twitch.tv/${s.profileUrl}/about`}
+                            target="_blank"
+                          >
+                            Learn More
+                          </AnchorLink>
+                        </Text>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-          {deviceSize.isMobile || (
+          {/* // Chat will come later maybe */}
+          {/* {deviceSize.isMobile || (
             <>
               <div
                 style={{
@@ -164,7 +179,7 @@ export const LivePage: React.FC<Props> = (props) => {
                 )}
               </div>
             </>
-          )}
+          )} */}
         </div>
       )}
     </Page>
@@ -194,19 +209,25 @@ const useStyles = createUseStyles({
   streamerCollectionListMask: {},
   streamerCollectionList: {
     display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: 'column',
+
+    ...onlyDesktop({
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+    }),
   },
   aspect: {
-    width: `calc(${100 / 3}% - ${spacers.defaultPx * 1}px)`,
-    marginRight: spacers.get(1.5),
-    marginBottom: spacers.get(1.5),
+    ...onlyDesktop({
+      width: `calc(${100 / 4}% - ${spacers.defaultPx * 2}px)`,
+      marginRight: spacers.get(1.5),
+      marginBottom: spacers.get(1.5),
 
-    ...({
-      '&:nth-child(3n)': {
-        marginRight: 0,
-      },
-    } as NestedCSSElement),
+      ...({
+        '&:nth-child(3n)': {
+          marginRight: 0,
+        },
+      } as NestedCSSElement),
+    }),
   },
   chatContainer: {
     border: 0,
