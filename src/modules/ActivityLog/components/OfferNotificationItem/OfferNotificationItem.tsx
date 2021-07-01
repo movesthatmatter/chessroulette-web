@@ -1,14 +1,14 @@
 import React from 'react';
 import { UserRecord } from 'dstnd-io';
-import { Button, IconButton } from 'src/components/Button';
+import { IconButton } from 'src/components/Button';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { colors, fonts } from 'src/theme';
 import cx from 'classnames';
 import { getUserDisplayName } from 'src/modules/User';
 import { spacers } from 'src/theme/spacers';
 import { OfferNotification } from '../../types';
-import { Avatar } from 'src/components/Avatar';
-import { Checkmark, Close, FormClose } from 'grommet-icons';
+import { Checkmark, Close } from 'grommet-icons';
+import { PeerAvatar } from 'src/providers/PeerProvider/components/PeerAvatar';
 
 type Props = {
   notification: OfferNotification;
@@ -117,8 +117,8 @@ export const OfferNotificationItem: React.FC<Props> = ({
               flexDirection: notification.byUser.id === me.id ? 'row' : 'row-reverse',
             }}
           >
-            <Avatar
-              mutunachiId={Number(notification.byUser.avatarId)}
+            <PeerAvatar
+              peerUserInfo={notification.byUser}
               className={cx({
                 [cls.avatarLeft]: notification.byUser.id !== me.id,
                 [cls.avatarRight]: notification.byUser.id === me.id,

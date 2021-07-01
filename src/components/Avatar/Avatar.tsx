@@ -8,7 +8,7 @@ import { getBoxShadow } from 'src/theme/util';
 import hexToRgba from 'hex-to-rgba';
 import cx from 'classnames';
 
-type Props = GAvatarProps & {
+export type AvatarProps = GAvatarProps & {
   className?: string;
   hasBorder?: boolean;
   darkMode?: boolean;
@@ -37,7 +37,7 @@ const bkgColors = [
 
 const getColor = (mid: number) => bkgColors[mid % bkgColors.length];
 
-export const Avatar: React.FC<Props> = ({
+export const Avatar: React.FC<AvatarProps> = ({
   className,
   hasBorder = false,
   darkMode = false,

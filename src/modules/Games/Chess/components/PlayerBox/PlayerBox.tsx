@@ -6,7 +6,9 @@ import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, fonts } from 'src/theme';
 import { Countdown } from '../Countdown';
-import { PeerWithConnectionStatusDisplay } from 'src/providers/PeerProvider';
+// import { PeerWithConnectionStatusDisplay } from 'src/providers/PeerProvider';
+import { PeerAvatar } from 'src/providers/PeerProvider/components/PeerAvatar';
+import { getUserDisplayName } from 'src/modules/User';
 
 type Props = {
   player: ChessPlayer;
@@ -29,10 +31,10 @@ export const PlayerBox: React.FC<Props> = ({
   return (
     <Box fill className={cls.container} direction="row">
       <Box fill direction="row">
-        <Avatar mutunachiId={Number(player.user.avatarId)} />
+        <PeerAvatar peerUserInfo={player.user} />
         <Box className={cls.playerInfo}>
           <Text className={cls.playerNameText}>
-            <PeerWithConnectionStatusDisplay peerUserInfo={player.user} />
+            {getUserDisplayName(player.user)}
           </Text>
           <div
             style={{
