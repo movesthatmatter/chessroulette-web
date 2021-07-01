@@ -1,11 +1,8 @@
-import { PeerRecord } from 'dstnd-io';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { createUseStyles } from 'src/lib/jss';
 import { colors } from 'src/theme';
-import { selectPeerProviderState } from '../../redux/selectors';
-import { Peer, Room } from '../../types';
+import { Peer } from '../../types';
 
 export type PeerConnectionStatusDotProps = {
   peer?: Peer;
@@ -14,9 +11,7 @@ export type PeerConnectionStatusDotProps = {
   dotClassName?: string;
 };
 
-const getStatusColor = (
-  peer?: Peer,
-) => {
+const getStatusColor = (peer?: Peer) => {
   if (!peer) {
     return colors.neutral;
   }
@@ -34,22 +29,6 @@ const getStatusColor = (
   }
 
   return colors.negative;
-
-  
-
-  // if (peersIncludingMe) {
-  //   if (keyInObject(peersIncludingMe, peerId) && peersIncludingMe[peerId].hasJoinedRoom) {
-  //     if (peersIncludingMe[peerId].connection.channels.streaming.on || (peerId === myPeerId)) {
-  //       return colors.positive;
-  //     }
-
-  //     return colors.attention;
-  //   }
-
-  //   return colors.negative;
-  // }
-
-  // return colors.neutral;
 };
 
 export const ConnectionStatusDot: React.FC<PeerConnectionStatusDotProps> = ({
@@ -59,7 +38,6 @@ export const ConnectionStatusDot: React.FC<PeerConnectionStatusDotProps> = ({
   size = `8px`,
 }) => {
   const cls = useStyles();
-  const room = useSelector(selectPeerProviderState).room;
 
   return (
     <AspectRatio
