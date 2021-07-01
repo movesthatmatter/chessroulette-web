@@ -31,11 +31,9 @@ export const PlayerBox: React.FC<Props> = ({
   return (
     <Box fill className={cls.container} direction="row">
       <Box fill direction="row">
-        <PeerAvatar peerUserInfo={player.user} />
+        <PeerAvatar peerUserInfo={player.user} hasUserInfo />
         <Box className={cls.playerInfo}>
-          <Text className={cls.playerNameText}>
-            {getUserDisplayName(player.user)}
-          </Text>
+          <Text className={cls.playerNameText}>{getUserDisplayName(player.user)}</Text>
           <div
             style={{
               flex: 1,
