@@ -12,8 +12,8 @@ export type StyledChessBoardProps = Omit<
   ChessgroundProps,
   'width' | 'height' | 'onMove' | 'orientation'
 > & {
-  premoveEnabled?: boolean;
   className?: string;
+  preMoveEnabled?: boolean;
   size: number;
   onMove: (m: ChessMove) => void;
   onPreMove?: (m: ChessMove) => void;
@@ -76,7 +76,7 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
       }}
     >
       <Chessground
-        premovable={{enabled: props.premoveEnabled, events: {
+        premovable={{enabled: props.preMoveEnabled, events: {
           set: (org, dest) => onPreMove && onPreMove({to: dest as Square, from: org as Square})
         }}}
         key={uniqueKey}

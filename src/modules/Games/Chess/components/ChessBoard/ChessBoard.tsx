@@ -37,6 +37,7 @@ type ChessState = {
 type State = {
   current: ChessState;
   uncommited?: ChessState;
+  preMove?: ChessMove | undefined;
   pendingPromotionalMove?: ChessBoardProps['promotionalMove'];
 };
 
@@ -92,6 +93,20 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
   }
 
   componentDidUpdate(prevProps: ChessBoardProps) {
+    const chessState = getCurrentChessState(this.chess)
+    const {homeColor} = this.props;
+
+    if ((chessState.turn === homeColor) && (typeof this.state.preMove !== 'undefined')){
+      this.props.onMove({
+        move: this.state.preMove,
+        fen: chessState.fen,
+        pgn: chessState.pgn,
+      });
+      this.setState({
+        preMove: undefined
+      })
+    }
+    
     // If there are changes in the props commit them
     if (prevProps.pgn !== this.props.pgn) {
       this.commit();
@@ -118,8 +133,8 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         // Reset the Board anytime the game changes
         key={id}
         {...boardProps}
-        premoveEnabled={this.state.current.isPreMovable}
         disableContextMenu
+        preMoveEnabled={this.state.current.isPreMovable}
         viewOnly={false}
         fen={chessState.fen}
         turnColor={chessState.turn}
@@ -128,10 +143,10 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         movable={this.calcMovable()}
         lastMove={chessState.lastMove && [chessState.lastMove.from, chessState.lastMove.to]}
         orientation={orientation || homeColor}
-        onPreMove={async (nextMove) => {
-            if (this.props.onPreMove){
-              this.props.onPreMove(nextMove);
-            }
+        onPreMove={(nextMove) => {
+           this.setState({
+             preMove: nextMove
+           })
         }}
         onMove={async (nextMove) => {
           this.setState({
