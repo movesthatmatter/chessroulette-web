@@ -48,11 +48,6 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         </a>
       </div>
       <div className={cls.linkWrapper}>
-        <a className={cls.link} href="https://www.instagram.com/chessroulette/" target="_blank">
-          Instagram
-        </a>
-      </div>
-      <div className={cls.linkWrapper}>
         <a
           className={cls.link}
           href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage"

@@ -1,11 +1,11 @@
 import React from 'react';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
-import { colors, effects, onlyMobile } from 'src/theme';
+import { colors, effects, onlyMobile, text } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Text } from '../Text';
 import { Link } from 'react-router-dom';
-import cx from 'classnames';
-
+import { AnchorLink } from '../AnchorLink';
+import { Instagram as InstagramIcon, Facebook as FacebookIcon } from 'grommet-icons';
 
 type Props = {};
 
@@ -14,19 +14,6 @@ export const Footer: React.FC<Props> = () => {
 
   return (
     <>
-      <div className={cls.topContainer}>
-        <div className={cx(cls.responsive, cls.centralizeContent)}>
-          <Text
-            size="body2"
-            className={cls.text}
-            style={{
-              fontWeight: 300,
-            }}
-          >
-            Made with ❤️around the world!
-          </Text>
-        </div>
-      </div>
       <div className={cls.container}>
         <div className={cls.responsive}>
           <div className={cls.content}>
@@ -34,9 +21,44 @@ export const Footer: React.FC<Props> = () => {
               <Text size="body2" className={cls.text}>
                 © 2021 Chessroulette: A Moves That Matter LLC Project.
               </Text>
-              <br />
+              <div className={cls.row}>
+                <AnchorLink
+                  className={cls.socialLink}
+                  href="https://www.instagram.com/chessroulette/"
+                  target="_blank"
+                  baseColor={text.baseColor}
+                >
+                  <InstagramIcon size="16px" className={cls.socialIcon} />
+                  <Text size="body2">Instagram</Text>
+                </AnchorLink>
+                <AnchorLink
+                  className={cls.socialLink}
+                  baseColor={text.baseColor}
+                  href="https://www.facebook.com/chessroulette/"
+                  target="_blank"
+                >
+                  <FacebookIcon size="16px" className={cls.socialIcon} />
+                  <Text size="body2">Facebook</Text>
+                </AnchorLink>
+              </div>
             </div>
             <div>
+              <AnchorLink
+                href="https://gabrielctroia.medium.com/meet-chessroulette-org-a-quarantine-project-e4108f05db39"
+                className={cls.link}
+              >
+                <Text size="body2" className={cls.text}>
+                  About
+                </Text>
+              </AnchorLink>
+              <AnchorLink
+                href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage"
+                className={cls.link}
+              >
+                <Text size="body2" className={cls.text}>
+                  Get In Touch
+                </Text>
+              </AnchorLink>
               <Link to="/privacy-policy" className={cls.link}>
                 <Text size="body2" className={cls.text}>
                   Privacy Policy
@@ -86,13 +108,13 @@ const useStyles = createUseStyles({
       alignContent: 'center',
       alignItems: 'center',
 
-      ...{
+      ...({
         '& $link': {
           paddingLeft: spacers.small,
           paddingRight: spacers.small,
         },
-      } as NestedCSSElement,
-    })
+      } as NestedCSSElement),
+    }),
   },
   link: {
     color: colors.neutralDarkest,
@@ -106,5 +128,33 @@ const useStyles = createUseStyles({
   },
   text: {
     color: colors.neutralDarkest,
+  },
+  socialLink: {
+    verticalAlign: 'center',
+    display: 'flex',
+    alignContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacers.small,
+    marginLeft: spacers.large,
+
+    '&:first-child': {
+      marginLeft: 0,
+    },
+  },
+  socialIcon: {
+    marginRight: spacers.small,
+  },
+  socialLinkText: {
+    color: text.baseColor,
+  },
+
+  row: {
+    paddingTop: spacers.default,
+    display: 'flex',
+    flexDirection: 'row',
+
+    ...onlyMobile({
+      justifyContent: 'center',
+    }),
   },
 });

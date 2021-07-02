@@ -13,7 +13,7 @@ export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
 
   return (
-    <Page name="Home">
+    <Page name="Home" contentClassName={cls.pageContent}>
       <div className={cls.container}>
         <div className={cls.inner}>
           <div
@@ -41,7 +41,9 @@ export const LandingPage: React.FC<Props> = () => {
             <div className={cls.list}>
               <h3 className={cls.text}>Play with friends in a private room.</h3>
               <h3 className={cls.text}>Start a quick game with someone across the world.</h3>
-              <h3 className={cls.text}>Face to Face. Live. Free. <Emoji symbol="😎" /></h3>
+              <h3 className={cls.text}>
+                Face to Face. Live. Free. <Emoji symbol="😎" />
+              </h3>
             </div>
             <div className={cls.buttonWrapper}>
               <ChallengeButtonWidget
@@ -85,6 +87,9 @@ const useStyles = createUseStyles({
     ...minMediaQuery(desktopBreakPoint, {
       fontSize: '60px',
     }),
+  },
+  pageContent: {
+    minHeight: '100vh',
   },
   inner: {
     display: 'flex',
