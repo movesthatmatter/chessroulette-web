@@ -12,7 +12,7 @@ export type ChessGameProps = Omit<ChessBoardProps, 'onMove' | 'id' | 'pgn' | 'ov
 
 export const ChessGame: React.FC<ChessGameProps> = ({ game, displayedPgn, ...chessGameProps }) => {
   const actions = useGameActions();
-
+  
   useSoundEffects(game);
 
   return (
