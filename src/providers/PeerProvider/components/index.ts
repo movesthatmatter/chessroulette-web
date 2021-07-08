@@ -1,1 +1,1 @@
-export * from './PeerWithConnectionStatusDisplay';
+export * from './PeerAvatar';

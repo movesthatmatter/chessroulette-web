@@ -1,22 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import Chessground, { ChessgroundProps } from 'react-chessground';
+import React, { useEffect, useRef, useState } from 'react';
+import Chessground, { ChessgroundProps, ChessgroundApi } from 'react-chessground';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import 'react-chessground/dist/styles/chessground.css';
 import blueBoard from '../assets/board/blue.svg';
 import cx from 'classnames';
 import { ChessGameColor, ChessMove, PromotionalChessPieceType } from 'dstnd-io';
 import { Square } from 'chess.js';
 import { pieces } from '../pieces';
+import { noop } from 'src/lib/util';
+import 'react-chessground/dist/styles/chessground.css';
 
 export type StyledChessBoardProps = Omit<
   ChessgroundProps,
   'width' | 'height' | 'onMove' | 'orientation'
 > & {
   className?: string;
+  preMoveEnabled?: boolean;
   size: number;
   onMove: (m: ChessMove) => void;
+  onPreMove?: (m: ChessMove) => void;
+  onPreMoveCanceled?: () => void;
   orientation?: ChessGameColor;
-  promotionalMove?: ChessMove & { color: ChessGameColor };
+  promotionalMove?: ChessMove & { color: ChessGameColor; isPreMove: boolean };
   overlayComponent?: React.ReactNode | ((p: { size?: number }) => React.ReactNode);
 };
 
@@ -42,10 +46,20 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
   promotionalMove,
   orientation = 'white',
   onMove,
+  onPreMove = noop,
+  onPreMoveCanceled = noop,
   ...props
 }) => {
   const cls = useStyles();
   const [uniqueKey, setUniquKey] = useState(new Date().getTime());
+  const chessgroundRef = useRef<ChessgroundApi>();
+
+  useEffect(() => {
+    if (chessgroundRef.current) {
+      // Remove the Premove Highlights as soon as the FEN changes
+      chessgroundRef.current.cancelPremove();
+    }
+  }, [props.fen]);
 
   useEffect(() => {
     setUniquKey(new Date().getTime());
@@ -56,10 +70,17 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
       return;
     }
 
-    onMove({
-      ...promotionalMove,
-      promotion,
-    });
+    if (promotionalMove.isPreMove) {
+      onPreMove({
+        ...promotionalMove,
+        promotion,
+      });
+    } else {
+      onMove({
+        ...promotionalMove,
+        promotion,
+      });
+    }
   };
 
   return (
@@ -74,6 +95,20 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
     >
       <Chessground
         key={uniqueKey}
+        ref={(r) => {
+          if (r) {
+            // TODO: For some reason this becomes null & then not on every update
+            chessgroundRef.current = (r as any).cg;
+          }
+        }}
+        premovable={{
+          enabled: props.preMoveEnabled,
+          castle: true,
+          events: {
+            set: (org, dest) => onPreMove({ to: dest as Square, from: org as Square }),
+            unset: onPreMoveCanceled,
+          },
+        }}
         resizable={false}
         draggable={{
           enabled: true,

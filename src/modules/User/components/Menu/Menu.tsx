@@ -26,6 +26,7 @@ export const Menu: React.FC<Props> = (props) => {
       <div className={cls.menuContent}>
         {props.sections.map(({ route, display }) => (
           <Link
+            key={route}
             to={`/user/${route}`}
             className={cx(props.linkClassName, {
               [props.activeLinkClassName]: props.current === route,

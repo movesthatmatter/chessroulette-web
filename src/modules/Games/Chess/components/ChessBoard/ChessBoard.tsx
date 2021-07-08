@@ -10,6 +10,7 @@ import {
   GameRecord,
 } from 'dstnd-io';
 import { StyledChessBoard, StyledChessBoardProps } from './StyledChessBoard';
+import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 
 export type ChessBoardProps = Omit<StyledChessBoardProps, 'onMove' | 'fen'> & {
   id: GameRecord['id'];
@@ -22,6 +23,7 @@ export type ChessBoardProps = Omit<StyledChessBoardProps, 'onMove' | 'fen'> & {
   //  move to be saved first
   autoCommitMove?: boolean;
   onMove: (p: { move: ChessMove; fen: ChessGameStateFen; pgn: ChessGameStatePgn }) => void;
+  onPreMove?: (m: ChessMove) => void;
 };
 
 type ChessState = {
@@ -30,11 +32,13 @@ type ChessState = {
   turn: ChessGameColor;
   inCheck: boolean;
   lastMove: ChessMove | undefined;
+  isPreMovable: boolean;
 };
 
 type State = {
   current: ChessState;
   uncommited?: ChessState;
+  preMove?: ChessMove | undefined;
   pendingPromotionalMove?: ChessBoardProps['promotionalMove'];
 };
 
@@ -47,6 +51,7 @@ const getCurrentChessState = (chess: ChessInstance): ChessState => {
     turn: toChessColor(chess.turn()),
     inCheck: chess.in_check(),
     lastMove: history[history.length - 1] as ChessMove,
+    isPreMovable: history.length === 0 ? true : history[history.length - 1].color !== chess.turn(),
   };
 };
 
@@ -63,7 +68,7 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
     };
   }
 
-  // Keeps the Component State and the Chess Instnce in sync
+  // Keeps the Component State and the Chess Instance in sync
   private commit() {
     if (!this.props.pgn) {
       this.chess.reset();
@@ -89,6 +94,13 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
   }
 
   componentDidUpdate(prevProps: ChessBoardProps) {
+    const chessState = getCurrentChessState(this.chess);
+    const { homeColor } = this.props;
+
+    if (this.state.preMove && chessState.turn === homeColor) {
+      this.applyPreMove(this.state.preMove);
+    }
+
     // If there are changes in the props commit them
     if (prevProps.pgn !== this.props.pgn) {
       this.commit();
@@ -106,6 +118,101 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
     } as const;
   }
 
+  private applyPreMove(preMove: ChessMove) {
+    this.onMove(preMove);
+
+    this.setState({ preMove: undefined });
+  }
+
+  private onPreMove(nextPreMove: ChessMove) {
+    const movedPiece = this.chess.get(nextPreMove.from);
+
+    if (movedPiece && this.isPromotable(nextPreMove)) {
+      // If the premove is a promotional move:
+      //  - show the Promotional Dialog inside the ChessBoard
+      //  - and wait for the player to select the Piece to promote before applying it
+      this.setState({
+        pendingPromotionalMove: {
+          ...nextPreMove,
+          color: toChessColor(movedPiece.color),
+          isPreMove: true,
+        },
+      });
+
+      return;
+    }
+
+    this.setState({
+      preMove: nextPreMove,
+      pendingPromotionalMove: undefined,
+    });
+  }
+
+  private isPromotable(m: ChessMove) {
+    const movedPiece = this.chess.get(m.from);
+
+    return !m.promotion && movedPiece && isPromotableMove(movedPiece, m);
+  }
+
+  private onMove(nextMove: ChessMove) {
+    this.setState({
+      pendingPromotionalMove: undefined,
+    });
+
+    // If the move is a promotional move:
+    //  - save a temporary chess state
+    //  - show the Promotional Dialog inside the ChessBoard
+    //  - and wait for the player to select the Piece to promote
+    if (this.isPromotable(nextMove)) {
+      const uncommitableChess = getNewChessGame(this.state.current.pgn);
+
+      const valid = uncommitableChess.move({
+        ...nextMove,
+        promotion: 'q',
+      });
+
+      if (!valid) {
+        return;
+      }
+
+      this.setState({
+        pendingPromotionalMove: {
+          ...nextMove,
+          color: otherChessColor(toChessColor(uncommitableChess.turn())),
+          isPreMove: false,
+        },
+        uncommited: {
+          ...getCurrentChessState(uncommitableChess),
+          // This is needed since, as a workaround not to revert the promoting move until
+          //  the player makes a selection, the temporarily promoted piece is a Queen,
+          //  and sometimes it can give a check - which of course is incorrect therefore
+          //  it must not show
+          inCheck: false,
+        },
+      });
+
+      return;
+    }
+
+    const valid = this.chess.move(nextMove);
+
+    if (!valid) {
+      return;
+    }
+
+    const nextChessState = getCurrentChessState(this.chess);
+
+    this.setState({
+      uncommited: nextChessState,
+    });
+
+    this.props.onMove({
+      move: nextMove,
+      fen: nextChessState.fen,
+      pgn: nextChessState.pgn,
+    });
+  }
+
   render() {
     const { pgn, id, playable, orientation, homeColor, ...boardProps } = this.props;
     const chessState = this.state.uncommited || this.state.current;
@@ -116,6 +223,7 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         key={id}
         {...boardProps}
         disableContextMenu
+        preMoveEnabled={this.state.current.isPreMovable}
         viewOnly={false}
         fen={chessState.fen}
         turnColor={chessState.turn}
@@ -124,67 +232,9 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         movable={this.calcMovable()}
         lastMove={chessState.lastMove && [chessState.lastMove.from, chessState.lastMove.to]}
         orientation={orientation || homeColor}
-        onMove={async (nextMove) => {
-          this.setState({
-            pendingPromotionalMove: undefined,
-          });
-
-          const movedPiece = this.chess.get(nextMove.from);
-
-          // If the move is a promotional move:
-          //  - save a temporary chess state
-          //  - show the Promotional Dialog inside the ChessBoard
-          //  - and wait for the player to select the Piece to promote
-          if (!nextMove.promotion && movedPiece && isPromotableMove(movedPiece, nextMove)) {
-            console.log('is prmotoavle')
-
-            const uncommitableChess = getNewChessGame(this.state.current.pgn);
-
-            const valid = uncommitableChess.move({
-              ...nextMove,
-              promotion: 'q',
-            });
-
-            if (!valid) {
-              return;
-            }
-
-            this.setState({
-              pendingPromotionalMove: {
-                ...nextMove,
-                color: toChessColor(movedPiece.color),
-              },
-              uncommited: {
-                ...getCurrentChessState(uncommitableChess),
-                // This is needed since, as a workaround not to revert the promoting move until 
-                //  the player makes a selection, the temporarily promoted piece is a Queen,
-                //  and sometimes it can give a check - which of course is incorrect therefore
-                //  it must not show
-                inCheck: false,
-              },
-            });
-
-            return;
-          }
-
-          const valid = this.chess.move(nextMove);
-
-          if (!valid) {
-            return;
-          }
-
-          const nextChessState = getCurrentChessState(this.chess);
-
-          this.setState({
-            uncommited: nextChessState,
-          });
-
-          this.props.onMove({
-            move: nextMove,
-            fen: nextChessState.fen,
-            pgn: nextChessState.pgn,
-          });
-        }}
+        onPreMove={(preMove) => this.onPreMove(preMove)}
+        onPreMoveCanceled={() => this.setState({ preMove: undefined })}
+        onMove={(m) => this.onMove(m)}
         promotionalMove={this.state.pendingPromotionalMove}
       />
     );
