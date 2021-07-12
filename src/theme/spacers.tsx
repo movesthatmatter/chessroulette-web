@@ -20,4 +20,6 @@ export const spacers = {
   large: getSpacer(1.5),
   larger: getSpacer(2),
   largest: getSpacer(3),
+
+  get: getSpacer,
 };

@@ -31,10 +31,6 @@ export const AuthenticationButton: React.FC<Props> = ({
         style={{
           marginBottom: 0,
         }}
-        withBadge={{
-          color: 'negative',
-          text: 'New',
-        }}
         {...restButtonProps}
       />
       <AuthenticationDialog

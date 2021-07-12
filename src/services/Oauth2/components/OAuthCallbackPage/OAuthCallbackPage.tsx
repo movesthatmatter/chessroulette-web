@@ -1,7 +1,6 @@
 import { ExternalVendor } from 'dstnd-io';
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, { useEffect } from 'react';
-import { Button } from 'src/components/Button';
 import { WindowWithOnTokenReceived } from '../../types';
 
 type Props = {
@@ -17,6 +16,8 @@ export const OAuthCallbackPage: React.FC<Props> = (props) => {
         (window.opener as WindowWithOnTokenReceived).onTokenReceivedFacebook?.(token);
       } else if (props.vendor === 'lichess') {
         (window.opener as WindowWithOnTokenReceived).onTokenReceivedLichess?.(token);
+      } else if (props.vendor === 'twitch') {
+        (window.opener as WindowWithOnTokenReceived).onTokenReceivedTwitch?.(token);
       }
 
       // HACK: If the timer isn't here, the react-popout component in which

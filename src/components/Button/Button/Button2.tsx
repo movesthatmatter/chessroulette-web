@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ButtonType } from '../type';
-import { Icon as GIcon } from 'grommet-icons';
+import { IconProps } from 'grommet-icons';
+import {FontAwesomeIconProps} from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { buttonStyles } from '../styles/styles';
 import { borderRadius, colors, onlyMobile } from 'src/theme';
@@ -14,7 +15,9 @@ import { Badge, BadgeProps } from 'src/components/Badge';
 
 export type ButtonProps = {
   type?: ButtonType;
-  icon?: GIcon;
+  // Difficult typing different icon packs
+  icon?: React.ComponentType<any>;
+  iconWrapperStyle? :CSSProperties;
   label: string;
   reverse?: boolean;
 
@@ -96,6 +99,7 @@ export const Button: React.FC<ButtonProps> = ({
           {props.withBadge && (
             <Badge {...props.withBadge} className={cls.badge}/>
           )}
+          <div className={cls.content}>
           <Text
             className={cls.label}
             style={{
@@ -106,6 +110,12 @@ export const Button: React.FC<ButtonProps> = ({
           >
             {props.label}
           </Text>
+          {Icon && (
+              <div className={cls.iconWrapper} style={props.iconWrapperStyle}>
+                <Icon className={cls.icon}/>
+              </div>
+            )}  
+          </div> 
           {isLoading && (
             <div className={cls.loadingWrapper}>
               <Loader
@@ -113,11 +123,6 @@ export const Button: React.FC<ButtonProps> = ({
                 active
                 innerClassName={cls.loader}
               />
-            </div>
-          )}
-          {Icon && (
-            <div className={cls.iconWrapper}>
-              <Icon className={cls.icon} />
             </div>
           )}
         </>
@@ -168,11 +173,9 @@ const useStyles = createUseStyles({
     fontWeight: 600, // TODO: Make it SemiBold
     fontSize: '14px',
     lineHeight: '32px',
-    direction: 'ltr',
-    width: '100%',
     paddingRight: '16px',
     paddingLeft: '16px',
-
+    
     ...onlyMobile({
       ...makeImportant({
         fontSize: '12px',
@@ -181,6 +184,13 @@ const useStyles = createUseStyles({
         paddingLeft: '13px',
       }),
     }),
+  },
+  content: {
+    width: '100%',
+    direction: 'ltr',
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'center'
   },
   iconWrapper: {
     height: '32px',
