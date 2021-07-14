@@ -139,7 +139,7 @@
     ]
   },
   "reactSnapshot": {
-    "snapshotDelay": 5000
+    "snapshotDelay": 5001
   },
   "devDependencies": {
     "@storybook/addon-actions": "^5.3.18",
