@@ -65,7 +65,7 @@ const dict = {
       <strong>{getUserDisplayName(n.toUser)}</strong> accepted the takeback request
     </div>
   ),
-  'offer-takeback-deny' : (n:OfferNotification) => (
+  'offer-takeback-withdrawn' : (n:OfferNotification) => (
     <div>
       <strong>{getUserDisplayName(n.byUser)}</strong>'s request was sent into the void 
     </div>

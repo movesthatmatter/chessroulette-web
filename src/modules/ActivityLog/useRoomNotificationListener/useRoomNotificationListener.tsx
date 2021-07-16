@@ -23,7 +23,6 @@ export const useRoomNotificationListener = (game: Game) => {
 
   useEffect(() => {
     const nextNotification = notificationFactory(gameAndOfferZipWithPrev);
-
     if (!nextNotification) {
       return;
     }
