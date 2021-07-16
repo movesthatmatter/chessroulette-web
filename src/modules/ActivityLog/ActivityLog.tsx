@@ -76,6 +76,8 @@ export const ActivityLog: React.FC<Props> = (props) => {
                   gameActions.onRematchAccepted();
                 } else if (offerType === 'challenge') {
                   gameActions.onChallengeAccepted();
+                } else if (offerType === 'takeback'){
+                  gameActions.onTakebackAccepted();
                 }
               }}
               onDenyOffer={({ offerType }) => {
@@ -85,6 +87,8 @@ export const ActivityLog: React.FC<Props> = (props) => {
                   gameActions.onRematchDenied();
                 } else if (offerType === 'challenge') {
                   gameActions.onChallengeDenied();
+                } else if (offerType === 'takeback') {
+                  gameActions.onTakebackDeny();
                 }
               }}
               onCancelOffer={gameActions.onOfferCanceled}
