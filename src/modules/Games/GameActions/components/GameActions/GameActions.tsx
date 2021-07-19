@@ -1,5 +1,5 @@
 import { ChessGameState, ChessPlayer, RoomPlayActivityRecord } from 'dstnd-io';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ActionButton, Button } from 'src/components/Button';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { Refresh, Flag, Edit } from 'grommet-icons';
@@ -11,8 +11,8 @@ import { getUserDisplayName } from 'src/modules/User';
 import cx from 'classnames';
 import { useGameActions } from '../../hooks/useGameActions';
 import { ConfirmNewGameAction } from '../ConfirmNewGameAction';
-import { getNewChessGame, getOppositePlayer } from '../../../Chess/lib';
-import { useStateWithPrev } from 'src/lib/hooks/useStateWithPrev';
+import { getOppositePlayer } from '../../../Chess/lib';
+import { useTakebackStatus } from '../../hooks';
 
 type Props = {
   myPlayer: ChessPlayer;
@@ -32,23 +32,7 @@ export const GameActions: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
   const actions = useGameActions();
-  const [offerWithPrev, setOfferWithPrev] = useStateWithPrev(props.roomActivity.offer);
-
-  // This takes into account the previous offer because if there was already a takeback 
-  // you can't have another takeback so this turn it will be disabled
-  useEffect(() => {
-    setOfferWithPrev(props.roomActivity.offer);
-  },[props.roomActivity.offer]);
-
-  // This cleares the prev offer whenever there was another moved made and no room activity 
-  useEffect(() => {
-    if (offerWithPrev.prev !== undefined && offerWithPrev.current === undefined ){
-      setOfferWithPrev(undefined);
-    }
-  },[game.history])
-
-useEffect(() => {console.log('OFFER WITH PREV', offerWithPrev)}, [offerWithPrev])
-
+  const takebackSatus = useTakebackStatus(game, myPlayer, props.roomActivity.offer);
 
   const content = () => {
     const dynamicProps = isMobile
@@ -211,9 +195,6 @@ useEffect(() => {console.log('OFFER WITH PREV', offerWithPrev)}, [offerWithPrev]
     }
 
     if (game.state === 'started') {
-     // console.log('current turn', chess.turn());
-      //console.log('my color ', myPlayer.color.charAt(0));
-      //console.log('current game', game);
       return (
         <>
           <ActionButton
@@ -259,8 +240,7 @@ useEffect(() => {console.log('OFFER WITH PREV', offerWithPrev)}, [offerWithPrev]
               {...dynamicProps}
             />
           )}
-          {game.lastMoveBy === myPlayer.color &&
-           (offerWithPrev.prev?.type !== 'takeback') &&
+          {takebackSatus.show  &&
           (
               <ActionButton
                 type="primary"
