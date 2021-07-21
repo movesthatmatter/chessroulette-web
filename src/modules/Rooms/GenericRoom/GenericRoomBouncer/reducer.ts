@@ -25,6 +25,11 @@ export type State = null | {
 
   // All
   ready: boolean;
+
+  mediaStatus : {
+    video : boolean;
+    audio : boolean;
+  } | undefined;
 };
 
 export const initialState: State = null;
@@ -41,6 +46,9 @@ export const confirmJoiningRoomAction = createAction(
   'ConfirmJoiningRoomAction',
   (resolve) => (p: { roomSlug: RoomRecord['slug'] }) => resolve(p)
 );
+export const switchAudio = createAction('switchAudio');
+export const switchVideo = createAction('switchVideo');
+export const initiateAudioVideo = createAction('initiateAudioVideo');
 
 const getReadyFlag = (state: Omit<NonNullable<State>, 'ready'>) => {
   return !!(
@@ -83,6 +91,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
         roomSlug: payload.roomSlug,
         status: false,
       },
+      mediaStatus: state?.mediaStatus
     };
 
     return {
@@ -171,6 +180,42 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       ready: getReadyFlag(nextState),
     };
   }),
+  handleAction(switchAudio, (state) => {
+    if (state?.mediaStatus){
+      return {
+        ...state,
+        mediaStatus: {
+          ...state.mediaStatus,
+          audio: !state.mediaStatus.audio
+        }
+      }
+    }
+    return state;
+  }),
+  handleAction(switchVideo, (state)=> {
+    if(state?.mediaStatus){
+      return {
+        ...state,
+        mediaStatus:{
+          ...state.mediaStatus,
+          video:!state.mediaStatus.video
+        }
+      }
+    }
+    return state;
+  }),
+  handleAction(initiateAudioVideo,(state)=> {
+    if (state){
+      return {
+        ...state,
+        mediaStatus: {
+          audio: true,
+          video: true,
+        }
+      }
+    }
+    return state;
+  })
 ]);
 
 export const stateSliceByKey = {

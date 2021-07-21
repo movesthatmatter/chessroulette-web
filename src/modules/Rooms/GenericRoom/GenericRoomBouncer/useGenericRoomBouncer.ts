@@ -6,7 +6,7 @@ import {
   confirmJoiningRoomAction,
   agreePermissionsRequestAction,
   checkRoomAction,
-  refusePermissionsAction,
+  refusePermissionsAction,initiateAudioVideo
 } from './reducer';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectroomBouncerState } from './selectors';
@@ -32,6 +32,7 @@ export const useGenericRoomBouncer = (roomSlug: RoomRecord['slug']) => {
       AsyncResult.passThrough((granted) => {
         if (granted) {
           dispatch(grantPermissionsAction());
+          dispatch(initiateAudioVideo());
         } else {
           dispatch(refusePermissionsAction());
         }

@@ -32,6 +32,7 @@ export const defaultStory = () =>
               permissionsRequestAgreed: false,
               browserIsUnsupported: true,
               ready: false,
+              mediaStatus: undefined
             },
           }}
         >
