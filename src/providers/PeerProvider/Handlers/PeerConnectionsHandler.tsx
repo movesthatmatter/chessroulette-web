@@ -1,10 +1,12 @@
 import { IceServerRecord, UserRecord } from 'dstnd-io';
 import { Component } from 'react';
+import { AVStreamingConstraints } from 'src/services/AVStreaming';
 import { PeerConnections } from '../lib/PeerConnections';
 
 type Props = {
   iceServers: IceServerRecord[];
   user: UserRecord;
+  avStreamingConstraints: AVStreamingConstraints;
 
   onOpen?: Parameters<PeerConnections['onOpen']>[0];
   onClose?: Parameters<PeerConnections['onClose']>[0];
@@ -72,10 +74,18 @@ export class PeerConnectionsHandler extends Component<Props, State> {
     this.destroy();
   }
 
-  componentDidUpdate(_: Props, prevState: State) {
+  componentDidUpdate(prevProps: Props, prevState: State) {
     // TODO: Make sure this is triggered on flag changes
     if (prevState.pcs !== this.state.pcs) {
       this.onStateUpdate();
+    }
+
+    // If the avStreamingConstraints chnffed and there is PeerConnection instance then forward the update!
+    if (
+      this.peerConnections &&
+      prevProps.avStreamingConstraints !== this.props.avStreamingConstraints
+    ) {
+      this.peerConnections.updateAVStreamingConstraints(this.props.avStreamingConstraints);
     }
   }
 
@@ -90,9 +100,10 @@ export class PeerConnectionsHandler extends Component<Props, State> {
       return;
     }
 
-    this.peerConnections = new PeerConnections({ 
+    this.peerConnections = new PeerConnections({
       iceServers: this.props.iceServers,
       user: this.props.user,
+      avStreamingConstraints: this.props.avStreamingConstraints,
     });
 
     console.log('[PeerProviderConnectionHandler] called open');

@@ -5,10 +5,9 @@ import config from 'src/config';
 import { wNamespace, woNamespace } from './util';
 import { Pubsy } from 'src/lib/Pubsy';
 import { ActivePeerConnection } from './ActivePeerConnection';
+import { AVStreamingConstraints } from 'src/services/AVStreaming';
 
-export type PeerConnectionsErrors =
-  | 'PEER_ID_TAKEN'
-  | 'GENERIC_ERROR';
+export type PeerConnectionsErrors = 'PEER_ID_TAKEN' | 'GENERIC_ERROR';
 
 export class PeerConnections {
   private user: PeerRecord['user'];
@@ -18,11 +17,11 @@ export class PeerConnections {
     onClose: void;
     onPeerConnected: PeerRecord['id'];
     onPeerDisconnected: PeerRecord['id'];
-    onError: PeerConnectionsErrors,
+    onError: PeerConnectionsErrors;
     onPeerStream: {
-      peerId: PeerRecord['id'],
+      peerId: PeerRecord['id'];
       stream: MediaStream;
-    },
+    };
   }>();
 
   private sdk: PeerSDK;
@@ -31,14 +30,25 @@ export class PeerConnections {
 
   unsubscribers: (() => void)[] = [];
 
+  // TODO: Do we need to update this as well???
+  //  I'm thinking since the stream itself updates at the AV streaming level
+  //  does it not propagate?
+
+  // That's actually untrue - this should update here as well so its in sync with the global one
+  // Thinking about, starting it again. It should starat from the prev state not the default one
+  private avStreamingConstraints: AVStreamingConstraints;
+
   constructor({
     user,
     iceServers,
+    avStreamingConstraints,
   }: {
     user: PeerRecord['user'];
     iceServers: IceServerRecord[];
+    avStreamingConstraints: AVStreamingConstraints;
   }) {
     this.user = user;
+    this.avStreamingConstraints = avStreamingConstraints;
 
     this.sdk = new PeerSDK(wNamespace(user.id), {
       ...config.SIGNALING_SERVER_CONFIG,
@@ -53,7 +63,7 @@ export class PeerConnections {
       //  rather than a type but it's the best we can do atm.
       // TOOD: Need to keep an eye as the library might change it without noticing!
       // TODO: A test should be added around this!
-      if (e instanceof Error  && e.message.match(/ID "\w+" is taken/g)) {
+      if (e instanceof Error && e.message.match(/ID "\w+" is taken/g)) {
         this.pubsy.publish('onError', 'PEER_ID_TAKEN');
       } else {
         this.pubsy.publish('onError', 'GENERIC_ERROR');
@@ -61,14 +71,14 @@ export class PeerConnections {
     };
     this.sdk.on('error', onErrorHandler);
 
-    this.unsubscribers.push(() => this.sdk.off('error', onErrorHandler))
-    
+    this.unsubscribers.push(() => this.sdk.off('error', onErrorHandler));
+
     // On Open Event
     const onOpenHandler = (id: string) => {
       this.pubsy.publish('onOpen', undefined);
     };
     this.sdk.on('open', onOpenHandler);
-    this.unsubscribers.push(() => this.sdk.off('open', onOpenHandler))
+    this.unsubscribers.push(() => this.sdk.off('open', onOpenHandler));
 
     // On Connection Event
     const onConnectionHandler = (pc: PeerSDK.DataConnection) => {
@@ -98,7 +108,7 @@ export class PeerConnections {
         return;
       }
 
-      apc.getMyStream().then((myStream) => {
+      apc.getMyStream(this.avStreamingConstraints).then((myStream) => {
         call.answer(myStream);
         call.on('stream', (stream) => {
           this.pubsy.publish('onPeerStream', {
@@ -129,6 +139,28 @@ export class PeerConnections {
     this.unsubscribers.push(() => this.sdk.off('disconnected', onDisconnectedHandler));
   }
 
+  updateAVStreamingConstraints(nextConstraints: AVStreamingConstraints) {
+    // Ensure they actually changed
+    if (
+      nextConstraints.audio === this.avStreamingConstraints.audio &&
+      nextConstraints.video === this.avStreamingConstraints.video
+    ) {
+      return;
+    }
+
+    console.info(
+      '[PeerConnections] updating avStreamingConstraints from',
+      this.avStreamingConstraints,
+      nextConstraints
+    );
+
+    this.avStreamingConstraints = nextConstraints;
+
+    Object.values(this.connections).forEach((apc) => {
+      apc.updateMyStream(nextConstraints);
+    });
+  }
+
   onOpen(fn: () => void) {
     return this.pubsy.subscribe('onOpen', fn);
   }
@@ -145,10 +177,7 @@ export class PeerConnections {
     return this.pubsy.subscribe('onPeerDisconnected', fn);
   }
 
-  onPeerStream(fn: (props: {
-    peerId: string,
-    stream: MediaStream,
-  }) => void) {
+  onPeerStream(fn: (props: { peerId: string; stream: MediaStream }) => void) {
     return this.pubsy.subscribe('onPeerStream', fn);
   }
 
@@ -157,58 +186,52 @@ export class PeerConnections {
   }
 
   connect(peers: Record<PeerRecord['id'], PeerRecord>) {
-    const peersWithoutMe = Object
-      .values(peers)
+    const peersWithoutMe = Object.values(peers)
       // Ensure myPeer is excluded
       .filter(({ id }) => id !== this.user.id);
 
-    const allAPCUnsubscribers = peersWithoutMe
-      .map((peer) => {
-        const namespacedPeerId = wNamespace(peer.id);
+    const allAPCUnsubscribers = peersWithoutMe.map((peer) => {
+      const namespacedPeerId = wNamespace(peer.id);
 
-        const apc = new ActivePeerConnection(
-          peer.id,
-          this.sdk.connect(namespacedPeerId),
-        );
+      const apc = new ActivePeerConnection(peer.id, this.sdk.connect(namespacedPeerId));
 
-        let onStreamUnsubscriber = () => {};
-        const onOpenUnsubscriber = apc.onOpen(() => {
-          apc.getMyStream()
-            .then((stream) => {
-              const call = this.sdk.call(namespacedPeerId, stream);
+      let onStreamUnsubscriber = () => {};
+      const onOpenUnsubscriber = apc.onOpen(() => {
+        apc.getMyStream(this.avStreamingConstraints).then((stream) => {
+          const call = this.sdk.call(namespacedPeerId, stream);
 
-              const onStreamHandler = (stream: MediaStream) => {
-                this.pubsy.publish('onPeerStream', {
-                  peerId: peer.id,
-                  stream,
-                });
-              };
-
-              call.on('stream', onStreamHandler);
-
-              onStreamUnsubscriber = () => {
-                call.off('stream', onStreamHandler);
-              };
+          const onStreamHandler = (stream: MediaStream) => {
+            this.pubsy.publish('onPeerStream', {
+              peerId: peer.id,
+              stream,
             });
+          };
 
-          this.pubsy.publish('onPeerConnected', peer.id);
+          call.on('stream', onStreamHandler);
+
+          onStreamUnsubscriber = () => {
+            call.off('stream', onStreamHandler);
+          };
         });
 
-        const onCloseUnsubscriber = apc.onClose(() => {
-          this.removePeerConnection(peer.id);
-
-          this.pubsy.publish('onPeerDisconnected', peer.id);
-        });
-
-        this.connections[peer.id] = apc;
-
-        return () => {
-          // Put all the unsubscribers here
-          onStreamUnsubscriber();
-          onOpenUnsubscriber();
-          onCloseUnsubscriber();
-        };
+        this.pubsy.publish('onPeerConnected', peer.id);
       });
+
+      const onCloseUnsubscriber = apc.onClose(() => {
+        this.removePeerConnection(peer.id);
+
+        this.pubsy.publish('onPeerDisconnected', peer.id);
+      });
+
+      this.connections[peer.id] = apc;
+
+      return () => {
+        // Put all the unsubscribers here
+        onStreamUnsubscriber();
+        onOpenUnsubscriber();
+        onCloseUnsubscriber();
+      };
+    });
 
     this.unsubscribers.push(() => {
       allAPCUnsubscribers.forEach((unsubscribe) => {
@@ -245,12 +268,10 @@ export class PeerConnections {
   }
 
   /**
-   * Destroys all the APCs 
+   * Destroys all the APCs
    */
   disconnect() {
-    Object
-    .values(this.connections)
-    .forEach((apc) => {
+    Object.values(this.connections).forEach((apc) => {
       apc.destroy();
     });
 
@@ -261,7 +282,7 @@ export class PeerConnections {
 
   destroy() {
     this.disconnect();
-    
+
     this.close();
 
     logsy.info('[PeerConnections] Destroyed!');

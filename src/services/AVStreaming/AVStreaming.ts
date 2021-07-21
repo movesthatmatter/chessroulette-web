@@ -1,4 +1,5 @@
 import { AsyncResultWrapper, Ok } from 'dstnd-io';
+import { console } from 'window-or-global';
 
 export type AVStreamingConstraints = {
   video: boolean;
@@ -23,7 +24,7 @@ class AVStreamingClass {
     }
 
     return this.activeStreamsById[firstActiveStreamId];
-  }
+  };
 
   private hasActiveStream() {
     return !!this.getAnActiveStream();
@@ -91,19 +92,37 @@ class AVStreamingClass {
     }
   ): Promise<MediaStream> {
     if (this.pendingStreamCreationPromise) {
-      return this
-        .pendingStreamCreationPromise
-        .then((stream) => {
-          // Cloning here is imperative, otherwise all of the calls get the
-          //  same stream resulting in freezing on Safari
-          return this.cloneStream(stream)
-        });
-    }
-    else if (this.hasActiveStream()) {
+      return this.pendingStreamCreationPromise.then((stream) => {
+        // Cloning here is imperative, otherwise all of the calls get the
+        //  same stream resulting in freezing on Safari
+        return this.cloneStream(stream);
+      });
+    } else if (this.hasActiveStream()) {
       return this.cloneAnActiveStream(constraints);
     } else {
       return this.createStream(constraints);
     }
+  }
+
+  updateAllStreams(nextConstraints: AVStreamingConstraints) {
+    const allStreams = Object.values(this.activeStreamsById);
+
+    allStreams.forEach((stream) => {
+      const tracks = stream.getTracks();
+
+      const audioTrack = tracks.find((t) => t.kind === 'audio');
+      const videoTrack = tracks.find((t) => t.kind === 'video');
+
+      if (audioTrack) {
+        audioTrack.enabled = nextConstraints.audio;
+      }
+
+      if (videoTrack) {
+        videoTrack.enabled = nextConstraints.video;
+      }
+    });
+
+    console.log(`[AVStreaaming] updateAllStreams ${allStreams.length} updated to`, nextConstraints);
   }
 
   hasPermission(
@@ -117,20 +136,18 @@ class AVStreamingClass {
         return Promise.resolve(new Ok(true));
       }
 
-      return this
-        .createStream(constraints)
-        .then(
-          (stream) => {
-            // Destroy the streamer right away
-            this.destroyStreamById(stream.id);
+      return this.createStream(constraints).then(
+        (stream) => {
+          // Destroy the streamer right away
+          this.destroyStreamById(stream.id);
 
-            return new Ok(true);
-          },
-          () => {
-            // TOOO: Check the error because it might be something else then permission
-            return new Ok(false);
-          }
-        );
+          return new Ok(true);
+        },
+        () => {
+          // TOOO: Check the error because it might be something else then permission
+          return new Ok(false);
+        }
+      );
     });
   }
 }
