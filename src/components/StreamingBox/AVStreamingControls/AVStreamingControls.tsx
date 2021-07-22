@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { IconButton } from 'src/components/Button';
 import { createUseStyles } from 'src/lib/jss';
 import { faVideoSlash, faVolumeMute, faVideo, faVolumeUp } from '@fortawesome/free-solid-svg-icons';
@@ -6,26 +6,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { spacers } from 'src/theme/spacers';
 import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
 import useInstance from '@use-it/instance';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectMediaStatus } from './redux/selectors';
+import { useDispatch } from 'react-redux';
 import { updateAVConstraints } from './redux/actions';
+import { useMediaStatus } from './useMediaStatus';
 
 type Props = {};
 
 export const AVStreamingControls: React.FC<Props> = () => {
   const cls = useStyles();
   const avStreaming = useInstance<AVStreaming>(getAVStreaming);
-  const mediaStatus = useSelector(selectMediaStatus);
-  //const [activeConstraints, setACtiveConstraints] = useState(avStreaming.activeConstraints);
+  const mediaStatus = useMediaStatus();
   const dispatch = useDispatch();
 
   useEffect(() => {
     avStreaming.onUpdateConstraints((nextConstraints) => {
       dispatch(updateAVConstraints(nextConstraints));
-
-      // TODO: Update Redux
-      //  We need to store the chosen constraints in the session (in Redux)
-      //  so on refresh it keeps them
 
       // TODO: This one not yet!
       //  Another we need to do is, to select the constraaints at Challenge Accept
@@ -41,7 +36,7 @@ export const AVStreamingControls: React.FC<Props> = () => {
         )}
         onSubmit={() => {
           avStreaming.updateConstraints({
-            ...avStreaming.activeConstraints,
+            ...mediaStatus,
             video: !mediaStatus.video,
           });
         }}
@@ -54,7 +49,7 @@ export const AVStreamingControls: React.FC<Props> = () => {
         )}
         onSubmit={() => {
           avStreaming.updateConstraints({
-            ...avStreaming.activeConstraints,
+            ...mediaStatus,
             audio: !mediaStatus.audio,
           });
         }}
