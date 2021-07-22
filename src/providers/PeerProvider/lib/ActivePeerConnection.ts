@@ -4,7 +4,7 @@ import { peerMessageEnvelope, PeerMessageEnvelope } from '../records';
 import PeerSDK from 'peerjs';
 import { logsy } from 'src/lib/logsy';
 import { eitherToResult } from 'src/lib/ioutil';
-import { AVStreamingConstraints, getAVStreaming } from 'src/services/AVStreaming';
+import { getAVStreaming } from 'src/services/AVStreaming';
 
 type Events = {
   onOpen: undefined;
@@ -79,50 +79,12 @@ export class ActivePeerConnection {
     this.unsubscribers.onClose = () => connection.off('close', onCloseHandler);
   }
 
-  async getMyStream(constraints: AVStreamingConstraints) {
-    return this.AVStreaming.getStream(constraints).then((stream) => {
+  async getMyStream() {
+    return this.AVStreaming.getStream().then((stream) => {
       this.myStream = stream;
 
       return stream;
     });
-  }
-
-  private getMyStreamTracks(): {
-    audio: MediaStreamTrack | undefined;
-    video: MediaStreamTrack | undefined;
-  } {
-    const myTracks = this.myStream?.getTracks();
-
-    console.log(`[APC] ${this.peerId}: getMyStreamConstraints`, myTracks);
-
-    const audio = myTracks?.find((t) => t.kind === 'audio');
-    const video = myTracks?.find((t) => t.kind === 'video');
-
-    // videoTrack?.readyState === ''
-
-    return {
-      audio,
-      video,
-    };
-  }
-
-  async updateMyStream(newConstraints: AVStreamingConstraints) {
-    const { audio, video } = this.getMyStreamTracks();
-
-    if (audio) {
-      audio.enabled = newConstraints.audio;
-    }
-
-    if (video) {
-      video.enabled = newConstraints.video;
-    }
-
-    console.log(
-      `APC ${this.peerId} update from`,
-      { audio: audio?.enabled, video: video?.enabled },
-      'to',
-      newConstraints
-    );
   }
 
   private removeMyStream() {

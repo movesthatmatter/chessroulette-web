@@ -5,7 +5,6 @@ import config from 'src/config';
 import { wNamespace, woNamespace } from './util';
 import { Pubsy } from 'src/lib/Pubsy';
 import { ActivePeerConnection } from './ActivePeerConnection';
-import { AVStreamingConstraints } from 'src/services/AVStreaming';
 
 export type PeerConnectionsErrors = 'PEER_ID_TAKEN' | 'GENERIC_ERROR';
 
@@ -30,25 +29,14 @@ export class PeerConnections {
 
   unsubscribers: (() => void)[] = [];
 
-  // TODO: Do we need to update this as well???
-  //  I'm thinking since the stream itself updates at the AV streaming level
-  //  does it not propagate?
-
-  // That's actually untrue - this should update here as well so its in sync with the global one
-  // Thinking about, starting it again. It should starat from the prev state not the default one
-  private avStreamingConstraints: AVStreamingConstraints;
-
   constructor({
     user,
     iceServers,
-    avStreamingConstraints,
   }: {
     user: PeerRecord['user'];
     iceServers: IceServerRecord[];
-    avStreamingConstraints: AVStreamingConstraints;
   }) {
     this.user = user;
-    this.avStreamingConstraints = avStreamingConstraints;
 
     this.sdk = new PeerSDK(wNamespace(user.id), {
       ...config.SIGNALING_SERVER_CONFIG,
@@ -108,7 +96,7 @@ export class PeerConnections {
         return;
       }
 
-      apc.getMyStream(this.avStreamingConstraints).then((myStream) => {
+      apc.getMyStream().then((myStream) => {
         call.answer(myStream);
         call.on('stream', (stream) => {
           this.pubsy.publish('onPeerStream', {
@@ -137,28 +125,6 @@ export class PeerConnections {
     };
     this.sdk.on('disconnected', onDisconnectedHandler);
     this.unsubscribers.push(() => this.sdk.off('disconnected', onDisconnectedHandler));
-  }
-
-  updateAVStreamingConstraints(nextConstraints: AVStreamingConstraints) {
-    // Ensure they actually changed
-    if (
-      nextConstraints.audio === this.avStreamingConstraints.audio &&
-      nextConstraints.video === this.avStreamingConstraints.video
-    ) {
-      return;
-    }
-
-    console.info(
-      '[PeerConnections] updating avStreamingConstraints from',
-      this.avStreamingConstraints,
-      nextConstraints
-    );
-
-    this.avStreamingConstraints = nextConstraints;
-
-    Object.values(this.connections).forEach((apc) => {
-      apc.updateMyStream(nextConstraints);
-    });
   }
 
   onOpen(fn: () => void) {
@@ -197,7 +163,7 @@ export class PeerConnections {
 
       let onStreamUnsubscriber = () => {};
       const onOpenUnsubscriber = apc.onOpen(() => {
-        apc.getMyStream(this.avStreamingConstraints).then((stream) => {
+        apc.getMyStream().then((stream) => {
           const call = this.sdk.call(namespacedPeerId, stream);
 
           const onStreamHandler = (stream: MediaStream) => {

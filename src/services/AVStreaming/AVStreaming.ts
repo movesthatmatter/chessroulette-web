@@ -1,5 +1,5 @@
 import { AsyncResultWrapper, Ok } from 'dstnd-io';
-import { console } from 'window-or-global';
+import { Pubsy } from 'src/lib/Pubsy';
 
 export type AVStreamingConstraints = {
   video: boolean;
@@ -10,11 +10,24 @@ type DestroyStreamFn = () => void;
 
 // Note: As of Dec 5h, 2020, It currently doesn't seperate the Audio from Video if needed in the future!
 class AVStreamingClass {
+  private pubsy = new Pubsy<{
+    onUpdateConstraints: AVStreamingConstraints;
+  }>();
+
   private pendingStreamCreationPromise?: Promise<MediaStream>;
 
   public activeStreamsById: {
     [id: string]: MediaStream;
   } = {};
+
+  private _activeConstraints: AVStreamingConstraints = {
+    audio: true,
+    video: true,
+  };
+
+  get activeConstraints() {
+    return this._activeConstraints;
+  }
 
   private getAnActiveStream = () => {
     const firstActiveStreamId = Object.keys(this.activeStreamsById)[0];
@@ -75,7 +88,7 @@ class AVStreamingClass {
     return clonedStream;
   }
 
-  private cloneAnActiveStream(constraints: AVStreamingConstraints) {
+  private cloneAnActiveStream() {
     const stream = this.getAnActiveStream();
 
     if (!stream) {
@@ -85,12 +98,7 @@ class AVStreamingClass {
     return this.cloneStream(stream);
   }
 
-  async getStream(
-    constraints: AVStreamingConstraints = {
-      video: true,
-      audio: true,
-    }
-  ): Promise<MediaStream> {
+  async getStream(): Promise<MediaStream> {
     if (this.pendingStreamCreationPromise) {
       return this.pendingStreamCreationPromise.then((stream) => {
         // Cloning here is imperative, otherwise all of the calls get the
@@ -98,31 +106,33 @@ class AVStreamingClass {
         return this.cloneStream(stream);
       });
     } else if (this.hasActiveStream()) {
-      return this.cloneAnActiveStream(constraints);
+      return this.cloneAnActiveStream();
     } else {
-      return this.createStream(constraints);
+      return this.createStream(this.activeConstraints);
     }
   }
 
-  updateAllStreams(nextConstraints: AVStreamingConstraints) {
-    const allStreams = Object.values(this.activeStreamsById);
+  updateConstraints(nextConstraints: AVStreamingConstraints) {
+    const allActiveStreams = Object.values(this.activeStreamsById);
 
-    allStreams.forEach((stream) => {
-      const tracks = stream.getTracks();
+    allActiveStreams.forEach((stream) => {
 
-      const audioTrack = tracks.find((t) => t.kind === 'audio');
-      const videoTrack = tracks.find((t) => t.kind === 'video');
-
-      if (audioTrack) {
-        audioTrack.enabled = nextConstraints.audio;
-      }
-
-      if (videoTrack) {
+      stream.getVideoTracks().forEach((videoTrack) => {
         videoTrack.enabled = nextConstraints.video;
-      }
+      });
+
+      stream.getAudioTracks().forEach((autioTrack) => {
+        autioTrack.enabled = nextConstraints.audio;
+      });
     });
 
-    console.log(`[AVStreaaming] updateAllStreams ${allStreams.length} updated to`, nextConstraints);
+    this._activeConstraints = nextConstraints;
+
+    this.pubsy.publish('onUpdateConstraints', nextConstraints);
+  }
+
+  onUpdateConstraints(fn: (updatedConstraints: AVStreamingConstraints) => void) {
+    return this.pubsy.subscribe('onUpdateConstraints', fn);
   }
 
   hasPermission(

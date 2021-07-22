@@ -1,67 +1,57 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconButton } from 'src/components/Button';
 import { createUseStyles } from 'src/lib/jss';
 import { faVideoSlash, faVolumeMute, faVideo, faVolumeUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { noop } from 'src/lib/util';
 import { spacers } from 'src/theme/spacers';
-import { switchAudio, switchVideo } from 'src/modules/Rooms/GenericRoom/GenericRoomBouncer/reducer';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectMediaStatus } from 'src/modules/Rooms/GenericRoom/GenericRoomBouncer/selectors';
 import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
 import useInstance from '@use-it/instance';
 
 type Props = {};
-type MediaStatus = {
-  video: boolean;
-  audio: boolean;
-};
 
-export const StreamingFooterOverlay: React.FC<Props> = (props) => {
+export const StreamingFooterOverlay: React.FC<Props> = () => {
   const cls = useStyles();
-  const mediaStatus = useSelector(selectMediaStatus);
-  const dispatch = useDispatch();
-
   const avStreaming = useInstance<AVStreaming>(getAVStreaming);
+  const [activeConstraints, setACtiveConstraints] = useState(avStreaming.activeConstraints);
 
   useEffect(() => {
-    if (!mediaStatus) {
-      return;
-    }
+    avStreaming.onUpdateConstraints((nextConstraints) => {
+      setACtiveConstraints(nextConstraints);
 
-    avStreaming.updateAllStreams(mediaStatus);
-  }, [avStreaming, mediaStatus])
+      // TODO: Update Redux
+      //  We need to store the chosen constraints in the session (in Redux)
+      //  so on refresh it keeps them
 
-  const [audioVideoStatus, setAudioVideoStatus] = useState<MediaStatus>({
-    audio: mediaStatus ? mediaStatus.audio : false,
-    video: mediaStatus ? mediaStatus.video : false,
-  });
-  useEffect(() => {
-    if (mediaStatus) {
-      setAudioVideoStatus({
-        audio: mediaStatus.audio,
-        video: mediaStatus.video,
-      });
-    }
-  }, [mediaStatus]);
+      // TODO: This one not yet!
+      //  Another we need to do is, to select the constraaints at Challenge Accept
+      //  so those constraints will be saved globally (in the AVStreaming and )
+    });
+  }, [avStreaming]);
+
   return (
     <div className={cls.footerOverlayContainer}>
       <IconButton
         icon={() => (
-          <FontAwesomeIcon icon={audioVideoStatus.video ? faVideo : faVideoSlash} size="xs" />
+          <FontAwesomeIcon icon={activeConstraints.video ? faVideo : faVideoSlash} size="xs" />
         )}
         onSubmit={() => {
-          dispatch(switchVideo());
+          avStreaming.updateConstraints({
+            ...avStreaming.activeConstraints,
+            video: !avStreaming.activeConstraints.video,
+          });
         }}
         className={cls.iconButton}
       />
       <div style={{ width: spacers.smallestPxPx }} />
       <IconButton
         icon={() => (
-          <FontAwesomeIcon icon={audioVideoStatus.audio ? faVolumeUp : faVolumeMute} size="xs" />
+          <FontAwesomeIcon icon={activeConstraints.audio ? faVolumeUp : faVolumeMute} size="xs" />
         )}
         onSubmit={() => {
-          dispatch(switchAudio());
+          avStreaming.updateConstraints({
+            ...avStreaming.activeConstraints,
+            audio: !avStreaming.activeConstraints.audio,
+          });
         }}
         className={cls.iconButton}
       />
