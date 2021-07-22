@@ -1,10 +1,6 @@
 import { AsyncResultWrapper, Ok } from 'dstnd-io';
 import { Pubsy } from 'src/lib/Pubsy';
-
-export type AVStreamingConstraints = {
-  video: boolean;
-  audio: boolean;
-};
+import {AVStreamingConstraints} from './types';
 
 type DestroyStreamFn = () => void;
 

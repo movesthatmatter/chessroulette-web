@@ -6,17 +6,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { spacers } from 'src/theme/spacers';
 import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
 import useInstance from '@use-it/instance';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectMediaStatus } from './redux/selectors';
+import { updateAVConstraints } from './redux/actions';
 
 type Props = {};
 
-export const StreamingFooterOverlay: React.FC<Props> = () => {
+export const AVStreamingControls: React.FC<Props> = () => {
   const cls = useStyles();
   const avStreaming = useInstance<AVStreaming>(getAVStreaming);
-  const [activeConstraints, setACtiveConstraints] = useState(avStreaming.activeConstraints);
+  const mediaStatus = useSelector(selectMediaStatus);
+  //const [activeConstraints, setACtiveConstraints] = useState(avStreaming.activeConstraints);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     avStreaming.onUpdateConstraints((nextConstraints) => {
-      setACtiveConstraints(nextConstraints);
+      dispatch(updateAVConstraints(nextConstraints));
 
       // TODO: Update Redux
       //  We need to store the chosen constraints in the session (in Redux)
@@ -32,12 +37,12 @@ export const StreamingFooterOverlay: React.FC<Props> = () => {
     <div className={cls.footerOverlayContainer}>
       <IconButton
         icon={() => (
-          <FontAwesomeIcon icon={activeConstraints.video ? faVideo : faVideoSlash} size="xs" />
+          <FontAwesomeIcon icon={mediaStatus.video ? faVideo : faVideoSlash} size="xs" />
         )}
         onSubmit={() => {
           avStreaming.updateConstraints({
             ...avStreaming.activeConstraints,
-            video: !avStreaming.activeConstraints.video,
+            video: !mediaStatus.video,
           });
         }}
         className={cls.iconButton}
@@ -45,12 +50,12 @@ export const StreamingFooterOverlay: React.FC<Props> = () => {
       <div style={{ width: spacers.smallestPxPx }} />
       <IconButton
         icon={() => (
-          <FontAwesomeIcon icon={activeConstraints.audio ? faVolumeUp : faVolumeMute} size="xs" />
+          <FontAwesomeIcon icon={mediaStatus.audio ? faVolumeUp : faVolumeMute} size="xs" />
         )}
         onSubmit={() => {
           avStreaming.updateConstraints({
             ...avStreaming.activeConstraints,
-            audio: !avStreaming.activeConstraints.audio,
+            audio: !mediaStatus.audio,
           });
         }}
         className={cls.iconButton}
