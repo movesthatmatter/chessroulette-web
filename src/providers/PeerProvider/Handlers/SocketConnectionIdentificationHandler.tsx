@@ -1,22 +1,16 @@
 import { GuestUserRecord } from 'dstnd-io';
 import React from 'react';
-import { Component, Dispatch } from 'react';
+import { Component } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { SocketConsumer, SocketConsumerProps } from '../../SocketProvider';
-import {
-  createMeAction,
-  createRoomAction,
-  removeMeAction,
-  updateMeAction,
-  updateRoomAction,
-} from '../redux/actions';
 import { State as PeerProviderState } from '../redux/reducer';
 
 type Props = {
   peerProviderState: PeerProviderState;
-  dispatch: Dispatch<any>;
+  onReady: NonNullable<SocketConsumerProps['onReady']>;
+  onMessage: NonNullable<SocketConsumerProps['onMessage']>;
+  onClose: NonNullable<SocketConsumerProps['onClose']>;
   render: SocketConsumerProps['render'];
-  onReady?: SocketConsumerProps['onReady'];
 } & ({
   isGuest: true;
   guestUser: GuestUserRecord;
@@ -25,7 +19,7 @@ type Props = {
   accessToken: string;
 });
 
-export class SocketConnectionHandler extends Component<Props> {
+export class SocketConnectionIdentificationHandler extends Component<Props> {
   private socketRef?: SocketClient;
 
   componentDidUpdate(prevProps: Props) {
@@ -65,45 +59,12 @@ export class SocketConnectionHandler extends Component<Props> {
         onReady={(socket) => {
           this.identify(socket);
 
-          if (this.props.onReady) {
-            this.props.onReady(socket);
-          }
+          this.props.onReady(socket);
 
           this.socketRef = socket;
         }}
-        onClose={() => this.props.dispatch(removeMeAction())}
-        onMessage={(msg) => {
-          const { dispatch } = this.props;
-
-          if (msg.kind === 'iam') {
-            if (!this.props.peerProviderState.me) {
-              dispatch(
-                createMeAction({
-                  me: msg.content.peer,
-                  joinedRoom: msg.content.hasJoinedRoom ? msg.content.room : undefined,
-                })
-              );
-            } else {
-              dispatch(
-                updateMeAction({
-                  me: msg.content.peer,
-                  joinedRoom: msg.content.hasJoinedRoom ? msg.content.room : undefined,
-                })
-              );
-            }
-          } else if (msg.kind === 'joinedRoomUpdated') {
-            dispatch(updateRoomAction({ room: msg.content }));
-          } else if (msg.kind === 'joinedRoomAndGameUpdated') {
-            dispatch(updateRoomAction({ room: msg.content.room }));
-          } else if (msg.kind === 'joinRoomSuccess') {
-            dispatch(
-              createRoomAction({
-                room: msg.content.room,
-                me: msg.content.me,
-              })
-            );
-          }
-        }}
+        onMessage={(...args) => this.props.onMessage(...args)}
+        onClose={(...args) => this.props.onClose(...args)}
         render={(...args) => this.props.render(...args)}
       />
     );

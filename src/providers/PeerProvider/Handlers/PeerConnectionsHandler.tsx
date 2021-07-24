@@ -48,6 +48,10 @@ type State = {
   pcs: PeerConnectionsState;
 };
 
+// The reason this is needed as a class is because it make the state
+//  sync up with the various functions that use it much simpler vs an FCM
+//  wihch has to use hooks and declare the needed state as a dependency!
+//
 export class PeerConnectionsHandler extends Component<Props, State> {
   private peerConnections: PeerConnections | undefined;
 
@@ -90,7 +94,7 @@ export class PeerConnectionsHandler extends Component<Props, State> {
       return;
     }
 
-    this.peerConnections = new PeerConnections({ 
+    this.peerConnections = new PeerConnections({
       iceServers: this.props.iceServers,
       user: this.props.user,
     });

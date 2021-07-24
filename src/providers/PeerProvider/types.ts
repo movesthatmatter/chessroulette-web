@@ -3,6 +3,7 @@ import {
   RoomRecord,
   RoomWithPlayActivityRecord,
   RoomWithNoActivityRecord,
+  RoomWithAnalysisActivityRecord,
 } from 'dstnd-io';
 import { PeerConnectionStatus } from 'src/services/peers';
 
@@ -27,3 +28,4 @@ export type Room = RoomRecord & {
 
 export type RoomWithNoActivity = Room & Pick<RoomWithNoActivityRecord, 'activity'>;
 export type RoomWithPlayActivity = Room & Pick<RoomWithPlayActivityRecord, 'activity'>;
+export type RoomWithAnalysisActivity = Room & Pick<RoomWithAnalysisActivityRecord, 'activity'>;
