@@ -1,2 +1,2 @@
 export * from './PeerConnectionsHandler';
-export * from './SocketConnectionHandler';
+export * from './SocketConnectionIdentificationHandler';
