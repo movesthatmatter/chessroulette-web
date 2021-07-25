@@ -34,6 +34,8 @@ const secondary = neutral;
 const secondaryLight = neutralLight;
 const secondaryDark = neutralDark;
 
+const background = neutralLightest;
+
 export const colors = {
   primary,
   primaryHover,
@@ -69,5 +71,7 @@ export const colors = {
   neutralDarkest,
 
   chessBoardDark,
-  chessBoardLight
+  chessBoardLight,
+
+  background,
 };
