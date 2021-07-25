@@ -55,7 +55,7 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
         // This is important as destroying it right away would
         //  create a need to reask for userMedia which on some browsers
         //  will retrigger the permissions!
-        AVStreaming.destroyStreamByIdAfter(streamingConfig.stream.id, seconds(3));
+        AVStreaming.destroyStreamByIdWithDelay(streamingConfig.stream.id, seconds(3));
       }
     };
   }, [streamingConfig]);
