@@ -1,0 +1,11 @@
+This is a big modules containing a bunch of other sub modules:
+- Room
+- Activities
+- AcitivityLog
+- RoomBouncer
+
+In addition it also makes a lot of use of PeerProvider as logically is related to it.
+
+This cohesiveness isn't yet shown in Redux as all of the submodules above and the PeerProvider
+keep their own root state. I believe it's worth bringing them all together as much as possible
+without having to keep weird synch mechanisms, like the "useJoinedRoom" or a bunch of others
