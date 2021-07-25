@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Peer, Room } from '../types';
+import { Peer, Room, RoomCredentials } from '../types';
 import { PeerConnectionsErrors } from '../lib/PeerConnections';
 import { PeerContext } from '../PeerContext';
 import usePrevious from 'use-previous';
@@ -32,6 +32,7 @@ export type PeerState =
         }
       | {
           hasJoinedRoom: false;
+          joinRoom: (c: RoomCredentials) => void;
         }
     ))
   | {
@@ -77,6 +78,7 @@ export const usePeerState = (): PeerState => {
           }
         : {
             hasJoinedRoom: false,
+            joinRoom: context.joinRoom,
           }),
     };
   } else if (context.state === 'error') {
