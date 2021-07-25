@@ -48,7 +48,7 @@ export class UserRecordMocker {
       avatarId: String(getRandomInt(1, 18)),
       profilePicUrl: undefined,
       externalAccounts: undefined,
-      username:  camelcase(`${chance.profession()} ${chance.animal()} ${chance.integer({ min: 1, max: 999 })}`),
+      username:  camelcase(`${chance.animal()} ${chance.integer({ min: 1, max: 999 })}`),
       country: {
         name: country.name,
         languages: country.languages,
@@ -59,6 +59,14 @@ export class UserRecordMocker {
         code: countryCode,
       },
     };
+  }
+
+  public registered(): RegisteredUserRecord {
+    return this.record(false);
+  }
+
+  public guest(): GuestUserRecord {
+    return this.record(true);
   }
 
   private lichessPerf() {
