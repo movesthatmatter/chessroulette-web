@@ -28,7 +28,8 @@ export class SocketConnectionIdentificationHandler extends Component<Props> {
     }
 
     if (
-      prevProps.isGuest !== this.props.isGuest // If the Guest flag has changed
+      // If the Guest flag has changed
+      prevProps.isGuest !== this.props.isGuest
       // If the Guest User Id has changed
       || (prevProps.isGuest && this.props.isGuest && prevProps.guestUser.id !== this.props.guestUser.id)
       // If the Access Token has changed
