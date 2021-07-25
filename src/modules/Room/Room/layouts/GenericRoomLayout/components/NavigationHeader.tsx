@@ -20,11 +20,8 @@ export const NavigationHeader: React.FC<Props> = ({ logoAsLink = true, darkMode 
   );
 };
 
-const TOP_HEIGHT_PX = 60;
-
 const useStyles = createUseStyles({
   container: {
-    height: `${TOP_HEIGHT_PX}px`,
     display: 'flex',
     flex: 1,
     flexDirection: 'row',
@@ -38,10 +35,4 @@ const useStyles = createUseStyles({
       padding: '8px',
     }),
   },
-  // onlyMobile: {
-  //   ...hideOnDesktop,
-  // },
-  // onlyDesktop: {
-  //   ...hideOnMobile,
-  // },
 });

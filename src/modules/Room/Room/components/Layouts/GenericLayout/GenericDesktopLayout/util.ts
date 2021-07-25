@@ -9,7 +9,7 @@ export type Dimensions = ContainerDimensions & {
 
 export type Ratios = {
   leftSide: number;
-  gameArea: number;
+  mainArea: number;
   rightSide: number;
 };
 
@@ -19,14 +19,14 @@ export const getMaxKey = <O extends { [k: string]: number }>(obj: O) =>
     Object.keys(obj)[0] as keyof O
   );
 
-  export const normalizeRatios = (r: Ratios): Ratios => {
+export const normalizeRatios = (r: Ratios): Ratios => {
   const maxKey = getMaxKey(r);
   const maxVal = r[maxKey];
 
   return {
     leftSide: r.leftSide / maxVal,
     rightSide: r.rightSide / maxVal,
-    gameArea: r.gameArea / maxVal,
+    mainArea: r.mainArea / maxVal,
 
     // Replace the maxKey with 1
     [maxKey]: 1,
@@ -35,22 +35,22 @@ export const getMaxKey = <O extends { [k: string]: number }>(obj: O) =>
 
 export const getLayoutSizes = (
   containerDimensions: ContainerDimensions,
-  ratios: Ratios,
+  ratios: Ratios
 ): {
   leftSide: number;
-  gameArea: number;
+  mainArea: number;
   rightSide: number;
   remaining: number;
 } => {
   const normalizedRatios = normalizeRatios(ratios);
-  const ratio = normalizedRatios.gameArea + normalizedRatios.leftSide + normalizedRatios.rightSide;
+  const ratio = normalizedRatios.mainArea + normalizedRatios.leftSide + normalizedRatios.rightSide;
   const maxWidth = containerDimensions.height * ratio;
   const diff = containerDimensions.width - maxWidth;
 
   if (diff >= 0) {
     return {
       leftSide: Math.floor(normalizedRatios.leftSide * (maxWidth / ratio)),
-      gameArea: Math.floor(normalizedRatios.gameArea * (maxWidth / ratio)),
+      mainArea: Math.floor(normalizedRatios.mainArea * (maxWidth / ratio)),
       rightSide: Math.floor(normalizedRatios.rightSide * (maxWidth / ratio)),
       remaining: diff,
     };

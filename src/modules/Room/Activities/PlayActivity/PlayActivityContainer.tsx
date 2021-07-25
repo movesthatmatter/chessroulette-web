@@ -13,15 +13,13 @@ type Props = {
   displayedPgn?: Game['pgn'];
 };
 
-export const PlayActivityContainer: React.FC<Props> = ({ activity, ...props }) => {
+export const PlayActivityContainer: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
   const peerState = usePeerState();
   const gameActions = useGameActions();
 
   useEffect(() => {
     if (peerState.status === 'open') {
-      console.log('play activitty gonna join');
-
       // Automatically Join the game for now!
       // In the future this might be differed to the User or other actions
       //  depending on the requirements
@@ -44,10 +42,10 @@ export const PlayActivityContainer: React.FC<Props> = ({ activity, ...props }) =
     }
   }, [peerState.status]);
 
-  if (!activity.game) {
+  if (!props.activity.game) {
     // Add (Goey) loader or pass in fallabck component
     return null;
   }
 
-  return <PlayActivity game={activity.game} {...props} />;
+  return <PlayActivity game={props.activity.game} {...props} />;
 };

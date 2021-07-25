@@ -94,7 +94,7 @@ export const empty = () => (
         renderBottomComponent={() => null}
         ratios={{
           leftSide: 1.2,
-          gameArea: 3,
+          mainArea: 3,
           rightSide: 2,
         }}
         minSpaceBetween={30}
@@ -113,27 +113,6 @@ export const empty = () => (
                 width: container.width,
                 height: container.height,
                 background: 'blue',
-                opacity: 0.5,
-                position: 'absolute',
-              }}
-            />
-          </div>
-        )}
-        renderLeftSideComponent={({ container }) => (
-          <div
-            style={{
-              width: container.width,
-              height: container.height + container.verticalPadding,
-              background: 'yellow',
-              position: 'relative',
-              // opacity:
-            }}
-          >
-            <div
-              style={{
-                width: container.width,
-                height: container.height,
-                background: 'orange',
                 opacity: 0.5,
                 position: 'absolute',
               }}
@@ -202,7 +181,7 @@ export const withChessGame = () => (
             <GenericDesktopLayout
               ratios={{
                 leftSide: 1.2,
-                gameArea: 3,
+                mainArea: 3,
                 rightSide: 2,
               }}
               minSpaceBetween={30}
@@ -240,7 +219,7 @@ export const withChessGame = () => (
                   />
                 );
               }}
-              renderLeftSideComponent={() => <></>}
+              // renderLeftSideComponent={() => <></>}
               renderRightSideComponent={({ container }) => (
                 <div
                   style={{
@@ -382,7 +361,7 @@ const LayoutComponent: React.FC<{
               )}
               ratios={{
                 leftSide: 1.2,
-                gameArea: 3,
+                mainArea: 3,
                 rightSide: 2,
               }}
               minSpaceBetween={30}
@@ -400,26 +379,6 @@ const LayoutComponent: React.FC<{
                       width: container.width,
                       height: container.height,
                       background: 'blue',
-                      opacity: 0.5,
-                      position: 'absolute',
-                    }}
-                  />
-                </div>
-              )}
-              renderLeftSideComponent={({ container }) => (
-                <div
-                  style={{
-                    width: container.width,
-                    height: container.height + container.verticalPadding,
-                    background: 'yellow',
-                    position: 'relative',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: container.width,
-                      height: container.height,
-                      background: 'orange',
                       opacity: 0.5,
                       position: 'absolute',
                     }}

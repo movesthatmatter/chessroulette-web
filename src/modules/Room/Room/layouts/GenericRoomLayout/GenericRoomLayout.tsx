@@ -19,12 +19,13 @@ type Props = {
   room: Room;
   renderActivity: (d: {
     containerDimensions: LayoutContainerDimensions;
+    boardSize: number;
     // TODO: might need a bunch of other dimensinos like the marging size or the bottom to inform the activity
   }) => React.ReactNode;
 };
 
-const TOP_HEIGHT = 80;
-const BOTTOM_HEIGHT = 80;
+const TOP_HEIGHT = 66;
+const BOTTOM_HEIGHT = TOP_HEIGHT;
 const MIN_SPACE_BETWEEN = spacers.largePx;
 
 export const GenericRoomLayout: React.FC<Props> = (props) => {
@@ -40,8 +41,8 @@ export const GenericRoomLayout: React.FC<Props> = (props) => {
       <GenericDesktopLayout
         ratios={{
           leftSide: 1.2,
-          gameArea: 3,
-          rightSide: 2,
+          mainArea: 3,
+          rightSide: 2.1,
         }}
         topHeight={TOP_HEIGHT}
         bottomHeight={BOTTOM_HEIGHT}
@@ -78,14 +79,11 @@ export const GenericRoomLayout: React.FC<Props> = (props) => {
           </div>
         )}
         renderBottomComponent={() => null}
-        renderLeftSideComponent={() => null}
-        // renderLeftSideComponent={({ container }) => (
-        //   <div style={{ background: 'yellow', width: container.width, height: container.height }}>
-        //     {/* asd */}
-        //   </div>
-        // )}
         renderActivityComponent={(extendedDimensions) =>
-          props.renderActivity({ containerDimensions: extendedDimensions.container })
+          props.renderActivity({
+            containerDimensions: extendedDimensions.container,
+            boardSize: extendedDimensions.center.width,
+          })
         }
       />
     </div>
@@ -114,7 +112,7 @@ const useStyles = createUseStyles({
     display: 'flex',
     paddingTop: spacers.default,
     paddingLeft: spacers.default,
-    paddingRight: spacers.get(2),
+    paddingRight: spacers.large,
   },
   navigationHeaderContainer: {
     flex: 1,

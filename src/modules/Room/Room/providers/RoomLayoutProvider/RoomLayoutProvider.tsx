@@ -18,7 +18,13 @@ export const RoomLayoutProvider: React.FC<Props> = ({ joinedRoom }) => {
       renderActivity={(cd) => (
         <RoomActivityComponent
           activity={joinedRoom.currentActivity}
-          containerDimensions={cd.containerDimensions}
+          layout={{
+            container: cd.containerDimensions,
+            board: {
+              height: cd.boardSize,
+              width: cd.boardSize,
+            },
+          }}
         />
       )}
     />
