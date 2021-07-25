@@ -46,7 +46,8 @@ export const Routes: React.FC<Props> = () => {
       <Route exact strict path='/lichess' key={location.key} component={PlayLichess}/>
       <SocketProvider>
         <PeerProvider>
-          <Route exact strict path="/stats" key={location.key} component={StatsPage} />
+
+          {/* <Route exact strict path="/stats" key={location.key} component={StatsPage} /> */}
           <Route exact strict path="/:slug" key={location.key} component={ChallengeOrRoomPage} />
           <Route exact path="/" component={LandingPage} />
         </PeerProvider>

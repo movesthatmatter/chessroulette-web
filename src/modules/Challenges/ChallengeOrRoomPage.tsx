@@ -4,12 +4,11 @@ import { useHistory, useParams } from 'react-router-dom';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { resources } from 'src/resources';
 import { usePeerState } from 'src/providers/PeerProvider';
-import { AwesomeErrorPage } from 'src/components/AwesomeError';
-import { GenericRoomPage } from 'src/modules/Rooms/GenericRoom';
 import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication';
 import { ChallengePage } from './ChallengePage';
 import { AwesomeErrorWithAction } from 'src/components/AwesomeErrorWithAction/AwesomeErrorWithAction';
+import { RoomRoute } from '../Room/Room/RoomRoute';
 
 type Props = {};
 
@@ -50,7 +49,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
   }
 
   if (roomInfo) {
-    return <GenericRoomPage roomInfo={roomInfo} key={roomInfo.slug} />;
+    return <RoomRoute roomInfo={roomInfo} key={roomInfo.slug} />
   }
 
   const goBackOrHome = () => {
