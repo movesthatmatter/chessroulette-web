@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { GameMocker } from 'src/mocks/records';
+import { RoomPlayActivity } from '../redux/types';
 import { PlayActivity } from './PlayActivity';
 
 export default {
@@ -9,7 +10,13 @@ export default {
 };
 
 const gameMocker = new GameMocker();
+const game = gameMocker.started();
+const activity: RoomPlayActivity = {
+  type: 'play',
+  gameId: game.id,
+  game,
+}
 
 export const defaultStory = () => (
-  <PlayActivity game={gameMocker.started()} size={500} />
+  <PlayActivity game={game} activity={activity} size={500} />
 );

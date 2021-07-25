@@ -9,7 +9,6 @@ import { GenericLayoutExtendedDimensions } from '../types';
 type Props = {
   renderActivityComponent: (d: GenericLayoutExtendedDimensions) => ReactNode;
   renderRightSideComponent: (d: GenericLayoutExtendedDimensions) => ReactNode;
-  renderLeftSideComponent: (d: GenericLayoutExtendedDimensions) => ReactNode;
   renderTopComponent: (d: GenericLayoutExtendedDimensions) => ReactNode;
   renderBottomComponent: (d: GenericLayoutExtendedDimensions) => ReactNode;
   topHeight: number;
@@ -51,7 +50,7 @@ export const GenericDesktopLayout: React.FC<Props> = ({
     if (!containerDimensions.updated) {
       return {
         leftSide: 0,
-        gameArea: 0,
+        mainArea: 0,
         rightSide: 0,
         remaining: 0,
       };
@@ -67,7 +66,7 @@ export const GenericDesktopLayout: React.FC<Props> = ({
       },
       {
         leftSide: 0.5,
-        gameArea: 1,
+        mainArea: 1,
         rightSide: 0.5,
         ...props.ratios,
       }
@@ -81,33 +80,35 @@ export const GenericDesktopLayout: React.FC<Props> = ({
     setIsMobile(getIsMobile(containerDimensions));
   }, [containerDimensions]);
 
-  const verticalPadding = containerDimensions.height - layout.gameArea;
+  const verticalPadding = containerDimensions.height - layout.mainArea;
 
   const occupiedWidth = Math.floor(
-    layout.leftSide + layout.gameArea + layout.rightSide + minSpaceBetween * 2
+    layout.leftSide + layout.mainArea + layout.rightSide + minSpaceBetween * 2
   );
 
   const extendedDimensions: Omit<GenericLayoutExtendedDimensions, 'container'> = {
     left: {
       width: layout.leftSide,
-      height: layout.gameArea,
+      height: layout.mainArea,
       horizontalPadding: 0,
       verticalPadding,
     },
     right: {
       width: layout.rightSide,
-      height: layout.gameArea,
+      height: layout.mainArea,
       horizontalPadding: 0,
       verticalPadding,
     },
     center: {
-      width: layout.gameArea,
-      height: layout.gameArea,
+      width: layout.mainArea,
+      height: layout.mainArea,
       horizontalPadding: 0,
       verticalPadding,
     },
+    // The activity
     main: {
-      width: occupiedWidth,
+      // width: occupiedWidth,
+      width: layout.leftSide + layout.mainArea,
       height: containerDimensions.height,
       horizontalPadding: containerDimensions.width - occupiedWidth,
       verticalPadding,
@@ -149,29 +150,16 @@ export const GenericDesktopLayout: React.FC<Props> = ({
         }}
       >
         <div className={cls.content}>
-          <aside
-            className={cls.side}
-            style={{
-              width: `${layout.leftSide}px`,
-              marginRight: minSpaceBetween,
-              height: `100%`,
-            }}
-          >
-            {props.renderLeftSideComponent({
-              ...extendedDimensions,
-              container: extendedDimensions.left,
-            })}
-          </aside>
           <main
-            className={cls.gameArea}
+            className={cls.mainArea}
             style={{
-              width: `${layout.gameArea}px`,
+              width: `${extendedDimensions.main.width}px`,
               height: `100%`,
             }}
           >
             {props.renderActivityComponent({
               ...extendedDimensions,
-              container: extendedDimensions.center,
+              container: extendedDimensions.main,
             })}
           </main>
           <aside
@@ -210,7 +198,7 @@ export const GenericDesktopLayout: React.FC<Props> = ({
 };
 
 const transitionsEffect = {
-  // transition: 'all 150ms ease-in',
+  transition: 'all 100ms ease-in',
 };
 
 const useStyles = createUseStyles({
@@ -240,7 +228,7 @@ const useStyles = createUseStyles({
     flexDirection: 'row',
     alignSelf: 'flex-end',
   },
-  gameArea: {
+  mainArea: {
     display: 'flex',
     justifyContent: 'flex-end',
     ...transitionsEffect,
