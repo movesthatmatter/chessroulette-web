@@ -29,6 +29,7 @@ export const PendingChallengeContainer: React.FC<PendingChallengeContainerProps>
         onMessage={(msg) => {
           if (msg.kind === 'challengeAccepted') {
             if (props.challenge.type === 'private') {
+              console.log('CHALLENGE ACCEPTED PENDING CHALLENGE CONTAINER');
               props.onAccepted({
                 id: msg.content.id,
                 chalengeeId: msg.content.userId,

@@ -28,6 +28,7 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo }) => {
     }
 
     if (peerState.hasJoinedRoom) {
+      console.log('PEER HAS JOINED ROOM');
       setRoom(peerState.room);
     }
   }, [peerState]);
@@ -37,8 +38,11 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo }) => {
       return;
     }
 
+    console.log('GENERIC ROOM PAGE', peerState, bouncerState, room);
+
     if (peerState.status === 'open') {
       // This call will eventually get a peerState room
+      console.log('JOIN ROOM REQUEST GENERIC ROOM PAGE');
       peerState.client.sendMessage({
         kind: 'joinRoomRequest',
         content: {
@@ -51,10 +55,7 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo }) => {
 
   if (room) {
     return (
-      <GenericRoomBouncer
-        roomInfo={roomInfo}
-        onCancel={() => history.push('/')}
-      >
+      <GenericRoomBouncer roomInfo={roomInfo} onCancel={() => history.push('/')}>
         <GenericRoom room={room} />
       </GenericRoomBouncer>
     );
@@ -65,10 +66,7 @@ export const GenericRoomPage: React.FC<Props> = ({ roomInfo }) => {
   if (roomInfo && !bouncerState?.ready) {
     return (
       <Page doNotTrack>
-        <GenericRoomBouncer
-          roomInfo={roomInfo}
-          onCancel={() => history.push('/')}
-        >
+        <GenericRoomBouncer roomInfo={roomInfo} onCancel={() => history.push('/')}>
           <AwesomeLoaderPage />
         </GenericRoomBouncer>
       </Page>

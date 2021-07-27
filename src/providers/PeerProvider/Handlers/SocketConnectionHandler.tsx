@@ -1,4 +1,4 @@
-import { GuestUserRecord } from 'dstnd-io';
+import { GuestUserRecord, roomActivityOption } from 'dstnd-io';
 import React from 'react';
 import { Component, Dispatch } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
@@ -17,13 +17,16 @@ type Props = {
   dispatch: Dispatch<any>;
   render: SocketConsumerProps['render'];
   onReady?: SocketConsumerProps['onReady'];
-} & ({
-  isGuest: true;
-  guestUser: GuestUserRecord;
-} | {
-  isGuest: false;
-  accessToken: string;
-});
+} & (
+  | {
+      isGuest: true;
+      guestUser: GuestUserRecord;
+    }
+  | {
+      isGuest: false;
+      accessToken: string;
+    }
+);
 
 export class SocketConnectionHandler extends Component<Props> {
   private socketRef?: SocketClient;
@@ -34,11 +37,15 @@ export class SocketConnectionHandler extends Component<Props> {
     }
 
     if (
-      prevProps.isGuest !== this.props.isGuest // If the Guest flag has changed
+      prevProps.isGuest !== this.props.isGuest || // If the Guest flag has changed
       // If the Guest User Id has changed
-      || (prevProps.isGuest && this.props.isGuest && prevProps.guestUser.id !== this.props.guestUser.id)
+      (prevProps.isGuest &&
+        this.props.isGuest &&
+        prevProps.guestUser.id !== this.props.guestUser.id) ||
       // If the Access Token has changed
-      || (!prevProps.isGuest && !this.props.isGuest && prevProps.accessToken !== this.props.accessToken)
+      (!prevProps.isGuest &&
+        !this.props.isGuest &&
+        prevProps.accessToken !== this.props.accessToken)
     ) {
       this.identify(this.socketRef);
     }
@@ -48,13 +55,15 @@ export class SocketConnectionHandler extends Component<Props> {
     socket.send({
       kind: 'userIdentification',
       content: {
-        ...this.props.isGuest ? {
-          isGuest: true,
-          guestUserId: this.props.guestUser.id,
-        } : {
-            isGuest: false,
-            acessToken: this.props.accessToken,
-          },
+        ...(this.props.isGuest
+          ? {
+              isGuest: true,
+              guestUserId: this.props.guestUser.id,
+            }
+          : {
+              isGuest: false,
+              acessToken: this.props.accessToken,
+            }),
       },
     });
   }
@@ -74,7 +83,7 @@ export class SocketConnectionHandler extends Component<Props> {
         onClose={() => this.props.dispatch(removeMeAction())}
         onMessage={(msg) => {
           const { dispatch } = this.props;
-
+          console.log('MESSAGE', msg);
           if (msg.kind === 'iam') {
             if (!this.props.peerProviderState.me) {
               dispatch(
@@ -92,10 +101,14 @@ export class SocketConnectionHandler extends Component<Props> {
               );
             }
           } else if (msg.kind === 'joinedRoomUpdated') {
+            console.log('JOINED ROOM UPDATED', msg);
             dispatch(updateRoomAction({ room: msg.content }));
           } else if (msg.kind === 'joinedRoomAndGameUpdated') {
+            console.log('JOINED ROOOM AND GAME UPDATED', msg);
             dispatch(updateRoomAction({ room: msg.content.room }));
           } else if (msg.kind === 'joinRoomSuccess') {
+            console.log('JOIN ROOM SUCESS', Object.entries(msg.content.room.peers).length);
+
             dispatch(
               createRoomAction({
                 room: msg.content.room,
