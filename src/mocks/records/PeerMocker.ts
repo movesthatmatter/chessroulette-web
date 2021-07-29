@@ -18,6 +18,8 @@ export class PeerMocker {
     return {
       ...peerRecord,
       user: userRecord,
+      isMe: false,
+      userId: userRecord.id,
       connection: {
         channels: {
           data: { on: false },
