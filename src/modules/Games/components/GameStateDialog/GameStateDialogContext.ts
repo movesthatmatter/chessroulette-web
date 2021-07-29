@@ -1,10 +1,11 @@
 import { createContext } from 'react';
 import { RoomPlayActivityWithGame } from 'src/modules/Room/Activities/PlayActivity';
+import { DialogNotificationTypes } from './type';
 
 export type GameStateDialogContextProps =
   | undefined
   | {
-      isMobile: boolean;
+      dialogNotificationTypes: DialogNotificationTypes;
       activity: RoomPlayActivityWithGame;
     };
 

@@ -15,14 +15,18 @@ import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { RoomPlayActivityWithGame } from 'src/modules/Room/Activities/PlayActivity';
+import { DialogNotificationTypes } from '../type';
 
 export type GameStateDialogContentProps = {
-  isMobile: boolean;
   activity: RoomPlayActivityWithGame;
+  dialogNotificationTypes: DialogNotificationTypes;
   target?: DialogProps['target'];
 };
 
-export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({ activity, isMobile }) => {
+export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
+  activity,
+  dialogNotificationTypes,
+}) => {
   const cls = useStyles();
   const { game } = activity;
 
@@ -173,8 +177,11 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({ activit
       }
     }
 
-    // Don't show the offers on desktop as the ActivityLog takes care of it
-    if (!isMobile) {
+    // Don't show the offers
+    // if (!canShowOffers) {
+    //   return null;
+    // }
+    if (dialogNotificationTypes === 'not-during-started-game' && game.state === 'started') {
       return null;
     }
 
