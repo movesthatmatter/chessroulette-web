@@ -25,7 +25,7 @@ type Props = {
 };
 
 const TOP_HEIGHT = 66;
-const BOTTOM_HEIGHT = TOP_HEIGHT;
+const BOTTOM_HEIGHT = 30;
 const MIN_SPACE_BETWEEN = spacers.largePx;
 
 export const GenericRoomLayout: React.FC<Props> = (props) => {
@@ -151,5 +151,8 @@ const useStyles = createUseStyles({
   streamingBox: {
     ...softBorderRadius,
     overflow: 'hidden',
+
+    // Fix issue on Safari with Border Radiuses not working
+    transform: 'translateZ(0)',
   },
 });
