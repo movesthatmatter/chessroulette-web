@@ -3,7 +3,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { console } from 'window-or-global';
-import { RoomAnalysisActivity } from '../redux/types';
+import { RoomAnalysisActivity } from './types';
 import { spacers } from 'src/theme/spacers';
 import { Button } from 'src/components/Button';
 import { useDispatch } from 'react-redux';
@@ -29,7 +29,7 @@ export const AnalysisActivity: React.FC<Props> = ({ activity, size: boardSize })
               disaptch(
                 switchRoomActivityAction({
                   type: 'play',
-                  gameId: '12323',
+                  // gameId: '12323',
                 })
               );
             }}

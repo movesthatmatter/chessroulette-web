@@ -139,7 +139,7 @@ export const getGameAfterMove = (
   return new Err(undefined);
 };
 
-type UserAsPlayerStats =
+export type UserAsPlayerStats =
   | {
       isPlayer: true;
       player: ChessPlayer;
@@ -147,13 +147,13 @@ type UserAsPlayerStats =
       canPlay: boolean;
       materialScore: number;
     }
-  | ({
+  | {
       isPlayer: false;
       player: undefined;
       opponent: undefined;
       canPlay: false;
       materialScore: undefined;
-    } & {});
+    };
 
 export const getPlayerStats = (game: Game, userId: UserRecord['id']): UserAsPlayerStats => {
   const player = getPlayer(userId, game.players);
@@ -176,16 +176,18 @@ export const getPlayerStats = (game: Game, userId: UserRecord['id']): UserAsPlay
       opponent,
       canPlay,
       materialScore: materialScore[player.color],
-    };
+    } as const;
   }
 
-  return {
-    player: undefined,
-    isPlayer: false,
-    opponent: undefined,
-    canPlay: false,
-    materialScore: undefined,
-  };
+  return defaultPlayerStats;
+};
+
+export const defaultPlayerStats: UserAsPlayerStats = {
+  player: undefined,
+  isPlayer: false,
+  opponent: undefined,
+  canPlay: false,
+  materialScore: undefined,
 };
 
 export const gameRecordToGame = <T extends ChessGameState>(g: T) => {

@@ -130,12 +130,7 @@ export const GenericDesktopLayout: React.FC<Props> = ({
 
   return (
     <div className={cx(cls.container, className)}>
-      <div
-        className={cls.top}
-        style={{
-          height: props.topHeight,
-        }}
-      >
+      <div style={{ height: props.topHeight }}>
         {props.renderTopComponent({
           ...extendedDimensions,
           container: extendedDimensions.top,
@@ -163,7 +158,6 @@ export const GenericDesktopLayout: React.FC<Props> = ({
             })}
           </main>
           <aside
-            className={cls.side}
             style={{
               width: `${layout.rightSide}px`,
               marginLeft: Math.max(minSpaceBetween, layout.remaining / 2),
@@ -182,12 +176,7 @@ export const GenericDesktopLayout: React.FC<Props> = ({
           </aside>
         </div>
       </div>
-      <div
-        className={cls.bottom}
-        style={{
-          height: props.bottomHeight,
-        }}
-      >
+      <div style={{ height: props.bottomHeight }}>
         {props.renderBottomComponent({
           ...extendedDimensions,
           container: extendedDimensions.bottom,
@@ -195,10 +184,6 @@ export const GenericDesktopLayout: React.FC<Props> = ({
       </div>
     </div>
   );
-};
-
-const transitionsEffect = {
-  transition: 'all 100ms ease-in',
 };
 
 const useStyles = createUseStyles({
@@ -212,9 +197,6 @@ const useStyles = createUseStyles({
   disableBodyScroll: {
     // Prevent scroll bounciness on Mac
     overflow: 'hidden',
-  },
-  top: {
-    ...transitionsEffect,
   },
   contentContainer: {
     flex: 1,
@@ -231,12 +213,5 @@ const useStyles = createUseStyles({
   mainArea: {
     display: 'flex',
     justifyContent: 'flex-end',
-    ...transitionsEffect,
-  },
-  side: {
-    ...transitionsEffect,
-  },
-  bottom: {
-    ...transitionsEffect,
   },
 });

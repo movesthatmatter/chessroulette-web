@@ -1,15 +1,15 @@
 import { createAction } from 'deox';
 import { Game } from 'src/modules/Games';
-import { RoomActivity } from './types';
+import { BaseRoomActivity } from './types';
 
 export const switchRoomActivityAction = createAction(
   'SwitchRoomActivity',
-  (resolve) => (p: RoomActivity) => resolve(p)
+  (resolve) => (p: BaseRoomActivity) => resolve(p)
 );
 
 export const updateRoomActivityAction = createAction(
   'UpdateRoomActivity',
-  (resolve) => (p: RoomActivity) => resolve(p)
+  (resolve) => (p: BaseRoomActivity) => resolve(p)
 );
 
 export const updateJoinedGameAction = createAction(

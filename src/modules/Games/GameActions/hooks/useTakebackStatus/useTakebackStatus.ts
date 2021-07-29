@@ -1,55 +1,61 @@
-import { ChessGameState, ChessPlayer, RoomWithPlayActivityRecord } from "dstnd-io";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useStateWithPrev } from "src/lib/hooks/useStateWithPrev"
-import { selectCurrentRoomActivityLogHistoryOrderedArray } from "src/modules/ActivityLog/redux/selectors";
-import {InfoNotification, OfferNotification} from '../../../../../modules/ActivityLog/types';
+import { ChessGameState, ChessPlayer, RoomWithPlayActivityRecord } from 'dstnd-io';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useStateWithPrev } from 'src/lib/hooks/useStateWithPrev';
+import { selectCurrentRoomActivityLogHistoryOrderedArray } from 'src/modules/Room/ActivityLog/redux/selectors';
+import { InfoNotification, OfferNotification } from 'src/modules/Room/ActivityLog/types';
 
 type TakeBackStatusReturn = {
-  show : boolean;
-}
+  show: boolean;
+};
 
+// TODO: I don't believe we actually need this one, as the whole logic is already built for notifications
+//  and game actions
 export const useTakebackStatus = (
-  game : ChessGameState, 
-  meAsPlayer: ChessPlayer, 
+  game: ChessGameState,
+  meAsPlayer: ChessPlayer,
   offer: RoomWithPlayActivityRecord['activity']['offer']
-  ) : TakeBackStatusReturn => {
+): TakeBackStatusReturn => {
   const logArrayOrdered = useSelector(selectCurrentRoomActivityLogHistoryOrderedArray);
-  const [gameAndOfferZipWithPrev, setGameAndOfferZipWithPrev] = useStateWithPrev({game, offer});
+  const [gameAndOfferZipWithPrev, setGameAndOfferZipWithPrev] = useStateWithPrev({ game, offer });
   const [takeBackEnabled, setTakeBackEnabled] = useState(true);
 
   useEffect(() => {
-    setGameAndOfferZipWithPrev({game, offer})
-  },[offer])
+    setGameAndOfferZipWithPrev({ game, offer });
+  }, [offer]);
 
   useEffect(() => {
-    if (gameAndOfferZipWithPrev.prev.offer !== undefined && gameAndOfferZipWithPrev.current.offer === undefined ){
-      setGameAndOfferZipWithPrev({game, offer: undefined});
+    if (
+      gameAndOfferZipWithPrev.prev.offer !== undefined &&
+      gameAndOfferZipWithPrev.current.offer === undefined
+    ) {
+      setGameAndOfferZipWithPrev({ game, offer: undefined });
     }
-  },[game.history])
+  }, [game.history]);
 
   useEffect(() => {
     setTakeBackEnabled(() => {
-      if (game.lastMoveBy !== meAsPlayer.color){
+      if (game.lastMoveBy !== meAsPlayer.color) {
         return false;
       }
-      if (game.history.length === 0){
+      if (game.history.length === 0) {
         return false;
       }
-      const lastNotification = logArrayOrdered[logArrayOrdered.length-1];
-      if (gameAndOfferZipWithPrev.prev.offer?.type === 'takeback'){
-        if (isOfferNotification(lastNotification) && (lastNotification.status === 'withdrawn')){
+      const lastNotification = logArrayOrdered[logArrayOrdered.length - 1];
+      if (gameAndOfferZipWithPrev.prev.offer?.type === 'takeback') {
+        if (isOfferNotification(lastNotification) && lastNotification.status === 'withdrawn') {
           return true;
-        };
+        }
         return false;
       }
       return true;
-    })
-  },[gameAndOfferZipWithPrev, logArrayOrdered, game])
+    });
+  }, [gameAndOfferZipWithPrev, logArrayOrdered, game]);
 
   return {
-    show: takeBackEnabled
-  }
-}
+    show: takeBackEnabled,
+  };
+};
 
-const isOfferNotification  =(n: OfferNotification | InfoNotification) : n is OfferNotification => n.type === 'offer';
+const isOfferNotification = (n: OfferNotification | InfoNotification): n is OfferNotification =>
+  n.type === 'offer';
