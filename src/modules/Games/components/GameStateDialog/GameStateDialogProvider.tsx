@@ -1,10 +1,11 @@
 import React from 'react';
 import { GameStateDialogContext } from './GameStateDialogContext';
 import { RoomPlayActivityWithGame } from 'src/modules/Room/Activities/PlayActivity';
+import { DialogNotificationTypes } from './type';
 
 type Props = {
-  isMobile: boolean;
   activity: RoomPlayActivityWithGame;
+  dialogNotificationTypes: DialogNotificationTypes;
 };
 
 export const GameStateDialogProvider: React.FC<Props> = ({ children, ...contextProps }) => {
