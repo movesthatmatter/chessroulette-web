@@ -4,6 +4,7 @@ import {
   RoomWithPlayActivityRecord,
   RoomWithNoActivityRecord,
   RoomWithAnalysisActivityRecord,
+  UserRecord,
 } from 'dstnd-io';
 import { PeerConnectionStatus } from 'src/services/peers';
 
@@ -13,6 +14,8 @@ export type RoomCredentials = {
 };
 
 export type Peer = PeerRecord & {
+  isMe: boolean;
+  userId: UserRecord['id'];
   connection: {
     channels: PeerConnectionStatus['channels'];
   };
