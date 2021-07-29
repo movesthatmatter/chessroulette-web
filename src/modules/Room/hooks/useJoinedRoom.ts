@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { toDictIndexedBy } from 'src/lib/util';
+import { getPlayerStats } from 'src/modules/Games/Chess/lib';
 import { Room, selectRoom } from 'src/providers/PeerProvider';
 import { selectCurrentRoomActivity } from '../Activities/redux/selectors';
-import { RoomActivity } from '../Activities/redux/types';
-import { JoinedRoom } from '../types';
+import { BaseRoomActivity } from '../Activities/redux/types';
+import { toRoomActivity } from '../Activities/util';
+import { toRoomMember } from '../Room/util';
+import { JoinedRoom, RoomMembers } from '../types';
 
 // This doesn't check for data integrity other then all being present, simply merges them
 const mergeSlicesIntoJoinedRoom = (slices: {
   room?: Room;
-  currentRoomActivity?: RoomActivity;
+  currentRoomActivity?: BaseRoomActivity;
 }): JoinedRoom | undefined => {
   if (!slices.room) {
     return undefined;
@@ -18,9 +22,14 @@ const mergeSlicesIntoJoinedRoom = (slices: {
     return undefined;
   }
 
+  const peersList = Object.values(slices.room.peersIncludingMe);
+  const membersList = peersList.map(toRoomMember);
+  const members = toDictIndexedBy(membersList, (m) => m.peer.user.id);
+
   return {
     ...slices.room,
-    currentActivity: slices.currentRoomActivity,
+    members,
+    currentActivity: toRoomActivity(slices.currentRoomActivity, membersList),
   };
 };
 
@@ -38,7 +47,10 @@ export const useJoinedRoom = () => {
   );
 
   useEffect(() => {
-    setJoinedRoom(mergeSlicesIntoJoinedRoom({ room, currentRoomActivity: roomActivity }));
+    const nextJoinedRoom = mergeSlicesIntoJoinedRoom({ room, currentRoomActivity: roomActivity });
+    setJoinedRoom(nextJoinedRoom);
+
+    console.log('nextJoinedRoom', nextJoinedRoom);
   }, [room, roomActivity]);
 
   return joinedRoom;

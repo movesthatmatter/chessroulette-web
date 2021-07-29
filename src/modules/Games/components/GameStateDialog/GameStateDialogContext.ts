@@ -1,15 +1,11 @@
 import { createContext } from 'react';
-import { Game } from '../../types';
-import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
-import { ChessPlayer } from 'dstnd-io';
+import { RoomPlayActivityWithGame } from 'src/modules/Room/Activities/PlayActivity';
 
 export type GameStateDialogContextProps =
   | undefined
   | {
       isMobile: boolean;
-      room: RoomWithPlayActivity;
-      game: Game;
-      myPlayer?: ChessPlayer;
+      activity: RoomPlayActivityWithGame;
     };
 
 export const GameStateDialogContext = createContext<GameStateDialogContextProps>(undefined);

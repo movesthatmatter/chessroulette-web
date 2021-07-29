@@ -1,4 +1,4 @@
 import { ModuleStateSlice } from './reducer';
-import { RoomActivity } from './types';
+import { BaseRoomActivity } from './types';
 
-export const selectCurrentRoomActivity = (s: ModuleStateSlice) => s.roomActivity as RoomActivity;
+export const selectCurrentRoomActivity = (s: ModuleStateSlice) => s.roomActivity as BaseRoomActivity;

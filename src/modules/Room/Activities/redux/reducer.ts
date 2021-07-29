@@ -10,9 +10,9 @@ import {
   updateJoinedGameAction,
   updateRoomActivityAction,
 } from './actions';
-import { RoomActivity } from './types';
+import { BaseRoomActivity } from './types';
 
-export type State = RoomActivity;
+export type State = BaseRoomActivity;
 
 export const initialState: State = {
   type: 'none',
@@ -34,7 +34,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       prev.type === 'play'
     ) {
       // But the Game Id has changed replace the old activity with the new
-      if (payload.room.activity.gameId !== prev.gameId) {
+      if (payload.room.activity.gameId !== prev.game?.id) {
         return payload.room.activity;
       }
 
@@ -49,7 +49,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       // And the activity is "Analysis"
       payload.room.activity.type === 'analysis' &&
       prev.type === 'analysis' &&
-      payload.room.activity.analysisId !== prev.analysisId
+      payload.room.activity.analysisId !== prev.analysis?.id
     ) {
       return payload.room.activity;
     }

@@ -10,15 +10,20 @@ export default {
 };
 
 const gameMocker = new GameMocker();
+const game = gameMocker.started();
+
+// TODO: Fix this as well
 
 export const defaultStory = () => (
   <StorybookReduxProvider>
-    <PlayActivityContainer
+    
+    {/* <PlayActivityContainer
       activity={{
         type: 'play',
-        gameId: '23',
+        game: game,
+        participants: {},
       }}
       size={500}
-    />
+    /> */}
   </StorybookReduxProvider>
 );

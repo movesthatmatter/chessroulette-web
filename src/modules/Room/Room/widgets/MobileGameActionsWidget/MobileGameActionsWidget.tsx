@@ -3,19 +3,25 @@ import { createUseStyles } from 'src/lib/jss';
 import { Layer } from 'grommet';
 import { AppsRounded } from 'grommet-icons';
 import { colors, floatingShadow, softBorderRadius } from 'src/theme';
-import { ChessPlayer, RoomPlayActivityRecord } from 'dstnd-io';
+import { RoomPlayActivityRecord } from 'dstnd-io';
 import { Game } from 'src/modules/Games';
 import { GameActions } from 'src/modules/Games/GameActions';
 import { Text } from 'src/components/Text';
 import { spacers } from 'src/theme/spacers';
+import { roomPlayActivityParticipantToChessPlayer } from 'src/modules/Room/Activities/PlayActivity/util';
+import {
+  RoomPlayActivity,
+  RoomPlayActivityWithGameAndParticipating,
+} from 'src/modules/Room/Activities/PlayActivity';
 
 type Props = {
-  roomActivity: RoomPlayActivityRecord;
-  game: Game;
-  myPlayer: ChessPlayer;
+  activity: RoomPlayActivityWithGameAndParticipating;
+  // game: Game;
+  // offer: RoomPlayActivityRecord['offer'];
+  // players: NonNullable<RoomPlayActivity['participants']>;
 };
 
-export const MobileGameActionsWidget: React.FC<Props> = (props) => {
+export const MobileGameActionsWidget: React.FC<Props> = ({ activity }) => {
   const cls = useStyles();
   const [show, setShow] = useState(false);
 
@@ -33,9 +39,13 @@ export const MobileGameActionsWidget: React.FC<Props> = (props) => {
           <Text size="subtitle1">What's your next move?</Text>
           <GameActions
             isMobile={true}
-            myPlayer={props.myPlayer}
-            roomActivity={props.roomActivity}
-            game={props.game}
+            activity={activity}
+            // players={{
+            //   me: roomPlayActivityParticipantToChessPlayer(players.home),
+            //   opponent: roomPlayActivityParticipantToChessPlayer(players.away),
+            // }}
+            // offer={offer}
+            // game={game}
             onActionTaken={() => {
               setShow(false);
             }}

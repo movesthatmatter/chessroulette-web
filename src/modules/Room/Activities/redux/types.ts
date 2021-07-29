@@ -1,15 +1,11 @@
-import { RoomAnalysisActivityRecord, RoomNoActivityRecord, RoomPlayActivityRecord } from 'dstnd-io';
-import { Game } from 'src/modules/Games';
+import { RoomAnalysisActivity } from '../AnalysisActivity/types';
+import { RoomNoActivity } from '../NoActivity/types';
+import { RoomPlayActivity } from '../PlayActivity/types';
 
-export type RoomNoActivity = RoomNoActivityRecord;
-export type RoomPlayActivity = RoomPlayActivityRecord & {
-  game?: Game;
-};
+type WithoutParticipants<T> = Omit<T, 'participants'>;
 
-export type RoomAnalysisActivity = RoomAnalysisActivityRecord & {
-  analysis?: {
-    history: Game['history'];
-  };
-};
+export type BaseRoomNoActivity = WithoutParticipants<RoomNoActivity>;
+export type BaseRoomPlayActivity = WithoutParticipants<RoomPlayActivity>;
+export type BaseRoomAnalysisActivity = WithoutParticipants<RoomAnalysisActivity>;
 
-export type RoomActivity = RoomNoActivity | RoomPlayActivity | RoomAnalysisActivity;
+export type BaseRoomActivity = BaseRoomNoActivity | BaseRoomPlayActivity | BaseRoomAnalysisActivity;

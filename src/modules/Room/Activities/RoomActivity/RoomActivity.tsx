@@ -3,7 +3,7 @@ import { ContainerDimensions } from 'src/modules/Rooms/PlayRoom/Layouts/DesktopL
 import { AnalysisActivity } from '../AnalysisActivity';
 import { NoActivity } from '../NoActivity';
 import { PlayActivityContainer } from '../PlayActivity/PlayActivityContainer';
-import { RoomActivity } from '../redux/types';
+import { RoomActivity } from '../types';
 
 type Props = {
   activity: RoomActivity;

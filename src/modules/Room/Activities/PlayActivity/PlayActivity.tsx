@@ -3,32 +3,36 @@ import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessGame } from 'src/modules/Games/Chess';
 import { Game } from 'src/modules/Games';
-import { useMyPeerPlayerStats } from './hooks/useMyPeerPlayerStats';
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 import { GameActions, useGameActions } from 'src/modules/Games/GameActions';
-import { RoomPlayActivity } from '../redux/types';
 import { spacers } from 'src/theme/spacers';
 import { Button } from 'src/components/Button';
 import { useDispatch } from 'react-redux';
 import { switchRoomActivityAction } from '../redux/actions';
+import { RoomPlayActivityWithGame } from './types';
 
 type Props = {
-  game: Game;
-  activity: RoomPlayActivity;
-  // deprecate in favor of the Layout
+  activity: RoomPlayActivityWithGame;
   size: number;
 };
 
-export const PlayActivity: React.FC<Props> = ({ game, activity, size: boardSize }) => {
+export const PlayActivity: React.FC<Props> = ({ activity, size: boardSize }) => {
   const cls = useStyles();
-  const myPeerPlayerStats = useMyPeerPlayerStats(game);
   const [gameDisplayedHistoryIndex, setGameDisplayedHistoryIndex] = useState(0);
   const [displayedPgn, setDisplayedPgn] = useState<Game['pgn']>();
   const gameActions = useGameActions();
   const disaptch = useDispatch();
 
+  // Default to White
+  const homeColor = activity.iamParticipating ? activity.participants.me.color : 'white';
+  const { game } = activity;
+
   useEffect(() => {
+    if (!game) {
+      return;
+    }
+
     if (!game.history || game.history.length === 0 || gameDisplayedHistoryIndex === 0) {
       setDisplayedPgn(undefined);
       return;
@@ -39,8 +43,6 @@ export const PlayActivity: React.FC<Props> = ({ game, activity, size: boardSize 
     setDisplayedPgn(nextPgn);
   }, [game, gameDisplayedHistoryIndex]);
 
-  const homeColor = myPeerPlayerStats.isPlayer ? myPeerPlayerStats.player.color : 'white';
-
   return (
     <div className={cls.container}>
       <aside className={cls.side} style={{ height: boardSize }}>
@@ -48,12 +50,7 @@ export const PlayActivity: React.FC<Props> = ({ game, activity, size: boardSize 
           <Button
             label="Analyze"
             onClick={() => {
-              disaptch(
-                switchRoomActivityAction({
-                  type: 'analysis',
-                  analysisId: '123',
-                })
-              );
+              disaptch(switchRoomActivityAction({ type: 'analysis' }));
             }}
           />
         </div>
@@ -70,13 +67,8 @@ export const PlayActivity: React.FC<Props> = ({ game, activity, size: boardSize 
             onTimerFinished={gameActions.onTimerFinished}
           />
         </div>
-        {myPeerPlayerStats.isPlayer && (
-          <GameActions
-            game={game}
-            myPlayer={myPeerPlayerStats.player}
-            className={cls.sideBottom}
-            roomActivity={activity}
-          />
+        {activity.iamParticipating && (
+          <GameActions activity={activity} className={cls.sideBottom} />
         )}
       </aside>
       <ChessGame
@@ -84,9 +76,8 @@ export const PlayActivity: React.FC<Props> = ({ game, activity, size: boardSize 
         key={game.id}
         game={game}
         size={boardSize}
-        // Default to white
         homeColor={homeColor}
-        playable={myPeerPlayerStats.canPlay}
+        playable={activity.iamParticipating && activity.participants.me.canPlay}
         displayedPgn={displayedPgn}
         className={cls.board}
       />
@@ -113,9 +104,6 @@ const useStyles = createUseStyles({
   },
   sideTop: {
     height: '30%',
-  },
-  sideMiddle: {
-    height: '40%',
   },
   sideBottom: {
     height: '30%',

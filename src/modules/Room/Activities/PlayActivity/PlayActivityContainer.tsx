@@ -5,7 +5,8 @@ import { useGameActions } from 'src/modules/Games/GameActions';
 import { PlayActivity } from './PlayActivity';
 import { useDispatch } from 'react-redux';
 import { updateJoinedGameAction } from '../redux/actions';
-import { RoomPlayActivity } from '../redux/types';
+import { RoomPlayActivity } from './types';
+import { GameStateDialogProvider } from 'src/modules/Games/components/GameStateDialog';
 
 type Props = {
   activity: RoomPlayActivity;
@@ -13,7 +14,7 @@ type Props = {
   displayedPgn?: Game['pgn'];
 };
 
-export const PlayActivityContainer: React.FC<Props> = (props) => {
+export const PlayActivityContainer: React.FC<Props> = ({ activity, ...props }) => {
   const dispatch = useDispatch();
   const peerState = usePeerState();
   const gameActions = useGameActions();
@@ -42,10 +43,14 @@ export const PlayActivityContainer: React.FC<Props> = (props) => {
     }
   }, [peerState.status]);
 
-  if (!props.activity.game) {
+  if (!activity.game) {
     // Add (Goey) loader or pass in fallabck component
     return null;
   }
 
-  return <PlayActivity game={props.activity.game} {...props} />;
+  return (
+    <GameStateDialogProvider isMobile={false} activity={activity}>
+      <PlayActivity activity={activity} {...props} />
+    </GameStateDialogProvider>
+  );
 };
