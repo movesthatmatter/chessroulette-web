@@ -9,6 +9,7 @@ import useInstance from '@use-it/instance';
 import { useDispatch } from 'react-redux';
 import { updateAVConstraints } from './redux/actions';
 import { useMediaStatus } from './useMediaStatus';
+import { onlyDesktop, onlyMobile } from 'src/theme';
 
 type Props = {};
 
@@ -59,9 +60,16 @@ const useStyles = createUseStyles({
   footerOverlayContainer: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginLeft: spacers.smallest,
-    marginBottom: spacers.smallest,
+    ...onlyDesktop({
+      justifyContent: 'flex-start',
+      marginLeft: spacers.smallest,
+      marginBottom: spacers.smallest,
+    }),
+    ...onlyMobile({
+      justifyContent: 'flex-end',
+      marginRight: spacers.default,
+      marginBottom: spacers.default,
+    })
   },
   iconButton: {
     marginBottom: '0px',

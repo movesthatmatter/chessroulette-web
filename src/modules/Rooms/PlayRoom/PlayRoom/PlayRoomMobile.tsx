@@ -18,6 +18,7 @@ import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { MobileLayout } from '../Layouts';
 import { MobileChatWidget } from './widgets/MobileChatWidget';
 import { MobileGameActionsWidget } from './widgets/MobileGameActionsWidget';
+import { AVStreamingControls } from 'src/components/StreamingBox/AVStreamingControls';
 
 type Props = PlayProps;
 
@@ -87,7 +88,7 @@ export const PlayRoomMobile: React.FC<Props> = ({ game, ...props }) => {
               </div>
             )}
             // Account for the rounded border
-            footerOverlay={() => <div style={{ height: '16px' }} />}
+            footerOverlay={() => <AVStreamingControls/>}
           />
         )}
         getMainArea={(dimensions) => (
