@@ -19,14 +19,10 @@ export const AVStreamingControls: React.FC<Props> = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    avStreaming.onUpdateConstraints((nextConstraints) => {
-      dispatch(updateAVConstraints(nextConstraints));
-
-      // TODO: This one not yet!
-      //  Another we need to do is, to select the constraaints at Challenge Accept
-      //  so those constraints will be saved globally (in the AVStreaming and )
-    });
-  }, [avStreaming]);
+    avStreaming.updateConstraints({
+      ...mediaStatus
+    })
+  },[mediaStatus])
 
   return (
     <div className={cls.footerOverlayContainer}>
@@ -35,10 +31,10 @@ export const AVStreamingControls: React.FC<Props> = () => {
           <FontAwesomeIcon icon={mediaStatus.video ? faVideo : faVideoSlash} size="xs" />
         )}
         onSubmit={() => {
-          avStreaming.updateConstraints({
+          dispatch(updateAVConstraints({
             ...mediaStatus,
-            video: !mediaStatus.video,
-          });
+            video: !mediaStatus.video
+          }))
         }}
         className={cls.iconButton}
       />
@@ -48,10 +44,10 @@ export const AVStreamingControls: React.FC<Props> = () => {
           <FontAwesomeIcon icon={mediaStatus.audio ? faVolumeUp : faVolumeMute} size="xs" />
         )}
         onSubmit={() => {
-          avStreaming.updateConstraints({
+          dispatch(updateAVConstraints({
             ...mediaStatus,
-            audio: !mediaStatus.audio,
-          });
+            audio: !mediaStatus.audio
+          }))
         }}
         className={cls.iconButton}
       />

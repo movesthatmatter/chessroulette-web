@@ -21,6 +21,14 @@ class AVStreamingClass {
     video: true,
   };
 
+  
+  set activeConstraints({video, audio} : {video:boolean;audio:boolean}) {
+    this._activeConstraints = {
+      video, 
+      audio
+    }
+  }
+  
   get activeConstraints() {
     return this._activeConstraints;
   }
@@ -123,12 +131,6 @@ class AVStreamingClass {
     });
 
     this._activeConstraints = nextConstraints;
-
-    this.pubsy.publish('onUpdateConstraints', nextConstraints);
-  }
-
-  onUpdateConstraints(fn: (updatedConstraints: AVStreamingConstraints) => void) {
-    return this.pubsy.subscribe('onUpdateConstraints', fn);
   }
 
   hasPermission(
