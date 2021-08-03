@@ -45,6 +45,7 @@
     "@use-it/event-listener": "^0.1.5",
     "@use-it/instance": "^0.3.0",
     "axios": "^0.19.2",
+    "can-ndjson-stream": "^1.0.2",
     "capitalize": "^2.0.3",
     "chance": "^1.1.5",
     "chess.js": "^0.10.3",

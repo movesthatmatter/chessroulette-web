@@ -12,7 +12,6 @@ const SIGNALING_SERVER_CONFIG = {
 
 const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN as string;
 const GOOGLE_ANALYTICS_TRACKING_ID = process.env.REACT_APP_GOOGLE_ANALYTICS_TRACKING_ID as string;
-
 const PRERENDERING = !!(window as any).reactSnapshotRender;
 
 const config = {
