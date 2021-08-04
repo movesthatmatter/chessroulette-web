@@ -25,19 +25,39 @@ export type LichessAPIConfig = {
   token: string;
 }
 
-export type NDJsonStreamEvent = {
+export type LichessAPIEvents = {
+  onStream : undefined;
+  onChallenge: undefined;
+  onMove: undefined;
+  onAbort: undefined;
+  onAcceptChallenge: undefined;
+  onDenyChallenge: undefined;
+}
+
+export type NDJsonReader = {
   read: () => Promise<{
       done: boolean;
       value: any;
   }>;
 }
 
-export type NDJsonGameEvent = {
+export type LichessStreamEvent = {
   type : 
   | 'gameStart'
   | 'gameFinish'
   | 'challenge'
   | 'challengeCanceled'
   | 'challengeDeclined';
-  game : LichessGameState |LichessGame;
+  game : LichessGame;
 }
+
+export type LichessGameStateEvent = LichessGameState & {
+  type : 'gameState'
+}
+
+export type LichessGameFullEvent = LichessGame & {
+  type : 'gameFull'
+}
+
+export type LichessGameEvent = LichessGameFullEvent | LichessGameStateEvent;
+

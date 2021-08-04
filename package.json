@@ -50,6 +50,7 @@
     "chance": "^1.1.5",
     "chess.js": "^0.10.3",
     "chessground": "^7.9.3",
+    "chessops": "0.7.1",
     "chunk": "^0.0.3",
     "classnames": "^2.2.6",
     "csstype": "^2.6.10",
