@@ -32,3 +32,26 @@ export const timeLeftToInterval = (timeLeftMs: number) => {
   }
   return minutes(1);
 };
+
+export const doubleDigitFormat = (int: number): string => {
+  if (int < 10) {
+    return `0${int}`
+  } else {
+    return int.toString()
+  }
+}
+
+export const timerHours = (int: number): string => {
+  const hours = Math.floor((int / (1000 * 60 * 60)) % 24)
+  return hours.toString()
+}
+
+export const timerMinutes = (int: number): string => {
+  const minutes = Math.floor((int / (1000 * 60)) % 60)
+  return doubleDigitFormat(minutes)
+}
+
+export const timerSeconds = (int: number): string => {
+  const seconds = Math.floor((int / 1000) % 60)
+  return doubleDigitFormat(seconds)
+}
