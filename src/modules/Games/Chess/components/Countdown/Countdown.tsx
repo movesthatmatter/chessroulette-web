@@ -71,7 +71,6 @@ export const Countdown: React.FC<Props> = ({
                     gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
                 })}
               >
-                {/* {dateFormat(timeLeft, timeLeftToFormatMajor(gameTimeClassInMs, timeLeft))} */}
                 {timerHours(timeLeft)}
               </Text>
               <Text
@@ -86,7 +85,6 @@ export const Countdown: React.FC<Props> = ({
               [cls.countdownMilliseconds]: gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
             })}
           >
-            {/* {dateFormat(timeLeft, timeLeftToFormatMajor(gameTimeClassInMs, timeLeft))} */}
             {timerMinutes(timeLeft)}
           </Text>
           <Text className={cx(cls.text, cls.major, props.active && (cls.textActive, cls.blink))}>
@@ -97,7 +95,6 @@ export const Countdown: React.FC<Props> = ({
               [cls.countdownMilliseconds]: gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
             })}
           >
-            {/* {dateFormat(timeLeft, timeLeftToFormatMinor(gameTimeClassInMs, timeLeft))} */}
             {timerSeconds(timeLeft)}
           </Text>
         </Text>
