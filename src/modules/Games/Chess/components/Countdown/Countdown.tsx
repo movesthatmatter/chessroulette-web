@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { noop } from 'src/lib/util';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
 import cx from 'classnames';
-import dateFormat from 'dateformat';
 import { useInterval } from 'src/lib/hooks';
 import { Text } from 'src/components/Text';
-import { timeLeftToFormatMajor, timeLeftToFormatMinor, timeLeftToInterval } from './util';
+import { timeLeftToInterval, timerHours, timerMinutes, timerSeconds } from './util';
 import { text } from 'src/theme/text';
 import { colors, maxMediaQuery, onlyMobile } from 'src/theme';
 import { minutes } from 'src/lib/time';
@@ -23,7 +22,11 @@ type Props = {
   className?: string;
 };
 
-export const Countdown: React.FC<Props> = ({ onFinished = () => noop, gameTimeClass, ...props }) => {
+export const Countdown: React.FC<Props> = ({
+  onFinished = () => noop,
+  gameTimeClass,
+  ...props
+}) => {
   const cls = useStyles();
   const [finished, setFinished] = useState(false as boolean);
   const [timeLeft, setTimeLeft] = useState(props.timeLeft);
@@ -60,20 +63,39 @@ export const Countdown: React.FC<Props> = ({ onFinished = () => noop, gameTimeCl
     <>
       {timeLeft > 0 ? (
         <Text className={cls.text}>
+          {timeLeft >= 1000 * 60 * 60 && (
+            <>
+              <Text
+                className={cx(cls.text, cls.major, props.active && cls.textActive, {
+                  [cls.countdownMilliseconds]:
+                    gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
+                })}
+              >
+                {timerHours(timeLeft)}
+              </Text>
+              <Text
+                className={cx(cls.text, cls.major, props.active && (cls.textActive, cls.blink))}
+              >
+                :
+              </Text>
+            </>
+          )}
           <Text
             className={cx(cls.text, cls.major, props.active && cls.textActive, {
               [cls.countdownMilliseconds]: gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
             })}
           >
-            {dateFormat(timeLeft, timeLeftToFormatMajor(gameTimeClassInMs, timeLeft))}
+            {timerMinutes(timeLeft)}
           </Text>
-          <Text className={cx(cls.text, cls.major, props.active && (cls.textActive, cls.blink))}>:</Text>
+          <Text className={cx(cls.text, cls.major, props.active && (cls.textActive, cls.blink))}>
+            :
+          </Text>
           <Text
             className={cx(cls.text, cls.minor, props.active && cls.textActive, {
               [cls.countdownMilliseconds]: gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
             })}
           >
-            {dateFormat(timeLeft, timeLeftToFormatMinor(gameTimeClassInMs, timeLeft))}
+            {timerSeconds(timeLeft)}
           </Text>
         </Text>
       ) : (
@@ -121,10 +143,10 @@ const useStyles = createUseStyles({
     color: text.primaryColor,
   },
   '@keyframes blink': {
-    ...{
+    ...({
       to: {
         visibility: 'hidden',
-      }
-    } as NestedCSSElement,
+      },
+    } as NestedCSSElement),
   },
 });
