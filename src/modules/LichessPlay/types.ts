@@ -1,7 +1,17 @@
+import { Color } from "chessground/types"
+
 export type LichessGameState = {
-  state: 'started' | 'finished';
+  type: 'gameState'
+  state: 'started' | 'finished' | 'resign';
   moves: string;
   id : string;
+  winner: Color;
+  bdraw: boolean;
+  wdraw: boolean;
+  binc: number;
+  btime: number;
+  wtime: number;
+  winc: number;
 }
 
 export type LichessPlayer = {
@@ -10,28 +20,40 @@ export type LichessPlayer = {
   rating: number;
 }
 
-export type LichessGame = {
+export type LichessGameFull= {
+  type: 'gameFull'
   id: string;
   perf: {
     name: string;
   };
+  clock: {
+    initial: number;
+    increment: number;
+  };
+  speed: string;
+  createdAt: string;
   white: LichessPlayer;
   black: LichessPlayer;
   state: LichessGameState;
+  initialFen: string;
+  variant: {
+    key : string;
+    name: string;
+    short: string;
+  };
+  rated: boolean;
+}
+
+export type LichessChatLine = {
+  type: 'chatLine';
+  username: LichessPlayer['name'];
+  text: string;
+  room: 'player' | 'spectator'
 }
 
 export type LichessAPIConfig = {
   userName: string;
   token: string;
-}
-
-export type LichessAPIEvents = {
-  onStream : undefined;
-  onChallenge: undefined;
-  onMove: undefined;
-  onAbort: undefined;
-  onAcceptChallenge: undefined;
-  onDenyChallenge: undefined;
 }
 
 export type NDJsonReader = {

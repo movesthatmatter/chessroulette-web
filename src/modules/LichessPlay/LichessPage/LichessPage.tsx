@@ -24,27 +24,19 @@ export const LichessPage: React.FC<Props> = ({}) => {
   const lichessManager = useInstance<LichessManagerType>(getLichessGameManager);
   const [chess, setChess] = useState<ChessInstance>(getNewChessGame());
 
-  // const [fen, setFen] = useState(lichessManager.getFen());
-  
   useEffect(() => {
-   lichessManager.startStream();
+    startSubscriptions();
   },[])
   
-  useEffect(() => {
-    // setChess(lichessManager.getChessState())
+  function startSubscriptions() {
+    lichessManager.startStream();
     lichessManager.onUpdateChess(({chess}) => setChess(chess));
-    console.log('GAME CHANGED!!!!')
-  },[lichessManager.game])
-
-  const onMove = (move: ChessMove) => {
-    console.log('MOVEEEEE BITCH')
-    lichessManager.makeMove(move);
+    lichessManager.onGameFinished(({chess}) => {});
   }
 
-  useEffect(() => {
-    console.log('new pgn', chess.pgn());
-  },[chess])
-
+  const onMove = (move: ChessMove) => {
+    lichessManager.makeMove(move);
+  }
   
   const calcMovable =() => {
     return {
@@ -53,7 +45,7 @@ export const LichessPage: React.FC<Props> = ({}) => {
       dests: toDests(chess),
       color: 'black',
       // Don't show the dests
-      showDests: true,
+      showDests: false,
     } as const;
   }
 

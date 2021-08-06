@@ -1,7 +1,7 @@
 import config from 'src/config';
 import ndjsonStream from 'can-ndjson-stream';
 import { getBoardStreamById, getLichessStreamEvent, sendAChallenge, sendAMove } from './resources';
-import { LichessGame, LichessGameState, NDJsonReader, LichessStreamEvent } from './types';
+import { LichessGameState, NDJsonReader, LichessGameFull } from './types';
 import { console } from 'window-or-global';
 import { Pubsy } from 'src/lib/Pubsy';
 import { Chess } from 'chessops/chess';
@@ -14,8 +14,13 @@ import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 import { chessGameActions } from 'dstnd-io';
 import { ShortMove } from 'chess.js';
 
+type LichessManagerEvents = {
+  onUpdateChess: { chess : ChessInstance};
+  onGameFinish: {chess: ChessInstance};
+};
+
 export class LichessManager {
-  game?: LichessGame;
+  game?: LichessGameFull;
   //chess: ChessInstance;
   homeColor?: ChessGameColor;
   authorization: {
@@ -24,7 +29,7 @@ export class LichessManager {
     };
   };
   activityLog = Array<string>();
-  private pubsy = new Pubsy<{ onUpdateChess: { chess: ChessInstance } }>();
+  private pubsy = new Pubsy<LichessManagerEvents>();
 
   constructor() {
     this.authorization = { headers: { Authorization: `Bearer q8OPhcRniAriA7DT` } };
@@ -82,6 +87,7 @@ export class LichessManager {
 
   private async loopThroughNDJson(reader: NDJsonReader) {
     try {
+      console.log('reading another event')
       const event = await reader.read();
 
       console.log('EVENT ', event);
@@ -94,13 +100,17 @@ export class LichessManager {
         this.gameStart(event.value['game']['id'] as string);
       }
       if (event.value['type'] === 'gameFull') {
-        this.game = event.value as LichessGame;
+        this.game = event.value as LichessGameFull;
         this.updateChess()
       }
       if (event.value['type'] === 'gameState' && this.game) {
         this.game.state = event.value as LichessGameState;
-        // this.updateFen();
         this.updateChess()
+
+
+      }
+      if (event.value['type'] === 'gameFinish' && this.game) {
+        console.log('FINSHED GAME!!!', event);
       }
 
       this.loopThroughNDJson(reader);
@@ -109,18 +119,11 @@ export class LichessManager {
     }
   }
 
-  // private updateFen() {
-  //   this.pubsy.publish('onUpdateFen', { fen: this.getFen() });
-  // }
+  onGameFinished(fn : (data: {chess: ChessInstance}) => void){
+    this.pubsy.subscribe('onGameFinish', fn);
+  }
 
-  // onUpdateFen(fn: (data: { fen: string }) => void) {
-  //   this.pubsy.subscribe('onUpdateFen', fn);
-  // }
-
-  // getFen() {
-  //   return this.getChessState().fen();
-  // }
-  onUpdateChess(fn : (data: {chess: ChessInstance}) => void){
+  onUpdateChess(fn : (data : {chess: ChessInstance}) => void){
     this.pubsy.subscribe('onUpdateChess', fn);
   }
 
@@ -140,7 +143,6 @@ export class LichessManager {
         });
     }
     console.log('NEW CHESS', chess);
-    //return chess;
     this.pubsy.publish('onUpdateChess', {chess})
   }
 }
