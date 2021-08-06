@@ -18,3 +18,7 @@ export function sendAChallenge (userName: string, opts: RequestInit){
     body: opts.body
   })
 }
+
+export function sendAMove(move: string, id:string, opts: RequestInit) {
+  return fetch(`https://lichess.org/api/board/game/${id}/move/${move}`, {method: 'POST', headers: opts.headers})
+}

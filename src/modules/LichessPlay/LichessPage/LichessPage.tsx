@@ -6,40 +6,96 @@ import Chessground from 'react-chessground';
 import {getInstance as getLichessGameManager, LichessManagerType} from '../LichessGameManager';
 import { Button } from 'src/components/Button';
 import useInstance from '@use-it/instance';
-import { getStartingFen } from 'src/modules/Games/Chess/lib';
-import { console } from 'window-or-global';
+import { getNewChessGame, getStartingFen, getStartingPgn } from 'src/modules/Games/Chess/lib';
+import { console, Date } from 'window-or-global';
+import { ChessInstance, Square } from 'chess.js';
+import { ChessGameColor, ChessMove } from 'dstnd-io';
+import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
+import { Chess } from 'chessops/chess';
+import { chessgroundDests } from 'chessops/compat';
+import { StyledChessBoard } from 'src/modules/Games/Chess/components/ChessBoard/StyledChessBoard';
+import { Color} from 'chessground/types';
+import { toDests } from 'src/modules/Games/Chess/components/ChessBoard/util';
 
 type Props = {};
 
-export const LichessPage: React.FC<Props> = (props) => {
+export const LichessPage: React.FC<Props> = ({}) => {
   const cls = useStyles();
   const lichessManager = useInstance<LichessManagerType>(getLichessGameManager);
-  const [fen, setFen] = useState(getStartingFen());
+  const [chess, setChess] = useState<ChessInstance>(getNewChessGame());
 
+  // const [fen, setFen] = useState(lichessManager.getFen());
+  
   useEffect(() => {
    lichessManager.startStream();
   },[])
-
+  
   useEffect(() => {
-    console.log('GAME UPDATE!!! - call pubsy ? ')
-    lichessManager.onUpdateFen(({fen}) => setFen(fen))
+    // setChess(lichessManager.getChessState())
+    lichessManager.onUpdateChess(({chess}) => setChess(chess));
+    console.log('GAME CHANGED!!!!')
   },[lichessManager.game])
 
-  useEffect(() =>{
-    console.log('NEW FEN!', fen);
-  },[fen])
+  const onMove = (move: ChessMove) => {
+    console.log('MOVEEEEE BITCH')
+    lichessManager.makeMove(move);
+  }
+
+  useEffect(() => {
+    console.log('new pgn', chess.pgn());
+  },[chess])
+
+  
+  const calcMovable =() => {
+    return {
+      free: false,
+      // This is what determines wether a someone can move a piece!
+      dests: toDests(chess),
+      color: 'black',
+      // Don't show the dests
+      showDests: true,
+    } as const;
+  }
 
   return (
     <Page name='lichess'>
-      <AspectRatio aspectRatio={1}>
-        <Chessground
-          fen={fen}
+          {/* <Chessground
+            fen={fen}
+            turnColor={lichessManager.game ? getTurn(chess.turn()) : 'white'}
+            movable={calcMovable()}
+            check={chess.in_check()}
+            orientation={"white" as ChessGameColor}
+          /> */}
+        {/* <Chessground
+          //id={lichessManager.game?.id || new Date().getTime().toString()}
+          fen={chess.fen()}
+          movable={calcMovable()}
+          onMove={(orig, dest) => onMove({from: orig as Square, to: dest as Square})}
+          //onMove={({move}) => onMove(move)}
+          //size={512}
+          viewOnly={false}
+          turnColor={chess.turn() === 'b' ? 'black' : 'white'}
+         // homeColor={lichessManager.homeColor || 'black'}      
         />
           <Button label='Challenge' onClick={() => {
             lichessManager.sendChallenge();
           }}
-          />
-      </AspectRatio>
+          />  */}
+        <ChessBoard
+          id={lichessManager.game?.id || new Date().getTime().toString()}
+          pgn={chess.pgn()}
+          movable={calcMovable()}
+          onMove={({move}) => onMove(move)}
+          size={512}
+          draggable={{ enabled: true}}
+          playable
+          turnColor={chess.turn() === 'b' ? 'black' : 'white'}
+          homeColor={lichessManager.homeColor || 'black'}      
+        />
+          <Button label='Challenge' onClick={() => {
+            lichessManager.sendChallenge();
+          }}
+          /> 
     </Page>
   );
 };
