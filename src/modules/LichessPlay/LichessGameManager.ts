@@ -1,17 +1,12 @@
-import config from 'src/config';
 import ndjsonStream from 'can-ndjson-stream';
 import { getBoardStreamById, getLichessStreamEvent, sendAChallenge, sendAMove } from './resources';
 import { LichessGameState, NDJsonReader, LichessGameFull } from './types';
 import { console } from 'window-or-global';
 import { Pubsy } from 'src/lib/Pubsy';
-import { Chess } from 'chessops/chess';
 import { parseUci, makeUci, makeSquare, parseSquare } from 'chessops/util';
-import { makeBoardFen } from 'chessops/fen';
-import { ChessGameColor, ChessHistory, ChessMove } from 'dstnd-io';
+import { ChessGameColor, ChessMove } from 'dstnd-io';
 import { NormalMove } from 'chessops/types';
-import { ChessInstance, getGameFromPgn, getNewChessGame, getStartingPgn } from '../Games/Chess/lib';
-import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
-import { chessGameActions } from 'dstnd-io';
+import { ChessInstance, getNewChessGame } from '../Games/Chess/lib';
 import { ShortMove } from 'chess.js';
 
 type LichessManagerEvents = {

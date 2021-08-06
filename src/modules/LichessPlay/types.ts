@@ -44,6 +44,28 @@ export type LichessGameFull= {
   rated: boolean;
 }
 
+export type LichessGameStartEvent = {
+  type: 'gameStart';
+  game: {
+    id: string;
+    source: string;
+  }
+}
+
+export type LichessGameFinishEvent = {
+  type: 'gameFinish';
+  game: {
+    id: string;
+    source: string;
+  }
+}
+
+export type LichessGameEvent = 
+| LichessGameFull 
+| LichessGameState 
+| LichessGameStartEvent
+| LichessGameFinishEvent
+
 export type LichessChatLine = {
   type: 'chatLine';
   username: LichessPlayer['name'];
@@ -51,35 +73,21 @@ export type LichessChatLine = {
   room: 'player' | 'spectator'
 }
 
+
 export type LichessAPIConfig = {
   userName: string;
   token: string;
 }
 
 export type NDJsonReader = {
-  read: () => Promise<{
-      done: boolean;
-      value: any;
+  read: () => Promise<
+  {
+      done: false;
+      value: LichessGameEvent;
+  } | 
+  {
+    done: true;
+    value: undefined;
   }>;
 }
-
-export type LichessStreamEvent = {
-  type : 
-  | 'gameStart'
-  | 'gameFinish'
-  | 'challenge'
-  | 'challengeCanceled'
-  | 'challengeDeclined';
-  game : LichessGame;
-}
-
-export type LichessGameStateEvent = LichessGameState & {
-  type : 'gameState'
-}
-
-export type LichessGameFullEvent = LichessGame & {
-  type : 'gameFull'
-}
-
-export type LichessGameEvent = LichessGameFullEvent | LichessGameStateEvent;
 
