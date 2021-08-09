@@ -1,8 +1,8 @@
 import { Color } from "chessground/types"
 
 export type LichessGameState = {
-  type: 'gameState'
-  state: 'started' | 'finished' | 'resign';
+  type: 'gameState';
+  status: 'started' | 'finished' | 'resign' | 'mate';
   moves: string;
   id : string;
   winner: Color;
@@ -60,6 +60,33 @@ export type LichessGameFinishEvent = {
   }
 }
 
+export type LichessChallenge = {
+  challenger : LichessPlayer;
+  color: Color;
+  destUser: LichessPlayer;
+  id: string;
+  perf: {
+    name: string;
+  }
+  rated: boolean;
+  speed: string;
+  status : string;
+  timeControl: {
+    type:string;
+  };
+  url: string;
+  variant: {
+    key: string;
+    name: string;
+    short: string;
+  }
+}
+
+export type LichessChallengeEvent = {
+  type : 'challenge';
+  challenge: LichessChallenge
+}
+
 export type LichessGameEvent = 
 | LichessGameFull 
 | LichessGameState 
@@ -83,7 +110,7 @@ export type NDJsonReader = {
   read: () => Promise<
   {
       done: false;
-      value: LichessGameEvent;
+      value: LichessGameEvent | LichessChallengeEvent;
   } | 
   {
     done: true;

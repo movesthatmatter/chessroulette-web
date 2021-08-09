@@ -1,6 +1,6 @@
 import ndjsonStream from 'can-ndjson-stream';
 import { getBoardStreamById, getLichessStreamEvent, sendAChallenge, sendAMove } from './resources';
-import { LichessGameState, NDJsonReader, LichessGameFull } from './types';
+import { LichessGameState, NDJsonReader, LichessGameFull, LichessChallenge } from './types';
 import { console } from 'window-or-global';
 import { Pubsy } from 'src/lib/Pubsy';
 import { parseUci, makeUci, makeSquare, parseSquare } from 'chessops/util';
@@ -11,7 +11,8 @@ import { ShortMove } from 'chess.js';
 
 type LichessManagerEvents = {
   onUpdateChess: { chess : ChessInstance};
-  onGameFinish: {chess: ChessInstance};
+  onGameFinish: {game: LichessGameFull};
+  onChallenge: {challenge: LichessChallenge};
 };
 
 export class LichessManager {
@@ -91,30 +92,37 @@ export class LichessManager {
         console.log('DONE DECODING STREAM');
         return;
       }
-      if (event.value['type'] === 'gameStart') {
+      if (event.value.type === 'gameStart') {
         this.gameStart(event.value['game']['id'] as string);
       }
-      if (event.value['type'] === 'gameFull') {
+      if (event.value.type === 'gameFull') {
         this.game = event.value as LichessGameFull;
         this.updateChess()
       }
-      if (event.value['type'] === 'gameState' && this.game) {
+      if (event.value.type === 'gameState' && this.game) {
         this.game.state = event.value as LichessGameState;
         this.updateChess()
-
-
+        if (event.value.winner){
+          this.pubsy.publish('onGameFinish', {game: this.game});
+        }
       }
-      if (event.value['type'] === 'gameFinish' && this.game) {
+      if (event.value.type === 'gameFinish' && this.game) {
         console.log('FINSHED GAME!!!', event);
       }
-
+      if (event.value.type === 'challenge') {
+        this.pubsy.publish('onChallenge', {challenge: event.value.challenge as LichessChallenge})
+      }
       this.loopThroughNDJson(reader);
     } catch (e) {
       console.log('error parsing the current event', e);
     }
   }
 
-  onGameFinished(fn : (data: {chess: ChessInstance}) => void){
+  onChallenge(fn: (data: {challenge: LichessChallenge}) => void){
+    this.pubsy.subscribe('onChallenge', fn);
+  }
+
+  onGameFinished(fn : (data: {game: LichessGameFull}) => void){
     this.pubsy.subscribe('onGameFinish', fn);
   }
 
