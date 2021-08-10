@@ -3,8 +3,8 @@ import { faComment, faList } from '@fortawesome/free-solid-svg-icons';
 import { UserInfoRecord } from 'dstnd-io';
 import { useSelector } from 'react-redux';
 import { Tabs } from 'src/components/Tabs';
-import { ActivityLog } from 'src/modules/RoomV3/RoomActivityLog';
-import { selectCurrentRoomActivityLog } from 'src/modules/RoomV3/RoomActivityLog/redux/selectors';
+import { ActivityLog } from 'src/modules/Room/RoomActivityLog';
+import { selectCurrentRoomActivityLog } from 'src/modules/Room/RoomActivityLog/redux/selectors';
 import { ChatContainer } from 'src/modules/Chat';
 import { colors } from 'src/theme';
 

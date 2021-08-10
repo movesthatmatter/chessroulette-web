@@ -1,5 +1,5 @@
 import React from 'react';
-import { RoomPlayActivityWithGame } from 'src/modules/RoomV3/RoomActivity/activities/PlayActivity';
+import { RoomPlayActivityWithGame } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 import { GameStateDialogContext } from './GameStateDialogContext';
 import { DialogNotificationTypes } from './type';
 

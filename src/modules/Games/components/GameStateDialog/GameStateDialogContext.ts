@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { RoomPlayActivityWithGame } from 'src/modules/RoomV3/RoomActivity/activities/PlayActivity';
+import { RoomPlayActivityWithGame } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 import { DialogNotificationTypes } from './type';
 
 export type GameStateDialogContextProps =

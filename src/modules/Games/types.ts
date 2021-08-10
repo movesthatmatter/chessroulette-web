@@ -4,7 +4,7 @@ import {
   GameRecord,
   GameRecordFromGameState,
 } from 'dstnd-io';
-import { RoomPlayActivityParticipant } from '../RoomV3/RoomActivity/activities/PlayActivity';
+import { RoomPlayActivityParticipant } from '../Room/RoomActivity/activities/PlayActivity';
 
 export type Game = GameRecord & {
   activePieces: ActivePiecesRecord;

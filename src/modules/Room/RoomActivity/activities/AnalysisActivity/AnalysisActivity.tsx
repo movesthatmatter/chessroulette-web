@@ -8,7 +8,7 @@ import { spacers } from 'src/theme/spacers';
 import { Button } from 'src/components/Button';
 import { useDispatch } from 'react-redux';
 import { switchRoomActivityAction } from '../../redux/actions';
-import { GenericLayoutDesktopRoomConsumer } from 'src/modules/RoomV3/RoomConsumers/GenericLayoutDesktopRoomConsumer';
+import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { ActivityCommonProps } from '../types';
 // import { switchRoomActivityAction } from '../redux/actions';
 

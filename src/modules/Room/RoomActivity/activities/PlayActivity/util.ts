@@ -5,7 +5,7 @@ import {
   getRelativeMaterialScore,
   RelativeMaterialScore,
 } from 'src/modules/Games/Chess/components/GameStateWidget/util';
-import { RoomMember } from 'src/modules/RoomV3/types';
+import { RoomMember } from 'src/modules/Room/types';
 import { BaseRoomPlayActivity } from '../../redux/types';
 import { RoomActivityParticipant } from '../../types';
 import {

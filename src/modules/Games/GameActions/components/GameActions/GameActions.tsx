@@ -14,8 +14,8 @@ import { useTakebackStatus } from '../../hooks';
 import {
   roomPlayActivityParticipantToChessPlayer,
   RoomPlayActivityWithGameAndParticipating,
-} from 'src/modules/RoomV3/RoomActivity/activities/PlayActivity';
-import { getParticipantUserInfo } from 'src/modules/RoomV3/RoomActivity/util/util';
+} from 'src/modules/Room/RoomActivity/activities/PlayActivity';
+import { getParticipantUserInfo } from 'src/modules/Room/RoomActivity/util/util';
 
 
 type Props = {
