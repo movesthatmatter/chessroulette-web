@@ -1,8 +1,6 @@
 import { RoomAnalysisActivityRecord } from 'dstnd-io';
 import { Game } from 'src/modules/Games';
 import { RoomActivitySpecifcParticipant, RoomRecordToRoomActivity } from '../../utilTypes';
-// import { RoomActivitySpecifcParticipant, RoomRecordToRoomActivity } from 'src/modules/Room/Activities/utilTypes';
-// import { RoomActivitySpecifcParticipant, RoomRecordToRoomActivity } from '../utilTypes';
 
 export type RoomAnalysisActivityParticipant = RoomActivitySpecifcParticipant<
   'analysis',

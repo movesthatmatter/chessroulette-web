@@ -2,8 +2,8 @@ import { ChessGameState, ChessPlayer, RoomWithPlayActivityRecord } from 'dstnd-i
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useStateWithPrev } from 'src/lib/hooks/useStateWithPrev';
-import { selectCurrentRoomActivityLogHistoryOrderedArray } from 'src/modules/Room/ActivityLog/redux/selectors';
-import { InfoNotification, OfferNotification } from 'src/modules/Room/ActivityLog/types';
+import { selectCurrentRoomActivityLogHistoryOrderedArray } from 'src/modules/RoomV3/RoomActivityLog/redux/selectors';
+import { InfoNotification, OfferNotification } from 'src/modules/RoomV3/RoomActivityLog/types';
 
 type TakeBackStatusReturn = {
   show: boolean;

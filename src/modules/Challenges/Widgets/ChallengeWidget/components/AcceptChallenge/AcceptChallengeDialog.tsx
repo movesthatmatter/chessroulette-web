@@ -2,8 +2,7 @@ import capitalize from 'capitalize';
 import { AsyncResult, RoomRecord, UserRecord } from 'dstnd-io';
 import React from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
-import { useGenericRoomBouncer } from 'src/modules/Rooms/GenericRoom';
-import { useBrowserSupportCheck } from 'src/modules/Rooms/GenericRoom/GenericRoomBouncer/useBrowserSupportCheck';
+import { useBrowserSupportCheck } from 'src/modules/RoomV3/RoomBouncer';
 import { resources } from 'src/resources';
 import { AcceptChallengeProps } from './AcceptChallenge';
 

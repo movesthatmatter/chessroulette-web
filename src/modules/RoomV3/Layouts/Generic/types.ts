@@ -1,4 +1,4 @@
-import { LayoutContainerDimensions } from 'src/modules/Room/LayoutProvider/types';
+import { LayoutContainerDimensions } from '../types';
 
 export type GenericLayoutExtendedDimensions = {
   container: LayoutContainerDimensions;
