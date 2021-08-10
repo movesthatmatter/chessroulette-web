@@ -1,7 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
-// import { ContainerDimensions } from 'src/modules/Rooms/PlayRoom/Layouts/DesktopLayout/util';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { MobileRoomLayout, NavigationHeader } from '../Layouts';
 import { ContainerDimensions } from '../Layouts/Generic/DesktopRoomLayout/util';

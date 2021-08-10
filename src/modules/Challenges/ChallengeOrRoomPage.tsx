@@ -8,7 +8,8 @@ import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication';
 import { ChallengePage } from './ChallengePage';
 import { AwesomeErrorWithAction } from 'src/components/AwesomeErrorWithAction/AwesomeErrorWithAction';
-import { RoomRoute } from '../Room/Room/RoomRoute';
+import { RoomRoute } from '../RoomV3/RoomRoute';
+import { Room } from '../RoomV3/Room';
 
 type Props = {};
 
@@ -49,6 +50,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
   }
 
   if (roomInfo) {
+    // return <Room roomInfo={roomInfo} key={roomInfo.slug} />
     return <RoomRoute roomInfo={roomInfo} key={roomInfo.slug} />
   }
 

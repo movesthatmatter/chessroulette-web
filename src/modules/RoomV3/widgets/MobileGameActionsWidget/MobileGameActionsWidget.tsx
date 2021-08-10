@@ -3,17 +3,10 @@ import { createUseStyles } from 'src/lib/jss';
 import { Layer } from 'grommet';
 import { AppsRounded } from 'grommet-icons';
 import { colors, floatingShadow, softBorderRadius } from 'src/theme';
-import { RoomPlayActivityRecord } from 'dstnd-io';
-import { Game } from 'src/modules/Games';
 import { GameActions } from 'src/modules/Games/GameActions';
 import { Text } from 'src/components/Text';
 import { spacers } from 'src/theme/spacers';
 import { RoomPlayActivityWithGameAndParticipating } from '../../RoomActivity/activities/PlayActivity';
-
-// import {
-//   RoomPlayActivity,
-//   RoomPlayActivityWithGameAndParticipating,
-// } from 'src/modules/Room/Activities/PlayActivity';
 
 type Props = {
   activity: RoomPlayActivityWithGameAndParticipating;
@@ -38,12 +31,6 @@ export const MobileGameActionsWidget: React.FC<Props> = ({ activity }) => {
           <GameActions
             isMobile={true}
             activity={activity}
-            // players={{
-            //   me: roomPlayActivityParticipantToChessPlayer(players.home),
-            //   opponent: roomPlayActivityParticipantToChessPlayer(players.away),
-            // }}
-            // offer={offer}
-            // game={game}
             onActionTaken={() => {
               setShow(false);
             }}

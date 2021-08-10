@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { RoomDetails } from 'src/modules/Room/Room_old/components/RoomDetails';
+import { RoomDetails } from '../Layouts';
 import { RoomProviderContext } from '../RoomProvider';
 
 type Props = {};

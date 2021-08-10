@@ -7,7 +7,6 @@ import { updateJoinedGameAction } from '../../../redux/actions';
 import { GameStateDialogProvider } from 'src/modules/Games/components/GameStateDialog';
 import { PlayActivityProps } from '../PlayActivity/PlayActivity';
 import { RoomPlayActivity } from '../types';
-// import { RoomPlayActivity } from 'src/modules/Room/Activities/PlayActivity';
 
 type Props = Omit<PlayActivityProps, 'activity'> & {
   activity: RoomPlayActivity;

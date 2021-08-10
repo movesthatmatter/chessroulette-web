@@ -5,8 +5,8 @@ import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { GenericLayoutDesktopRoomConsumer } from '../../../RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { GenericLayoutMobileRoomConsumer } from '../../../RoomConsumers/GenericLayoutMobileRoomConsumer';
 import { DeviceSize } from 'src/theme/hooks/useDeviceSize';
-import { NavigationHeader } from 'src/modules/Room/LayoutProvider/RoomLayoutProvider/components/NavigationHeader';
 import { ActivityCommonProps } from '../types';
+import { NavigationHeader } from 'src/modules/RoomV3/Layouts';
 
 type Props = ActivityCommonProps & {
   deviceSize: DeviceSize;

@@ -1,8 +1,4 @@
 import React, { useContext } from 'react';
-// import { AnalysisActivity } from 'src/modules/Room/Activities/AnalysisActivity';
-// import { NoActivity } from 'src/modules/Room/Activities/NoActivity';
-// import { PlayActivityContainer } from 'src/modules/Room/Activities/PlayActivity/PlayActivityContainer';
-// import { ContainerDimensions } from 'src/modules/Rooms/PlayRoom/Layouts/DesktopLayout/util';
 import { NoActivity } from '../RoomActivity/activities/NoActivity';
 import { PlayActivity } from '../RoomActivity/activities/PlayActivity';
 import { AnalysisActivity } from '../RoomActivity/activities/AnalysisActivity';
@@ -27,7 +23,6 @@ export const ActivityRoomConsumer: React.FC<Props> = () => {
   }
 
   if (currentActivity.type === 'analysis') {
-    // currentActivity.participants['2'].participant.
     return <AnalysisActivity activity={currentActivity} deviceSize={context.deviceSize} />;
   }
 

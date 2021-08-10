@@ -1,6 +1,5 @@
 import { UserInfoRecord } from 'dstnd-io';
 import { RoomMember } from '../types';
-// import { RoomMember } from 'src/modules/Room/types';
 import { RoomAnalysisActivity } from './activities/AnalysisActivity/types';
 import { RoomNoActivity } from './activities/NoActivity/types';
 import { RoomPlayActivity } from './activities/PlayActivity';

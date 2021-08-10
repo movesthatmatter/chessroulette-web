@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { MobileChatWidget } from 'src/modules/Room/LayoutProvider/Layouts/Generic/RoomLayout/MobileRoomLayout/widgets/MobileChatWidget';
 import { RoomProviderContext } from '../RoomProvider';
+import { MobileChatWidget } from '../widgets/MobileChatWidget';
 
 type Props = {
   containerHeight: number;
