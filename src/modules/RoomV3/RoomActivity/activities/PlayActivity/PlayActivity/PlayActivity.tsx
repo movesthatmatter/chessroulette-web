@@ -9,22 +9,21 @@ import { GameActions, useGameActions } from 'src/modules/Games/GameActions';
 import { spacers } from 'src/theme/spacers';
 import { Button } from 'src/components/Button';
 import { useDispatch } from 'react-redux';
-import { RoomPlayActivityWithGame } from 'src/modules/Room/Activities/PlayActivity';
+// import { RoomPlayActivityWithGame } from 'src/modules/Room/Activities/PlayActivity';
 import { GenericLayoutDesktopRoomConsumer } from 'src/modules/RoomV3/RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { DeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { GenericLayoutMobileRoomConsumer } from 'src/modules/RoomV3/RoomConsumers/GenericLayoutMobileRoomConsumer';
 import { NavigationHeader } from 'src/modules/Room/LayoutProvider/RoomLayoutProvider/components/NavigationHeader';
 import { MobileChatWidgetRoomConsumer } from 'src/modules/RoomV3/RoomConsumers/MobileChatWidgetRoomConsumer';
-import { MobileGameActionsWidget } from 'src/modules/Room/LayoutProvider/Layouts/Generic/RoomLayout/MobileRoomLayout/widgets/MobileGameActionsWidget';
+// import { MobileGameActionsWidget } from 'src/modules/Room/LayoutProvider/Layouts/Generic/RoomLayout/MobileRoomLayout/widgets/MobileGameActionsWidget';
 import { PlayerBox } from 'src/modules/Games/Chess/components/PlayerBox';
-// import { GenericLayoutDesktopRoomConsumer } from '../RoomConsumers/GenericLayoutDesktopRoomConsumer';
-// import { switchRoomActivityAction } from '../../redux/actions';
-// import { RoomPlayActivityWithGame } from '../types';
+import { ActivityCommonProps } from '../../types';
+import { switchRoomActivityAction } from '../../../redux/actions';
+import { RoomPlayActivityWithGame } from '../types';
+import { MobileGameActionsWidget } from 'src/modules/RoomV3/widgets/MobileGameActionsWidget';
 
-export type PlayActivityProps = {
+export type PlayActivityProps = ActivityCommonProps & {
   activity: RoomPlayActivityWithGame;
-  deviceSize: DeviceSize;
-  // size: number;
 };
 
 export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize }) => {
@@ -36,6 +35,8 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
   // Default to White
   const homeColor = activity.iamParticipating ? activity.participants.me.color : 'white';
   const { game } = activity;
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!game) {
@@ -57,7 +58,6 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
   if (deviceSize.isMobile) {
     return (
       <GenericLayoutMobileRoomConsumer
-        renderTopOverlayHeader={() => <NavigationHeader darkMode />}
         renderTopOverlayMain={(dimensions) => (
           <div
             className={cls.iconButtonsContainer}
@@ -77,8 +77,6 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
             {activity.iamParticipating && <MobileGameActionsWidget activity={activity} />}
           </div>
         )}
-        // Account for the rounded border
-        renderTopOverlayFooter={() => <div style={{ height: '16px' }} />}
         renderActivity={({ boardSize }) => (
           <div className={cls.mobileMainContainer}>
             {/* {activity.iamParticipating && activity.participants.opponent && (
@@ -138,12 +136,12 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
         <div className={cls.container}>
           <aside className={cls.side} style={{ height: boardSize }}>
             <div className={cls.sideTop}>
-              {/* <Button
-            label="Analyze"
-            onClick={() => {
-              // disaptch(switchRoomActivityAction({ type: 'analysis' }));
-            }} */}
-              {/* /> */}
+              <Button
+                label="Analyze"
+                onClick={() => {
+                  dispatch(switchRoomActivityAction({ type: 'analysis' }));
+                }}
+              />
             </div>
             <div style={{ height: '40%' }}>
               <GameStateWidget

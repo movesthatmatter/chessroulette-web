@@ -1,6 +1,8 @@
 import { toDictIndexedBy } from 'src/lib/util';
+import { RoomMember } from 'src/modules/Room/types';
 import { BaseRoomAnalysisActivity } from '../../redux/types';
 import { RoomActivityParticipant } from '../../types';
+import { toRoomActivityPresentParticipant } from '../../util/participantsUtil';
 import { RoomAnalysisActivityParticipant, RoomAnalysisActivity } from './types';
 
 const toActivityParticipant = (
@@ -14,8 +16,12 @@ const toActivityParticipant = (
 
 export const toRoomAnalysisActivity = (
   currentRoomActivity: BaseRoomAnalysisActivity,
-  participantList: RoomActivityParticipant[]
+  // participantList: RoomActivityParticipant[]
+  members: RoomMember[]
 ): RoomAnalysisActivity => ({
   ...currentRoomActivity,
-  participants: toDictIndexedBy(participantList.map(toActivityParticipant), (p) => p.userId),
+  participants: toDictIndexedBy(
+    members.map(toRoomActivityPresentParticipant).map(toActivityParticipant),
+    (p) => p.userId
+  ),
 });

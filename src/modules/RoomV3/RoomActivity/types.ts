@@ -1,13 +1,27 @@
-import { RoomMember } from 'src/modules/Room/types';
+import { UserInfoRecord } from 'dstnd-io';
+import { RoomMember } from '../types';
+// import { RoomMember } from 'src/modules/Room/types';
 import { RoomAnalysisActivity } from './activities/AnalysisActivity/types';
 import { RoomNoActivity } from './activities/NoActivity/types';
 import { RoomPlayActivity } from './activities/PlayActivity';
 
-export type RoomActivityParticipant = {
+type RoomActivityBasicParticipantInfo = {
   userId: RoomMember['userId'];
-  member: RoomMember;
   isActivityParticipant: true;
+  isMe: boolean;
+}
+
+export type RoomActivityPresentParticipant = RoomActivityBasicParticipantInfo & {
+  isPresent: true;
+  member: RoomMember;
 };
+
+export type RoomActivityAbsentParticipant = RoomActivityBasicParticipantInfo & {
+  isPresent: false;
+  user: UserInfoRecord;
+};
+
+export type RoomActivityParticipant = RoomActivityPresentParticipant | RoomActivityAbsentParticipant;
 
 export type RoomActivityParticipants = {
   [userId: string]: RoomActivityParticipant;

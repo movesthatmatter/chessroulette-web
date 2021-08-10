@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { RoomRecord } from 'dstnd-io';
-import { useJoinedRoom } from 'src/modules/Room/hooks/useJoinedRoom';
 import { RoomProviderContext, RoomProviderContextState } from './RoomProviderContext';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
+import { useJoinedRoom } from '../hooks/useJoinedRoom';
 
 type Props = {};
 
