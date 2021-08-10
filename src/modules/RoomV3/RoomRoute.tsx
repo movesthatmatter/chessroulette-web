@@ -1,6 +1,6 @@
 import { RoomRecord } from 'dstnd-io';
 import React from 'react';
-import { JoinRoomBouncer } from '../Room/Room/JoinRoomBouncer';
+import { JoinRoomBouncer } from './JoinRoomBouncer';
 import { Room } from './Room';
 
 type Props = {

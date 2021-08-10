@@ -127,3 +127,17 @@ export const toDictIndexedBy = <O extends object, KGetter extends (o: O) => stri
     }),
     {} as { [k: string]: O }
   );
+
+export const addSliceToDict = <
+  O extends object,
+  K extends string,
+  V extends unknown,
+  S extends { [k in K]: V }
+>(
+  dict: O,
+  slice: S
+) =>
+  ({
+    ...dict,
+    ...slice,
+  } as O & S);

@@ -3,12 +3,11 @@ import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { colors, softBorderRadius } from 'src/theme';
-import { ExitRoomButton } from 'src/modules/Room/Room/components/ExitRoomButton';
-import { NavigationHeader } from 'src/modules/Room/LayoutProvider/RoomLayoutProvider/components/NavigationHeader';
-import { DesktopRoomLayout } from 'src/modules/Room/LayoutProvider/Layouts/Generic/RoomLayout/DesktopRoomLayout';
+import { ExitRoomButton } from 'src/modules/Room/Room_old/components/ExitRoomButton';
 import { RoomDetailsConsumer } from './RoomDetailsConsumer';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
 import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
+import { DesktopRoomLayout, NavigationHeader } from '../Layouts';
 
 type Props = {
   renderActivity: (d: {

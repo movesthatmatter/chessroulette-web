@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 import { GenericStateSlice } from 'src/redux/types';
 
-import { reducer as activity } from '../RoomActivity/redux/reducer';
+import { stateSliceByKey as activity } from '../RoomActivity/redux/reducer';
 
 const reducer = combineReducers({
-  activity,
+  ...activity,
 });
 
 export const stateSliceByKey = {

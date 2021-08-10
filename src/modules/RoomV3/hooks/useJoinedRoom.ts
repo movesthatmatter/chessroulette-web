@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { toDictIndexedBy } from 'src/lib/util';
-// import { toRoomMember } from 'src/modules/Room/Room/util';
 import { Room, selectRoom } from 'src/providers/PeerProvider';
 import { console } from 'window-or-global';
 import { selectCurrentRoomActivity } from '../RoomActivity/redux/selectors';
