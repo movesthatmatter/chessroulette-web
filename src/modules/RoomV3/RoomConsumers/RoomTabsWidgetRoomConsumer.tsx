@@ -1,10 +1,6 @@
 import React, { useContext } from 'react';
-import { createUseStyles } from 'src/lib/jss';
-import {
-  RoomTabsWidget,
-  RoomTabsWidgetProps,
-} from 'src/modules/Room/LayoutProvider/Layouts/Generic/RoomLayout/DesktopRoomLayout/widgets/RoomTabsWidget';
 import { RoomProviderContext } from '../RoomProvider';
+import { RoomTabsWidget, RoomTabsWidgetProps } from '../widgets/RoomTabsWidget';
 
 type Props = Omit<RoomTabsWidgetProps, 'me'>;
 
