@@ -155,6 +155,8 @@ export type UserAsPlayerStats =
       materialScore: undefined;
     };
 
+
+// TODO: Deprecate in favor of PlayRoomActivity stats
 export const getPlayerStats = (game: Game, userId: UserRecord['id']): UserAsPlayerStats => {
   const player = getPlayer(userId, game.players);
 

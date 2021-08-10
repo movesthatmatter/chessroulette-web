@@ -14,8 +14,9 @@ import { DialogContent } from 'src/components/Dialog';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
-import { RoomPlayActivityWithGame } from 'src/modules/Room/Activities/PlayActivity';
+// import { RoomPlayActivityWithGame } from 'src/modules/Room/Activities/PlayActivity';
 import { DialogNotificationTypes } from '../type';
+import { RoomPlayActivityWithGame } from 'src/modules/RoomV3/RoomActivity/activities/PlayActivity';
 
 export type GameStateDialogContentProps = {
   activity: RoomPlayActivityWithGame;

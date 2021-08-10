@@ -19,7 +19,31 @@ const playerB = userMocker.record();
 
 const gameMocker = new GameMocker();
 
-export const defaultStory = () => (
+export const defaultStory = () => {
+  const game = gameMocker.withProps({
+    state: 'pending',
+    timeLimit: 'blitz5',
+    players: [
+      {
+        color: 'white',
+        user: playerA,
+      },
+      {
+        color: 'black',
+        user: playerB,
+      },
+    ],
+    timeLeft: {
+      white: minutes(5),
+      black: minutes(5),
+    },
+    pgn: undefined,
+    winner: undefined,
+    lastMoveBy: undefined,
+    lastMoveAt: undefined,
+  });
+  
+  return (
   <Grommet theme={defaultTheme}>
     <div
       style={{
@@ -30,36 +54,17 @@ export const defaultStory = () => (
         flexDirection: 'column',
       }}
     >
-      <GameStateWidget
-        homeColor="black"
-        game={
-          gameMocker.withProps({
-            state: 'pending',
-            timeLimit: 'blitz5',
-            players: [
-              {
-                color: 'white',
-                user: playerA,
-              },
-              {
-                color: 'black',
-                user: playerB,
-              },
-            ],
-            timeLeft: {
-              white: minutes(5),
-              black: minutes(5),
-            },
-            pgn: undefined,
-            winner: undefined,
-            lastMoveBy: undefined,
-            lastMoveAt: undefined,
-          })}
+      {/* <GameStateWidget
+        // homeColor="black"
+        game={game}
+        playParticipants={{
+          away: 
+        }}
         onTimerFinished={action('onTimerFinished')}
-      />
+      /> */}
     </div>
   </Grommet>
-);
+)};
 
 export const withTimeFinished = () => (
   <Grommet theme={defaultTheme}>
@@ -80,7 +85,7 @@ export const withTimeFinished = () => (
         <div style={{
           height: '300px',
         }}>
-          <GameStateWidget
+          {/* <GameStateWidget
             homeColor="black"
             game={
               gameMocker.withProps({
@@ -107,7 +112,7 @@ export const withTimeFinished = () => (
               })}
             onTimerFinished={action('onTimerFinished')}
             onHistoryFocusedIndexChanged={action('onHistoryFocusedIndexChanged')}
-          />
+          /> */}
         </div>
       </div>
       <div style={{
@@ -124,7 +129,7 @@ export const withGameStarted = () => (
         width: '300px',
       }}
     >
-      <GameStateWidget
+      {/* <GameStateWidget
         homeColor="black"
         game={gameMocker.withProps({
           state: 'started',
@@ -149,7 +154,7 @@ export const withGameStarted = () => (
           lastMoveAt: toISODateTime(new Date()),
         })}
         onTimerFinished={action('onTimerFinished')}
-      />
+      /> */}
     </div>
   </Grommet>
 );

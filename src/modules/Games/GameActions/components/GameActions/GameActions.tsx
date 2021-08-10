@@ -14,7 +14,9 @@ import { useTakebackStatus } from '../../hooks';
 import {
   roomPlayActivityParticipantToChessPlayer,
   RoomPlayActivityWithGameAndParticipating,
-} from 'src/modules/Room/Activities/PlayActivity';
+} from 'src/modules/RoomV3/RoomActivity/activities/PlayActivity';
+import { getParticipantUserInfo } from 'src/modules/RoomV3/RoomActivity/util/util';
+
 
 type Props = {
   activity: RoomPlayActivityWithGameAndParticipating;
@@ -78,7 +80,7 @@ export const GameActions: React.FC<Props> = ({
               title="Rematch"
               content={{
                 __html: `Challenge <strong>${getUserDisplayName(
-                  participants.opponent.participant.member.peer.user
+                  getParticipantUserInfo(participants.opponent.participant)
                 )}</strong> to a Rematch or create a New Game below`,
               }}
               prevGameSpecs={{
@@ -152,7 +154,7 @@ export const GameActions: React.FC<Props> = ({
               title="Edit Game"
               content={{
                 __html: `Create a new game with <strong>${getUserDisplayName(
-                  participants.opponent.participant.member.peer.user
+                  getParticipantUserInfo(participants.opponent.participant)
                 )}</strong>`,
               }}
               prevGameSpecs={{
