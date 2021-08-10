@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { JoinedRoom } from 'src/modules/Room/types';
 import { DeviceSize } from 'src/theme/hooks/useDeviceSize';
+import { JoinedRoom } from '../types';
 
 export type RoomProviderContextState = undefined | {
   room: JoinedRoom;

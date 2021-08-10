@@ -23,6 +23,8 @@ const TOP_HEIGHT = 66;
 const BOTTOM_HEIGHT = 30;
 const MIN_SPACE_BETWEEN = spacers.largePx;
 
+
+// TODO: This isn't provided for now and don't think it needs to be but for now it sits here
 export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
   const cls = useStyles();
 

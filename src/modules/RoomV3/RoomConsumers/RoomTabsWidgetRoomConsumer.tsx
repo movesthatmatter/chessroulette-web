@@ -18,7 +18,3 @@ export const RoomTabsWidgetRoomConsumer: React.FC<Props> = (props) => {
 
   return <RoomTabsWidget me={roomContext.room.me.user} {...props} />;
 };
-
-const useStyles = createUseStyles({
-  container: {},
-});
