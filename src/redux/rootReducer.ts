@@ -4,9 +4,11 @@ import { stateSliceByKey as peerProvider } from 'src/providers/PeerProvider/redu
 import { stateSliceByKey as session } from 'src/services/Session/reducer';
 
 // All of these 3 could be under a "room" slice and part of the Room(s) module
-import { stateSliceByKey as roomBouncer } from 'src/modules/Rooms/GenericRoom/GenericRoomBouncer/reducer';
+// import { stateSliceByKey as roomBouncer } from 'src/modules/Rooms/GenericRoom/GenericRoomBouncer/reducer';
 import { stateSliceByKey as activityLog } from 'src/modules/Room/ActivityLog/redux/reducer';
-import { stateSliceByKey as roomActivity } from 'src/modules/Room/Activities/redux/reducer';
+import { stateSliceByKey as roomBouncer } from 'src/modules/RoomV3/RoomBouncer/redux/reducer';
+
+import { stateSliceByKey as room } from 'src/modules/RoomV3/redux/reducer';
 
 const allModuleReducers = {
   ...authentication,
@@ -16,7 +18,8 @@ const allModuleReducers = {
   // All of these 3 could be under a "room" slice
   ...roomBouncer,
   ...activityLog,
-  ...roomActivity
+
+  ...room,
 };
 
 export const rootReducer = combineReducers({

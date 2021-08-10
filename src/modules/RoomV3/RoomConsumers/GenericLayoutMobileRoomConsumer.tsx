@@ -1,10 +1,10 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { MobileRoomLayout } from 'src/modules/Room/LayoutProvider/Layouts/Generic/RoomLayout/MobileRoomLayout';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
-import { ContainerDimensions } from 'src/modules/Rooms/PlayRoom/Layouts/DesktopLayout/util';
+// import { ContainerDimensions } from 'src/modules/Rooms/PlayRoom/Layouts/DesktopLayout/util';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
-import { NavigationHeader } from 'src/modules/Room/LayoutProvider/RoomLayoutProvider/components/NavigationHeader';
+import { MobileRoomLayout, NavigationHeader } from '../Layouts';
+import { ContainerDimensions } from '../Layouts/Generic/DesktopRoomLayout/util';
 
 type Props = {
   renderTopOverlayHeader?: (d: {
