@@ -6,7 +6,7 @@ import { GenericLayoutDesktopRoomConsumer } from '../../../RoomConsumers/Generic
 import { GenericLayoutMobileRoomConsumer } from '../../../RoomConsumers/GenericLayoutMobileRoomConsumer';
 import { DeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { ActivityCommonProps } from '../types';
-import { NavigationHeader } from 'src/modules/RoomV3/Layouts';
+import { NavigationHeader } from 'src/modules/Room/Layouts';
 
 type Props = ActivityCommonProps & {
   deviceSize: DeviceSize;

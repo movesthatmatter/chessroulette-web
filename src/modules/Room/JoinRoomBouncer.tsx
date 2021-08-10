@@ -3,8 +3,8 @@ import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
-import { useJoinedRoom } from 'src/modules/RoomV3/hooks/useJoinedRoom';
-import { JoinedRoom } from 'src/modules/RoomV3/types';
+import { useJoinedRoom } from 'src/modules/Room/hooks/useJoinedRoom';
+import { JoinedRoom } from 'src/modules/Room/types';
 import { RoomBouncer, useRoomBouncer } from './RoomBouncer';
 
 type Props = {

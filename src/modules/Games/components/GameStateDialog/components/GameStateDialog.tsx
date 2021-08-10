@@ -7,14 +7,14 @@ import { Text } from 'src/components/Text';
 import { getPlayerByColor } from '../../../Chess/lib';
 import { useGameActions } from '../../../GameActions';
 import { useSelector } from 'react-redux';
-import { selectCurrentRoomActivityLog } from 'src/modules/RoomV3/RoomActivityLog/redux/selectors';
+import { selectCurrentRoomActivityLog } from 'src/modules/Room/RoomActivityLog/redux/selectors';
 import { getUserDisplayName } from 'src/modules/User';
 import { DialogContent } from 'src/components/Dialog';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { DialogNotificationTypes } from '../type';
-import { RoomPlayActivityWithGame } from 'src/modules/RoomV3/RoomActivity/activities/PlayActivity';
+import { RoomPlayActivityWithGame } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 
 export type GameStateDialogContentProps = {
   activity: RoomPlayActivityWithGame;

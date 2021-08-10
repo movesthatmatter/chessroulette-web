@@ -8,7 +8,7 @@ import { GameHistory } from '../GameHistory';
 import cx from 'classnames';
 import { noop } from 'src/lib/util';
 import { Game } from 'src/modules/Games';
-import { roomPlayActivityParticipantToChessPlayer } from 'src/modules/RoomV3/RoomActivity/activities/PlayActivity';
+import { roomPlayActivityParticipantToChessPlayer } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 import { PlayParticipants } from 'src/modules/Games/types';
 import { useGameTimesLeft } from './useGameState';
 

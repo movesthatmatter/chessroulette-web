@@ -1,7 +1,7 @@
 import { createReducer } from 'deox';
 import { GenericStateSlice } from 'src/redux/types';
 import { addNotificationAction, clearLogAction, resolveOfferNotificationAction } from './actions';
-import { Notification, OfferNotification } from 'src/modules/RoomV3/RoomActivityLog/types';
+import { Notification, OfferNotification } from 'src/modules/Room/RoomActivityLog/types';
 
 export type State = {
   currentRoom: {

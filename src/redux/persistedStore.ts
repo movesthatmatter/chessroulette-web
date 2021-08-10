@@ -1,7 +1,7 @@
 import { createStore, StoreEnhancer } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
-import { setGenericRoomBouncerPersistTransform } from 'src/modules/RoomV3/RoomBouncer/redux/reduxPersistTransformer';
+import { setGenericRoomBouncerPersistTransform } from 'src/modules/Room/RoomBouncer/redux/reduxPersistTransformer';
 
 import { rootReducer } from './rootReducer';
 

@@ -8,7 +8,7 @@ import {
   clearLogAction,
   resolveOfferNotificationAction,
 } from '../redux/actions';
-import { JoinedRoom } from 'src/modules/RoomV3/types';
+import { JoinedRoom } from 'src/modules/Room/types';
 // import { JoinedRoom } from '../../types';
 
 // This could depend on the room ID as well

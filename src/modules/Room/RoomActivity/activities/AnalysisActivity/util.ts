@@ -1,5 +1,5 @@
 import { toDictIndexedBy } from 'src/lib/util';
-import { RoomMember } from 'src/modules/RoomV3/types';
+import { RoomMember } from 'src/modules/Room/types';
 import { BaseRoomAnalysisActivity } from '../../redux/types';
 import { RoomActivityParticipant } from '../../types';
 import { toRoomActivityPresentParticipant } from '../../util/participantsUtil';

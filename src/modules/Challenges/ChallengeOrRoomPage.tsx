@@ -8,8 +8,8 @@ import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication';
 import { ChallengePage } from './ChallengePage';
 import { AwesomeErrorWithAction } from 'src/components/AwesomeErrorWithAction/AwesomeErrorWithAction';
-import { RoomRoute } from '../RoomV3/RoomRoute';
-import { Room } from '../RoomV3/Room';
+import { RoomRoute } from '../Room/RoomRoute';
+import { Room } from '../Room/Room';
 
 type Props = {};
 

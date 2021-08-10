@@ -4,9 +4,9 @@ import { stateSliceByKey as peerProvider } from 'src/providers/PeerProvider/redu
 import { stateSliceByKey as session } from 'src/services/Session/reducer';
 
 // All of these 3 could be under a "room" slice and part of the Room(s) module
-import { stateSliceByKey as roomBouncer } from 'src/modules/RoomV3/RoomBouncer/redux/reducer';
+import { stateSliceByKey as roomBouncer } from 'src/modules/Room/RoomBouncer/redux/reducer';
 
-import { stateSliceByKey as room } from 'src/modules/RoomV3/redux/reducer';
+import { stateSliceByKey as room } from 'src/modules/Room/redux/reducer';
 
 const allModuleReducers = {
   ...authentication,
