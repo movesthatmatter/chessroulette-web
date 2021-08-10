@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { RoomProviderContext, RoomProviderContextState } from './RoomProviderContext';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { useJoinedRoom } from '../hooks/useJoinedRoom';
-import { useRoomActivityListener } from 'src/modules/Room/ActivityLog/useRoomActivityListener';
+import { useRoomActivityListener } from 'src/modules/RoomV3/RoomActivityLog/useRoomActivityListener';
 
 type Props = {};
 
