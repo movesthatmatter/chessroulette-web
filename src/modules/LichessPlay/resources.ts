@@ -22,3 +22,11 @@ export function sendAChallenge (userName: string, opts: RequestInit){
 export function sendAMove(move: string, id:string, opts: RequestInit) {
   return fetch(`https://lichess.org/api/board/game/${id}/move/${move}`, {method: 'POST', headers: opts.headers})
 }
+
+export function acceptChallenge( challengeId: string, opts: RequestInit) {
+  return fetch(`https://lichess.org/api/challenge/${challengeId}/accept`, { method: 'POST', headers: opts.headers})
+}
+
+export function declineChallenge ( challengeId: string, opts: RequestInit){
+  return fetch(`https://lichess.org/api/challenge/${challengeId}/decline`, { method: 'POST', headers: opts.headers}) 
+}

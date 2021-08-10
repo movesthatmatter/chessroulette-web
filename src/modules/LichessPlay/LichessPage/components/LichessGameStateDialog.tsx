@@ -9,8 +9,8 @@ import { LichessChallenge, LichessGameFull } from '../../types';
 import { LichessGameDialogContext } from './LichessGameStateDialogContext';
 
 type Props = NonNullable<LichessGameDialogContext> & {
-  onChallengeAccepted: () => void;
-  onChallengeDeny: () => void;
+  onChallengeAccepted: (challenge: LichessChallenge) => void;
+  onChallengeDeny: (challenge: LichessChallenge) => void;
 };
 
 export const LichessGameStateDialog: React.FC<Props> = ({
@@ -44,12 +44,12 @@ export const LichessGameStateDialog: React.FC<Props> = ({
             {
               label: 'Accept',
               type: 'positive',
-              onClick: () => onChallengeAccepted(),
+              onClick: () => onChallengeAccepted(challenge),
             },
             {
               label: 'Deny',
               type: 'negative',
-              onClick: () => onChallengeDeny(),
+              onClick: () => onChallengeDeny(challenge),
             },
           ]}
         />

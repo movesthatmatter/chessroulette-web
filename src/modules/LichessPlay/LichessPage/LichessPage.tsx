@@ -1,34 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { AspectRatio } from 'src/components/AspectRatio';
-import { Page } from 'src/components/Page';
+import { AuthenticatedPage, LichessAuthenticatedPage, Page } from 'src/components/Page';
 import { createUseStyles } from 'src/lib/jss';
-import Chessground from 'react-chessground';
 import { getInstance as getLichessGameManager, LichessManagerType } from '../LichessGameManager';
 import { Button } from 'src/components/Button';
 import useInstance from '@use-it/instance';
-import { getNewChessGame, getStartingFen, getStartingPgn } from 'src/modules/Games/Chess/lib';
-import { console, Date } from 'window-or-global';
-import { ChessInstance, Square } from 'chess.js';
-import { ChessGameColor, ChessMove } from 'dstnd-io';
+import { getNewChessGame} from 'src/modules/Games/Chess/lib';
+import { ChessInstance } from 'chess.js';
+import { ChessMove } from 'dstnd-io';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
-import { Chess } from 'chessops/chess';
-import { chessgroundDests } from 'chessops/compat';
-import { StyledChessBoard } from 'src/modules/Games/Chess/components/ChessBoard/StyledChessBoard';
-import { Color } from 'chessground/types';
 import { toDests } from 'src/modules/Games/Chess/components/ChessBoard/util';
 import { LichessChallenge, LichessGameFull } from '../types';
-import { LichessGameStateDialog } from './components/LichessGameStateDialog';
 import { LichessGameStateDialogProvider } from './components/LichessGameStateDialogProvider';
 import { LichessGameStateDialogConsumer } from './components/LichessGameStateDialogConsumer';
+import { useAuthentication } from 'src/services/Authentication';
+import { console } from 'window-or-global';
 
 type Props = {};
 
 export const LichessPage: React.FC<Props> = ({}) => {
-  const cls = useStyles();
   const lichessManager = useInstance<LichessManagerType>(getLichessGameManager);
   const [chess, setChess] = useState<ChessInstance>(getNewChessGame());
   const [game, setGame] = useState<LichessGameFull | undefined>(undefined);
   const [challenge, setChallenge] = useState<LichessChallenge | undefined>(undefined);
+  const authentication = useAuthentication();
 
   useEffect(() => {
     startSubscriptions();
@@ -57,7 +51,7 @@ export const LichessPage: React.FC<Props> = ({}) => {
   };
 
   return (
-    <Page name="lichess">
+    <LichessAuthenticatedPage name="lichess">
       <LichessGameStateDialogProvider
         game={game}
         challenge={challenge}
@@ -78,14 +72,11 @@ export const LichessPage: React.FC<Props> = ({}) => {
         <Button
           label="Challenge"
           onClick={() => {
-            lichessManager.sendChallenge();
+            console.log('authenticated user ', authentication);
+            //lichessManager.sendChallenge();
           }}
         />
       </LichessGameStateDialogProvider>
-    </Page>
+    </LichessAuthenticatedPage>
   );
 };
-
-const useStyles = createUseStyles({
-  container: {},
-});

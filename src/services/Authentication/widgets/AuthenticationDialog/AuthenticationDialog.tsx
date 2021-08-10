@@ -108,7 +108,9 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
                   ...(keyInObject(r.external.user, 'lastName') && {
                     firstName: r.external.user.lastName,
                   }),
-                 
+                 ...(r.external.vendor === 'lichess' && {
+                   username: r.external.user.username
+                 })
                 },
                 verifiedExternalVendorInfo: {
                   vendor: input.vendor,

@@ -1,5 +1,5 @@
 import ndjsonStream from 'can-ndjson-stream';
-import { getBoardStreamById, getLichessStreamEvent, sendAChallenge, sendAMove } from './resources';
+import { acceptChallenge, declineChallenge, getBoardStreamById, getLichessStreamEvent, sendAChallenge, sendAMove } from './resources';
 import { LichessGameState, NDJsonReader, LichessGameFull, LichessChallenge } from './types';
 import { console } from 'window-or-global';
 import { Pubsy } from 'src/lib/Pubsy';
@@ -76,6 +76,20 @@ export class LichessManager {
       .then((res) => this.loopThroughNDJson(res))
       .catch((e) => console.log('error sending a challenge', e));
   };
+
+  acceptChallenge =(challenge: LichessChallenge) => {
+    acceptChallenge(challenge.id, this.authorization)
+    .then(this.getReader)
+    .then(res => this.loopThroughNDJson(res))
+    .catch(e => console.log('error accepting the challenge', e))
+  }
+
+  declineChallenge = (challenge: LichessChallenge) => {
+    declineChallenge(challenge.id, this.authorization)
+    .then(this.getReader)
+    .then(res => this.loopThroughNDJson(res))
+    .catch(e => console.log('error declining a challenge', e))
+  }
 
   private getReader(response: Response) {
     return ndjsonStream(response.body).getReader();
