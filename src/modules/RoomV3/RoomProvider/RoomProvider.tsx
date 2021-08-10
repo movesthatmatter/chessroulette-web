@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { RoomProviderContext, RoomProviderContextState } from './RoomProviderContext';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { useJoinedRoom } from '../hooks/useJoinedRoom';
+import { useRoomActivityListener } from 'src/modules/Room/ActivityLog/useRoomActivityListener';
 
 type Props = {};
 
@@ -10,14 +11,14 @@ export const RoomProvider: React.FC<Props> = (props) => {
   const joinedRoom = useJoinedRoom();
   const deviceSize = useDeviceSize();
 
+  useRoomActivityListener(joinedRoom);
+
   useEffect(() => {
     setContextState(joinedRoom ? { 
       room: joinedRoom,
       deviceSize,
     } : undefined);
   }, [joinedRoom, deviceSize]);
-
-  console.log('[RoomV3] RoomProvider renders');
 
   return (
     <RoomProviderContext.Provider value={contextState}>
