@@ -4,18 +4,16 @@ import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme/effects';
 import { colors, fonts } from 'src/theme';
 import { PlayerBox } from '../PlayerBox/PlayerBox';
-import { GameHistory } from '../GameHistory';
 import cx from 'classnames';
 import { noop } from 'src/lib/util';
 import { Game } from 'src/modules/Games';
 import { roomPlayActivityParticipantToChessPlayer } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 import { PlayParticipants } from 'src/modules/Games/types';
 import { useGameTimesLeft } from './useGameState';
+import { ChessGameHistoryProvided } from '../GameHistory/ChessGameHistoryProvider/ChessGameHistoryProvided';
 
 type Props = {
   game: Game;
-  historyFocusedIndex?: number;
-  onHistoryFocusedIndexChanged?: (index: number) => void;
   onTimerFinished?: (color: ChessGameColor) => void;
 
   playParticipants: PlayParticipants;
@@ -25,7 +23,6 @@ export const GameStateWidget: React.FC<Props> = ({
   game,
   playParticipants,
   onTimerFinished = noop,
-  ...props
 }) => {
   const cls = useStyles();
 
@@ -48,11 +45,7 @@ export const GameStateWidget: React.FC<Props> = ({
         <div className={cls.spacer} />
       </div>
       <div className={cls.gameStateContainer}>
-        <GameHistory
-          game={game}
-          focusedIndex={props.historyFocusedIndex}
-          onFocusedIndexChanged={props.onHistoryFocusedIndexChanged}
-        />
+        <ChessGameHistoryProvided />
       </div>
       <div className={cls.player}>
         <div className={cls.spacer} />
