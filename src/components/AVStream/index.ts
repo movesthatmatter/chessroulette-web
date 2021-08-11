@@ -1,1 +1,1 @@
-export * from './AVStream';
+export * from './AvStream';
