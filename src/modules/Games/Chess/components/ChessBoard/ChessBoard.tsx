@@ -11,10 +11,15 @@ import {
 } from 'dstnd-io';
 import { StyledChessBoard, StyledChessBoardProps } from './StyledChessBoard';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { ChessgroundProps } from 'react-chessground';
 
 export type ChessBoardProps = Omit<StyledChessBoardProps, 'onMove' | 'fen'> & {
   id: GameRecord['id'];
   pgn: GameRecord['pgn'];
+  type: 'play' | 'analysis' | 'free';
+  config?: {
+    showDests?: boolean;
+  };
   homeColor: ChessGameColor;
   orientation?: ChessGameColor;
   playable?: boolean;
@@ -101,21 +106,39 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
       this.applyPreMove(this.state.preMove);
     }
 
-    // If there are changes in the props commit them
+    // If there are changes in the pgn and uncommited moves, commit them now!
     if (prevProps.pgn !== this.props.pgn) {
       this.commit();
     }
   }
 
-  private calcMovable() {
-    return {
+  private calcMovable(): ChessgroundProps['movable'] {
+    const base = {
       free: false,
-      // This is what determines wether a someone can move a piece!
+      // This is what determines wether someone can move a piece!
       dests: this.props.playable ? toDests(this.chess) : undefined,
-      color: this.props.homeColor,
-      // Don't show the dests
-      showDests: false,
+      showDests: !!this.props.config?.showDests,
     } as const;
+
+    if (this.props.type === 'analysis') {
+      return {
+        ...base,
+        color: 'both',
+      };
+    }
+
+    if (this.props.type === 'play') {
+      return {
+        ...base,
+        color: this.props.homeColor,
+      };
+    }
+
+    return {
+      ...base,
+      free: true,
+      color: 'both',
+    };
   }
 
   private applyPreMove(preMove: ChessMove) {
