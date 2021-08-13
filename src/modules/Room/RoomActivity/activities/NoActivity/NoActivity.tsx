@@ -21,6 +21,7 @@ export const NoActivity: React.FC<Props> = (props) => {
         renderTopOverlayHeader={() => <NavigationHeader darkMode />}
         renderActivity={(cd) => (
           <ChessBoard
+            type="free"
             size={cd.boardSize}
             id="empty-frozen-board" // TODO: This might need to change
             pgn=""
@@ -37,6 +38,7 @@ export const NoActivity: React.FC<Props> = (props) => {
     <GenericLayoutDesktopRoomConsumer
       renderActivity={(cd) => (
         <ChessBoard
+          type="free"
           size={cd.boardSize}
           id="empty-frozen-board" // TODO: This might need to change
           pgn=""

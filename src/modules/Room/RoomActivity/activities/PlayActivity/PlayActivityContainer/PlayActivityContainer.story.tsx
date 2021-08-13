@@ -1,7 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { GameMocker } from 'src/mocks/records';
+import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityParticipant';
+import { RoomMocker } from 'src/mocks/records/RoomMocker';
+import { RoomProvider } from 'src/modules/Room/RoomProvider';
+import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
+import { RoomPlayActivityParticipant } from '../types';
 import { PlayActivityContainer } from './PlayActivityContainer';
 
 export default {
@@ -11,19 +16,73 @@ export default {
 
 const gameMocker = new GameMocker();
 const game = gameMocker.started();
+const participantMocker = new RoomActivityParticipantMocker();
 
-// TODO: Fix this as well
+const myParticipant = participantMocker.withProps({ isPresent: true, isMe: true });
+const myPlayParticipant: RoomPlayActivityParticipant = {
+  roomActivitySpecificParticipantType: 'play',
+  isRoomActivitySpecificParticipant: true,
+  participant: myParticipant,
+  userId: myParticipant.userId,
+  isPlayer: true,
+  canPlay: true,
+  materialScore: 0,
+  color: 'white',
+} as const;
+
+const opponentParticipant = participantMocker.record({ isPresent: true });
+const opponentPlayParticipant = {
+  roomActivitySpecificParticipantType: 'play',
+  isRoomActivitySpecificParticipant: true,
+  participant: opponentParticipant,
+  userId: opponentParticipant.userId,
+  isPlayer: true,
+  canPlay: false,
+  materialScore: 0,
+  color: 'black',
+} as const;
+
+const roomMocker = new RoomMocker();
+
+const room = roomMocker.record(
+  myParticipant.isPresent && opponentParticipant.isPresent
+    ? {
+        [myParticipant.member.peer.id]: myParticipant.member.peer,
+        [opponentParticipant.member.peer.id]: opponentParticipant.member.peer,
+      }
+    : undefined
+);
 
 export const defaultStory = () => (
-  <StorybookReduxProvider>
-    
-    {/* <PlayActivityContainer
-      activity={{
-        type: 'play',
-        game: game,
-        participants: {},
-      }}
-      size={500}
-    /> */}
-  </StorybookReduxProvider>
+  <StorybookBaseProvider
+    withRedux
+    initialState={{
+      ...(myParticipant.isPresent && {
+        peerProvider: {
+          me: myParticipant.member.peer,
+          room: room,
+        },
+      }),
+    }}
+  >
+    <RoomProvider>
+      <PlayActivityContainer
+        activity={{
+          type: 'play',
+          game: game,
+          iamParticipating: true,
+          participants: {
+            me: myPlayParticipant,
+            opponent: opponentPlayParticipant,
+          },
+        }}
+        deviceSize={{
+          isDesktop: true,
+          isMobile: false,
+          isSmallMobile: false,
+        }}
+        // size={500}
+      />
+    </RoomProvider>
+  </StorybookBaseProvider>
 );
