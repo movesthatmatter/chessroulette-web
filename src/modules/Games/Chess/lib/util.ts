@@ -11,10 +11,11 @@ import {
   ChessPlayer,
   UserRecord,
 } from 'dstnd-io';
-import { FullMove, HalfMove, PairedMove, PairedHistory } from './types';
+import { FullMove, HalfMove, PairedMove, PairedHistory, FullOnlyBlackMove } from './types';
 import { flatten } from 'src/lib/util';
 import { getRelativeMaterialScore } from '../components/GameStateWidget/util';
 import { Game, GameFromGameState } from '../../types';
+import { ChessAnalyisHistory } from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
 
 export const getStartingPgn = () => getNewChessGame().pgn();
 export const getStartingFen = () => getNewChessGame().fen();
@@ -49,17 +50,29 @@ export const toChessColor = (c: 'w' | 'white' | 'b' | 'black') => {
   return c === 'b' || c === 'black' ? 'black' : 'white';
 };
 
-export const isFullMove = (pm: unknown): pm is FullMove => Array.isArray(pm) && pm.length === 2;
-export const isHalfMove = (pm: unknown): pm is HalfMove => Array.isArray(pm) && pm.length === 1;
-export const isPairedMove = (pm: unknown): pm is PairedMove => isFullMove(pm) || isHalfMove(pm);
+export const isHalfMove = (pm: PairedMove): pm is HalfMove => Array.isArray(pm) && pm.length === 1;
+export const isFullOnlyBlackMove = (pm: PairedMove): pm is FullOnlyBlackMove =>
+  Array.isArray(pm) && pm.length === 2 && pm[0] === undefined;
+export const isFullMove = (pm: PairedMove): pm is FullMove =>
+  Array.isArray(pm) && pm.length === 2 && !isFullOnlyBlackMove(pm);
 
-export const toPairedHistory = (history: ChessHistory): PairedHistory =>
-  history.reduce((prev, next) => {
+export const toPairedHistory = (history: ChessAnalyisHistory): PairedHistory =>
+  ([
+    // TODO: This is a bit of a hack as it checks here if the first move is black 
+    //  and then add the fullOnlyBlackMove while I believe this should happen somehow else
+    //  including it being part of the type system,
+    ...(history[0]?.color === 'black' ? [undefined] : []),
+    ...history,
+  ] as ChessAnalyisHistory).reduce((prev, next) => {
     if (prev.length === 0) {
       return [[next]];
     }
 
     const lastMove = prev.slice(-1)[0];
+    if (isFullOnlyBlackMove(lastMove)) {
+      return [...prev, [next]];
+    }
+
     if (isFullMove(lastMove)) {
       return [...prev, [next]];
     }
@@ -69,6 +82,8 @@ export const toPairedHistory = (history: ChessHistory): PairedHistory =>
 
     return [...prevWithoutLastMove, nextFullMove];
   }, [] as PairedHistory);
+
+// export const toPairedHistoryFromPartial = (history: )
 
 export const pairedHistoryToHistory = (ph: PairedHistory): ChessHistory =>
   (flatten(ph) as unknown) as ChessHistory;
@@ -90,8 +105,13 @@ export const reversedLinearIndex = (history: ChessHistory, index: number) =>
 
 export const historyToPgn = (moves: ChessHistory): ChessGameStatePgn =>
   toPairedHistory(moves)
-    .map((pm, index) =>
-      isFullMove(pm) ? `${index + 1}. ${pm[0].san} ${pm[1].san}` : `${index + 1}. ${pm[0].san}`
+    .map(
+      (pm, index) =>
+        isFullMove(pm)
+          ? `${index + 1}. ${pm[0].san} ${pm[1].san}` // full move
+          : isFullOnlyBlackMove(pm)
+          ? `${index + 1}. ... ${pm[1].san}` // full black (this shouldn't happen in a PGN)
+          : `${index + 1}. ${pm[0].san}` // halfMove
     )
     .join(' ');
 
@@ -154,7 +174,6 @@ export type UserAsPlayerStats =
       canPlay: false;
       materialScore: undefined;
     };
-
 
 // TODO: Deprecate in favor of PlayRoomActivity stats
 export const getPlayerStats = (game: Game, userId: UserRecord['id']): UserAsPlayerStats => {

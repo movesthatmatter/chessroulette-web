@@ -26,6 +26,7 @@ export const fromStartingPosition = () =>
 
     return (
       <ChessBoard
+        type="play"
         id={game.id}
         pgn={game.pgn}
         homeColor="black"
@@ -42,6 +43,7 @@ export const playable = () =>
 
     return (
       <ChessBoard
+        type="play"
         id={game.id}
         pgn={game.pgn}
         size={600}
@@ -69,6 +71,7 @@ export const withGameStarted = () =>
 
     return (
       <ChessBoard
+        type="play"
         id={game.id}
         pgn={game.pgn}
         size={400}
@@ -86,6 +89,7 @@ export const withNotification = () =>
     return (
       <Grommet theme={defaultTheme}>
         <ChessBoard
+          type="play"
           id={game.id}
           pgn={game.pgn}
           size={400}
