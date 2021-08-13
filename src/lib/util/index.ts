@@ -141,3 +141,5 @@ export const addSliceToDict = <
     ...dict,
     ...slice,
   } as O & S);
+
+export const isObject = (m: unknown): m is object => (m !== null && typeof m === 'object');
