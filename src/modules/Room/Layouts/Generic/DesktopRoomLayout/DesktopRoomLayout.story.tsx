@@ -210,6 +210,7 @@ export const withChessGame = () => (
 
                 return (
                   <ChessBoard
+                    type="play"
                     homeColor="black"
                     playable
                     pgn={game.pgn}
