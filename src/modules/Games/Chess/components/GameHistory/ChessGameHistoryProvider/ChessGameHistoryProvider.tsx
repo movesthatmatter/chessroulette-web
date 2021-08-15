@@ -3,6 +3,10 @@ import useEventListener from '@use-it/event-listener';
 import { ChessHistory } from 'dstnd-io';
 import { keyInObject } from 'src/lib/util';
 import { ChessGameHistoryContext, ChessGameHistoryContextProps } from './ChessGameHistoryContext';
+import {
+  ChessHistoryIndex,
+  getChessHistoryAtIndex,
+} from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
 
 type Props = {
   history: ChessHistory;
@@ -18,16 +22,16 @@ export const ChessGameHistoryProvider: React.FC<Props> = ({
     setContextState((prev) => ({
       ...prev,
       displayedHistory: history,
-      displayedIndex: 0,
+      displayedIndex: history.length - 1,
     }));
   }, [history]);
 
   const onRefocus = useCallback(
-    (nextIndex: number) => {
+    (nextIndex: ChessHistoryIndex) => {
       setContextState((prev) => ({
         ...prev,
         displayedIndex: nextIndex,
-        displayedHistory: history.slice(0, history.length - nextIndex),
+        displayedHistory: getChessHistoryAtIndex(history, nextIndex),
       }));
     },
     [history]
@@ -52,10 +56,14 @@ export const ChessGameHistoryProvider: React.FC<Props> = ({
       return;
     }
 
-    if (event.key === 'ArrowRight' && contextState.displayedIndex > 0) {
-      onRefocus(contextState.displayedIndex - 1);
-    } else if (event.key === 'ArrowLeft' && contextState.displayedIndex < history.length) {
-      onRefocus(contextState.displayedIndex + 1);
+    if (event.key === 'ArrowRight' && contextState.displayedIndex < history.length - 1) {
+      if (typeof contextState.displayedIndex === 'number') {
+        onRefocus(contextState.displayedIndex + 1);
+      }
+    } else if (event.key === 'ArrowLeft' && contextState.displayedIndex > 0) {
+      if (typeof contextState.displayedIndex === 'number') {
+        onRefocus(contextState.displayedIndex - 1);
+      }
     }
   });
 

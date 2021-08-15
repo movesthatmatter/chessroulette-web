@@ -4,29 +4,36 @@ import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import { PairedMove } from '../../../lib';
 import cx from 'classnames';
-import { ChessGameColor } from 'dstnd-io';
 import { HistoryList } from './HistoryList';
 import { colors } from 'src/theme';
+import {
+  ChessHistoryIndex,
+  getNestedChessHistoryIndex,
+  isBranchedHistoryIndex,
+} from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
 
 type Props = {
   pairedMove: PairedMove;
-  index: number;
+  pairedIndex: number;
+  whiteMoveLinearIndex: number;
   isActive: 'white' | 'black' | undefined;
-  onClick: (color: ChessGameColor) => void;
+  onFocus: (i: ChessHistoryIndex) => void;
+  focusedIndex?: ChessHistoryIndex;
   className?: string;
 };
 
 export const HistoryRow: React.FC<Props> = ({
   pairedMove,
-  index: rootIndex,
-  isActive,
-  onClick,
+  pairedIndex,
+  whiteMoveLinearIndex,
+  onFocus,
   className,
+  focusedIndex,
 }) => {
   const cls = useStyles();
-  const moveCount = rootIndex + 1;
-
+  const moveCount = pairedIndex + 1;
   const [whiteMove, blackMove] = pairedMove;
+  const blackMoveLinearIndex = whiteMoveLinearIndex + 1;
 
   return (
     <div className={cls.container}>
@@ -35,63 +42,96 @@ export const HistoryRow: React.FC<Props> = ({
         // ref={(b) => (rowElementRefs.current[index] = b)}
       >
         <Text className={cx(cls.text, cls.rowIndex)}>{`${moveCount}.`}</Text>
-        <Text
-          className={cx(cls.text, cls.move, cls.whiteMove, {
-            [cls.activeMove]: isActive === 'white',
-          })}
-          onClick={() => onClick('white')}
-        >
-          {whiteMove?.san || '...'}
-        </Text>
-        {whiteMove?.branchedHistories && blackMove ? (
-          <Text className={cx(cls.text, cls.move, cls.blackMove)}>...</Text>
-        ) : (
+        {whiteMove ? (
           <Text
-            className={cx(cls.text, cls.move, cls.blackMove, {
-              [cls.activeMove]: isActive === 'black',
+            className={cx(cls.text, cls.move, cls.whiteMove, {
+              [cls.activeMove]: whiteMoveLinearIndex === focusedIndex,
             })}
-            onClick={() => onClick('black')}
+            onClick={() => onFocus(whiteMoveLinearIndex)}
           >
-            {blackMove?.san}
+            {whiteMove.san}
           </Text>
+        ) : (
+          <Text className={cx(cls.text, cls.move, cls.whiteMove)}>...</Text>
+        )}
+
+        {blackMove && (
+          <>
+            {whiteMove?.branchedHistories ? (
+              <Text className={cx(cls.text, cls.move, cls.blackMove)}>...</Text>
+            ) : (
+              <Text
+                className={cx(cls.text, cls.move, cls.blackMove, {
+                  [cls.activeMove]: blackMoveLinearIndex === focusedIndex,
+                })}
+                onClick={() => onFocus(blackMoveLinearIndex)}
+              >
+                {blackMove?.san}
+              </Text>
+            )}
+          </>
         )}
       </div>
       {whiteMove?.branchedHistories && (
         <>
-          {whiteMove.branchedHistories.map((branchedHistory, index) => (
-            <HistoryList
-              history={branchedHistory}
-              onRefocus={() => {}}
-              key={`${whiteMove.san}-branch-${index}`}
-              className={cls.nestedHistory}
-              rootIndex={rootIndex}
-            />
-          ))}
+          {whiteMove.branchedHistories.map((branchedHistory, branchIndex) => {
+            const focusedIndexPerBranch =
+              isBranchedHistoryIndex(focusedIndex) &&
+              focusedIndex[0] === whiteMoveLinearIndex &&
+              focusedIndex[1] === branchIndex
+                ? getNestedChessHistoryIndex(focusedIndex)
+                : undefined;
 
-          <div className={cx(cls.row, className)}>
-            <Text className={cx(cls.text, cls.rowIndex)}>{`${moveCount}.`}</Text>
-            <Text className={cx(cls.text, cls.move, cls.blackMove)}>...</Text>
-            <Text
-              className={cx(cls.text, cls.move, cls.blackMove, {
-                [cls.activeMove]: isActive === 'black',
-              })}
-              onClick={() => onClick('black')}
-            >
-              {blackMove?.san}
-            </Text>
-          </div>
+            return (
+              <HistoryList
+                history={branchedHistory}
+                onRefocus={(nestedIndex) => {
+                  onFocus([whiteMoveLinearIndex, branchIndex, nestedIndex]);
+                }}
+                key={`${whiteMove.san}-branch-${branchIndex}`}
+                className={cls.nestedHistory}
+                rootPairedIndex={pairedIndex}
+                focusedIndex={focusedIndexPerBranch}
+              />
+            );
+          })}
+          {blackMove && (
+            <div className={cx(cls.row, cls.rowBelowNested, className)}>
+              <Text className={cx(cls.text, cls.rowIndex)}>{`${moveCount}.`}</Text>
+              <Text className={cx(cls.text, cls.move, cls.blackMove)}>...</Text>
+              <Text
+                className={cx(cls.text, cls.move, cls.blackMove, {
+                  [cls.activeMove]: blackMoveLinearIndex === focusedIndex,
+                })}
+                onClick={() => onFocus(blackMoveLinearIndex)}
+              >
+                {blackMove.san}
+              </Text>
+            </div>
+          )}
         </>
       )}
-      {blackMove?.branchedHistories &&
-        blackMove.branchedHistories.map((branchedHistory, index) => (
+      {blackMove?.branchedHistories?.map((branchedHistory, branchIndex) => {
+        const focusedIndexPerBranch =
+          isBranchedHistoryIndex(focusedIndex) &&
+          focusedIndex[0] === blackMoveLinearIndex &&
+          focusedIndex[1] === branchIndex
+            ? getNestedChessHistoryIndex(focusedIndex)
+            : undefined;
+
+        return (
           <HistoryList
             history={branchedHistory}
-            onRefocus={() => {}}
-            key={`${blackMove.san}-branch-${index}`}
+            onRefocus={(nestedIndex) => {
+              onFocus([blackMoveLinearIndex, branchIndex, nestedIndex]);
+            }}
+            key={`${blackMove.san}-branch-${branchIndex}`}
             className={cls.nestedHistory}
-            rootIndex={rootIndex}
+            rootPairedIndex={pairedIndex}
+            focusedIndex={focusedIndexPerBranch}
           />
-        ))}
+        );
+      })}
     </div>
   );
 };
@@ -115,14 +155,11 @@ const useStyles = createUseStyles({
         paddingTop: 0,
       },
       '&:last-child': {
-        // paddingBottom: 0,
         borderBottomWidth: 0,
       },
     } as CSSProperties),
   },
   row: {
-    // background: 'red',
-
     display: 'flex',
   },
   initStateRow: {
@@ -156,9 +193,12 @@ const useStyles = createUseStyles({
   nestedHistory: {
     paddingTop: spacers.small,
     marginLeft: spacers.smallest,
+    marginTop: spacers.smaller,
     borderLeft: `${spacers.smaller} solid ${colors.neutral}`,
-    background: colors.neutralLighter,
+    background: colors.neutralLightest,
     borderColor: borderColorsByDepth[3],
-    // background: `rgba(230, 236, 245, .5)`,
+  },
+  rowBelowNested: {
+    marginTop: spacers.small,
   },
 });
