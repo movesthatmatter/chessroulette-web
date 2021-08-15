@@ -83,8 +83,6 @@ export const toPairedHistory = (history: ChessAnalyisHistory): PairedHistory =>
     return [...prevWithoutLastMove, nextFullMove];
   }, [] as PairedHistory);
 
-// export const toPairedHistoryFromPartial = (history: )
-
 export const pairedHistoryToHistory = (ph: PairedHistory): ChessHistory =>
   (flatten(ph) as unknown) as ChessHistory;
 
@@ -93,9 +91,9 @@ export const pairedHistoryToHistory = (ph: PairedHistory): ChessHistory =>
 export type PairedIndex = [number, number];
 
 export const linearToPairedIndex = (history: ChessHistory, index: number): PairedIndex => {
-  const diff = history.length - 1 - index;
+  // const diff = history.length - 1 - index;
 
-  return [Math.floor(diff / 2), diff % 2];
+  return [Math.floor(index / 2), index % 2];
 };
 
 export const pairedToLinearIndex = (index: PairedIndex) => index[0] * 2 + index[1];
