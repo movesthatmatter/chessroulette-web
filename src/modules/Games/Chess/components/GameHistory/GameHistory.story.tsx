@@ -6,6 +6,7 @@ import { second } from 'src/lib/time';
 import { pgnToChessHistory } from 'src/mocks/records';
 import {
   addMoveToChessHistory,
+  ChessAnalyisHistory,
   ChessHistoryIndex,
 } from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
@@ -85,7 +86,7 @@ const nestedMoves1Gen = [
 ] as const;
 
 const historyWithBranches = nestedMoves1Gen.reduce(
-  (prev, nexMove) => addMoveToChessHistory(prev, nexMove, [2, 0]),
+  (prev, nexMove) => addMoveToChessHistory(prev, nexMove, [2, 0])[0],
   linearHistory
 );
 
@@ -107,7 +108,7 @@ const anotherMoveNestedMoves1Gen = [
 ] as const;
 
 const historyWithTwoDifferentBranches = anotherMoveNestedMoves1Gen.reduce(
-  (prev, nexMove) => addMoveToChessHistory(prev, nexMove, [5, 0]),
+  (prev, nexMove) => addMoveToChessHistory(prev, nexMove, [5, 0])[0],
   historyWithBranches
 );
 
@@ -153,25 +154,24 @@ const anotherNestedMoves1Gen = [
 ] as const;
 
 const historyWithParallelBranches = anotherNestedMoves1Gen.reduce(
-  (prev, nexMove) => addMoveToChessHistory(prev, nexMove, [2, 1]),
+  (prev, nexMove) => addMoveToChessHistory(prev, nexMove, [2, 1])[0],
   historyWithBranches
 );
 
-export const withParallelNestedBranches = () =>
-  React.createElement(() => {
-    const [focusedIndex, setFocusedIndex] = useState<ChessHistoryIndex>(2);
+export const withParallelNestedBranches = () => React.createElement(() => {
+  const [focusedIndex, setFocusedIndex] = useState<ChessHistoryIndex>(2);
 
-    return (
-      <StorybookBaseProvider>
-        <div style={{}}>
-          <GameHistory
-            history={historyWithParallelBranches}
-            focusedIndex={focusedIndex}
-            onRefocus={setFocusedIndex}
-          />
-        </div>
-      </StorybookBaseProvider>
-    );
+  return (
+  <StorybookBaseProvider>
+    <div style={{}}>
+      <GameHistory
+        history={historyWithParallelBranches}
+        focusedIndex={focusedIndex}
+        onRefocus={setFocusedIndex}
+      />
+    </div>
+  </StorybookBaseProvider>
+);
   });
 
 const nestedMoves2Gen = [
@@ -199,7 +199,7 @@ const nestedMoves2Gen = [
 ] as const;
 
 const historyWithBranches2Gen = nestedMoves2Gen.reduce(
-  (prev, nexMove, index) => addMoveToChessHistory(prev, nexMove, [2, 0, [0, 0]]),
+  (prev, nexMove, index) => addMoveToChessHistory(prev, nexMove, [2, 0, [0, 0]])[0],
   historyWithBranches
 );
 

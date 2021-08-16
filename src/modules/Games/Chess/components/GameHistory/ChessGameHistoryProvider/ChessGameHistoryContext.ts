@@ -1,4 +1,4 @@
-import { ChessHistory } from 'dstnd-io';
+import { ChessHistory, ChessHistoryMove } from 'dstnd-io';
 import { createContext } from 'react';
 import { ChessHistoryIndex } from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
 
@@ -12,6 +12,8 @@ export type ChessGameHistoryContextProps = {
   // | [moveIndex branchIndex nestedMoveIndex]
   // | [moveIndex branchIndex [nestedMoveIndex nestedBranchIndex nestedNestedMoveIndex]]
   onRefocus: (nextIndex: ChessHistoryIndex) => void;
+
+  onAddMove: (move: ChessHistoryMove, atIndex: ChessHistoryIndex, withRefocus?: boolean) => void;
 };
 
 export const ChessGameHistoryContext = createContext<ChessGameHistoryContextProps>({
@@ -19,5 +21,6 @@ export const ChessGameHistoryContext = createContext<ChessGameHistoryContextProp
   displayedIndex: 0,
   displayedHistory: [],
   onReset: () => {},
-  onRefocus: (_: ChessHistoryIndex) => {},
+  onRefocus: () => {},
+  onAddMove: () => {},
 });
