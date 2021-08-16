@@ -90,7 +90,7 @@ export const HistoryRow: React.FC<Props> = ({
                 }}
                 key={`${whiteMove.san}-branch-${branchIndex}`}
                 className={cls.nestedHistory}
-                rootPairedIndex={pairedIndex}
+                rootPairedIndex={pairedIndex + 1}
                 focusedIndex={focusedIndexPerBranch}
               />
             );
@@ -127,7 +127,7 @@ export const HistoryRow: React.FC<Props> = ({
             }}
             key={`${blackMove.san}-branch-${branchIndex}`}
             className={cls.nestedHistory}
-            rootPairedIndex={pairedIndex}
+            rootPairedIndex={pairedIndex + 1}
             focusedIndex={focusedIndexPerBranch}
           />
         );
