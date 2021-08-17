@@ -6,7 +6,6 @@ import { second } from 'src/lib/time';
 import { pgnToChessHistory } from 'src/mocks/records';
 import {
   addMoveToChessHistory,
-  ChessAnalyisHistory,
   ChessHistoryIndex,
 } from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
@@ -158,20 +157,21 @@ const historyWithParallelBranches = anotherNestedMoves1Gen.reduce(
   historyWithBranches
 );
 
-export const withParallelNestedBranches = () => React.createElement(() => {
-  const [focusedIndex, setFocusedIndex] = useState<ChessHistoryIndex>(2);
+export const withParallelNestedBranches = () =>
+  React.createElement(() => {
+    const [focusedIndex, setFocusedIndex] = useState<ChessHistoryIndex>(2);
 
-  return (
-  <StorybookBaseProvider>
-    <div style={{}}>
-      <GameHistory
-        history={historyWithParallelBranches}
-        focusedIndex={focusedIndex}
-        onRefocus={setFocusedIndex}
-      />
-    </div>
-  </StorybookBaseProvider>
-);
+    return (
+      <StorybookBaseProvider>
+        <div style={{}}>
+          <GameHistory
+            history={historyWithParallelBranches}
+            focusedIndex={focusedIndex}
+            onRefocus={setFocusedIndex}
+          />
+        </div>
+      </StorybookBaseProvider>
+    );
   });
 
 const nestedMoves2Gen = [

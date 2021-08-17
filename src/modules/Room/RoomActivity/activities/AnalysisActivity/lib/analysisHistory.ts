@@ -105,6 +105,35 @@ export const addMoveToChessHistory = (
   return [nextHistory, nextHistory.length - 1];
 };
 
+// Adds a new move from the given index at the next availalbe slot
+//  In case of a nested move it simply adds a new branch if the move not already there
+//  If the move is already present as a following move (on the main or branched histories) it simply refocuses
+//  Otherwise it appends it to the given history
+export const addMoveToChessHistoryAtNextAvailableIndex = (
+  history: ChessAnalysisHistory,
+  atIndex: ChessHistoryIndex,
+  move: ChessHistoryMove
+) => {
+  const lastIndexInBranch = getBranchedHistoryLastIndex(history, atIndex);
+  // If the Branched History atIndex is the last one or not given, just append it to the current history branch
+  if (!(normalizeChessHistoryIndex(atIndex) < normalizeChessHistoryIndex(lastIndexInBranch))) {
+    return addMoveToChessHistory(history, move, atIndex);
+  }
+
+  const foundFollowingMoveAndIndex = getAllFollowingMoves(history, atIndex).find(
+    ([m]) => m.san === move.san
+  );
+
+  // If the move is the same as an already following history branch just refocus on it
+  if (foundFollowingMoveAndIndex) {
+    const [_, followingFoundIndex] = foundFollowingMoveAndIndex;
+    return [history, followingFoundIndex] as const;
+  }
+
+  // Otherwise add a parallel history branch for the move
+  return addMoveToChessHistory(history, move, getNextAvailableParallelIndex(history, atIndex));
+};
+
 export const getChessHistoryAtIndex = (
   history: RecursiveChessHistory,
   index?: ChessHistoryIndex

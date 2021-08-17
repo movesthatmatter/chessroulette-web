@@ -4,11 +4,11 @@ import cx from 'classnames';
 import { spacers } from 'src/theme/spacers';
 import { colors, softBorderRadius } from 'src/theme';
 import { debounce } from 'debounce';
-import { ChessAnalyisHistory } from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
+import { ChessAnalysisHistory } from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
 import { HistoryList, HistoryListProps } from './components/HistoryList';
 
 export type GameHistoryProps = {
-  history: ChessAnalyisHistory;
+  history: ChessAnalysisHistory;
   focusedIndex: HistoryListProps['focusedIndex'];
   onRefocus: HistoryListProps['onRefocus'];
 

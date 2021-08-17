@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  ChessAnalyisHistory,
+  ChessAnalysisHistory,
   ChessHistoryIndex,
 } from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
 import {
@@ -15,7 +15,7 @@ import {
 import { HistoryRow } from './HistoryRow';
 
 export type HistoryListProps = {
-  history: ChessAnalyisHistory;
+  history: ChessAnalysisHistory;
   onRefocus: (nextIndex: ChessHistoryIndex) => void;
   focusedIndex?: ChessHistoryIndex;
   className?: string;
