@@ -1,11 +1,10 @@
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { seconds } from 'src/lib/time';
 import { pgnToChessHistory } from 'src/mocks/records';
-import { console } from 'window-or-global';
-import { addMoveToChessHistory, ChessAnalyisHistory } from '../analysisHistory';
+import { addMoveToChessHistory, ChessAnalysisHistory } from '../analysisHistory';
 
 test('empty history', () => {
-  const history: ChessAnalyisHistory = [];
+  const history: ChessAnalysisHistory = [];
 
   const move = {
     from: 'e2',
@@ -27,7 +26,7 @@ test('empty history', () => {
 test('adds a further move', () => {
   const pgn = '1. e4 c5 2. Nf3';
 
-  const history: ChessAnalyisHistory = pgnToChessHistory(pgn, {
+  const history: ChessAnalysisHistory = pgnToChessHistory(pgn, {
     white: chessGameTimeLimitMsMap.blitz3,
     black: chessGameTimeLimitMsMap.blitz3,
   });
@@ -52,7 +51,7 @@ test('adds a further move', () => {
 test('adds a single branched move as white', () => {
   const pgn = '1. e4 c5 2. Nf3';
 
-  const originalHistory: ChessAnalyisHistory = pgnToChessHistory(pgn, {
+  const originalHistory: ChessAnalysisHistory = pgnToChessHistory(pgn, {
     white: chessGameTimeLimitMsMap.blitz3,
     black: chessGameTimeLimitMsMap.blitz3,
   });
@@ -91,7 +90,7 @@ test('adds a single branched move as white', () => {
 test('adds a single branched move as black', () => {
   const pgn = '1. e4 c5 2. Nf3 Nf6';
 
-  const originalHistory: ChessAnalyisHistory = pgnToChessHistory(pgn, {
+  const originalHistory: ChessAnalysisHistory = pgnToChessHistory(pgn, {
     white: chessGameTimeLimitMsMap.blitz3,
     black: chessGameTimeLimitMsMap.blitz3,
   });
@@ -131,7 +130,7 @@ test('adds multiple consecutive moves in one branch', () => {
   const pgn = '1. e4 c5 2. Nf3 Nf6 3. a4 a6';
   // const pgn = '1. e4 c5';
 
-  const originalHistory: ChessAnalyisHistory = pgnToChessHistory(pgn, {
+  const originalHistory: ChessAnalysisHistory = pgnToChessHistory(pgn, {
     white: chessGameTimeLimitMsMap.blitz3,
     black: chessGameTimeLimitMsMap.blitz3,
   });
@@ -194,7 +193,7 @@ test('adds multiple consecutive moves in one branch', () => {
 test('adds one move in a nested branch', () => {
   const pgn = '1. e4 c5 2. Nf3 Nf6 3. a4 a6';
 
-  const originalHistory: ChessAnalyisHistory = pgnToChessHistory(pgn, {
+  const originalHistory: ChessAnalysisHistory = pgnToChessHistory(pgn, {
     white: chessGameTimeLimitMsMap.blitz3,
     black: chessGameTimeLimitMsMap.blitz3,
   });
@@ -269,7 +268,7 @@ test('adds one move in a nested branch', () => {
 test('adds one move in a parallel branch', () => {
   const pgn = '1. e4 c5 2. Nf3 Nf6 3. a4 a6';
 
-  const originalHistory: ChessAnalyisHistory = pgnToChessHistory(pgn, {
+  const originalHistory: ChessAnalysisHistory = pgnToChessHistory(pgn, {
     white: chessGameTimeLimitMsMap.blitz3,
     black: chessGameTimeLimitMsMap.blitz3,
   });
@@ -332,10 +331,11 @@ test('adds one move in a parallel branch', () => {
       historyWithOneBranchedMove
     );
 
-  const [actualHistory, actualIndex] = addMoveToChessHistory(historyWithAnoterBranchedMove, movesBranch2.slice(-1)[0], [
-    displayedMoveIndex,
-    branchIndex,
-  ]);
+  const [actualHistory, actualIndex] = addMoveToChessHistory(
+    historyWithAnoterBranchedMove,
+    movesBranch2.slice(-1)[0],
+    [displayedMoveIndex, branchIndex]
+  );
 
   const expectedHistory = [
     ...originalHistory.slice(0, displayedMoveIndex),
