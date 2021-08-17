@@ -1,6 +1,6 @@
-import { ChessAnalyisHistory } from '../analysisHistory';
+import { ChessAnalysisHistory } from './analysisHistory';
 
-export const printHistory = (h: ChessAnalyisHistory, baseIndex: number = 0) => {
+export const printHistory = (h: ChessAnalysisHistory, baseIndex: number = 0) => {
   console.group('Printing  History:');
   h.forEach((m, i) => {
     const index = baseIndex + i;

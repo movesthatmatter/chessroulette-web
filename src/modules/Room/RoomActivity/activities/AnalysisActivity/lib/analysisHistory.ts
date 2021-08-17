@@ -1,16 +1,15 @@
 import { ChessHistory, ChessHistoryMove } from 'dstnd-io';
-import { console, indexedDB, Number } from 'window-or-global';
 
 // @deprecate in favor NestedChessHistoryMove
 export type ChessAnalysisMove = ChessHistoryMove & {
-  branchedHistories?: ChessAnalyisHistory[] | undefined;
+  branchedHistories?: ChessAnalysisHistory[] | undefined;
 };
 
 // @deprecate in favor of NestedChessHistory
-export type ChessAnalyisHistory = ChessAnalysisMove[];
+export type ChessAnalysisHistory = ChessAnalysisMove[];
 
 export type RecursiveChessHistoryMove = ChessAnalysisMove;
-export type RecursiveChessHistory = ChessAnalyisHistory;
+export type RecursiveChessHistory = ChessAnalysisHistory;
 
 export type LinearChessHistory = ChessHistory;
 
@@ -35,10 +34,10 @@ export const getNestedChessHistoryIndex = (i: ChessHistoryIndex): ChessHistoryIn
   typeof i !== 'number' ? i[2] : undefined;
 
 export const addMoveToChessHistory = (
-  history: ChessAnalyisHistory,
+  history: ChessAnalysisHistory,
   m: ChessHistoryMove,
   chessHistoryIndex?: ChessHistoryIndex
-): [nextHistory: ChessAnalyisHistory, nextIndex: ChessHistoryIndex] => {
+): [nextHistory: ChessAnalysisHistory, nextIndex: ChessHistoryIndex] => {
   if (isBranchedHistoryIndex(chessHistoryIndex)) {
     const [moveIndex, branchIndex, nestedBranchedHistoryOrMoveIndex] = chessHistoryIndex;
 
@@ -145,6 +144,113 @@ export const getChessHistoryAtIndex = (
   ];
 };
 
+export const getMoveAtIndex = (
+  history: ChessAnalysisHistory,
+  index?: ChessHistoryIndex
+): undefined | ChessAnalysisMove => {
+  if (index === undefined) {
+    return undefined;
+  }
+
+  if (typeof index === 'number') {
+    return history[index];
+  }
+
+  const [moveIndex, branchIndex, nestedBranchedHistoryOrMoveIndex] = index;
+
+  const move = history[moveIndex];
+
+  if (!move) {
+    return undefined; // return undefined
+  }
+
+  // If the move doesn't have branches return undefined
+  if (!move.branchedHistories) {
+    return undefined;
+  }
+
+  // If the given branch doesn't exist just return undefined
+  if (!move.branchedHistories[branchIndex]) {
+    return undefined;
+  }
+
+  return getMoveAtIndex(move.branchedHistories[branchIndex], nestedBranchedHistoryOrMoveIndex);
+};
+
+export const getMainFollowingMove = (history: ChessAnalysisHistory, atIndex: ChessHistoryIndex) => {
+  const followingIndex = incrementChessHistoryIndex(atIndex);
+  const followingMove = getMoveAtIndex(history, followingIndex);
+
+  return followingMove ? ([followingMove, followingIndex] as const) : undefined;
+};
+
+export const getAlternativeFollowingMoves = (
+  history: ChessAnalysisHistory,
+  atIndex: ChessHistoryIndex
+): [ChessAnalysisMove, ChessHistoryIndex][] => {
+  const move = getMoveAtIndex(history, atIndex);
+
+  if (!(move && move.branchedHistories)) {
+    return [];
+  }
+
+  const deconstructedAtIndex: (BranchedHistoryIndex | number)[] = [];
+  every(atIndex, (i) => deconstructedAtIndex.push(i), { reverse: true });
+
+  return move.branchedHistories
+    .map((branch, branchIndex) => {
+      const branchMoveIndex = 0;
+      const followingMove = branch[branchMoveIndex];
+
+      if (!followingMove) {
+        return undefined;
+      }
+
+      const reconstructedFollowingMoveIndex = deconstructedAtIndex.reduce((prev, nextIndex) => {
+        // First position only
+        if (typeof nextIndex === 'number') {
+          return [nextIndex, branchIndex, 0];
+        }
+
+        return [nextIndex[0], nextIndex[1], prev];
+      }, ([] as unknown) as BranchedHistoryIndex);
+
+      return [followingMove, reconstructedFollowingMoveIndex] as const;
+    })
+    .filter((m) => !!m) as [ChessAnalysisMove, ChessHistoryIndex][];
+};
+
+// The fn params:
+//   - i as number -> means it's the last one,
+//   - i as BranchHistoryIndex -> means it has another nested one
+export const every = (
+  index: ChessHistoryIndex,
+  fn: (i: BranchedHistoryIndex | number) => void,
+  p: { reverse?: boolean } = {}
+) => {
+  if (typeof index === 'number') {
+    fn(index);
+    return;
+  }
+
+  const [moveIndex, branchIndex, nestedBranchedIndex] = index;
+
+  if (p.reverse) {
+    every(nestedBranchedIndex || 0, fn, p);
+    fn([moveIndex, branchIndex]);
+  } else {
+    fn([moveIndex, branchIndex]);
+    every(nestedBranchedIndex || 0, fn, p);
+  }
+};
+
+export const getAllFollowingMoves = (history: ChessAnalysisHistory, atIndex: ChessHistoryIndex) => {
+  const mainFollowingMove = getMainFollowingMove(history, atIndex);
+  const alternativeFollowingMoves = getAlternativeFollowingMoves(history, atIndex);
+
+  return [...(mainFollowingMove ? [mainFollowingMove] : []), ...alternativeFollowingMoves];
+};
+
 export const incrementChessHistoryIndex = (index?: ChessHistoryIndex): ChessHistoryIndex => {
   if (index === undefined) {
     return 0;
@@ -228,9 +334,9 @@ export const getChessHistoryMoveIndex = (index?: ChessHistoryIndex): number => {
 };
 
 export const getHistoryBranch = (
-  history: ChessAnalyisHistory,
+  history: ChessAnalysisHistory,
   fromIndex?: ChessHistoryIndex
-): ChessAnalyisHistory => {
+): ChessAnalysisHistory => {
   // If it's already a number (moveIndex) the actual history is the correct branch
   if (typeof fromIndex === 'number' || fromIndex === undefined) {
     return history;
@@ -262,7 +368,7 @@ export const getHistoryBranch = (
 };
 
 export const getBranchedHistoryLastIndex = (
-  history: ChessAnalyisHistory,
+  history: ChessAnalysisHistory,
   fromIndex?: ChessHistoryIndex
 ): ChessHistoryIndex => {
   // If it's already a number (moveIndex) the actual history is the correct branch
@@ -299,18 +405,60 @@ export const getBranchedHistoryLastIndex = (
   ];
 };
 
-// const isEqual = (aIndex?: ChessHistoryIndex, bIndex?: ChessHistoryIndex): boolean => {
-//   if (aIndex === undefined && bIndex === undefined) {
-//     return true;
-//   }
+export const incrementChessHistoryBranchIndex = (
+  index: BranchedHistoryIndex
+): BranchedHistoryIndex => {
+  const [moveIndex, branchIndex, nestedBranchIndex] = index;
 
-//   if (typeof aIndex === 'number' && typeof bIndex === 'number') {
-//     return aIndex === bIndex;
-//   }
+  if (isBranchedHistoryIndex(nestedBranchIndex)) {
+    return [moveIndex, branchIndex, incrementChessHistoryBranchIndex(nestedBranchIndex)];
+  }
 
-//   if (isBranchedHistoryIndex(aIndex) && isBranchedHistoryIndex(bIndex)) {
-//     return aIndex[0] === bIndex[0] && aIndex[1] === bIndex[1] && isEqual(aIndex[2], bIndex[2]);
-//   }
+  return [moveIndex, branchIndex + 1];
+};
 
-//   return false;
-// };
+export const getNextAvailableParallelIndex = (
+  history: ChessAnalysisHistory,
+  fromIndex?: ChessHistoryIndex
+): ChessHistoryIndex => {
+  // If the index isn't given the next avaialable position is at the end of history
+  if (fromIndex === undefined) {
+    return history.length;
+  }
+
+  if (typeof fromIndex === 'number') {
+    const move = history[fromIndex];
+
+    if (!move) {
+      return history.length;
+    }
+
+    // If the move exists than the next available index is within a new nested branch inside the move
+    return [fromIndex, (move.branchedHistories || []).length];
+  }
+
+  const [moveIndex, branchIndex, nestedBranchOrMoveIndex] = fromIndex;
+
+  const move = history[moveIndex];
+
+  if (!move) {
+    return history.length;
+  }
+
+  // If there aren't any branches the nestedBranchOrMoveIndex doesn't matter
+  //  just return the next available branch (which is the 1st one)
+  if (!move.branchedHistories) {
+    return [moveIndex, 0];
+  }
+
+  // If the branch index is out of range return the next available one
+  if (!move.branchedHistories[branchIndex]) {
+    return [moveIndex, move.branchedHistories.length];
+  }
+
+  return [
+    moveIndex,
+    branchIndex,
+    getNextAvailableParallelIndex(move.branchedHistories[branchIndex], nestedBranchOrMoveIndex),
+  ];
+};
