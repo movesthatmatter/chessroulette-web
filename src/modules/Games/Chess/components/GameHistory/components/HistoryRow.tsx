@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Ref, useRef } from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
@@ -29,6 +29,7 @@ export const HistoryRow: React.FC<Props> = ({
   focusedIndex,
 }) => {
   const cls = useStyles();
+
   const moveCount = pairedIndex + 1;
 
   const [whiteMove, blackMove] = isPartialBlackMove(pairedMove)
@@ -107,10 +108,7 @@ export const HistoryRow: React.FC<Props> = ({
 
   return (
     <div className={cls.container}>
-      <div
-        className={cx(cls.row, className)}
-        // ref={(b) => (rowElementRefs.current[index] = b)}
-      >
+      <div className={cx(cls.row, className)}>
         <Text className={cx(cls.text, cls.rowIndex)}>{`${moveCount}.`}</Text>
         {whiteMove ? (
           <Text

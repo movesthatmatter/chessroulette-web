@@ -13,7 +13,7 @@ export type GameHistoryProps = {
   onRefocus: HistoryListProps['onRefocus'];
 
   className?: string;
-  
+
   // @deprecated
   showRows?: number;
 };
@@ -41,9 +41,14 @@ export const GameHistory: React.FC<GameHistoryProps> = ({
     <div className={cls.container}>
       <div className={cx(cls.main, props.className)}>
         <div className={cls.spacer} />
-        <div className={cls.content}>
-          <HistoryList history={history} focusedIndex={focusedIndex} onRefocus={onRefocus} />
-        </div>
+        {/* <div className={cls.content}> */}
+        <HistoryList
+          history={history}
+          focusedIndex={focusedIndex}
+          onRefocus={onRefocus}
+          className={cls.content}
+        />
+        {/* </div> */}
       </div>
     </div>
   );
