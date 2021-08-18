@@ -12,8 +12,6 @@ import {
   getBranchedHistoryLastIndex,
   addMoveToChessHistoryAtNextAvailableIndex,
 } from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
-import { console } from 'window-or-global';
-import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 
 type Props = {
   history: ChessHistory;
@@ -48,18 +46,6 @@ export const ChessGameHistoryProvider: React.FC<Props> = ({
   const onAddMove = useCallback(
     (move: ChessHistoryMove, atIndex: ChessHistoryIndex, withRefocus = true) => {
       setContextState((prev) => {
-        // console.group('[Analysis] add move', move.san);
-        // console.log('current AtIndex:', atIndex);
-        // console.log('adding at index:', addingAtIndex);
-        // console.group('isBranchedHistoryIndex', isBranchedHistoryIndex(atIndex));
-        // console.log(
-        //   'isLowerThan last',
-        //   normalizeChessHistoryIndex(lastIndexInBranch),
-        //   normalizeChessHistoryIndex(atIndex),
-        //   normalizeChessHistoryIndex(lastIndexInBranch) < normalizeChessHistoryIndex(atIndex)
-        // );
-        // console.groupEnd();
-
         const [nextHistory, addedAtIndex] = addMoveToChessHistoryAtNextAvailableIndex(
           prev.history,
           atIndex,
@@ -90,17 +76,6 @@ export const ChessGameHistoryProvider: React.FC<Props> = ({
   });
 
   useEffect(() => {
-    console.group('[HistoryProvider] context updated');
-    console.log('new history as pgn', chessHistoryToSimplePgn(contextState.history));
-    console.log('new displayed index', contextState.displayedIndex);
-    console.log(
-      'new displayed history as pgn',
-      chessHistoryToSimplePgn(contextState.displayedHistory)
-    );
-    console.groupEnd();
-  }, [contextState]);
-
-  useEffect(() => {
     if (resetOnUpdate) {
       onReset();
     }
@@ -121,7 +96,7 @@ export const ChessGameHistoryProvider: React.FC<Props> = ({
 
     if (event.key === 'ArrowRight' && normalizedDisplayedIndex < normalizedLastInCurrentBranch) {
       onRefocus(incrementChessHistoryIndex(contextState.displayedIndex));
-    } else if (event.key === 'ArrowLeft' && normalizedDisplayedIndex > 0) {
+    } else if (event.key === 'ArrowLeft' && normalizedDisplayedIndex >= 0) {
       onRefocus(decrementChessHistoryIndex(contextState.displayedIndex));
     }
   });
