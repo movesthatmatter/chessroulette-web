@@ -28,12 +28,11 @@ export class UserRecordMocker {
         name,
         avatarId: String(getRandomInt(1, 18)),
         isGuest: true,
-        sid: String(new Date().getTime()),
       };
     }
 
-    const email = chance.email();
-    const externalAccountId = chance.guid();
+    // const email = chance.email();
+    // const externalAccountId = chance.guid();
 
     const countryCode = objectKeys(countries)[getRandomInt(0, Object.keys(countries).length - 1)];
     const country = countries[countryCode];
@@ -41,14 +40,12 @@ export class UserRecordMocker {
     return {
       id,
       isGuest: false,
-      email,
       firstName,
       lastName,
       name,
       avatarId: String(getRandomInt(1, 18)),
       profilePicUrl: undefined,
-      externalAccounts: undefined,
-      username:  camelcase(`${chance.animal()} ${chance.integer({ min: 1, max: 999 })}`),
+      username: camelcase(`${chance.animal()} ${chance.integer({ min: 1, max: 999 })}`),
       country: {
         name: country.name,
         languages: country.languages,
