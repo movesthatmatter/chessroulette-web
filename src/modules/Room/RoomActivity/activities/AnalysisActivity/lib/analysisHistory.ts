@@ -1,15 +1,13 @@
-import { ChessHistory, ChessHistoryMove } from 'dstnd-io';
+import {
+  ChessHistory,
+  ChessHistoryMove,
+  ChessRecursiveHistory,
+  ChessRecursiveMove,
+} from 'dstnd-io';
 
-// @deprecate in favor NestedChessHistoryMove
-export type ChessAnalysisMove = ChessHistoryMove & {
-  branchedHistories?: ChessAnalysisHistory[] | undefined;
-};
-
-// @deprecate in favor of NestedChessHistory
-export type ChessAnalysisHistory = ChessAnalysisMove[];
-
-export type RecursiveChessHistoryMove = ChessAnalysisMove;
-export type RecursiveChessHistory = ChessAnalysisHistory;
+// @deprecate in favor of ChessRecursiveHistory
+export type ChessAnalysisHistory = ChessRecursiveHistory;
+export type ChessAnalysisMove = ChessRecursiveMove;
 
 export type LinearChessHistory = ChessHistory;
 
@@ -135,7 +133,7 @@ export const addMoveToChessHistoryAtNextAvailableIndex = (
 };
 
 export const getChessHistoryAtIndex = (
-  history: RecursiveChessHistory,
+  history: ChessRecursiveHistory,
   index?: ChessHistoryIndex
 ): LinearChessHistory => {
   if (index === undefined) {
@@ -171,6 +169,29 @@ export const getChessHistoryAtIndex = (
       nestedBranchedHistoryOrMoveIndex
     ),
   ];
+};
+
+export const getBranchAtIndex = (
+  history: ChessAnalysisHistory,
+  index: ChessHistoryIndex
+): undefined | ChessAnalysisHistory => {
+  // If number just return the history (aka the main branch)
+  if (typeof index === 'number') {
+    return history;
+  }
+
+  const [moveIndex, branchIndex, nestedIndex] = index;
+  const branch = history[moveIndex]?.branchedHistories?.[branchIndex];
+
+  if (!branch) {
+    return undefined;
+  }
+
+  if (!isBranchedHistoryIndex(nestedIndex)) {
+    return branch;
+  }
+
+  return getBranchAtIndex(branch, nestedIndex);
 };
 
 export const getMoveAtIndex = (

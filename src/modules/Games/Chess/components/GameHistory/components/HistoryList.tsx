@@ -4,12 +4,9 @@ import {
   ChessHistoryIndex,
 } from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
 import {
-  linearToPairedIndex,
+  isPartialBlackMove,
   PairedHistory,
-  pairedHistoryToHistory,
-  PairedIndex,
   pairedToLinearIndex,
-  reversedLinearIndex,
   toPairedHistory,
 } from '../../../lib';
 import { HistoryRow } from './HistoryRow';
@@ -30,45 +27,25 @@ export const HistoryList: React.FC<HistoryListProps> = ({
   rootPairedIndex = 0,
 }) => {
   const [pairedHistory, setPairedHistory] = useState<PairedHistory>([]);
-  const [focus, setFocus] = useState<PairedIndex>([-1, -1]);
 
   useEffect(() => {
-    if (history) {
-      setPairedHistory(
-        toPairedHistory([
-          // getChessHistoryEmptyMove(),
-          ...history,
-        ])
-      );
-
-      if (typeof focusedIndex === 'number') {
-        setFocus(linearToPairedIndex(history, focusedIndex));
-      }
-      // const currentRowElm = rowElementRefs.current[linearToPairedIndex(history, focusedIndex)[0]];
-      // if (currentRowElm) {
-      //   scrollIntoView(currentRowElm);
-      // }
-    } else {
-      setPairedHistory([]);
-    }
-  }, [history, focusedIndex]);
-  // const rowElementRefs = useRef<Record<number, HTMLDivElement | null>>({});
+    setPairedHistory(toPairedHistory(history));
+  }, [history]);
 
   return (
     <div className={className}>
       {pairedHistory.map((pairedMove, index) => (
         <HistoryRow
-          key={`${pairedMove[0]?.san}-${pairedMove[1]?.san || ''}`}
+          key={`${pairedMove[0].san}-${pairedMove[1]?.san || ''}`}
           pairedMove={pairedMove}
           pairedIndex={rootPairedIndex + index}
-          isActive={
-            focus[0] === index && focus[1] === 0
-              ? 'white'
-              : focus[0] === index && focus[1] === 1
-              ? 'black'
-              : undefined
+          startingLinearIndex={
+            isPartialBlackMove(pairedHistory[0])
+              ? // If the history starts with a black move the index needs to be altered
+                //  but have no idea how come it needs to be substracted not added
+                pairedToLinearIndex([index, 0]) - 1
+              : pairedToLinearIndex([index, 0])
           }
-          whiteMoveLinearIndex={pairedToLinearIndex([index, 0])}
           focusedIndex={focusedIndex}
           onFocus={onRefocus}
         />
