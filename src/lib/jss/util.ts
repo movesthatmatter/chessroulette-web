@@ -1,10 +1,22 @@
-import { CSSProperties } from "./types";
+import { isObject } from '../util';
+import { CSSProperties } from './types';
 
-export const makeImportant = (css: CSSProperties) => {
+type CSSObject = Record<string, CSSProperties>;
+
+export const makeImportant = (css: CSSProperties): CSSObject => {
   return Object.keys(css).reduce((accum, key) => {
+    const valueAsStringOrNestedCSS = (css as any)[key];
+
+    if (isObject(valueAsStringOrNestedCSS)) {
+      return {
+        ...accum,
+        [key]: makeImportant(valueAsStringOrNestedCSS),
+      };
+    }
+
     return {
       ...accum,
-      [key]: `${(css as any)[key]} !important`,
-    } as { [k: string]: CSSProperties };
-  }, {} as { [k: string]: CSSProperties });
-}
+      [key]: `${valueAsStringOrNestedCSS} !important`,
+    } as CSSObject;
+  }, {} as CSSObject);
+};
