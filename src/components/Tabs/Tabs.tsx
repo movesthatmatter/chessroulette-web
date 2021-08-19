@@ -27,6 +27,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, onTabChanged = noop, currentTa
       <div className={cls.tabBar}>
         {tabs.map((tab, index) => (
           <div
+            key={tab.title}
             className={cls.tabButton}
             onClick={() => {
               onTabChanged(index);
