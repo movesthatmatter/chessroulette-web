@@ -66,3 +66,11 @@ export const useUserAuthentication = () => {
 
   return undefined;
 };
+
+export const useAuthenticatedUserWithLichessAccount = () => {
+  const user = useAnyUser();
+  if (!user?.isGuest && user?.externalAccounts?.lichess){
+    return user;
+  }
+  return undefined;
+}
