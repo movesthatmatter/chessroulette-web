@@ -83,7 +83,7 @@ export type LichessChallenge = {
 }
 
 export type LichessChallengeEvent = {
-  type : 'challenge' | 'challengeAccepted' | 'challengeDeclined';
+  type : 'challenge' | 'challengeAccepted' | 'challengeDeclined' | 'challengeCancelled';
   challenge: LichessChallenge
 }
 

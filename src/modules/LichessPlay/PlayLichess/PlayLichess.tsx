@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { AuthenticatedPage, LichessAuthenticatedPage, Page } from 'src/components/Page';
-import { getInstance as getLichessGameManager, LichessManagerType } from '../LichessGameManager';
 import { Button } from 'src/components/Button';
 import useInstance from '@use-it/instance';
 import { ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
@@ -18,17 +17,17 @@ import { updateGameWithNewStateFromLichess } from '../utils';
 type Props = Pick<PlayProps, 'displayedPgn' | 'game' | 'meAsPlayer' | 'playable'>
 
 export const PlayLichess: React.FC<Props> = (props) => {
-  const [game, setGame] = useState<Game>(new GameMocker().record());
+  const [game, setGame] = useState<Game | undefined>(undefined);
   const [challenge, setChallenge] = useState<LichessChallenge | undefined>(undefined);
   const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
   const lichess = useLichessProvider();
 
   useEffect(() => {
-    lichess?.onNewGame(({game, homeColor}) => {
-      setGame(game);
-      setHomeColor(homeColor);
-    })
-    lichess?.onGameUpdate(({gameState}) => setGame(updateGameWithNewStateFromLichess(game, gameState)));
+      lichess?.onNewGame(({game, homeColor}) => {
+        setGame(game);
+        setHomeColor(homeColor);
+      })
+      lichess?.onGameUpdate(({gameState}) => setGame(updateGameWithNewStateFromLichess(game as Game, gameState)));
   }, []);
 
   if (!lichess) {
@@ -42,7 +41,9 @@ export const PlayLichess: React.FC<Props> = (props) => {
   // }
 
   const onMove = (p : { move: ChessMove; fen: ChessGameStateFen; pgn: ChessGameStatePgn }) => {
-    lichess.makeMove(p.move, game.id);
+    if (game){
+      lichess.makeMove(p.move, game.id);
+    }
   };
 
 
@@ -54,7 +55,7 @@ export const PlayLichess: React.FC<Props> = (props) => {
         challenge={challenge}
         state={game.state}
       > */}
-        <LichessGame
+        {game && <LichessGame
               // Reset the State each time the game id changes
               key={game.id}
               game={game}
@@ -64,7 +65,7 @@ export const PlayLichess: React.FC<Props> = (props) => {
               playable
               onMove={onMove}
               //className={cls.board}
-            />
+            />}
         {/* <ChessBoard
           id={lichessManager.lichessGame?.id || new Date().getTime().toString()}
           onMove={({ move }) => onMove(move)}

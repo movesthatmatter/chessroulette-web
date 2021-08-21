@@ -3,7 +3,8 @@ import { ChessGameColor, ChessMove, GameSpecsRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { Game } from 'src/modules/Games';
 import { useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
-import { LichessManagerType, getInstance as getLichessManager } from '../LichessGameManager';
+import { LichessManager } from '../LichessGameManager';
+
 import { LichessGameState } from '../types';
 
 type LichessContext = {
@@ -21,7 +22,7 @@ type Props = {};
 export const LichessProvider: React.FC<Props> = (props) => {
   const auth = useAuthenticatedUserWithLichessAccount();
   const [contextState, setContextState] = useState<LichessContext>(undefined);
-  const lichessManager = useInstance<LichessManagerType>(getLichessManager);
+  // const lichessManager = useInstance<LichessManagerType>(getLichessManager);
 
   useEffect(() => {
     setContextState(() => {
@@ -29,31 +30,27 @@ export const LichessProvider: React.FC<Props> = (props) => {
         return undefined;
       }
      
-      lichessManager.init(auth);
+      const lichessManager = new LichessManager(auth);
 
       return {
         initAndChallenge : (gameSpecs) => {
-          lichessManager.startStreamAndChallenge(gameSpecs);
+          return lichessManager.startStreamAndChallenge(gameSpecs);
         },
         makeMove : (move, id) => {
-          lichessManager.makeMove(move, id);
+          return lichessManager.makeMove(move, id);
         },
         onChallengeAccepted : (fn: () => void) => {
-          lichessManager.onChallengeAccepted(fn);
+          return lichessManager.onChallengeAccepted(fn);
         },
         onGameUpdate: (fn : (data: {gameState: LichessGameState}) => void) => {
-          lichessManager.onGameUpdate(fn);
+          return lichessManager.onGameUpdate(fn);
         },
         onNewGame: (fn: (data: {game: Game, homeColor: ChessGameColor}) => void) => {
-          lichessManager.onNewGame(fn);
+          return lichessManager.onNewGame(fn);
         }
       }
     })
-  },[auth])
-
-  useEffect(() => {
-    
-  },[lichessManager])  
+  },[auth?.externalAccounts?.lichess.userId])
 
   return (
       <LichessContext.Provider value={contextState}>

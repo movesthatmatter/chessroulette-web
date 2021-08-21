@@ -26,6 +26,7 @@ import { Game } from '../Games';
 import { getHomeColor, lichessGameToChessRouletteGame, updateGameWithNewStateFromLichess } from './utils';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { console } from 'window-or-global';
+import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';
 
 type LichessManagerEvents = {
   onStreamStart: undefined;
@@ -36,24 +37,29 @@ type LichessManagerEvents = {
   onChallengeAccepted: undefined;
 };
 
+
 export class LichessManager {
  // lichessGame?: LichessGameFull;
  // activityLog = Array<string>();
   auth : RequestInit = {};
-  userId? : string;
-  user?: RegisteredUserRecord;
+  // userId? : string;
+  // user?: RegisteredUserRecord;
   challengeId?:string;
   private pubsy = new Pubsy<LichessManagerEvents>();
 
-  constructor() {}
-
-  init = (auth: NonNullable<RegisteredUserRecord>) => {
+  constructor(private user: RegisteredUserRecordWithLichessConnection) {
     this.auth = {
-      headers : { Authorization: `Bearer ` + auth.externalAccounts?.lichess?.accessToken }
+      headers : { Authorization: `Bearer ` + user.externalAccounts.lichess.accessToken }
     };
-    this.userId = auth.externalAccounts?.lichess?.userId;
-    this.user = auth;
   }
+
+  // init = (auth: NonNullable<RegisteredUserRecord>) => {
+  //   this.auth = {
+  //     headers : { Authorization: `Bearer ` + auth.externalAccounts?.lichess?.accessToken }
+  //   };
+  //   // this.userId = auth.externalAccounts?.lichess?.userId;
+  //   this.user = auth;
+  // }
 
   startStreamAndChallenge = (specs: GameSpecsRecord) => {
     console.log('START STREAM EVENT');
@@ -118,8 +124,8 @@ export class LichessManager {
 
       if (event.value.type === 'gameFull') {
         this.pubsy.publish( 'onNewGame', {
-          homeColor: getHomeColor(event.value,this.userId as string), 
-          game: lichessGameToChessRouletteGame(event.value, this.user!)
+          homeColor: getHomeColor(event.value, this.user.externalAccounts.lichess.userId), 
+          game: lichessGameToChessRouletteGame(event.value, this.user)
         })
 
         //TODO - this would check if there's no game in Redux, just in case we get another GameFull event not to trigger it again!
@@ -181,12 +187,12 @@ export class LichessManager {
   }
 }
 
-export type LichessManagerType = LichessManager;
+// export type LichessManagerType = LichessManager;
 
-let instance: LichessManager;
-export const getInstance = () => {
-  if (!instance) {
-    instance = new LichessManager();
-  }
-  return instance;
-};
+// let instance: LichessManager;
+// export const getInstance = () => {
+//   if (!instance) {
+//     instance = new LichessManager();
+//   }
+//   return instance;
+// };

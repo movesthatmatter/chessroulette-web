@@ -106,14 +106,14 @@ export const lichessGameToChessRouletteGame = (
         color: 'white',
         user:
           game.white.id === user.externalAccounts?.lichess?.userId
-            ? user
+            ? user // TODO: Convert this to UserInfo so not the whole user shows up
             : convertLichessToGuestUser(game.white),
       },
       {
         color: 'black',
         user:
           game.black.id === user.externalAccounts?.lichess?.userId
-            ? user
+            ? user // TODO: Convert this to UserInfo so not the whole user shows up
             : convertLichessToGuestUser(game.black),
       },
     ],
