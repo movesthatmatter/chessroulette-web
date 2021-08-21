@@ -3,7 +3,7 @@ import { AuthenticatedPage, LichessAuthenticatedPage, Page } from 'src/component
 import { getInstance as getLichessGameManager, LichessManagerType } from '../LichessGameManager';
 import { Button } from 'src/components/Button';
 import useInstance from '@use-it/instance';
-import { ChessMove } from 'dstnd-io';
+import { ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
 import { LichessChallenge } from '../types';
 import { LichessGameStateDialogProvider } from './components/LichessGameStateDialogProvider';
 import { useAuthenticatedUser } from 'src/services/Authentication';
@@ -13,20 +13,27 @@ import { GameMocker } from 'src/mocks/records';
 import { LichessGame } from 'src/modules/Games/Chess/components/LichessGame/LichessGame';
 import { PlayProps } from 'src/modules/Rooms/PlayRoom/Layouts';
 import { useLichessProvider } from '../LichessAPI/useLichessProvider';
+import { updateGameWithNewStateFromLichess } from '../utils';
 
 type Props = Pick<PlayProps, 'displayedPgn' | 'game' | 'meAsPlayer' | 'playable'>
 
 export const PlayLichess: React.FC<Props> = (props) => {
-  const lichess = useLichessProvider();
-  // const [chess, setChess] = useState<ChessInstance>(getNewChessGame());
-  // const [game, setGame] = useState<LichessGameFull | undefined>(undefined);
   const [game, setGame] = useState<Game>(new GameMocker().record());
   const [challenge, setChallenge] = useState<LichessChallenge | undefined>(undefined);
-  
+  const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
+  const lichess = useLichessProvider();
+
   useEffect(() => {
-   // startSubscriptions();
+    lichess?.onNewGame(({game, homeColor}) => {
+      setGame(game);
+      setHomeColor(homeColor);
+    })
+    lichess?.onGameUpdate(({gameState}) => setGame(updateGameWithNewStateFromLichess(game, gameState)));
   }, []);
 
+  if (!lichess) {
+    return null;
+  }
   // function startSubscriptions() {
   //  // lichessManager.startStream();
   //   // lichessManager.onUpdateChess(({ chess }) => setChess(chess));
@@ -34,9 +41,10 @@ export const PlayLichess: React.FC<Props> = (props) => {
   //   lichessManager.onChallenge(({ challenge }) => setChallenge(challenge));
   // }
 
-  const onMove = (move: ChessMove) => {
-    lichess!.makeMove(move);
+  const onMove = (p : { move: ChessMove; fen: ChessGameStateFen; pgn: ChessGameStatePgn }) => {
+    lichess.makeMove(p.move, game.id);
   };
+
 
 
   return (
@@ -51,9 +59,10 @@ export const PlayLichess: React.FC<Props> = (props) => {
               key={game.id}
               game={game}
               //displayedPgn={props.displayedPgn}
-              homeColor={'white'}
+              homeColor={homeColor}
               size={512}
               playable
+              onMove={onMove}
               //className={cls.board}
             />
         {/* <ChessBoard
