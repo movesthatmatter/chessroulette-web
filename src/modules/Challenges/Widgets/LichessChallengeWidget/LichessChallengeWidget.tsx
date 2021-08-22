@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Dialog } from 'src/components/Dialog/Dialog';
 import { CreateChallenge } from '../ChallengeWidget/components/CreateChallenge/CreateChallenge';
 import { useLichessProvider } from 'src/modules/LichessPlay/LichessAPI/useLichessProvider';
+import { console } from 'window-or-global';
 
 type Props = {
   onCancel: () => void;

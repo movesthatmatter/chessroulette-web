@@ -1,1 +1,1 @@
-export * from './LichessGameManager';
+export * from './LichessAPI/LichessGameManager';

@@ -3,7 +3,7 @@ import { ChessGameColor, ChessMove, GameSpecsRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { Game } from 'src/modules/Games';
 import { useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
-import { LichessManager } from '../LichessGameManager';
+import { LichessManager } from './LichessGameManager';
 
 import { LichessGameState } from '../types';
 
@@ -50,6 +50,9 @@ export const LichessProvider: React.FC<Props> = (props) => {
         }
       }
     })
+    return () => {
+      //TODO unsubscribe
+    }
   },[auth?.externalAccounts?.lichess.userId])
 
   return (

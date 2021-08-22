@@ -10,6 +10,7 @@ import config from './config';
 import { GA } from './services/Analytics';
 import { RouteEffects } from './RouteEffects';
 import { ScrollToTop } from './components/ScrollToTop';
+import { LichessProvider } from './modules/LichessPlay/LichessAPI/LichessProvider';
 
 function App() {
   useEffect(() => {
@@ -19,6 +20,7 @@ function App() {
   return (
     <ReduxProvider>
       <AuthenticationProvider>
+        <LichessProvider>
         <JssProvider
           // Prefix the Mounted classes but not the prerendered ones
           // This is to avoid style conflict between new and stale
@@ -34,6 +36,7 @@ function App() {
             <ScrollToTop />
           </ThemeProvider>
         </JssProvider>
+        </LichessProvider>
       </AuthenticationProvider>
     </ReduxProvider>
   );

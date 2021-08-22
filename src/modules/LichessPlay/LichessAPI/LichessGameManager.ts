@@ -6,8 +6,8 @@ import {
   getLichessStreamEvent,
   sendAChallenge,
   sendAMove,
-} from './resources';
-import { LichessGameState, NDJsonReader, LichessGameFull, LichessChallenge } from './types';
+} from '../resources';
+import { LichessGameState, NDJsonReader, LichessGameFull, LichessChallenge } from '../types';
 import { Pubsy } from 'src/lib/Pubsy';
 import { parseUci, makeUci, makeSquare, parseSquare } from 'chessops/util';
 import {
@@ -20,10 +20,10 @@ import {
   RegisteredUserRecord,
 } from 'dstnd-io';
 import { NormalMove } from 'chessops/types';
-import { getNewChessGame } from '../Games/Chess/lib';
+import { getNewChessGame } from '../../Games/Chess/lib';
 import { ShortMove } from 'chess.js';
-import { Game } from '../Games';
-import { getHomeColor, lichessGameToChessRouletteGame, updateGameWithNewStateFromLichess } from './utils';
+import { Game } from '../../Games';
+import { getHomeColor, lichessGameToChessRouletteGame, updateGameWithNewStateFromLichess } from '../utils';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { console } from 'window-or-global';
 import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';

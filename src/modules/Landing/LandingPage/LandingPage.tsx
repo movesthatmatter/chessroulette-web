@@ -65,13 +65,11 @@ export const LandingPage: React.FC<Props> = () => {
                   marginRight: '16px',
                 }}
               />
-              <LichessProvider>
                 <LichessChallengeButton
                     label='Lichess'
                     size='small'
                     type='secondary'
                   />
-              </LichessProvider>
             </div>
           </div>
         </div>

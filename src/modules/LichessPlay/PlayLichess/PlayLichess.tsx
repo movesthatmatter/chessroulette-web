@@ -23,16 +23,20 @@ export const PlayLichess: React.FC<Props> = (props) => {
   const lichess = useLichessProvider();
 
   useEffect(() => {
-      lichess?.onNewGame(({game, homeColor}) => {
-        setGame(game);
-        setHomeColor(homeColor);
-      })
-      lichess?.onGameUpdate(({gameState}) => setGame(updateGameWithNewStateFromLichess(game as Game, gameState)));
+    lichess!.onNewGame(({game, homeColor}) => {
+      console.log('new game ==> ', game);
+      console.log('home color' , homeColor);
+    } )
+    // if (lichess){
+    //   lichess.onNewGame(({game, homeColor}) => {
+    //     setGame(game);
+    //     setHomeColor(homeColor);
+    //   })
+    //   lichess.onGameUpdate(({gameState}) => setGame(updateGameWithNewStateFromLichess(game as Game, gameState)));
+    // }
   }, []);
 
-  if (!lichess) {
-    return null;
-  }
+  
   // function startSubscriptions() {
   //  // lichessManager.startStream();
   //   // lichessManager.onUpdateChess(({ chess }) => setChess(chess));
@@ -41,7 +45,7 @@ export const PlayLichess: React.FC<Props> = (props) => {
   // }
 
   const onMove = (p : { move: ChessMove; fen: ChessGameStateFen; pgn: ChessGameStatePgn }) => {
-    if (game){
+    if (game && lichess){
       lichess.makeMove(p.move, game.id);
     }
   };
