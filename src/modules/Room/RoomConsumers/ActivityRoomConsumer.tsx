@@ -9,8 +9,6 @@ type Props = {};
 export const ActivityRoomConsumer: React.FC<Props> = () => {
   const context = useContext(RoomProviderContext);
 
-  console.log('[RoomV3] ActivityRoomConsumer', context);
-
   if (!context) {
     // Loader
     return null;

@@ -4,11 +4,19 @@ import { defaultTheme } from 'src/theme';
 import { BrowserRouter } from 'react-router-dom';
 import { StorybookReduxProvider } from './StorybookReduxProvider';
 import { UserRecordMocker } from 'src/mocks/records';
+import { RootState } from 'src/redux/rootReducer';
 
 type Props = {
-  withRedux?: boolean;
   withAuthentication?: boolean;
-};
+} & (
+  | {
+      withRedux: true;
+      initialState?: Partial<RootState>;
+    }
+  | {
+      withRedux?: false;
+    }
+);
 
 const userMocker = new UserRecordMocker();
 
@@ -20,10 +28,10 @@ const userMocker = new UserRecordMocker();
 //  that might use some of the providers above
 export const StorybookBaseProvider: React.FunctionComponent<Props> = ({
   children,
-  withRedux = false,
   withAuthentication = false,
+  ...props
 }) => {
-  withRedux = withAuthentication || withRedux;
+  const withRedux = withAuthentication || props.withRedux;
 
   const base = (
     <Grommet theme={defaultTheme} full>
@@ -35,6 +43,7 @@ export const StorybookBaseProvider: React.FunctionComponent<Props> = ({
     return (
       <StorybookReduxProvider
         initialState={{
+          ...(props.withRedux && props.initialState),
           ...(withAuthentication && {
             authentication: {
               authenticationType: 'user',

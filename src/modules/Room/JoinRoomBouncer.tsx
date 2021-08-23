@@ -31,6 +31,7 @@ export const JoinRoomBouncer: React.FC<Props> = ({ roomInfo, renderJoinedRoom })
     }
   }, [bouncerState?.ready, peerState.status]);
 
+
   if (joinedRoom) {
     return (
       <RoomBouncer roomInfo={roomInfo} onCancel={() => history.push('/')}>

@@ -1,26 +1,25 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import useEventListener from '@use-it/event-listener';
-import { ChessHistory, ChessHistoryMove } from 'dstnd-io';
-import { keyInObject } from 'src/lib/util';
+import { ChessHistory, ChessHistoryIndex, ChessHistoryMove, analysis } from 'dstnd-io';
+import { keyInObject, noop } from 'src/lib/util';
 import { ChessGameHistoryContext, ChessGameHistoryContextProps } from './ChessGameHistoryContext';
-import {
-  ChessHistoryIndex,
-  decrementChessHistoryIndex,
-  getChessHistoryAtIndex,
-  incrementChessHistoryIndex,
-  normalizeChessHistoryIndex,
-  getBranchedHistoryLastIndex,
-  addMoveToChessHistoryAtNextAvailableIndex,
-} from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
 
 type Props = {
   history: ChessHistory;
+  onMoved?: (move: ChessHistoryMove, atIndex: ChessHistoryIndex) => void;
+  onRefocused?: (atIndex: ChessHistoryIndex) => void;
+  onUpdated?: (next: ChessHistory) => void;
+  displayedIndex?: ChessHistoryIndex;
   resetOnUpdate?: boolean;
 };
 
 export const ChessGameHistoryProvider: React.FC<Props> = ({
   history,
   resetOnUpdate = true,
+  onMoved = noop,
+  onRefocused = noop,
+  onUpdated = noop,
+  displayedIndex,
   ...props
 }) => {
   const onReset = useCallback(() => {
@@ -28,7 +27,7 @@ export const ChessGameHistoryProvider: React.FC<Props> = ({
       ...prev,
       history,
       displayedHistory: history,
-      displayedIndex: history.length - 1,
+      displayedIndex: displayedIndex === undefined ? history.length - 1 : displayedIndex,
     }));
   }, [history]);
 
@@ -37,8 +36,12 @@ export const ChessGameHistoryProvider: React.FC<Props> = ({
       setContextState((prev) => ({
         ...prev,
         displayedIndex: nextIndex,
-        displayedHistory: getChessHistoryAtIndex(prev.history, nextIndex),
+        displayedHistory: analysis.actions.getChessHistoryAtIndex(prev.history, nextIndex),
       }));
+
+      // TODO: This isn't the best here for now, since it doesn't actually check
+      // that the refocus actually worked, meaning it got updated and it was not
+      onRefocused(nextIndex);
     },
     [history]
   );
@@ -46,11 +49,10 @@ export const ChessGameHistoryProvider: React.FC<Props> = ({
   const onAddMove = useCallback(
     (move: ChessHistoryMove, atIndex: ChessHistoryIndex, withRefocus = true) => {
       setContextState((prev) => {
-        const [nextHistory, addedAtIndex] = addMoveToChessHistoryAtNextAvailableIndex(
-          prev.history,
-          atIndex,
-          move
-        );
+        const [
+          nextHistory,
+          addedAtIndex,
+        ] = analysis.actions.addMoveToChessHistoryAtNextAvailableIndex(prev.history, atIndex, move);
 
         return {
           ...prev,
@@ -58,10 +60,14 @@ export const ChessGameHistoryProvider: React.FC<Props> = ({
 
           ...(withRefocus && {
             displayedIndex: addedAtIndex,
-            displayedHistory: getChessHistoryAtIndex(nextHistory, addedAtIndex),
+            displayedHistory: analysis.actions.getChessHistoryAtIndex(nextHistory, addedAtIndex),
           }),
         };
       });
+
+      // TODO: This isn't the best here for now, since it doesn't actually check
+      // that the refocus actually worked, meaning it got updated and it was not
+      onMoved(move, atIndex);
     },
     [history]
   );
@@ -76,28 +82,40 @@ export const ChessGameHistoryProvider: React.FC<Props> = ({
   });
 
   useEffect(() => {
-    if (resetOnUpdate) {
-      onReset();
-    }
-  }, [history, resetOnUpdate]);
+    setContextState((prev) => {
+      const nextIndex = displayedIndex === undefined ? history.length - 1 : displayedIndex;
+      const nextDisplayedHistory = analysis.actions.getChessHistoryAtIndex(history, nextIndex);
+
+      return {
+        ...prev,
+        history,
+        displayedHistory: nextDisplayedHistory,
+        displayedIndex: nextIndex,
+      };
+    });
+  }, [history, displayedIndex]);
 
   useEventListener('keydown', (event: object) => {
     if (!keyInObject(event, 'key')) {
       return;
     }
 
-    const normalizedDisplayedIndex = normalizeChessHistoryIndex(contextState.displayedIndex);
+    const normalizedDisplayedIndex = analysis.actions.normalizeChessHistoryIndex(
+      contextState.displayedIndex
+    );
 
-    const lastInCurrentBranch = getBranchedHistoryLastIndex(
+    const lastInCurrentBranch = analysis.actions.getBranchedHistoryLastIndex(
       contextState.history,
       contextState.displayedIndex
     );
-    const normalizedLastInCurrentBranch = normalizeChessHistoryIndex(lastInCurrentBranch);
+    const normalizedLastInCurrentBranch = analysis.actions.normalizeChessHistoryIndex(
+      lastInCurrentBranch
+    );
 
     if (event.key === 'ArrowRight' && normalizedDisplayedIndex < normalizedLastInCurrentBranch) {
-      onRefocus(incrementChessHistoryIndex(contextState.displayedIndex));
+      onRefocus(analysis.actions.incrementChessHistoryIndex(contextState.displayedIndex));
     } else if (event.key === 'ArrowLeft' && normalizedDisplayedIndex >= 0) {
-      onRefocus(decrementChessHistoryIndex(contextState.displayedIndex));
+      onRefocus(analysis.actions.decrementChessHistoryIndex(contextState.displayedIndex));
     }
   });
 

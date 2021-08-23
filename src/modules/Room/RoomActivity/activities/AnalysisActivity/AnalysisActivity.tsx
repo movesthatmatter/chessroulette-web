@@ -1,56 +1,60 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { floatingShadow, softBorderRadius } from 'src/theme';
+import { colors, floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
-import { console } from 'window-or-global';
 import { RoomAnalysisActivity } from './types';
 import { spacers } from 'src/theme/spacers';
-import { Button } from 'src/components/Button';
-import { useDispatch } from 'react-redux';
-import { switchRoomActivityAction } from '../../redux/actions';
-import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { ActivityCommonProps } from '../types';
-// import { switchRoomActivityAction } from '../redux/actions';
+import { ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/GameHistory';
+import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
+import { ChessGameHistoryProvided } from 'src/modules/Games/Chess/components/GameHistory';
 
-type Props = ActivityCommonProps & {
-  activity: RoomAnalysisActivity;
+export type AnalysisActivityProps = ActivityCommonProps & {
+  boardSize: number;
+  analysis: NonNullable<RoomAnalysisActivity['analysis']>;
 };
 
-export const AnalysisActivity: React.FC<Props> = ({ activity, deviceSize }) => {
+export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({ analysis, boardSize }) => {
   const cls = useStyles();
-  const dispatch = useDispatch();
 
   return (
-    <GenericLayoutDesktopRoomConsumer
-      key="1"
-      renderActivity={({ boardSize }) => (
+    <ChessGameHistoryConsumer
+      render={({ displayedHistory, onAddMove, displayedIndex }) => (
         <div className={cls.container}>
           <aside className={cls.side} style={{ height: boardSize }}>
-            <div className={cls.sideTop}>
-              <Button
-                label="Play"
-                onClick={() => {
-                  dispatch(
-                    switchRoomActivityAction({
-                      type: 'play',
-                      // gameId: '12323',
-                    })
-                  );
-                }}
-              />
-            </div>
-            <div style={{ height: '40%' }} />
+            <ChessGameHistoryProvided className={cls.gameStateContainer} />
           </aside>
-          <ChessBoard
-            size={boardSize}
-            id="analysis-board" // TODO: This might need to change
-            pgn=""
-            homeColor="white"
-            onMove={(m) => {
-              console.log('on move', m);
+          <div
+            className={cls.boardContainer}
+            style={{
+              height: boardSize,
             }}
-            className={cls.board}
-          />
+          >
+            <ChessBoard
+              size={boardSize}
+              type="analysis"
+              id="analysis-board" // TODO: This might need to change
+              playable
+              pgn={
+                displayedHistory
+                  ? chessHistoryToSimplePgn(displayedHistory)
+                  : analysis.history
+                  ? chessHistoryToSimplePgn(analysis.history)
+                  : ''
+              }
+              homeColor="white"
+              onMove={(m) => {
+                onAddMove(
+                  {
+                    ...m.move,
+                    clock: 0, // the clock doesn't matter on analysis
+                  },
+                  displayedIndex
+                );
+              }}
+              className={cls.board}
+            />
+          </div>
         </div>
       )}
     />
@@ -62,6 +66,9 @@ const useStyles = createUseStyles({
     display: 'flex',
     flex: 1,
     justifyContent: 'space-between',
+  },
+  boardContainer: {
+    ...floatingShadow,
   },
   board: {
     ...floatingShadow,
@@ -82,5 +89,15 @@ const useStyles = createUseStyles({
   },
   sideBottom: {
     height: '30%',
+  },
+
+  gameStateContainer: {
+    height: '100%',
+    background: colors.white,
+    ...floatingShadow,
+    ...softBorderRadius,
+    // height: 'calc(100% - 80px)',
+    minHeight: '100px',
+    minWidth: '130px',
   },
 });

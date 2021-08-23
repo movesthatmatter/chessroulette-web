@@ -1,13 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { action } from '@storybook/addon-actions';
+import { ChessHistoryIndex } from 'dstnd-io';
+import { addMoveToChessHistory } from 'dstnd-io/dist/analysis/analysisActions';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import React, { useState } from 'react';
 import { second } from 'src/lib/time';
 import { pgnToChessHistory } from 'src/mocks/records';
-import {
-  addMoveToChessHistory,
-  ChessHistoryIndex,
-} from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { colors } from 'src/theme';
 import { GameHistory } from './GameHistory';
