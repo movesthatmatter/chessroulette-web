@@ -35,6 +35,9 @@ export const PlayLichess: React.FC<Props> = (props) => {
       lichess.onGameUpdate(({ gameState }) => {
         setNewGameState(gameState);
       });
+      lichess.onGameFinish(() => {
+        console.log('GAME FINISHEDDDDD')
+      })
     }
   }, []);
 
@@ -61,11 +64,11 @@ export const PlayLichess: React.FC<Props> = (props) => {
 
   return (
     <LichessAuthenticatedPage name="lichess" doNotTrack>
-      {/* <LichessGameStateDialogProvider
+       {/* <LichessGameStateDialogProvider
         game={game}
         challenge={challenge}
         state={game.state}
-      > */}
+      >  */}
       {game && (
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <LichessGame
@@ -92,15 +95,9 @@ export const PlayLichess: React.FC<Props> = (props) => {
               //onTimerFinished={gameActions.onTimerFinished}
             />
           </div>
-          {/* <ChessBoard
-          id={lichessManager.lichessGame?.id || new Date().getTime().toString()}
-          onMove={({ move }) => onMove(move)}
-          play          turnColor={chess.turn() === 'b' ? 'black' : 'white'}
-          homeColor={lichessManage || 'black'}
-        /> */}
-          {/* </LichessGameStateDialogProvider> */}
         </div>
       )}
+      {/* </LichessGameStateDialogProvider> */}
     </LichessAuthenticatedPage>
   );
 };

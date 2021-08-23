@@ -7,7 +7,7 @@ import {
   sendAChallenge,
   sendAMove,
 } from '../resources';
-import { LichessGameState, NDJsonReader, LichessGameFull, LichessChallenge } from '../types';
+import { LichessGameState, NDJsonReader, LichessGameFull, LichessChallenge, LichessChatLine } from '../types';
 import { Pubsy } from 'src/lib/Pubsy';
 import { parseUci, makeUci, makeSquare, parseSquare } from 'chessops/util';
 import {
@@ -31,10 +31,11 @@ import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authenti
 type LichessManagerEvents = {
   onStreamStart: undefined;
   onNewGame : {game:Game, homeColor: ChessGameColor};
-  onGameFinish: { game: Game};
+  onGameFinish: undefined;
   onGameUpdate: {gameState: LichessGameState};
   onChallenge: { challenge: LichessChallenge };
   onChallengeAccepted: undefined;
+  onNewChatLine: {chatLine: LichessChatLine};
 };
 
 
@@ -141,13 +142,17 @@ export class LichessManager {
          gameState: event.value as LichessGameState
        })
         if (event.value.winner) {
-          //this.pubsy.publish('onGameFinish', { game: this.updateGame() });
+          this.pubsy.publish('onGameFinish', undefined);
         }
       }
 
-      if (event.value.type === 'gameFinish') {
-        console.log('FINSHED GAME!!!', event);
+      if (event.value.type === 'chatLine'){
+        this.pubsy.publish('onNewChatLine', {chatLine: event.value})
       }
+
+      // if (event.value.type === 'gameFinish') {
+      //   this.pubsy.publish('onGameFinish', undefined)
+      // }
 
       if (event.value.type === 'challenge') {
         this.pubsy.publish('onChallenge', { challenge: event.value.challenge as LichessChallenge });
@@ -173,7 +178,7 @@ export class LichessManager {
     this.pubsy.subscribe('onChallenge', fn);
   }
 
-  onGameFinished(fn: (data: { game: Game }) => void) {
+  onGameFinished(fn: () => void) {
     this.pubsy.subscribe('onGameFinish', fn);
   }
 
@@ -183,6 +188,10 @@ export class LichessManager {
 
   onGameUpdate(fn: (data : {gameState : LichessGameState}) => void) {
     this.pubsy.subscribe('onGameUpdate', fn);
+  }
+
+  onNewChatLine(fn: (data: {chatLine: LichessChatLine}) => void){
+    this.pubsy.subscribe('onNewChatLine', fn);
   }
 }
 

@@ -41,7 +41,7 @@ export const getGameState = (status: LichessGameState['status']): Game['state'] 
   if (status === 'resign') {
     return 'stopped';
   }
-  if (status === 'finished' || status === 'mate') {
+  if (status === 'finished' || status === 'mate' || status === 'outoftime') {
     return 'finished';
   }
   return status;

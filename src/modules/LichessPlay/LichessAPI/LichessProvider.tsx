@@ -5,7 +5,7 @@ import { Game } from 'src/modules/Games';
 import { useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
 import { LichessManager } from './LichessGameManager';
 
-import { LichessGameState } from '../types';
+import { LichessChatLine, LichessGameState } from '../types';
 
 type LichessContext = {
   initAndChallenge : (specs: GameSpecsRecord) => void;
@@ -13,6 +13,8 @@ type LichessContext = {
   onChallengeAccepted: (fn: () => void) => void;
   onGameUpdate : (fn: (data : {gameState: LichessGameState}) => void) => void;
   onNewGame : (fn: (data: {game: Game, homeColor: ChessGameColor}) => void) => void
+  onGameFinish: (fn :() => void) => void;
+  onNewChatLine: () => void;
 } | undefined
 
 export const LichessContext = React.createContext<LichessContext>(undefined);
@@ -47,6 +49,12 @@ export const LichessProvider: React.FC<Props> = (props) => {
         },
         onNewGame: (fn: (data: {game: Game, homeColor: ChessGameColor}) => void) => {
           return lichessManager.onNewGame(fn);
+        },
+        onGameFinish: (fn: () => void) => { 
+          return lichessManager.onGameFinished(fn);
+        },
+        onNewChatLine: () => {
+          return lichessManager.onNewChatLine(processChatLine);
         }
       }
     })
@@ -54,6 +62,21 @@ export const LichessProvider: React.FC<Props> = (props) => {
       //TODO unsubscribe
     }
   },[auth?.externalAccounts?.lichess.userId])
+
+  const processChatLine = (data: {chatLine : LichessChatLine}) => {
+    const {chatLine} = data;
+    if (chatLine.text.includes('offers draw') && chatLine.username === 'lichess' && chatLine.room === 'player'){
+      
+    }
+    if (chatLine.text.includes('Takeback') && chatLine.username === 'lichess' && chatLine.room === 'player'){
+      if (chatLine.text.includes('sent')){
+
+      }
+      if (chatLine.text.includes('cancelled')){
+
+      }
+    }
+  }
 
   return (
       <LichessContext.Provider value={contextState}>
