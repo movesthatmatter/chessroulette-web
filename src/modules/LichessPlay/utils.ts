@@ -11,7 +11,7 @@ import {
 import { ISODateTimeBrand } from 'io-ts-isodatetime/dist/lib/ISODateTime';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { getRandomInt } from 'src/lib/util';
-import { Date } from 'window-or-global';
+import { console, Date } from 'window-or-global';
 import { Game } from '../Games';
 import { gameRecordToGame, getNewChessGame, historyToPgn } from '../Games/Chess/lib';
 import { LichessGameFull, LichessGameState, LichessPlayer } from './types';
@@ -76,10 +76,10 @@ const getLastActivityTimeAtUpdateGameStatus = (
   game: Game
 ): ISODateTimeBrand => {
   return toISODateTime(
-    (
+    new Date(
       new Date(game.lastMoveAt as string).getTime() +
-      new Date(gameState[turn === 'black' ? 'btime' : 'wtime'] - game.timeLeft[turn]).getTime()
-    ).toString()
+      new Date((gameState[turn === 'black' ? 'btime' : 'wtime'] - game.timeLeft[turn]).toString()).getTime()
+    )
   );
 };
 
@@ -91,7 +91,7 @@ export const lichessGameToChessRouletteGame = (
   const turn = history.length % 2 === 0 ? 'white' : 'black';
   const gameRecord: GameRecord = {
     id: game.id,
-    state: getGameState(game.state.status),
+    state: history.length > 0 ? getGameState(game.state.status) : 'pending',
     timeLimit: timeLimitsMap[
       (game.clock.initial / 1000).toString() as keyof typeof timeLimitsMap
     ] as Game['timeLimit'],
@@ -100,7 +100,15 @@ export const lichessGameToChessRouletteGame = (
       white: game.state.wtime,
     },
     updatedAt: toISODateTime(new Date()),
-    startedAt: toISODateTime(new Date(game.createdAt)),
+    ...(history.length > 0 && {
+      startedAt: toISODateTime(new Date(game.createdAt)),
+      pgn: historyToPgn(history),
+      lastMoveBy: turn,
+      lastMoveAt: getLastActivityTimeAtCreateGameStatus(turn, game),
+      lastActivityAt: getLastActivityTimeAtCreateGameStatus(turn, game),
+      winner: game.state.winner || undefined,
+      history,
+    }),
     players: [
       {
         color: 'white',
@@ -117,14 +125,9 @@ export const lichessGameToChessRouletteGame = (
             : convertLichessToGuestUser(game.black),
       },
     ],
-    pgn: historyToPgn(history),
-    lastMoveBy: turn,
-    lastMoveAt: getLastActivityTimeAtCreateGameStatus(turn, game),
-    lastActivityAt: getLastActivityTimeAtCreateGameStatus(turn, game),
-    winner: game.state.winner || undefined,
-    history,
     createdAt: toISODateTime(new Date(game.createdAt)),
   } as GameRecord;
+  console.log('converted Game ', gameRecord)
   return gameRecordToGame(gameRecord);
 };
 
@@ -143,11 +146,12 @@ export const updateGameWithNewStateFromLichess = (
     },
     updatedAt: toISODateTime(new Date()),
     lastMoveBy: turn,
-    lastMoveAt: getLastActivityTimeAtUpdateGameStatus(turn, lichessGameState, game),
+    lastMoveAt: toISODateTime(new Date()),
     pgn: historyToPgn(history),
     winner: lichessGameState.winner || undefined,
     history,
   } as GameRecord;
+  console.log('updated converted game ', gameRecord)
   return gameRecordToGame(gameRecord);
 };
 

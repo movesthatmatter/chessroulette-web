@@ -119,6 +119,10 @@ export class LichessManager {
       }
 
       if (event.value.type === 'gameStart') {
+        //TODO - this would check if there's no game in Redux, just in case we get another GameFull event not to trigger it again!
+        if (event.value.game.id === this.challengeId) {
+          this.pubsy.publish('onChallengeAccepted', undefined);
+        }
         this.gameStart(event.value['game']['id'] as string);
       }
 
@@ -127,11 +131,6 @@ export class LichessManager {
           homeColor: getHomeColor(event.value, this.user.externalAccounts.lichess.userId), 
           game: lichessGameToChessRouletteGame(event.value, this.user)
         })
-
-        //TODO - this would check if there's no game in Redux, just in case we get another GameFull event not to trigger it again!
-        if (event.value.id === this.challengeId) {
-          this.pubsy.publish('onChallengeAccepted', undefined);
-        }
 
        // this.lichessGame = event.value as LichessGameFull;
       }
