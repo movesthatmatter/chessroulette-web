@@ -1,5 +1,4 @@
-import { RoomAnalysisActivityRecord } from 'dstnd-io';
-import { Game } from 'src/modules/Games';
+import { AnalysisRecord, RoomAnalysisActivityRecord } from 'dstnd-io';
 import { RoomActivitySpecifcParticipant, RoomRecordToRoomActivity } from '../../utilTypes';
 
 export type RoomAnalysisActivityParticipant = RoomActivitySpecifcParticipant<
@@ -11,11 +10,8 @@ export type RoomAnalysisActivityParticipant = RoomActivitySpecifcParticipant<
 
 export type RoomAnalysisActivity = RoomRecordToRoomActivity<
   'analysis',
-  Omit<RoomAnalysisActivityRecord, 'analysisId'> & {
-    analysis?: {
-      id: string;
-      history: Game['history'];
-    };
+  RoomAnalysisActivityRecord & {
+    analysis?: AnalysisRecord;
   },
   RoomAnalysisActivityParticipant
 >;

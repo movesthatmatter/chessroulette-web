@@ -1,10 +1,7 @@
 import { debounce } from 'debounce';
+import { ChessHistoryIndex, ChessRecursiveHistory } from 'dstnd-io';
+import { getChessHistoryMoveIndex } from 'dstnd-io/dist/analysis/analysisActions';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  ChessAnalysisHistory,
-  ChessHistoryIndex,
-  getChessHistoryMoveIndex,
-} from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/lib';
 import {
   isPartialBlackMove,
   PairedHistory,
@@ -14,7 +11,7 @@ import {
 import { HistoryRow } from './HistoryRow';
 
 export type HistoryListProps = {
-  history: ChessAnalysisHistory;
+  history: ChessRecursiveHistory;
   onRefocus: (nextIndex: ChessHistoryIndex) => void;
   focusedIndex?: ChessHistoryIndex;
   className?: string;
@@ -62,26 +59,21 @@ export const HistoryList: React.FC<HistoryListProps> = ({
   return (
     <div className={className} ref={(e) => (containerElementRef.current = e)}>
       {pairedHistory.map((pairedMove, index) => (
-        <div
+        <HistoryRow
           key={`${pairedMove[0].san}-${pairedMove[1]?.san || ''}`}
           ref={(b) => (rowElementRefs.current[index] = b)}
-        >
-          {/* <>{index} - {pairedToLinearIndex([index, 0])} </> */}
-          <HistoryRow
-            key={`${pairedMove[0].san}-${pairedMove[1]?.san || ''}`}
-            pairedMove={pairedMove}
-            pairedIndex={rootPairedIndex + index}
-            startingLinearIndex={
-              isPartialBlackMove(pairedHistory[0])
-                ? // If the history starts with a black move the index needs to be altered
-                  //  but have no idea how come it needs to be substracted not added
-                  pairedToLinearIndex([index, 0]) - 1
-                : pairedToLinearIndex([index, 0])
-            }
-            focusedIndex={focusedIndex}
-            onFocus={onRefocus}
-          />
-        </div>
+          pairedMove={pairedMove}
+          pairedIndex={rootPairedIndex + index}
+          startingLinearIndex={
+            isPartialBlackMove(pairedHistory[0])
+              ? // If the history starts with a black move the index needs to be altered
+                //  but have no idea how come it needs to be substracted not added
+                pairedToLinearIndex([index, 0]) - 1
+              : pairedToLinearIndex([index, 0])
+          }
+          focusedIndex={focusedIndex}
+          onFocus={onRefocus}
+        />
       ))}
     </div>
   );

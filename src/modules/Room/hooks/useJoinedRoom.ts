@@ -14,8 +14,6 @@ const mergeSlicesIntoJoinedRoom = (slices: {
   room?: Room;
   currentRoomActivity?: BaseRoomActivity;
 }): JoinedRoom | undefined => {
-  console.log('[mergeSlicesIntoJoinedRoom] slices', slices);
-
   if (!slices.room) {
     return undefined;
   }
@@ -51,10 +49,6 @@ export const useJoinedRoom = () => {
   useEffect(() => {
     const nextJoinedRoom = mergeSlicesIntoJoinedRoom({ room, currentRoomActivity: roomActivity });
     setJoinedRoom(nextJoinedRoom);
-
-    console.group();
-    console.log('nextJoinedRoom', nextJoinedRoom);
-    console.groupEnd();
 
     console.group(
       `%cJoinedRoom %cUpdated:`,

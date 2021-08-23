@@ -51,7 +51,7 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
                 <Button
                   label="Analyze"
                   onClick={() => {
-                    dispatch(switchRoomActivityAction({ type: 'analysis' }));
+                    // dispatch(switchRoomActivityAction({ type: 'analysis' }));
                   }}
                 />
               </div>
@@ -90,7 +90,7 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
                   homeColor={homeColor}
                   playable={activity.iamParticipating && activity.participants.me.canPlay}
                   displayedPgn={historyToPgn(c.displayedHistory)}
-                  // autoCommitMove
+                  // autoCommitMove // TODO: Add this and try it outs
                   className={cls.board}
                 />
               )}

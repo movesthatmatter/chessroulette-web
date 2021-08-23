@@ -7,6 +7,7 @@ import {
 import { GenericStateSlice } from 'src/redux/types';
 import {
   switchRoomActivityAction,
+  updateCurrentAnalysisAction,
   updateJoinedGameAction,
   updateRoomActivityAction,
 } from './actions';
@@ -77,6 +78,17 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
     return {
       ...prev,
       game: nextGame,
+    };
+  }),
+
+  handleAction(updateCurrentAnalysisAction, (prev, { payload: nextAnalysis }) => {
+    if (prev.type !== 'analysis') {
+      return prev;
+    }
+
+    return {
+      ...prev,
+      analysis: nextAnalysis,
     };
   }),
 ]);

@@ -6,6 +6,7 @@ import {
   ChessGameColor,
   ChessGameStateFen,
   ChessGameStatePgn,
+  ChessHistoryMove,
   ChessMove,
   GameRecord,
 } from 'dstnd-io';
@@ -27,7 +28,11 @@ export type ChessBoardProps = Omit<StyledChessBoardProps, 'onMove' | 'fen'> & {
   // This speeds up rendering as it doesn't wait for the
   //  move to be saved first
   autoCommitMove?: boolean;
-  onMove: (p: { move: ChessMove; fen: ChessGameStateFen; pgn: ChessGameStatePgn }) => void;
+  onMove: (p: {
+    move: Omit<ChessHistoryMove, 'clock'>;
+    fen: ChessGameStateFen;
+    pgn: ChessGameStatePgn;
+  }) => void;
   onPreMove?: (m: ChessMove) => void;
 };
 
@@ -224,13 +229,19 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
     }
 
     const nextChessState = getCurrentChessState(this.chess);
+    const history = this.chess.history({ verbose: true });
+    const nextHistoryMove = history[history.length - 1];
 
     this.setState({
       uncommited: nextChessState,
     });
 
     this.props.onMove({
-      move: nextMove,
+      move: {
+        ...(nextHistoryMove as ChessMove),
+        color: toChessColor(nextHistoryMove.color),
+        san: nextHistoryMove.san,
+      },
       fen: nextChessState.fen,
       pgn: nextChessState.pgn,
     });

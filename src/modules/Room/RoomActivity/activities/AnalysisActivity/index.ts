@@ -1,1 +1,1 @@
-export * from './AnalysisActivity';
+export { AnalysisActivityContainer as AnalysisActivity } from './AnalysisActivityContainer';
