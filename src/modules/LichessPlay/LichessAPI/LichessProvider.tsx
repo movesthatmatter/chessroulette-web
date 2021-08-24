@@ -66,14 +66,14 @@ export const LichessProvider: React.FC<Props> = (props) => {
   const processChatLine = (data: {chatLine : LichessChatLine}) => {
     const {chatLine} = data;
     if (chatLine.text.includes('offers draw') && chatLine.username === 'lichess' && chatLine.room === 'player'){
-      
+      //TODO dispatch notification
     }
     if (chatLine.text.includes('Takeback') && chatLine.username === 'lichess' && chatLine.room === 'player'){
       if (chatLine.text.includes('sent')){
-
+      //TODO dispatch notification
       }
       if (chatLine.text.includes('cancelled')){
-
+      //TODO dispatch notification
       }
     }
   }

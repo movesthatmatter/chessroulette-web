@@ -9,21 +9,15 @@ import {
 } from '../resources';
 import { LichessGameState, NDJsonReader, LichessGameFull, LichessChallenge, LichessChatLine } from '../types';
 import { Pubsy } from 'src/lib/Pubsy';
-import { parseUci, makeUci, makeSquare, parseSquare } from 'chessops/util';
+import { makeUci, makeSquare, parseSquare } from 'chessops/util';
 import {
   ChessGameColor,
-  ChessHistory,
   ChessMove,
-  Err,
   GameSpecsRecord,
-  Ok,
-  RegisteredUserRecord,
 } from 'dstnd-io';
 import { NormalMove } from 'chessops/types';
-import { getNewChessGame } from '../../Games/Chess/lib';
-import { ShortMove } from 'chess.js';
 import { Game } from '../../Games';
-import { getHomeColor, lichessGameToChessRouletteGame, updateGameWithNewStateFromLichess } from '../utils';
+import { getHomeColor, lichessGameToChessRouletteGame, getPromoPieceFromMove } from '../utils';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { console } from 'window-or-global';
 import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';
@@ -40,11 +34,7 @@ type LichessManagerEvents = {
 
 
 export class LichessManager {
- // lichessGame?: LichessGameFull;
- // activityLog = Array<string>();
   auth : RequestInit = {};
-  // userId? : string;
-  // user?: RegisteredUserRecord;
   challengeId?:string;
   private pubsy = new Pubsy<LichessManagerEvents>();
 
@@ -53,14 +43,6 @@ export class LichessManager {
       headers : { Authorization: `Bearer ` + user.externalAccounts.lichess.accessToken }
     };
   }
-
-  // init = (auth: NonNullable<RegisteredUserRecord>) => {
-  //   this.auth = {
-  //     headers : { Authorization: `Bearer ` + auth.externalAccounts?.lichess?.accessToken }
-  //   };
-  //   // this.userId = auth.externalAccounts?.lichess?.userId;
-  //   this.user = auth;
-  // }
 
   startStreamAndChallenge = (specs: GameSpecsRecord) => {
     console.log('START STREAM EVENT');
@@ -90,6 +72,7 @@ export class LichessManager {
     const normalMove: NormalMove = {
       from: parseSquare(move.from),
       to: parseSquare(move.to),
+      ...(move.promotion && {promotion: getPromoPieceFromMove(move.promotion)})
     };
     sendAMove(makeUci(normalMove), id, this.auth)
     .map(e => console.log('move successfull!'))
@@ -132,12 +115,9 @@ export class LichessManager {
           homeColor: getHomeColor(event.value, this.user.externalAccounts.lichess.userId), 
           game: lichessGameToChessRouletteGame(event.value, this.user)
         })
-
-       // this.lichessGame = event.value as LichessGameFull;
       }
 
       if (event.value.type === 'gameState') {
-       // this.lichessGame.state = event.value as LichessGameState;
        this.pubsy.publish('onGameUpdate', {
          gameState: event.value as LichessGameState
        })
@@ -194,13 +174,3 @@ export class LichessManager {
     this.pubsy.subscribe('onNewChatLine', fn);
   }
 }
-
-// export type LichessManagerType = LichessManager;
-
-// let instance: LichessManager;
-// export const getInstance = () => {
-//   if (!instance) {
-//     instance = new LichessManager();
-//   }
-//   return instance;
-// };

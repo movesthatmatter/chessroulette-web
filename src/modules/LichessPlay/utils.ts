@@ -4,6 +4,7 @@ import { makeSquare, parseUci } from 'chessops/util';
 import {
   ChessGameColor,
   ChessHistory,
+  ChessMove,
   GameRecord,
   GuestUserRecord,
   RegisteredUserRecord,
@@ -70,6 +71,14 @@ const getLastActivityTimeAtCreateGameStatus = (
   );
 };
 
+export const getPromoPieceFromMove = (promo: NonNullable<ChessMove['promotion']>) : NormalMove['promotion'] => {
+  return promo === 'b' ? 'bishop' : promo === 'n' ? 'knight' : promo === 'r' ? 'rook' : 'queen';
+}
+
+const convertNormalMovePromoToShortMovePromo = (promo: NonNullable<NormalMove['promotion']>) : ShortMove['promotion'] => {
+  return promo === 'bishop' ? 'b' : promo === 'knight' ? 'n' : promo === 'king' ? 'k' : promo === 'pawn' ? 'q' : promo === 'rook' ? 'r' :  'q';
+}
+
 const getLastActivityTimeAtUpdateGameStatus = (
   turn: ChessGameColor,
   gameState: LichessGameState,
@@ -127,7 +136,7 @@ export const lichessGameToChessRouletteGame = (
     ],
     createdAt: toISODateTime(new Date(game.createdAt)),
   } as GameRecord;
-  console.log('converted Game ', gameRecord)
+  console.log('lichess game to chessroulette game ', gameRecord)
   return gameRecordToGame(gameRecord);
 };
 
@@ -151,7 +160,7 @@ export const updateGameWithNewStateFromLichess = (
     winner: lichessGameState.winner || undefined,
     history,
   } as GameRecord;
-  console.log('updated converted game ', gameRecord)
+  console.log('update to chessroulette game', gameRecord)
   return gameRecordToGame(gameRecord);
 };
 
@@ -164,15 +173,16 @@ export const lichessGameStateToGameHistory = (gameState: LichessGameState): Ches
     .forEach((move, index) => {
       const normalMove = parseUci(move) as NormalMove;
       const color = index % 2 === 0 ? 'white' : 'black';
+      const chessMove = chess.move({
+        to: makeSquare(normalMove.to),
+        from: makeSquare(normalMove.from),
+        ...(normalMove.promotion && {promotion: convertNormalMovePromoToShortMovePromo(normalMove.promotion)}),
+      })
       gameHistory.push({
         to: makeSquare(normalMove.to),
         from: makeSquare(normalMove.from),
         color,
-        san: chess.move({
-          to: makeSquare(normalMove.to),
-          from: makeSquare(normalMove.from),
-          promotion: normalMove.promotion?.charAt(0) as ShortMove['promotion'],
-        })!.san,
+        ...(chessMove ? {san : chessMove.san} : {san: ''}),
         clock: gameState[color === 'white' ? 'wtime' : 'btime'],
       });
     });
