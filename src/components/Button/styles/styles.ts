@@ -72,7 +72,7 @@ const clear: CSSProperties = {
     '& $label': {
       color: `${colors.neutralDarkest} !important`,
       // fontWeight: 200,
-      lineHeight: '28px',
+      lineHeight: '30px',
 
       ...onlyMobile({
         ...makeImportant({
