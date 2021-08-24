@@ -3,7 +3,7 @@ import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { fonts, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Button } from '../Button';
-import { DialogContent, DialogContentProps } from '../Dialog/DialogContent';
+import { DialogContentProps } from '../Dialog/DialogContent';
 
 type Props = Pick<DialogContentProps, 'buttons' | 'buttonsStacked' | 'graphic' | 'title'> & {
   // onHandleStep: () => void;
@@ -38,8 +38,6 @@ export const DialogWizardStep: React.FC<Props> = (props) => {
                 containerClassName={
                   props.buttonsStacked ? cls.stackedButtonContainer : cls.buttonContainer
                 }
-                // size="medium"
-                // full
                 {...buttonProps}
               />
             );
