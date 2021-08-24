@@ -1,7 +1,7 @@
 import { ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
 import React from 'react';
-import { GameStateDialogConsumer } from 'src/modules/Games/components/GameStateDialog';
 import { Game } from 'src/modules/Games/types';
+import { LichessGameStateDialogConsumer } from 'src/modules/LichessPlay/PlayLichess/components/LichessGameStateDialogConsumer';
 import { useSoundEffects } from '../../hooks';
 import { ChessBoard, ChessBoardProps } from '../ChessBoard';
 
@@ -21,7 +21,7 @@ export const LichessGame: React.FC<LichessGameProps> = (props) => {
       id={game.id}
       pgn={displayedPgn === undefined ? game.pgn : displayedPgn}
       onMove={onMove}
-      overlayComponent={<GameStateDialogConsumer />}
+      overlayComponent={<LichessGameStateDialogConsumer />}
       {...chessGameProps}
     />
   );

@@ -1,4 +1,3 @@
-import ndjsonStream from 'can-ndjson-stream';
 import {
   acceptChallenge,
   declineChallenge,
@@ -9,7 +8,7 @@ import {
 } from '../resources';
 import { LichessGameState, NDJsonReader, LichessGameFull, LichessChallenge, LichessChatLine } from '../types';
 import { Pubsy } from 'src/lib/Pubsy';
-import { makeUci, makeSquare, parseSquare } from 'chessops/util';
+import { makeUci, parseSquare } from 'chessops/util';
 import {
   ChessGameColor,
   ChessMove,
@@ -62,7 +61,6 @@ export class LichessManager {
   };
 
   private gameStart = (id: string) => {
-    console.log('get board by id');
     getBoardStreamById(id, this.auth)
     .map(reader => this.loopThroughNDJson(reader))
     .mapErr(e => console.log('Error starting the game', e.value));
@@ -75,9 +73,12 @@ export class LichessManager {
       ...(move.promotion && {promotion: getPromoPieceFromMove(move.promotion)})
     };
     sendAMove(makeUci(normalMove), id, this.auth)
-    .map(e => console.log('move successfull!'))
-    .mapErr(e => console.log('move failed!'))
+    .mapErr(e => console.log('move failed!', e.error))
   };
+
+  sendChatMessage = (msg: string, gameId: string) => {
+
+  }
 
   acceptChallenge = (challenge: LichessChallenge) => {
     acceptChallenge(challenge.id, this.auth)

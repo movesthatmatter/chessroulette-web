@@ -3,69 +3,81 @@ import React, { useEffect, useState } from 'react';
 import { DialogContent } from 'src/components/Dialog';
 import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
+import { Game } from 'src/modules/Games';
+import { getPlayerByColor } from 'src/modules/Games/Chess/lib';
 import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
-import { console } from 'window-or-global';
-import { LichessChallenge, LichessGameFull } from '../../types';
-import { LichessGameDialogContext } from './LichessGameStateDialogContext';
+import { LichessGameDialogContext } from './LichessGameStateDialogProvider';
 
-type Props = NonNullable<LichessGameDialogContext> & {
-  onChallengeAccepted: (challenge: LichessChallenge) => void;
-  onChallengeDeny: (challenge: LichessChallenge) => void;
-};
+type Props = NonNullable<LichessGameDialogContext>;
 
-export const LichessGameStateDialog: React.FC<Props> = ({
-  game,
-  challenge,
-  state,
-  onChallengeAccepted,
-  onChallengeDeny,
-}) => {
+export const LichessGameStateDialog: React.FC<Props> = ({ game, status }) => {
   const [dialogSeen, setDialogSeen] = useState(false);
 
   const cls = useStyles();
 
-  const content = ((game: LichessGameFull | undefined, challenge: LichessChallenge | undefined) => {
-    console.group('DIALOGGG');
-    console.log('DIALOG GAME', game);
-    console.log('DIALOG CHALLENGE', challenge);
-    console.log('DIALOG STATE ', state);
-    console.groupEnd();
+  const content = ((game: Game | undefined) => {
     if (dialogSeen) {
       return null;
     }
 
-    if (challenge && (state !== 'started')) {
-      return (
-        <DialogContent
-          title="Rematch Offer"
-          content="You have been challenged to a rematch"
-          hasCloseButton={false}
-          buttons={[
-            {
-              label: 'Accept',
-              type: 'positive',
-              onClick: () => onChallengeAccepted(challenge),
-            },
-            {
-              label: 'Deny',
-              type: 'negative',
-              onClick: () => onChallengeDeny(challenge),
-            },
-          ]}
-        />
-      );
-    }
-
-    if (game && game.state.winner) {
+    if (game && game.winner && game.winner !== '1/2') {
       return (
         <DialogContent
           title="Game Finished"
           content={
             <Box align="center">
-              <Text>
-                <strong>{game[game.state.winner].name}</strong>
-                {` won by ${game.state.status}`}
-              </Text>
+              {status === 'mate' ? (
+                <Text>
+                  <strong>{getPlayerByColor(game.winner, game.players).user.name}</strong>
+                  {` won by checkmate`}
+                </Text>
+              ) : status === 'outoftime' ? (
+                <Text>
+                  {`Time over for ${
+                    getPlayerByColor(game.winner === 'black' ? 'white' : 'black', game.players).user
+                      .name
+                  }.`}
+                  <strong>{`${getPlayerByColor(game.winner, game.players).user.name} `}</strong>
+                  {`won!`}
+                </Text>
+              ) : status === 'resign' ? (
+                <Text>
+                  {`${
+                    getPlayerByColor(game.winner === 'black' ? 'white' : 'black', game.players).user
+                      .name
+                  } resigned. `}
+                  <strong>{getPlayerByColor(game.winner, game.players).user.name}</strong>
+                  {` won!`}
+                </Text>
+              ) : (
+                <Text>
+                  <strong>{getPlayerByColor(game.winner, game.players).user.name}</strong>
+                  {` won!`}
+                </Text>
+              )}
+            </Box>
+          }
+          hasCloseButton={false}
+          buttons={[
+            {
+              label: 'Ok',
+              type: 'positive',
+              onClick: () => {
+                setDialogSeen(true);
+              },
+            },
+          ]}
+          onClose={() => setDialogSeen(true)}
+        />
+      );
+    }
+    if (game && game.winner && game.winner === '1/2') {
+      return (
+        <DialogContent
+          title="Game Finished"
+          content={
+            <Box align="center">
+              <Text> Game ended in a draw.</Text>
             </Box>
           }
           hasCloseButton={false}
@@ -83,7 +95,7 @@ export const LichessGameStateDialog: React.FC<Props> = ({
       );
     }
     return null;
-  })(game, challenge);
+  })(game);
   if (!content) {
     return null;
   }

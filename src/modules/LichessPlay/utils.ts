@@ -2,6 +2,8 @@ import { ShortMove } from 'chess.js';
 import { NormalMove } from 'chessops/types';
 import { makeSquare, parseUci } from 'chessops/util';
 import {
+  ChatHistoryRecord,
+  ChatMessageRecord,
   ChessGameColor,
   ChessHistory,
   ChessMove,
@@ -15,7 +17,7 @@ import { getRandomInt } from 'src/lib/util';
 import { console, Date } from 'window-or-global';
 import { Game } from '../Games';
 import { gameRecordToGame, getNewChessGame, historyToPgn } from '../Games/Chess/lib';
-import { LichessGameFull, LichessGameState, LichessPlayer } from './types';
+import { LichessChatLine, LichessGameFull, LichessGameState, LichessPlayer } from './types';
 
 export const timeLimitsMap = {
   [`30`]: `bullet30`,
@@ -77,6 +79,14 @@ export const getPromoPieceFromMove = (promo: NonNullable<ChessMove['promotion']>
 
 const convertNormalMovePromoToShortMovePromo = (promo: NonNullable<NormalMove['promotion']>) : ShortMove['promotion'] => {
   return promo === 'bishop' ? 'b' : promo === 'knight' ? 'n' : promo === 'king' ? 'k' : promo === 'pawn' ? 'q' : promo === 'rook' ? 'r' :  'q';
+}
+
+export const convertLichessChatLineToChatMessageRecord = (line: LichessChatLine): ChatMessageRecord => {
+  return {
+    content: line.text,
+    fromUserId: line.username,
+    sentAt: toISODateTime(new Date())
+  }
 }
 
 const getLastActivityTimeAtUpdateGameStatus = (

@@ -1,23 +1,18 @@
-import useInstance from '@use-it/instance';
 import React, { useContext } from 'react';
 import { LichessGameStateDialog } from './LichessGameStateDialog';
-import { lichessGameStateContext } from './LichessGameStateDialogContext';
+import { LichessGameStateContext } from './LichessGameStateDialogProvider';
 
 export const LichessGameStateDialogConsumer: React.FC = () => {
-  const context = useContext(lichessGameStateContext);
-  // const lichessManager = useInstance<LichessManagerType>(getLichessGameManager)
+  const context = useContext(LichessGameStateContext);
 
   if (!context) { 
     return null;
   }
-  return null;
-  // return (
-  //   <LichessGameStateDialog 
-  //   game={context.game}
-  //   challenge={context.challenge}
-  //   state={context.state}
-  //   onChallengeAccepted={lichessManager.acceptChallenge}
-  //   onChallengeDeny={lichessManager.declineChallenge}
-  //   /> 
-  // );
+
+  return (
+    <LichessGameStateDialog 
+      game={context.game}
+      status={context.status}
+    /> 
+  );
 };

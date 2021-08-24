@@ -1,4 +1,3 @@
-import useInstance from '@use-it/instance';
 import { ChessGameColor, ChessMove, GameSpecsRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { Game } from 'src/modules/Games';
@@ -14,7 +13,8 @@ type LichessContext = {
   onGameUpdate : (fn: (data : {gameState: LichessGameState}) => void) => void;
   onNewGame : (fn: (data: {game: Game, homeColor: ChessGameColor}) => void) => void
   onGameFinish: (fn :() => void) => void;
-  onNewChatLine: () => void;
+  onNewChatLine: (fn: (data: {chatLine: LichessChatLine}) => void) => void;
+  sendChatMessage: (msg:string, gameId: string) => void;
 } | undefined
 
 export const LichessContext = React.createContext<LichessContext>(undefined);
@@ -24,7 +24,6 @@ type Props = {};
 export const LichessProvider: React.FC<Props> = (props) => {
   const auth = useAuthenticatedUserWithLichessAccount();
   const [contextState, setContextState] = useState<LichessContext>(undefined);
-  // const lichessManager = useInstance<LichessManagerType>(getLichessManager);
 
   useEffect(() => {
     setContextState(() => {
@@ -53,8 +52,11 @@ export const LichessProvider: React.FC<Props> = (props) => {
         onGameFinish: (fn: () => void) => { 
           return lichessManager.onGameFinished(fn);
         },
-        onNewChatLine: () => {
-          return lichessManager.onNewChatLine(processChatLine);
+        onNewChatLine: (fn: (data: {chatLine: LichessChatLine}) => void) => {
+          return lichessManager.onNewChatLine(fn);
+        },
+        sendChatMessage: (msg: string, gameId: string) => {
+          return lichessManager.sendChatMessage(msg, gameId);
         }
       }
     })
@@ -62,21 +64,6 @@ export const LichessProvider: React.FC<Props> = (props) => {
       //TODO unsubscribe
     }
   },[auth?.externalAccounts?.lichess.userId])
-
-  const processChatLine = (data: {chatLine : LichessChatLine}) => {
-    const {chatLine} = data;
-    if (chatLine.text.includes('offers draw') && chatLine.username === 'lichess' && chatLine.room === 'player'){
-      //TODO dispatch notification
-    }
-    if (chatLine.text.includes('Takeback') && chatLine.username === 'lichess' && chatLine.room === 'player'){
-      if (chatLine.text.includes('sent')){
-      //TODO dispatch notification
-      }
-      if (chatLine.text.includes('cancelled')){
-      //TODO dispatch notification
-      }
-    }
-  }
 
   return (
       <LichessContext.Provider value={contextState}>

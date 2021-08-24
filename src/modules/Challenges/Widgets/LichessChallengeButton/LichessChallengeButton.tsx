@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 import { Button, ButtonProps } from 'src/components/Button';
 import { Dialog} from 'src/components/Dialog';
 import { Text } from 'src/components/Text';
-import { createUseStyles } from 'src/lib/jss';
 import { useAuthentication } from 'src/services/Authentication';
 import { LichessChallengeWidget } from '../LichessChallengeWidget/LichessChallengeWidget';
 
@@ -88,6 +87,3 @@ export const LichessChallengeButton: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
-  container: {},
-});
