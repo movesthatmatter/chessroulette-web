@@ -6,6 +6,7 @@ import { Text } from 'src/components/Text';
 import { hasOwnProperty, noop } from 'src/lib/util';
 import { FormClose } from 'grommet-icons';
 import cx from 'classnames';
+import { spacers } from 'src/theme/spacers';
 
 type DangerouslySetInnerHTML = { __html: string };
 
@@ -139,9 +140,9 @@ const useStyles = createUseStyles({
   title: {
     ...fonts.subtitle1,
     textAlign: 'center',
-    paddingLeft: '32px',
-    paddingRight: '32px',
-    paddingBottom: '16px',
+    paddingLeft: spacers.large,
+    paddingRight: spacers.large,
+    paddingBottom: spacers.default,
 
     ...onlyMobile({
       ...makeImportant({
@@ -152,9 +153,9 @@ const useStyles = createUseStyles({
     }),
   },
   contentWrapper: {
-    paddingLeft: '32px',
-    paddingRight: '32px',
-    paddingBottom: '32px',
+    paddingLeft: spacers.large,
+    paddingRight: spacers.large,
+    paddingBottom: spacers.default,
 
     ...onlyMobile({
       paddingLeft: '18px',
@@ -172,9 +173,9 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingLeft: '32px',
-    paddingRight: '32px',
-    paddingBottom: '24px',
+    paddingLeft: spacers.large,
+    paddingRight: spacers.large,
+    paddingBottom: spacers.default,
 
     ...onlyMobile({
       paddingLeft: '18px',
