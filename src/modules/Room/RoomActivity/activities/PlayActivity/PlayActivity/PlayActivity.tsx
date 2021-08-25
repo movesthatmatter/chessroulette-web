@@ -6,11 +6,8 @@ import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWid
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { GameActions, useGameActions } from 'src/modules/Games/GameActions';
 import { spacers } from 'src/theme/spacers';
-import { Button } from 'src/components/Button';
-import { useDispatch } from 'react-redux';
 import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { ActivityCommonProps } from '../../types';
-import { switchRoomActivityAction } from '../../../redux/actions';
 import { RoomPlayActivityWithGame } from '../types';
 import { PlayActivityMobile } from './PlayActivityMobile';
 import { ChessGameHistoryProvider, ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/GameHistory';
@@ -27,8 +24,6 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
   // Default to White
   const homeColor = activity.iamParticipating ? activity.participants.me.color : 'white';
   const { game } = activity;
-
-  const dispatch = useDispatch();
 
   if (deviceSize.isMobile) {
     return (
@@ -47,14 +42,7 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
         <ChessGameHistoryProvider history={game.history || []}>
           <div className={cls.container}>
             <aside className={cls.side} style={{ height: boardSize }}>
-              <div className={cls.sideTop}>
-                <Button
-                  label="Analyze"
-                  onClick={() => {
-                    // dispatch(switchRoomActivityAction({ type: 'analysis' }));
-                  }}
-                />
-              </div>
+              <div className={cls.sideTop} />
               <div style={{ height: '40%' }}>
                 <GameStateWidget
                   // This is needed for the countdown to reset the interval !!

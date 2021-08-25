@@ -30,7 +30,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
     }
 
     if (
-      // And the activity is "Play"
+      // If the activity is "Play"
       payload.room.activity.type === 'play' &&
       prev.type === 'play'
     ) {
@@ -39,7 +39,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
         return payload.room.activity;
       }
 
-      // Update for the Offer
+      // Update for the Offer and the Status
       return {
         ...payload.room.activity,
         game: prev.game,

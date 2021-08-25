@@ -1,17 +1,17 @@
-import { RoomRecord } from 'dstnd-io';
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import { JoinRoomBouncer } from './JoinRoomBouncer';
-import { Room } from './Room';
+import { RoomContainer } from './RoomContainer';
 
-type Props = {
-  roomInfo: RoomRecord;
-};
+type Props = {};
 
-export const RoomRoute: React.FC<Props> = (props) => {
+export const RoomRoute: React.FC<Props> = () => {
+  const params = useParams<{ slug: string }>();
+
   return (
     <JoinRoomBouncer
-      roomInfo={props.roomInfo}
-      renderJoinedRoom={() => <Room />}
+      slug={params.slug}
+      render={(joinedRoom) => <RoomContainer joinedRoom={joinedRoom} />}
     />
   );
 };

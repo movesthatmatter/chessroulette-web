@@ -1,60 +1,78 @@
-import React, { useEffect } from 'react';
+import { CreateRoomRequest } from 'dstnd-io';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button } from 'src/components/Button';
-import { createUseStyles } from 'src/lib/jss';
+import { Button, ButtonProps } from 'src/components/Button';
 import { toRoomUrlPath } from 'src/lib/util';
 import { usePeerState } from 'src/providers/PeerProvider';
-import { createRoom } from 'src/resources/resources';
-import { useUserAuthentication } from 'src/services/Authentication';
-import { console } from 'window-or-global';
-
-type Props = {};
-
-export const CreateRoomButtonWidget: React.FC<Props> = (props) => {
-  const cls = useStyles();
-  const peerState = usePeerState();
-
-  // const auth = useUserAuthentication();
-  const history = useHistory();
-  // const
-
-  // useEffect(() => {
-  //   if (peerState.status !== 'open') {
-  //     return;
-  //   }
-
-  //   // if (peerState.hasJoinedRoom) {
-  //   //   history.push(toRoomUrlPath(peerState.room));
-  //   // }
-  // }, [peerState.status === 'open' && peerState.hasJoinedRoom])
-
-  return (
-    <Button
-      label="Create Analysis Room"
-      disabled={peerState.status !== 'open'}
-      onClick={() => {
-        if (peerState.status !== 'open') {
-          return;
-        }
-
-        createRoom({
-          type: 'public',
-          activityType: 'analysis',
-          userId: peerState.me.id,
-        }).map((room) => {
-          if (!peerState.hasJoinedRoom) {
-            peerState.joinRoom({
-              id: room.id,
-              code: room.code || undefined,
-            });
-            history.push(toRoomUrlPath(room));
-          }
-        });
-      }}
-    />
-  );
+import { CreatePlayRoomWizard } from '../../wizards/CreatePlayRoomWizard';
+import { CreateAnalysisRoomWizard } from '../../wizards/CreateAnalysisRoomWizard';
+import { Dialog } from 'src/components/Dialog';
+import * as resources from '../../resources';
+type Props = Omit<ButtonProps, 'onClick'> & {
+  createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activityType'>;
 };
 
-const useStyles = createUseStyles({
-  container: {},
-});
+export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...buttonProps }) => {
+  const peerState = usePeerState();
+  const history = useHistory();
+  const [showWizard, setShowWizard] = useState(false);
+
+  return (
+    <>
+      <Button
+        {...buttonProps}
+        disabled={buttonProps.disabled || peerState.status !== 'open'}
+        onClick={() => setShowWizard(true)}
+      />
+
+      <Dialog
+        visible={showWizard}
+        content={
+          <>
+            {createRoomSpecs.activityType === 'play' && (
+              <CreatePlayRoomWizard
+                onFinished={({ gameSpecs }) => {
+                  if (peerState.status !== 'open') {
+                    return;
+                  }
+
+                  resources
+                    .createRoom({
+                      userId: peerState.me.id,
+                      type: createRoomSpecs.type,
+                      activityType: 'play',
+                      gameSpecs,
+                    })
+                    .map((room) => {
+                      history.push(toRoomUrlPath(room));
+                    });
+                }}
+              />
+            )}
+            {createRoomSpecs.activityType !== 'play' && (
+              <CreateAnalysisRoomWizard
+                onFinished={() => {
+                  if (peerState.status !== 'open') {
+                    return;
+                  }
+
+                  resources
+                    .createRoom({
+                      userId: peerState.me.id,
+                      type: createRoomSpecs.type,
+                      activityType:
+                        createRoomSpecs.activityType === 'analysis' ? 'analysis' : 'none',
+                    })
+                    .map((room) => {
+                      history.push(toRoomUrlPath(room));
+                    });
+                }}
+              />
+            )}
+          </>
+        }
+        onClose={() => setShowWizard(false)}
+      />
+    </>
+  );
+};

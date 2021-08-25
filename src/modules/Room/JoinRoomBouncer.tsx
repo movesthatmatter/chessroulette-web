@@ -1,50 +1,148 @@
 import { RoomRecord } from 'dstnd-io';
-import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { usePeerState } from 'src/providers/PeerProvider';
+import React, { useEffect, useState } from 'react';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
-import { useJoinedRoom } from 'src/modules/Room/hooks/useJoinedRoom';
-import { JoinedRoom } from 'src/modules/Room/types';
-import { RoomBouncer, useRoomBouncer } from './RoomBouncer';
+import { FunWallpaper } from 'src/components/FunWallpaper';
+import { createUseStyles } from 'src/lib/jss';
+import { usePeerState } from 'src/providers/PeerProvider';
+import { colors, floatingShadow, softBorderRadius } from 'src/theme';
+import { spacers } from 'src/theme/spacers';
+import * as roomResources from './resources';
+import { resources } from 'src/resources';
+import { JoinRoomWizard } from './wizards/JoinRoomWizard';
+import { JoinedRoom } from './types';
+import { useJoinedRoom } from './hooks/useJoinedRoom';
 
 type Props = {
-  roomInfo: RoomRecord;
-  renderJoinedRoom: (r: JoinedRoom) => React.ReactNode;
+  slug: RoomRecord['slug'];
+  render: (r: JoinedRoom) => React.ReactNode;
 };
 
-export const JoinRoomBouncer: React.FC<Props> = ({ roomInfo, renderJoinedRoom }) => {
+type State = {
+  loading: boolean;
+} & (
+  | {
+      roomInfo: undefined;
+      canJoin: false;
+    }
+  | {
+      roomInfo: RoomRecord;
+      canJoin: boolean;
+    }
+);
+
+export const JoinRoomBouncer: React.FC<Props> = (props) => {
+  const cls = useStyles();
   const peerState = usePeerState();
   const joinedRoom = useJoinedRoom();
-  const { state: bouncerState } = useRoomBouncer(roomInfo.slug);
-  const history = useHistory();
+  const [state, setState] = useState<State>({
+    loading: false,
+    canJoin: false,
+    roomInfo: undefined,
+  });
 
+  // Fetch the Room Info
   useEffect(() => {
-    if (!bouncerState?.ready) {
+    if (peerState.status !== 'open') {
       return;
     }
 
-    if (peerState.status === 'open' && !peerState.hasJoinedRoom) {
+    if (state.roomInfo) {
+      return;
+    }
+
+    roomResources.getRoomBySlug(props.slug).map((roomInfo) => {
+      const iamHost = roomInfo.createdBy === peerState.me.id;
+
+      setState({
+        roomInfo,
+        canJoin: iamHost,
+        loading: iamHost,
+      });
+    });
+  }, [state, props.slug, peerState.status]);
+
+  // Join the Room once the canJoin is true
+  useEffect(() => {
+    if (peerState.status === 'open' && !peerState.hasJoinedRoom && state.canJoin) {
       peerState.joinRoom({
-        id: roomInfo.id,
-        code: roomInfo.code || undefined,
+        id: state.roomInfo.id,
+        code: state.roomInfo.code || undefined,
       });
     }
-  }, [bouncerState?.ready, peerState.status]);
+  }, [state.canJoin, peerState.status]);
 
+  useEffect(() => {
+    if (joinedRoom) {
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+      }));
+    }
+  }, [joinedRoom, state.loading]);
 
   if (joinedRoom) {
-    return (
-      <RoomBouncer roomInfo={roomInfo} onCancel={() => history.push('/')}>
-        {renderJoinedRoom(joinedRoom)}
-      </RoomBouncer>
-    );
+    return <>{props.render(joinedRoom)}</>;
   }
 
-  // If the user hasn't joined the existent Room yet
-  //  make him go through the bouncer and have him join it!
-  if (roomInfo && !bouncerState?.ready) {
-    return <RoomBouncer roomInfo={roomInfo} onCancel={() => history.push('/')} />;
+  if (state.roomInfo && !state.loading) {
+    return (
+      <FunWallpaper>
+        <div className={cls.container}>
+          <div className={cls.box}>
+            <JoinRoomWizard
+              roomInfo={state.roomInfo}
+              onFinished={(wizardState) => {
+                if (peerState.status !== 'open') {
+                  return;
+                }
+
+                if (wizardState.challengeAccepted) {
+                  resources
+                    .acceptChallenge({
+                      id: wizardState.pendingChallenge.id,
+                      userId: peerState.me.id,
+                    })
+                    .map(() => {
+                      setState({
+                        canJoin: true,
+                        roomInfo: state.roomInfo,
+                        loading: true,
+                      });
+                    });
+                } else {
+                  setState({
+                    canJoin: true,
+                    roomInfo: state.roomInfo,
+                    loading: true,
+                  });
+                }
+              }}
+            />
+          </div>
+        </div>
+      </FunWallpaper>
+    );
   }
 
   return <AwesomeLoaderPage />;
 };
+
+const useStyles = createUseStyles({
+  container: {
+    display: 'flex',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  box: {
+    // TODO: This should be the same as the DialogContent
+    minWidth: '200px',
+    maxWidth: '360px',
+    width: '50%',
+    display: 'flex',
+    background: colors.white,
+    ...floatingShadow,
+    ...softBorderRadius,
+    padding: spacers.large,
+  },
+});
