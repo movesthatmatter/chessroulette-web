@@ -59,7 +59,15 @@ export const defaultStory = () => (
       }),
     }}
   >
-    <RoomProvider>
+    <RoomProvider joinedRoom={{
+        ...room,
+        currentActivity: {
+          type: 'analysis',
+          analysisId: '23',
+          participants: {},
+        },
+        members: {},
+      }}>
       <AnalysisActivityContainer
         activity={{
           type: 'analysis',
