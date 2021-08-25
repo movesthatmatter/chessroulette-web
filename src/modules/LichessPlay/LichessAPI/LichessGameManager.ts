@@ -1,12 +1,16 @@
 import {
   acceptChallenge,
+  acceptOrOfferDraw,
   declineChallenge,
+  declineDrawOffer,
   getBoardStreamById,
   getLichessStreamEvent,
+  resignGame,
   sendAChallenge,
+  sendAMessage,
   sendAMove,
 } from '../resources';
-import { LichessGameState, NDJsonReader, LichessGameFull, LichessChallenge, LichessChatLine } from '../types';
+import { LichessGameState, NDJsonReader, LichessChallenge, LichessChatLine } from '../types';
 import { Pubsy } from 'src/lib/Pubsy';
 import { makeUci, parseSquare } from 'chessops/util';
 import {
@@ -20,6 +24,7 @@ import { getHomeColor, lichessGameToChessRouletteGame, getPromoPieceFromMove } f
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { console } from 'window-or-global';
 import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';
+import { URLSearchParams } from 'url';
 
 type LichessManagerEvents = {
   onStreamStart: undefined;
@@ -44,7 +49,6 @@ export class LichessManager {
   }
 
   startStreamAndChallenge = (specs: GameSpecsRecord) => {
-    console.log('START STREAM EVENT');
     getLichessStreamEvent(this.auth)
     .map((reader) => this.loopThroughNDJson(reader))
     .flatMap(() => {
@@ -76,8 +80,33 @@ export class LichessManager {
     .mapErr(e => console.log('move failed!', e.error))
   };
 
-  sendChatMessage = (msg: string, gameId: string) => {
+  sendChatMessage = (text: string, gameId: string) => {
+    return sendAMessage(gameId, {
+      ...this.auth,
+      body: new URLSearchParams({
+        room: 'player',
+        text
+      })
+    })
+    .mapErr(e => console.log('failed to send a message'))
+    .resolve()
+  }
 
+  resignGame = (gameId: string) => {
+    resignGame(gameId, this.auth)
+    .mapErr(e => console.log('failed to resign game'))
+  }
+
+  acceptOrOfferDraw = (gameId: string) => {
+    return acceptOrOfferDraw(gameId, this.auth)
+    .mapErr(e => console.log('failed to resign game'))
+    .resolve()
+  }
+
+  declineDraw = (gameId: string) => {
+    return declineDrawOffer(gameId, this.auth)
+    .mapErr(e => console.log('failed to decline draw'))
+    .resolve()
   }
 
   acceptChallenge = (challenge: LichessChallenge) => {

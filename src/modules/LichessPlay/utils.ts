@@ -122,7 +122,7 @@ export const lichessGameToChessRouletteGame = (
     ...(history.length > 0 && {
       startedAt: toISODateTime(new Date(game.createdAt)),
       pgn: historyToPgn(history),
-      lastMoveBy: turn,
+      lastMoveBy: turn === 'black' ? 'white' : 'black',
       lastMoveAt: getLastActivityTimeAtCreateGameStatus(turn, game),
       lastActivityAt: getLastActivityTimeAtCreateGameStatus(turn, game),
       winner: game.state.winner || undefined,
@@ -164,7 +164,7 @@ export const updateGameWithNewStateFromLichess = (
       white: lichessGameState.wtime,
     },
     updatedAt: toISODateTime(new Date()),
-    lastMoveBy: turn,
+    lastMoveBy: turn === 'black' ? 'white' : 'black',
     lastMoveAt: toISODateTime(new Date()),
     pgn: historyToPgn(history),
     winner: lichessGameState.winner || undefined,

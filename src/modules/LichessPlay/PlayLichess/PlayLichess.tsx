@@ -18,6 +18,7 @@ export const PlayLichess: React.FC = ({}) => {
   const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
   const lichess = useLichessProvider();
   const auth = useAuthenticatedUser();
+  //TODO this should be in the room! 
   const [chatHistory, setChatHistory] = useState<ChatHistoryRecord>({
     id: game?.id || new Date().getTime().toString(),
     messages: [],

@@ -15,6 +15,10 @@ type LichessContext = {
   onGameFinish: (fn :() => void) => void;
   onNewChatLine: (fn: (data: {chatLine: LichessChatLine}) => void) => void;
   sendChatMessage: (msg:string, gameId: string) => void;
+  resignGame : (gameId:string) => void;
+  acceptDraw : (gameId : string) => void;
+  declineDraw : (gameId: string) => void;
+  sendDrawOffer : (gameId: string) => void;
 } | undefined
 
 export const LichessContext = React.createContext<LichessContext>(undefined);
@@ -57,6 +61,18 @@ export const LichessProvider: React.FC<Props> = (props) => {
         },
         sendChatMessage: (msg: string, gameId: string) => {
           return lichessManager.sendChatMessage(msg, gameId);
+        },
+        resignGame: (gameId) => {
+          return lichessManager.resignGame(gameId)
+        },
+        acceptDraw: (gameId) => {
+          return lichessManager.acceptOrOfferDraw(gameId)
+        },
+        declineDraw: (gameId) => {
+          return lichessManager.declineDraw(gameId)
+        },
+        sendDrawOffer: (gameId) => {
+          return lichessManager.acceptOrOfferDraw(gameId)
         }
       }
     })

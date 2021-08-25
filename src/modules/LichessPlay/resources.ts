@@ -1,5 +1,6 @@
 import ndjsonStream from 'can-ndjson-stream';
 import { AsyncResultWrapper, Err, Ok } from 'dstnd-io';
+import { fetch } from 'window-or-global';
 import { NDJsonReader } from './types';
 
 type ApiError = {
@@ -93,4 +94,78 @@ export function declineChallenge(challengeId: string, opts: RequestInit) {
       return new Err({ type: 'BadRequest', value: e });
     }
   });
+}
+
+export function sendAMessage(gameId: string, opts: RequestInit){
+  return new AsyncResultWrapper<{ok: boolean}, ApiError>(async () => {
+    try{
+      await fetch(`https://lichess.org/api/board/game/${gameId}/chat`, {
+        method: 'POST',
+        headers: {
+          ...opts.headers,
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        },
+        body: opts.body,
+      })
+      return new Ok({ok: true})
+    } catch (e) {
+      return new Err({type: 'BadRequest', value: e})
+    }
+  })
+}
+
+export function abortGame(gameId: string, opts: RequestInit){
+  return new AsyncResultWrapper<{ok: boolean}, ApiError>(async () => {
+    try {
+      await fetch(`https://lichess.org/api/board/game/${gameId}/abort`, {
+        method: 'POST',
+        headers: opts.headers
+      })
+      return new Ok({ok:true})
+    } catch (e) {
+      return new Err({type: 'BadRequest', value: e});
+    }
+  })
+}
+
+export function resignGame(gameId: string, opts: RequestInit){
+  return new AsyncResultWrapper<{ok: boolean}, ApiError>(async () => {
+    try {
+      await fetch(`https://lichess.org/api/board/game/${gameId}/resign`, {
+        method: 'POST',
+        headers: opts.headers
+      })
+      return new Ok({ok:true})
+    } catch (e) {
+      return new Err({type: 'BadRequest', value: e});
+    }
+  })
+}
+
+export function acceptOrOfferDraw(gameId: string, opts: RequestInit){
+  return new AsyncResultWrapper<{ok: boolean}, ApiError>(async () => {
+    try {
+      await fetch(`https://lichess.org/api/board/game/${gameId}/draw/yes`, {
+        method: 'POST',
+        headers: opts.headers
+      })
+      return new Ok({ok:true})
+    } catch (e) {
+      return new Err({type: 'BadRequest', value: e});
+    }
+  })
+}
+
+export function declineDrawOffer(gameId: string, opts: RequestInit){
+  return new AsyncResultWrapper<{ok: boolean}, ApiError>(async () => {
+    try {
+      await fetch(`https://lichess.org/api/board/game/${gameId}/draw/no`, {
+        method: 'POST',
+        headers: opts.headers
+      })
+      return new Ok({ok:true})
+    } catch (e) {
+      return new Err({type: 'BadRequest', value: e});
+    }
+  })
 }
