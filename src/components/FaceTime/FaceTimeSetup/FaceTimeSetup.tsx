@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { PeerStreamingConfig } from 'src/services/peers';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { Box } from 'grommet';
@@ -9,6 +9,7 @@ import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
 import { colors, softBorderRadius } from 'src/theme';
 import useInstance from '@use-it/instance';
 import { seconds } from 'src/lib/time';
+import Loader from 'react-loaders';
 
 type Props = {
   onUpdated: (streamingConfig: PeerStreamingConfig) => void;
@@ -26,8 +27,7 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
   const showStream = () => {
     setPermissionState('pending');
 
-    AVStreaming
-      .getStream()
+    AVStreaming.getStream()
       .then((stream) => {
         setStreamingConfig({
           on: true,
@@ -85,14 +85,15 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
               }}
             >
               {permissionState === 'pending' && (
-                <Text size="small1">
-                  Waiting for Camera & Microphone Permissions...
-                </Text>
+                <>
+                  <Loader type="line-scale-pulse-out" active innerClassName={cls.loader}/>
+                  <Text size="small1">Waiting for Camera & Microphone Permissions...</Text>
+                </>
               )}
               {permissionState === 'denied' && (
                 <Text size="small1">
-                  Your Camera & Microphone permissions seem to be off.
-                  Please use your Browser's settings to allow them.
+                  Your Camera & Microphone permissions seem to be off. Please use your Browser's
+                  settings to allow them.
                 </Text>
               )}
             </Box>
@@ -114,5 +115,13 @@ const useStyles = createUseStyles({
   facetime: {
     ...softBorderRadius,
     overflow: 'hidden',
+  },
+  loader: {
+    transform: 'scale(.7)',
+    ...{
+      '& > div': {
+        backgroundColor: colors.primary,
+      },
+    } as CSSProperties,
   },
 });
