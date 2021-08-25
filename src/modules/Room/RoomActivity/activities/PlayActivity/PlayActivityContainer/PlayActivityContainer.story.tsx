@@ -5,7 +5,6 @@ import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityPar
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { RoomProvider } from 'src/modules/Room/RoomProvider';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
-import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 import { RoomPlayActivityParticipant } from '../types';
 import { PlayActivityContainer } from './PlayActivityContainer';
 
@@ -65,7 +64,16 @@ export const defaultStory = () => (
       }),
     }}
   >
-    <RoomProvider>
+    <RoomProvider
+      joinedRoom={{
+        ...room,
+        currentActivity: {
+          type: 'none',
+          participants: undefined,
+        },
+        members: {},
+      }}
+    >
       <PlayActivityContainer
         activity={{
           type: 'play',

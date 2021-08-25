@@ -1,11 +1,12 @@
 import React from 'react';
 import { Page } from 'src/components/Page';
-import { ChallengeButtonWidget } from 'src/modules/Challenges';
 import chessBackground from './assets/chess_icons.png';
 import { createUseStyles } from 'src/lib/jss';
 import { colors, minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
 import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
+import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
+import { spacers } from 'src/theme/spacers';
 
 type Props = {};
 
@@ -46,19 +47,27 @@ export const LandingPage: React.FC<Props> = () => {
               </h3>
             </div>
             <div className={cls.buttonWrapper}>
-              <ChallengeButtonWidget
-                label="Play Friend"
-                challengeType="private"
+              <CreateRoomButtonWidget
+                label="Play"
+                type="primary"
+                createRoomSpecs={{
+                  type: 'private',
+                  activityType: 'play',
+                }}
                 size="small"
                 style={{
-                  marginRight: '16px',
+                  marginRight: spacers.default,
                 }}
               />
-              <ChallengeButtonWidget
-                label="Quick Game"
+              <CreateRoomButtonWidget
+                label="Analyze"
+                type="primary"
+                clear
                 size="small"
-                challengeType="public"
-                type="secondary"
+                createRoomSpecs={{
+                  type: 'private',
+                  activityType: 'analysis',
+                }}
               />
             </div>
           </div>
