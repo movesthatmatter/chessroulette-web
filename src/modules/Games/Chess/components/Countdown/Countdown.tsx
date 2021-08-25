@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { noop } from 'src/lib/util';
-import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
+import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
 import cx from 'classnames';
 import dateFormat from 'dateformat';
 import { useInterval } from 'src/lib/hooks';
@@ -67,7 +67,9 @@ export const Countdown: React.FC<Props> = ({ onFinished = () => noop, gameTimeCl
           >
             {dateFormat(timeLeft, timeLeftToFormatMajor(gameTimeClassInMs, timeLeft))}
           </Text>
-          <Text className={cx(cls.text, cls.major, props.active && (cls.textActive, cls.blink))}>:</Text>
+          <Text className={cx(cls.text, cls.major, props.active && (cls.textActive, cls.blink), {
+              [cls.countdownMilliseconds]: gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
+            })}>:</Text>
           <Text
             className={cx(cls.text, cls.minor, props.active && cls.textActive, {
               [cls.countdownMilliseconds]: gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
@@ -114,7 +116,9 @@ const useStyles = createUseStyles({
   },
   paused: {},
   countdownMilliseconds: {
-    color: colors.negative,
+    ...makeImportant({
+      color: colors.negative,
+    }),
   },
   blink: {
     animation: '$blink 1s steps(5, start) infinite',
