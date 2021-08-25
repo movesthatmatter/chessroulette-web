@@ -2,14 +2,13 @@ import { AsyncResult, ChallengeRecord, RoomRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
-import { resources } from 'src/resources';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication';
 import { ChallengePage } from './ChallengePage';
 import { AwesomeErrorWithAction } from 'src/components/AwesomeErrorWithAction/AwesomeErrorWithAction';
-import { RoomRoute } from '../Room/RoomRoute';
-import { Room } from '../Room/Room';
+import { RoomRoute, resources as roomResources } from 'src/modules/Room';
+import { resources } from 'src/resources';
 
 type Props = {};
 
@@ -29,7 +28,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
     if (!(challenge || roomInfo) && resourceState === 'none') {
       setResourceState('loading');
 
-      resources
+      roomResources
         .getRoomBySlug(params.slug)
         .map((room) => setRoomInfo(room))
         .flatMapErr(() => resources.getChallengeBySlug(params.slug).map(setChallenge))
@@ -51,7 +50,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
 
   if (roomInfo) {
     // return <Room roomInfo={roomInfo} key={roomInfo.slug} />
-    return <RoomRoute roomInfo={roomInfo} key={roomInfo.slug} />
+    return <RoomRoute key={roomInfo.slug} />
   }
 
   const goBackOrHome = () => {
