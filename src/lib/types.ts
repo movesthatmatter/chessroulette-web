@@ -14,3 +14,10 @@ export type DeepPartial<T> = T extends Function
  */
 export type WithRequiredKey<T extends object, K extends keyof T> = Omit<T, K> &
   Required<Pick<T, K>>;
+
+/**
+ * Taken from here https://stackoverflow.com/a/57103940/2093626
+ * Also look at here to understand why the regular Omit breaks the discribimanting union
+ *  https://github.com/microsoft/TypeScript/issues/31501
+ */
+export type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never;
