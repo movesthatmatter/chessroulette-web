@@ -5,8 +5,8 @@ import { spacers } from 'src/theme/spacers';
 import { Button } from '../Button';
 import { DialogContentProps } from '../Dialog/DialogContent';
 
-type Props = Pick<DialogContentProps, 'buttons' | 'buttonsStacked' | 'graphic' | 'title'> & {
-  // onHandleStep: () => void;
+type Props = Pick<DialogContentProps, 'buttons' | 'buttonsStacked' | 'graphic'> & {
+  title?: string | React.ReactNode;
 };
 
 export const DialogWizardStep: React.FC<Props> = (props) => {
@@ -14,7 +14,11 @@ export const DialogWizardStep: React.FC<Props> = (props) => {
 
   return (
     <div className={cls.container}>
-      {props.title && <div className={cls.title}>{props.title}</div>}
+      {typeof props.title === 'string' ? (
+        <div className={cls.title}>{props.title}</div>
+      ) : props.title !== undefined ? (
+        <>{props.title}</>
+      ) : null}
       {props.graphic && <div className={cls.graphicContainer}>{props.graphic}</div>}
       <div className={cls.content}>{props.children}</div>
       {props.buttons && (
@@ -50,6 +54,7 @@ export const DialogWizardStep: React.FC<Props> = (props) => {
 
 const useStyles = createUseStyles({
   container: {
+    flex: 1,
     paddingLeft: 0,
     paddingRight: 0,
   },
@@ -70,7 +75,7 @@ const useStyles = createUseStyles({
     width: '50%',
     maxWidth: '300px',
     margin: '0 auto',
-    paddingBottom: spacers.small,
+    paddingBottom: spacers.default,
   },
   content: {},
   buttonsWrapper: {
