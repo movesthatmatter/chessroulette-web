@@ -170,7 +170,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       ...nextState,
       ready: getReadyFlag(nextState),
     };
-  }),
+  })
 ]);
 
 export const stateSliceByKey = {

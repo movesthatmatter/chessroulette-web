@@ -13,6 +13,7 @@ import { ChessGame } from 'src/modules/Games/Chess';
 import { PlayProps } from './types';
 import { DesktopLayout } from '../Layouts';
 import { RoomTabsWidget } from './widgets/RoomTabsWidget';
+import { AVStreamingControls} from 'src/components/StreamingBox/AVStreamingControls/AVStreamingControls';
 
 type Props = PlayProps;
 
@@ -147,6 +148,7 @@ export const PlayRoomDesktop: React.FC<Props> = ({ game, ...props }) => {
                   room={props.room}
                   focusedPeerId={!!props.meAsPlayer ? props.opponentAsPlayer?.user.id : undefined}
                   containerClassName={cls.streamingBox}
+                  footerOverlay={() => <AVStreamingControls/>}
                 />
               </div>
               <RoomTabsWidget

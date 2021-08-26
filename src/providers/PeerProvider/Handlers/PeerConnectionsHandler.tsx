@@ -72,7 +72,7 @@ export class PeerConnectionsHandler extends Component<Props, State> {
     this.destroy();
   }
 
-  componentDidUpdate(_: Props, prevState: State) {
+  componentDidUpdate(prevProps: Props, prevState: State) {
     // TODO: Make sure this is triggered on flag changes
     if (prevState.pcs !== this.state.pcs) {
       this.onStateUpdate();
@@ -90,7 +90,7 @@ export class PeerConnectionsHandler extends Component<Props, State> {
       return;
     }
 
-    this.peerConnections = new PeerConnections({ 
+    this.peerConnections = new PeerConnections({
       iceServers: this.props.iceServers,
       user: this.props.user,
     });

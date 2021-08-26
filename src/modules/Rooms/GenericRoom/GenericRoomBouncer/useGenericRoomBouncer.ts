@@ -6,7 +6,7 @@ import {
   confirmJoiningRoomAction,
   agreePermissionsRequestAction,
   checkRoomAction,
-  refusePermissionsAction,
+  refusePermissionsAction
 } from './reducer';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectroomBouncerState } from './selectors';

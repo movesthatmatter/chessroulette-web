@@ -25,6 +25,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
   const [iceServers, setIceServers] = useState<IceServerRecord[]>();
   const auth = useSelector(selectAuthentication);
   const state = useSelector(selectPeerProviderState);
+
   const dispatch = useDispatch();
 
   // Get ICE Urls onmount
@@ -144,6 +145,9 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
               return (
                 <PeerConnectionsHandler
                   onPeerStream={(p) => dispatch(addPeerStream(p))}
+                  // avStreamingConstraints={avStreamingConstraints}
+                  // TODO: Jul 21 - Do We need an on peer updated??
+
                   onPeerDisconnected={(peerId) => {
                     dispatch(closePeerChannelsAction({ peerId }));
                   }}
