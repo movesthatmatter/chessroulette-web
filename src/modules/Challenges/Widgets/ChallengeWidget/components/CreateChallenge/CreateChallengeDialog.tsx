@@ -29,6 +29,7 @@ export const CreateChallengeDialog: React.FC<Props> = ({
     preferredColor: 'random',
   });
 
+
   const createChallenge = () => {
     if (props.challengeType === 'private') {
       return resources

@@ -17,6 +17,18 @@ declare module 'react-snapshot';
 
 declare module 'object-equals';
 
+declare module 'can-ndjson-stream' {
+  export default function ndjsonStream(data : unknown): {
+    getReader : () => {
+      read : () => Promise<{
+        done : boolean;
+        value: any;
+      }>;
+    };
+    cancel : () => void;
+  }
+}
+
 declare module 'use-debounced-effect' {
   import { DependencyList, EffectCallback } from 'react';
 
