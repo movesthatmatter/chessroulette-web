@@ -1,6 +1,6 @@
 import React from 'react';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
-import { AvStream } from './AvStream';
+import { AvStream } from './AVStream';
 
 export default {
   component: AvStream,

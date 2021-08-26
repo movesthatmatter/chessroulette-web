@@ -84,6 +84,7 @@ export const PlayLichess: React.FC = ({}) => {
       {game && (
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <LichessGame
+              type="play"
               // Reset the State each time the game id changes
               key={game.id}
               game={game}
@@ -93,7 +94,7 @@ export const PlayLichess: React.FC = ({}) => {
               onMove={onMove}
             />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <GameStateWidget
+              {/* <GameStateWidget
                 key={game.id}
                 game={game}
                 homeColor={homeColor}
@@ -102,7 +103,7 @@ export const PlayLichess: React.FC = ({}) => {
                 // TODO: This should probably be seperate from the GameStateWidget
                 //  something like a hook so it can be used without a view component
                 //onTimerFinished={gameActions.onTimerFinished}
-              />
+              /> */}
             </div>
             {auth && <div>
              <Chat

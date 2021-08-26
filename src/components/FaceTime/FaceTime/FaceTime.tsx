@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { PeerStreamingConfig } from 'src/services/peers';
-import { AvStream, AVStreamProps } from '../../AvStream';
+import { AvStream, AVStreamProps } from '../../AVStream';
 import { colors, fonts, onlyMobile } from 'src/theme';
 import { Text } from 'src/components/Text';
 import { AspectRatio, AspectRatioProps } from '../../AspectRatio';

@@ -8,6 +8,7 @@ import { CreatePlayRoomWizard } from '../../wizards/CreatePlayRoomWizard';
 import { CreateAnalysisRoomWizard } from '../../wizards/CreateAnalysisRoomWizard';
 import { Dialog } from 'src/components/Dialog';
 import * as resources from '../../resources';
+
 type Props = Omit<ButtonProps, 'onClick'> & {
   createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activityType'>;
 };
