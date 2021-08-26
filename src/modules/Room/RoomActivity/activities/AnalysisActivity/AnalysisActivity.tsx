@@ -33,7 +33,7 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({ analysis, bo
             <ChessBoard
               size={boardSize}
               type="analysis"
-              id="analysis-board" // TODO: This might need to change
+              id={analysis.id}
               playable
               pgn={
                 displayedHistory

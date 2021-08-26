@@ -2,11 +2,14 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
-import { colors, softBorderRadius } from 'src/theme';
+import { colors, softBorderRadius, text } from 'src/theme';
 import { RoomDetailsConsumer } from './RoomDetailsConsumer';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
 import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
 import { DesktopRoomLayout, ExitRoomButton, NavigationHeader } from '../Layouts';
+import { Logo } from 'src/components/Logo';
+import { UserMenu } from 'src/components/Navigation';
+import { SwitchActivityRoomConsumer } from './SwitchActivityRoomConsumer';
 
 type Props = {
   renderActivity: (d: {
@@ -20,7 +23,6 @@ type Props = {
 const TOP_HEIGHT = 66;
 const BOTTOM_HEIGHT = 30;
 const MIN_SPACE_BETWEEN = spacers.largePx;
-
 
 // TODO: This isn't provided for now and don't think it needs to be but for now it sits here
 export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
@@ -37,10 +39,24 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
         topHeight={TOP_HEIGHT}
         bottomHeight={BOTTOM_HEIGHT}
         minSpaceBetween={MIN_SPACE_BETWEEN}
-        renderTopComponent={({ right }) => (
+        renderTopComponent={({ left, right }) => (
           <div className={cls.top}>
             <div className={cls.mainTop}>
-              <NavigationHeader />
+              <div style={{ width: left.width }}>
+                <Logo asLink />
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  flex: 1,
+                }}
+              >
+                <SwitchActivityRoomConsumer type="analysis" text="Analysis" />
+                <SwitchActivityRoomConsumer type="play" text="Play" />
+                <SwitchActivityRoomConsumer type="none" text="none" />
+                <UserMenu reversed />
+              </div>
+              {/* <NavigationHeader /> */}
             </div>
             <div style={{ width: right.width }} />
           </div>
