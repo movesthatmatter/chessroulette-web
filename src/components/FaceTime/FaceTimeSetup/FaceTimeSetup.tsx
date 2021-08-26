@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import { PeerStreamingConfig } from 'src/services/peers';
+import {
+  PeerStreamingConfig,
+  PeerStreamingConfigOff,
+  PeerStreamingConfigOn,
+} from 'src/services/peers';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
@@ -12,7 +16,7 @@ import { seconds } from 'src/lib/time';
 import Loader from 'react-loaders';
 
 type Props = {
-  onUpdated: (streamingConfig: PeerStreamingConfig) => void;
+  onUpdated: (p: { streamingConfig: PeerStreamingConfig; isLoading: boolean }) => void;
 };
 
 export const FaceTimeSetup: React.FC<Props> = (props) => {
@@ -44,12 +48,6 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    showStream();
-  }, []);
-
-  useEffect(() => {
-    props.onUpdated(streamingConfig);
-
     return () => {
       if (streamingConfig.on) {
         // This is important as destroying it right away would
@@ -58,7 +56,14 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
         AVStreaming.destroyStreamByIdWithDelay(streamingConfig.stream.id, seconds(3));
       }
     };
-  }, [streamingConfig]);
+  }, [streamingConfig.on]);
+
+  useEffect(() => {
+    props.onUpdated({ streamingConfig, isLoading: permissionState === 'pending' });
+  }, [streamingConfig, permissionState]);
+
+  // Show the stream on mount
+  useEffect(showStream, []);
 
   return (
     <div className={cls.container}>
@@ -86,7 +91,7 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
             >
               {permissionState === 'pending' && (
                 <>
-                  <Loader type="line-scale-pulse-out" active innerClassName={cls.loader}/>
+                  <Loader type="line-scale-pulse-out" active innerClassName={cls.loader} />
                   <Text size="small1">Waiting for Camera & Microphone Permissions...</Text>
                 </>
               )}
@@ -118,10 +123,10 @@ const useStyles = createUseStyles({
   },
   loader: {
     transform: 'scale(.7)',
-    ...{
+    ...({
       '& > div': {
         backgroundColor: colors.primary,
       },
-    } as CSSProperties,
+    } as CSSProperties),
   },
 });
