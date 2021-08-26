@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { createUseStyles } from 'src/lib/jss';
-import { PeerStreamingConfig } from 'src/services/peers';
+import { createUseStyles, CSSProperties } from 'src/lib/jss';
+import {
+  PeerStreamingConfig,
+  PeerStreamingConfigOff,
+  PeerStreamingConfigOn,
+} from 'src/services/peers';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
@@ -9,9 +13,10 @@ import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
 import { colors, softBorderRadius } from 'src/theme';
 import useInstance from '@use-it/instance';
 import { seconds } from 'src/lib/time';
+import Loader from 'react-loaders';
 
 type Props = {
-  onUpdated: (streamingConfig: PeerStreamingConfig) => void;
+  onUpdated: (p: { streamingConfig: PeerStreamingConfig; isLoading: boolean }) => void;
 };
 
 export const FaceTimeSetup: React.FC<Props> = (props) => {
@@ -26,8 +31,7 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
   const showStream = () => {
     setPermissionState('pending');
 
-    AVStreaming
-      .getStream()
+    AVStreaming.getStream()
       .then((stream) => {
         setStreamingConfig({
           on: true,
@@ -44,21 +48,22 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    showStream();
-  }, []);
-
-  useEffect(() => {
-    props.onUpdated(streamingConfig);
-
     return () => {
       if (streamingConfig.on) {
         // This is important as destroying it right away would
         //  create a need to reask for userMedia which on some browsers
         //  will retrigger the permissions!
-        AVStreaming.destroyStreamByIdAfter(streamingConfig.stream.id, seconds(3));
+        AVStreaming.destroyStreamByIdWithDelay(streamingConfig.stream.id, seconds(3));
       }
     };
-  }, [streamingConfig]);
+  }, [streamingConfig.on]);
+
+  useEffect(() => {
+    props.onUpdated({ streamingConfig, isLoading: permissionState === 'pending' });
+  }, [streamingConfig, permissionState]);
+
+  // Show the stream on mount
+  useEffect(showStream, []);
 
   return (
     <div className={cls.container}>
@@ -85,14 +90,15 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
               }}
             >
               {permissionState === 'pending' && (
-                <Text size="small1">
-                  Waiting for Camera & Microphone Permissions...
-                </Text>
+                <>
+                  <Loader type="line-scale-pulse-out" active innerClassName={cls.loader} />
+                  <Text size="small1">Waiting for Camera & Microphone Permissions...</Text>
+                </>
               )}
               {permissionState === 'denied' && (
                 <Text size="small1">
-                  Your Camera & Microphone permissions seem to be off.
-                  Please use your Browser's settings to allow them.
+                  Your Camera & Microphone permissions seem to be off. Please use your Browser's
+                  settings to allow them.
                 </Text>
               )}
             </Box>
@@ -114,5 +120,13 @@ const useStyles = createUseStyles({
   facetime: {
     ...softBorderRadius,
     overflow: 'hidden',
+  },
+  loader: {
+    transform: 'scale(.7)',
+    ...({
+      '& > div': {
+        backgroundColor: colors.primary,
+      },
+    } as CSSProperties),
   },
 });

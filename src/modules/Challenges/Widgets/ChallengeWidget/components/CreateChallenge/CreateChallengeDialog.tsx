@@ -1,6 +1,9 @@
 import { AsyncResult, ChallengeRecord, GameSpecsRecord, RoomRecord, UserRecord } from 'dstnd-io';
+import { CheckBox } from 'grommet';
 import React, { useState } from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
+import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import { createUseStyles } from 'src/lib/jss';
 import { resources } from 'src/resources';
 import { Events } from 'src/services/Analytics';
 import { CreateChallenge } from './CreateChallenge';
@@ -10,20 +13,21 @@ type Props = Pick<DialogProps, 'title' | 'visible'> & {
   onCancel: () => void;
   onCreated: (c: ChallengeRecord) => void;
 } & (
-  | {
-      challengeType: 'private';
-    }
-  | {
-      challengeType: 'public';
-      onMatched: (r: RoomRecord) => void;
-    }
-);
+    | {
+        challengeType: 'private';
+      }
+    | {
+        challengeType: 'public';
+        onMatched: (r: RoomRecord) => void;
+      }
+  );
 
 export const CreateChallengeDialog: React.FC<Props> = ({
   visible,
-  title = 'Create a Game',
+  title = 'Yey, you are about to Create a Game!',
   ...props
 }) => {
+  const cls = useStyles();
   const [gameSpecs, setGameSpecs] = useState<GameSpecsRecord>({
     timeLimit: 'rapid10',
     preferredColor: 'random',
@@ -72,7 +76,17 @@ export const CreateChallengeDialog: React.FC<Props> = ({
       visible={visible}
       hasCloseButton={false}
       title={title}
-      content={<CreateChallenge gameSpecs={gameSpecs} onUpdated={setGameSpecs} />}
+      graphic={
+        <div className={cls.mutunachiContainer}>
+          <Mutunachi mid="9" />
+        </div>
+      }
+      content={
+        <div>
+          <CreateChallenge gameSpecs={gameSpecs} onUpdated={setGameSpecs} />
+          <CheckBox />
+        </div>
+      }
       buttons={[
         {
           label: 'Cancel',
@@ -90,3 +104,14 @@ export const CreateChallengeDialog: React.FC<Props> = ({
     />
   );
 };
+
+const useStyles = createUseStyles({
+  mutunachiContainer: {
+    width: '50%',
+    maxWidth: '300px',
+    margin: '0 auto',
+  },
+  mutunachi: {
+    height: '100%',
+  },
+});

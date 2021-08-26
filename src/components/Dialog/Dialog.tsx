@@ -4,13 +4,19 @@ import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { DialogContent, DialogContentProps } from './DialogContent';
 import cx from 'classnames';
+import { noop } from 'src/lib/util';
 
 export type DialogProps = {
   visible: boolean;
   target?: LayerProps['target'];
 } & DialogContentProps;
 
-export const Dialog: React.FC<DialogProps> = ({ className, ...props }) => {
+export const Dialog: React.FC<DialogProps> = ({
+  className,
+  hasCloseButton = true,
+  onClose = noop,
+  ...props
+}) => {
   const cls = useStyles();
 
   if (!props.visible) {
@@ -27,8 +33,12 @@ export const Dialog: React.FC<DialogProps> = ({ className, ...props }) => {
       target={props.target}
       modal
       responsive={false}
+      {...(hasCloseButton && {
+        onClickOutside: onClose,
+        onEsc: onClose,
+      })}
     >
-      <DialogContent {...props} />
+      <DialogContent hasCloseButton={hasCloseButton} onClose={onClose} {...props} />
     </Layer>
   );
 };

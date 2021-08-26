@@ -1,5 +1,6 @@
 import { ActivePiecesRecord } from 'dstnd-io';
 import { objectKeys } from 'src/lib/util';
+import { PlayParticipants } from 'src/modules/Games';
 import { Game } from 'src/modules/Games/types';
 
 const pointsByMaterial = {
@@ -16,7 +17,12 @@ const calculatePointsBySide = (activePieces: ActivePiecesRecord[keyof ActivePiec
   }, 0);
 };
 
-export const getRelativeMaterialScore = (game: Game) => {
+export type RelativeMaterialScore = {
+  white: number;
+  black: number;
+};
+
+export const getRelativeMaterialScore = (game: Game): RelativeMaterialScore => {
   const blackPoints = calculatePointsBySide(game.activePieces.black);
   const whitePoints = calculatePointsBySide(game.activePieces.white);
 
@@ -35,4 +41,20 @@ export const getRelativeMaterialScore = (game: Game) => {
     white: 0,
     black: 0,
   };
+};
+
+export const getPlayersTimeLeft = (game: Game, participants: PlayParticipants) => {
+  const now = new Date().getTime();
+
+  const home =
+    game.state === 'started' && game.lastMoveBy !== participants.home.color
+      ? game.timeLeft[participants.home.color] - (now - new Date(game.lastMoveAt).getTime())
+      : game.timeLeft[participants.home.color];
+
+  const away =
+    game.state === 'started' && game.lastMoveBy !== participants.away.color
+      ? game.timeLeft[participants.away.color] - (now - new Date(game.lastMoveAt).getTime())
+      : game.timeLeft[participants.away.color];
+
+  return { home, away } as const;
 };

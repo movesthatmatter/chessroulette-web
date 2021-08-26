@@ -29,9 +29,11 @@ export const initialState: State = {
   room: undefined,
 };
 
-const peerRecordToPeer = (p: PeerRecord): Peer => {
+const peerRecordToPeer = ({ peer, isMe }: { peer: PeerRecord; isMe: boolean }): Peer => {
   return {
-    ...p,
+    ...peer,
+    isMe,
+    userId: peer.user.id,
     connection: {
       // This shouldn't be so
       // there's no connetion with myself :)
@@ -47,7 +49,7 @@ const getNewRoom = (me: Peer, room: RoomRecord): Room => {
   const { [me.id]: removedMyPeer, ...peersWithoutMe } = room.peers;
 
   const nextPeers = Object.values(peersWithoutMe)
-    .map(peerRecordToPeer)
+    .map((peer) => peerRecordToPeer({ peer, isMe: false }))
     .reduce(
       (prev, next) => ({
         ...prev,
@@ -72,7 +74,7 @@ const getNewRoom = (me: Peer, room: RoomRecord): Room => {
 
 export const reducer = createReducer(initialState as State, (handleAction) => [
   handleAction(createMeAction, (state, { payload }) => {
-    const nextMe = peerRecordToPeer(payload.me);
+    const nextMe = peerRecordToPeer({ peer: payload.me, isMe: true });
 
     return {
       ...state,
@@ -157,7 +159,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
         }
 
         // Otherwise add the new one
-        return peerRecordToPeer(peer);
+        return peerRecordToPeer({ peer, isMe: false });
       })
       .reduce(
         (prev, next) => ({

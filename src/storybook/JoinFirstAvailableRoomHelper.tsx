@@ -10,7 +10,7 @@ import {
   SocketConsumer,
   SocketConsumerProps,
 } from 'src/providers/SocketProvider';
-import { resources } from 'src/resources';
+import * as roomResources from 'src/modules/Room/resources';
 
 type Props = Pick<
   SocketConsumerProps,
@@ -32,7 +32,7 @@ export const JoinFirstAvailableRoomHelper: React.FC<Props> = (props) => {
 
   useEffect(() => {
     (async () => {
-      const res = await resources.getPublicRooms();
+      const res = await roomResources.getPublicRooms();
 
       res.map(setPublicRooms);
     })();

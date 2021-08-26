@@ -1,9 +1,7 @@
 import React from 'react';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { LichessAuthCallbackPage } from './vendors/lichess/LichessAuthCallbackPage';
-import { StatsPage } from './modules/Stats';
 import { LandingPage } from './modules/Landing/LandingPage';
-import { ChallengeOrRoomPage } from './modules/Challenges/ChallengeOrRoomPage';
 import { FacebookAuthCallbackPage } from './vendors/facebook';
 import { PeerProvider } from './providers/PeerProvider';
 import { SocketProvider } from './providers/SocketProvider';
@@ -13,6 +11,7 @@ import { TOS } from './pages/TOS';
 import { TwitchCallbackPage } from './vendors/twitch/TwitchCallbackPage/TwitchCallBackPage';
 import { LivePage } from './modules/Live';
 import { PlayLichess } from './modules/LichessPlay/PlayLichess/PlayLichess';
+import { RoomRoute } from './modules/Room';
 
 type Props = {};
 
@@ -44,10 +43,10 @@ export const Routes: React.FC<Props> = () => {
       <Route path="/user/:section" key={location.key} exact component={UserProfilePage} />
       <Route path="/live" key={location.key} exact component={LivePage} />
       <Route exact strict path='/lichess' key={location.key} component={PlayLichess}/>
+
       <SocketProvider>
         <PeerProvider>
-          <Route exact strict path="/stats" key={location.key} component={StatsPage} />
-          <Route exact strict path="/:slug" key={location.key} component={ChallengeOrRoomPage} />
+          <Route exact strict path="/:slug" key={location.key} component={RoomRoute} />
           <Route exact path="/" component={LandingPage} />
         </PeerProvider>
       </SocketProvider>

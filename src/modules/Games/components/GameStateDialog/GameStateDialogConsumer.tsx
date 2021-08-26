@@ -11,10 +11,8 @@ export const GameStateDialogConsumer: React.FC = () => {
 
   return (
     <GameStateDialog
-      isMobile={context.isMobile}
-      myPlayer={context.myPlayer}
-      room={context.room}
-      game={context.game}
+      dialogNotificationTypes={context.dialogNotificationTypes}
+      activity={context.activity}
     />
   );
 };

@@ -1,16 +1,16 @@
 import React from 'react';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
-import { AVStream } from './AVStream';
+import { AvStream } from './AVStream';
 
 export default {
-  component: AVStream,
-  title: 'Components/AVStream',
+  component: AvStream,
+  title: 'components/AvStream',
 };
 
-export const withWebcam = () => (
+export const defaultStory = () => (
   <WithLocalStream
     render={(stream) => (
-      <AVStream
+      <AvStream
         stream={stream}
         autoPlay
         muted

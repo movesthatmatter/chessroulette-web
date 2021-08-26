@@ -1,6 +1,11 @@
-import { ChessHistoryMove } from 'dstnd-io';
+import { ChessRecursiveBlackMove, ChessRecursiveMove, ChessRecursiveWhiteMove } from 'dstnd-io';
 
-export type HalfMove = [ChessHistoryMove];
-export type FullMove = [ChessHistoryMove, ChessHistoryMove];
-export type PairedMove = HalfMove | FullMove;
+// export type EmptyMove = undefined;
+export type PartialWhiteMove = [ChessRecursiveWhiteMove];
+export type PartialBlackMove = [ChessRecursiveBlackMove];
+
+export type PartialMove = [ChessRecursiveMove];
+export type FullMove = [ChessRecursiveWhiteMove, ChessRecursiveBlackMove];
+
+export type PairedMove = PartialMove | FullMove;
 export type PairedHistory = PairedMove[];

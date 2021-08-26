@@ -78,7 +78,7 @@ class AVStreamingClass {
   // TODO: As of 12/09/2020 I haven't found a way to stop and restart the
   //  same getUserMedia stream, but if that would work than all we would need
   //  is to create one!
-  destroyStreamByIdAfter(streamId: string, ms = 250) {
+  destroyStreamByIdWithDelay(streamId: string, ms = 250) {
     setTimeout(() => {
       this.destroyStreamById(streamId);
     }, ms);

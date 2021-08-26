@@ -16,23 +16,26 @@ export const FaceTimeSetupWidget: React.FC<Props> = ({
   const [permissionsState, setPermissionsState] = useState<'none' | 'granted' | 'denied'>('none');
 
   useEffect(() => {
-    AVStreaming.hasPermission().map((granted) => setPermissionsState(granted ? 'granted' : 'denied'));
+    AVStreaming.hasPermission().map((granted) =>
+      setPermissionsState(granted ? 'granted' : 'denied')
+    );
   }, []);
 
   if (permissionsState === 'granted') {
-    return (
-      <>
-        {renderPermissionGranted()}
-      </>
-    );
+    return <>{renderPermissionGranted()}</>;
   }
 
   return (
     <>
-      {props.renderFallback 
-        ? props.renderFallback()
-        : <FaceTimeSetup onUpdated={(s) => setPermissionsState(s.on ? 'granted' : 'denied')}/>
-      }
+      {props.renderFallback ? (
+        props.renderFallback()
+      ) : (
+        <FaceTimeSetup
+          onUpdated={({ streamingConfig }) =>
+            setPermissionsState(streamingConfig.on ? 'granted' : 'denied')
+          }
+        />
+      )}
     </>
   );
 };

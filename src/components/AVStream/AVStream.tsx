@@ -8,7 +8,7 @@ export type AVStreamProps = VideoAttributes & {
   stream: MediaStream;
 };
 
-export const AVStream: React.FunctionComponent<AVStreamProps> = ({
+export const AvStream: React.FunctionComponent<AVStreamProps> = ({
   stream,
   ...videoProps
 }) => {
