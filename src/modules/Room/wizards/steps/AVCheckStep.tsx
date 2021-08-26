@@ -1,7 +1,5 @@
-import React from 'react';
-import { createUseStyles } from 'src/lib/jss';
+import React, { useState } from 'react';
 import { useWizard } from 'react-use-wizard';
-import { Button } from 'src/components/Button';
 import { DialogWizardStep } from 'src/components/DialogWizard/DialogWizardStep';
 import { FaceTimeSetup } from 'src/components/FaceTime';
 
@@ -9,9 +7,11 @@ type Props = {
   onSuccess: () => void;
 };
 
+type ButtonState = 'notReady' | 'loading' | 'ready';
+
 export const AVCheckStep: React.FC<Props> = (props) => {
-  const cls = useStyles();
   const wizardProps = useWizard();
+  const [buttonState, setButtonState] = useState<ButtonState>('notReady');
 
   return (
     <DialogWizardStep
@@ -24,22 +24,21 @@ export const AVCheckStep: React.FC<Props> = (props) => {
         },
         {
           label: 'Next',
+          isLoading: buttonState === 'loading',
+          disabled: buttonState === 'notReady',
           onClick: props.onSuccess,
         },
       ]}
     >
       <FaceTimeSetup
-        onUpdated={(s) => {
-          if (s.on) {
-            // This is extra, as the Permissions are already granted here
-            // bouncer.checkPermissions();
+        onUpdated={({ streamingConfig, isLoading }) => {
+          if (isLoading) {
+            setButtonState('loading');
+          } else {
+            setButtonState(streamingConfig.on ? 'ready' : 'notReady');
           }
         }}
       />
     </DialogWizardStep>
   );
 };
-
-const useStyles = createUseStyles({
-  container: {},
-});
