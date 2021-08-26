@@ -4,7 +4,7 @@ import { ActionButton, Button } from 'src/components/Button';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { Refresh, Flag, Edit } from 'grommet-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHandshakeAltSlash } from '@fortawesome/free-solid-svg-icons';
+import { faHandshakeAltSlash, faUndo } from '@fortawesome/free-solid-svg-icons';
 import { spacers } from 'src/theme/spacers';
 import { noop } from 'src/lib/util';
 import { getUserDisplayName } from 'src/modules/User';
@@ -12,7 +12,7 @@ import cx from 'classnames';
 import { useGameActions } from '../../hooks/useGameActions';
 import { ConfirmNewGameAction } from '../ConfirmNewGameAction';
 import { getOppositePlayer } from '../../../Chess/lib';
-
+import { useTakebackStatus } from '../../hooks';
 
 type Props = {
   myPlayer: ChessPlayer;
@@ -32,6 +32,7 @@ export const GameActions: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
   const actions = useGameActions();
+  const takebackSatus = useTakebackStatus(game, myPlayer, props.roomActivity.offer);
 
   const content = () => {
     const dynamicProps = isMobile
@@ -47,7 +48,7 @@ export const GameActions: React.FC<Props> = ({
         };
 
     const otherPlayer = getOppositePlayer(myPlayer, game.players);
-
+    
     if (!otherPlayer) {
       return null;
     }
@@ -239,6 +240,23 @@ export const GameActions: React.FC<Props> = ({
               {...dynamicProps}
             />
           )}
+          {takebackSatus.show  &&
+          (
+              <ActionButton
+                type="primary"
+                label="Takeback"
+                confirmation="Confirm"
+                actionType="attention"
+                iconComponent={<FontAwesomeIcon icon={faUndo} color="#fff" />}
+                onSubmit={() => {
+                  actions.onTakebackOffer();
+                  onActionTaken('onTakebackOffer');
+                }}
+                disabled={props.roomActivity.offer?.type === 'takeback'}
+                className={cls.gameActionButton}
+                {...dynamicProps}
+              />
+            )}
         </>
       );
     }

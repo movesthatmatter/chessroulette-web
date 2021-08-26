@@ -78,6 +78,19 @@ export const notificationFactory = ({
         id: prev.offer.id,
         status: 'withdrawn',
       };
+    } else if (prev.offer.type === 'takeback'){
+      if (current.game.history && prev.game && prev.game.history && (current.game.history?.length < prev.game?.history?.length)){
+        return {
+          type: 'update',
+          id: prev.offer.id,
+          status: 'accepted'
+        }
+      } 
+      return {
+        type:  'update',
+        id: prev.offer.id,
+        status: 'withdrawn'
+      }
     }
   } else if (current.offer) {
     switch (current.offer.type) {
@@ -94,6 +107,19 @@ export const notificationFactory = ({
             toUser: current.offer.content.toUser,
           },
         };
+      case 'takeback':
+        return {
+          type: 'add',
+          notification: {
+            id: current.offer.id,
+            timestamp: toISODateTime(now),
+            type: 'offer',
+            status: 'pending',
+            offerType: 'takeback',
+            byUser: current.offer.content.byUser,
+            toUser: current.offer.content.toUser
+          }
+        }
       case 'rematch':
         return {
           type: 'add',
