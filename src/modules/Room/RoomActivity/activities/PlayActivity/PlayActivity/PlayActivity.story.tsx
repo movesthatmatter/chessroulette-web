@@ -2,7 +2,7 @@
 import React from 'react';
 import { GameMocker } from 'src/mocks/records';
 import { PlayActivity } from './PlayActivity';
-import { RoomPlayActivity, RoomPlayActivityParticipant } from '../types';
+import { RoomPlayActivityParticipant } from '../types';
 import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityParticipant';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { RoomProvider } from 'src/modules/Room/RoomProvider';
@@ -14,7 +14,9 @@ export default {
 };
 
 const gameMocker = new GameMocker();
-const game = gameMocker.withPgn('1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 a6 5. Nc3 Qc7 6. Bd3 Nc6 7. Be3 b5 8. a3 Bb7 9. O-O');
+const game = gameMocker.withPgn(
+  '1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 a6 5. Nc3 Qc7 6. Bd3 Nc6 7. Be3 b5 8. a3 Bb7 9. O-O'
+);
 const participantMocker = new RoomActivityParticipantMocker();
 
 const myParticipant = participantMocker.withProps({ isPresent: true, isMe: true });
@@ -64,7 +66,16 @@ export const defaultStory = () => (
       }),
     }}
   >
-    <RoomProvider>
+    <RoomProvider
+      joinedRoom={{
+        ...room,
+        currentActivity: {
+          type: 'none',
+          participants: undefined,
+        },
+        members: {},
+      }}
+    >
       <PlayActivity
         activity={{
           type: 'play',

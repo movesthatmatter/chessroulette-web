@@ -37,6 +37,7 @@ export const NoActivity: React.FC<Props> = (props) => {
   return (
     <GenericLayoutDesktopRoomConsumer
       renderActivity={(cd) => (
+        
         <ChessBoard
           type="free"
           size={cd.boardSize}

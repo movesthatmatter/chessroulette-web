@@ -59,7 +59,17 @@ export const defaultStory = () => (
       }),
     }}
   >
-    <RoomProvider>
+    <RoomProvider
+      joinedRoom={{
+        ...room,
+        currentActivity: {
+          type: 'analysis',
+          analysisId: '23',
+          participants: {},
+        },
+        members: {},
+      }}
+    >
       <AnalysisActivity
         boardSize={500}
         analysis={analysisMocker.record()}

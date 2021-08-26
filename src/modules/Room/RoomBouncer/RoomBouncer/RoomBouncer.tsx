@@ -46,8 +46,8 @@ export const RoomBouncer: React.FC<Props> = ({ onReady = noop, onCancel = noop, 
         title: 'Wow! You look ready! 😏',
         content: (
           <FaceTimeSetup
-            onUpdated={(s) => {
-              if (s.on) {
+            onUpdated={({ streamingConfig }) => {
+              if (streamingConfig.on) {
                 // This is extra, as the Permissions are already granted here
                 bouncer.checkPermissions();
               }

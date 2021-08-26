@@ -1,7 +1,5 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { Box } from 'grommet';
-import { Text } from 'src/components/Text';
 import {
   ChessGameTimeLimit,
   metadata,
@@ -13,6 +11,7 @@ import capitalize from 'capitalize';
 import { SelectInput } from 'src/components/Input/SelectInput';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import humanizeDuration from 'humanize-duration';
+import { spacers } from 'src/theme/spacers';
 
 export type CreateChallengeProps = {
   gameSpecs: ChallengeRecord['gameSpecs'];
@@ -29,7 +28,7 @@ export const CreateChallenge: React.FC<CreateChallengeProps> = ({ gameSpecs, onU
 
   return (
     <div className={cls.container}>
-      <Box margin={{ bottom: 'small' }}>
+      <div className={cls.top}>
         <SelectInput
           label="Time Limit"
           options={Object.keys(metadata.game.chessGameTimeLimitMsMap).map((k) => {
@@ -63,8 +62,8 @@ export const CreateChallenge: React.FC<CreateChallengeProps> = ({ gameSpecs, onU
             });
           }}
         />
-      </Box>
-      <Box>
+      </div>
+      <div>
         <SelectInput
           label="Preferred Color"
           options={metadata.game.chessGamePrefferedColorOptionList.map((k) => ({
@@ -82,14 +81,17 @@ export const CreateChallenge: React.FC<CreateChallengeProps> = ({ gameSpecs, onU
             });
           }}
         />
-      </Box>
+      </div>
     </div>
   );
 };
 
 const useStyles = createUseStyles({
   container: {},
+  top: {
+    marginBottom: spacers.small,
+  },
   label: {
-    marginBottom: '8px',
+    marginBottom: spacers.small,
   },
 });
