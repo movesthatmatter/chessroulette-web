@@ -76,9 +76,6 @@ export const LichessProvider: React.FC<Props> = (props) => {
         }
       }
     })
-    return () => {
-      //TODO unsubscribe
-    }
   },[auth?.externalAccounts?.lichess.userId])
 
   return (

@@ -1,19 +1,18 @@
 import ndjsonStream from 'can-ndjson-stream';
 import { AsyncResultWrapper, Err, Ok } from 'dstnd-io';
-import { fetch } from 'window-or-global';
 import { NDJsonReader } from './types';
+import api from './api';
 
 type ApiError = {
-  type: 'BadRequest' | 'BadResponse';
+  type: 'BadRequest';
   value: unknown;
 };
 
 export function getLichessStreamEvent(opts: RequestInit) {
   return new AsyncResultWrapper<NDJsonReader, ApiError>(async () => {
     try {
-      const result = await fetch('https://lichess.org/api/stream/event', {
-        method: 'GET',
-        headers: opts.headers,
+      const result = await api.get('stream/event',{
+        headers: opts.headers
       });
       return new Ok(ndjsonStream(result.body).getReader());
     } catch (e) {
@@ -25,8 +24,7 @@ export function getLichessStreamEvent(opts: RequestInit) {
 export function getBoardStreamById(id: string, opts: RequestInit) {
   return new AsyncResultWrapper<NDJsonReader, ApiError>(async () => {
     try {
-      const result = await fetch(`https://lichess.org/api/board/game/stream/${id}`, {
-        method: 'GET',
+      const result = await api.get(`board/game/stream/${id}`, {
         headers: opts.headers,
       });
       return new Ok(ndjsonStream(result.body).getReader());
@@ -39,8 +37,7 @@ export function getBoardStreamById(id: string, opts: RequestInit) {
 export function sendAChallenge(userName: string, opts: RequestInit) {
   return new AsyncResultWrapper<NDJsonReader, ApiError>(async () => {
     try {
-      const result = await fetch(`https://lichess.org/api/challenge/${userName}`, {
-        method: 'POST',
+      const result = await api.post(`challenge/${userName}`, {
         headers: {
           ...opts.headers,
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
@@ -57,8 +54,7 @@ export function sendAChallenge(userName: string, opts: RequestInit) {
 export function sendAMove(move: string, id: string, opts: RequestInit) {
   return new AsyncResultWrapper<{ ok: true }, { ok: false; error: any }>(async () => {
     try {
-      await fetch(`https://lichess.org/api/board/game/${id}/move/${move}`, {
-        method: 'POST',
+      await api.post(`board/game/${id}/move/${move}`, {
         headers: opts.headers,
       });
       return new Ok({ ok: true } as const);
@@ -69,103 +65,96 @@ export function sendAMove(move: string, id: string, opts: RequestInit) {
 }
 
 export function acceptChallenge(challengeId: string, opts: RequestInit) {
-  return new AsyncResultWrapper<NDJsonReader, ApiError>(async () => {
+  return new AsyncResultWrapper<{ok: true}, {ok: false; error: any}>(async () => {
     try {
-      const result = await fetch(`https://lichess.org/api/challenge/${challengeId}/accept`, {
-        method: 'POST',
+      await api.post(`challenge/${challengeId}/accept`, {
         headers: opts.headers,
       });
-      return new Ok(ndjsonStream(result.body).getReader());
+      return new Ok({ ok: true } as const);
     } catch (e) {
-      return new Err({ type: 'BadRequest', value: e });
+      return new Err({ ok: false, error: e } as const);
     }
   });
 }
 
 export function declineChallenge(challengeId: string, opts: RequestInit) {
-  return new AsyncResultWrapper<NDJsonReader, ApiError>(async () => {
+  return new AsyncResultWrapper<{ok: true}, {ok: false; error: any}>(async () => {
     try {
-      const result = await fetch(`https://lichess.org/api/challenge/${challengeId}/decline`, {
-        method: 'POST',
+      await api.post(`challenge/${challengeId}/decline`, {
         headers: opts.headers,
       });
-      return new Ok(ndjsonStream(result.body).getReader());
+      return new Ok({ ok: true } as const);
     } catch (e) {
-      return new Err({ type: 'BadRequest', value: e });
+      return new Err({ ok: false, error: e } as const);
     }
   });
 }
 
 export function sendAMessage(gameId: string, opts: RequestInit){
-  return new AsyncResultWrapper<{ok: boolean}, ApiError>(async () => {
+  return new AsyncResultWrapper<{ok: true}, {ok: false; error: any}>(async () => {
     try{
-      await fetch(`https://lichess.org/api/board/game/${gameId}/chat`, {
-        method: 'POST',
+      await api.post(`board/game/${gameId}/chat`, {
         headers: {
           ...opts.headers,
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         },
         body: opts.body,
       })
-      return new Ok({ok: true})
+      return new Ok({ok: true} as const)
     } catch (e) {
-      return new Err({type: 'BadRequest', value: e})
+      return new Err({ ok: false, error: e } as const);
     }
   })
 }
 
 export function abortGame(gameId: string, opts: RequestInit){
-  return new AsyncResultWrapper<{ok: boolean}, ApiError>(async () => {
+  return new AsyncResultWrapper<{ok: true}, {ok:false; error:any}>(async () => {
     try {
-      await fetch(`https://lichess.org/api/board/game/${gameId}/abort`, {
-        method: 'POST',
+      await api.post(`board/game/${gameId}/abort`, {
         headers: opts.headers
       })
-      return new Ok({ok:true})
+      return new Ok({ok:true} as const )
     } catch (e) {
-      return new Err({type: 'BadRequest', value: e});
+      return new Err({ ok: false, error: e } as const);
     }
   })
 }
 
 export function resignGame(gameId: string, opts: RequestInit){
-  return new AsyncResultWrapper<{ok: boolean}, ApiError>(async () => {
+  return new AsyncResultWrapper<{ok: true}, {ok: false; error: any}>(async () => {
     try {
-      await fetch(`https://lichess.org/api/board/game/${gameId}/resign`, {
-        method: 'POST',
+      await api.post(`board/game/${gameId}/resign`, {
         headers: opts.headers
       })
-      return new Ok({ok:true})
+      return new Ok({ok:true} as const)
     } catch (e) {
-      return new Err({type: 'BadRequest', value: e});
+      return new Err({ ok: false, error: e } as const);
     }
   })
 }
 
 export function acceptOrOfferDraw(gameId: string, opts: RequestInit){
-  return new AsyncResultWrapper<{ok: boolean}, ApiError>(async () => {
+  return new AsyncResultWrapper<{ok: true}, {ok:false; error:any}>(async () => {
     try {
-      await fetch(`https://lichess.org/api/board/game/${gameId}/draw/yes`, {
-        method: 'POST',
+      await api.post(`board/game/${gameId}/draw/yes`, {
         headers: opts.headers
       })
-      return new Ok({ok:true})
+      return new Ok({ok:true} as const)
     } catch (e) {
-      return new Err({type: 'BadRequest', value: e});
+      return new Err({ ok: false, error: e } as const);
     }
   })
 }
 
 export function declineDrawOffer(gameId: string, opts: RequestInit){
-  return new AsyncResultWrapper<{ok: boolean}, ApiError>(async () => {
+  return new AsyncResultWrapper<{ok: true}, {ok: false; error: any}>(async () => {
     try {
-      await fetch(`https://lichess.org/api/board/game/${gameId}/draw/no`, {
-        method: 'POST',
+      await api.post(`board/game/${gameId}/draw/no`, {
         headers: opts.headers
       })
-      return new Ok({ok:true})
+      return new Ok({ok:true} as const)
     } catch (e) {
-      return new Err({type: 'BadRequest', value: e});
+      return new Err({ ok: false, error: e } as const);
     }
   })
 }

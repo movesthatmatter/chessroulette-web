@@ -24,7 +24,6 @@ import { getHomeColor, lichessGameToChessRouletteGame, getPromoPieceFromMove } f
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { console } from 'window-or-global';
 import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';
-import { URLSearchParams } from 'url';
 
 type LichessManagerEvents = {
   onStreamStart: undefined;
@@ -111,14 +110,12 @@ export class LichessManager {
 
   acceptChallenge = (challenge: LichessChallenge) => {
     acceptChallenge(challenge.id, this.auth)
-    .map(reader => this.loopThroughNDJson(reader))
-    .mapErr(e => console.log('error accepting a challenge', e.value))
+    .mapErr(e => console.log('error accepting a challenge', e))
   };
 
   declineChallenge = (challenge: LichessChallenge) => {
     declineChallenge(challenge.id, this.auth)
-    .map((res) => this.loopThroughNDJson(res))
-    .mapErr((e) => console.log('error declining a challenge', e.value));
+    .mapErr((e) => console.log('error declining a challenge', e));
   };
 
   private async loopThroughNDJson(reader: NDJsonReader) {
