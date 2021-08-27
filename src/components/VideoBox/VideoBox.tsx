@@ -4,11 +4,11 @@ import config from 'src/config';
 type VideoAttributes =
   React.DetailedHTMLProps<React.VideoHTMLAttributes<HTMLVideoElement>, HTMLVideoElement>;
 
-export type AVStreamProps = VideoAttributes & {
+export type VideoBoxProps = VideoAttributes & {
   stream: MediaStream;
 };
 
-export const AvStream: React.FunctionComponent<AVStreamProps> = ({
+export const VideoBox: React.FunctionComponent<VideoBoxProps> = ({
   stream,
   ...videoProps
 }) => {

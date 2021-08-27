@@ -2,12 +2,12 @@ import React, { ReactNode } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { PeerStreamingConfig } from 'src/services/peers';
-import { AvStream, AVStreamProps } from '../../AVStream';
+import { VideoBox, VideoBoxProps } from 'src/components/VideoBox';
 import { colors, fonts, onlyMobile } from 'src/theme';
 import { Text } from 'src/components/Text';
-import { AspectRatio, AspectRatioProps } from '../../AspectRatio';
+import { AspectRatio, AspectRatioProps } from 'src/components/AspectRatio';
 
-export type FaceTimeProps = Omit<AVStreamProps, 'stream'> & {
+export type FaceTimeProps = Omit<VideoBoxProps, 'stream'> & {
   aspectRatio?: AspectRatioProps['aspectRatio'];
   streamConfig: PeerStreamingConfig;
   streamingOffFallback?: React.ReactNode;
@@ -45,7 +45,7 @@ export const FaceTime: React.FC<FaceTimeProps> = ({
     <div className={cx(cls.container, containerClassName)}>
       <AspectRatio aspectRatio={aspectRatio}>
         {streamConfig.on ? (
-          <AvStream
+          <VideoBox
             stream={streamConfig.stream}
             autoPlay
             className={cx(cls.video, className)}
