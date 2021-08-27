@@ -8,6 +8,10 @@ import { ActivityCommonProps } from '../types';
 import { ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/GameHistory';
 import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 import { ChessGameHistoryProvided } from 'src/modules/Games/Chess/components/GameHistory';
+import { FenBox } from './components/FenBox';
+import { PgnBox } from './components/PgnBox';
+import { LabeledFloatingBox } from './components/LabeledFloatingBox';
+import cx from 'classnames';
 
 export type AnalysisActivityProps = ActivityCommonProps & {
   boardSize: number;
@@ -19,10 +23,24 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({ analysis, bo
 
   return (
     <ChessGameHistoryConsumer
-      render={({ displayedHistory, onAddMove, displayedIndex }) => (
+      render={({ history, displayedHistory, onAddMove, displayedIndex }) => (
         <div className={cls.container}>
           <aside className={cls.side} style={{ height: boardSize }}>
-            <ChessGameHistoryProvided className={cls.gameStateContainer} />
+            <div className={cls.stretchedContainer}>
+              <LabeledFloatingBox
+                label="History"
+                containerClassName={cx(cls.box, cls.historyContainer)}
+                floatingBoxClassName={cls.history}
+              >
+                <ChessGameHistoryProvided />
+              </LabeledFloatingBox>
+              <FenBox historyOrPgn={history} containerClassName={cx(cls.box, cls.fenBox)} />
+              <PgnBox
+                historyOrPgn={history}
+                containerClassName={cx(cls.box, cls.pgnBoxContainer)}
+                contentClassName={cls.pgnBox}
+              />
+            </div>
           </aside>
           <div
             className={cls.boardContainer}
@@ -91,13 +109,38 @@ const useStyles = createUseStyles({
     height: '30%',
   },
 
-  gameStateContainer: {
+  stretchedContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    overflow: 'hidden',
+    alignItems: 'stretch',
     height: '100%',
-    background: colors.white,
-    ...floatingShadow,
-    ...softBorderRadius,
-    // height: 'calc(100% - 80px)',
-    minHeight: '100px',
-    minWidth: '130px',
+  },
+
+  historyContainer: {
+    overflow: 'hidden',
+    flex: 1,
+  },
+  history: {
+    overflow: 'hidden',
+  },
+
+  box: {
+    marginBottom: spacers.small,
+
+    '&:last-child': {
+      marginBottom: 0,
+    },
+  },
+  fenBox: {
+    flex: 0,
+  },
+  pgnBoxContainer: {
+    maxHeight: '20%',
+    overflow: 'hidden',
+  },
+  pgnBox: {
+    overflow: 'hidden',
   },
 });
