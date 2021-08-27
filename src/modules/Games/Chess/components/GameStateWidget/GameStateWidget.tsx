@@ -1,8 +1,7 @@
 import { ChessGameColor } from 'dstnd-io';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { floatingShadow, softBorderRadius } from 'src/theme/effects';
-import { colors, fonts } from 'src/theme';
+import { fonts } from 'src/theme';
 import { PlayerBox } from '../PlayerBox/PlayerBox';
 import cx from 'classnames';
 import { noop } from 'src/lib/util';
@@ -11,6 +10,8 @@ import { roomPlayActivityParticipantToChessPlayer } from 'src/modules/Room/RoomA
 import { PlayParticipants } from 'src/modules/Games/types';
 import { useGameTimesLeft } from './useGameState';
 import { ChessGameHistoryProvided } from '../GameHistory/ChessGameHistoryProvider/ChessGameHistoryProvided';
+import { FloatingBox } from 'src/components/FloatingBox';
+import { spacers } from 'src/theme/spacers';
 
 type Props = {
   game: Game;
@@ -44,9 +45,9 @@ export const GameStateWidget: React.FC<Props> = ({
         />
         <div className={cls.spacer} />
       </div>
-      <div className={cls.gameStateContainer}>
+      <FloatingBox className={cls.gameStateContainer}>
         <ChessGameHistoryProvided />
-      </div>
+      </FloatingBox>
       <div className={cls.player}>
         <div className={cls.spacer} />
         <PlayerBox
@@ -70,9 +71,6 @@ const useStyles = createUseStyles({
     flexDirection: 'column',
   },
   gameStateContainer: {
-    background: colors.white,
-    ...floatingShadow,
-    ...softBorderRadius,
     height: 'calc(100% - 80px)',
     minHeight: '100px',
     minWidth: '130px',
@@ -83,6 +81,6 @@ const useStyles = createUseStyles({
     ...fonts.small2,
   },
   spacer: {
-    height: '8px',
+    height: spacers.small,
   },
 });

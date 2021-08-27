@@ -17,10 +17,22 @@ type Props = {
   onFocus: (i: ChessHistoryIndex) => void;
   focusedIndex?: ChessHistoryIndex;
   className?: string;
+  containerClassName?: string;
 };
 
 export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
-  ({ pairedMove, pairedIndex, startingLinearIndex, onFocus, className, focusedIndex }, ref) => {
+  (
+    {
+      pairedMove,
+      pairedIndex,
+      startingLinearIndex,
+      onFocus,
+      className,
+      focusedIndex,
+      containerClassName,
+    },
+    ref
+  ) => {
     const cls = useStyles();
 
     const moveCount = pairedIndex + 1;
@@ -33,9 +45,11 @@ export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
     const blackMoveLinearIndex = whiteMoveLinearIndex + 1;
 
     const renderNestedContent = () => {
-      const [focusedMoveIndex, focusedBranchIndex, focusedNestedIndex] = isChessRecursiveHistoryIndex(
-        focusedIndex
-      )
+      const [
+        focusedMoveIndex,
+        focusedBranchIndex,
+        focusedNestedIndex,
+      ] = isChessRecursiveHistoryIndex(focusedIndex)
         ? focusedIndex
         : [focusedIndex, undefined, undefined];
 
@@ -102,7 +116,7 @@ export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
     };
 
     return (
-      <div className={cls.container} ref={ref}>
+      <div className={cx(cls.container, containerClassName)} ref={ref}>
         <div className={cx(cls.row, className)}>
           <Text className={cx(cls.text, cls.rowIndex)}>{`${moveCount}.`}</Text>
           {whiteMove ? (
