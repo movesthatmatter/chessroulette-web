@@ -8,6 +8,7 @@ import { CreatePlayRoomWizard } from '../../wizards/CreatePlayRoomWizard';
 import { CreateAnalysisRoomWizard } from '../../wizards/CreateAnalysisRoomWizard';
 import { Dialog } from 'src/components/Dialog';
 import * as resources from '../../resources';
+import { CreateLichessRoomWizard } from '../../wizards/CreateLichessRoomWizard';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activityType'>;
@@ -50,13 +51,32 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
                 }}
               />
             )}
-            {createRoomSpecs.activityType !== 'play' && (
+            {createRoomSpecs.activityType === 'lichess' && (
+              <CreateLichessRoomWizard
+              onFinished={(gameSpecs) => {
+                if (peerState.status !== 'open'){
+                  return;
+                }
+
+                resources 
+                  .createRoom({
+                    userId: peerState.me.id,
+                    type: createRoomSpecs.type,
+                    activityType: 'lichess',
+                    gameSpecs
+                  })
+                  .map((room) => {
+                    history.push(toRoomUrlPath(room));
+                  })
+              }}
+              />
+            )}
+            {(createRoomSpecs.activityType === 'analysis' || createRoomSpecs.activityType === 'none' ) && (
               <CreateAnalysisRoomWizard
                 onFinished={() => {
                   if (peerState.status !== 'open') {
                     return;
                   }
-
                   resources
                     .createRoom({
                       userId: peerState.me.id,

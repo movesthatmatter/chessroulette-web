@@ -70,12 +70,24 @@ export const LandingPage: React.FC<Props> = () => {
                   type: 'private',
                   activityType: 'analysis',
                 }}
+                style={{
+                  marginRight: spacers.default
+                }}
               />
-                <LichessChallengeButton
+              <CreateRoomButtonWidget
+                label='Lichess'
+                type='primary'
+                createRoomSpecs={{
+                  type: 'private',
+                  activityType: 'lichess'
+                }}
+                size= 'small'
+                />
+                {/* <LichessChallengeButton
                     label='Lichess'
                     size='small'
                     type='secondary'
-                  />
+                  /> */}
             </div>
           </div>
         </div>

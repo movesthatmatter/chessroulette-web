@@ -1,4 +1,4 @@
-import { ChessPlayer, RoomPlayActivityRecord } from 'dstnd-io';
+import { ChessPlayer, RoomLichessActivityRecord, RoomPlayActivityRecord } from 'dstnd-io';
 import { Game } from 'src/modules/Games';
 import { RoomActivitySpecifcParticipant } from '../../utilTypes';
 
@@ -12,6 +12,22 @@ export type RoomPlayActivityParticipant = RoomActivitySpecifcParticipant<
   }
 >;
 
+export type RoomLichessActivityGues = Pick<RoomActivitySpecifcParticipant<'lichess'>, 'roomActivitySpecificParticipantType' | 'userId'> & {
+  isPlayer: true;
+  canPlay: true
+  color: ChessPlayer['color']
+}
+
+export type RoomLichessActivityParticipant = RoomActivitySpecifcParticipant<
+'lichess',
+{
+  isPlayer: true;
+  canPlay: boolean;
+  materialScore: number;
+  color: ChessPlayer['color']
+}
+>;
+
 export type RoomPlayActivityWithGameAndParticipating = Omit<RoomPlayActivityRecord, 'gameId'> & {
   game: Game;
   iamParticipating: true;
@@ -20,6 +36,21 @@ export type RoomPlayActivityWithGameAndParticipating = Omit<RoomPlayActivityReco
     opponent: RoomPlayActivityParticipant;
   };
 };
+
+export type LichessRoomActivityWithGame = Omit<RoomLichessActivityRecord, 'gameId'> & {
+  game: Game;
+  participants: {
+    me: RoomLichessActivityParticipant
+    opponent: RoomLichessActivityGues
+  }
+}
+
+export type LichessRoomActivityWithoutGame = Omit<RoomLichessActivityRecord, 'gameId'> & {
+  game? : undefined;
+  participants? :undefined;
+}
+
+export type RoomLichessActivity = LichessRoomActivityWithGame | LichessRoomActivityWithoutGame;
 
 export type RoomPlayActivityWithGameButNotParticipating = Omit<RoomPlayActivityRecord, 'gameId'> & {
   game: Game;

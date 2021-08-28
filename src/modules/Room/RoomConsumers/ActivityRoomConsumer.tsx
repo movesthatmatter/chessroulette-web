@@ -7,6 +7,7 @@ import { usePeerState } from 'src/providers/PeerProvider';
 import { useDispatch } from 'react-redux';
 import { updateCurrentAnalysisAction, updateJoinedGameAction } from '../RoomActivity/redux/actions';
 import { useGameActions } from 'src/modules/Games/GameActions';
+import { LichessActivity } from '../RoomActivity/activities/LichessActivity/LichessActivity';
 
 type Props = {};
 
@@ -52,6 +53,11 @@ export const ActivityRoomConsumer: React.FC<Props> = () => {
 
   if (currentActivity.type === 'analysis') {
     return <AnalysisActivity activity={currentActivity} deviceSize={context.deviceSize} />;
+  }
+
+  if (currentActivity.type === 'lichess'){
+    //TODO - add device size and implement mobile 
+    return <LichessActivity activity={currentActivity}/>
   }
 
   return <NoActivity deviceSize={context.deviceSize} />;

@@ -7,6 +7,7 @@ import { toRoomAnalysisActivity } from '../activities/AnalysisActivity/util';
 import { BaseRoomActivity } from '../redux/types';
 import { RoomActivity, RoomActivityParticipant } from '../types';
 import { UserInfoRecord } from 'dstnd-io';
+import { LichessRoomActivityWithGame } from '../activities/PlayActivity';
 
 export const toRoomActivity = (
   currentRoomActivity: BaseRoomActivity,
@@ -22,6 +23,10 @@ export const toRoomActivity = (
   if (currentRoomActivity.type === 'analysis') {
     return toRoomAnalysisActivity(currentRoomActivity, members);
   }
+
+  if (currentRoomActivity.type === 'lichess'){
+    return {...currentRoomActivity} as LichessRoomActivityWithGame
+  } 
 
   return {
     ...currentRoomActivity,
