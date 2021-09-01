@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { LichessAuthenticatedPage } from 'src/components/Page';
-import { ChatHistoryRecord, ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
+import { ChatHistoryRecord, ChatMessageRecord, ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
 import { LichessChatLine, LichessGameState } from '../types';
 import { LichessGameStateDialogProvider } from './components/LichessGameStateDialogProvider';
 import { useAuthenticatedUser } from 'src/services/Authentication';
@@ -9,21 +8,21 @@ import { LichessGame } from 'src/modules/Games/Chess/components/LichessGame/Lich
 import { useLichessProvider } from '../LichessAPI/useLichessProvider';
 import { convertLichessChatLineToChatMessageRecord, updateGameWithNewStateFromLichess } from '../utils';
 import { console } from 'window-or-global';
-import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 import { Chat } from 'src/modules/Chat/Chat';
+import { ChessGameHistoryProvider } from 'src/modules/Games/Chess/components/GameHistory';
+import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
+import { floatingShadow, softBorderRadius } from 'src/theme';
 
-export const PlayLichess: React.FC = ({}) => {
+type Props = {
+  boardSize: number;
+  onSendNewChatMessage: (payload: ChatMessageRecord) => void;
+}
+
+export const LichessGameContainer: React.FC<Props> = ({boardSize, onSendNewChatMessage}) => {
   const [game, setGame] = useState<Game | undefined>(undefined);
   const [newGameState, setNewGameState] = useState<LichessGameState | undefined>(undefined);
   const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
   const lichess = useLichessProvider();
-  const auth = useAuthenticatedUser();
-  //TODO this should be in the room! 
-  const [chatHistory, setChatHistory] = useState<ChatHistoryRecord>({
-    id: game?.id || new Date().getTime().toString(),
-    messages: [],
-    usersInfo: {}
-  });
 
   useEffect(() => {
     if (lichess) {
@@ -71,54 +70,45 @@ export const PlayLichess: React.FC = ({}) => {
         }
       }
     } else {
-      chatHistory.messages.push(convertLichessChatLineToChatMessageRecord(chatLine))
+      onSendNewChatMessage(convertLichessChatLineToChatMessageRecord(chatLine));
     }
   }
 
   return (
-    <LichessAuthenticatedPage name="lichess" doNotTrack>
+    <>
+      {game ? (
       <LichessGameStateDialogProvider
         game={game}
         status={newGameState?.status}
       > 
-      {game && (
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <ChessGameHistoryProvider history={game?.history || []}>
             <LichessGame
               type="play"
               // Reset the State each time the game id changes
               key={game.id}
               game={game}
               homeColor={homeColor}
-              size={512}
+              size={boardSize}
               playable
               onMove={onMove}
             />
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {/* <GameStateWidget
-                key={game.id}
-                game={game}
-                homeColor={homeColor}
-                // historyFocusedIndex={props.historyIndex}
-                // onHistoryFocusedIndexChanged={props.onHistoryIndexUpdated}
-                // TODO: This should probably be seperate from the GameStateWidget
-                //  something like a hook so it can be used without a view component
-                //onTimerFinished={gameActions.onTimerFinished}
-              /> */}
-            </div>
-            {auth && <div>
-             <Chat
-              myId={auth.id}
-              history={chatHistory}
-              onSend={(msg) => {
-                if (lichess){
-                  lichess.sendChatMessage(msg, game.id);
-                }
-              }}
-             />
-            </div>}
-          </div>
-      )}
+      </ChessGameHistoryProvider>
       </LichessGameStateDialogProvider>
-    </LichessAuthenticatedPage>
+      ): (
+        <ChessBoard
+          type="free"
+          size={boardSize}
+          id="empty-frozen-board"
+          pgn=""
+          homeColor="white"
+          onMove={() => {}}
+          style={{
+            ...floatingShadow,
+            ...softBorderRadius,
+            overflow: 'hidden',
+          }}
+        />
+      )}
+    </>
   );
 };

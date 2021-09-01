@@ -1,5 +1,4 @@
 import React from 'react';
-import { createUseStyles } from 'src/lib/jss';
 import { useWizard } from 'react-use-wizard';
 import { CreateChallenge } from 'src/modules/Challenges/Widgets/ChallengeWidget/components/CreateChallenge/CreateChallenge';
 import { GameSpecsRecord } from 'dstnd-io';
@@ -9,15 +8,16 @@ import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 type Props = {
   gameSpecs: GameSpecsRecord;
   onUpdated: (gameSpecs: GameSpecsRecord) => void;
+  type: 'play' | 'lichess'
 };
 
 export const CreatePlayChallengeStep: React.FC<Props> = (props) => {
-  const cls = useStyles();
   const wizardProps = useWizard();
 
   return (
     <DialogWizardStep
-      title="Yey, you are creating a Game"
+      title={
+        props.type === 'play' ? "Yey, you are creating a Game" : "Set your preferences and seek a game on Lichess"}
       graphic={<Mutunachi mid="9" />}
       buttons={[
         {
@@ -30,7 +30,3 @@ export const CreatePlayChallengeStep: React.FC<Props> = (props) => {
     </DialogWizardStep>
   );
 };
-
-const useStyles = createUseStyles({
-  container: {},
-});

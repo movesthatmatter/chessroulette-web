@@ -48,8 +48,7 @@ export class LichessManager {
   }
 
   startStreamAndChallenge = (specs: GameSpecsRecord) => {
-    getLichessStreamEvent(this.auth)
-    .map((reader) => this.loopThroughNDJson(reader))
+   this.startStream()
     .flatMap(() => {
       return sendAChallenge('tttcr', {
         ...this.auth,
@@ -62,6 +61,11 @@ export class LichessManager {
     })
     .mapErr(e => console.log('Error starting a stream', e.value));
   };
+
+  startStream = () => {
+    return getLichessStreamEvent(this.auth)
+    .map(reader => this.loopThroughNDJson(reader))
+  }
 
   private gameStart = (id: string) => {
     getBoardStreamById(id, this.auth)

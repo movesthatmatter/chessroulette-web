@@ -10,7 +10,6 @@ import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TOS } from './pages/TOS';
 import { TwitchCallbackPage } from './vendors/twitch/TwitchCallbackPage/TwitchCallBackPage';
 import { LivePage } from './modules/Live';
-import { PlayLichess } from './modules/LichessPlay/PlayLichess/PlayLichess';
 import { RoomRoute } from './modules/Room';
 
 type Props = {};
@@ -42,8 +41,6 @@ export const Routes: React.FC<Props> = () => {
       <Route path="/tos" key={location.key} exact component={TOS} />
       <Route path="/user/:section" key={location.key} exact component={UserProfilePage} />
       <Route path="/live" key={location.key} exact component={LivePage} />
-      {/* <Route exact strict path='/lichess' key={location.key} component={PlayLichess}/> */}
-
       <SocketProvider>
         <PeerProvider>
           <Route exact strict path="/:slug" key={location.key} component={RoomRoute} />

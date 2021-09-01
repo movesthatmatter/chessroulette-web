@@ -8,6 +8,7 @@ import { LichessChatLine, LichessGameState } from '../types';
 
 type LichessContext = {
   initAndChallenge : (specs: GameSpecsRecord) => void;
+  startStream: () => void;
   makeMove: (move: ChessMove, id: string) => void;
   onChallengeAccepted: (fn: () => void) => void;
   onGameUpdate : (fn: (data : {gameState: LichessGameState}) => void) => void;
@@ -40,6 +41,9 @@ export const LichessProvider: React.FC<Props> = (props) => {
       return {
         initAndChallenge : (gameSpecs) => {
           return lichessManager.startStreamAndChallenge(gameSpecs);
+        },
+        startStream: () => {
+          return lichessManager.startStream();
         },
         makeMove : (move, id) => {
           return lichessManager.makeMove(move, id);
