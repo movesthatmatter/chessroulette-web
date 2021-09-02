@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { PlayActivity } from '../PlayActivity';
-import { useDispatch } from 'react-redux';
-import { updateJoinedGameAction } from '../../../redux/actions';
 import { GameStateDialogProvider } from 'src/modules/Games/components/GameStateDialog';
 import { PlayActivityProps } from '../PlayActivity/PlayActivity';
 import { RoomPlayActivity } from '../types';
@@ -13,10 +11,8 @@ type Props = Omit<PlayActivityProps, 'activity'> & {
 };
 
 export const PlayActivityContainer: React.FC<Props> = ({ activity, ...props }) => {
-  const dispatch = useDispatch();
   const peerState = usePeerState();
   const gameActions = useGameActions();
-
 
   // TODO: This should be in the RoomActivity not here as the room activity redux gets updated!
   useEffect(() => {
@@ -30,16 +26,6 @@ export const PlayActivityContainer: React.FC<Props> = ({ activity, ...props }) =
       //  between different peers than the ones that created & accepted the challenge
       // request(gameActions.join());
       gameActions.onJoin();
-
-      const unsubscribers = [
-        gameActions.onGameUpdatedEventListener((nextGame) => {
-          dispatch(updateJoinedGameAction(nextGame));
-        }),
-      ];
-
-      return () => {
-        unsubscribers.forEach((cb) => cb());
-      };
     }
   }, [peerState.status]);
 

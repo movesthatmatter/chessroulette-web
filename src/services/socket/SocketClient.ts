@@ -45,6 +45,7 @@ import {
   AnalysisMoveRequestPayload,
   AnalysisRefocusRequestPayload,
   AnalysisDrawnShapesUpdatedRequestPayload,
+  SwitchRoomActivityRequestPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
@@ -78,6 +79,7 @@ type SendableMessagesMap = {
   // Room
   joinRoomRequest: JoinRoomRequestPayload;
   leaveRoomRequest: LeaveRoomRequestPayload;
+  switchRoomActivityRequestPayload: SwitchRoomActivityRequestPayload;
 
   //Chat
   broadcastChatMessage: BroadcastChatMessagePayload;

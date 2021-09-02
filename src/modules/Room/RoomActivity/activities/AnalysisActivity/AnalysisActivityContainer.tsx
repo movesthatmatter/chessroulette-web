@@ -1,10 +1,8 @@
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
 import { ChessGameHistoryProvider } from 'src/modules/Games/Chess/components/GameHistory';
 import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { SocketClient } from 'src/services/socket/SocketClient';
-import { updateCurrentAnalysisAction } from '../../redux/actions';
 import { AnalysisActivity, AnalysisActivityProps } from './AnalysisActivity';
 import { RoomAnalysisActivity } from './types';
 
@@ -14,31 +12,6 @@ type Props = Pick<AnalysisActivityProps, 'deviceSize'> & {
 
 export const AnalysisActivityContainer: React.FC<Props> = (props) => {
   const peerState = usePeerState();
-  const dispatch = useDispatch();
-
-  console.log('AnalysisActivityContainer workd', props.activity);
-
-  // Subscribe to Analysis Updates
-  useEffect(() => {
-    if (peerState.status === 'open') {
-      const unsubscribers = [
-        peerState.client.onMessage((payload) => {
-          if (payload.kind === 'analysisUpdatedResponse') {
-            dispatch(updateCurrentAnalysisAction(payload.content));
-          }
-        }),
-      ];
-
-      return () => {
-        unsubscribers.forEach((unsubscribe) => unsubscribe());
-      };
-    }
-  }, [peerState.status]);
-
-  // if (!props.activity.analysis) {
-  //   // Add (Goey) loader or pass in fallabck component
-  //   return null;
-  // }
 
   const request: SocketClient['send'] = (payload) => {
     // TODO: Look into what to do if not open!
@@ -54,6 +27,7 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
     <GenericLayoutDesktopRoomConsumer
       renderActivity={({ boardSize }) => (
         <ChessGameHistoryProvider
+          key={props.activity.analysisId}
           onMoved={(move, atIndex) => {
             request({
               kind: 'analysisMoveRequest',
