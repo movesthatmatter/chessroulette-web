@@ -5,25 +5,34 @@ import { createUseStyles } from 'src/lib/jss';
 import { colors, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
+import { noop } from 'src/lib/util';
 
 type Props = {
   icon: FontAwesomeIconProps['icon'];
   iconProps?: Omit<FontAwesomeIconProps, 'icon'>;
+  title?: string;
   tooltip?: string;
   onClick?: () => void;
   className?: string;
+  disabled?: boolean;
 };
 
-export const ClearIconButton: React.FC<Props> = (props) => {
+export const ClearIconButton: React.FC<Props> = ({ onClick = noop, ...props }) => {
   const cls = useStyles();
 
   return (
-    <div className={cls.container}>
+    <div className={cls.container} title={props.title}>
       <FontAwesomeIcon
         icon={props.icon}
         size="xs"
-        className={cx(cls.icon, props.className)}
-        onClick={props.onClick}
+        className={cx(cls.icon, props.disabled && cls.iconDisabled, props.className)}
+        onClick={() => {
+          if (props.disabled) {
+            return;
+          }
+
+          onClick();
+        }}
         {...props.iconProps}
       />
       {props.tooltip && (
@@ -48,6 +57,13 @@ const useStyles = createUseStyles({
 
     '&:hover': {
       opacity: 0.5,
+    },
+  },
+  iconDisabled: {
+    cursor: 'auto',
+    color: colors.neutralDarker,
+    '&:hover': {
+      opacity: 1,
     },
   },
   tooltipContainer: {
