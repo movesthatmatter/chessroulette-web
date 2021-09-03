@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { updateCurrentAnalysisAction, updateJoinedGameAction } from '../RoomActivity/redux/actions';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { LichessActivity } from '../RoomActivity/activities/LichessActivity/LichessActivity';
+import { useLichessGameActions } from 'src/modules/LichessPlay/useLichessGameActions/useLichessGameActions';
 
 type Props = {};
 
@@ -15,6 +16,7 @@ export const ActivityRoomConsumer: React.FC<Props> = () => {
   const context = useContext(RoomProviderContext);
   const peerState = usePeerState();
   const gameActions = useGameActions();
+  const lichessGameActions = useLichessGameActions();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -32,6 +34,11 @@ export const ActivityRoomConsumer: React.FC<Props> = () => {
         gameActions.onGameUpdatedEventListener((nextGame) => {
           dispatch(updateJoinedGameAction(nextGame));
         }),
+
+        //Lichess Activity Listener
+        lichessGameActions.onGameUpdatedEventListener((game )=> {
+          dispatch(updateJoinedGameAction(game));
+        })
       ];
 
       return () => {

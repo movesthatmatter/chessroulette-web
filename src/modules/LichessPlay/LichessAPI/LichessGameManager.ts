@@ -10,7 +10,7 @@ import {
   sendAMessage,
   sendAMove,
 } from '../resources';
-import { LichessGameState, NDJsonReader, LichessChallenge, LichessChatLine } from '../types';
+import { LichessGameState, NDJsonReader, LichessChallenge, LichessChatLine, LichessPlayer } from '../types';
 import { Pubsy } from 'src/lib/Pubsy';
 import { makeUci, parseSquare } from 'chessops/util';
 import {
@@ -20,14 +20,14 @@ import {
 } from 'dstnd-io';
 import { NormalMove } from 'chessops/types';
 import { Game } from '../../Games';
-import { getHomeColor, lichessGameToChessRouletteGame, getPromoPieceFromMove } from '../utils';
+import { getHomeColor, lichessGameToChessRouletteGame, getPromoPieceFromMove, getAwayColor } from '../utils';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { console } from 'window-or-global';
 import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';
 
 type LichessManagerEvents = {
   onStreamStart: undefined;
-  onNewGame : {game:Game, homeColor: ChessGameColor};
+  onNewGame : {game:Game, homeColor: ChessGameColor, player: LichessPlayer};
   onGameFinish: undefined;
   onGameUpdate: {gameState: LichessGameState};
   onChallenge: { challenge: LichessChallenge };
@@ -144,7 +144,8 @@ export class LichessManager {
       if (event.value.type === 'gameFull') {
         this.pubsy.publish( 'onNewGame', {
           homeColor: getHomeColor(event.value, this.user.externalAccounts.lichess.userId), 
-          game: lichessGameToChessRouletteGame(event.value, this.user)
+          game: lichessGameToChessRouletteGame(event.value, this.user),
+          player: event.value[getAwayColor(event.value, this.user.externalAccounts.lichess.userId)]
         })
       }
 
@@ -193,7 +194,7 @@ export class LichessManager {
     this.pubsy.subscribe('onGameFinish', fn);
   }
 
-  onNewGame(fn: (data: {game: Game, homeColor: ChessGameColor}) => void){
+  onNewGame(fn: (data: {game: Game, homeColor: ChessGameColor, player: LichessPlayer}) => void){
     this.pubsy.subscribe('onNewGame', fn);
   }
 

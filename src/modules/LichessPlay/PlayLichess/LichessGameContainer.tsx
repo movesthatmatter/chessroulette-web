@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { ChatHistoryRecord, ChatMessageRecord, ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
+import { ChatMessageRecord, ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
 import { LichessChatLine, LichessGameState } from '../types';
 import { LichessGameStateDialogProvider } from './components/LichessGameStateDialogProvider';
-import { useAuthenticatedUser } from 'src/services/Authentication';
 import { Game } from 'src/modules/Games';
 import { LichessGame } from 'src/modules/Games/Chess/components/LichessGame/LichessGame';
 import { useLichessProvider } from '../LichessAPI/useLichessProvider';
 import { convertLichessChatLineToChatMessageRecord, updateGameWithNewStateFromLichess } from '../utils';
 import { console } from 'window-or-global';
-import { Chat } from 'src/modules/Chat/Chat';
 import { ChessGameHistoryProvider } from 'src/modules/Games/Chess/components/GameHistory';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { floatingShadow, softBorderRadius } from 'src/theme';
+import { useLichessGameActions } from '../useLichessGameActions/useLichessGameActions';
 
 type Props = {
   boardSize: number;
@@ -23,12 +22,14 @@ export const LichessGameContainer: React.FC<Props> = ({boardSize, onSendNewChatM
   const [newGameState, setNewGameState] = useState<LichessGameState | undefined>(undefined);
   const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
   const lichess = useLichessProvider();
+  const gameActions = useLichessGameActions();
 
   useEffect(() => {
     if (lichess) {
-      lichess.onNewGame(({ game, homeColor }) => {
+      lichess.onNewGame(({ game, homeColor, player }) => {
         setGame(game);
         setHomeColor(homeColor);
+        gameActions.onJoinedGame(game, player);
       });
       lichess.onGameUpdate(({ gameState }) => {
         setNewGameState(gameState);
@@ -47,6 +48,7 @@ export const LichessGameContainer: React.FC<Props> = ({boardSize, onSendNewChatM
       setGame((prev) => {
         return updateGameWithNewStateFromLichess(prev as Game, newGameState);
       });
+      gameActions.onUpdateGame(game);
     }
   }, [newGameState]);
 

@@ -9,6 +9,7 @@ import { CreateAnalysisRoomWizard } from '../../wizards/CreateAnalysisRoomWizard
 import { Dialog } from 'src/components/Dialog';
 import * as resources from '../../resources';
 import { useLichessProvider } from 'src/modules/LichessPlay/LichessAPI/useLichessProvider';
+import { console } from 'window-or-global';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activityType'>;

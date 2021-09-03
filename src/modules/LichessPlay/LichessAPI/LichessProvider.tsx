@@ -4,7 +4,7 @@ import { Game } from 'src/modules/Games';
 import { useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
 import { LichessManager } from './LichessGameManager';
 
-import { LichessChatLine, LichessGameState } from '../types';
+import { LichessChatLine, LichessGameState, LichessPlayer } from '../types';
 
 type LichessContext = {
   initAndChallenge : (specs: GameSpecsRecord) => void;
@@ -12,7 +12,7 @@ type LichessContext = {
   makeMove: (move: ChessMove, id: string) => void;
   onChallengeAccepted: (fn: () => void) => void;
   onGameUpdate : (fn: (data : {gameState: LichessGameState}) => void) => void;
-  onNewGame : (fn: (data: {game: Game, homeColor: ChessGameColor}) => void) => void
+  onNewGame : (fn: (data: {game: Game, homeColor: ChessGameColor, player:LichessPlayer}) => void) => void
   onGameFinish: (fn :() => void) => void;
   onNewChatLine: (fn: (data: {chatLine: LichessChatLine}) => void) => void;
   sendChatMessage: (msg:string, gameId: string) => void;
@@ -54,7 +54,7 @@ export const LichessProvider: React.FC<Props> = (props) => {
         onGameUpdate: (fn : (data: {gameState: LichessGameState}) => void) => {
           return lichessManager.onGameUpdate(fn);
         },
-        onNewGame: (fn: (data: {game: Game, homeColor: ChessGameColor}) => void) => {
+        onNewGame: (fn: (data: {game: Game, homeColor: ChessGameColor, player:LichessPlayer}) => void) => {
           return lichessManager.onNewGame(fn);
         },
         onGameFinish: (fn: () => void) => { 

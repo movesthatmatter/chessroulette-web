@@ -37,6 +37,10 @@ export const getHomeColor = (game: LichessGameFull, userId: string): ChessGameCo
   return game.black.name === userId ? 'black' : 'white';
 };
 
+export const getAwayColor = (game: LichessGameFull, userId: string): ChessGameColor => {
+  return game.black.name === userId ? 'white' : 'black';
+}
+
 export const getGameState = (status: LichessGameState['status']): Game['state'] => {
   if (status === 'started') {
     return 'started';
