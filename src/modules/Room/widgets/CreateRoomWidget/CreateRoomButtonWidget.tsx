@@ -61,8 +61,14 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
                     .createRoom({
                       userId: peerState.me.id,
                       type: createRoomSpecs.type,
-                      activityType:
-                        createRoomSpecs.activityType === 'analysis' ? 'analysis' : 'none',
+                      ...(createRoomSpecs.activityType === 'analysis'
+                        ? {
+                            activityType: 'analysis',
+                            history: [],
+                          }
+                        : {
+                            activityType: 'none',
+                          }),
                     })
                     .map((room) => {
                       history.push(toRoomUrlPath(room));

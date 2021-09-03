@@ -25,7 +25,7 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
 
   return (
     <GenericLayoutDesktopRoomConsumer
-      renderActivity={({ boardSize }) => (
+      renderActivity={({ boardSize, leftSide }) => (
         <ChessGameHistoryProvider
           key={props.activity.analysisId}
           onMoved={(move, atIndex) => {
@@ -53,8 +53,18 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
           {props.activity.analysis && (
             <AnalysisActivity
               boardSize={boardSize}
+              leftSide={leftSide}
               deviceSize={props.deviceSize}
               analysis={props.activity.analysis}
+              onPgnImported={(pgn) => {
+                request({
+                  kind: 'analysisImportPgnRequest',
+                  content: {
+                    id: props.activity.analysisId,
+                    pgn,
+                  },
+                });
+              }}
             />
           )}
         </ChessGameHistoryProvider>

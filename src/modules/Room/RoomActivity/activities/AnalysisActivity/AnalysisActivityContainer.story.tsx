@@ -389,3 +389,42 @@ export const withParallelBranches = () => {
     </StorybookBaseProvider>
   );
 };
+
+export const withoutHistory = () => {
+  const analysis = {
+    ...analysisMocker.record(),
+    history: [],
+    focusIndex: -1,
+  };
+
+  return (
+    <StorybookBaseProvider
+      withRedux
+      initialState={{
+        ...(myParticipant.isPresent && {
+          peerProvider: {
+            me: myParticipant.member.peer,
+            room: room,
+          },
+        }),
+      }}
+    >
+      <AnalysisActivityContainer
+        activity={{
+          type: 'analysis',
+          analysisId: analysis.id,
+          analysis,
+          participants: {
+            [myAnalsyisParticipant.userId]: myAnalsyisParticipant,
+            [opponentAnalysisParticipant.userId]: opponentAnalysisParticipant,
+          },
+        }}
+        deviceSize={{
+          isDesktop: true,
+          isMobile: false,
+          isSmallMobile: false,
+        }}
+      />
+    </StorybookBaseProvider>
+  );
+};

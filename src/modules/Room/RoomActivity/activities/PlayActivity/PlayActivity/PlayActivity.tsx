@@ -38,10 +38,10 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
 
   return (
     <GenericLayoutDesktopRoomConsumer
-      renderActivity={({ boardSize }) => (
+      renderActivity={({ boardSize, leftSide }) => (
         <ChessGameHistoryProvider history={game.history || []}>
           <div className={cls.container}>
-            <aside className={cls.side} style={{ height: boardSize }}>
+            <aside className={cls.side} style={{ height: boardSize, width: leftSide.width }}>
               <div className={cls.sideTop} />
               <div style={{ height: '40%' }}>
                 <GameStateWidget

@@ -2,20 +2,26 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
-import { colors, softBorderRadius, text } from 'src/theme';
+import { colors, softBorderRadius } from 'src/theme';
 import { RoomDetailsConsumer } from './RoomDetailsConsumer';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
 import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
-import { DesktopRoomLayout, ExitRoomButton, NavigationHeader } from '../Layouts';
+import {
+  DesktopRoomLayout,
+  ExitRoomButton,
+  LayoutContainerDimensions,
+} from '../Layouts';
 import { Logo } from 'src/components/Logo';
 import { UserMenu } from 'src/components/Navigation';
 import { SwitchActivityRoomConsumer } from './SwitchActivityRoomConsumer';
+import { getBoxShadow } from 'src/theme/util';
 
 type Props = {
   renderActivity: (d: {
     isMobile: boolean;
     // containerDimensions: LayoutContainerDimensions;
     boardSize: number;
+    leftSide: LayoutContainerDimensions;
     // TODO: might need a bunch of other dimensinos like the marging size or the bottom to inform the activity
   }) => React.ReactNode;
 };
@@ -80,13 +86,15 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
           </div>
         )}
         renderBottomComponent={() => null}
-        renderActivityComponent={(extendedDimensions) =>
-          props.renderActivity({
-            isMobile: false,
-            // containerDimensions: extendedDimensions.container,
-            boardSize: extendedDimensions.center.width,
-          })
-        }
+        renderActivityComponent={(extendedDimensions) => (
+          <div className={cls.activityContainer}>
+            {props.renderActivity({
+              isMobile: false,
+              boardSize: extendedDimensions.center.width,
+              leftSide: extendedDimensions.left,
+            })}
+          </div>
+        )}
       />
     </div>
   );
@@ -105,14 +113,13 @@ const useStyles = createUseStyles({
     display: 'flex',
     height: '100%',
     flex: 1,
-    // background: 'red',
-    // fill direction="row" style={{ height: '100%' }}
   },
   mainTop: {
     flex: 1,
     flexDirection: 'row',
     display: 'flex',
-    paddingTop: spacers.default,
+    paddingTop: spacers.smaller,
+    paddingBottom: spacers.large,
     paddingLeft: spacers.default,
     paddingRight: spacers.large,
   },
@@ -123,8 +130,7 @@ const useStyles = createUseStyles({
   },
   rightSide: {
     background: colors.white,
-    // background: 'red',
-    // height: '100%',
+    boxShadow: getBoxShadow(0, 0, 26, 10, 'rgba(16, 30, 115, 0.08)'),
     paddingLeft: `${MIN_SPACE_BETWEEN}px`,
     paddingRight: `${MIN_SPACE_BETWEEN}px`,
   },
@@ -149,5 +155,10 @@ const useStyles = createUseStyles({
 
     // Fix issue on Safari with Border Radiuses not working
     transform: 'translateZ(0)',
+  },
+  activityContainer: {
+    // background: 'red',
+    position: 'relative',
+    zIndex: 1,
   },
 });

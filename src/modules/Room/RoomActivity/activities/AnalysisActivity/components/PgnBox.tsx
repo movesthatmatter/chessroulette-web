@@ -6,6 +6,7 @@ import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 import { Text } from 'src/components/Text';
 import { spacers } from 'src/theme/spacers';
 import { LabeledFloatingBox } from './LabeledFloatingBox';
+import { MiniClipboardCopyButton } from 'src/components/ClipboardCopy/MiniClipboardCopyButton';
 
 type Props = {
   historyOrPgn: ChessHistory | SimplePGN;
@@ -34,10 +35,11 @@ export const PgnBox: React.FC<Props> = (props) => {
       label="PGN"
       containerClassName={cx(props.containerClassName)}
       floatingBoxClassName={cx(cls.container, props.contentClassName)}
+      topRightComponent={<MiniClipboardCopyButton value={pgn} />}
     >
       <div className={cls.scroller}>
         <div>
-          <Text size="small1">{pgn}</Text>
+          <Text size="small1">{pgn || 'Wow So Empty!'}</Text>
         </div>
       </div>
     </LabeledFloatingBox>
@@ -55,7 +57,6 @@ const useStyles = createUseStyles({
   },
   scroller: {
     display: 'flex',
-    flexDirection: 'column-reverse',
     flex: 1,
     overflowY: 'scroll',
     scrollBehavior: 'smooth',

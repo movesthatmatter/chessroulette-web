@@ -9,6 +9,7 @@ type Props = FloatingBoxProps & {
   label: string;
   containerClassName?: string;
   floatingBoxClassName?: string;
+  topRightComponent?: React.ReactNode;
 };
 
 export const LabeledFloatingBox: React.FC<Props> = (props) => {
@@ -18,6 +19,9 @@ export const LabeledFloatingBox: React.FC<Props> = (props) => {
     <div className={cx(cls.container, props.containerClassName)}>
       <div className={cls.top}>
         <Text size="small2">{props.label}</Text>
+        {props.topRightComponent && <div className={cls.topRightContainer}>
+          {props.topRightComponent}
+        </div>}
       </div>
       <FloatingBox className={cx(cls.box, props.floatingBoxClassName)}>{props.children}</FloatingBox>
     </div>
@@ -32,8 +36,17 @@ const useStyles = createUseStyles({
   top: {
     padding: spacers.smaller,
     paddingTop: 0,
+    display: 'flex',
   },
   box: {
     flex: 1,
-  }
+  },
+  topRightContainer: {
+    display: 'flex',
+    flex: 1,
+    alignContent: 'center',
+    justifyItems: 'center',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
 });

@@ -45,6 +45,7 @@ import {
   AnalysisMoveRequestPayload,
   AnalysisRefocusRequestPayload,
   AnalysisDrawnShapesUpdatedRequestPayload,
+  AnalysisImportPgnRequestPayload,
   SwitchRoomActivityRequestPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
@@ -109,6 +110,8 @@ type SendableMessagesMap = {
   analysisMoveRequestPayload: AnalysisMoveRequestPayload;
   analysisRefocusRequestPayload: AnalysisRefocusRequestPayload;
   analysisDrawnShapesUpdatedRequestPayload: AnalysisDrawnShapesUpdatedRequestPayload;
+  analysisImportPgnRequestPayload: AnalysisImportPgnRequestPayload,
+
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {

@@ -1,46 +1,47 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, floatingShadow, softBorderRadius } from 'src/theme';
+import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { RoomAnalysisActivity } from './types';
-import { spacers } from 'src/theme/spacers';
 import { ActivityCommonProps } from '../types';
 import { ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/GameHistory';
 import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
-import { ChessGameHistoryProvided } from 'src/modules/Games/Chess/components/GameHistory';
-import { FenBox } from './components/FenBox';
-import { PgnBox } from './components/PgnBox';
-import { LabeledFloatingBox } from './components/LabeledFloatingBox';
-import cx from 'classnames';
+import { LayoutContainerDimensions } from 'src/modules/Room/Layouts';
+import { SimplePGN } from 'dstnd-io';
+import { AnalysisPanel } from './components/AnalysisPanel';
 
 export type AnalysisActivityProps = ActivityCommonProps & {
   boardSize: number;
+  leftSide: LayoutContainerDimensions;
   analysis: NonNullable<RoomAnalysisActivity['analysis']>;
+
+  onPgnImported: (pgn: SimplePGN) => void;
 };
 
-export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({ analysis, boardSize }) => {
+export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
+  analysis,
+  boardSize,
+  leftSide,
+  onPgnImported,
+}) => {
   const cls = useStyles();
 
   return (
     <ChessGameHistoryConsumer
       render={({ history, displayedHistory, onAddMove, displayedIndex }) => (
         <div className={cls.container}>
-          <aside className={cls.side} style={{ height: boardSize }}>
-            <div className={cls.stretchedContainer}>
-              <LabeledFloatingBox
-                label="History"
-                containerClassName={cx(cls.box, cls.historyContainer)}
-                floatingBoxClassName={cls.history}
-              >
-                <ChessGameHistoryProvided />
-              </LabeledFloatingBox>
-              <FenBox historyOrPgn={history} containerClassName={cx(cls.box, cls.fenBox)} />
-              <PgnBox
-                historyOrPgn={history}
-                containerClassName={cx(cls.box, cls.pgnBoxContainer)}
-                contentClassName={cls.pgnBox}
-              />
-            </div>
+          <aside className={cls.side} style={{ height: boardSize, width: leftSide.width }}>
+            <AnalysisPanel
+              analysisRecord={
+                history.length > 0
+                  ? {
+                      history,
+                      displayedHistory,
+                    }
+                  : undefined
+              }
+              onPgnImported={onPgnImported}
+            />
           </aside>
           <div
             className={cls.boardContainer}
@@ -97,7 +98,6 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    marginRight: spacers.large,
   },
   sideTop: {
     height: '30%',
@@ -107,40 +107,5 @@ const useStyles = createUseStyles({
   },
   sideBottom: {
     height: '30%',
-  },
-
-  stretchedContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-    overflow: 'hidden',
-    alignItems: 'stretch',
-    height: '100%',
-  },
-
-  historyContainer: {
-    overflow: 'hidden',
-    flex: 1,
-  },
-  history: {
-    overflow: 'hidden',
-  },
-
-  box: {
-    marginBottom: spacers.small,
-
-    '&:last-child': {
-      marginBottom: 0,
-    },
-  },
-  fenBox: {
-    flex: 0,
-  },
-  pgnBoxContainer: {
-    maxHeight: '20%',
-    overflow: 'hidden',
-  },
-  pgnBox: {
-    overflow: 'hidden',
   },
 });
