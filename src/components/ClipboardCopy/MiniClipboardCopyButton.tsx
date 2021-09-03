@@ -4,18 +4,17 @@ import { seconds } from 'src/lib/time';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import { colors, text } from 'src/theme';
-import { ClearIconButton } from '../Button/ClearIconButton';
+import { ClearIconButton } from 'src/components/Button/ClearIconButton';
 import { noop } from 'src/lib/util';
+import cx from 'classnames';
 
 type Props = {
   value: string;
   onCopied?: () => void;
+  className?: string;
 };
 
-export const MiniClipboardCopyButton: React.FC<Props> = ({
-  value,
-  onCopied = noop,
-}) => {
+export const MiniClipboardCopyButton: React.FC<Props> = ({ value, onCopied = noop, className }) => {
   const cls = useStyles();
   const [copied, setCopied] = useState(false);
 
@@ -34,10 +33,14 @@ export const MiniClipboardCopyButton: React.FC<Props> = ({
   };
 
   if (copied) {
-    return <ClearIconButton icon={faCheck} className={cls.checkIcon} tooltip="Copied!" />;
+    return (
+      <ClearIconButton icon={faCheck} className={cx(cls.checkIcon, className)} tooltip="Copied!" />
+    );
   }
 
-  return <ClearIconButton icon={faCopy} onClick={copy} />;
+  return (
+    <ClearIconButton icon={faCopy} className={className} onClick={copy} title="Copy to Clipboard" />
+  );
 };
 
 const useStyles = createUseStyles({
