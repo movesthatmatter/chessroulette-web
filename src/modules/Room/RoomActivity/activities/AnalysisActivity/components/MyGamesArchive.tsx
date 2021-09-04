@@ -23,7 +23,7 @@ export const MyGamesArchive: React.FC<Props> = (props) => {
   return (
     <GamesArchiveProvider
       userId={user.id}
-      pageSize={5}
+      pageSize={25}
       render={({ games }) =>
         games.map((game) => (
           <div key={game.id} className={cls.row}>

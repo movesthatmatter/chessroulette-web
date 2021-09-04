@@ -6,12 +6,11 @@ import { spacers } from 'src/theme/spacers';
 import { FenBox } from './FenBox';
 import { LabeledFloatingBox } from './LabeledFloatingBox';
 import { PgnBox } from './PgnBox';
-import { MyGamesArchive } from './MyGamesArchive';
 import cx from 'classnames';
-import { PgnInputBox } from './PgnInputBox';
 import { Button } from 'src/components/Button';
 import { Upload } from 'grommet-icons';
 import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
+import { ImportPanel } from './ImportPanel';
 
 type Props = {
   onPgnImported: (pgn: SimplePGN) => void;
@@ -34,44 +33,6 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
     setShowImportPanel(!analysisRecord);
     setPgn(analysisRecord ? chessHistoryToSimplePgn(analysisRecord.history) : undefined);
   }, [analysisRecord]);
-
-  const importPanel = (
-    <>
-      <LabeledFloatingBox
-        label="Import Game"
-        containerClassName={cx(cls.box, cls.gamesArchiveContainer)}
-        floatingBoxClassName={cls.gamesArchive}
-      >
-        <div className={cls.scroller}>
-          <div style={{ width: '100%' }}>
-            <MyGamesArchive
-              onSelect={(g) => {
-                onPgnImported(g.pgn as SimplePGN);
-                setShowImportPanel(false);
-              }}
-            />
-          </div>
-        </div>
-      </LabeledFloatingBox>
-      <PgnInputBox
-        key={pgn}
-        onImported={onPgnImported}
-        containerClassName={cx(cls.box, cls.pgnInputBox)}
-        contentClassName={cls.pgnBox}
-      />
-      {hasLoadedAnalysis && (
-        <div className={cls.box}>
-          <Button
-            label="Back to Analysis"
-            type="secondary"
-            full
-            onClick={() => setShowImportPanel(false)}
-            className={cls.button}
-          />
-        </div>
-      )}
-    </>
-  );
 
   const historyPanel = (
     <>
@@ -118,7 +79,11 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
           flex: 1,
         }}
       >
-        {importPanel}
+        <ImportPanel
+          onImported={onPgnImported}
+          hasBackButton={hasLoadedAnalysis}
+          onBackButtonClicked={() => setShowImportPanel(false)}
+        />
       </div>
       <div
         style={{

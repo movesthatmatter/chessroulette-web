@@ -164,7 +164,7 @@ const useStyles = createUseStyles({
     borderBottomWidth: '1px',
     borderStyle: 'solid',
     borderColor: colors.neutralLighter,
-    padding: `${spacers.small} ${spacers.small}`,
+    padding: `${spacers.smaller} ${spacers.small}`,
     ...({
       '&:first-child': {
         paddingTop: 0,
@@ -209,9 +209,9 @@ const useStyles = createUseStyles({
     paddingTop: spacers.small,
     marginLeft: spacers.smallest,
     marginTop: spacers.smaller,
-    borderLeft: `${spacers.smaller} solid ${colors.neutral}`,
+    borderLeft: `2px solid ${colors.neutral}`,
     background: colors.neutralLightest,
-    borderColor: borderColorsByDepth[3],
+    borderColor: borderColorsByDepth[2],
   },
   rowBelowNested: {
     marginTop: spacers.small,

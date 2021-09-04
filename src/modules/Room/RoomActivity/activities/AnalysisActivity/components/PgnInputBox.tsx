@@ -1,19 +1,19 @@
 import { Err, Ok, Result, SimplePGN } from 'dstnd-io';
-import React, { useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
 import cx from 'classnames';
 import { spacers } from 'src/theme/spacers';
 import { LabeledFloatingBox } from './LabeledFloatingBox';
 import { getNewChessGame } from 'src/modules/Games/Chess/lib';
-import { faUpload } from '@fortawesome/free-solid-svg-icons';
-import { ClearIconButton } from 'src/components/Button/ClearIconButton';
-import { debounce } from 'debounce';
-import { colors, fonts, softBorderRadius, text } from 'src/theme';
+import { colors, fonts, softBorderRadius } from 'src/theme';
+import useDebouncedEffect from 'use-debounced-effect';
 
 type Props = {
+  value?: string;
+  onValidPgn: (s: SimplePGN) => void;
+  onInvalidPgn: () => void;
   containerClassName?: string;
   contentClassName?: string;
-  onImported: (pgn: SimplePGN) => void;
 };
 
 const validatePGN = (s: string): Result<SimplePGN, 'PgnNotValidError'> => {
@@ -21,22 +21,23 @@ const validatePGN = (s: string): Result<SimplePGN, 'PgnNotValidError'> => {
 
   const isValid = instance.load_pgn(s);
 
-  return isValid ? new Ok(instance.pgn() as SimplePGN) : new Err('PgnNotValidError');
+  return isValid ? new Ok(s as SimplePGN) : new Err('PgnNotValidError');
 };
 
 export const PgnInputBox: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const [pgnInput, setPgnInput] = useState<SimplePGN>();
+  const [input, setInput] = useState(props.value || '');
 
-  const validatePGNWithDebounce = useCallback(
-    debounce((s: string) => {
-      validatePGN(s)
-        .map((pgn) => {
-          setPgnInput(pgn);
-        })
-        .mapErr(() => setPgnInput(undefined));
-    }, 250),
-    []
+  useEffect(() => {
+    setInput((prev) => props.value || prev);
+  }, [props.value]);
+
+  useDebouncedEffect(
+    () => {
+      validatePGN(input).map(props.onValidPgn).mapErr(props.onInvalidPgn);
+    },
+    250,
+    [input]
   );
 
   return (
@@ -44,25 +45,14 @@ export const PgnInputBox: React.FC<Props> = (props) => {
       label="Import PGN"
       containerClassName={cx(props.containerClassName)}
       floatingBoxClassName={cx(cls.container, props.contentClassName)}
-      topRightComponent={
-        <ClearIconButton
-          icon={faUpload}
-          disabled={!pgnInput}
-          title="Import"
-          onClick={() => {
-            if (pgnInput) {
-              props.onImported(pgnInput);
-              setPgnInput(undefined);
-            }
-          }}
-        />
-      }
     >
       <textarea
+        value={input}
         className={cls.textArea}
         rows={5}
         placeholder="Paste PGN here"
-        onChange={(e) => validatePGNWithDebounce(e.target.value)}
+        // onChange={(e) => props.onChange(e.target.value)}
+        onChange={(e) => setInput(e.target.value)}
       />
     </LabeledFloatingBox>
   );
