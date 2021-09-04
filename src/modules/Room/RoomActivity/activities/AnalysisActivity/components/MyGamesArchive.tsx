@@ -7,6 +7,7 @@ import { spacers } from 'src/theme/spacers';
 import { colors, softBorderRadius } from 'src/theme';
 import { GameRecord } from 'dstnd-io';
 import { Text } from 'src/components/Text';
+import { usePeerState } from 'src/providers/PeerProvider';
 
 type Props = {
   onSelect: (g: GameRecord) => void;
@@ -14,29 +15,36 @@ type Props = {
 
 export const MyGamesArchive: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const user = useAuthenticatedUser();
+  // const user = useAuthenticatedUser();
+  const peerState = usePeerState();
 
-  if (!user) {
+  if (peerState.status !== 'open') {
     return null;
   }
 
   return (
     <GamesArchiveProvider
-      userId={user.id}
+      userId={peerState.me.id}
       pageSize={25}
-      render={({ games }) =>
-        games.map((game) => (
-          <div key={game.id} className={cls.row}>
-            <CompactArchivedGame game={game} myUserId={user.id} />
-            <div className={cls.hovered}>
-              <div className={cls.hoveredBkg} />
-              <div className={cls.hoveredContent} onClick={() => props.onSelect(game)}>
-                <Text size="subtitle1">Analyze</Text>
+      render={({ games }) => (
+        <>
+          {games.length > 0 ? (
+            games.map((game) => (
+              <div key={game.id} className={cls.row}>
+                <CompactArchivedGame game={game} myUserId={peerState.me.id} />
+                <div className={cls.hovered}>
+                  <div className={cls.hoveredBkg} />
+                  <div className={cls.hoveredContent} onClick={() => props.onSelect(game)}>
+                    <Text size="subtitle1">Analyze</Text>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        ))
-      }
+            ))
+          ) : (
+            <Text size="small1">Wow So Empty</Text>
+          )}
+        </>
+      )}
     />
   );
 };
