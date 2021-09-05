@@ -1,8 +1,6 @@
 import useInstance from "@use-it/instance"
-import { useEffect } from "react"
 import { Pubsy } from "src/lib/Pubsy"
 import { Game } from "src/modules/Games"
-import { gameRecordToGame } from "src/modules/Games/Chess/lib"
 import { usePeerState } from "src/providers/PeerProvider"
 import { SocketClient } from "src/services/socket/SocketClient"
 import { LichessPlayer } from "../types"
@@ -16,22 +14,6 @@ export const useLichessGameActions = () => {
   const peerState = usePeerState()
   const pubsy = useInstance<Pubsy<Events>>(new Pubsy<Events>());
 
-  useEffect(() => {
-    if (peerState.status === 'open'){
-      const unsubscribers = [
-        peerState.client.onMessage(payload => {
-          if (payload.kind === 'lichessGameUpdateRequest' || payload.kind === 'lichessGameJoinRequest'){
-            
-            pubsy.publish('onGameUpdate', gameRecordToGame(payload.content.game))
-          } 
-        })
-      ]
-      return () => {
-        unsubscribers.forEach(unsub => unsub()); 
-      }
-    }
-  }, [peerState.status])
-
   const request: SocketClient['send'] = (payload) => {
     if (peerState.status === 'open'){
       peerState.client.sendMessage(payload)
@@ -41,9 +23,11 @@ export const useLichessGameActions = () => {
   return {
     onJoinedGame: (game: Game, player:LichessPlayer) => {
       request(lichessGameActionsPayloads.onGameJoined(game, player));
+      pubsy.publish('onGameUpdate', game);
     },
     onUpdateGame: (game: Game) => {
       request(lichessGameActionsPayloads.onGameUpdated(game))
+      pubsy.publish('onGameUpdate', game)
     },
     onGameUpdatedEventListener: (fn: (g: Game) => void) => pubsy.subscribe('onGameUpdate', fn),
   }

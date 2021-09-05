@@ -46,7 +46,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       };
     }
 
-    if (payload.room.activity.type === 'lichess' && prev.type === 'lichess' && payload.room.activity.gameId !== prev.gameId){
+    if (payload.room.activity.type === 'lichess' && prev.type === 'lichess' && payload.room.activity.gameId !== prev.game?.id){
       return payload.room.activity
     }
 

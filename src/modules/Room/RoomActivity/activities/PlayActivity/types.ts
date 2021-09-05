@@ -46,7 +46,7 @@ export type LichessRoomActivityWithGame = RoomLichessActivityRecord & {
   }
 }
 
-export type LichessRoomActivityWithoutGame = RoomLichessActivityRecord & {
+export type LichessRoomActivityWithoutGame = Omit<RoomLichessActivityRecord, 'gameId'> & {
   game? : undefined;
   gameSpecs: GameSpecsRecord;
   participants? :undefined;

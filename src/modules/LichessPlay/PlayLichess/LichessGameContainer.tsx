@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { ChatMessageRecord, ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
+import { ChatMessageRecord, ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove, GuestUserRecord } from 'dstnd-io';
 import { LichessChatLine, LichessGameState } from '../types';
 import { LichessGameStateDialogProvider } from './components/LichessGameStateDialogProvider';
-import { Game } from 'src/modules/Games';
 import { LichessGame } from 'src/modules/Games/Chess/components/LichessGame/LichessGame';
 import { useLichessProvider } from '../LichessAPI/useLichessProvider';
-import { convertLichessChatLineToChatMessageRecord, updateGameWithNewStateFromLichess } from '../utils';
+import { convertLichessChatLineToChatMessageRecord, filterChatLineMessage, updateGameWithNewStateFromLichess } from '../utils';
 import { console } from 'window-or-global';
 import { ChessGameHistoryProvider } from 'src/modules/Games/Chess/components/GameHistory';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { useLichessGameActions } from '../useLichessGameActions/useLichessGameActions';
+import { useSelector } from 'react-redux';
+import { selectGame } from 'src/modules/Room/RoomActivity/redux/selectors';
+import { useLichessChatProvider } from './useLichessChatProvider/useLichessChatProvider';
+import { authenticateAsExistentGuest } from 'src/services/Authentication/resources';
+import { getPlayerByColor } from 'src/modules/Games/Chess/lib';
+import { useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
 
 type Props = {
   boardSize: number;
@@ -18,18 +23,22 @@ type Props = {
 }
 
 export const LichessGameContainer: React.FC<Props> = ({boardSize, onSendNewChatMessage}) => {
-  const [game, setGame] = useState<Game | undefined>(undefined);
+  const game = useSelector(selectGame)
   const [newGameState, setNewGameState] = useState<LichessGameState | undefined>(undefined);
   const [homeColor, setHomeColor] = useState<ChessGameColor>('white');
   const lichess = useLichessProvider();
   const gameActions = useLichessGameActions();
+  const auth = useAuthenticatedUserWithLichessAccount();
+
+  useLichessChatProvider();
 
   useEffect(() => {
     if (lichess) {
       lichess.onNewGame(({ game, homeColor, player }) => {
-        setGame(game);
         setHomeColor(homeColor);
         gameActions.onJoinedGame(game, player);
+        const awayPlayer = getPlayerByColor(homeColor === 'black' ? 'white' : 'black', game.players)
+        authenticateAsExistentGuest({guestUser: awayPlayer.user as GuestUserRecord})
       });
       lichess.onGameUpdate(({ gameState }) => {
         setNewGameState(gameState);
@@ -45,16 +54,13 @@ export const LichessGameContainer: React.FC<Props> = ({boardSize, onSendNewChatM
 
   useEffect(() => {
     if (newGameState && game) {
-      setGame((prev) => {
-        return updateGameWithNewStateFromLichess(prev as Game, newGameState);
-      });
-      gameActions.onUpdateGame(game);
+      gameActions.onUpdateGame(updateGameWithNewStateFromLichess(game, newGameState));
     }
   }, [newGameState]);
 
   const onMove = (p: { move: ChessMove; fen: ChessGameStateFen; pgn: ChessGameStatePgn }) => {
     if (game && lichess) {
-      lichess.makeMove(p.move, game.id);
+      lichess.makeMove(p.move, game.vendorData?.gameId as string);
     }
   };
 
@@ -72,7 +78,9 @@ export const LichessGameContainer: React.FC<Props> = ({boardSize, onSendNewChatM
         }
       }
     } else {
-      onSendNewChatMessage(convertLichessChatLineToChatMessageRecord(chatLine));
+      if (filterChatLineMessage(chatLine, auth?.externalAccounts.lichess.userId as string)){
+        onSendNewChatMessage(convertLichessChatLineToChatMessageRecord(chatLine));
+      }
     }
   }
 

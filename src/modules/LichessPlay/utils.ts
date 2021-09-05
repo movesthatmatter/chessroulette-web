@@ -2,7 +2,6 @@ import { ShortMove } from 'chess.js';
 import { NormalMove } from 'chessops/types';
 import { makeSquare, parseUci } from 'chessops/util';
 import {
-  ChatHistoryRecord,
   ChatMessageRecord,
   ChessGameColor,
   ChessHistory,
@@ -16,7 +15,7 @@ import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { getRandomInt } from 'src/lib/util';
 import { console, Date } from 'window-or-global';
 import { Game } from '../Games';
-import { gameRecordToGame, getNewChessGame, historyToPgn } from '../Games/Chess/lib';
+import { gameRecordToGame, getNewChessGame, getPlayerByColor, historyToPgn } from '../Games/Chess/lib';
 import { LichessChatLine, LichessGameFull, LichessGameState, LichessPlayer } from './types';
 
 export const timeLimitsMap = {
@@ -32,6 +31,8 @@ export const timeLimitsMap = {
   [`2700`]: `rapid45`,
   [`3600`]: `rapid60`,
 };
+
+const guestPrefix = 'chg-';
 
 export const getHomeColor = (game: LichessGameFull, userId: string): ChessGameColor => {
   return game.black.name === userId ? 'black' : 'white';
@@ -61,11 +62,11 @@ const convertLichessToGuestUser = (user: LichessPlayer): GuestUserRecord => {
   return {
     firstName: user.name,
     isGuest: true,
-    id: user.id,
+    id: `${guestPrefix}${user.id}`,
     lastName: '',
     avatarId: String(getRandomInt(1, 18)),
     name: user.name,
-    sid: String(new Date().getTime()),
+    sid: `lichess-${String(new Date().getTime())}`,
   };
 };
 
@@ -91,9 +92,13 @@ const convertNormalMovePromoToShortMovePromo = (promo: NonNullable<NormalMove['p
 export const convertLichessChatLineToChatMessageRecord = (line: LichessChatLine): ChatMessageRecord => {
   return {
     content: line.text,
-    fromUserId: line.username,
+    fromUserId: `${guestPrefix}${line.username}`,
     sentAt: toISODateTime(new Date())
   }
+}
+
+export const filterChatLineMessage = (line: LichessChatLine, homeId: string) : boolean => {
+  return homeId !== line.username
 }
 
 const getLastActivityTimeAtUpdateGameStatus = (
@@ -115,6 +120,7 @@ export const lichessGameToChessRouletteGame = (
 ): Game => {
   const history = lichessGameStateToGameHistory(game.state);
   const turn = history.length % 2 === 0 ? 'white' : 'black';
+  const awayPlayer = getAwayColor(game, user.externalAccounts?.lichess?.userId as string);
   const gameRecord: GameRecord = {
     id: game.id,
     state: history.length > 0 ? getGameState(game.state.status) : 'pending',
@@ -152,6 +158,13 @@ export const lichessGameToChessRouletteGame = (
       },
     ],
     createdAt: toISODateTime(new Date(game.createdAt)),
+    isVendorGame: true,
+    vendorData: {
+      vendor: 'lichess',
+      userRating: game[awayPlayer].rating,
+      playerId: game[awayPlayer].id,
+      gameId: game.id
+    }
   } as GameRecord;
   console.log('lichess game to chessroulette game ', gameRecord)
   return gameRecordToGame(gameRecord);
@@ -170,9 +183,11 @@ export const updateGameWithNewStateFromLichess = (
       black: lichessGameState.btime,
       white: lichessGameState.wtime,
     },
+    ...(history.length === 1 && {startedAt: toISODateTime(new Date(game.createdAt))}),
     updatedAt: toISODateTime(new Date()),
     lastMoveBy: turn === 'black' ? 'white' : 'black',
     lastMoveAt: toISODateTime(new Date()),
+    lastActivityAt: toISODateTime(new Date()),
     pgn: historyToPgn(history),
     winner: lichessGameState.winner || undefined,
     history,
