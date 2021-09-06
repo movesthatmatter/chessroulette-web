@@ -18,9 +18,15 @@ type Props = {
   game: GameRecordFinished | GameRecordStopped;
   myUserId?: RegisteredUserRecord['id'];
   containerClassName?: string;
+  hasClipboardCopyButton?: boolean;
 };
 
-export const CompactArchivedGame: React.FC<Props> = ({ game, myUserId, containerClassName }) => {
+export const CompactArchivedGame: React.FC<Props> = ({
+  game,
+  myUserId,
+  containerClassName,
+  hasClipboardCopyButton = true,
+}) => {
   const cls = useStyles();
   const avatarSize = '28px';
 
@@ -43,13 +49,17 @@ export const CompactArchivedGame: React.FC<Props> = ({ game, myUserId, container
     >
       <div className={cls.top}>
         <Text className={cls.title} size="subtitle2">
-          {getScore(game)}{' | '}
-          {capitalize(game.timeLimit)}{' | '}
+          {getScore(game)}
+          {' | '}
+          {capitalize(game.timeLimit)}
+          {' | '}
           {dateformat(game.createdAt, 'yyyy-mm-dd')}
         </Text>
-        <div className={cls.copyToClipboard}>
-          <MiniClipboardCopyButton value={game.pgn} />
-        </div>
+        {hasClipboardCopyButton && (
+          <div className={cls.copyToClipboard}>
+            <MiniClipboardCopyButton value={game.pgn} />
+          </div>
+        )}
       </div>
       <div className={cls.sideWrapper}>
         {(() => {

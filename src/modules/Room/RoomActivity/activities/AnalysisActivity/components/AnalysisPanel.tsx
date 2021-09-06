@@ -56,7 +56,7 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
           />
           <div className={cls.box}>
             <Button
-              label="New Analysis"
+              label="Import"
               type="secondary"
               full
               onClick={() => setShowImportPanel(true)}

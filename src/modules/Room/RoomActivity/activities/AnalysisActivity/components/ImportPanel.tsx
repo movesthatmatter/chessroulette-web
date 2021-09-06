@@ -29,7 +29,7 @@ export const ImportPanel: React.FC<Props> = (props) => {
   return (
     <>
       <LabeledFloatingBox
-        label="Import Game"
+        label="Import a Previous Game"
         containerClassName={cx(cls.box, cls.gamesArchiveContainer)}
         floatingBoxClassName={cls.gamesArchive}
       >

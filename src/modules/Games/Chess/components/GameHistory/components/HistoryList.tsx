@@ -39,18 +39,21 @@ export const HistoryList: React.FC<HistoryListProps> = ({
     setPairedHistory(toPairedHistory(history));
   }, [history]);
 
-  useEffect(() => {
-    if (pairedHistory.length === 0) {
-      return;
-    }
+  // TODO: This was taken out on Sep 6th as it's not working correctly
+  //  Keeps jumping weirdly - it's because the indexes don't work correctly
+  //  so until that is fixed we shouldn't use it!
+  // useEffect(() => {
+  //   if (pairedHistory.length === 0) {
+  //     return;
+  //   }
 
-    const moveIndex = Math.floor(getChessHistoryMoveIndex(focusedIndex) / 2);
+  //   const moveIndex = Math.floor(getChessHistoryMoveIndex(focusedIndex) / 2);
 
-    const elm = rowElementRefs.current[moveIndex];
-    if (elm) {
-      scrollIntoView(elm);
-    }
-  }, [pairedHistory, focusedIndex]);
+  //   const elm = rowElementRefs.current[moveIndex];
+  //   if (elm) {
+  //     scrollIntoView(elm);
+  //   }
+  // }, [pairedHistory, focusedIndex]);
 
   useEffect(() => {
     if (containerElementRef.current) {
