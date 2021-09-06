@@ -4,6 +4,7 @@ import { makeSquare, parseUci } from 'chessops/util';
 import {
   ChatMessageRecord,
   ChessGameColor,
+  ChessGameStateFinished,
   ChessHistory,
   ChessMove,
   GameRecord,
@@ -170,6 +171,13 @@ export const lichessGameToChessRouletteGame = (
   return gameRecordToGame(gameRecord);
 };
 
+const getWinner = (gameState: LichessGameState): ChessGameStateFinished['winner'] => {
+  if (gameState.status === 'draw'){
+    return '1/2'
+  }
+  return gameState.winner
+}
+
 export const updateGameWithNewStateFromLichess = (
   game: Game,
   lichessGameState: LichessGameState
@@ -189,7 +197,7 @@ export const updateGameWithNewStateFromLichess = (
     lastMoveAt: toISODateTime(new Date()),
     lastActivityAt: toISODateTime(new Date()),
     pgn: historyToPgn(history),
-    winner: lichessGameState.winner || undefined,
+    winner: getWinner(lichessGameState),
     history,
   } as GameRecord;
   console.log('update to chessroulette game', gameRecord)

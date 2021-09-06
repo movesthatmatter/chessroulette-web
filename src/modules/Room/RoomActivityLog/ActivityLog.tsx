@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import { Game } from 'src/modules/Games';
-import { selectMyPeer } from 'src/providers/PeerProvider';
+import { selectMyPeer, selectRoomActivity } from 'src/providers/PeerProvider';
 import { colors } from 'src/theme';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { InfoNotificationItem } from './components/InfoNotificationItem';
 import { OfferNotificationItem } from './components/OfferNotificationItem';
 import { selectCurrentRoomActivityLog } from './redux/selectors';
+import { useLichessGameActions } from 'src/modules/LichessPlay/useLichessGameActions/useLichessGameActions';
+import { RoomActivityType, roomType } from 'dstnd-io';
+import { resolveOfferNotificationAction } from './redux/actions';
+import { OfferNotification, OfferType } from './types';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -26,6 +29,17 @@ const processLog = (log: ReturnType<typeof selectCurrentRoomActivityLog>) => {
   return sorted;
 };
 
+type PlayfulActivities = Exclude<RoomActivityType, 'none' | 'analysis'>;
+
+type ActivityController = {
+    onDrawAccepted: {
+      [k in PlayfulActivities]: () => void;
+    }
+    onDrawDeclined: {
+      [k in PlayfulActivities]: () => void;
+    }
+};
+
 export const ActivityLog: React.FC<Props> = (props) => {
   const cls = useStyles();
   const myPeer = useSelector(selectMyPeer);
@@ -33,6 +47,38 @@ export const ActivityLog: React.FC<Props> = (props) => {
   const activityLog = useSelector(selectCurrentRoomActivityLog);
   const [log, setLog] = useState(processLog(activityLog));
   const dummy = useRef<HTMLDivElement>(null);
+  const roomActivity = useSelector(selectRoomActivity);
+  const lichessGameActions = useLichessGameActions();
+  const dispatch = useDispatch();
+
+  const gameActionsController: ActivityController = {
+    onDrawAccepted: {
+      play: () => gameActions.onDrawAccepted(),
+      lichess: () => lichessGameActions.onDrawAccept(),
+    },
+    onDrawDeclined: {
+      play: () => gameActions.onDrawDenied(),
+      lichess: () => lichessGameActions.onDrawDecline(),
+    }
+  };
+
+  function resolveNotification(
+    notificationId: string,
+    status: Exclude<OfferNotification['status'], 'pending'>,
+    activityType: PlayfulActivities,
+    offerType: keyof ActivityController
+  ) {
+    gameActionsController[offerType][activityType]()
+    if (activityType === 'play') {
+      return;
+    }
+    dispatch(
+      resolveOfferNotificationAction({
+        notificationId,
+        status,
+      })
+    );
+  }
 
   useEffect(() => {
     setLog(processLog(activityLog));
@@ -70,7 +116,7 @@ export const ActivityLog: React.FC<Props> = (props) => {
               me={myPeer.user}
               onAcceptOffer={({ offerType }) => {
                 if (offerType === 'draw') {
-                  gameActions.onDrawAccepted();
+                  resolveNotification(notification.id, 'accepted', roomActivity?.type as PlayfulActivities, 'onDrawAccepted')
                 } else if (offerType === 'rematch') {
                   gameActions.onRematchAccepted();
                 } else if (offerType === 'challenge') {
@@ -81,7 +127,7 @@ export const ActivityLog: React.FC<Props> = (props) => {
               }}
               onDenyOffer={({ offerType }) => {
                 if (offerType === 'draw') {
-                  gameActions.onDrawDenied();
+                  resolveNotification(notification.id, 'withdrawn', roomActivity?.type as PlayfulActivities, 'onDrawDeclined');
                 } else if (offerType === 'rematch') {
                   gameActions.onRematchDenied();
                 } else if (offerType === 'challenge') {
