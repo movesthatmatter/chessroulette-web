@@ -158,3 +158,29 @@ export function declineDrawOffer(gameId: string, opts: RequestInit){
     }
   })
 }
+
+export function acceptOfOfferTakeback(gameId: string, opts:RequestInit){
+  return new AsyncResultWrapper<{ok: true},{ok:false, error: any}>(async () => {
+    try{
+      await api.post(`board/game/${gameId}/takeback/yes`,{
+        headers: opts.headers
+      })
+      return new Ok({ok:true} as const)
+    } catch (e) {
+      return new Err({ ok: false, error: e} as const);
+    }
+  })
+}
+
+export function declineTakeback(gameId: string, opts:RequestInit){
+  return new AsyncResultWrapper<{ok: true},{ok:false, error: any}>(async () => {
+    try{
+      await api.post(`board/game/${gameId}/takeback/no`, {
+        headers: opts.headers
+      })
+      return new Ok({ok:true} as const)
+    } catch (e) {
+      return new Err({ ok: false, error: e} as const);
+    }
+  })
+}

@@ -32,7 +32,6 @@ export const useLichessGameActions = () => {
       pubsy.publish('onGameUpdate', game);
     },
     onUpdateGame: (game: Game) => {
-      console.log('UPDATED GAME --- > ',game);
       request(lichessGameActionsPayloads.onGameUpdated(game))
       pubsy.publish('onGameUpdate', game)
     },
@@ -48,5 +47,15 @@ export const useLichessGameActions = () => {
         lichess.declineDraw(game.vendorData?.gameId as string)
       }
     },
+    onTakebackAccept: () => {
+      if (lichess && game){
+        lichess.acceptTakeback(game.vendorData?.gameId as string);
+      }
+    },
+    onTakebackDecline: () => {
+      if (lichess && game){
+        lichess.declineTakeback(game.vendorData?.gameId as string);
+      } 
+    }
   }
 }

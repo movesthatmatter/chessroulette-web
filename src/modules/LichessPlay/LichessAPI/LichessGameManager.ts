@@ -1,8 +1,10 @@
 import {
   acceptChallenge,
+  acceptOfOfferTakeback,
   acceptOrOfferDraw,
   declineChallenge,
   declineDrawOffer,
+  declineTakeback,
   getBoardStreamById,
   getLichessStreamEvent,
   resignGame,
@@ -109,6 +111,18 @@ export class LichessManager {
   declineDraw = (gameId: string) => {
     return declineDrawOffer(gameId, this.auth)
     .mapErr(e => console.log('failed to decline draw'))
+    .resolve()
+  }
+
+  acceptOrOfferTakeback = (gameId: string) => {
+    return acceptOfOfferTakeback(gameId, this.auth)
+    .mapErr(e => console.log('failed to accept takeback'))
+    .resolve()
+  }
+
+  declineTakeback = (gameId:string) => {
+    return declineTakeback(gameId, this.auth) 
+    .mapErr(e => console.log('failed to decline a takeback'))
     .resolve()
   }
 

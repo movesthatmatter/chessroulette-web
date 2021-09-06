@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ChatMessageRecord, ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove, ChessPlayer, GuestUserRecord } from 'dstnd-io';
+import { ChatMessageRecord, ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove, ChessPlayer, GuestUserRecord, RoomRecord } from 'dstnd-io';
 import { LichessChatLine, LichessGameState } from '../types';
 import { LichessGameStateDialogProvider } from './components/LichessGameStateDialogProvider';
 import { LichessGame } from 'src/modules/Games/Chess/components/LichessGame/LichessGame';
@@ -16,10 +16,11 @@ import { useLichessChatProvider } from './useLichessChatProvider/useLichessChatP
 import { authenticateAsExistentGuest } from 'src/services/Authentication/resources';
 import { getOppositePlayer, getPlayerByColor } from 'src/modules/Games/Chess/lib';
 import { useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
-import { addNotificationAction } from 'src/modules/Room/RoomActivityLog/redux/actions';
+import { addNotificationAction, resolveOfferNotificationAction } from 'src/modules/Room/RoomActivityLog/redux/actions';
 import { Game } from 'src/modules/Games';
-import { OfferNotification } from 'src/modules/Room/RoomActivityLog/types';
+import { Notification, OfferNotification } from 'src/modules/Room/RoomActivityLog/types';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
+import { selectCurrentRoomActivityLog } from 'src/modules/Room/RoomActivityLog/redux/selectors';
 
 type Props = {
   boardSize: number;
@@ -35,6 +36,7 @@ export const LichessGameContainer: React.FC<Props> = ({boardSize, onSendNewChatM
   const auth = useAuthenticatedUserWithLichessAccount();
   const [lichessChatLinesLog, setLichessChatLinesLog] = useState<LichessChatLine[]>([]);
   const dispatch = useDispatch();
+  const activitLog = useSelector(selectCurrentRoomActivityLog);
 
   useLichessChatProvider();
 
@@ -95,6 +97,16 @@ export const LichessGameContainer: React.FC<Props> = ({boardSize, onSendNewChatM
     }
   };
 
+  const getTakebackNotificationId = (log: {
+    history: Record<Notification['id'], Notification>;
+    pending?: OfferNotification;
+  }) => {
+    if (log.pending?.offerType === 'takeback'){
+      return log.pending.id
+    }
+    return Object.values(log.history).find(s => s.type === 'offer' && s.offerType === 'takeback' && s.status === 'pending')?.id
+  }
+
   const processChatLine = (chatLine : LichessChatLine) => {
     if (chatLine.username === 'lichess'){
       if (chatLine.text.includes('offers draw') && chatLine.room === 'player'){
@@ -111,10 +123,25 @@ export const LichessGameContainer: React.FC<Props> = ({boardSize, onSendNewChatM
       }
       if (chatLine.text.includes('Takeback') && chatLine.room === 'player'){
         if (chatLine.text.includes('sent')){
-        //TODO dispatch notification
+        dispatch(addNotificationAction({
+          notification: {
+            offerType: 'takeback',
+            type: 'offer',
+            status: 'pending',
+            ...getMessageCorrespondence(chatLine, homeColor, game as Game),
+            id: new Date().getTime().toString(),
+            timestamp: toISODateTime(new Date())
+          }
+        }))
         }
         if (chatLine.text.includes('cancelled')){
-        //TODO dispatch notification
+          const id = getTakebackNotificationId(activitLog);
+          if (id){
+            dispatch(resolveOfferNotificationAction({
+              notificationId: id,
+              status: 'withdrawn'
+            }))
+          }
         }
       }
     } else {

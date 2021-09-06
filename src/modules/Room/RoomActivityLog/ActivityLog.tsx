@@ -30,12 +30,10 @@ const processLog = (log: ReturnType<typeof selectCurrentRoomActivityLog>) => {
 };
 
 type PlayfulActivities = Exclude<RoomActivityType, 'none' | 'analysis'>;
+type Offers = 'onDrawAccept' | 'onDrawDecline' | 'onTakebackAccept' | 'onTakebackDecline';
 
 type ActivityController = {
-    onDrawAccepted: {
-      [k in PlayfulActivities]: () => void;
-    }
-    onDrawDeclined: {
+    [t in Offers]: {
       [k in PlayfulActivities]: () => void;
     }
 };
@@ -52,14 +50,22 @@ export const ActivityLog: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
 
   const gameActionsController: ActivityController = {
-    onDrawAccepted: {
+    onDrawAccept: {
       play: () => gameActions.onDrawAccepted(),
       lichess: () => lichessGameActions.onDrawAccept(),
     },
-    onDrawDeclined: {
+    onDrawDecline: {
       play: () => gameActions.onDrawDenied(),
       lichess: () => lichessGameActions.onDrawDecline(),
-    }
+    },
+    onTakebackAccept: {
+      play: () => gameActions.onTakebackAccepted(),
+      lichess: () => lichessGameActions.onTakebackAccept(),
+    },
+    onTakebackDecline: {
+      play: () => gameActions.onTakebackDeny(),
+      lichess: () => lichessGameActions.onTakebackDecline()
+    },
   };
 
   function resolveNotification(
@@ -116,24 +122,24 @@ export const ActivityLog: React.FC<Props> = (props) => {
               me={myPeer.user}
               onAcceptOffer={({ offerType }) => {
                 if (offerType === 'draw') {
-                  resolveNotification(notification.id, 'accepted', roomActivity?.type as PlayfulActivities, 'onDrawAccepted')
+                  resolveNotification(notification.id, 'accepted', roomActivity?.type as PlayfulActivities, 'onDrawAccept')
                 } else if (offerType === 'rematch') {
                   gameActions.onRematchAccepted();
                 } else if (offerType === 'challenge') {
                   gameActions.onChallengeAccepted();
                 } else if (offerType === 'takeback') {
-                  gameActions.onTakebackAccepted();
+                  resolveNotification(notification.id, 'accepted', roomActivity?.type as PlayfulActivities, 'onTakebackAccept')
                 }
               }}
               onDenyOffer={({ offerType }) => {
                 if (offerType === 'draw') {
-                  resolveNotification(notification.id, 'withdrawn', roomActivity?.type as PlayfulActivities, 'onDrawDeclined');
+                  resolveNotification(notification.id, 'withdrawn', roomActivity?.type as PlayfulActivities, 'onDrawDecline');
                 } else if (offerType === 'rematch') {
                   gameActions.onRematchDenied();
                 } else if (offerType === 'challenge') {
                   gameActions.onChallengeDenied();
                 } else if (offerType === 'takeback') {
-                  gameActions.onTakebackDeny();
+                  resolveNotification(notification.id, 'withdrawn', roomActivity?.type as PlayfulActivities, 'onTakebackDecline')
                 }
               }}
               onCancelOffer={gameActions.onOfferCanceled}

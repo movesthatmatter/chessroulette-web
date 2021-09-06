@@ -20,6 +20,9 @@ type LichessContext = {
   acceptDraw : (gameId : string) => void;
   declineDraw : (gameId: string) => void;
   sendDrawOffer : (gameId: string) => void;
+  acceptTakeback : (gameId: string) => void;
+  declineTakeback: (gameId: string) => void;
+  sendTakebackOffer: (gameId: string) => void;
 } | undefined
 
 export const LichessContext = React.createContext<LichessContext>(undefined);
@@ -77,6 +80,15 @@ export const LichessProvider: React.FC<Props> = (props) => {
         },
         sendDrawOffer: (gameId) => {
           return lichessManager.acceptOrOfferDraw(gameId)
+        },
+        acceptTakeback: (gameId) => {
+          return lichessManager.acceptOrOfferTakeback(gameId);
+        },
+        declineTakeback: (gameId) => {
+          return lichessManager.declineTakeback(gameId);
+        },
+        sendTakebackOffer: (gameId) => {
+          return lichessManager.acceptOrOfferTakeback(gameId);
         }
       }
     })
