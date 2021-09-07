@@ -1,8 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 import config from 'src/config';
+import { createUseStyles } from 'src/lib/jss';
+import cx from 'classnames';
 
-type VideoAttributes =
-  React.DetailedHTMLProps<React.VideoHTMLAttributes<HTMLVideoElement>, HTMLVideoElement>;
+type VideoAttributes = React.DetailedHTMLProps<
+  React.VideoHTMLAttributes<HTMLVideoElement>,
+  HTMLVideoElement
+>;
 
 export type VideoBoxProps = VideoAttributes & {
   stream: MediaStream;
@@ -10,8 +14,10 @@ export type VideoBoxProps = VideoAttributes & {
 
 export const VideoBox: React.FunctionComponent<VideoBoxProps> = ({
   stream,
+  className,
   ...videoProps
 }) => {
+  const cls = useStyles();
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -24,7 +30,7 @@ export const VideoBox: React.FunctionComponent<VideoBoxProps> = ({
       if (videoRef.current) {
         videoRef.current.srcObject = null;
       }
-    }
+    };
   }, [stream.id]);
 
   return (
@@ -32,16 +38,13 @@ export const VideoBox: React.FunctionComponent<VideoBoxProps> = ({
       // Make sure the video refreshes if the stream id changes
       key={stream.id}
       ref={videoRef}
-
       // Hardcode this here for now to stop the hallow effect in dev mode
       // But let them be overwritten by specifc props
-      {
-        ...(config.ENV === 'dev') && {
-          muted: true,
-        }
-      }
-
+      {...(config.ENV === 'dev' && {
+        muted: true,
+      })}
       {...videoProps}
+      className={cx(cls.video, className)}
       autoPlay
       playsInline
     >
@@ -49,3 +52,9 @@ export const VideoBox: React.FunctionComponent<VideoBoxProps> = ({
     </video>
   );
 };
+
+const useStyles = createUseStyles({
+  video: {
+    transform: 'rotateY(180deg)',
+  },
+});
