@@ -14,9 +14,16 @@ import {
 import { ISODateTimeBrand } from 'io-ts-isodatetime/dist/lib/ISODateTime';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { getRandomInt } from 'src/lib/util';
-import { console, Date } from 'window-or-global';
+import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';
+import { console, Date, Object } from 'window-or-global';
 import { Game } from '../Games';
-import { gameRecordToGame, getNewChessGame, getPlayerByColor, historyToPgn } from '../Games/Chess/lib';
+import {
+  gameRecordToGame,
+  getNewChessGame,
+  getPlayerByColor,
+  historyToPgn,
+} from '../Games/Chess/lib';
+import { Notification, OfferNotification, OfferType } from '../Room/RoomActivityLog/types';
 import { LichessChatLine, LichessGameFull, LichessGameState, LichessPlayer } from './types';
 
 export const timeLimitsMap = {
@@ -41,7 +48,7 @@ export const getHomeColor = (game: LichessGameFull, userId: string): ChessGameCo
 
 export const getAwayColor = (game: LichessGameFull, userId: string): ChessGameColor => {
   return game.black.name === userId ? 'white' : 'black';
-}
+};
 
 export const getGameState = (status: LichessGameState['status']): Game['state'] => {
   if (status === 'started') {
@@ -50,11 +57,17 @@ export const getGameState = (status: LichessGameState['status']): Game['state'] 
   if (status === 'resign' || status === 'aborted' || status === 'timeout') {
     return 'stopped';
   }
-  if (status === 'finished' || status === 'mate' || status === 'outoftime' || status === 'draw' || status === 'stalemate') {
+  if (
+    status === 'finished' ||
+    status === 'mate' ||
+    status === 'outoftime' ||
+    status === 'draw' ||
+    status === 'stalemate'
+  ) {
     return 'finished';
   }
-  if (status === 'nostart'){
-    return 'neverStarted'
+  if (status === 'nostart') {
+    return 'neverStarted';
   }
   return status;
 };
@@ -82,25 +95,41 @@ const getLastActivityTimeAtCreateGameStatus = (
   );
 };
 
-export const getPromoPieceFromMove = (promo: NonNullable<ChessMove['promotion']>) : NormalMove['promotion'] => {
+export const getPromoPieceFromMove = (
+  promo: NonNullable<ChessMove['promotion']>
+): NormalMove['promotion'] => {
   return promo === 'b' ? 'bishop' : promo === 'n' ? 'knight' : promo === 'r' ? 'rook' : 'queen';
-}
+};
 
-const convertNormalMovePromoToShortMovePromo = (promo: NonNullable<NormalMove['promotion']>) : ShortMove['promotion'] => {
-  return promo === 'bishop' ? 'b' : promo === 'knight' ? 'n' : promo === 'king' ? 'k' : promo === 'pawn' ? 'q' : promo === 'rook' ? 'r' :  'q';
-}
+const convertNormalMovePromoToShortMovePromo = (
+  promo: NonNullable<NormalMove['promotion']>
+): ShortMove['promotion'] => {
+  return promo === 'bishop'
+    ? 'b'
+    : promo === 'knight'
+    ? 'n'
+    : promo === 'king'
+    ? 'k'
+    : promo === 'pawn'
+    ? 'q'
+    : promo === 'rook'
+    ? 'r'
+    : 'q';
+};
 
-export const convertLichessChatLineToChatMessageRecord = (line: LichessChatLine): ChatMessageRecord => {
+export const convertLichessChatLineToChatMessageRecord = (
+  line: LichessChatLine
+): ChatMessageRecord => {
   return {
     content: line.text,
     fromUserId: `${guestPrefix}${line.username}`,
-    sentAt: toISODateTime(new Date())
-  }
-}
+    sentAt: toISODateTime(new Date()),
+  };
+};
 
-export const filterChatLineMessage = (line: LichessChatLine, homeId: string) : boolean => {
-  return homeId !== line.username
-}
+export const filterChatLineMessage = (line: LichessChatLine, homeId: string): boolean => {
+  return homeId !== line.username;
+};
 
 const getLastActivityTimeAtUpdateGameStatus = (
   turn: ChessGameColor,
@@ -110,9 +139,66 @@ const getLastActivityTimeAtUpdateGameStatus = (
   return toISODateTime(
     new Date(
       new Date(game.lastMoveAt as string).getTime() +
-      new Date((gameState[turn === 'black' ? 'btime' : 'wtime'] - game.timeLeft[turn]).toString()).getTime()
+        new Date(
+          (gameState[turn === 'black' ? 'btime' : 'wtime'] - game.timeLeft[turn]).toString()
+        ).getTime()
     )
   );
+};
+
+export const getAwayPlayer = (color: ChessGameColor, game: Game) =>
+  getPlayerByColor(color === 'black' ? 'white' : 'black', game.players);
+
+export const getHomePlayer = (color: ChessGameColor, game: Game) =>
+  getPlayerByColor(color, game.players);
+
+export const getHomePlayerFromGameAndAuth = (game: Game, auth: RegisteredUserRecordWithLichessConnection) => {
+  if (game.players[0].user.id === auth.id) {
+    return game.players[0].user
+  }
+  return game.players[1].user
+}
+
+export const getAwayPlayerFromGameAndAuth = (game: Game, auth: RegisteredUserRecordWithLichessConnection) => {
+  if (game.players[0].user.id === auth.id){
+    return game.players[1].user
+  }
+  return game.players[0].user
+}
+
+export const getLastPendingNotificationOfType = (
+  log: {
+    history: Record<Notification['id'], Notification>;
+    pending?: OfferNotification;
+  },
+  type: OfferType
+) => {
+  if (log.pending?.offerType === type) {
+    return log.pending.id;
+  }
+  return Object.values(log.history).find(
+    (s) => s.type === 'offer' && s.offerType === type && s.status === 'pending'
+  )?.id;
+};
+
+export const getMessageCorrespondence = (
+  senderColor: ChessGameColor,
+  homeColor: ChessGameColor,
+  game: Game
+): Pick<OfferNotification, 'byUser' | 'toUser'> => {
+  const awayPlayer = getAwayPlayer(homeColor, game);
+  const homePlayer = getHomePlayer(homeColor, game);
+  return {
+    ...(awayPlayer.color.toLowerCase() === senderColor.toLowerCase()
+      ? {
+          byUser: awayPlayer.user,
+          toUser: homePlayer.user,
+        }
+      : {
+          byUser: homePlayer.user,
+          toUser: awayPlayer.user,
+        }),
+  };
 };
 
 export const lichessGameToChessRouletteGame = (
@@ -164,19 +250,19 @@ export const lichessGameToChessRouletteGame = (
       vendor: 'lichess',
       userRating: game[awayPlayer].rating,
       playerId: game[awayPlayer].id,
-      gameId: game.id
-    }
+      gameId: game.id,
+    },
   } as GameRecord;
-  console.log('lichess game to chessroulette game ', gameRecord)
+  console.log('lichess game to chessroulette game ', gameRecord);
   return gameRecordToGame(gameRecord);
 };
 
 const getWinner = (gameState: LichessGameState): ChessGameStateFinished['winner'] => {
-  if (gameState.status === 'draw'){
-    return '1/2'
+  if (gameState.status === 'draw') {
+    return '1/2';
   }
-  return gameState.winner
-}
+  return gameState.winner;
+};
 
 export const updateGameWithNewStateFromLichess = (
   game: Game,
@@ -191,7 +277,7 @@ export const updateGameWithNewStateFromLichess = (
       black: lichessGameState.btime,
       white: lichessGameState.wtime,
     },
-    ...(history.length === 1 && {startedAt: toISODateTime(new Date(game.createdAt))}),
+    ...(history.length === 1 && { startedAt: toISODateTime(new Date(game.createdAt)) }),
     updatedAt: toISODateTime(new Date()),
     lastMoveBy: turn === 'black' ? 'white' : 'black',
     lastMoveAt: toISODateTime(new Date()),
@@ -200,7 +286,7 @@ export const updateGameWithNewStateFromLichess = (
     winner: getWinner(lichessGameState),
     history,
   } as GameRecord;
-  console.log('update to chessroulette game', gameRecord)
+  console.log('update to chessroulette game', gameRecord);
   return gameRecordToGame(gameRecord);
 };
 
@@ -216,13 +302,15 @@ export const lichessGameStateToGameHistory = (gameState: LichessGameState): Ches
       const chessMove = chess.move({
         to: makeSquare(normalMove.to),
         from: makeSquare(normalMove.from),
-        ...(normalMove.promotion && {promotion: convertNormalMovePromoToShortMovePromo(normalMove.promotion)}),
-      })
+        ...(normalMove.promotion && {
+          promotion: convertNormalMovePromoToShortMovePromo(normalMove.promotion),
+        }),
+      });
       gameHistory.push({
         to: makeSquare(normalMove.to),
         from: makeSquare(normalMove.from),
         color,
-        ...(chessMove ? {san : chessMove.san} : {san: ''}),
+        ...(chessMove ? { san: chessMove.san } : { san: '' }),
         clock: gameState[color === 'white' ? 'wtime' : 'btime'],
       });
     });

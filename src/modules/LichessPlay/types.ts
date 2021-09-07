@@ -104,12 +104,62 @@ export type LichessGameEvent =
   | LichessGameStartEvent
   | LichessGameFinishEvent;
 
-export type LichessChatLine = {
+export type LichessSystemBaseChatLine = {
+    type : 'chatLine';
+    username: 'lichess';
+    room?: 'player';
+}
+
+export type LichessGeneralChatLine = {
   type: 'chatLine';
   username: LichessPlayer['name'];
   text: string;
   room: 'player' | 'spectator';
 };
+
+
+export type LichessTakebackOffer = LichessSystemBaseChatLine & {
+  text: 'Takeback sent'
+}
+
+export type LichessTakebackAcceptedLine = LichessSystemBaseChatLine & {
+  text: 'Takeback accepted'
+}
+
+export type LichessTakebackCancelledLine = LichessSystemBaseChatLine & {
+  text: 'Takeback declined' | 'Takeback cancelled'
+}
+
+export type LichessTakebackOfferLine = 
+| LichessTakebackAcceptedLine
+| LichessTakebackCancelledLine
+| LichessTakebackOffer
+
+export type LichessDrawOffer = LichessSystemBaseChatLine & {
+  text: 'White offers draw' | 'Black offers draw'
+}
+
+export type LichessDrawAcceptLine = LichessSystemBaseChatLine & {
+  text: 'Draw offer accepted'
+}
+
+export type LichessDrawCancelledLine = LichessSystemBaseChatLine & {
+  text: 'White declines draw' | 'Black declines draw'
+} 
+
+export type LichessDrawOfferLine = 
+| LichessDrawOffer
+| LichessDrawAcceptLine
+| LichessDrawCancelledLine
+
+export type LichessSystemChatLines = 
+| LichessTakebackOfferLine
+| LichessDrawOfferLine
+
+export type LichessChatLine = 
+| LichessGeneralChatLine
+| LichessSystemChatLines
+
 
 export type LichessAPIConfig = {
   userName: string;

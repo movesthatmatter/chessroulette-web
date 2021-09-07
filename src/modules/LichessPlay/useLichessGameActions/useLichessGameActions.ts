@@ -1,4 +1,5 @@
 import useInstance from "@use-it/instance"
+import { useEffect } from "react"
 import { useSelector } from "react-redux"
 import { Pubsy } from "src/lib/Pubsy"
 import { Game } from "src/modules/Games"
@@ -42,9 +43,20 @@ export const useLichessGameActions = () => {
 
       }
     },
+    resignGame : () => {
+      if (lichess && game){
+        lichess.resignGame(game.vendorData?.gameId as string);
+      }
+    },
     onDrawDecline: () => {
       if (lichess && game){
         lichess.declineDraw(game.vendorData?.gameId as string)
+      }
+    },
+    sendDrawOffer: () => {
+      if (lichess && game) {
+        console.log('sending draw offer! ');
+        lichess.sendDrawOffer(game.vendorData?.gameId as string)
       }
     },
     onTakebackAccept: () => {
@@ -56,6 +68,11 @@ export const useLichessGameActions = () => {
       if (lichess && game){
         lichess.declineTakeback(game.vendorData?.gameId as string);
       } 
+    },
+    sendTakebackOffer: () => {
+      if (lichess && game){
+        lichess.sendTakebackOffer(game.vendorData?.gameId as string);
+      }
     }
   }
 }
