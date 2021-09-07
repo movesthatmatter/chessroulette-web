@@ -12,6 +12,7 @@ import Loader from 'react-loaders';
 import 'loaders.css';
 import { AsyncResult } from 'dstnd-io';
 import { Badge, BadgeProps } from 'src/components/Badge';
+import { spacers } from 'src/theme/spacers';
 
 export type ButtonProps = {
   type?: ButtonType;
@@ -64,8 +65,6 @@ export const Button: React.FC<ButtonProps> = ({
           props.disabled || cls[type],
           clear && cls.clear,
           full && cls.full,
-          props.icon && cls.withIcon,
-          reverse && cls.reverse,
           size !== 'auto' && cls[size],
           isLoading && cls.hasLoader,
           props.className
@@ -110,7 +109,8 @@ export const Button: React.FC<ButtonProps> = ({
               }
             />
           )}
-          <div className={cls.content}>
+          <div className={cx(cls.content, reverse && cls.reverse, props.icon && cls.withIcon)}>
+            {Icon && <div className={cls.icon} />}
             <Text
               className={cls.label}
               style={{
@@ -152,16 +152,19 @@ const useStyles = createUseStyles({
   withIcon: {
     display: 'flex',
     flexDirection: 'row',
+    flex: 1,
   },
   reverse: {
-    flexDirection: 'row-reverse',
+    ...makeImportant({
+      flexDirection: 'row-reverse',
 
-    ...{
-      '& $iconWrapper': {
-        marginLeft: 0,
-        marginRight: '-8px',
+      ...{
+        '& $iconWrapper': {
+          marginLeft: 0,
+          marginRight: '-8px',
+        },
       },
-    },
+    }),
   },
   small: {
     minWidth: '100px',
@@ -182,6 +185,7 @@ const useStyles = createUseStyles({
     lineHeight: '32px',
     paddingRight: '16px',
     paddingLeft: '16px',
+    flex: 1,
 
     ...onlyMobile({
       ...makeImportant({
@@ -197,7 +201,7 @@ const useStyles = createUseStyles({
     direction: 'ltr',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
   iconWrapper: {
     height: '32px',
@@ -217,12 +221,12 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
-  icon: {
-    fill: `${colors.white} !important`,
-    stroke: `${colors.white} !important`,
-    width: '16px !important',
-    height: '16px !important',
-  },
+  icon: makeImportant({
+    fill: colors.white,
+    stroke: colors.white,
+    width: spacers.default,
+    height: spacers.default,
+  }),
   loadingWrapper: {
     position: 'absolute',
     top: '3px',
