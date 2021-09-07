@@ -188,12 +188,13 @@ const useStyles = createUseStyles({
 
   nestedHistory: {
     marginTop: spacers.smaller,
-    background: hexToRgba(colors.primary, 0.05),
-    border: `1px solid ${colors.neutral}`,
-    borderColor: hexToRgba(colors.primary, 0.07),
+    background: hexToRgba(colors.primary, 0.075),
+    border: `1px solid ${colors.negativeLight}`,
+    borderColor: hexToRgba(colors.primary, 0.1),
     borderWidth: 0,
     borderLeftWidth: '1px',
     borderTopWidth: '1px',
+    borderLeftColor: hexToRgba(colors.primary, 0.4),
     borderBottomWidth: '1px',
     ...softBorderRadius,
 
