@@ -8,6 +8,8 @@ import { useGameActions } from 'src/modules/Games/GameActions';
 import { InfoNotificationItem } from './components/InfoNotificationItem';
 import { OfferNotificationItem } from './components/OfferNotificationItem';
 import { selectCurrentRoomActivityLog } from './redux/selectors';
+import { Text } from 'src/components/Text';
+import { ChallengeNotificationItem } from './components/ChallengeNotificationItem';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -59,6 +61,17 @@ export const ActivityLog: React.FC<Props> = (props) => {
                 key={notification.id}
                 notification={notification}
                 me={myPeer.user}
+              />
+            );
+          }
+
+          if (notification.type === 'challenge') {
+            return (
+              <ChallengeNotificationItem
+                key={notification.id}
+                notification={notification}
+                me={myPeer.user}
+                onCancel={() => {}}
               />
             );
           }

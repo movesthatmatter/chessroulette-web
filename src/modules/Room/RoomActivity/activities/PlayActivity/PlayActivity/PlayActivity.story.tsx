@@ -7,6 +7,8 @@ import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityPar
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { RoomProvider } from 'src/modules/Room/RoomProvider';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
+import { toISODateTime } from 'io-ts-isodatetime';
+import { Date } from 'window-or-global';
 
 export default {
   component: PlayActivity,
@@ -20,7 +22,7 @@ const game = gameMocker.withPgn(
 const participantMocker = new RoomActivityParticipantMocker();
 
 const myParticipant = participantMocker.withProps({ isPresent: true, isMe: true });
-const myPlayParticipant: RoomPlayActivityParticipant = {
+const myPlayParticipant = {
   roomActivitySpecificParticipantType: 'play',
   isRoomActivitySpecificParticipant: true,
   participant: myParticipant,
@@ -72,6 +74,20 @@ export const defaultStory = () => (
         currentActivity: {
           type: 'none',
           participants: undefined,
+        },
+        pendingChallenges: {
+          '0': {
+            id: '0',
+            gameSpecs: {
+              timeLimit: 'blitz3',
+              preferredColor: 'black',
+            },
+            createdAt: toISODateTime(new Date()),
+            slug: 'asda',
+            type: 'private',
+            createdBy: myPlayParticipant.participant.member.peer.user.id,
+            createdByUser: myPlayParticipant.participant.member.peer.user,
+          },
         },
         members: {},
       }}

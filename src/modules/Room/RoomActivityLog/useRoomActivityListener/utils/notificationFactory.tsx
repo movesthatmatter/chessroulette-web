@@ -1,5 +1,5 @@
 import React from 'react';
-import { metadata, RoomWithPlayActivityRecord } from 'dstnd-io';
+import { ChallengeRecord, metadata, RoomWithPlayActivityRecord } from 'dstnd-io';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { Game } from 'src/modules/Games';
 import HumanizeDuration from 'humanize-duration';
@@ -8,9 +8,10 @@ import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { Notification, OfferNotification } from '../../types';
 import { getPlayerByColor } from 'src/modules/Games/Chess/lib';
 
-type NotificationDependencies = {
+type NotificationState = {
   game?: Game;
   offer?: RoomWithPlayActivityRecord['activity']['offer'];
+  pendingChallenge?: ChallengeRecord;
 };
 
 type NotificationFactoryReturn =
@@ -33,15 +34,43 @@ export const notificationFactory = ({
   prev,
   current,
 }: {
-  prev: NotificationDependencies;
-  current: NotificationDependencies;
+  prev: NotificationState;
+  current: NotificationState;
 }): NotificationFactoryReturn | undefined => {
+  const now = new Date();
+
+
+  console.log('prev', prev);
+  console.log('current', current);
+
+  if (current.pendingChallenge) {
+    return {
+      type: 'add',
+      notification: {
+        timestamp: toISODateTime(now),
+        challengeType: 'open',
+        id: current.pendingChallenge.id,
+        type: 'challenge',
+        status: 'pending',
+        byUser: current.pendingChallenge.createdByUser,
+        gameSpecs: current.pendingChallenge.gameSpecs,
+      },
+    };
+  }
+
+  if (!current.pendingChallenge && prev.pendingChallenge) {
+    return {
+      type: 'update',
+      id: prev.pendingChallenge.id,
+      status: !!current.game ? 'accepted' : 'withdrawn',
+    };
+  }
+
   // Later on this could be another notification
   if (!current.game) {
     return undefined;
   }
   //  const [notifications, setnotifications] = useState<Notification[]>()
-  const now = new Date();
 
   if (!current.offer && prev.offer) {
     if (prev.offer.type === 'rematch') {
@@ -78,19 +107,24 @@ export const notificationFactory = ({
         id: prev.offer.id,
         status: 'withdrawn',
       };
-    } else if (prev.offer.type === 'takeback'){
-      if (current.game.history && prev.game && prev.game.history && (current.game.history?.length < prev.game?.history?.length)){
+    } else if (prev.offer.type === 'takeback') {
+      if (
+        current.game.history &&
+        prev.game &&
+        prev.game.history &&
+        current.game.history?.length < prev.game?.history?.length
+      ) {
         return {
           type: 'update',
           id: prev.offer.id,
-          status: 'accepted'
-        }
-      } 
-      return {
-        type:  'update',
-        id: prev.offer.id,
-        status: 'withdrawn'
+          status: 'accepted',
+        };
       }
+      return {
+        type: 'update',
+        id: prev.offer.id,
+        status: 'withdrawn',
+      };
     }
   } else if (current.offer) {
     switch (current.offer.type) {
@@ -117,9 +151,9 @@ export const notificationFactory = ({
             status: 'pending',
             offerType: 'takeback',
             byUser: current.offer.content.byUser,
-            toUser: current.offer.content.toUser
-          }
-        }
+            toUser: current.offer.content.toUser,
+          },
+        };
       case 'rematch':
         return {
           type: 'add',
@@ -178,7 +212,7 @@ export const notificationFactory = ({
             metadata.game.chessGameTimeLimitMsMap[current.game.timeLimit]
           )} game has started between <strong>${getUserDisplayName(
             current.game.players[0].user
-          )}</strong> & <strong>${getUserDisplayName(current.game.players[1].user)}</strong></div>`
+          )}</strong> & <strong>${getUserDisplayName(current.game.players[1].user)}</strong></div>`,
         },
       },
     };
@@ -194,9 +228,9 @@ export const notificationFactory = ({
           id: `${current.game.id}-${current.game.winner}-win`,
           timestamp: toISODateTime(now),
           content: {
-            __html : `<div><strong>${getUserDisplayName(
+            __html: `<div><strong>${getUserDisplayName(
               getPlayerByColor(current.game.winner, current.game.players).user
-            )}</strong> won!</div>`
+            )}</strong> won!</div>`,
           },
         },
       };
@@ -240,7 +274,7 @@ export const notificationFactory = ({
               getPlayerByColor(otherChessColor(current.game.winner), current.game.players).user
             )}</strong> has resigned. <strong>${getUserDisplayName(
               getPlayerByColor(current.game.winner, current.game.players).user
-            )}</strong> won!</div>`
+            )}</strong> won!</div>`,
           },
         },
       };

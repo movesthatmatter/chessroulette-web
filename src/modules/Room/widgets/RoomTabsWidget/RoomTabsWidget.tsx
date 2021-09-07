@@ -18,7 +18,11 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
   const [tab, setTab] = useState(0);
 
   useEffect(() => {
-    if (activityLog.pending && props.me.id === activityLog.pending.toUser.id) {
+    if (
+      activityLog.pending &&
+      activityLog.pending.type === 'offer' &&
+      props.me.id === activityLog.pending.toUser.id
+    ) {
       // Go back to activity record if there is pending offer for me!
       setTab(0);
     }

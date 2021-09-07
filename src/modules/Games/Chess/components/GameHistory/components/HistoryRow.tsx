@@ -152,9 +152,7 @@ export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
 );
 
 const useStyles = createUseStyles({
-  container: {
-    paddingLeft: spacers.small,
-  },
+  container: {},
   row: {
     display: 'flex',
     paddingBottom: spacers.smaller,
@@ -198,6 +196,8 @@ const useStyles = createUseStyles({
     borderTopWidth: '1px',
     borderBottomWidth: '1px',
     ...softBorderRadius,
+
+    paddingLeft: spacers.small,
   },
   rowBelowNested: {
     // marginTop: spacers.small,

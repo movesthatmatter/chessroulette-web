@@ -1,4 +1,4 @@
-import { UserInfoRecord } from 'dstnd-io';
+import { ChallengeRecord, UserInfoRecord } from 'dstnd-io';
 import { ISODateTime } from 'io-ts-isodatetime';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 
@@ -18,10 +18,18 @@ export type OfferNotification = BaseNotification & {
   status: 'pending' | 'withdrawn' | 'accepted';
 };
 
+export type ChallengeNotification = BaseNotification & {
+  type: 'challenge';
+  challengeType: 'open'; // specific to user
+  byUser: UserInfoRecord;
+  gameSpecs: ChallengeRecord['gameSpecs'];
+  status: 'pending' | 'withdrawn' | 'accepted';
+};
+
 export type InfoNotification = BaseNotification & {
   type: 'info';
   infoType: 'resign' | 'win' | 'draw' | 'newGame';
   content: string | DangerouslySetInnerHTML;
 };
 
-export type Notification = OfferNotification | InfoNotification;
+export type Notification = InfoNotification | OfferNotification | ChallengeNotification;

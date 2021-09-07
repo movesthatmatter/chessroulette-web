@@ -61,9 +61,15 @@ export const LandingPage: React.FC<Props> = () => {
                   marginRight: spacers.default,
                 }}
               />
+            
               <CreateRoomButtonWidget
                 label="Analysis Room"
                 type="primary"
+                withBadge={{
+                  text: 'New',
+                  color: 'negative',
+                  side: 'right',
+                }}
                 clear
                 size="small"
                 createRoomSpecs={{
