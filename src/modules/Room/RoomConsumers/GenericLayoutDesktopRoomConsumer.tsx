@@ -45,16 +45,11 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
         renderTopComponent={({ left, right }) => (
           <div className={cls.top}>
             <div className={cls.mainTop}>
-              <div style={{ width: left.width }}>
-                <Logo asLink />
+              <div className={cls.logoWrapper} style={{ width: left.width }}>
+                <Logo asLink withBeta />
               </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flex: 1,
-                }}
-              >
-                <UserMenu reversed />
+              <div className={cls.userMenuWrapper}>
+                <UserMenu reversed showPeerStatus />
               </div>
             </div>
             <div style={{ width: right.width }} />
@@ -111,10 +106,17 @@ const useStyles = createUseStyles({
     flex: 1,
     flexDirection: 'row',
     display: 'flex',
-    paddingTop: spacers.default,
-    // paddingBottom: spacers.large,
-    paddingLeft: spacers.default,
+    paddingLeft: spacers.large,
     paddingRight: spacers.large,
+  },
+  userMenuWrapper: {
+    display: 'flex',
+    flex: 1,
+    paddingTop: spacers.default,
+  },
+  logoWrapper: {
+    display: 'flex',
+    alignItems: 'center',
   },
   side: {
     display: 'flex',

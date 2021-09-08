@@ -15,12 +15,14 @@ type Props = {
   reversed?: boolean;
   withDropMenu?: boolean;
   linksTarget?: 'blank' | 'self';
+  showPeerStatus?: boolean;
 };
 
 export const UserMenu: React.FC<Props> = ({
   darkMode = false,
   reversed = false,
   withDropMenu = false,
+  showPeerStatus = false,
   linksTarget = 'self',
 }) => {
   const cls = useStyles();
@@ -50,7 +52,7 @@ export const UserMenu: React.FC<Props> = ({
           },
         })}
       >
-        <PeerInfo peer={myPeer} reversed />
+        <PeerInfo peer={myPeer} reversed showPeerStatus={showPeerStatus} />
       </Box>
     </Box>
   );

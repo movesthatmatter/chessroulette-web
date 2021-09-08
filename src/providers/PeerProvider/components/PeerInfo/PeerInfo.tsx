@@ -50,7 +50,7 @@ export const PeerInfo: React.FC<Props> = ({
     >
       <PeerAvatar reversed={reversed} peer={peer} />
       <div className={cls.spacer} />
-      <div className={cls.textWrapper}>
+      <div className={cx(cls.textWrapper, showPeerStatus || cls.textWrapperCentered )}>
         <Text className={cls.userNameText}>
           {getUserDisplayName(peer.user)}
         </Text>
@@ -84,5 +84,8 @@ const useStyles = createUseStyles({
     display: 'flex',
     alignItems: 'flex-end',
     flexDirection: 'column',
+  },
+  textWrapperCentered: {
+    justifyContent: 'center',
   },
 });

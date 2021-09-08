@@ -44,7 +44,7 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
         <div className={`${cls.content} ${props.contentClassName}`}>
           <div className={cls.top}>
             <div className={cls.topMain}>
-              <Logo asLink={logoAsLink} />
+              <Logo asLink={logoAsLink} withBeta />
               <div className={cls.navigationMenu}>
                 <NavigationMenu />
               </div>
