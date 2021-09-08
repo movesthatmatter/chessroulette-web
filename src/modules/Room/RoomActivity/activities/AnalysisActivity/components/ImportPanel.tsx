@@ -2,7 +2,6 @@ import { SimplePGN } from 'dstnd-io';
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
-import { LabeledFloatingBox } from './LabeledFloatingBox';
 import { MyGamesArchive } from './MyGamesArchive';
 import cx from 'classnames';
 import { PgnInputBox } from './PgnInputBox';
@@ -25,25 +24,40 @@ type Props = {
 export const ImportPanel: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [pgn, setPgn] = useState<SimplePGN>();
+  const [isValidating, setIsValidating] = useState(false);
 
   return (
     <>
-      <LabeledFloatingBox
-        label="Import a Previous Game"
-        containerClassName={cx(cls.box, cls.gamesArchiveContainer)}
-        floatingBoxClassName={cls.gamesArchive}
-      >
+      <div style={{ overflowY: 'hidden' }}>
+        {/* <div className={cx(cls.boxHorizontalPadding, cls.importGameLabel)}>
+          <Text size="small2">Import a Previous Game</Text>
+        </div> */}
         <div className={cls.scroller}>
-          <div style={{ width: '100%' }}>
+          <div
+            className={cx(cls.box)}
+            style={{
+              width: '100%',
+            }}
+          >
             <MyGamesArchive onSelect={(g) => setPgn(g.pgn as SimplePGN)} />
           </div>
         </div>
-      </LabeledFloatingBox>
+      </div>
       <PgnInputBox
         // Here show either the pgn or if it's nothing the input
         value={pgn}
-        onValidPgn={setPgn}
-        onInvalidPgn={() => setPgn(undefined)}
+        onChange={(s) => {
+          setIsValidating(s.isLoading);
+          if (s.isLoading) {
+            return;
+          }
+
+          if (s.isValid) {
+            setPgn(s.pgn);
+            return;
+          }
+          setPgn(undefined);
+        }}
         containerClassName={cx(cls.box, cls.pgnInputBox)}
         contentClassName={cls.pgnInputBox}
       />
@@ -57,10 +71,11 @@ export const ImportPanel: React.FC<Props> = (props) => {
           />
         )}
         <Button
-          label="Import"
+          label={pgn ? 'Import' : 'PGN Invalid'}
           type="primary"
           disabled={!pgn}
           full
+          isLoading={isValidating}
           onClick={() => {
             if (pgn) {
               props.onImported(pgn);
@@ -96,11 +111,12 @@ const useStyles = createUseStyles({
       marginBottom: 0,
     },
   },
-  gamesArchiveContainer: {
-    overflowY: 'hidden',
+  boxHorizontalPadding: {
+    paddingLeft: FLOATING_SHADOW_HORIZONTAL_OFFSET,
+    paddingRight: FLOATING_SHADOW_HORIZONTAL_OFFSET,
   },
-  gamesArchive: {
-    overflowY: 'hidden',
+  importGameLabel: {
+    paddingBottom: spacers.small,
   },
   fenBox: {
     flex: 0,
@@ -111,10 +127,12 @@ const useStyles = createUseStyles({
   },
   pgnInputBox: {
     flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'end',
   },
   scroller: {
     display: 'flex',
-    flex: 1,
     overflowY: 'scroll',
     scrollBehavior: 'smooth',
     width: '100%',

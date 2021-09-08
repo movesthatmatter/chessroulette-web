@@ -3,12 +3,13 @@ import { createUseStyles, CSSProperties, NestedCSSElement } from 'src/lib/jss';
 import { GamesArchiveProvider } from 'src/modules/GamesArchive';
 import { CompactArchivedGame } from 'src/modules/GamesArchive/components/ArchivedGame/CompactArchivedGame';
 import { spacers } from 'src/theme/spacers';
-import { colors, softBorderRadius } from 'src/theme';
+import { colors, floatingShadow, softBorderRadius } from 'src/theme';
 import { GameRecord } from 'dstnd-io';
 import { Text } from 'src/components/Text';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { renderMatch } from 'src/lib/renderMatch';
 import Loader from 'react-loaders';
+import { FloatingBox } from 'src/components/FloatingBox';
 
 type Props = {
   onSelect: (g: GameRecord) => void;
@@ -44,8 +45,22 @@ export const MyGamesArchive: React.FC<Props> = (props) => {
                 </div>
               </div>
             )),
-          [isLoading, () => <Loader type="ball-pulse" active innerClassName={cls.loader} />],
-          [isEmpty, () => <Text size="small1">Wow So Empty</Text>]
+          [
+            isLoading,
+            () => (
+              <FloatingBox>
+                <Loader type="ball-pulse" active innerClassName={cls.loader} />
+              </FloatingBox>
+            ),
+          ],
+          [
+            isEmpty,
+            () => (
+              <FloatingBox>
+                <Text size="small1">Wow So Empty</Text>
+              </FloatingBox>
+            ),
+          ]
         )
       }
     />
@@ -57,6 +72,7 @@ const useStyles = createUseStyles({
     marginBottom: spacers.small,
     position: 'relative',
     ...softBorderRadius,
+    ...floatingShadow,
     overflow: 'hidden',
 
     ...({
@@ -103,7 +119,7 @@ const useStyles = createUseStyles({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: '100px',
+    // minHeight: '100px',
 
     transform: 'scale(.7)',
     ...({

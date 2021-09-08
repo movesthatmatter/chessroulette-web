@@ -1,24 +1,34 @@
 import { Err, Ok, Result, SimplePGN } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
-import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
+import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { spacers } from 'src/theme/spacers';
-import { LabeledFloatingBox } from './LabeledFloatingBox';
 import { getNewChessGame } from 'src/modules/Games/Chess/lib';
-import { colors, fonts, softBorderRadius } from 'src/theme';
 import useDebouncedEffect from 'use-debounced-effect';
+import { TextArea } from 'src/components/TextArea';
 
 type Props = {
+  onChange: (s: OnChangeState) => void;
   value?: string;
-  onValidPgn: (s: SimplePGN) => void;
-  onInvalidPgn: () => void;
   containerClassName?: string;
   contentClassName?: string;
 };
 
+type OnChangeState =
+  | {
+      isLoading: true;
+    }
+  | {
+      isLoading: false;
+      isValid: true;
+      pgn: SimplePGN;
+    }
+  | {
+      isLoading: false;
+      isValid: false;
+    };
+
 const validatePGN = (s: string): Result<SimplePGN, 'PgnNotValidError'> => {
   const instance = getNewChessGame();
-
   const isValid = instance.load_pgn(s);
 
   return isValid ? new Ok(s as SimplePGN) : new Err('PgnNotValidError');
@@ -27,6 +37,7 @@ const validatePGN = (s: string): Result<SimplePGN, 'PgnNotValidError'> => {
 export const PgnInputBox: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [input, setInput] = useState(props.value || '');
+  const [isInvalid, setIsInvalid] = useState(false);
 
   useEffect(() => {
     setInput((prev) => props.value || prev);
@@ -34,60 +45,52 @@ export const PgnInputBox: React.FC<Props> = (props) => {
 
   useDebouncedEffect(
     () => {
-      validatePGN(input).map(props.onValidPgn).mapErr(props.onInvalidPgn);
+      validatePGN(input)
+        .map((pgn) => {
+          setIsInvalid(false);
+          props.onChange({
+            isValid: true,
+            isLoading: false,
+            pgn,
+          });
+        })
+        .mapErr(() => {
+          setIsInvalid(true);
+          props.onChange({
+            isValid: false,
+            isLoading: false,
+          });
+        });
     },
     250,
     [input]
   );
 
+  useEffect(() => {
+    if (input) {
+      props.onChange({ isLoading: true });
+    }
+  }, [input]);
+
   return (
-    <LabeledFloatingBox
-      label="Import PGN"
-      containerClassName={cx(props.containerClassName)}
-      floatingBoxClassName={cx(cls.container, props.contentClassName)}
-    >
-      <textarea
-        value={input}
-        className={cls.textArea}
-        rows={5}
-        placeholder="Paste PGN here"
-        // onChange={(e) => props.onChange(e.target.value)}
-        onChange={(e) => setInput(e.target.value)}
-      />
-    </LabeledFloatingBox>
+    <div className={props.containerClassName}>
+      <div className={cx(cls.container, props.contentClassName)}>
+        <TextArea
+          label="Import PGN"
+          value={input}
+          className={cx(cls.container)}
+          rows={5}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Paste PGN here"
+          hasValidationError={isInvalid}
+        />
+      </div>
+    </div>
   );
 };
 
 const useStyles = createUseStyles({
   container: {
-    display: 'flex',
+    marginBottom: 0,
   },
-  top: {
-    padding: spacers.smaller,
-  },
-  scroller: {
-    display: 'flex',
-    flex: 1,
-    overflowY: 'scroll',
-    scrollBehavior: 'smooth',
-  },
-  textArea: {
-    border: 0,
-    width: '100%',
-    height: '100%',
-    overflowY: 'scroll',
-    ...fonts.body2,
-    resize: 'none',
-    fontFamily: 'Lato, Open Sans, sans-serif',
-
-    ...({
-      '&:focus-visible': {
-        boxShadow: `0 0 0 2px ${colors.primaryLight}`,
-        ...softBorderRadius,
-        outline: 'none',
-      },
-    } as NestedCSSElement),
-  },
-  iconActive: {},
-  iconInactive: {},
 });

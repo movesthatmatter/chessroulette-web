@@ -34,8 +34,7 @@ const useStyles = createUseStyles({
     flexDirection: 'column',
   },
   top: {
-    padding: spacers.smaller,
-    paddingTop: 0,
+    paddingBottom: spacers.smaller,
     display: 'flex',
   },
   box: {
