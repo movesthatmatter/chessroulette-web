@@ -7,6 +7,7 @@ import {
   ChessGameStateFinished,
   ChessHistory,
   ChessMove,
+  ChessPlayer,
   GameRecord,
   GuestUserRecord,
   RegisteredUserRecord,
@@ -15,7 +16,7 @@ import { ISODateTimeBrand } from 'io-ts-isodatetime/dist/lib/ISODateTime';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { getRandomInt } from 'src/lib/util';
 import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';
-import { console, Date, Object } from 'window-or-global';
+import { console, Date, Object, pending } from 'window-or-global';
 import { Game } from '../Games';
 import {
   gameRecordToGame,
@@ -152,18 +153,18 @@ export const getAwayPlayer = (color: ChessGameColor, game: Game) =>
 export const getHomePlayer = (color: ChessGameColor, game: Game) =>
   getPlayerByColor(color, game.players);
 
-export const getHomePlayerFromGameAndAuth = (game: Game, auth: RegisteredUserRecordWithLichessConnection) => {
+export const getHomePlayerFromGameAndAuth = (game: Game, auth: RegisteredUserRecordWithLichessConnection): ChessPlayer => {
   if (game.players[0].user.id === auth.id) {
-    return game.players[0].user
+    return game.players[0]
   }
-  return game.players[1].user
+  return game.players[1]
 }
 
-export const getAwayPlayerFromGameAndAuth = (game: Game, auth: RegisteredUserRecordWithLichessConnection) => {
+export const getAwayPlayerFromGameAndAuth = (game: Game, auth: RegisteredUserRecordWithLichessConnection): ChessPlayer => {
   if (game.players[0].user.id === auth.id){
-    return game.players[1].user
+    return game.players[1]
   }
-  return game.players[0].user
+  return game.players[0]
 }
 
 export const getLastPendingNotificationOfType = (
@@ -174,12 +175,42 @@ export const getLastPendingNotificationOfType = (
   type: OfferType
 ) => {
   if (log.pending?.offerType === type) {
-    return log.pending.id;
+    return log.pending;
   }
-  return Object.values(log.history).find(
+  return Object.values(log.history).sort((x, y) => {
+    return new Date(x.timestamp).getTime() - new Date(x.timestamp).getTime()
+  }).find(
     (s) => s.type === 'offer' && s.offerType === type && s.status === 'pending'
-  )?.id;
+  );
 };
+
+export const getNumberOfOffersOfType = (
+  log: {
+    history: Record<Notification['id'], Notification>;
+    pending?: OfferNotification;
+  },
+  type: OfferType
+) : number => {
+  return Object.values(log.history).reduce((acc, entry) => {
+    if (entry.type === 'offer' && entry.offerType === type){
+      return acc += 1
+    }
+    return acc
+  }, 0)
+}
+
+export const hasPendingOffer = (
+  log: {
+    history: Record<Notification['id'], Notification>;
+    pending? : OfferNotification;
+  },
+  type: OfferType
+) : boolean => {
+  if (log.pending && log.pending.offerType === type){
+    return true;
+  }
+  return Object.values(log.history).filter(s => s.type === 'offer' && s.offerType === type && s.status === 'pending').length > 0;
+}
 
 export const getMessageCorrespondence = (
   senderColor: ChessGameColor,

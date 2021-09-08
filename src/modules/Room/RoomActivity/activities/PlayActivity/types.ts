@@ -39,7 +39,6 @@ export type RoomPlayActivityWithGameAndParticipating = Omit<RoomPlayActivityReco
 
 export type LichessRoomActivityWithGame = RoomLichessActivityRecord & {
   game: Game;
-  gameSpecs: GameSpecsRecord;
   participants: {
     me: RoomLichessActivityParticipant
     opponent: RoomLichessActivityGuest
@@ -48,7 +47,6 @@ export type LichessRoomActivityWithGame = RoomLichessActivityRecord & {
 
 export type LichessRoomActivityWithoutGame = Omit<RoomLichessActivityRecord, 'gameId'> & {
   game? : undefined;
-  gameSpecs: GameSpecsRecord;
   participants? :undefined;
 }
 

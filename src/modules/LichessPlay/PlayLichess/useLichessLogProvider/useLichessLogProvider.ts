@@ -64,7 +64,7 @@ export const useLichessLogProvider = (homeColor: ChessGameColor) => {
 
   const processSystemNotification = (line: LichessSystemChatLines) => {
     if (isTakebackOffer(line)){
-      const id = getLastPendingNotificationOfType(activitLog, 'takeback');
+      const id = getLastPendingNotificationOfType(activitLog, 'takeback')?.id;
       if (line.text === 'Takeback accepted' && id) {
           dispatch(
             resolveOfferNotificationAction({
@@ -74,6 +74,10 @@ export const useLichessLogProvider = (homeColor: ChessGameColor) => {
           )
       }
       if ((line.text.split(' ').some(s => (s.toLowerCase() === 'cancelled' || s.toLowerCase() === 'declined'))) && id){
+        request({
+          kind : 'gameOfferingCancelRequest',
+          content: undefined
+        })
         dispatch(
           resolveOfferNotificationAction({
             notificationId: id,
@@ -97,7 +101,7 @@ export const useLichessLogProvider = (homeColor: ChessGameColor) => {
         );
       }
     } else if (isDrawOffer(line)){
-      const id = getLastPendingNotificationOfType(activitLog, 'draw');
+      const id = getLastPendingNotificationOfType(activitLog, 'draw')?.id;
       if (line.text === 'Draw offer accepted' && id){
         dispatch(
           resolveOfferNotificationAction({

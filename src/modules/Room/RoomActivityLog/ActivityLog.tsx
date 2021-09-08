@@ -11,6 +11,7 @@ import { useLichessGameActions } from 'src/modules/LichessPlay/useLichessGameAct
 import { RoomActivityType, roomType } from 'dstnd-io';
 import { resolveOfferNotificationAction } from './redux/actions';
 import { OfferNotification, OfferType } from './types';
+import { noop } from 'src/lib/util';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -142,7 +143,8 @@ export const ActivityLog: React.FC<Props> = (props) => {
                   resolveNotification(notification.id, 'withdrawn', roomActivity?.type as PlayfulActivities, 'onTakebackDecline')
                 }
               }}
-              onCancelOffer={gameActions.onOfferCanceled}
+              //TODO - can be better done but at the moment that means alterating the OfferNotification component
+              onCancelOffer={roomActivity?.type === 'play' ? gameActions.onOfferCanceled : noop}
             />
           );
         })}
