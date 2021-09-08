@@ -176,6 +176,7 @@ const useStyles = createUseStyles({
     paddingLeft: spacers.large,
     paddingRight: spacers.large,
     paddingBottom: spacers.default,
+    paddingTop: spacers.default,
 
     ...onlyMobile({
       paddingLeft: '18px',
