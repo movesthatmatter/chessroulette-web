@@ -31,12 +31,12 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         >
           Live
         </Link>
-        <Badge
+        {/* <Badge
           color="negative"
           text="New"
           className={cls.linkBadge}
           textClassName={cls.linkBadgeText}
-        />
+        /> */}
       </div>
       <div className={cls.linkWrapper}>
         <a

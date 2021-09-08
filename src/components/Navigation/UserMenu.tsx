@@ -1,35 +1,20 @@
 import React, { useRef, useState } from 'react';
 import { Box } from 'grommet';
-import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { selectAuthentication } from 'src/services/Authentication';
-import { colors, floatingShadow, fonts, hardBorderRadius, text } from 'src/theme';
-import { Avatar } from 'src/components/Avatar';
+import { colors, floatingShadow, hardBorderRadius, text } from 'src/theme';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
-import { PeerState, usePeerState } from 'src/providers/PeerProvider';
+import { PeerInfo } from 'src/providers/PeerProvider';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { Link } from 'react-router-dom';
-import { FormDown } from 'grommet-icons';
-import { spacers } from 'src/theme/spacers';
+import { useMyPeer } from 'src/providers/PeerProvider/hooks';
 
 type Props = {
   darkMode?: boolean;
   reversed?: boolean;
   withDropMenu?: boolean;
   linksTarget?: 'blank' | 'self';
-};
-
-const getStatusColor = (peerState: PeerState) => {
-  if (peerState.status !== 'open') {
-    return colors.neutral;
-  }
-
-  if (peerState.hasJoinedRoom && peerState.connected) {
-    return colors.primary;
-  }
-
-  return colors.positive;
 };
 
 export const UserMenu: React.FC<Props> = ({
@@ -40,21 +25,21 @@ export const UserMenu: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
   const auth = useSelector(selectAuthentication);
-  const peerState = usePeerState();
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuOpened, setMenuOpened] = useState(false);
+  const myPeer = useMyPeer();
 
   useOnClickOutside(menuRef, () => {
     setMenuOpened(false);
   });
 
   // TODO: Maybe change in the future
-  if (auth.authenticationType === 'none') {
+  if (auth.authenticationType === 'none' || !myPeer) {
     return null;
   }
 
   const labelContent = (
-    <Box fill className={cx(cls.container, darkMode && cls.containerDarkMode)} direction="row">
+    <Box fill className={cx(darkMode && cls.containerDarkMode)} direction="row">
       <Box
         fill
         direction={reversed ? 'row-reverse' : 'row'}
@@ -65,45 +50,7 @@ export const UserMenu: React.FC<Props> = ({
           },
         })}
       >
-        {/* {withDropMenu && (
-          <div className={cls.downIconWrapper}>
-            <FormDown />
-          </div>
-        )} */}
-        <Avatar
-          className={cls.avatar}
-          darkMode={darkMode}
-          hasBorder={darkMode}
-          mutunachiId={Number(auth.user.avatarId)}
-        />
-        <div className={cls.spacer} />
-        <Box
-          direction="column"
-          style={{
-            textAlign: reversed ? 'right' : 'left',
-          }}
-        >
-          <Text className={cls.userNameText} size="small2">
-            {auth.user.name}
-          </Text>
-          <Text className={cls.userType}>
-            <div
-              className={cls.dot}
-              style={{
-                backgroundColor: getStatusColor(peerState),
-                display: reversed ? 'none' : 'inline-block',
-              }}
-            />
-            {auth.user.isGuest ? ' Guest ' : ` @${auth.user.username} `}
-            {/* <div
-              className={cls.dot}
-              style={{
-                backgroundColor: getStatusColor(peerState),
-                display: reversed ? 'inline-block' : 'none',
-              }}
-            /> */}
-          </Text>
-        </Box>
+        <PeerInfo peer={myPeer} reversed />
       </Box>
     </Box>
   );
@@ -145,34 +92,9 @@ export const UserMenu: React.FC<Props> = ({
 };
 
 const useStyles = createUseStyles({
-  container: {},
   containerDarkMode: {
     color: colors.white,
   },
-  avatar: {
-    height: '32px',
-    width: '32px',
-    background: '#ddd',
-    ...floatingShadow,
-  },
-  spacer: {
-    width: '8px',
-  },
-  userNameText: {
-    ...fonts.small2,
-  },
-  userType: {
-    ...fonts.small1,
-  },
-  dot: {
-    height: '8px',
-    width: '8px',
-    backgroundColor: colors.neutral,
-    borderRadius: '50%',
-    display: 'inline-block',
-  },
-  userNameWrapper: {},
-
   menuWrapper: {
     position: 'relative',
   },
@@ -223,10 +145,5 @@ const useStyles = createUseStyles({
       borderBottom: `3px solid ${text.primaryColor}`,
       color: text.primaryColor,
     },
-  },
-  downIconWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: spacers.smaller,
   },
 });
