@@ -50,7 +50,7 @@ export const LandingPage: React.FC<Props> = () => {
             </div>
             <div className={cls.buttonWrapper}>
               <CreateRoomButtonWidget
-                label="Play Room"
+                label="Play"
                 type="primary"
                 createRoomSpecs={{
                   type: 'private',
@@ -63,12 +63,13 @@ export const LandingPage: React.FC<Props> = () => {
               />
             
               <CreateRoomButtonWidget
-                label="Analysis Room"
+                label="Analyze"
                 type="primary"
                 withBadge={{
                   text: 'New',
                   color: 'negative',
                   side: 'right',
+
                 }}
                 clear
                 size="small"
