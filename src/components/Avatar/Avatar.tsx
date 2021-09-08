@@ -58,7 +58,7 @@ export const Avatar: React.FC<AvatarProps> = ({
         style={{
           width: size,
           background: bkgColor,
-          border: `1px solid ${darkMode ? colors.neutralLightest : colors.neutralLightest}`,
+          border: `2px solid ${darkMode ? colors.neutralLightest : colors.neutralLightest}`,
           boxShadow: getBoxShadow(0, 2, 16, 0, hexToRgba(bkgColor, 0.3)),
         }}
       >
