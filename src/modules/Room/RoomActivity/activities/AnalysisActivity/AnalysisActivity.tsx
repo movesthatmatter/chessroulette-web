@@ -25,6 +25,7 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
   onPgnImported,
 }) => {
   const cls = useStyles();
+  const pgnFromHistory = analysis.history ? chessHistoryToSimplePgn(analysis.history) : '';
 
   return (
     <ChessGameHistoryConsumer
@@ -54,13 +55,7 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
               type="analysis"
               id={analysis.id}
               playable
-              pgn={
-                displayedHistory
-                  ? chessHistoryToSimplePgn(displayedHistory)
-                  : analysis.history
-                  ? chessHistoryToSimplePgn(analysis.history)
-                  : ''
-              }
+              pgn={displayedHistory ? chessHistoryToSimplePgn(displayedHistory) : pgnFromHistory}
               homeColor="white"
               onMove={(m) => {
                 onAddMove(

@@ -9,8 +9,8 @@ import { PgnBox } from './PgnBox';
 import cx from 'classnames';
 import { Button } from 'src/components/Button';
 import { Upload } from 'grommet-icons';
-import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 import { ImportPanel } from './ImportPanel';
+import { ConfirmButton } from 'src/components/Button/ConfirmButton';
 
 type Props = {
   onPgnImported: (pgn: SimplePGN) => void;
@@ -24,14 +24,12 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
   const cls = useStyles();
   const [hasLoadedAnalysis, setHasLoadedAnalysis] = useState(!!analysisRecord);
   const [showImportPanel, setShowImportPanel] = useState(!hasLoadedAnalysis);
-  const [pgn, setPgn] = useState(
-    analysisRecord ? chessHistoryToSimplePgn(analysisRecord.history) : undefined
-  );
 
   useEffect(() => {
-    setHasLoadedAnalysis(!!analysisRecord);
-    setShowImportPanel(!analysisRecord);
-    setPgn(analysisRecord ? chessHistoryToSimplePgn(analysisRecord.history) : undefined);
+    const nextHasLoadedAnalysis = !!analysisRecord;
+
+    setHasLoadedAnalysis(nextHasLoadedAnalysis);
+    setShowImportPanel(!nextHasLoadedAnalysis);
   }, [analysisRecord]);
 
   const historyPanel = (
@@ -41,7 +39,7 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
           <LabeledFloatingBox
             label="History"
             containerClassName={cx(cls.box, cls.historyContainer)}
-            floatingBoxClassName={cls.history}
+            floatingBoxClassName={cls.historyBoxContent}
           >
             <ChessGameHistoryProvided />
           </LabeledFloatingBox>
@@ -55,9 +53,31 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
             contentClassName={cls.pgnBox}
           />
           <div className={cls.box}>
+            <ConfirmButton
+              buttonProps={{
+                label: 'Clear',
+                type: 'secondary',
+                full: true,
+                className: cls.button,
+              }}
+              dialogProps={{
+                title: 'Clear Analysis',
+                content: 'Are you sure you want to Clear All the Analysis?',
+                buttonsStacked: false,
+              }}
+              confirmButtonProps={{
+                type: 'negative',
+                label: 'Yes',
+              }}
+              onConfirmed={() => {
+                onPgnImported('' as SimplePGN);
+                setHasLoadedAnalysis(true);
+              }}
+            />
+            <div style={{ marginBottom: spacers.small }} />
             <Button
               label="Import"
-              type="secondary"
+              type="primary"
               full
               onClick={() => setShowImportPanel(true)}
               className={cls.button}
@@ -131,7 +151,7 @@ const useStyles = createUseStyles({
     overflowY: 'hidden',
     flex: 1,
   },
-  history: {
+  historyBoxContent: {
     overflowY: 'hidden',
   },
   gamesArchiveContainer: {
@@ -162,6 +182,8 @@ const useStyles = createUseStyles({
     height: '100%',
   },
   button: {
-    marginBottom: 0,
+    '&:last-child': {
+      marginBottom: 0,
+    },
   },
 });
