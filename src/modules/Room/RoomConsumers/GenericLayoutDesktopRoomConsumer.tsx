@@ -6,15 +6,11 @@ import { colors, softBorderRadius } from 'src/theme';
 import { RoomDetailsConsumer } from './RoomDetailsConsumer';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
 import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
-import {
-  DesktopRoomLayout,
-  ExitRoomButton,
-  LayoutContainerDimensions,
-} from '../Layouts';
+import { DesktopRoomLayout, ExitRoomButton, LayoutContainerDimensions } from '../Layouts';
 import { Logo } from 'src/components/Logo';
 import { UserMenu } from 'src/components/Navigation';
-import { SwitchActivityRoomConsumer } from './SwitchActivityRoomConsumer';
 import { getBoxShadow } from 'src/theme/util';
+import { useMyPeer } from 'src/providers/PeerProvider/hooks';
 
 type Props = {
   renderActivity: (d: {
@@ -33,6 +29,7 @@ const MIN_SPACE_BETWEEN = spacers.largePx;
 // TODO: This isn't provided for now and don't think it needs to be but for now it sits here
 export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
   const cls = useStyles();
+  const myPeer = useMyPeer();
 
   return (
     <div className={cls.container}>
@@ -57,12 +54,8 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
                   flex: 1,
                 }}
               >
-                <SwitchActivityRoomConsumer type="analysis" text="Analysis" />
-                <SwitchActivityRoomConsumer type="play" text="Play" />
-                <SwitchActivityRoomConsumer type="none" text="none" />
                 <UserMenu reversed />
               </div>
-              {/* <NavigationHeader /> */}
             </div>
             <div style={{ width: right.width }} />
           </div>
@@ -157,7 +150,6 @@ const useStyles = createUseStyles({
     transform: 'translateZ(0)',
   },
   activityContainer: {
-    // background: 'red',
     position: 'relative',
     zIndex: 1,
   },
