@@ -205,12 +205,14 @@ const useStyles = createUseStyles({
   },
   iconWrapper: {
     height: '32px',
-    padding: '0 8px',
+    width: '32px',
+    // padding: '0px',
     marginLeft: '-8px',
 
     ...onlyMobile({
       ...makeImportant({
         height: '28px',
+        width: '28px',
       }),
     }),
 
