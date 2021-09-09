@@ -7,6 +7,8 @@ import { GenericLayoutMobileRoomConsumer } from '../../../RoomConsumers/GenericL
 import { DeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { ActivityCommonProps } from '../types';
 import { NavigationHeader } from 'src/modules/Room/Layouts';
+import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
+import { PendingChallengeDialog } from './components/PendingChallengeDialog';
 
 type Props = ActivityCommonProps & {
   deviceSize: DeviceSize;
@@ -14,6 +16,11 @@ type Props = ActivityCommonProps & {
 
 export const NoActivity: React.FC<Props> = (props) => {
   const cls = useStyles();
+  const roomConsumer = useRoomConsumer();
+
+  const pendingChallenge = roomConsumer?.room?.pendingChallenges
+    ? Object.values(roomConsumer.room.pendingChallenges)[0]
+    : undefined;
 
   if (props.deviceSize.isMobile) {
     return (
@@ -28,6 +35,7 @@ export const NoActivity: React.FC<Props> = (props) => {
             homeColor="white"
             onMove={() => {}}
             className={cls.board}
+            overlayComponent={pendingChallenge && <PendingChallengeDialog pendingChallenge={pendingChallenge} />}
           />
         )}
       />
@@ -37,7 +45,6 @@ export const NoActivity: React.FC<Props> = (props) => {
   return (
     <GenericLayoutDesktopRoomConsumer
       renderActivity={(cd) => (
-        
         <ChessBoard
           type="free"
           size={cd.boardSize}
@@ -46,6 +53,7 @@ export const NoActivity: React.FC<Props> = (props) => {
           homeColor="white"
           onMove={() => {}}
           className={cls.board}
+          overlayComponent={pendingChallenge && <PendingChallengeDialog pendingChallenge={pendingChallenge} />}
         />
       )}
     />
