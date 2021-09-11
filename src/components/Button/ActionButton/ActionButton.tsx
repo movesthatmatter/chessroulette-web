@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { createUseStyles, CSSProperties } from 'src/lib/jss';
+import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import { colors } from 'src/theme/colors';
 import { Text } from 'src/components/Text';
 import cx from 'classnames';
@@ -12,6 +12,7 @@ import { buttonStyles } from '../styles/styles';
 import { AsyncResult } from 'dstnd-io';
 import Loader from 'react-loaders';
 import 'loaders.css';
+import { fonts, onlyMobile, text } from 'src/theme';
 
 export type ActionButtonProps = {
   type: ButtonType;
@@ -201,6 +202,7 @@ const useStyles = createUseStyles({
   ...buttonStyles,
   button: {
     ...buttonStyles.button,
+    ...fonts.small1,
     display: 'flex',
     flexDirection: 'row',
     paddingLeft: 0,
@@ -226,6 +228,7 @@ const useStyles = createUseStyles({
     position: 'relative',
   },
   label: {
+    ...fonts.small1,
     color: colors.white,
     fontWeight: 600, // TODO: Make it SemiBold
     lineHeight: '32px',
