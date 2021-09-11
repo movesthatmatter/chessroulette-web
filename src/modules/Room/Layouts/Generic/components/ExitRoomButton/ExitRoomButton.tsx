@@ -5,7 +5,7 @@ import { Dialog } from 'src/components/Dialog';
 import { Emoji } from 'src/components/Emoji';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { colors } from 'src/theme';
 import { useOnLeaveRoute } from './useOnLeaveRoute';
 
@@ -24,7 +24,9 @@ export const ExitRoomButton: React.FC<Props> = () => {
 
   return (
     <div className={cls.container}>
-      <FormClose className={cls.exitIcon} onClick={() => history.push('/')} />
+      <a className={cls.exitButton} title="Exit Room" onClick={() => history.push('/')}>
+        <FormClose className={cls.exitIcon} size="medium" />
+      </a>
       <Dialog
         visible={showConfrmation}
         onClose={() => setShowConfirmation(false)}
@@ -64,10 +66,31 @@ export const ExitRoomButton: React.FC<Props> = () => {
 
 const useStyles = createUseStyles({
   container: {},
+  exitButton: {
+    cursor: 'pointer',
+    color: colors.neutralDark,
+    display: 'flex',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    lineHeight: 0,
+
+    ...({
+      '&:hover $exitIcon': {
+        fill: `${colors.neutralDarker} !important`,
+        stroke: `${colors.neutralDarker} !important`,
+      },
+    } as CSSProperties),
+  },
   exitIcon: {
     fill: `${colors.neutralDark} !important`,
     stroke: `${colors.neutralDark} !important`,
-    cursor: 'pointer',
+  },
+  exitText: {
+    lineHeight: 0,
+    background: 'purple',
+    margin: 0,
+    padding: 0,
   },
   dialogContentContainer: {
     textAlign: 'center',
