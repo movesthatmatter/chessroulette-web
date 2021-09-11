@@ -1,14 +1,14 @@
 import React, { useRef, useState } from 'react';
-import { Box } from 'grommet';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { selectAuthentication } from 'src/services/Authentication';
+import { useAuthentication } from 'src/services/Authentication';
 import { colors, floatingShadow, hardBorderRadius, text } from 'src/theme';
-import { useSelector } from 'react-redux';
 import cx from 'classnames';
-import { PeerInfo } from 'src/providers/PeerProvider';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { Link } from 'react-router-dom';
-import { useMyPeer } from 'src/providers/PeerProvider/hooks';
+import { UserInfo } from 'src/modules/User/components/UserInfo';
+import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { spacers } from 'src/theme/spacers';
 
 type Props = {
   darkMode?: boolean;
@@ -22,39 +22,46 @@ export const UserMenu: React.FC<Props> = ({
   darkMode = false,
   reversed = false,
   withDropMenu = false,
-  showPeerStatus = false,
   linksTarget = 'self',
 }) => {
   const cls = useStyles();
-  const auth = useSelector(selectAuthentication);
+  const auth = useAuthentication();
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuOpened, setMenuOpened] = useState(false);
-  const myPeer = useMyPeer();
 
   useOnClickOutside(menuRef, () => {
     setMenuOpened(false);
   });
 
   // TODO: Maybe change in the future
-  if (auth.authenticationType === 'none' || !myPeer) {
+  if (auth.authenticationType === 'none') {
     return null;
   }
 
   const labelContent = (
-    <Box fill className={cx(darkMode && cls.containerDarkMode)} direction="row">
-      <Box
-        fill
-        direction={reversed ? 'row-reverse' : 'row'}
-        className={cls.label}
+    <div
+      className={cx(cls.container, darkMode && cls.containerDarkMode, withDropMenu && cls.asLink)}
+    >
+      <div
+        className={cx(cls.label)}
+        style={{
+          flexDirection: reversed ? 'row-reverse' : 'row',
+        }}
         {...(withDropMenu && {
           onClick: () => {
             setMenuOpened((prev) => !prev);
           },
         })}
       >
-        <PeerInfo peer={myPeer} reversed showPeerStatus={showPeerStatus} />
-      </Box>
-    </Box>
+        <UserInfo user={auth.user} reversed={reversed} />
+        {withDropMenu && (
+          <>
+            <div className={cls.spacer} />
+            <FontAwesomeIcon icon={menuOpened ? faCaretUp : faCaretDown} className={cls.caretIcon} />
+          </>
+        )}
+      </div>
+    </div>
   );
 
   if (withDropMenu && auth.authenticationType === 'user') {
@@ -63,7 +70,10 @@ export const UserMenu: React.FC<Props> = ({
         {labelContent}
         {menuOpened && (
           <div className={cls.menuContentWrapper} ref={menuRef}>
-            <div className={cls.openedMenuLabelWrapper}>{labelContent}</div>
+            <div className={cls.openedMenuLabelWrapper}>
+              <div style={{ display: 'flex', flex: 1 }} />
+              {labelContent}
+            </div>
             <div className={cls.menuContent}>
               <div className={cls.linkWrapper}>
                 <Link
@@ -94,8 +104,19 @@ export const UserMenu: React.FC<Props> = ({
 };
 
 const useStyles = createUseStyles({
+  container: {
+    display: 'flex',
+    flex: 1,
+  },
   containerDarkMode: {
     color: colors.white,
+  },
+  asLink: {
+    cursor: 'pointer',
+  },
+  box: {
+    display: 'flex',
+    flex: 1,
   },
   menuWrapper: {
     position: 'relative',
@@ -118,11 +139,17 @@ const useStyles = createUseStyles({
   openedMenuLabelWrapper: {
     paddingBottom: '16px',
     borderBottom: `1px solid ${colors.neutralLighter}`,
+    display: 'flex',
   },
   menuContent: {
     paddingTop: '16px',
   },
   label: {
+    display: 'flex',
+    flex: 1,
+    // justifyContent: 'center',
+    alignItems: 'center',
+
     '&:focus': {
       ...makeImportant({
         boxShadow: 'none',
@@ -147,5 +174,11 @@ const useStyles = createUseStyles({
       borderBottom: `3px solid ${text.primaryColor}`,
       color: text.primaryColor,
     },
+  },
+  caretIcon: {
+    color: colors.neutralDarkest,
+  },
+  spacer: {
+    paddingRight: spacers.default,
   },
 });
