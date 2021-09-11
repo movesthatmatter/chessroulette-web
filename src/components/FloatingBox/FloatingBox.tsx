@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, floatingShadow, softBorderRadius } from 'src/theme';
+import { colors, floatingShadow, softBorderRadius, softOutline } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 
@@ -20,6 +20,7 @@ const useStyles = createUseStyles({
   container: {
     ...floatingShadow,
     ...softBorderRadius,
+    ...softOutline,
     padding: spacers.default,
     background: colors.white,
   },
