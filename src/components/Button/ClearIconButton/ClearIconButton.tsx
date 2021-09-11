@@ -2,7 +2,7 @@ import { FontAwesomeIcon, FontAwesomeIconProps } from '@fortawesome/react-fontaw
 import React from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, softBorderRadius } from 'src/theme';
+import { colors, softBorderRadius, softOutline } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { noop } from 'src/lib/util';
@@ -76,11 +76,11 @@ const useStyles = createUseStyles({
   },
   tooltipText: {
     marginLeft: spacers.small,
-    border: `1px solid ${colors.neutralDark}`,
     padding: spacers.small,
     lineHeight: 0,
     background: colors.white,
-    ...softBorderRadius,
     boxShadow: '0 6px 13px rgba(16, 30, 115, 0.08)',
+    ...softOutline,
+    ...softBorderRadius,
   },
 });
