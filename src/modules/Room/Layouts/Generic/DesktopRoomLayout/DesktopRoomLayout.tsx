@@ -148,7 +148,7 @@ export const DesktopRoomLayout: React.FC<Props> = ({
           <main
             className={cls.mainArea}
             style={{
-              width: `${extendedDimensions.main.width}px`,
+              width: `${extendedDimensions.main.width + extendedDimensions.main.horizontalPadding}px`,
               height: `100%`,
             }}
           >
@@ -160,7 +160,7 @@ export const DesktopRoomLayout: React.FC<Props> = ({
           <aside
             style={{
               width: `${layout.rightSide}px`,
-              marginLeft: Math.max(minSpaceBetween, layout.remaining / 2),
+              marginLeft: Math.max(minSpaceBetween),
 
               // This is a hack to go above the top & bottom components
               //  But ideally it could be done better!
