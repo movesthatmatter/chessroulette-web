@@ -39,10 +39,6 @@ export const notificationFactory = ({
 }): NotificationFactoryReturn | undefined => {
   const now = new Date();
 
-
-  console.log('prev', prev);
-  console.log('current', current);
-
   if (current.pendingChallenge) {
     return {
       type: 'add',
@@ -54,6 +50,7 @@ export const notificationFactory = ({
         status: 'pending',
         byUser: current.pendingChallenge.createdByUser,
         gameSpecs: current.pendingChallenge.gameSpecs,
+        challenge: current.pendingChallenge,
       },
     };
   }

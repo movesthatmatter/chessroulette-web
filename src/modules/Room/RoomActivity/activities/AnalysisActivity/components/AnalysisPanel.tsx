@@ -4,13 +4,13 @@ import { createUseStyles } from 'src/lib/jss';
 import { ChessGameHistoryProvided } from 'src/modules/Games/Chess/components/GameHistory';
 import { spacers } from 'src/theme/spacers';
 import { FenBox } from './FenBox';
-import { LabeledFloatingBox } from './LabeledFloatingBox';
 import { PgnBox } from './PgnBox';
 import cx from 'classnames';
 import { Button } from 'src/components/Button';
 import { Upload } from 'grommet-icons';
 import { ImportPanel } from './ImportPanel';
 import { ConfirmButton } from 'src/components/Button/ConfirmButton';
+import { FloatingBox } from 'src/components/FloatingBox';
 
 type Props = {
   onPgnImported: (pgn: SimplePGN) => void;
@@ -36,13 +36,11 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
     <>
       {analysisRecord && (
         <>
-          <LabeledFloatingBox
-            label="History"
-            containerClassName={cx(cls.box, cls.historyContainer)}
-            floatingBoxClassName={cls.historyBoxContent}
-          >
-            <ChessGameHistoryProvided />
-          </LabeledFloatingBox>
+          <div className={cx(cls.box, cls.historyContainer)}>
+            <FloatingBox className={cls.historyBoxContent}>
+              <ChessGameHistoryProvided />
+            </FloatingBox>
+          </div>
           <FenBox
             historyOrPgn={analysisRecord.displayedHistory}
             containerClassName={cx(cls.box, cls.fenBox)}
@@ -150,9 +148,12 @@ const useStyles = createUseStyles({
   historyContainer: {
     overflowY: 'hidden',
     flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
   },
   historyBoxContent: {
     overflowY: 'hidden',
+    flex: 1,
   },
   gamesArchiveContainer: {
     overflowY: 'hidden',

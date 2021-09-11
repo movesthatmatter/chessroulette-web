@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { faComment, faList } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faBars, faDiceD6 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UserInfoRecord } from 'dstnd-io';
 import { useSelector } from 'react-redux';
 import { Tabs } from 'src/components/Tabs';
@@ -34,7 +35,7 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
       onTabChanged={setTab}
       tabs={[
         {
-          title: 'Activity Log',
+          title: 'Activity',
           content: (
             <div
               style={{
@@ -50,7 +51,7 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
               />
             </div>
           ),
-          icon: faList,
+          icon: faDiceD6,
         },
         {
           title: 'Messages',

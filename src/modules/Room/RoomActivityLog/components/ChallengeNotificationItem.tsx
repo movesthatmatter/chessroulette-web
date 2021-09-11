@@ -1,18 +1,22 @@
 import React from 'react';
+import cx from 'classnames';
+import capitalize from 'capitalize';
+import Loader from 'react-loaders';
 import { UserRecord } from 'dstnd-io';
 import { IconButton } from 'src/components/Button';
-import { createUseStyles, makeImportant } from 'src/lib/jss';
+import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import { colors, fonts } from 'src/theme';
-import cx from 'classnames';
 import { spacers } from 'src/theme/spacers';
-import { ChallengeNotification, OfferNotification } from '../types';
-import { Checkmark, Close } from 'grommet-icons';
+import { ChallengeNotification } from '../types';
+import { Close } from 'grommet-icons';
 import { PeerAvatar } from 'src/providers/PeerProvider/components/PeerAvatar';
 import { getUserDisplayName } from 'src/modules/User';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
-import capitalize from 'capitalize';
 import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGame/util';
 import { renderMatch } from 'src/lib/renderMatch';
+import { Text } from 'src/components/Text';
+import { ClipboardCopyButton } from 'src/components/ClipboardCopy';
+import { toChallengeUrlPath } from 'src/lib/util';
 
 type Props = {
   notification: ChallengeNotification;
@@ -28,9 +32,8 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
-  // const content = getContent(notification);
 
-  const needsAttention = notification.status === 'pending' && notification.byUser.id === me.id;
+  const needsAttention = notification.status === 'pending' && notification.byUser.id !== me.id;
 
   return (
     <div className={cx(cls.container, needsAttention && cls.attention, className)}>
@@ -48,14 +51,12 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
           style={{
             display: 'flex',
             flexDirection: notification.byUser.id === me.id ? 'row' : 'row-reverse',
-            alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
           <div
             style={{
               display: 'flex',
-              alignItems: 'center',
               flexDirection: notification.byUser.id === me.id ? 'row' : 'row-reverse',
             }}
           >
@@ -77,15 +78,29 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
                   notification.status === 'pending',
                   () => (
                     <div>
-                      {notification.byUser.id === me.id ? (
-                        'You'
-                      ) : (
-                        <strong>getUserDisplayName(notification.byUser)</strong>
-                      )}{' '}
-                      created a challenge for a
-                      <strong>{' ' + capitalize(notification.gameSpecs.timeLimit) + ' '}</strong>(
+                      <div className={cls.title}>
+                        <Text size="small2">
+                          {notification.byUser.id === me.id ? (
+                            'Your '
+                          ) : (
+                            <strong>{getUserDisplayName(notification.byUser)}'s </strong>
+                          )}
+                          Pending Challenge
+                        </Text>
+                        <Loader type="ball-beat" active innerClassName={cls.loader} />
+                      </div>{' '}
+                      A<strong>{' ' + capitalize(notification.gameSpecs.timeLimit) + ' '}</strong>(
                       {formatTimeLimit(chessGameTimeLimitMsMap[notification.gameSpecs.timeLimit])})
                       Game
+                      <ClipboardCopyButton
+                        label="Invite Friend"
+                        copiedlLabel="Challenge Link Copied"
+                        clear
+                        value={`${window.location.origin}/${toChallengeUrlPath(
+                          notification.challenge
+                        )}`}
+                        className={cx(cls.copyToClipboardBtn)}
+                      />
                     </div>
                   ),
                 ],
@@ -96,13 +111,12 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
                       {notification.byUser.id === me.id ? (
                         'Your'
                       ) : (
-                        <strong>getUserDisplayName(notification.byUser)</strong>
+                        <strong>{getUserDisplayName(notification.byUser)}</strong>
                       )}{' '}
                       challenge for a
                       <strong>{' ' + capitalize(notification.gameSpecs.timeLimit) + ' '}</strong>(
                       {formatTimeLimit(chessGameTimeLimitMsMap[notification.gameSpecs.timeLimit])})
                       Game was accepted
-                      {/* {notification.gameSpecs.timeLimit} ({}) */}
                     </div>
                   ),
                 ],
@@ -119,14 +133,10 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
                       <strong>{' ' + capitalize(notification.gameSpecs.timeLimit) + ' '}</strong>(
                       {formatTimeLimit(chessGameTimeLimitMsMap[notification.gameSpecs.timeLimit])})
                       Game was sent into the void
-                      {/* {notification.gameSpecs.timeLimit} ({}) */}
                     </div>
                   ),
                 ]
               )}
-              {}
-
-              {/* {content} */}
             </div>
           </div>
           {notification.status === 'pending' && notification.byUser.id === me.id && (
@@ -173,5 +183,29 @@ const useStyles = createUseStyles({
     ...makeImportant({
       marginBottom: 0,
     }),
+  },
+  challengeButton: {
+    marginBottom: 0,
+    marginTop: spacers.small,
+  },
+  title: {
+    display: 'flex',
+  },
+  loader: {
+    alignContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    paddingLeft: spacers.smaller,
+    ...({
+      '& > div': {
+        height: '7px',
+        width: '7px',
+        backgroundColor: colors.primary,
+      },
+    } as CSSProperties),
+  },
+  copyToClipboardBtn: {
+    marginBottom: 0,
+    marginTop: spacers.small,
   },
 });

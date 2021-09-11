@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import { Game } from 'src/modules/Games';
 import { selectMyPeer } from 'src/providers/PeerProvider';
 import { colors } from 'src/theme';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { InfoNotificationItem } from './components/InfoNotificationItem';
 import { OfferNotificationItem } from './components/OfferNotificationItem';
 import { selectCurrentRoomActivityLog } from './redux/selectors';
-import { Text } from 'src/components/Text';
 import { ChallengeNotificationItem } from './components/ChallengeNotificationItem';
+import { spacers } from 'src/theme/spacers';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -123,11 +122,9 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column-reverse',
     flex: 1,
-    paddingLeft: '8px',
-    paddingRight: '8px',
     overflowY: 'scroll',
-    marginTop: '10px',
     scrollBehavior: 'smooth',
+    marginTop: spacers.small,
   },
   bottomPart: {
     borderTop: 'solid 1px',

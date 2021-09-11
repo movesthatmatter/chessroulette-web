@@ -3,7 +3,7 @@ import { ActionButton, Button } from 'src/components/Button';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { Refresh, Flag, Edit } from 'grommet-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHandshakeAltSlash, faUndo } from '@fortawesome/free-solid-svg-icons';
+import { faHandshake, faUndo } from '@fortawesome/free-solid-svg-icons';
 import { spacers } from 'src/theme/spacers';
 import { noop } from 'src/lib/util';
 import { getUserDisplayName } from 'src/modules/User';
@@ -224,7 +224,7 @@ export const GameActions: React.FC<Props> = ({
               label="Offer Draw"
               confirmation="Confirm"
               actionType="attention"
-              iconComponent={<FontAwesomeIcon icon={faHandshakeAltSlash} color="#fff" />}
+              iconComponent={<FontAwesomeIcon icon={faHandshake} color="#fff" />}
               onSubmit={() => {
                 actions.onOfferDraw();
                 onActionTaken('onOfferDraw');

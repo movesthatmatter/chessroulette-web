@@ -1,4 +1,4 @@
-import { Peer } from 'src/providers/PeerProvider';
+import { Peer, Room } from 'src/providers/PeerProvider';
 import { RoomMember } from './types';
 
 export const toRoomMember = (peer: Peer): RoomMember => ({
@@ -6,6 +6,10 @@ export const toRoomMember = (peer: Peer): RoomMember => ({
   userId: peer.userId,
   peer,
 });
+
+export const getRoomPendingChallenge = (room: Room) => {
+  return Object.values(room.pendingChallenges || {})[0];
+};
 
 // I don't think these are needed anymore
 // export const isRoomMember = (peer: object): peer is RoomMember => {

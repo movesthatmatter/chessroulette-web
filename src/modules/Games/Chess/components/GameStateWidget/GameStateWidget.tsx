@@ -18,12 +18,15 @@ type Props = {
   onTimerFinished?: (color: ChessGameColor) => void;
 
   playParticipants: PlayParticipants;
+  containerClassName?: string;
+  floatingBoxClassName?: string;
 };
 
 export const GameStateWidget: React.FC<Props> = ({
   game,
   playParticipants,
   onTimerFinished = noop,
+  ...props
 }) => {
   const cls = useStyles();
 
@@ -33,7 +36,7 @@ export const GameStateWidget: React.FC<Props> = ({
   const { away: awayTimeLeft, home: homeTimeLeft } = useGameTimesLeft(game, playParticipants);
 
   return (
-    <div className={cls.container}>
+    <div className={cx(cls.container, props.containerClassName)}>
       <div className={cx(cls.player, cls.playerTop)}>
         <PlayerBox
           player={awayPlayer}
@@ -45,8 +48,8 @@ export const GameStateWidget: React.FC<Props> = ({
         />
         <div className={cls.spacer} />
       </div>
-      <FloatingBox className={cls.gameStateContainer}>
-        <ChessGameHistoryProvided />
+      <FloatingBox className={cx(cls.gameStateContainer, props.floatingBoxClassName)}>
+        <ChessGameHistoryProvided emptyContent="White to move!" />
       </FloatingBox>
       <div className={cls.player}>
         <div className={cls.spacer} />

@@ -24,6 +24,7 @@ export type ChallengeNotification = BaseNotification & {
   byUser: UserInfoRecord;
   gameSpecs: ChallengeRecord['gameSpecs'];
   status: 'pending' | 'withdrawn' | 'accepted';
+  challenge: ChallengeRecord;
 };
 
 export type InfoNotification = BaseNotification & {

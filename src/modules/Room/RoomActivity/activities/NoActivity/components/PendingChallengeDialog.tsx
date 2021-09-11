@@ -1,4 +1,6 @@
+import capitalize from 'capitalize';
 import { ChallengeRecord } from 'dstnd-io';
+import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import React, { useEffect, useState } from 'react';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { Button } from 'src/components/Button';
@@ -9,6 +11,7 @@ import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { seconds } from 'src/lib/time';
 import { toChallengeUrlPath } from 'src/lib/util';
+import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGame/util';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
@@ -39,12 +42,23 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
           // content="While you're waiting"
           content={
             <>
+              <div className={cls.centered}>
+                <Text size="body2">
+                  Waiting for someone to join your
+                  <br />{' '}
+                  <strong>{' ' + capitalize(pendingChallenge.gameSpecs.timeLimit) + ' '}</strong>(
+                  {formatTimeLimit(chessGameTimeLimitMsMap[pendingChallenge.gameSpecs.timeLimit])})
+                  Game
+                </Text>
+                <div className={cls.spacer} />
+              </div>
               {canShowOtherActivities && (
                 <>
+                  <Hr text="Oh, btw" />
                   <div className={cls.centered}>
-                    <Text size="body2">Oh btw, while you're waiting you can also</Text>
+                    <Text size="body2">While waiting you can now also</Text>
                     <Button
-                      label="Open Analysis"
+                      label="Analyse Games"
                       clear
                       size="medium"
                       className={cls.analysisButton}
@@ -66,16 +80,15 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
                     />
                   </div>
                   <div className={cls.spacer} />
-                  <Hr />
-                  <div className={cls.spacer} />
-                  {/* <br /> */}
                 </>
               )}
 
               <div className={cls.centered}>
                 {/* <Text size="small1">Share the Magic Link with a friend!</Text> */}
                 {/* <br/> */}
-                <Text size="small1">Share the Magic Link with a friend!</Text>
+                <Text size="small1" color={colors.negative}>
+                  Share the Magic Link with a friend!
+                </Text>
               </div>
 
               <ClipboardCopyButton
@@ -92,9 +105,12 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
           buttonsContainerClass={cls.buttonsContainer}
           buttons={[
             {
-              label: 'Cancel',
+              label: 'Cancel Challenge',
               type: 'secondary',
-              onClick: () => {},
+              onClick: () => {
+                // TODO: Add this once we have room challenges
+                // deleteChallenge()
+              },
             },
           ]}
         />

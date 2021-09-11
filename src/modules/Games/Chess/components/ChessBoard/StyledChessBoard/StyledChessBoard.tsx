@@ -8,6 +8,7 @@ import { Square } from 'chess.js';
 import { pieces } from '../pieces';
 import { noop } from 'src/lib/util';
 import 'react-chessground/dist/styles/chessground.css';
+import { softOutline } from 'src/theme';
 
 export type StyledChessBoardProps = Omit<
   ChessgroundProps,

@@ -18,7 +18,8 @@ export type AnalysisActivityProps = ActivityCommonProps & {
   onPgnImported: (pgn: SimplePGN) => void;
 };
 
-export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
+export const AnalysisActivity: React.FC<AnalysisActivityProps>
+ = ({
   analysis,
   boardSize,
   leftSide,
