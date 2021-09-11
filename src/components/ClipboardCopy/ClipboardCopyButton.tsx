@@ -7,6 +7,7 @@ import { seconds } from 'src/lib/time';
 import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import { colors } from 'src/theme';
+import cx from 'classnames';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   value: string;
@@ -40,7 +41,19 @@ export const ClipboardCopyButton: React.FC<Props> = ({
   return (
     <Button
       onClick={copy}
-      icon={() => <FontAwesomeIcon icon={copied ? faCheck : faCopy} className={cls.icon} />}
+      icon={() => (
+        <FontAwesomeIcon
+          icon={copied ? faCheck : faCopy}
+          className={cls.icon}
+          style={
+            buttonProps.clear
+              ? {
+                  color: colors.neutralDarkest,
+                }
+              : undefined
+          }
+        />
+      )}
       {...buttonProps}
       label={copied ? copiedlLabel : buttonProps.label}
     />
