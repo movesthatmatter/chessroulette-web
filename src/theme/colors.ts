@@ -1,4 +1,4 @@
-const primary = '#558EFF';
+const primary = '#5A20FE';
 const primaryHover = '#74A3FE';
 const primaryLight = '#A9C1FD';
 const primaryLightest = '#EBF0FF';
