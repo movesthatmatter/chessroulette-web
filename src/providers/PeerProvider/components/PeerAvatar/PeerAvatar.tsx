@@ -96,7 +96,7 @@ const useStyles = createUseStyles({
   },
   connectionDotContainer: {
     position: 'absolute',
-    zIndex: 9,
+    zIndex: 5,
     bottom: 'calc(15% - 2px)',
     right: 'calc(10% - 2px)',
   },
@@ -109,7 +109,7 @@ const useStyles = createUseStyles({
     top: 0,
     bottom: 0,
     left: '100%',
-    zIndex: 999,
+    zIndex: 0,
   },
   infoContainerReversed: {
     right: '100%',
