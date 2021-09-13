@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { PeerConsumer, usePeerState } from 'src/providers/PeerProvider';
-import { RoomLichessActivity } from '../PlayActivity';
+import { LichessRoomActivityWithGame, RoomLichessActivity } from '../PlayActivity';
 import { LichessGameContainer } from 'src/modules/LichessPlay/PlayLichess/LichessGameContainer';
 import { useLichessProvider } from 'src/modules/LichessPlay/LichessAPI/useLichessProvider';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectGame } from '../../redux/selectors';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessGameColor, GuestUserRecord } from 'dstnd-io';
 import { useLichessGameActions } from 'src/modules/LichessPlay/useLichessGameActions/useLichessGameActions';
-import { getAwayPlayer } from 'src/modules/LichessPlay/utils';
+import { convertLichessToGuestUser, getAwayPlayer } from 'src/modules/LichessPlay/utils';
 import { authenticateAsExistentGuest } from 'src/services/Authentication/resources';
+import { addNotificationAction } from 'src/modules/Room/RoomActivityLog/redux/actions';
+import { RegisteredUserRecordWithLichessConnection, useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
+import { toISODateTime } from 'src/lib/date/ISODateTime';
 
 type Props = {
   activity: RoomLichessActivity;
@@ -25,6 +28,8 @@ export const LichessActivity: React.FC<Props> = (props) => {
   const gameActions = useLichessGameActions();
   const lichess = useLichessProvider();
   const game = useSelector(selectGame);
+  const dispatch = useDispatch();
+  const auth = useAuthenticatedUserWithLichessAccount();
 
   useEffect(() => {
     if (lichess) {
@@ -42,8 +47,26 @@ export const LichessActivity: React.FC<Props> = (props) => {
           guestUser: getAwayPlayer(homeColor, game).user as GuestUserRecord,
         });
       });
+      lichess.onChallenge(({challenge}) => {
+        dispatch(addNotificationAction({
+          notification: {
+            type: 'offer',
+            offerType: 'rematch',
+            byUser: convertLichessToGuestUser(challenge.challenger),
+            toUser: auth as RegisteredUserRecordWithLichessConnection,
+            timestamp: toISODateTime(new Date()),
+            id: new Date().getTime().toString(),
+            status: 'pending'
+          }
+        }
+        ))
+      })
     }
   },[lichess])
+
+  function isActivityWithGame(activity: RoomLichessActivity): activity is LichessRoomActivityWithGame {
+    return activity.game ? true : false
+  }
 
 
   if (peerState.status !== 'open') {
@@ -62,7 +85,7 @@ export const LichessActivity: React.FC<Props> = (props) => {
       renderRoomJoined={() => (
         <GenericLayoutDesktopRoomConsumer
           renderActivity={({ boardSize }) => {
-            return game ? (
+            return game && isActivityWithGame(props.activity) ? (
               <LichessGameContainer boardSize={boardSize} game={game}  homeColor={homeColor} activity={props.activity}/>
             ) : (
               <ChessBoard

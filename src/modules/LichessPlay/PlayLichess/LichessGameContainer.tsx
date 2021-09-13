@@ -20,13 +20,14 @@ import { LichessGameActions } from '../LichessGameActions/LichessGameActions';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import { Game } from 'src/modules/Games';
-import { RoomLichessActivity } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
+import { LichessRoomActivityWithGame, RoomLichessActivity } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
+import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 
 type Props = {
   boardSize: number;
   game: Game;
   homeColor: ChessGameColor;
-  activity: RoomLichessActivity
+  activity: LichessRoomActivityWithGame
 };
 
 export const LichessGameContainer: React.FC<Props> = ({ boardSize, game, homeColor, activity }) => {
@@ -52,7 +53,9 @@ export const LichessGameContainer: React.FC<Props> = ({ boardSize, game, homeCol
   }, [newGameState]);
 
   const onMove = (p: { move: ChessMove; fen: ChessGameStateFen; pgn: ChessGameStatePgn }) => {
-    if (game && lichess) {
+    if  (lichess && (
+      game.state === 'started' || (game.state === 'pending' && homeColor === 'white')
+    )) {
       lichess.makeMove(p.move, game.vendorData?.gameId as string);
     }
   };
@@ -64,7 +67,17 @@ export const LichessGameContainer: React.FC<Props> = ({ boardSize, game, homeCol
             <div className={cls.container}>
               <aside className={cls.side} style={{ height: boardSize }}>
                 <div className={cls.sideTop} />
-                <div style={{ height: '40%' }} />
+                <div style={{ height: '40%' }}>
+                <GameStateWidget
+                  // This is needed for the countdown to reset the interval !!
+                  key={game.id}
+                  game={game}
+                  homeColor={homeColor}
+                  // TODO: This should probably be seperate from the GameStateWidget
+                  //  something like a hook so it can be used without a view component
+                 onTimerFinished={lichessGameActions.onStatusCheck}
+                />
+              </div>
                 <LichessGameActions className={cls.sideBottom} game={game} activity={activity}/>
               </aside>
               <LichessGame

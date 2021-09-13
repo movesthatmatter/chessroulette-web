@@ -132,7 +132,7 @@ export const LichessGameActions: React.FC<Props> = ({ className, game,activity }
               }}
               className={cls.gameActionButton}
               disabled={
-                !show  
+                !show  || game.state !== 'started'
               }
             />
           }

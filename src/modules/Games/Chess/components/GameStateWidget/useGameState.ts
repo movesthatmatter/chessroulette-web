@@ -1,15 +1,21 @@
+import { ChessGameColor } from 'dstnd-io';
 import { useEffect, useState } from 'react';
 import { PlayParticipants } from '../../..';
 import { Game } from '../../../types';
-import { getPlayersTimeLeft } from './util';
+import { getPlayersTimeLeft, getPlayersTimeLeftFromGame } from './util';
 
-export const useGameTimesLeft = (game: Game, playParticipants: PlayParticipants) => {
+export const useGameTimesLeft = (game: Game, homeColor: ChessGameColor, playParticipants?: PlayParticipants, ) => {
   const [playersTimeLeft, setPlayersTimeLeft] = useState(
-    getPlayersTimeLeft(game, playParticipants)
+    playParticipants 
+    ? getPlayersTimeLeft(game, playParticipants)
+    : getPlayersTimeLeftFromGame(game, homeColor)
   );
 
   useEffect(() => {
-    setPlayersTimeLeft(getPlayersTimeLeft(game, playParticipants));
+    setPlayersTimeLeft(
+      playParticipants 
+      ? getPlayersTimeLeft(game, playParticipants)
+      : getPlayersTimeLeftFromGame(game, homeColor));
   }, [game]);
 
   return playersTimeLeft;

@@ -1,10 +1,11 @@
-import { ChessPlayer, ChessPlayerBlack, ChessPlayerWhite } from 'dstnd-io';
+import { ChessGameColor, ChessPlayer, ChessPlayerBlack, ChessPlayerWhite } from 'dstnd-io';
 import { toDictIndexedBy } from 'src/lib/util';
 import { Game } from 'src/modules/Games';
 import {
   getRelativeMaterialScore,
   RelativeMaterialScore,
 } from 'src/modules/Games/Chess/components/GameStateWidget/util';
+import { getOppositePlayer, getPlayerByColor } from 'src/modules/Games/Chess/lib';
 import { RoomMember } from 'src/modules/Room/types';
 import { BaseRoomPlayActivity } from '../../redux/types';
 import { RoomActivityParticipant } from '../../types';
@@ -12,7 +13,7 @@ import {
   toRoomActivityAbsentParticipant,
   toRoomActivityPresentParticipant,
 } from '../../util/participantsUtil';
-import { RoomPlayActivity, RoomPlayActivityParticipant } from './types';
+import { RoomLichessActivityParticipant, RoomPlayActivity, RoomPlayActivityParticipant } from './types';
 
 export const toRoomPlayActivity = (
   basePlayActivity: BaseRoomPlayActivity,
@@ -161,8 +162,8 @@ const getPlayerStats = (
   };
 };
 
-export const roomPlayActivityParticipantToChessPlayer = (
-  p: RoomPlayActivityParticipant
+export const roomActivityParticipantToChessPlayer = (
+  p: RoomPlayActivityParticipant | RoomLichessActivityParticipant
 ): ChessPlayer => ({
   color: p.color,
   user: p.participant.isPresent ? p.participant.member.peer.user : p.participant.user,

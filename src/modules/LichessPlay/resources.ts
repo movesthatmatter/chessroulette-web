@@ -34,6 +34,23 @@ export function getBoardStreamById(id: string, opts: RequestInit) {
   });
 }
 
+export function startOpenSeek(opts: RequestInit) {
+  return new AsyncResultWrapper<{ok: true},{ok: false, err: any}>(async () => {
+    try {
+      await api.post(`board/seek`, {
+        headers: {
+          ...opts.headers,
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body: opts.body
+      });
+      return new Ok({ok: true} as const)
+    } catch (e) {
+      return new Err({ok: false, err: e} as const)
+    }
+  })
+}
+
 export function sendAChallenge(userName: string, opts: RequestInit) {
   return new AsyncResultWrapper<NDJsonReader, ApiError>(async () => {
     try {

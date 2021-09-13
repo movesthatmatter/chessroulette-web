@@ -73,7 +73,11 @@ export const getGameState = (status: LichessGameState['status']): Game['state'] 
   return status;
 };
 
-const convertLichessToGuestUser = (user: LichessPlayer): GuestUserRecord => {
+export function getOtherColor(color: ChessGameColor) : ChessGameColor {
+  return color === 'black' ? 'white' : 'black'
+}
+
+export const convertLichessToGuestUser = (user: LichessPlayer): GuestUserRecord => {
   return {
     firstName: user.name,
     isGuest: true,

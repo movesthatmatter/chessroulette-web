@@ -89,6 +89,13 @@ export const LichessGameStateDialog: React.FC<Props> = ({ game, status }) => {
                 setDialogSeen(true);
               },
             },
+            {
+              label: 'Play Another Game',
+              type: 'positive',
+              onClick: () => {
+                
+              }
+            }
           ]}
           onClose={() => setDialogSeen(true)}
         />

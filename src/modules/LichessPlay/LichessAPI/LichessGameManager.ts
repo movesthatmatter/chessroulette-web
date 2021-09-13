@@ -11,11 +11,13 @@ import {
   sendAChallenge,
   sendAMessage,
   sendAMove,
+  startOpenSeek,
 } from '../resources';
 import { LichessGameState, NDJsonReader, LichessChallenge, LichessChatLine, LichessPlayer } from '../types';
 import { Pubsy } from 'src/lib/Pubsy';
 import { makeUci, parseSquare } from 'chessops/util';
 import {
+  AsyncOk,
   ChessGameColor,
   ChessMove,
   GameSpecsRecord,
@@ -24,7 +26,7 @@ import { NormalMove } from 'chessops/types';
 import { Game } from '../../Games';
 import { getHomeColor, lichessGameToChessRouletteGame, getPromoPieceFromMove, getAwayColor } from '../utils';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
-import { console } from 'window-or-global';
+import { console, Promise } from 'window-or-global';
 import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';
 
 type LichessManagerEvents = {
@@ -52,17 +54,35 @@ export class LichessManager {
   startStreamAndChallenge = (specs: GameSpecsRecord) => {
    this.startStream()
     .flatMap(() => {
-      return sendAChallenge('tttcr', {
+      // return sendAChallenge('tttcr', {
+      //   ...this.auth,
+      //   body: new URLSearchParams({
+      //     'color': specs.preferredColor, 
+      //     'clock.limit' : (chessGameTimeLimitMsMap[specs.timeLimit]/1000).toString(),
+      //     'clock.increment' : '0'
+      //   }),s
+      return startOpenSeek({
         ...this.auth,
-        body: new URLSearchParams({
-          'color': specs.preferredColor, 
-          'clock.limit' : (chessGameTimeLimitMsMap[specs.timeLimit]/1000).toString(),
-          'clock.increment' : '0'
-        }),
+      body: new URLSearchParams({
+        'color': specs.preferredColor, 
+        'time' : (chessGameTimeLimitMsMap[specs.timeLimit]/ 60000).toString(),
+        'increment' : '0'
+      })
       })
     })
-    .mapErr(e => console.log('Error starting a stream', e.value));
+    .mapErr(e => console.log('Error starting a stream'));
   };
+
+  startSeek = (specs: GameSpecsRecord) => {
+    startOpenSeek({
+      ...this.auth,
+      body: new URLSearchParams({
+        'color': specs.preferredColor, 
+        'time' : (chessGameTimeLimitMsMap[specs.timeLimit]/60000).toString(),
+        'increment' : '0'
+      })
+    })
+  }
 
   startStream = () => {
     return getLichessStreamEvent(this.auth)
@@ -126,13 +146,13 @@ export class LichessManager {
     .resolve()
   }
 
-  acceptChallenge = (challenge: LichessChallenge) => {
-    acceptChallenge(challenge.id, this.auth)
+  acceptChallenge = () => {
+    acceptChallenge(this.challengeId as string, this.auth)
     .mapErr(e => console.log('error accepting a challenge', e))
   };
 
-  declineChallenge = (challenge: LichessChallenge) => {
-    declineChallenge(challenge.id, this.auth)
+  declineChallenge = () => {
+    declineChallenge(this.challengeId as string, this.auth)
     .mapErr((e) => console.log('error declining a challenge', e));
   };
 
@@ -181,7 +201,9 @@ export class LichessManager {
       // }
 
       if (event.value.type === 'challenge') {
-        this.pubsy.publish('onChallenge', { challenge: event.value.challenge as LichessChallenge });
+        if (event.value.challenge.challenger.id !== this.user.externalAccounts.lichess.userId){
+          this.pubsy.publish('onChallenge', { challenge: event.value.challenge as LichessChallenge });
+        }
         this.challengeId= event.value.challenge.id;
       }
 

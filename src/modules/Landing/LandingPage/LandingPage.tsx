@@ -5,8 +5,6 @@ import { createUseStyles } from 'src/lib/jss';
 import { colors, minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
 import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
-import { LichessChallengeButton } from 'src/modules/Challenges/Widgets/LichessChallengeButton/LichessChallengeButton';
-import { LichessProvider } from 'src/modules/LichessPlay/LichessAPI/LichessProvider';
 import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
 import { spacers } from 'src/theme/spacers';
 
@@ -83,11 +81,6 @@ export const LandingPage: React.FC<Props> = () => {
                 }}
                 size= 'small'
                 />
-                {/* <LichessChallengeButton
-                    label='Lichess'
-                    size='small'
-                    type='secondary'
-                  /> */}
             </div>
           </div>
         </div>

@@ -12,6 +12,7 @@ import { RoomActivityType, roomType } from 'dstnd-io';
 import { resolveOfferNotificationAction } from './redux/actions';
 import { OfferNotification, OfferType } from './types';
 import { noop } from 'src/lib/util';
+import { useLichessProvider } from 'src/modules/LichessPlay/LichessAPI/useLichessProvider';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -31,7 +32,7 @@ const processLog = (log: ReturnType<typeof selectCurrentRoomActivityLog>) => {
 };
 
 type PlayfulActivities = Exclude<RoomActivityType, 'none' | 'analysis'>;
-type Offers = 'onDrawAccept' | 'onDrawDecline' | 'onTakebackAccept' | 'onTakebackDecline';
+type Offers = 'onDrawAccept' | 'onDrawDecline' | 'onTakebackAccept' | 'onTakebackDecline' | 'onRematchAccepted' | 'onRematchDenied';
 
 type ActivityController = {
     [t in Offers]: {
@@ -49,7 +50,7 @@ export const ActivityLog: React.FC<Props> = (props) => {
   const roomActivity = useSelector(selectRoomActivity);
   const lichessGameActions = useLichessGameActions();
   const dispatch = useDispatch();
-
+  
   const gameActionsController: ActivityController = {
     onDrawAccept: {
       play: () => gameActions.onDrawAccepted(),
@@ -67,6 +68,14 @@ export const ActivityLog: React.FC<Props> = (props) => {
       play: () => gameActions.onTakebackDeny(),
       lichess: () => lichessGameActions.onTakebackDecline()
     },
+    onRematchAccepted: {
+      play: () => gameActions.onRematchAccepted(),
+      lichess: () => lichessGameActions.acceptRematch()
+    },
+    onRematchDenied: {
+      play: () => gameActions.onRematchDenied(),
+      lichess: () => lichessGameActions.denyRematch()
+    }
   };
 
   function resolveNotification(
@@ -125,7 +134,7 @@ export const ActivityLog: React.FC<Props> = (props) => {
                 if (offerType === 'draw') {
                   resolveNotification(notification.id, 'accepted', roomActivity?.type as PlayfulActivities, 'onDrawAccept')
                 } else if (offerType === 'rematch') {
-                  gameActions.onRematchAccepted();
+                  resolveNotification(notification.id, 'accepted', roomActivity?.type as PlayfulActivities, 'onRematchAccepted');
                 } else if (offerType === 'challenge') {
                   gameActions.onChallengeAccepted();
                 } else if (offerType === 'takeback') {
@@ -136,7 +145,7 @@ export const ActivityLog: React.FC<Props> = (props) => {
                 if (offerType === 'draw') {
                   resolveNotification(notification.id, 'withdrawn', roomActivity?.type as PlayfulActivities, 'onDrawDecline');
                 } else if (offerType === 'rematch') {
-                  gameActions.onRematchDenied();
+                  resolveNotification(notification.id, 'withdrawn', roomActivity?.type as PlayfulActivities, 'onRematchDenied')
                 } else if (offerType === 'challenge') {
                   gameActions.onChallengeDenied();
                 } else if (offerType === 'takeback') {

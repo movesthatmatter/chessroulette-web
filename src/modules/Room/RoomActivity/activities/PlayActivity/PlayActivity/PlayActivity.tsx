@@ -59,6 +59,7 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
                           away: activity.participants[otherChessColor(homeColor)],
                         }
                   }
+                  homeColor={homeColor}
                   // TODO: This should probably be seperate from the GameStateWidget
                   //  something like a hook so it can be used without a view component
                   onTimerFinished={gameActions.onTimerFinished}

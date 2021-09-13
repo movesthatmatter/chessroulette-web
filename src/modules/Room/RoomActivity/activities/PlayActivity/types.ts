@@ -1,4 +1,4 @@
-import { ChessPlayer, GameSpecsRecord, RoomLichessActivityRecord, RoomPlayActivityRecord } from 'dstnd-io';
+import { ChessPlayer, RoomLichessActivityRecord, RoomPlayActivityRecord } from 'dstnd-io';
 import { Game } from 'src/modules/Games';
 import { RoomActivitySpecifcParticipant } from '../../utilTypes';
 
@@ -11,12 +11,6 @@ export type RoomPlayActivityParticipant = RoomActivitySpecifcParticipant<
     color: ChessPlayer['color'];
   }
 >;
-
-export type RoomLichessActivityGuest = Pick<RoomActivitySpecifcParticipant<'lichess'>, 'roomActivitySpecificParticipantType' | 'userId'> & {
-  isPlayer: true;
-  canPlay: true
-  color: ChessPlayer['color']
-}
 
 export type RoomLichessActivityParticipant = RoomActivitySpecifcParticipant<
 'lichess',
@@ -37,20 +31,14 @@ export type RoomPlayActivityWithGameAndParticipating = Omit<RoomPlayActivityReco
   };
 };
 
-export type LichessRoomActivityWithGame = RoomLichessActivityRecord & {
+export type LichessRoomActivityWithGameAndParticipating = Omit<RoomLichessActivityRecord, 'gameId'> & {
   game: Game;
+  iamParticipating: true;
   participants: {
-    me: RoomLichessActivityParticipant
-    opponent: RoomLichessActivityGuest
+    me: RoomLichessActivityParticipant;
+    opponent: RoomPlayActivityParticipant;
   }
 }
-
-export type LichessRoomActivityWithoutGame = Omit<RoomLichessActivityRecord, 'gameId'> & {
-  game? : undefined;
-  participants? :undefined;
-}
-
-export type RoomLichessActivity = LichessRoomActivityWithGame | LichessRoomActivityWithoutGame;
 
 export type RoomPlayActivityWithGameButNotParticipating = Omit<RoomPlayActivityRecord, 'gameId'> & {
   game: Game;
@@ -61,14 +49,36 @@ export type RoomPlayActivityWithGameButNotParticipating = Omit<RoomPlayActivityR
   };
 };
 
-export type RoomPlayActivityWithGame =
-  | RoomPlayActivityWithGameAndParticipating
-  | RoomPlayActivityWithGameButNotParticipating;
+export type LichessRoomActivityWithGameButNotParticipating = Omit<RoomLichessActivityRecord,'gameId'> & {
+  game: Game;
+  iamParticipating: false;
+  participants: {
+    black: RoomLichessActivityParticipant
+    white: RoomLichessActivityParticipant
+  }
+}
 
 export type RoomPlayActivityWithoutGame = Omit<RoomPlayActivityRecord, 'gameId'> & {
   game?: undefined;
   participants?: undefined;
 };
+
+export type LichessRoomActivityWithoutGame = Omit<RoomLichessActivityRecord, 'gameId'> & {
+  game? : undefined;
+  participants? :undefined;
+}
+
+export type LichessRoomActivityWithGame = 
+| LichessRoomActivityWithGameButNotParticipating
+| LichessRoomActivityWithGameAndParticipating
+
+export type RoomLichessActivity = LichessRoomActivityWithGame | LichessRoomActivityWithoutGame;
+
+
+export type RoomPlayActivityWithGame =
+  | RoomPlayActivityWithGameAndParticipating
+  | RoomPlayActivityWithGameButNotParticipating;
+
 
 export type RoomPlayActivity = RoomPlayActivityWithGame | RoomPlayActivityWithoutGame;
 

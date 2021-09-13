@@ -12,7 +12,7 @@ import { floatingShadow, onlySmallMobile, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { ActivityCommonProps } from '../../types';
 import { RoomPlayActivityWithGame } from '../types';
-import { roomPlayActivityParticipantToChessPlayer } from '../util';
+import { roomActivityParticipantToChessPlayer } from '../util';
 
 type Props = ActivityCommonProps & {
   activity: RoomPlayActivityWithGame;
@@ -32,6 +32,7 @@ export const PlayActivityMobile: React.FC<Props> = ({
 
   const { away: awayTimeLeft, home: homeTimeLeft } = useGameTimesLeft(
     game,
+    homeColor,
     activity.iamParticipating
       ? {
           away: activity.participants.opponent,
@@ -67,7 +68,7 @@ export const PlayActivityMobile: React.FC<Props> = ({
               <PlayerBox
                 // This is needed for the countdown to reset the interval !!
                 key={`${game.id}-${activity.participants.opponent.color}`}
-                player={roomPlayActivityParticipantToChessPlayer(activity.participants.opponent)}
+                player={roomActivityParticipantToChessPlayer(activity.participants.opponent)}
                 timeLeft={awayTimeLeft}
                 active={
                   game.state === 'started' &&
@@ -96,7 +97,7 @@ export const PlayActivityMobile: React.FC<Props> = ({
               <PlayerBox
                 // This is needed for the countdown to reset the interval !!
                 key={`${game.id}-${activity.participants.me.color}`}
-                player={roomPlayActivityParticipantToChessPlayer(activity.participants.me)}
+                player={roomActivityParticipantToChessPlayer(activity.participants.me)}
                 timeLeft={homeTimeLeft}
                 active={
                   game.state === 'started' && game.lastMoveBy !== activity.participants.me.color

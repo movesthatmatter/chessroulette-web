@@ -4,13 +4,14 @@ import { Game } from 'src/modules/Games';
 import { useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
 import { LichessManager } from './LichessGameManager';
 
-import { LichessChatLine, LichessGameState, LichessPlayer } from '../types';
+import { LichessChallenge, LichessChatLine, LichessGameState, LichessPlayer } from '../types';
 
 type LichessContext = {
   initAndChallenge : (specs: GameSpecsRecord) => void;
   startStream: () => void;
   makeMove: (move: ChessMove, id: string) => void;
   onChallengeAccepted: (fn: () => void) => void;
+  onChallenge: (fn: (data: { challenge: LichessChallenge }) => void) => void;
   onGameUpdate : (fn: (data : {gameState: LichessGameState}) => void) => void;
   onNewGame : (fn: (data: {game: Game, homeColor: ChessGameColor, player:LichessPlayer}) => void) => void
   onGameFinish: (fn :() => void) => void;
@@ -23,6 +24,8 @@ type LichessContext = {
   acceptTakeback : (gameId: string) => void;
   declineTakeback: (gameId: string) => void;
   sendTakebackOffer: (gameId: string) => void;
+  onRematchAccept: () => void;
+  onRematchDeny: () => void;
 } | undefined
 
 export const LichessContext = React.createContext<LichessContext>(undefined);
@@ -53,6 +56,9 @@ export const LichessProvider: React.FC<Props> = (props) => {
         },
         onChallengeAccepted : (fn: () => void) => {
           return lichessManager.onChallengeAccepted(fn);
+        },
+        onChallenge: (fn: (data: { challenge: LichessChallenge })  => void) => {
+          return lichessManager.onChallenge(fn);
         },
         onGameUpdate: (fn : (data: {gameState: LichessGameState}) => void) => {
           return lichessManager.onGameUpdate(fn);
@@ -89,6 +95,12 @@ export const LichessProvider: React.FC<Props> = (props) => {
         },
         sendTakebackOffer: (gameId) => {
           return lichessManager.acceptOrOfferTakeback(gameId);
+        },
+        onRematchAccept: () => {
+          return lichessManager.acceptChallenge();
+        },
+        onRematchDeny: () => {
+          return lichessManager.declineChallenge();
         }
       }
     })

@@ -11,13 +11,15 @@ type Props = {
   type: 'play' | 'lichess'
 };
 
-export const CreatePlayChallengeStep: React.FC<Props> = (props) => {
+export const CreatePlayChallengeStep: React.FC<Props> = ({
+  type = 'play',
+  ...props}) => {
   const wizardProps = useWizard();
 
   return (
     <DialogWizardStep
       title={
-        props.type === 'play' ? "Yey, you are creating a Game" : "Set your preferences and seek a game on Lichess"}
+        type === 'play' ? "Yey, you are creating a Game" : "Set your preferences and seek a game on Lichess"}
       graphic={<Mutunachi mid="9" />}
       buttons={[
         {
@@ -26,7 +28,7 @@ export const CreatePlayChallengeStep: React.FC<Props> = (props) => {
         },
       ]}
     >
-      <CreateChallenge onUpdated={props.onUpdated} gameSpecs={props.gameSpecs} />
+      <CreateChallenge onUpdated={props.onUpdated} gameSpecs={props.gameSpecs} activityType={type}/>
     </DialogWizardStep>
   );
 };

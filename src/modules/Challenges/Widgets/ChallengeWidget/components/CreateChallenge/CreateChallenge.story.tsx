@@ -14,6 +14,7 @@ export const defaultStory = () => (
   <Grommet theme={defaultTheme} full>
     <Box pad="medium" align="center">
       <CreateChallenge
+        activityType='play'
         gameSpecs={{
           timeLimit: 'blitz3',
           preferredColor: 'black',
