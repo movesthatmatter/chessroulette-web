@@ -26,6 +26,7 @@ type LichessContext = {
   sendTakebackOffer: (gameId: string) => void;
   onRematchAccept: () => void;
   onRematchDeny: () => void;
+  makeNewChallenge : (specs: GameSpecsRecord) => void;
 } | undefined
 
 export const LichessContext = React.createContext<LichessContext>(undefined);
@@ -101,6 +102,9 @@ export const LichessProvider: React.FC<Props> = (props) => {
         },
         onRematchDeny: () => {
           return lichessManager.declineChallenge();
+        },
+        makeNewChallenge: (specs: GameSpecsRecord) => {
+          return lichessManager.sendANewChallenge(specs);
         }
       }
     })

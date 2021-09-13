@@ -17,7 +17,6 @@ import { LichessGameState, NDJsonReader, LichessChallenge, LichessChatLine, Lich
 import { Pubsy } from 'src/lib/Pubsy';
 import { makeUci, parseSquare } from 'chessops/util';
 import {
-  AsyncOk,
   ChessGameColor,
   ChessMove,
   GameSpecsRecord,
@@ -26,7 +25,6 @@ import { NormalMove } from 'chessops/types';
 import { Game } from '../../Games';
 import { getHomeColor, lichessGameToChessRouletteGame, getPromoPieceFromMove, getAwayColor } from '../utils';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
-import { console, Promise } from 'window-or-global';
 import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';
 
 type LichessManagerEvents = {
@@ -54,24 +52,35 @@ export class LichessManager {
   startStreamAndChallenge = (specs: GameSpecsRecord) => {
    this.startStream()
     .flatMap(() => {
-      // return sendAChallenge('tttcr', {
-      //   ...this.auth,
-      //   body: new URLSearchParams({
-      //     'color': specs.preferredColor, 
-      //     'clock.limit' : (chessGameTimeLimitMsMap[specs.timeLimit]/1000).toString(),
-      //     'clock.increment' : '0'
-      //   }),s
-      return startOpenSeek({
+      return sendAChallenge('tttcr', {
         ...this.auth,
-      body: new URLSearchParams({
-        'color': specs.preferredColor, 
-        'time' : (chessGameTimeLimitMsMap[specs.timeLimit]/ 60000).toString(),
-        'increment' : '0'
-      })
+        body: new URLSearchParams({
+          'color': specs.preferredColor, 
+          'clock.limit' : (chessGameTimeLimitMsMap[specs.timeLimit]/1000).toString(),
+          'clock.increment' : '0'
+        })
+      // return startOpenSeek({
+      //   ...this.auth,
+      // body: new URLSearchParams({
+      //   'color': specs.preferredColor, 
+      //   'time' : (chessGameTimeLimitMsMap[specs.timeLimit]/ 60000).toString(),
+      //   'increment' : '0'
+      // })
       })
     })
     .mapErr(e => console.log('Error starting a stream'));
   };
+
+  sendANewChallenge = (specs: GameSpecsRecord) => {
+    return sendAChallenge('tttcr', {
+      ...this.auth,
+      body: new URLSearchParams({
+        'color': specs.preferredColor, 
+        'clock.limit' : (chessGameTimeLimitMsMap[specs.timeLimit]/1000).toString(),
+        'clock.increment' : '0'
+      }) 
+  })
+}
 
   startSeek = (specs: GameSpecsRecord) => {
     startOpenSeek({

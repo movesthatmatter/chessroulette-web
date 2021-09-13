@@ -5,13 +5,18 @@ import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { Game } from 'src/modules/Games';
 import { getPlayerByColor } from 'src/modules/Games/Chess/lib';
+import { useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
 import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
+import { useLichessProvider } from '../../LichessAPI/useLichessProvider';
+import { getHomePlayerFromGameAndAuth } from '../../utils';
 import { LichessGameDialogContext } from './LichessGameStateDialogProvider';
 
 type Props = NonNullable<LichessGameDialogContext>;
 
 export const LichessGameStateDialog: React.FC<Props> = ({ game, status }) => {
   const [dialogSeen, setDialogSeen] = useState(false);
+  const lichess = useLichessProvider();
+  const auth = useAuthenticatedUserWithLichessAccount();
 
   const cls = useStyles();
 
@@ -66,6 +71,18 @@ export const LichessGameStateDialog: React.FC<Props> = ({ game, status }) => {
                 setDialogSeen(true);
               },
             },
+            {
+              label: 'Seek New Game',
+              type: 'positive',
+              onClick: () => {
+                if (lichess && auth) {
+                  lichess.makeNewChallenge({
+                    timeLimit: game.timeLimit,
+                    preferredColor: getHomePlayerFromGameAndAuth(game, auth).color 
+                  })
+                }
+              }
+            }
           ]}
           onClose={() => setDialogSeen(true)}
         />
@@ -90,10 +107,15 @@ export const LichessGameStateDialog: React.FC<Props> = ({ game, status }) => {
               },
             },
             {
-              label: 'Play Another Game',
+              label: 'Seek New Game',
               type: 'positive',
               onClick: () => {
-                
+                if (lichess && auth) {
+                  lichess.makeNewChallenge({
+                    timeLimit: game.timeLimit,
+                    preferredColor: getHomePlayerFromGameAndAuth(game, auth).color 
+                  })
+                }
               }
             }
           ]}
