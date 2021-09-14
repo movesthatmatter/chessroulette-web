@@ -99,8 +99,6 @@ export class PeerConnectionsHandler extends Component<Props, State> {
       user: this.props.user,
     });
 
-    console.log('[PeerProviderConnectionHandler] called open');
-
     this.eventListenerUnsubscribers = [
       ...this.eventListenerUnsubscribers,
       this.peerConnections.onOpen(() => {

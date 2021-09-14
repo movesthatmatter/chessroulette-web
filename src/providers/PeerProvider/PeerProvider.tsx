@@ -60,7 +60,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
       //  it won't connect to a room.
       //  This is actualy super fucked up as it doesnt update properly like this!
       // TODO: I need to rethin this whole context state shit!
-      if (state.room && pcState.status === 'open') {
+      if (!!state.room) {
         return {
           state: 'joined',
           proxy,
@@ -75,11 +75,15 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
           },
 
           disconnectFromRoom: () => {
-            pcState.disconnect();
+            if (pcState.status === 'open') {
+              pcState.disconnect();
+            }
           },
 
           leaveRoom: () => {
-            pcState.destroy();
+            if (pcState.status === 'open') {
+              pcState.destroy();
+            }
 
             socket.send({
               kind: 'leaveRoomRequest',
@@ -131,7 +135,7 @@ export const PeerProvider: React.FC<PeerProviderProps> = (props) => {
         onMessage: socket.onMessage.bind(socket),
       };
     });
-  }, [state.room, state.me, socket, pcState]);
+  }, [state, socket, pcState]);
 
   const onMessageHandler = useCallback<NonNullable<SocketConsumerProps['onMessage']>>(
     (msg) => {
