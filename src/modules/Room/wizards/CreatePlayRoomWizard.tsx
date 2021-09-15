@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { createUseStyles } from 'src/lib/jss';
 import { Wizard } from 'react-use-wizard';
 import { GameSpecsRecord } from 'dstnd-io';
 import { CreatePlayChallengeStep } from './steps/CreatePlayChallengeStep';
 import { AVCheckStep } from './steps/AVCheckStep';
-
 
 type Props = {
   onFinished: (s: WizardState) => void;
@@ -15,8 +13,6 @@ type WizardState = {
 };
 
 export const CreatePlayRoomWizard: React.FC<Props> = (props) => {
-  const cls = useStyles();
-
   const [wizardState, setWizardState] = useState<WizardState>({
     gameSpecs: {
       timeLimit: 'rapid10',
@@ -34,7 +30,3 @@ export const CreatePlayRoomWizard: React.FC<Props> = (props) => {
     </Wizard>
   );
 };
-
-const useStyles = createUseStyles({
-  container: {},
-});

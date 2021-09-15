@@ -2,7 +2,7 @@
 import { action } from '@storybook/addon-actions';
 import React from 'react';
 import { FunWallpaper } from 'src/components/FunWallpaper/FunWallpaper';
-import { ChallengeMocker } from 'src/mocks/records';
+import { ChallengeMocker, UserInfoMocker } from 'src/mocks/records';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { colors, floatingShadow, softBorderRadius } from 'src/theme';
@@ -14,6 +14,7 @@ export default {
   title: 'modules/room/Wizards/JoinRoomWizard',
 };
 
+const userMocker = new UserInfoMocker();
 const roomMocker = new RoomMocker();
 const challengeMocker = new ChallengeMocker();
 
@@ -43,7 +44,11 @@ export const withPendingChallenge = () => {
             ...floatingShadow,
           }}
         >
-          <JoinRoomWizard roomInfo={room} onFinished={action('on finished')} />
+          <JoinRoomWizard
+            roomInfo={room}
+            onFinished={action('on finished')}
+            myUser={userMocker.record()}
+          />
         </div>
       </FunWallpaper>
     </StorybookBaseProvider>
