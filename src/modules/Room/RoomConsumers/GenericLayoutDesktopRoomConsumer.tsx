@@ -6,12 +6,13 @@ import { colors, softBorderRadius } from 'src/theme';
 import { RoomDetailsConsumer } from './RoomDetailsConsumer';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
 import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
-import { DesktopRoomLayout, ExitRoomButton, LayoutContainerDimensions } from '../Layouts';
+import { DesktopRoomLayout, LayoutContainerDimensions } from '../Layouts';
 import { Logo } from 'src/components/Logo';
 import { UserMenu } from 'src/components/Navigation';
 import { getBoxShadow } from 'src/theme/util';
 import { NavigationLink } from 'src/components/NavigationLink';
 import { SwitchActivityWidgetRoomConsumer } from './SwitchActivityWidgetRoomConsumer';
+import { RoomControlMenuConsumer } from './RoomControlMenuConsumer';
 
 type Props = {
   renderActivity: (d: {
@@ -63,7 +64,8 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
                             {
                               title: 'Analyze',
                               disabled:
-                                room.currentActivity.type === 'play' ||
+                                (room.currentActivity.type === 'play' &&
+                                  room.currentActivity.game?.state === 'started') ||
                                 room.currentActivity.type === 'analysis',
                               onClick: () => onSwitch({ activityType: 'analysis' }),
                             },
@@ -84,7 +86,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
             <div style={{ height: `${TOP_HEIGHT}px` }}>
               <div className={cls.roomInfoContainer}>
                 <RoomDetailsConsumer />
-                <ExitRoomButton />
+                <RoomControlMenuConsumer />
               </div>
             </div>
             <div className={cls.rightSideStretchedContainer}>
