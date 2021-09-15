@@ -15,9 +15,13 @@ import { useLichessGameActions } from 'src/modules/LichessPlay/useLichessGameAct
 import { convertLichessToGuestUser, getAwayPlayer } from 'src/modules/LichessPlay/utils';
 import { authenticateAsExistentGuest } from 'src/services/Authentication/resources';
 import { addNotificationAction } from 'src/modules/Room/RoomActivityLog/redux/actions';
-import { RegisteredUserRecordWithLichessConnection, useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
+import {
+  RegisteredUserRecordWithLichessConnection,
+  useAuthenticatedUserWithLichessAccount,
+} from 'src/services/Authentication';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { Date } from 'window-or-global';
+import { timeStamp } from 'console';
 
 type Props = {
   activity: RoomLichessActivity;
@@ -36,39 +40,69 @@ export const LichessActivity: React.FC<Props> = (props) => {
     if (lichess) {
       // This is needed to have a stream open on this page as well in case user refreshes the page - it will get back to the event flow
       lichess.startStream();
+      dispatch(
+        addNotificationAction({
+          notification: {
+            type: 'info',
+            infoType: 'newGame',
+            content: {
+              __html: `<div>Searching for an opponent...</div>`,
+            },
+            timestamp: toISODateTime(new Date()),
+            id: new Date().getTime().toString(),
+          },
+        })
+      );
     }
   }, []);
 
   useEffect(() => {
     if (lichess) {
       lichess.onNewGame(({ game, homeColor, player }) => {
+        dispatch(
+          addNotificationAction({
+            notification: {
+              type: 'info',
+              infoType: 'newGame',
+              content: {
+                __html: `<div><strong>${player.name}</strong> accepted the challenge. ${
+                  homeColor === 'white' ? 'Move to start the game.' : ''
+                }</div>`,
+              },
+              timestamp: toISODateTime(new Date()),
+              id: new Date().getTime().toString(),
+            },
+          })
+        );
         setHomeColor(homeColor);
         gameActions.onJoinedGame(game, player);
         authenticateAsExistentGuest({
           guestUser: getAwayPlayer(homeColor, game).user as GuestUserRecord,
         });
       });
-      lichess.onChallenge(({challenge}) => {
-        dispatch(addNotificationAction({
-          notification: {
-            type: 'offer',
-            offerType: 'rematch',
-            byUser: convertLichessToGuestUser(challenge.challenger),
-            toUser: auth as RegisteredUserRecordWithLichessConnection,
-            timestamp: toISODateTime(new Date()),
-            id: new Date().getTime().toString(),
-            status: 'pending'
-          }
-        }
-        ))
-      })
+      lichess.onChallenge(({ challenge }) => {
+        dispatch(
+          addNotificationAction({
+            notification: {
+              type: 'offer',
+              offerType: 'rematch',
+              byUser: convertLichessToGuestUser(challenge.challenger),
+              toUser: auth as RegisteredUserRecordWithLichessConnection,
+              timestamp: toISODateTime(new Date()),
+              id: new Date().getTime().toString(),
+              status: 'pending',
+            },
+          })
+        );
+      });
     }
-  },[lichess])
+  }, [lichess]);
 
-  function isActivityWithGame(activity: RoomLichessActivity): activity is LichessRoomActivityWithGame {
-    return activity.game ? true : false
+  function isActivityWithGame(
+    activity: RoomLichessActivity
+  ): activity is LichessRoomActivityWithGame {
+    return activity.game ? true : false;
   }
-
 
   if (peerState.status !== 'open') {
     return null;
@@ -87,7 +121,12 @@ export const LichessActivity: React.FC<Props> = (props) => {
         <GenericLayoutDesktopRoomConsumer
           renderActivity={({ boardSize }) => {
             return game && isActivityWithGame(props.activity) ? (
-              <LichessGameContainer boardSize={boardSize} game={game}  homeColor={homeColor} activity={props.activity}/>
+              <LichessGameContainer
+                boardSize={boardSize}
+                game={game}
+                homeColor={homeColor}
+                activity={props.activity}
+              />
             ) : (
               <ChessBoard
                 type="free"
