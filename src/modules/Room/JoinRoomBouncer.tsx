@@ -6,39 +6,29 @@ import { createUseStyles } from 'src/lib/jss';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { colors, floatingShadow, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
-import * as roomResources from './resources';
-import { resources } from 'src/resources';
-import { JoinRoomWizard } from './wizards/JoinRoomWizard';
+import { useSession } from 'src/services/Session';
 import { JoinedRoom } from './types';
 import { useJoinedRoom } from './hooks/useJoinedRoom';
+import { JoinRoomWizard } from './wizards/JoinRoomWizard';
+import * as roomResources from './resources';
 
 type Props = {
   slug: RoomRecord['slug'];
   render: (r: JoinedRoom) => React.ReactNode;
 };
 
-type State = {
-  loading: boolean;
-} & (
-  | {
-      roomInfo: undefined;
-      canJoin: false;
-    }
-  | {
-      roomInfo: RoomRecord;
-      canJoin: boolean;
-    }
-);
+type SessionState = {
+  [roomSlug: string]: {
+    canJoin: boolean;
+  };
+};
 
 export const JoinRoomBouncer: React.FC<Props> = (props) => {
   const cls = useStyles();
   const peerState = usePeerState();
   const joinedRoom = useJoinedRoom();
-  const [state, setState] = useState<State>({
-    loading: false,
-    canJoin: false,
-    roomInfo: undefined,
-  });
+  const [roomInfo, setRoomInfo] = useState<RoomRecord>();
+  const [session, setSession] = useSession<SessionState>('roomBouncer');
 
   // Fetch the Room Info
   useEffect(() => {
@@ -46,76 +36,63 @@ export const JoinRoomBouncer: React.FC<Props> = (props) => {
       return;
     }
 
-    if (state.roomInfo) {
+    if (roomInfo) {
+      // Don't reload the room info if it's already present
       return;
     }
 
     roomResources.getRoomBySlug(props.slug).map((roomInfo) => {
-      const iamHost = roomInfo.createdBy === peerState.me.id;
-
-      setState({
-        roomInfo,
-        canJoin: iamHost,
-        loading: iamHost,
-      });
+      setRoomInfo(roomInfo);
+      setSession((prev) => ({
+        [roomInfo.slug]: {
+          // If I'm the host let me join right away
+          canJoin: (prev && prev[roomInfo.slug]?.canJoin) || peerState.me.id === roomInfo.createdBy,
+        },
+      }));
     });
-  }, [state, props.slug, peerState.status]);
+  }, [props.slug, peerState.status, roomInfo, session]);
 
   // Join the Room once the canJoin is true
   useEffect(() => {
-    if (peerState.status === 'open' && !peerState.hasJoinedRoom && state.canJoin) {
+    if (
+      peerState.status === 'open' &&
+      roomInfo &&
+      !peerState.hasJoinedRoom &&
+      session &&
+      session[props.slug]?.canJoin
+    ) {
       peerState.joinRoom({
-        id: state.roomInfo.id,
-        code: state.roomInfo.code || undefined,
+        id: roomInfo.id,
+        code: roomInfo.code || undefined,
       });
     }
-  }, [state.canJoin, peerState.status]);
+  }, [roomInfo, peerState.status, session]);
 
-  useEffect(() => {
-    if (joinedRoom) {
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-      }));
-    }
-  }, [joinedRoom, state.loading]);
+  // If the PeerState is not open render an error
+  if (peerState.status !== 'open') {
+    return null;
+  }
 
   if (joinedRoom) {
     return <>{props.render(joinedRoom)}</>;
   }
 
-  if (state.roomInfo && !state.loading) {
+  const sessionState = session ? session[props.slug] : undefined;
+
+  if (roomInfo && !sessionState?.canJoin) {
     return (
       <FunWallpaper>
         <div className={cls.container}>
           <div className={cls.box}>
             <JoinRoomWizard
-              roomInfo={state.roomInfo}
-              onFinished={(wizardState) => {
-                if (peerState.status !== 'open') {
-                  return;
-                }
-
-                if (wizardState.challengeAccepted) {
-                  resources
-                    .acceptChallenge({
-                      id: wizardState.pendingChallenge.id,
-                      userId: peerState.me.id,
-                    })
-                    .map(() => {
-                      setState({
-                        canJoin: true,
-                        roomInfo: state.roomInfo,
-                        loading: true,
-                      });
-                    });
-                } else {
-                  setState({
+              myUser={peerState.me.user}
+              roomInfo={roomInfo}
+              onFinished={() => {
+                setSession({
+                  [props.slug]: {
                     canJoin: true,
-                    roomInfo: state.roomInfo,
-                    loading: true,
-                  });
-                }
+                  },
+                });
               }}
             />
           </div>

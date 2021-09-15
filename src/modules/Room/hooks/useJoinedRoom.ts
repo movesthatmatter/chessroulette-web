@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import config from 'src/config';
 import { toDictIndexedBy } from 'src/lib/util';
 import { Room, selectRoom } from 'src/providers/PeerProvider';
 import { console } from 'window-or-global';
@@ -50,15 +51,18 @@ export const useJoinedRoom = () => {
     const nextJoinedRoom = mergeSlicesIntoJoinedRoom({ room, currentRoomActivity: roomActivity });
     setJoinedRoom(nextJoinedRoom);
 
-    console.group(
-      `%cJoinedRoom %cUpdated:`,
-      'color: grey;',
-      'color: #4CAF50; font-weight: bold;',
-    );
-    console.log('Prev:', joinedRoom);
-    console.log('Next:', nextJoinedRoom);
-    console.groupEnd();
+    // Logging
 
+    if (config.DEBUG) {
+      console.group(
+        `%cJoinedRoom %cUpdated:`,
+        'color: grey;',
+        'color: #4CAF50; font-weight: bold;'
+      );
+      console.log('Prev:', joinedRoom);
+      console.log('Next:', nextJoinedRoom);
+      console.groupEnd();
+    }
   }, [room, roomActivity]);
 
   return joinedRoom;

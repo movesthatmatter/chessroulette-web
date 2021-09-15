@@ -1,4 +1,5 @@
-import { Peer, Room } from 'src/providers/PeerProvider';
+import { RoomRecord } from 'dstnd-io';
+import { Peer } from 'src/providers/PeerProvider';
 import { RoomMember } from './types';
 
 export const toRoomMember = (peer: Peer): RoomMember => ({
@@ -7,7 +8,7 @@ export const toRoomMember = (peer: Peer): RoomMember => ({
   peer,
 });
 
-export const getRoomPendingChallenge = (room: Room) => {
+export const getRoomPendingChallenge = (room: RoomRecord) => {
   return Object.values(room.pendingChallenges || {})[0];
 };
 
