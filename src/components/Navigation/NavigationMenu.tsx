@@ -8,7 +8,6 @@ import { UserMenu } from './UserMenu';
 import { useFeedbackDialog } from '../FeedbackDialog/useFeedbackDialog';
 import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton } from 'src/services/Authentication/widgets';
-import { Badge } from '../Badge';
 import { Link, useLocation } from 'react-router-dom';
 
 type Props = {
@@ -31,12 +30,12 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         >
           Live
         </Link>
-        <Badge
+        {/* <Badge
           color="negative"
           text="New"
           className={cls.linkBadge}
           textClassName={cls.linkBadgeText}
-        />
+        /> */}
       </div>
       <div className={cls.linkWrapper}>
         <a
@@ -79,7 +78,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         {auth.authenticationType !== 'none' && (
           <div className={cls.authMenu}>
             {auth.authenticationType === 'user' ? (
-              <UserMenu reversed withDropMenu />
+              <UserMenu withDropMenu />
             ) : (
               <AuthenticationButton />
             )}
@@ -198,7 +197,6 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    // background: 'red',
     ...({
       '& $linkWrapper': {
         padding: '16px 0',

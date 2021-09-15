@@ -20,19 +20,10 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
         return;
       }
 
-      if (content.activityType === 'analysis') {
-        return peerState.client.sendMessage({
-          kind: 'switchJoinedRoomActivityRequest',
-          content,
-        });
-      }
-
-      if (content.activityType === 'none') {
-        return peerState.client.sendMessage({
-          kind: 'switchJoinedRoomActivityRequest',
-          content,
-        });
-      }
+      return peerState.client.send({
+        kind: 'switchJoinedRoomActivityRequest',
+        content,
+      });
     },
     [joinedRoom]
   );

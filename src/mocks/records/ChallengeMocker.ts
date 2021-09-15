@@ -1,8 +1,10 @@
 import Chance from 'chance';
 import { ChallengeRecord } from 'dstnd-io';
 import { toISODateTime } from 'io-ts-isodatetime';
+import { UserInfoMocker } from './UserInfoMocker';
 
 const chance = new Chance();
+const userInfoMocker = new UserInfoMocker();
 
 export class ChallengeMocker {
   record(type: ChallengeRecord['type'] = 'public'): ChallengeRecord {
@@ -38,6 +40,7 @@ export class ChallengeMocker {
       },
       createdAt: toISODateTime(new Date()),
       createdBy,
+      createdByUser: userInfoMocker.record(),
     };
 
     return record;

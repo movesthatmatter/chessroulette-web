@@ -208,6 +208,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
     // me as sender
     if (
       activityLog.pending?.status === 'pending' &&
+      activityLog.pending.type === 'offer' &&
       activityLog.pending.byUser.id === activity.participants.me.userId
     ) {
       return (
@@ -236,7 +237,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
     }
 
     // me as receiver
-    if (activityLog.pending?.offerType === 'challenge') {
+    if (activityLog.pending?.type === 'offer' && activityLog.pending?.offerType === 'challenge') {
       return (
         <DialogContent
           title="Challenge Offer"
@@ -265,7 +266,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
       );
     }
 
-    if (activityLog.pending?.offerType === 'rematch') {
+    if (activityLog.pending?.type === 'offer' && activityLog.pending?.offerType === 'rematch') {
       return (
         <DialogContent
           title="Rematch Offer"
@@ -294,7 +295,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
       );
     }
 
-    if (activityLog.pending?.offerType === 'draw') {
+    if (activityLog.pending?.type === 'offer' && activityLog.pending?.offerType === 'draw') {
       return (
         <DialogContent
           title="Draw Offer"

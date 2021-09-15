@@ -3,11 +3,12 @@ import { createUseStyles } from 'src/lib/jss';
 import { Logo } from 'src/components/Logo';
 import { Footer } from '../Footer';
 import { NavigationMenu } from '../Navigation/NavigationMenu';
-import { colors, effects, fonts, text } from 'src/theme';
+import { colors, fonts, text } from 'src/theme';
 import { Events } from 'src/services/Analytics';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { Text } from '../Text';
+import { getBoxShadow } from 'src/theme/util';
 
 export type PageProps = {
   // This name will be used on analytics
@@ -43,14 +44,14 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
       <div className={cls.container}>
         <div className={`${cls.content} ${props.contentClassName}`}>
           <div className={cls.top}>
-            <div className={cls.topMain}>
-              <Logo asLink={logoAsLink} />
+            <div className={`${cls.topMain} ${cls.responsive}`}>
+              <Logo asLink={logoAsLink} withBeta />
               <div className={cls.navigationMenu}>
                 <NavigationMenu />
               </div>
             </div>
           </div>
-          <main className={cls.main}>
+          <main className={`${cls.main} ${cls.responsive}`}>
             {props.title && <h1 className={cls.title}>{props.title}</h1>}
             {props.children}
           </main>
@@ -95,7 +96,6 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
-    maxWidth: '1140px',
     margin: '0 auto',
   },
   top: {
@@ -131,7 +131,7 @@ const useStyles = createUseStyles({
   preFooter: {
     background: colors.neutralLightest,
     paddingBottom: spacers.default,
-    ...effects.floatingShadow,
+    boxShadow: getBoxShadow(0, 12, 12, -12, 'rgba(16, 30, 115, 0.08)'),
     position: 'relative',
   },
   text: {

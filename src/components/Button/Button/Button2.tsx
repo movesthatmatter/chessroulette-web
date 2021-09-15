@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ButtonType } from '../type';
 import { IconProps } from 'grommet-icons';
-import {FontAwesomeIconProps} from '@fortawesome/react-fontawesome';
+import { FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { buttonStyles } from '../styles/styles';
 import { borderRadius, colors, onlyMobile } from 'src/theme';
@@ -12,12 +12,13 @@ import Loader from 'react-loaders';
 import 'loaders.css';
 import { AsyncResult } from 'dstnd-io';
 import { Badge, BadgeProps } from 'src/components/Badge';
+import { spacers } from 'src/theme/spacers';
 
 export type ButtonProps = {
   type?: ButtonType;
   // Difficult typing different icon packs
   icon?: React.ComponentType<any>;
-  iconWrapperStyle? :CSSProperties;
+  iconWrapperStyle?: CSSProperties;
   label: string;
   reverse?: boolean;
 
@@ -31,7 +32,9 @@ export type ButtonProps = {
   onClick: (() => void) | (() => Promise<any>) | (() => AsyncResult<any, any>);
   withLoader?: boolean;
   isLoading?: boolean;
-  withBadge?: BadgeProps;
+  withBadge?: BadgeProps & {
+    side?: 'left' | 'right';
+  };
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -62,8 +65,6 @@ export const Button: React.FC<ButtonProps> = ({
           props.disabled || cls[type],
           clear && cls.clear,
           full && cls.full,
-          props.icon && cls.withIcon,
-          reverse && cls.reverse,
           size !== 'auto' && cls[size],
           isLoading && cls.hasLoader,
           props.className
@@ -83,9 +84,7 @@ export const Button: React.FC<ButtonProps> = ({
           if (AsyncResult.isAsyncResult(result)) {
             setIsLoading(true);
 
-            result
-              .map(() => setIsLoading(false))
-              .mapErr(() => setIsLoading(false));
+            result.map(() => setIsLoading(false)).mapErr(() => setIsLoading(false));
           } else {
             setIsLoading(true);
 
@@ -97,32 +96,40 @@ export const Button: React.FC<ButtonProps> = ({
       >
         <>
           {props.withBadge && (
-            <Badge {...props.withBadge} className={cls.badge}/>
+            <Badge
+              {...props.withBadge}
+              className={cls.badge}
+              style={
+                props.withBadge.side === 'right'
+                  ? {
+                      left: 'auto',
+                      right: '-14px',
+                    }
+                  : {}
+              }
+            />
           )}
-          <div className={cls.content}>
-          <Text
-            className={cls.label}
-            style={{
-              ...(isLoading && {
+          <div className={cx(cls.content, reverse && cls.reverse, props.icon && cls.withIcon)}>
+            {Icon && <div className={cls.icon} />}
+            <Text
+              className={cls.label}
+              style={{
+                ...(isLoading && {
                   visibility: 'hidden',
                 }),
-            }}
-          >
-            {props.label}
-          </Text>
-          {Icon && (
+              }}
+            >
+              {props.label}
+            </Text>
+            {Icon && (
               <div className={cls.iconWrapper} style={props.iconWrapperStyle}>
-                <Icon className={cls.icon}/>
+                <Icon className={cls.icon} />
               </div>
-            )}  
-          </div> 
+            )}
+          </div>
           {isLoading && (
             <div className={cls.loadingWrapper}>
-              <Loader
-                type="ball-pulse"
-                active
-                innerClassName={cls.loader}
-              />
+              <Loader type="ball-pulse" active innerClassName={cls.loader} />
             </div>
           )}
         </>
@@ -145,21 +152,24 @@ const useStyles = createUseStyles({
   withIcon: {
     display: 'flex',
     flexDirection: 'row',
+    flex: 1,
   },
   reverse: {
-    flexDirection: 'row-reverse',
+    ...makeImportant({
+      flexDirection: 'row-reverse',
 
-    ...{
-      '& $iconWrapper': {
-        marginLeft: 0,
-        marginRight: '-8px',
+      ...{
+        '& $iconWrapper': {
+          marginLeft: 0,
+          marginRight: '-8px',
+        },
       },
-    },
+    }),
   },
   small: {
     minWidth: '100px',
   },
-  xsmall : {
+  xsmall: {
     minWidth: '60px',
   },
   medium: {
@@ -175,7 +185,8 @@ const useStyles = createUseStyles({
     lineHeight: '32px',
     paddingRight: '16px',
     paddingLeft: '16px',
-    
+    flex: 1,
+
     ...onlyMobile({
       ...makeImportant({
         fontSize: '12px',
@@ -188,18 +199,20 @@ const useStyles = createUseStyles({
   content: {
     width: '100%',
     direction: 'ltr',
-    display:'flex',
-    flexDirection:'row',
-    justifyContent:'center'
+    display: 'flex',
+    flexDirection: 'row',
+    // justifyContent: 'center',
   },
   iconWrapper: {
     height: '32px',
-    padding: '0 8px',
+    width: '32px',
+    // padding: '0px',
     marginLeft: '-8px',
 
     ...onlyMobile({
       ...makeImportant({
         height: '28px',
+        width: '28px',
       }),
     }),
 
@@ -210,12 +223,12 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
-  icon: {
-    fill: `${colors.white} !important`,
-    stroke: `${colors.white} !important`,
-    width: '16px !important',
-    height: '16px !important',
-  },
+  icon: makeImportant({
+    fill: colors.white,
+    stroke: colors.white,
+    width: spacers.default,
+    height: spacers.default,
+  }),
   loadingWrapper: {
     position: 'absolute',
     top: '3px',

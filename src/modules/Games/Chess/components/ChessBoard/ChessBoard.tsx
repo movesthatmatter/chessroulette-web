@@ -24,6 +24,7 @@ export type ChessBoardProps = Omit<StyledChessBoardProps, 'onMove' | 'fen'> & {
   homeColor: ChessGameColor;
   orientation?: ChessGameColor;
   playable?: boolean;
+  canInteract?: boolean;
 
   // This speeds up rendering as it doesn't wait for the
   //  move to be saved first
@@ -121,7 +122,7 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
     const base = {
       free: false,
       // This is what determines wether someone can move a piece!
-      dests: this.props.playable ? toDests(this.chess) : undefined,
+      dests: this.props.canInteract && this.props.playable ? toDests(this.chess) : undefined,
       showDests: !!this.props.config?.showDests,
     } as const;
 
@@ -153,6 +154,10 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
   }
 
   private onPreMove(nextPreMove: ChessMove) {
+    if (!this.props.canInteract) {
+      return;
+    }
+
     const movedPiece = this.chess.get(nextPreMove.from);
 
     if (movedPiece && this.isPromotable(nextPreMove)) {
@@ -183,6 +188,10 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
   }
 
   private onMove(nextMove: ChessMove) {
+    if (!this.props.canInteract) {
+      return;
+    }
+
     this.setState({
       pendingPromotionalMove: undefined,
     });
@@ -248,7 +257,15 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
   }
 
   render() {
-    const { pgn, id, playable, orientation, homeColor, ...boardProps } = this.props;
+    const {
+      pgn,
+      id,
+      playable,
+      orientation,
+      homeColor,
+      canInteract = false,
+      ...boardProps
+    } = this.props;
     const chessState = this.state.uncommited || this.state.current;
 
     return (
@@ -257,7 +274,7 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         key={id}
         {...boardProps}
         disableContextMenu
-        preMoveEnabled={this.state.current.isPreMovable}
+        preMoveEnabled={this.props.canInteract && this.state.current.isPreMovable}
         viewOnly={false}
         fen={chessState.fen}
         turnColor={chessState.turn}

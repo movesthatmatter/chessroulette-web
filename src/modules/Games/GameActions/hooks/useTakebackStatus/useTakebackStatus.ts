@@ -3,7 +3,11 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useStateWithPrev } from 'src/lib/hooks/useStateWithPrev';
 import { selectCurrentRoomActivityLogHistoryOrderedArray } from 'src/modules/Room/RoomActivityLog/redux/selectors';
-import { InfoNotification, OfferNotification } from 'src/modules/Room/RoomActivityLog/types';
+import {
+  InfoNotification,
+  Notification,
+  OfferNotification,
+} from 'src/modules/Room/RoomActivityLog/types';
 
 type TakeBackStatusReturn = {
   show: boolean;
@@ -57,5 +61,4 @@ export const useTakebackStatus = (
   };
 };
 
-const isOfferNotification = (n: OfferNotification | InfoNotification): n is OfferNotification =>
-  n.type === 'offer';
+const isOfferNotification = (n: Notification): n is OfferNotification => n.type === 'offer';

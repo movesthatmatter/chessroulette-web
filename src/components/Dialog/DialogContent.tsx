@@ -20,6 +20,7 @@ export type DialogContentProps = {
   onClose?: () => void;
   className?: string;
   contentContainerClass?: string;
+  buttonsContainerClass?: string;
 };
 
 const isDangerouslySetHtml = (t: unknown): t is DangerouslySetInnerHTML =>
@@ -61,7 +62,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({
       </div>
       {props.buttons && (
         <div
-          className={cls.buttonsWrapper}
+          className={cx(cls.buttonsWrapper, props.buttonsContainerClass)}
           {...(props.buttonsStacked && {
             style: {
               flexDirection: 'column',
@@ -176,6 +177,7 @@ const useStyles = createUseStyles({
     paddingLeft: spacers.large,
     paddingRight: spacers.large,
     paddingBottom: spacers.default,
+    paddingTop: spacers.default,
 
     ...onlyMobile({
       paddingLeft: '18px',

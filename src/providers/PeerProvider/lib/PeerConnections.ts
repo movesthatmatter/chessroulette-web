@@ -29,13 +29,7 @@ export class PeerConnections {
 
   unsubscribers: (() => void)[] = [];
 
-  constructor({
-    user,
-    iceServers,
-  }: {
-    user: PeerRecord['user'];
-    iceServers: IceServerRecord[];
-  }) {
+  constructor({ user, iceServers }: { user: PeerRecord['user']; iceServers: IceServerRecord[] }) {
     this.user = user;
 
     this.sdk = new PeerSDK(wNamespace(user.id), {

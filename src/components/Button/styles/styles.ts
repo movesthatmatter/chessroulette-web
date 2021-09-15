@@ -81,11 +81,11 @@ const clear: CSSProperties = {
       }),
     },
     '& $iconWrapper': {
-      height: '26px',
+      height: '29px',
 
       ...onlyMobile({
         ...makeImportant({
-          height: '26px',
+          height: '29px',
         }),
       }),
     },

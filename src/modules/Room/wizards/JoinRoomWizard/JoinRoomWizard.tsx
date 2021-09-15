@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Wizard } from 'react-use-wizard';
-import { ChallengeRecord, RoomRecord } from 'dstnd-io';
+import { ChallengeRecord, RoomRecord, UserInfoRecord } from 'dstnd-io';
 import { AVCheckStep } from '../steps/AVCheckStep';
 import { AcceptPlayChallengeStep } from '../steps/AcceptPlayChallengeStep';
+import { getRoomPendingChallenge } from '../../util';
+import { resources } from 'src/resources';
 
 type Props = {
+  myUser: UserInfoRecord;
   roomInfo: RoomRecord;
-  onFinished: (s: WizardState) => void;
+  onFinished: () => void;
 };
 
 type WizardState =
@@ -20,30 +23,46 @@ type WizardState =
     };
 
 export const JoinRoomWizard: React.FC<Props> = (props) => {
-  const [wizardState, setWizardState] = useState<WizardState>({
+  const [state, setState] = useState<WizardState>({
     challengeAccepted: false,
-
-    // TODO: Make sure this isn't mine
-    pendingChallenge: Object.values(props.roomInfo.pendingChallenges)[0],
+    pendingChallenge: getRoomPendingChallenge(props.roomInfo),
   });
 
   return (
     <Wizard>
-      {wizardState.pendingChallenge && (
+      {state.pendingChallenge && (
         <AcceptPlayChallengeStep
           roomInfo={props.roomInfo}
-          challenge={wizardState.pendingChallenge}
+          challenge={state.pendingChallenge}
           onAccepted={() => {
-            if (wizardState.pendingChallenge) {
-              setWizardState({
-                challengeAccepted: true,
-                pendingChallenge: wizardState.pendingChallenge,
-              });
+            if (!state.pendingChallenge) {
+              return;
             }
+
+            setState({
+              pendingChallenge: state.pendingChallenge,
+              challengeAccepted: true,
+            });
           }}
         />
       )}
-      <AVCheckStep onSuccess={() => props.onFinished(wizardState)} />
+      <AVCheckStep
+        onSuccess={() => {
+          if (state.challengeAccepted) {
+            resources
+              .acceptChallenge({
+                id: state.pendingChallenge.id,
+                userId: props.myUser.id,
+              })
+              // TODO: Handle error
+              .map(() => {
+                props.onFinished();
+              });
+          } else {
+            props.onFinished();
+          }
+        }}
+      />
     </Wizard>
   );
 };

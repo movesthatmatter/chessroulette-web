@@ -1,12 +1,12 @@
 import { createReducer } from 'deox';
 import { GenericStateSlice } from 'src/redux/types';
 import { addNotificationAction, clearLogAction, resolveOfferNotificationAction } from './actions';
-import { Notification, OfferNotification } from 'src/modules/Room/RoomActivityLog/types';
+import { ChallengeNotification, Notification, OfferNotification } from 'src/modules/Room/RoomActivityLog/types';
 
 export type State = {
   currentRoom: {
     history: Record<Notification['id'], Notification>;
-    pending?: OfferNotification;
+    pending?: OfferNotification | ChallengeNotification;
   };
 };
 
@@ -18,7 +18,10 @@ export const initialState: State = {
 
 export const reducer = createReducer(initialState as State, (handleAction) => [
   handleAction(addNotificationAction, (state, { payload }) => {
-    if (payload.notification.type === 'offer' && payload.notification.status === 'pending') {
+    if (
+      (payload.notification.type === 'offer' || payload.notification.type === 'challenge') &&
+      payload.notification.status === 'pending'
+    ) {
       return {
         ...state,
         currentRoom: {

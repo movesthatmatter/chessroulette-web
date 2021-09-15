@@ -8,13 +8,13 @@ import { getBoxShadow } from 'src/theme/util';
 import hexToRgba from 'hex-to-rgba';
 
 
-type Props = Omit<React.ComponentProps<typeof GTextInput>, | 'plain' | 'size' | 'ref'> & {
+export type TextInputProps = Omit<React.ComponentProps<typeof GTextInput>, | 'plain' | 'size' | 'ref'> & {
   className?: string;
   label?: string;
   validationError?: string;
 };
 
-export const TextInput: React.FC<Props> = ({
+export const TextInput: React.FC<TextInputProps> = ({
   className,
   label,
   value,

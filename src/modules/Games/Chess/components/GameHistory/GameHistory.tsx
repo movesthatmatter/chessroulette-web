@@ -6,11 +6,14 @@ import { colors, softBorderRadius } from 'src/theme';
 import { debounce } from 'debounce';
 import { HistoryList, HistoryListProps } from './components/HistoryList';
 import { ChessRecursiveHistory } from 'dstnd-io';
+import { Text } from 'src/components/Text';
 
 export type GameHistoryProps = {
   history: ChessRecursiveHistory;
   focusedIndex: HistoryListProps['focusedIndex'];
   onRefocus: HistoryListProps['onRefocus'];
+
+  emptyContent?: string | React.ReactNode;
 
   className?: string;
   containerClassName?: string;
@@ -22,6 +25,7 @@ export type GameHistoryProps = {
 export const GameHistory: React.FC<GameHistoryProps> = ({
   history = [],
 
+  emptyContent = 'Wow, so empty!',
   showRows = 4,
   focusedIndex,
   onRefocus,
@@ -33,13 +37,28 @@ export const GameHistory: React.FC<GameHistoryProps> = ({
     <div className={cx(cls.container, props.containerClassName)}>
       <div className={cx(cls.main, props.className)}>
         {/* <div className={cls.spacer} /> */}
-        <HistoryList
-          history={history}
-          focusedIndex={focusedIndex}
-          onRefocus={onRefocus}
-          className={cls.content}
-          rowClassName={cls.row}
-        />
+        {history.length === 0 ? (
+          typeof emptyContent === 'string' ? (
+            <div style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              display: 'flex',
+            }}>
+            <Text size="small1">{emptyContent}</Text>
+            </div>
+          ) : (
+            emptyContent
+          )
+        ) : (
+          <HistoryList
+            history={history}
+            focusedIndex={focusedIndex}
+            onRefocus={onRefocus}
+            className={cls.content}
+            rowClassName={cls.row}
+          />
+        )}
       </div>
     </div>
   );
@@ -68,6 +87,6 @@ const useStyles = createUseStyles({
   row: {
     '&:last-child': {
       paddingBottom: 0,
-    }
+    },
   },
 });

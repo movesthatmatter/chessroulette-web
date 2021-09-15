@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { faComment, faList } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faBars, faDiceD6 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UserInfoRecord } from 'dstnd-io';
 import { useSelector } from 'react-redux';
 import { Tabs } from 'src/components/Tabs';
@@ -18,7 +19,11 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
   const [tab, setTab] = useState(0);
 
   useEffect(() => {
-    if (activityLog.pending && props.me.id === activityLog.pending.toUser.id) {
+    if (
+      activityLog.pending &&
+      activityLog.pending.type === 'offer' &&
+      props.me.id === activityLog.pending.toUser.id
+    ) {
       // Go back to activity record if there is pending offer for me!
       setTab(0);
     }
@@ -30,7 +35,7 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
       onTabChanged={setTab}
       tabs={[
         {
-          title: 'Activity Log',
+          title: 'Activity',
           content: (
             <div
               style={{
@@ -46,7 +51,7 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
               />
             </div>
           ),
-          icon: faList,
+          icon: faDiceD6,
         },
         {
           title: 'Messages',

@@ -19,13 +19,6 @@ export const RoomDetails: React.FC<Props> = ({ room }) => (
       <br />
       <Text size="small2">Active Members:</Text>
       <Text size="small1">{` ${Object.keys(room.peersIncludingMe).length}`}</Text>
-
-      <br />
-      {Object.keys(room.pendingChallenges).length > 0 && (
-        <>
-          has challenge
-        </>
-      )}
     </div>
   </div>
 );

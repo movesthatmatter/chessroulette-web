@@ -5,13 +5,17 @@ import { ChessGame } from 'src/modules/Games/Chess';
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { GameActions, useGameActions } from 'src/modules/Games/GameActions';
-import { spacers } from 'src/theme/spacers';
 import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { ActivityCommonProps } from '../../types';
 import { RoomPlayActivityWithGame } from '../types';
 import { PlayActivityMobile } from './PlayActivityMobile';
-import { ChessGameHistoryProvider, ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/GameHistory';
+import {
+  ChessGameHistoryProvider,
+  ChessGameHistoryConsumer,
+} from 'src/modules/Games/Chess/components/GameHistory';
 import { historyToPgn } from 'src/modules/Games/Chess/lib';
+import { floatingBoxContainerOffsets, floatingBoxOffsets } from '../../styles';
+import cx from 'classnames';
 
 export type PlayActivityProps = ActivityCommonProps & {
   activity: RoomPlayActivityWithGame;
@@ -41,32 +45,45 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
       renderActivity={({ boardSize, leftSide }) => (
         <ChessGameHistoryProvider history={game.history || []}>
           <div className={cls.container}>
-            <aside className={cls.side} style={{ height: boardSize, width: leftSide.width }}>
+            <aside
+              className={cls.side}
+              style={{ height: boardSize, width: leftSide.width + leftSide.horizontalPadding }}
+            >
               <div className={cls.sideTop} />
-              <div style={{ height: '40%' }}>
-                <GameStateWidget
-                  // This is needed for the countdown to reset the interval !!
-                  key={game.id}
-                  game={game}
-                  playParticipants={
-                    activity.iamParticipating
-                      ? {
-                          home: activity.participants.me,
-                          away: activity.participants.opponent,
-                        }
-                      : {
-                          home: activity.participants[homeColor],
-                          away: activity.participants[otherChessColor(homeColor)],
-                        }
-                  }
-                  // TODO: This should probably be seperate from the GameStateWidget
-                  //  something like a hook so it can be used without a view component
-                  onTimerFinished={gameActions.onTimerFinished}
-                />
+              <div
+                style={{ height: '40%' }}
+                className={cx(cls.floatingBoxContainerOffsets, cls.gameStateWidgetContainer)}
+              >
+                <div className={cls.floatingBoxOffsets}>
+                  <GameStateWidget
+                    // This is needed for the countdown to reset the interval !!
+                    key={game.id}
+                    game={game}
+                    playParticipants={
+                      activity.iamParticipating
+                        ? {
+                            home: activity.participants.me,
+                            away: activity.participants.opponent,
+                          }
+                        : {
+                            home: activity.participants[homeColor],
+                            away: activity.participants[otherChessColor(homeColor)],
+                          }
+                    }
+                    // TODO: This should probably be seperate from the GameStateWidget
+                    //  something like a hook so it can be used without a view component
+                    onTimerFinished={gameActions.onTimerFinished}
+                  />
+                </div>
               </div>
-              {activity.iamParticipating && (
-                <GameActions activity={activity} className={cls.sideBottom} />
-              )}
+              <div className={cls.sideBottom}>
+                {activity.iamParticipating && (
+                  <GameActions
+                    activity={activity}
+                    className={cx(cls.sideBottom, cls.floatingBoxOffsets)}
+                  />
+                )}
+              </div>
             </aside>
             <ChessGameHistoryConsumer
               render={(c) => (
@@ -76,6 +93,7 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
                   game={game}
                   size={boardSize}
                   homeColor={homeColor}
+                  canInteract={activity.iamParticipating}
                   playable={activity.iamParticipating && activity.participants.me.canPlay}
                   displayedPgn={historyToPgn(c.displayedHistory)}
                   // autoCommitMove // TODO: Add this and try it outs
@@ -105,12 +123,30 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    marginRight: spacers.large,
   },
   sideTop: {
     height: '30%',
   },
   sideBottom: {
     height: '30%',
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+  },
+
+  gameStateWidgetContainer: {
+    display: 'flex',
+    flex: 1,
+  },
+
+  floatingBoxContainerOffsets: {
+    ...floatingBoxContainerOffsets,
+
+    // This is an override
+    marginBottom: 0,
+  },
+  floatingBoxOffsets: {
+    ...floatingBoxOffsets,
+    flex: 1,
   },
 });

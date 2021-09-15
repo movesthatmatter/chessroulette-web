@@ -5,10 +5,11 @@ import { spacers } from 'src/theme/spacers';
 import { isPartialBlackMove, PairedMove } from '../../../lib';
 import cx from 'classnames';
 import { HistoryList } from './HistoryList';
-import { colors } from 'src/theme';
+import { colors, softBorderRadius } from 'src/theme';
 import { HTMLDivElement } from 'window-or-global';
 import { ChessHistoryIndex } from 'dstnd-io';
 import { isChessRecursiveHistoryIndex } from 'dstnd-io/dist/analysis/analysisActions';
+import hexToRgba from 'hex-to-rgba';
 
 type Props = {
   pairedMove: PairedMove;
@@ -150,32 +151,12 @@ export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
   }
 );
 
-const borderColorsByDepth = [
-  colors.primaryLightest,
-  colors.positiveLight,
-  colors.negativeLightest,
-  colors.attentionLight,
-];
-
 const useStyles = createUseStyles({
-  container: {
-    // background: 'red',
-    borderWidth: 0,
-    borderBottomWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: colors.neutralLighter,
-    padding: `${spacers.smaller} ${spacers.small}`,
-    ...({
-      '&:first-child': {
-        paddingTop: 0,
-      },
-      '&:last-child': {
-        borderBottomWidth: 0,
-      },
-    } as CSSProperties),
-  },
+  container: {},
   row: {
     display: 'flex',
+    paddingBottom: spacers.smaller,
+    paddingTop: spacers.smaller,
   },
   initStateRow: {
     flex: 1,
@@ -206,14 +187,20 @@ const useStyles = createUseStyles({
   },
 
   nestedHistory: {
-    paddingTop: spacers.small,
-    marginLeft: spacers.smallest,
     marginTop: spacers.smaller,
-    borderLeft: `2px solid ${colors.neutral}`,
-    background: colors.neutralLightest,
-    borderColor: borderColorsByDepth[2],
+    background: hexToRgba(colors.primary, 0.075),
+    border: `1px solid ${colors.negativeLight}`,
+    borderColor: hexToRgba(colors.primary, 0.1),
+    borderWidth: 0,
+    borderLeftWidth: '1px',
+    borderTopWidth: '1px',
+    borderLeftColor: hexToRgba(colors.primary, 0.4),
+    borderBottomWidth: '1px',
+    ...softBorderRadius,
+
+    paddingLeft: spacers.small,
   },
   rowBelowNested: {
-    marginTop: spacers.small,
+    // marginTop: spacers.small,
   },
 });

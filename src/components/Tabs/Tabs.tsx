@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { spacers } from 'src/theme/spacers';
 import { noop } from 'src/lib/util';
+import { Button } from '../Button';
 
 type TabProps = {
   title: string;
@@ -17,9 +18,15 @@ type TabsProps = {
   tabs: TabProps[];
   currentTabIndex: number;
   onTabChanged: (nextIndex: number) => void;
+  renderTabRightEndComponent?: (p: { tabIndex: number }) => React.ReactNode;
 };
 
-export const Tabs: React.FC<TabsProps> = ({ tabs, onTabChanged = noop, currentTabIndex = 0 }) => {
+export const Tabs: React.FC<TabsProps> = ({
+  tabs,
+  onTabChanged = noop,
+  currentTabIndex = 0,
+  renderTabRightEndComponent,
+}) => {
   const cls = useStyles();
 
   return (
@@ -58,6 +65,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, onTabChanged = noop, currentTa
             </Text>
           </div>
         ))}
+        {renderTabRightEndComponent && renderTabRightEndComponent({ tabIndex: currentTabIndex })}
       </div>
       {tabs[currentTabIndex].content}
     </>

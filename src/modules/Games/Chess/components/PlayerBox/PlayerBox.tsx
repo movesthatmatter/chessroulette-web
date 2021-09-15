@@ -56,14 +56,14 @@ export const PlayerBox: React.FC<Props> = ({
 
 const useStyles = createUseStyles({
   container: {},
-  playerInfo: {
-    marginLeft: '8px',
-  },
   avatar: {
     height: '32px',
     width: '32px',
     background: '#ddd',
     ...floatingShadow,
+  },
+  playerInfo: {
+    marginLeft: '8px',
   },
   playerNameText: {
     ...fonts.small2,

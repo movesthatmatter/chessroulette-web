@@ -93,6 +93,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
     const nextMe: Peer = {
       ...state.me,
       ...payload.me,
+      userId: payload.me.user.id,
     };
 
     const nextRoom: Room | undefined =

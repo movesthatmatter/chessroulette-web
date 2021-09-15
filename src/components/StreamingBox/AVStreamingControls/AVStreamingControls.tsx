@@ -19,41 +19,44 @@ export const AVStreamingControls: React.FC<Props> = () => {
   const mediaStatus = useMediaStatus();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    avStreaming.updateConstraints({
-      ...mediaStatus
-    })
-  },[mediaStatus])
+  // useEffect(() => {
+  //   avStreaming.updateConstraints({
+  //     ...mediaStatus
+  //   })
+  // },[mediaStatus])
 
-  return (
-    <div className={cls.footerOverlayContainer}>
-      <IconButton
-        icon={() => (
-          <FontAwesomeIcon icon={mediaStatus.video ? faVideo : faVideoSlash} size="xs" />
-        )}
-        onSubmit={() => {
-          dispatch(updateAVConstraints({
-            ...mediaStatus,
-            video: !mediaStatus.video
-          }))
-        }}
-        className={cls.iconButton}
-      />
-      <div style={{ width: spacers.smallestPxPx }} />
-      <IconButton
-        icon={() => (
-          <FontAwesomeIcon icon={mediaStatus.audio ? faVolumeUp : faVolumeMute} size="xs" />
-        )}
-        onSubmit={() => {
-          dispatch(updateAVConstraints({
-            ...mediaStatus,
-            audio: !mediaStatus.audio
-          }))
-        }}
-        className={cls.iconButton}
-      />
-    </div>
-  );
+  // return (
+  //   <div className={cls.footerOverlayContainer}>
+  //     <IconButton
+  //       icon={() => (
+  //         <FontAwesomeIcon icon={mediaStatus.video ? faVideo : faVideoSlash} size="xs" />
+  //       )}
+  //       onSubmit={() => {
+  //         dispatch(updateAVConstraints({
+  //           ...mediaStatus,
+  //           video: !mediaStatus.video
+  //         }))
+  //       }}
+  //       className={cls.iconButton}
+  //     />
+  //     <div style={{ width: spacers.smallestPxPx }} />
+  //     <IconButton
+  //       icon={() => (
+  //         <FontAwesomeIcon icon={mediaStatus.audio ? faVolumeUp : faVolumeMute} size="xs" />
+  //       )}
+  //       onSubmit={() => {
+  //         dispatch(updateAVConstraints({
+  //           ...mediaStatus,
+  //           audio: !mediaStatus.audio
+  //         }))
+  //       }}
+  //       className={cls.iconButton}
+  //     />
+  //   </div>
+  // );
+
+  // UPDATE Mon Sep 13th while removing the old Room Bouncer
+  return null;
 };
 
 const useStyles = createUseStyles({

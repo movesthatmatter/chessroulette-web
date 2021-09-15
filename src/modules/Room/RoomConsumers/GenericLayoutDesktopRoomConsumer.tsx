@@ -6,28 +6,25 @@ import { colors, softBorderRadius } from 'src/theme';
 import { RoomDetailsConsumer } from './RoomDetailsConsumer';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
 import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
-import {
-  DesktopRoomLayout,
-  ExitRoomButton,
-  LayoutContainerDimensions,
-} from '../Layouts';
+import { DesktopRoomLayout, LayoutContainerDimensions } from '../Layouts';
 import { Logo } from 'src/components/Logo';
 import { UserMenu } from 'src/components/Navigation';
-import { SwitchActivityRoomConsumer } from './SwitchActivityRoomConsumer';
 import { getBoxShadow } from 'src/theme/util';
+import { NavigationLink } from 'src/components/NavigationLink';
+import { SwitchActivityWidgetRoomConsumer } from './SwitchActivityWidgetRoomConsumer';
+import { RoomControlMenuConsumer } from './RoomControlMenuConsumer';
 
 type Props = {
   renderActivity: (d: {
     isMobile: boolean;
-    // containerDimensions: LayoutContainerDimensions;
     boardSize: number;
     leftSide: LayoutContainerDimensions;
     // TODO: might need a bunch of other dimensinos like the marging size or the bottom to inform the activity
   }) => React.ReactNode;
 };
 
-const TOP_HEIGHT = 66;
-const BOTTOM_HEIGHT = 30;
+const TOP_HEIGHT = 70;
+const BOTTOM_HEIGHT = 66;
 const MIN_SPACE_BETWEEN = spacers.largePx;
 
 // TODO: This isn't provided for now and don't think it needs to be but for now it sits here
@@ -45,24 +42,41 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
         topHeight={TOP_HEIGHT}
         bottomHeight={BOTTOM_HEIGHT}
         minSpaceBetween={MIN_SPACE_BETWEEN}
-        renderTopComponent={({ left, right }) => (
+        renderTopComponent={({ left, right, center }) => (
           <div className={cls.top}>
             <div className={cls.mainTop}>
-              <div style={{ width: left.width }}>
-                <Logo asLink />
+              <div className={cls.logoWrapper} style={{ flex: 1 }}>
+                <Logo asLink withBeta />
               </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flex: 1,
-                }}
-              >
-                <SwitchActivityRoomConsumer type="analysis" text="Analysis" />
-                <SwitchActivityRoomConsumer type="play" text="Play" />
-                <SwitchActivityRoomConsumer type="none" text="none" />
-                <UserMenu reversed />
+              <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
+                <div className={cls.linksContainer}>
+                  <SwitchActivityWidgetRoomConsumer
+                    render={({ onSwitch, room }) => (
+                      <NavigationLink
+                        title="Room"
+                        withDropMenu={{
+                          items: [
+                            {
+                              title: 'Play',
+                              disabled: room.currentActivity.type === 'play',
+                              onClick: () => onSwitch({ activityType: 'play' }),
+                            },
+                            {
+                              title: 'Analyze',
+                              disabled:
+                                (room.currentActivity.type === 'play' &&
+                                  room.currentActivity.game?.state === 'started') ||
+                                room.currentActivity.type === 'analysis',
+                              onClick: () => onSwitch({ activityType: 'analysis' }),
+                            },
+                          ],
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+                <UserMenu reversed showPeerStatus />
               </div>
-              {/* <NavigationHeader /> */}
             </div>
             <div style={{ width: right.width }} />
           </div>
@@ -72,7 +86,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
             <div style={{ height: `${TOP_HEIGHT}px` }}>
               <div className={cls.roomInfoContainer}>
                 <RoomDetailsConsumer />
-                <ExitRoomButton />
+                <RoomControlMenuConsumer />
               </div>
             </div>
             <div className={cls.rightSideStretchedContainer}>
@@ -91,7 +105,10 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
             {props.renderActivity({
               isMobile: false,
               boardSize: extendedDimensions.center.width,
-              leftSide: extendedDimensions.left,
+              leftSide: {
+                ...extendedDimensions.left,
+                width: extendedDimensions.left.width + extendedDimensions.main.horizontalPadding,
+              },
             })}
           </div>
         )}
@@ -118,10 +135,15 @@ const useStyles = createUseStyles({
     flex: 1,
     flexDirection: 'row',
     display: 'flex',
-    paddingTop: spacers.default,
-    // paddingBottom: spacers.large,
-    paddingLeft: spacers.default,
+    paddingLeft: spacers.large,
     paddingRight: spacers.large,
+  },
+  userMenuWrapper: {
+    display: 'flex',
+  },
+  logoWrapper: {
+    display: 'flex',
+    alignItems: 'center',
   },
   side: {
     display: 'flex',
@@ -157,8 +179,13 @@ const useStyles = createUseStyles({
     transform: 'translateZ(0)',
   },
   activityContainer: {
-    // background: 'red',
     position: 'relative',
     zIndex: 1,
+  },
+
+  linksContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    flex: 1,
   },
 });

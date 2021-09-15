@@ -1,5 +1,4 @@
 import React from 'react';
-import { createUseStyles } from 'src/lib/jss';
 import { useWizard } from 'react-use-wizard';
 import { CreateChallenge } from 'src/modules/Challenges/Widgets/ChallengeWidget/components/CreateChallenge/CreateChallenge';
 import { GameSpecsRecord } from 'dstnd-io';
@@ -12,7 +11,6 @@ type Props = {
 };
 
 export const CreatePlayChallengeStep: React.FC<Props> = (props) => {
-  const cls = useStyles();
   const wizardProps = useWizard();
 
   return (
@@ -30,7 +28,3 @@ export const CreatePlayChallengeStep: React.FC<Props> = (props) => {
     </DialogWizardStep>
   );
 };
-
-const useStyles = createUseStyles({
-  container: {},
-});
