@@ -1,28 +1,47 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, floatingShadow, softBorderRadius } from 'src/theme';
+import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { RoomAnalysisActivity } from './types';
-import { spacers } from 'src/theme/spacers';
 import { ActivityCommonProps } from '../types';
 import { ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/GameHistory';
 import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
-import { ChessGameHistoryProvided } from 'src/modules/Games/Chess/components/GameHistory';
+import { LayoutContainerDimensions } from 'src/modules/Room/Layouts';
+import { SimplePGN } from 'dstnd-io';
+import { AnalysisPanel } from './components/AnalysisPanel';
 
 export type AnalysisActivityProps = ActivityCommonProps & {
   boardSize: number;
+  leftSide: LayoutContainerDimensions;
   analysis: NonNullable<RoomAnalysisActivity['analysis']>;
+
+  onPgnImported: (pgn: SimplePGN) => void;
 };
 
-export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({ analysis, boardSize }) => {
+export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
+  analysis,
+  boardSize,
+  leftSide,
+  onPgnImported,
+}) => {
   const cls = useStyles();
 
   return (
     <ChessGameHistoryConsumer
-      render={({ displayedHistory, onAddMove, displayedIndex }) => (
+      render={({ history, displayedHistory, onAddMove, displayedIndex }) => (
         <div className={cls.container}>
-          <aside className={cls.side} style={{ height: boardSize }}>
-            <ChessGameHistoryProvided className={cls.gameStateContainer} />
+          <aside className={cls.side} style={{ height: boardSize, width: leftSide.width }}>
+            <AnalysisPanel
+              analysisRecord={
+                history.length > 0
+                  ? {
+                      history,
+                      displayedHistory,
+                    }
+                  : undefined
+              }
+              onPgnImported={onPgnImported}
+            />
           </aside>
           <div
             className={cls.boardContainer}
@@ -79,7 +98,6 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    marginRight: spacers.large,
   },
   sideTop: {
     height: '30%',
@@ -89,15 +107,5 @@ const useStyles = createUseStyles({
   },
   sideBottom: {
     height: '30%',
-  },
-
-  gameStateContainer: {
-    height: '100%',
-    background: colors.white,
-    ...floatingShadow,
-    ...softBorderRadius,
-    // height: 'calc(100% - 80px)',
-    minHeight: '100px',
-    minWidth: '130px',
   },
 });

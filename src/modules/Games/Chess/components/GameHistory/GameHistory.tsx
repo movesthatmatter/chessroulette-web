@@ -13,14 +13,11 @@ export type GameHistoryProps = {
   onRefocus: HistoryListProps['onRefocus'];
 
   className?: string;
+  containerClassName?: string;
 
   // @deprecated
   showRows?: number;
 };
-
-const scrollIntoView = debounce((elm: HTMLDivElement) => {
-  elm.scrollIntoView({ block: 'end', behavior: 'smooth' });
-}, 50);
 
 export const GameHistory: React.FC<GameHistoryProps> = ({
   history = [],
@@ -31,24 +28,18 @@ export const GameHistory: React.FC<GameHistoryProps> = ({
   ...props
 }) => {
   const cls = useStyles();
-  // const [pairedHistory, setPairedHistory] = useState<PairedHistory>([]);
-  // const [focus, setFocus] = useState<PairedIndex>([0, 0]);
-  // const rowElementRefs = useRef<Record<number, HTMLDivElement | null>>({});
-
-  // console.log(JSON.stringify(history, null, 2));
 
   return (
-    <div className={cls.container}>
+    <div className={cx(cls.container, props.containerClassName)}>
       <div className={cx(cls.main, props.className)}>
-        <div className={cls.spacer} />
-        {/* <div className={cls.content}> */}
+        {/* <div className={cls.spacer} /> */}
         <HistoryList
           history={history}
           focusedIndex={focusedIndex}
           onRefocus={onRefocus}
           className={cls.content}
+          rowClassName={cls.row}
         />
-        {/* </div> */}
       </div>
     </div>
   );
@@ -58,27 +49,12 @@ const useStyles = createUseStyles({
   container: {
     display: 'flex',
     height: '100%',
-    // background: 'red',
   },
   main: {
     display: 'flex',
     height: '100%',
     flexDirection: 'column',
     flex: 1,
-    // paddingTop: spacers.default,
-    // paddingRight: '10px',
-    // marginRight: spacers.small,
-  },
-  side: {
-    display: 'flex',
-    height: '100%',
-    // background: 'red',
-    width: '10px',
-    marginLeft: '-10px',
-    ...softBorderRadius,
-    // backgroundImage: 'linearGradient(to bottom, )',
-    background: `linear-gradient(${colors.negativeLight}, ${colors.primary})`,
-    opacity: 0.7,
   },
   spacer: {
     height: spacers.default,
@@ -86,9 +62,12 @@ const useStyles = createUseStyles({
   content: {
     display: 'flex',
     flex: 1,
-    paddingLeft: spacers.default,
-    paddingRight: spacers.default,
     flexDirection: 'column',
     overflowY: 'auto',
+  },
+  row: {
+    '&:last-child': {
+      paddingBottom: 0,
+    }
   },
 });

@@ -13,7 +13,7 @@ import { AnalysisActivityContainer } from './AnalysisActivityContainer';
 
 export default {
   component: AnalysisActivityContainer,
-  title: 'modules/Room/Activities/AnlaysisActivity',
+  title: 'modules/Room/Activities/AnlaysisActivityContainer',
 };
 
 const participantMocker = new RoomActivityParticipantMocker();
@@ -47,45 +47,54 @@ const room = roomMocker.record(
 
 const analysisMocker = new AnalysisRecordMocker();
 
-export const defaultStory = () => (
-  <StorybookBaseProvider
-    withRedux
-    initialState={{
-      ...(myParticipant.isPresent && {
-        peerProvider: {
-          me: myParticipant.member.peer,
-          room: room,
-        },
-      }),
-    }}
-  >
-    <RoomProvider joinedRoom={{
-        ...room,
-        currentActivity: {
-          type: 'analysis',
-          analysisId: '23',
-          participants: {},
-        },
-        members: {},
-      }}>
-      <AnalysisActivityContainer
-        activity={{
-          type: 'analysis',
-          analysisId: '1',
-          participants: {
-            [myAnalsyisParticipant.userId]: myAnalsyisParticipant,
-            [opponentAnalysisParticipant.userId]: opponentAnalysisParticipant,
+export const defaultStory = () => {
+  const analysis = analysisMocker.record(
+    '1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4'
+  );
+
+  return (
+    <StorybookBaseProvider
+      withRedux
+      initialState={{
+        ...(myParticipant.isPresent && {
+          peerProvider: {
+            me: myParticipant.member.peer,
+            room: room,
           },
+        }),
+      }}
+    >
+      <RoomProvider
+        joinedRoom={{
+          ...room,
+          currentActivity: {
+            type: 'analysis',
+            analysisId: '1',
+            participants: {},
+          },
+          members: {},
         }}
-        deviceSize={{
-          isDesktop: true,
-          isMobile: false,
-          isSmallMobile: false,
-        }}
-      />
-    </RoomProvider>
-  </StorybookBaseProvider>
-);
+      >
+        <AnalysisActivityContainer
+          activity={{
+            type: 'analysis',
+            analysisId: '1',
+            participants: {
+              [myAnalsyisParticipant.userId]: myAnalsyisParticipant,
+              [opponentAnalysisParticipant.userId]: opponentAnalysisParticipant,
+            },
+            analysis,
+          }}
+          deviceSize={{
+            isDesktop: true,
+            isMobile: false,
+            isSmallMobile: false,
+          }}
+        />
+      </RoomProvider>
+    </StorybookBaseProvider>
+  );
+};
 
 export const withoutRoomProvider = () => {
   const analysis = analysisMocker.record(
@@ -127,6 +136,43 @@ export const withoutRoomProvider = () => {
 export const withShortPgn = () => {
   const analysis = analysisMocker.record(
     '1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 a6 5. Nc3 Qc7 6. Bd3'
+  );
+
+  return (
+    <StorybookBaseProvider
+      withRedux
+      initialState={{
+        ...(myParticipant.isPresent && {
+          peerProvider: {
+            me: myParticipant.member.peer,
+            room: room,
+          },
+        }),
+      }}
+    >
+      <AnalysisActivityContainer
+        activity={{
+          type: 'analysis',
+          analysisId: analysis.id,
+          analysis,
+          participants: {
+            [myAnalsyisParticipant.userId]: myAnalsyisParticipant,
+            [opponentAnalysisParticipant.userId]: opponentAnalysisParticipant,
+          },
+        }}
+        deviceSize={{
+          isDesktop: true,
+          isMobile: false,
+          isSmallMobile: false,
+        }}
+      />
+    </StorybookBaseProvider>
+  );
+};
+
+export const withLongPgn = () => {
+  const analysis = analysisMocker.record(
+    '1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 a6 5. Nc3 Qc7 6. Bd3 Nc6 7. Be3 b5 8. a3 Bb7 9. O-O Rc8 10. Nxc6 Qxc6 11. Qg4 Nf6 12. Qg3 h5 13. e5 Nd5 14. Ne4 h4 15. Qh3 Qc7 16. f4 Nxe3 17. Qxe3 h3 18. gxh3 f5 19. exf6 d5 20. Nf2 Kf7 21. Rae1 Re8 22. Qg3 g5 23. fxg5 Qxg3+ 24. hxg3 e5 25. g6+ Kxf6 26. Ng4+ Kg5 27. Rf5+ 1-0'
   );
 
   return (
@@ -310,6 +356,45 @@ export const withParallelBranches = () => {
     ...analysisMocker.record(),
     history: historyWithParallelBranches,
     focusIndex: historyWithParallelBranches.length - 1,
+  };
+
+  return (
+    <StorybookBaseProvider
+      withRedux
+      initialState={{
+        ...(myParticipant.isPresent && {
+          peerProvider: {
+            me: myParticipant.member.peer,
+            room: room,
+          },
+        }),
+      }}
+    >
+      <AnalysisActivityContainer
+        activity={{
+          type: 'analysis',
+          analysisId: analysis.id,
+          analysis,
+          participants: {
+            [myAnalsyisParticipant.userId]: myAnalsyisParticipant,
+            [opponentAnalysisParticipant.userId]: opponentAnalysisParticipant,
+          },
+        }}
+        deviceSize={{
+          isDesktop: true,
+          isMobile: false,
+          isSmallMobile: false,
+        }}
+      />
+    </StorybookBaseProvider>
+  );
+};
+
+export const withoutHistory = () => {
+  const analysis = {
+    ...analysisMocker.record(),
+    history: [],
+    focusIndex: -1,
   };
 
   return (

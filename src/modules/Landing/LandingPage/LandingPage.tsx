@@ -50,7 +50,7 @@ export const LandingPage: React.FC<Props> = () => {
             </div>
             <div className={cls.buttonWrapper}>
               <CreateRoomButtonWidget
-                label="Play"
+                label="Play Room"
                 type="primary"
                 createRoomSpecs={{
                   type: 'private',
@@ -62,7 +62,7 @@ export const LandingPage: React.FC<Props> = () => {
                 }}
               />
               <CreateRoomButtonWidget
-                label="Analyze"
+                label="Analysis Room"
                 type="primary"
                 clear
                 size="small"
@@ -71,11 +71,7 @@ export const LandingPage: React.FC<Props> = () => {
                   activityType: 'analysis',
                 }}
               />
-                <LichessChallengeButton
-                    label='Lichess'
-                    size='small'
-                    type='secondary'
-                  />
+              {/* <LichessChallengeButton label="Lichess" size="small" type="secondary" /> */}
             </div>
           </div>
         </div>

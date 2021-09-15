@@ -3,7 +3,7 @@ import { RoomProviderContext, RoomProviderContextState } from './RoomProviderCon
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { useRoomActivityListener } from 'src/modules/Room/RoomActivityLog/useRoomActivityListener';
 import { JoinedRoom } from '../types';
-import { RoomActivityType } from 'dstnd-io';
+import { RoomActivityCreationRecord } from 'dstnd-io';
 import { usePeerState } from 'src/providers/PeerProvider';
 
 type Props = {
@@ -15,26 +15,22 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
   const peerState = usePeerState();
 
   const switchActivity = useCallback(
-    (p: RoomActivityType) => {
+    (content: RoomActivityCreationRecord) => {
       if (peerState.status !== 'open') {
         return;
       }
 
-      if (p === 'analysis') {
+      if (content.activityType === 'analysis') {
         return peerState.client.sendMessage({
           kind: 'switchJoinedRoomActivityRequest',
-          content: {
-            activityType: 'analysis',
-          },
+          content,
         });
       }
 
-      if (p === 'none') {
+      if (content.activityType === 'none') {
         return peerState.client.sendMessage({
           kind: 'switchJoinedRoomActivityRequest',
-          content: {
-            activityType: 'none',
-          },
+          content,
         });
       }
     },

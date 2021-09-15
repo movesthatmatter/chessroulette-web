@@ -15,6 +15,7 @@ import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme'
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { DialogNotificationTypes } from '../type';
 import { RoomPlayActivityWithGame } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
+import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 
 export type GameStateDialogContentProps = {
   activity: RoomPlayActivityWithGame;
@@ -32,6 +33,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
   const [gameResultSeen, setGameResultSeen] = useState(false);
   const activityLog = useSelector(selectCurrentRoomActivityLog);
   const gameActions = useGameActions();
+  const roomConsumer = useRoomConsumer();
 
   // TODO: Make sure the game id matches the room activity game id
   useEffect(() => {
@@ -133,6 +135,20 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
             buttons={
               activity.iamParticipating
                 ? [
+                    {
+                      label: 'Analyze',
+                      type: 'primary',
+                      onClick: () => {
+                        setGameResultSeen(true);
+                        if (roomConsumer) {
+                          roomConsumer.roomActions.switchActivity({
+                            activityType: 'analysis',
+                            history: game.history,
+                          });
+                        }
+                        // gameActions.onRematchOffer({});
+                      },
+                    },
                     {
                       label: 'Rematch',
                       type: 'positive',

@@ -16,7 +16,7 @@ type Props = {
   pageSize?: number;
 };
 
-export const GamesArchive: React.FC<Props> = ({ userId, pageSize = 4 }) => {
+export const GamesArchive: React.FC<Props> = ({ userId, pageSize = 10 }) => {
   const cls = useStyles();
 
   return (
@@ -27,13 +27,11 @@ export const GamesArchive: React.FC<Props> = ({ userId, pageSize = 4 }) => {
           userId,
           pageSize: p.pageSize,
           currentIndex: p.pageIndex,
-        }).map((games) => {
-          return {
-            items: games.items.map(gameRecordToGame),
-            itemsTotal: games.itemsTotal,
-            currentIndex: games.currentIndex,
-          };
-        })
+        }).map((games) => ({
+          items: games.items.map(gameRecordToGame),
+          itemsTotal: games.itemsTotal,
+          currentIndex: games.currentIndex,
+        }))
       }
       render={(r) => {
         return (

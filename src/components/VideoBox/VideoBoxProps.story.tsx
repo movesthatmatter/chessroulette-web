@@ -1,16 +1,16 @@
 import React from 'react';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
-import { AvStream } from './AVStream';
+import { VideoBox } from './VideoBox';
 
 export default {
-  component: AvStream,
-  title: 'components/AvStream',
+  component: VideoBox,
+  title: 'components/VideoBox',
 };
 
 export const defaultStory = () => (
   <WithLocalStream
     render={(stream) => (
-      <AvStream
+      <VideoBox
         stream={stream}
         autoPlay
         muted

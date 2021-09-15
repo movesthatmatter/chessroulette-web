@@ -25,7 +25,7 @@ export const SwitchActivityRoomConsumer: React.FC<Props> = (props) => {
       <a
         className={cls.link}
         onClick={() => {
-          context.roomActions.switchActivity(props.type);
+          // context.roomActions.switchActivity(props.type);
         }}
       >
         {props.text}

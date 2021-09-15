@@ -14,8 +14,9 @@ export type HistoryListProps = {
   history: ChessRecursiveHistory;
   onRefocus: (nextIndex: ChessHistoryIndex) => void;
   focusedIndex?: ChessHistoryIndex;
-  className?: string;
   rootPairedIndex?: number;
+  className?: string;
+  rowClassName?: string;
 };
 
 const scrollIntoView = debounce((elm: HTMLDivElement) => {
@@ -28,6 +29,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
   onRefocus,
   className,
   rootPairedIndex = 0,
+  rowClassName,
 }) => {
   const rowElementRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const containerElementRef = useRef<HTMLDivElement | null>();
@@ -73,6 +75,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
           }
           focusedIndex={focusedIndex}
           onFocus={onRefocus}
+          containerClassName={rowClassName}
         />
       ))}
     </div>
