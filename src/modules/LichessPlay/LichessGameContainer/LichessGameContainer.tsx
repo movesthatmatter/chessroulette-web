@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
 import { LichessGameState } from '../types';
-import { LichessGameStateDialogProvider } from './components/LichessGameStateDialogProvider';
-import { LichessGame } from 'src/modules/Games/Chess/components/LichessGame/LichessGame';
-import { useLichessProvider } from '../LichessAPI/useLichessProvider';
+import { LichessGameStateDialogProvider } from './LichessGameStateDialog/LichessGameStateDialogProvider';
+import { LichessGame } from 'src/modules/LichessPlay/LichessGame/LichessGame';
+import { useLichessProvider } from '../LichessProvider/hooks/useLichessProvider';
 import { updateGameWithNewStateFromLichess } from '../utils';
 import {
   ChessGameHistoryConsumer,
   ChessGameHistoryProvider,
 } from 'src/modules/Games/Chess/components/GameHistory';
 import { floatingShadow, softBorderRadius } from 'src/theme';
-import { useLichessGameActions } from '../useLichessGameActions/useLichessGameActions';
-import { useLichessLogProvider } from './useLichessLogProvider/useLichessLogProvider';
+import { useLichessGameActions } from '../LichessGameActions/hooks/useLichessGameActions';
+import { useLichessLogProvider } from '../hooks/useLichessLogProvider';
 import { LichessGameActions } from '../LichessGameActions/LichessGameActions';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';

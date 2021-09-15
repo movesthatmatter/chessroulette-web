@@ -7,9 +7,9 @@ import { selectGame } from 'src/modules/Room/RoomActivity/redux/selectors';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { console } from 'window-or-global';
-import { useLichessProvider } from '../LichessAPI/useLichessProvider';
-import { LichessPlayer } from '../types';
-import { lichessGameActionsPayloads } from './payloads';
+import { useLichessProvider } from '../../LichessProvider/hooks/useLichessProvider';
+import { LichessPlayer } from '../../types';
+import { lichessGameActionsPayloads } from '../../payloads';
 
 type Events = {
   onGameUpdate: Game;

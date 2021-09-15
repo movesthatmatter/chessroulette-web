@@ -10,7 +10,7 @@ import {
   RegisteredUserRecordWithLichessConnection,
   useAuthenticatedUserWithLichessAccount,
 } from 'src/services/Authentication';
-import { useLichessGameActions } from '../useLichessGameActions/useLichessGameActions';
+import { useLichessGameActions } from './hooks/useLichessGameActions';
 import {
   getAwayPlayerFromGameAndAuth,
   getHomePlayerFromGameAndAuth,

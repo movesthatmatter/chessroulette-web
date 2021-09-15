@@ -12,7 +12,7 @@ import {
   sendAMessage,
   sendAMove,
   startOpenSeek,
-} from '../resources';
+} from './resources';
 import { LichessGameState, NDJsonReader, LichessChallenge, LichessChatLine, LichessPlayer } from '../types';
 import { Pubsy } from 'src/lib/Pubsy';
 import { makeUci, parseSquare } from 'chessops/util';

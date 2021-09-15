@@ -73,7 +73,7 @@ export const LandingPage: React.FC<Props> = () => {
                 }}
               />
               <CreateRoomButtonWidget
-                label='Lichess'
+                label='Lichess Open Challenge'
                 type='primary'
                 createRoomSpecs={{
                   type: 'private',

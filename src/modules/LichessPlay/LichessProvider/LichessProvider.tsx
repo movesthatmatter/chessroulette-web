@@ -2,7 +2,7 @@ import { ChessGameColor, ChessMove, GameSpecsRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { Game } from 'src/modules/Games';
 import { useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
-import { LichessManager } from './LichessGameManager';
+import { LichessManager } from '../LichessAPI/LichessGameManager';
 
 import { LichessChallenge, LichessChatLine, LichessGameState, LichessPlayer } from '../types';
 

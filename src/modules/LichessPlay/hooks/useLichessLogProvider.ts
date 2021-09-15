@@ -10,10 +10,10 @@ import { selectCurrentRoomActivityLog } from "src/modules/Room/RoomActivityLog/r
 import { selectChatHistory, usePeerState } from "src/providers/PeerProvider";
 import { useAuthenticatedUserWithLichessAccount } from "src/services/Authentication";
 import { SocketClient } from "src/services/socket/SocketClient";
-import { useLichessProvider } from "../../LichessAPI/useLichessProvider"
-import { LichessChatLine, LichessGeneralChatLine, LichessSystemChatLines } from "../../types";
-import { convertLichessChatLineToChatMessageRecord, filterChatLineMessage, getLastPendingNotificationOfType, getMessageCorrespondence } from "../../utils";
-import { isDrawOffer, isSystemChatLine, isTakebackOffer } from "./utils";
+import { useLichessProvider } from "../LichessProvider/hooks/useLichessProvider"
+import { LichessChatLine, LichessGeneralChatLine, LichessSystemChatLines } from "../types";
+import { convertLichessChatLineToChatMessageRecord, filterChatLineMessage, getLastPendingNotificationOfType, getMessageCorrespondence } from "../utils";
+import { isDrawOffer, isSystemChatLine, isTakebackOffer } from "../LichessGameActions/utils";
 
 export const useLichessLogProvider = (homeColor: ChessGameColor) => {
   const lichess = useLichessProvider();

@@ -1,6 +1,6 @@
 import { LichessGameJoinRequestPayload, LichessGameUpdateRequestPayload } from "dstnd-io"
 import { Game } from "src/modules/Games"
-import { LichessPlayer } from "../types"
+import { LichessPlayer } from "./types"
 
 export const lichessGameActionsPayloads =  {
   onGameJoined : (game: Game, player: LichessPlayer) : LichessGameJoinRequestPayload => ({

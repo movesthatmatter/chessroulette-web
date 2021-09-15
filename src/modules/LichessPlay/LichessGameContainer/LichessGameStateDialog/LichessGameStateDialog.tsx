@@ -7,7 +7,7 @@ import { Game } from 'src/modules/Games';
 import { getPlayerByColor } from 'src/modules/Games/Chess/lib';
 import { useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
 import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
-import { useLichessProvider } from '../../LichessAPI/useLichessProvider';
+import { useLichessProvider } from '../../LichessProvider/hooks/useLichessProvider';
 import { getHomePlayerFromGameAndAuth } from '../../utils';
 import { LichessGameDialogContext } from './LichessGameStateDialogProvider';
 

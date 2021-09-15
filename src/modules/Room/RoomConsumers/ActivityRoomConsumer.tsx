@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { updateCurrentAnalysisAction, updateJoinedGameAction } from '../RoomActivity/redux/actions';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { LichessActivity } from '../RoomActivity/activities/LichessActivity/LichessActivity';
-import { useLichessGameActions } from 'src/modules/LichessPlay/useLichessGameActions/useLichessGameActions';
+import { useLichessGameActions } from 'src/modules/LichessPlay/LichessGameActions/hooks/useLichessGameActions';
 
 type Props = {};
 

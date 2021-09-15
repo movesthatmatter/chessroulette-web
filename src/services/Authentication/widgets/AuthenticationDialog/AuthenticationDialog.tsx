@@ -9,15 +9,19 @@ import { keyInObject } from 'src/lib/util';
 import { AsyncResult, CreateUserAccountRequestPayload, RegisteredUserRecord } from 'dstnd-io';
 import { CodeVerificationForm } from '../../components/CodeVerificationForm';
 import { UserAccountInfo } from '../../types';
-import { colors, onlyMobile } from 'src/theme';
+import { colors, fonts, onlyMobile } from 'src/theme';
 import { Emoji } from 'src/components/Emoji';
 import capitalize from 'capitalize';
 import { useAuthenticationService } from '../../useAuthentication';
 import { Events } from 'src/services/Analytics';
+import { LichessAuthButton } from 'src/vendors/lichess';
+import { spacers } from 'src/theme/spacers';
+import { Hr } from 'src/components/Hr';
 
 type Props = {
   visible: boolean;
   onClose?: () => void;
+  lichessAuth?: boolean;
 };
 
 type VerificationStep = {
@@ -108,9 +112,9 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
                   ...(keyInObject(r.external.user, 'lastName') && {
                     firstName: r.external.user.lastName,
                   }),
-                 ...(r.external.vendor === 'lichess' && {
-                   username: r.external.user.username
-                 })
+                  ...(r.external.vendor === 'lichess' && {
+                    username: r.external.user.username,
+                  }),
                 },
                 verifiedExternalVendorInfo: {
                   vendor: input.vendor,
@@ -140,7 +144,28 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
     verification: (_: undefined) => ({
       title: `I'm so excited to meet you!`,
       graphic: <Mutunachi mid="1" className={cls.mutunachi} />,
-      content: <VerificationForm onSubmit={authenticate} />,
+      content: props.lichessAuth ? (
+      <>
+      <Hr text="Login or Register" />
+      <div style={{padding: spacers.default, ...fonts.body1}}>
+        Connect a lichess account to play an open challenge.
+      </div>
+        <LichessAuthButton
+          full
+          label="Lichess"
+          type="secondary"
+          onSuccess={(accessToken) => {
+            authenticate({
+              type: 'external',
+              vendor: 'lichess',
+              accessToken,
+            });
+          }}
+        />
+        </>
+      ) : (
+        <VerificationForm onSubmit={authenticate} />
+      ),
     }),
     registration: (s: RegistrationStep['state']) => ({
       title: `Heey, you're new around here!`,
@@ -175,8 +200,11 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
                   .create({
                     isGuest: false,
                     accessToken: r.accessToken,
-                  }).map(() => {
-                    const via = s.verifiedExternalVendorInfo ? s.verifiedExternalVendorInfo.vendor : 'email';
+                  })
+                  .map(() => {
+                    const via = s.verifiedExternalVendorInfo
+                      ? s.verifiedExternalVendorInfo.vendor
+                      : 'email';
 
                     Events.trackAuthenticated('registration', via);
                   });

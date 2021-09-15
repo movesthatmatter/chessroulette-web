@@ -7,12 +7,12 @@ import { useGameActions } from 'src/modules/Games/GameActions';
 import { InfoNotificationItem } from './components/InfoNotificationItem';
 import { OfferNotificationItem } from './components/OfferNotificationItem';
 import { selectCurrentRoomActivityLog } from './redux/selectors';
-import { useLichessGameActions } from 'src/modules/LichessPlay/useLichessGameActions/useLichessGameActions';
+import { useLichessGameActions } from 'src/modules/LichessPlay/LichessGameActions/hooks/useLichessGameActions';
 import { RoomActivityType, roomType } from 'dstnd-io';
 import { resolveOfferNotificationAction } from './redux/actions';
 import { OfferNotification, OfferType } from './types';
 import { noop } from 'src/lib/util';
-import { useLichessProvider } from 'src/modules/LichessPlay/LichessAPI/useLichessProvider';
+import { useLichessProvider } from 'src/modules/LichessPlay/LichessProvider/hooks/useLichessProvider';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;

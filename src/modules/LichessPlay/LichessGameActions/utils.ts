@@ -1,4 +1,4 @@
-import { LichessChatLine, LichessDrawOfferLine, LichessSystemChatLines, LichessTakebackOfferLine } from "../../types";
+import { LichessChatLine, LichessDrawOfferLine, LichessSystemChatLines, LichessTakebackOfferLine } from "../types";
 
 export function isSystemChatLine (line: LichessChatLine) : line is LichessSystemChatLines {
   return line.username === 'lichess';
