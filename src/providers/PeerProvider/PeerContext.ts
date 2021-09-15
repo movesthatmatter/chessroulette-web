@@ -17,6 +17,7 @@ export type PeerContextState =
           hasJoinedRoom: true;
           room: Room;
           connected: boolean;
+          connectionAttempt: boolean;
           connectToRoom: () => void;
           disconnectFromRoom: () => void;
           leaveRoom: () => void;

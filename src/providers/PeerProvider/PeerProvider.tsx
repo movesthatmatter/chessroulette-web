@@ -1,4 +1,4 @@
-import { IceServerRecord, UserRecord } from 'dstnd-io';
+import { IceServerRecord, RoomRecord, UserRecord } from 'dstnd-io';
 import React from 'react';
 import { PeerContext, PeerContextState } from './PeerContext';
 import { PeerConnectionsHandler, PeerConnectionsState } from './Handlers';
@@ -108,13 +108,6 @@ export class PeerProvider extends React.Component<Props, State> {
       return { status: 'init' };
     }
 
-    // TODO: Not sure this works correctly
-    if (this.state.peerConnectionsState.status === 'closed') {
-      return {
-        status: 'closed',
-      };
-    }
-
     if (this.props.roomAndMe.room) {
       return {
         status: 'open',
@@ -125,6 +118,9 @@ export class PeerProvider extends React.Component<Props, State> {
         connected:
           this.state.peerConnectionsState.status === 'ready' &&
           this.state.peerConnectionsState.connected,
+        connectionAttempt:
+          this.state.peerConnectionsState.status === 'ready' &&
+          this.state.peerConnectionsState.connectionAttempted,
         connectToRoom: this.connectToRoom.bind(this),
         disconnectFromRoom: this.disconnectFromRoom.bind(this),
         leaveRoom: this.leaveRoom.bind(this),
@@ -174,20 +170,22 @@ export class PeerProvider extends React.Component<Props, State> {
   render() {
     return (
       <>
-        <PeerConnectionsHandler
-          onPeerStream={(p) => this.props.dispatch(addPeerStream(p))}
-          onPeerDisconnected={(peerId) => {
-            this.props.dispatch(closePeerChannelsAction({ peerId }));
-          }}
-          iceServers={this.props.iceServers}
-          user={this.props.user}
-          onStateUpdate={(peerConnectionsState) => this.setState({ peerConnectionsState })}
-        />
-        {this.state.peerConnectionsState.status === 'ready' && (
-          <PeerContext.Provider value={this.state.contextState}>
-            {this.props.children}
-          </PeerContext.Provider>
+        {this.props.roomAndMe.room && (
+          <PeerConnectionsHandler
+            // Reset this once the room changes
+            key={this.props.roomAndMe.room.id}
+            onPeerStream={(p) => this.props.dispatch(addPeerStream(p))}
+            onPeerDisconnected={(peerId) =>
+              this.props.dispatch(closePeerChannelsAction({ peerId }))
+            }
+            iceServers={this.props.iceServers}
+            user={this.props.user}
+            onStateUpdate={(peerConnectionsState) => this.setState({ peerConnectionsState })}
+          />
         )}
+        <PeerContext.Provider value={this.state.contextState}>
+          {this.props.children}
+        </PeerContext.Provider>
       </>
     );
   }

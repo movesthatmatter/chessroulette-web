@@ -28,6 +28,7 @@ export type PeerConnectionsState =
   | {
       status: 'ready';
       connected: boolean;
+      connectionAttempted: boolean;
       connect: PeerConnections['connect'];
       disconnect: PeerConnections['disconnect'];
       destroy: () => void;
@@ -178,9 +179,22 @@ export class PeerConnectionsHandler extends Component<Props, State> {
   }
 
   private connect(peers: Parameters<PeerConnections['connect']>[0]) {
-    if (this.peerConnections) {
-      this.peerConnections.connect(peers);
+    if (!(this.state.status === 'ready' && this.peerConnections)) {
+      return;
     }
+
+    this.peerConnections.connect(peers);
+
+    this.setState((prev) => {
+      if (prev.status !== 'ready') {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        connectionAttempted: true,
+      };
+    });
   }
 
   private disconnect() {
