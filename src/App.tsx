@@ -4,13 +4,11 @@ import { ReduxProvider } from './redux/Provider';
 import { AuthenticationProvider } from './services/Authentication';
 import { Routes } from './Routes';
 import { JssProvider, ThemeProvider } from 'react-jss';
-import { PeerProvider } from './providers/PeerProvider';
-import { SocketProvider } from './providers/SocketProvider';
 import config from './config';
 import { GA } from './services/Analytics';
 import { RouteEffects } from './RouteEffects';
 import { ScrollToTop } from './components/ScrollToTop';
-import { LichessProvider } from './modules/LichessPlay/LichessAPI/LichessProvider';
+import { LichessProvider } from './modules/LichessPlay/LichessProvider';
 
 function App() {
   useEffect(() => {

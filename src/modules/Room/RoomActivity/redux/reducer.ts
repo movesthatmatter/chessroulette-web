@@ -46,6 +46,17 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       };
     }
 
+    if (payload.room.activity.type === 'lichess' && prev.type === 'lichess' ){
+      if(payload.room.activity.gameId !== prev.game?.id){
+        return payload.room.activity;
+      }
+
+      return {
+        ...payload.room.activity,
+        game: prev.game,
+      }
+    }
+
     if (
       // And the activity is "Analysis"
       payload.room.activity.type === 'analysis' &&
@@ -71,6 +82,12 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
     return prev;
   }),
   handleAction(updateJoinedGameAction, (prev, { payload: nextGame }) => {
+    if (prev.type === 'lichess'){
+      return {
+        ...prev,
+        game: nextGame
+      }
+    }
     if (prev.type !== 'play') {
       return prev;
     }

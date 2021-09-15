@@ -12,7 +12,7 @@ import { useGameActions } from '../../hooks/useGameActions';
 import { ConfirmNewGameAction } from '../ConfirmNewGameAction';
 import { useTakebackStatus } from '../../hooks';
 import {
-  roomPlayActivityParticipantToChessPlayer,
+  roomActivityParticipantToChessPlayer,
   RoomPlayActivityWithGameAndParticipating,
 } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 import { getParticipantUserInfo } from 'src/modules/Room/RoomActivity/util/util';
@@ -35,7 +35,7 @@ export const GameActions: React.FC<Props> = ({
   const actions = useGameActions();
   const { game, offer, participants } = activity;
 
-  const myPlayer = roomPlayActivityParticipantToChessPlayer(participants.me);
+  const myPlayer = roomActivityParticipantToChessPlayer(participants.me);
 
   const takebackSatus = useTakebackStatus(game, myPlayer, offer);
 

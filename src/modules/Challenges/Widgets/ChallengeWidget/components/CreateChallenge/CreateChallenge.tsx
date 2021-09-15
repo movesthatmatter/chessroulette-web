@@ -16,6 +16,7 @@ import { spacers } from 'src/theme/spacers';
 export type CreateChallengeProps = {
   gameSpecs: ChallengeRecord['gameSpecs'];
   onUpdated: (gs: GameSpecsRecord) => void;
+  activityType: 'play' | 'lichess';
 };
 
 const formatTimeLimit = humanizeDuration.humanizer({
@@ -23,7 +24,11 @@ const formatTimeLimit = humanizeDuration.humanizer({
   round: true,
 });
 
-export const CreateChallenge: React.FC<CreateChallengeProps> = ({ gameSpecs, onUpdated }) => {
+export const CreateChallenge: React.FC<CreateChallengeProps> = ({
+  gameSpecs,
+  onUpdated,
+  activityType = 'play',
+}) => {
   const cls = useStyles();
 
   return (
@@ -31,21 +36,28 @@ export const CreateChallenge: React.FC<CreateChallengeProps> = ({ gameSpecs, onU
       <div className={cls.top}>
         <SelectInput
           label="Time Limit"
-          options={Object.keys(metadata.game.chessGameTimeLimitMsMap).map((k) => {
-            const timeLimit = (chessGameTimeLimitMsMap as any)[k];
+          options={Object.keys(metadata.game.chessGameTimeLimitMsMap)
+            .filter((s) => {
+              if (activityType === 'lichess' && s.toLowerCase().includes('rapid')) {
+                return s;
+              }
+              if (activityType === 'play') return s;
+            })
+            .map((k) => {
+              const timeLimit = (chessGameTimeLimitMsMap as any)[k];
 
-            if (k === 'untimed') {
+              if (k === 'untimed') {
+                return {
+                  value: k,
+                  label: capitalize(k),
+                };
+              }
+
               return {
                 value: k,
-                label: capitalize(k),
+                label: `${capitalize(k)} (${formatTimeLimit(timeLimit)})`,
               };
-            }
-
-            return {
-              value: k,
-              label: `${capitalize(k)} (${formatTimeLimit(timeLimit)})`,
-            };
-          })}
+            })}
           value={{
             label:
               gameSpecs.timeLimit === 'untimed'

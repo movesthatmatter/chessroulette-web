@@ -1,7 +1,9 @@
-import { ActivePiecesRecord } from 'dstnd-io';
+import { ActivePiecesRecord, ChessGameColor } from 'dstnd-io';
 import { objectKeys } from 'src/lib/util';
 import { PlayParticipants } from 'src/modules/Games';
 import { Game } from 'src/modules/Games/types';
+import { getOtherColor } from 'src/modules/LichessPlay/utils';
+import { Date } from 'window-or-global';
 
 const pointsByMaterial = {
   p: 1,
@@ -58,3 +60,17 @@ export const getPlayersTimeLeft = (game: Game, participants: PlayParticipants) =
 
   return { home, away } as const;
 };
+
+export const getPlayersTimeLeftFromGame = (game: Game, homeColor: ChessGameColor) => {
+  const now = new Date().getTime();
+
+  const home = game.state === 'started' && game.lastMoveBy !== homeColor 
+    ? game.timeLeft[homeColor] - (now - new Date(game.lastMoveAt). getTime())
+    : game.timeLeft[homeColor]
+
+  const away = game.state === 'started' && game.lastMoveBy !== getOtherColor(homeColor)
+    ? game.timeLeft[getOtherColor(homeColor)] - (now - new Date(game.lastMoveAt).getTime())
+    : game.timeLeft[getOtherColor(homeColor)]
+
+  return {home, away} as const;
+}

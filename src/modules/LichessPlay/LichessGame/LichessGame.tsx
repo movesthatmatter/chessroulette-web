@@ -1,9 +1,9 @@
 import { ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
 import React from 'react';
 import { Game } from 'src/modules/Games/types';
-import { LichessGameStateDialogConsumer } from 'src/modules/LichessPlay/PlayLichess/components/LichessGameStateDialogConsumer';
-import { useSoundEffects } from '../../hooks';
-import { ChessBoard, ChessBoardProps } from '../ChessBoard';
+import { LichessGameStateDialogConsumer } from 'src/modules/LichessPlay/LichessGameContainer/LichessGameStateDialog/LichessGameStateDialogConsumer';
+import { useSoundEffects } from '../../Games/Chess/hooks';
+import { ChessBoard, ChessBoardProps } from '../../Games/Chess/components/ChessBoard';
 
 type LichessGameProps = Omit<ChessBoardProps, 'onMove' | 'id' | 'pgn' | 'overlayComponent'> & {
   game: Game;

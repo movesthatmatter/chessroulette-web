@@ -15,8 +15,8 @@ import { JoinedRoom } from 'src/modules/Room/types';
 export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
   const dispatch = useDispatch();
 
-  const offer = room?.currentActivity.type === 'play' ? room?.currentActivity.offer : undefined;
-  const game = room?.currentActivity.type === 'play' ? room?.currentActivity.game : undefined;
+  const offer = room?.currentActivity.type === 'play' || room?.currentActivity.type === 'lichess' ? room?.currentActivity.offer : undefined;
+  const game = room?.currentActivity.type === 'play' || room?.currentActivity.type === 'lichess' ? room?.currentActivity.game : undefined;
 
   const [gameAndOfferZipWithPrev, setGameAndOfferZipWithPrev] = useStateWithPrev({ game, offer });
 

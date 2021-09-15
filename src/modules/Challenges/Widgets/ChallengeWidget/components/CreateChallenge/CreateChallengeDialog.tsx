@@ -83,7 +83,7 @@ export const CreateChallengeDialog: React.FC<Props> = ({
       }
       content={
         <div>
-          <CreateChallenge gameSpecs={gameSpecs} onUpdated={setGameSpecs} />
+          <CreateChallenge gameSpecs={gameSpecs} onUpdated={setGameSpecs} activityType='play'/>
           <CheckBox />
         </div>
       }

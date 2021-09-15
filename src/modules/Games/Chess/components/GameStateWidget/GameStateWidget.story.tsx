@@ -4,7 +4,7 @@ import React from 'react';
 import { minutes, seconds } from 'src/lib/time';
 import { GameMocker } from 'src/mocks/records';
 import { RoomPlayActivityParticipantMocker } from 'src/mocks/records/RoomPlayActivityParticipant';
-import { roomPlayActivityParticipantToChessPlayer } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
+import { roomActivityParticipantToChessPlayer } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { GameStateWidget } from './GameStateWidget';
 
@@ -24,8 +24,8 @@ export const defaultStory = () => {
     state: 'pending',
     timeLimit: 'blitz5',
     players: [
-      roomPlayActivityParticipantToChessPlayer(homeParticipant),
-      roomPlayActivityParticipantToChessPlayer(awayParticipant),
+      roomActivityParticipantToChessPlayer(homeParticipant),
+      roomActivityParticipantToChessPlayer(awayParticipant),
     ],
     timeLeft: {
       white: minutes(5),
@@ -49,6 +49,7 @@ export const defaultStory = () => {
         }}
       >
         <GameStateWidget
+          homeColor='white'
           game={game}
           playParticipants={{
             home: homeParticipant,
@@ -87,6 +88,7 @@ export const withTimeFinished = () => (
           }}
         >
           <GameStateWidget
+            homeColor='white'
             playParticipants={{
               home: homeParticipant,
               away: awayParticipant,
@@ -97,11 +99,11 @@ export const withTimeFinished = () => (
               players: [
                 {
                   color: 'white',
-                  user: roomPlayActivityParticipantToChessPlayer(homeParticipant).user,
+                  user: roomActivityParticipantToChessPlayer(homeParticipant).user,
                 },
                 {
                   color: 'black',
-                  user: roomPlayActivityParticipantToChessPlayer(awayParticipant).user,
+                  user: roomActivityParticipantToChessPlayer(awayParticipant).user,
                 },
               ],
               timeLeft: {
@@ -134,6 +136,7 @@ export const withGameStarted = () => (
       }}
     >
       <GameStateWidget
+        homeColor='white'
         playParticipants={{
           home: homeParticipant,
           away: awayParticipant,
@@ -144,11 +147,11 @@ export const withGameStarted = () => (
           players: [
             {
               color: 'white',
-              user: roomPlayActivityParticipantToChessPlayer(homeParticipant).user,
+              user: roomActivityParticipantToChessPlayer(homeParticipant).user,
             },
             {
               color: 'black',
-              user: roomPlayActivityParticipantToChessPlayer(awayParticipant).user,
+              user: roomActivityParticipantToChessPlayer(awayParticipant).user,
             },
           ],
           timeLeft: {

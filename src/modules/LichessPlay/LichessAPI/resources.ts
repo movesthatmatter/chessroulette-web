@@ -1,6 +1,6 @@
 import ndjsonStream from 'can-ndjson-stream';
 import { AsyncResultWrapper, Err, Ok } from 'dstnd-io';
-import { NDJsonReader } from './types';
+import { NDJsonReader } from '../types';
 import api from './api';
 
 type ApiError = {
@@ -32,6 +32,23 @@ export function getBoardStreamById(id: string, opts: RequestInit) {
       return new Err({ type: 'BadRequest', value: e });
     }
   });
+}
+
+export function startOpenSeek(opts: RequestInit) {
+  return new AsyncResultWrapper<{ok: true},{ok: false, err: any}>(async () => {
+    try {
+      await api.post(`board/seek`, {
+        headers: {
+          ...opts.headers,
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body: opts.body
+      });
+      return new Ok({ok: true} as const)
+    } catch (e) {
+      return new Err({ok: false, err: e} as const)
+    }
+  })
 }
 
 export function sendAChallenge(userName: string, opts: RequestInit) {
@@ -155,6 +172,32 @@ export function declineDrawOffer(gameId: string, opts: RequestInit){
       return new Ok({ok:true} as const)
     } catch (e) {
       return new Err({ ok: false, error: e } as const);
+    }
+  })
+}
+
+export function acceptOfOfferTakeback(gameId: string, opts:RequestInit){
+  return new AsyncResultWrapper<{ok: true},{ok:false, error: any}>(async () => {
+    try{
+      await api.post(`board/game/${gameId}/takeback/yes`,{
+        headers: opts.headers
+      })
+      return new Ok({ok:true} as const)
+    } catch (e) {
+      return new Err({ ok: false, error: e} as const);
+    }
+  })
+}
+
+export function declineTakeback(gameId: string, opts:RequestInit){
+  return new AsyncResultWrapper<{ok: true},{ok:false, error: any}>(async () => {
+    try{
+      await api.post(`board/game/${gameId}/takeback/no`, {
+        headers: opts.headers
+      })
+      return new Ok({ok:true} as const)
+    } catch (e) {
+      return new Err({ ok: false, error: e} as const);
     }
   })
 }

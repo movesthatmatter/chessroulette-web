@@ -8,13 +8,14 @@ import { AVCheckStep } from './steps/AVCheckStep';
 
 type Props = {
   onFinished: (s: WizardState) => void;
+  type: 'play' | 'lichess'
 };
 
 type WizardState = {
   gameSpecs: GameSpecsRecord;
 };
 
-export const CreatePlayRoomWizard: React.FC<Props> = (props) => {
+export const CreateGameRoomWizard: React.FC<Props> = (props) => {
   const cls = useStyles();
 
   const [wizardState, setWizardState] = useState<WizardState>({
@@ -27,6 +28,7 @@ export const CreatePlayRoomWizard: React.FC<Props> = (props) => {
   return (
     <Wizard>
       <CreatePlayChallengeStep
+        type={props.type}
         gameSpecs={wizardState.gameSpecs}
         onUpdated={(nextGameSpecs) => setWizardState({ gameSpecs: nextGameSpecs })}
       />

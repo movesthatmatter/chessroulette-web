@@ -1,16 +1,19 @@
 import {
   acceptChallenge,
+  acceptOfOfferTakeback,
   acceptOrOfferDraw,
   declineChallenge,
   declineDrawOffer,
+  declineTakeback,
   getBoardStreamById,
   getLichessStreamEvent,
   resignGame,
   sendAChallenge,
   sendAMessage,
   sendAMove,
-} from '../resources';
-import { LichessGameState, NDJsonReader, LichessChallenge, LichessChatLine } from '../types';
+  startOpenSeek,
+} from './resources';
+import { LichessGameState, NDJsonReader, LichessChallenge, LichessChatLine, LichessPlayer } from '../types';
 import { Pubsy } from 'src/lib/Pubsy';
 import { makeUci, parseSquare } from 'chessops/util';
 import {
@@ -20,14 +23,13 @@ import {
 } from 'dstnd-io';
 import { NormalMove } from 'chessops/types';
 import { Game } from '../../Games';
-import { getHomeColor, lichessGameToChessRouletteGame, getPromoPieceFromMove } from '../utils';
+import { getHomeColor, lichessGameToChessRouletteGame, getPromoPieceFromMove, getAwayColor } from '../utils';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
-import { console } from 'window-or-global';
 import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';
 
 type LichessManagerEvents = {
   onStreamStart: undefined;
-  onNewGame : {game:Game, homeColor: ChessGameColor};
+  onNewGame : {game:Game, homeColor: ChessGameColor, player: LichessPlayer};
   onGameFinish: undefined;
   onGameUpdate: {gameState: LichessGameState};
   onChallenge: { challenge: LichessChallenge };
@@ -48,8 +50,7 @@ export class LichessManager {
   }
 
   startStreamAndChallenge = (specs: GameSpecsRecord) => {
-    getLichessStreamEvent(this.auth)
-    .map((reader) => this.loopThroughNDJson(reader))
+   this.startStream()
     .flatMap(() => {
       return sendAChallenge('tttcr', {
         ...this.auth,
@@ -57,11 +58,45 @@ export class LichessManager {
           'color': specs.preferredColor, 
           'clock.limit' : (chessGameTimeLimitMsMap[specs.timeLimit]/1000).toString(),
           'clock.increment' : '0'
-        }),
+        })
+      // return startOpenSeek({
+      //   ...this.auth,
+      // body: new URLSearchParams({
+      //   'color': specs.preferredColor, 
+      //   'time' : (chessGameTimeLimitMsMap[specs.timeLimit]/ 60000).toString(),
+      //   'increment' : '0'
+      // })
       })
     })
-    .mapErr(e => console.log('Error starting a stream', e.value));
+    .mapErr(e => console.log('Error starting a stream'));
   };
+
+  sendANewChallenge = (specs: GameSpecsRecord) => {
+    return sendAChallenge('tttcr', {
+      ...this.auth,
+      body: new URLSearchParams({
+        'color': specs.preferredColor, 
+        'clock.limit' : (chessGameTimeLimitMsMap[specs.timeLimit]/1000).toString(),
+        'clock.increment' : '0'
+      }) 
+  })
+}
+
+  startSeek = (specs: GameSpecsRecord) => {
+    startOpenSeek({
+      ...this.auth,
+      body: new URLSearchParams({
+        'color': specs.preferredColor, 
+        'time' : (chessGameTimeLimitMsMap[specs.timeLimit]/60000).toString(),
+        'increment' : '0'
+      })
+    })
+  }
+
+  startStream = () => {
+    return getLichessStreamEvent(this.auth)
+    .map(reader => this.loopThroughNDJson(reader))
+  }
 
   private gameStart = (id: string) => {
     getBoardStreamById(id, this.auth)
@@ -108,13 +143,25 @@ export class LichessManager {
     .resolve()
   }
 
-  acceptChallenge = (challenge: LichessChallenge) => {
-    acceptChallenge(challenge.id, this.auth)
+  acceptOrOfferTakeback = (gameId: string) => {
+    return acceptOfOfferTakeback(gameId, this.auth)
+    .mapErr(e => console.log('failed to accept takeback'))
+    .resolve()
+  }
+
+  declineTakeback = (gameId:string) => {
+    return declineTakeback(gameId, this.auth) 
+    .mapErr(e => console.log('failed to decline a takeback'))
+    .resolve()
+  }
+
+  acceptChallenge = () => {
+    acceptChallenge(this.challengeId as string, this.auth)
     .mapErr(e => console.log('error accepting a challenge', e))
   };
 
-  declineChallenge = (challenge: LichessChallenge) => {
-    declineChallenge(challenge.id, this.auth)
+  declineChallenge = () => {
+    declineChallenge(this.challengeId as string, this.auth)
     .mapErr((e) => console.log('error declining a challenge', e));
   };
 
@@ -140,7 +187,8 @@ export class LichessManager {
       if (event.value.type === 'gameFull') {
         this.pubsy.publish( 'onNewGame', {
           homeColor: getHomeColor(event.value, this.user.externalAccounts.lichess.userId), 
-          game: lichessGameToChessRouletteGame(event.value, this.user)
+          game: lichessGameToChessRouletteGame(event.value, this.user),
+          player: event.value[getAwayColor(event.value, this.user.externalAccounts.lichess.userId)]
         })
       }
 
@@ -162,7 +210,9 @@ export class LichessManager {
       // }
 
       if (event.value.type === 'challenge') {
-        this.pubsy.publish('onChallenge', { challenge: event.value.challenge as LichessChallenge });
+        if (event.value.challenge.challenger.id !== this.user.externalAccounts.lichess.userId){
+          this.pubsy.publish('onChallenge', { challenge: event.value.challenge as LichessChallenge });
+        }
         this.challengeId= event.value.challenge.id;
       }
 
@@ -189,7 +239,7 @@ export class LichessManager {
     this.pubsy.subscribe('onGameFinish', fn);
   }
 
-  onNewGame(fn: (data: {game: Game, homeColor: ChessGameColor}) => void){
+  onNewGame(fn: (data: {game: Game, homeColor: ChessGameColor, player: LichessPlayer}) => void){
     this.pubsy.subscribe('onNewGame', fn);
   }
 

@@ -2,16 +2,18 @@ import { ChessGameColor, ChessMove, GameSpecsRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { Game } from 'src/modules/Games';
 import { useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
-import { LichessManager } from './LichessGameManager';
+import { LichessManager } from '../LichessAPI/LichessGameManager';
 
-import { LichessChatLine, LichessGameState } from '../types';
+import { LichessChallenge, LichessChatLine, LichessGameState, LichessPlayer } from '../types';
 
 type LichessContext = {
   initAndChallenge : (specs: GameSpecsRecord) => void;
+  startStream: () => void;
   makeMove: (move: ChessMove, id: string) => void;
   onChallengeAccepted: (fn: () => void) => void;
+  onChallenge: (fn: (data: { challenge: LichessChallenge }) => void) => void;
   onGameUpdate : (fn: (data : {gameState: LichessGameState}) => void) => void;
-  onNewGame : (fn: (data: {game: Game, homeColor: ChessGameColor}) => void) => void
+  onNewGame : (fn: (data: {game: Game, homeColor: ChessGameColor, player:LichessPlayer}) => void) => void
   onGameFinish: (fn :() => void) => void;
   onNewChatLine: (fn: (data: {chatLine: LichessChatLine}) => void) => void;
   sendChatMessage: (msg:string, gameId: string) => void;
@@ -19,6 +21,12 @@ type LichessContext = {
   acceptDraw : (gameId : string) => void;
   declineDraw : (gameId: string) => void;
   sendDrawOffer : (gameId: string) => void;
+  acceptTakeback : (gameId: string) => void;
+  declineTakeback: (gameId: string) => void;
+  sendTakebackOffer: (gameId: string) => void;
+  onRematchAccept: () => void;
+  onRematchDeny: () => void;
+  makeNewChallenge : (specs: GameSpecsRecord) => void;
 } | undefined
 
 export const LichessContext = React.createContext<LichessContext>(undefined);
@@ -41,16 +49,22 @@ export const LichessProvider: React.FC<Props> = (props) => {
         initAndChallenge : (gameSpecs) => {
           return lichessManager.startStreamAndChallenge(gameSpecs);
         },
+        startStream: () => {
+          return lichessManager.startStream();
+        },
         makeMove : (move, id) => {
           return lichessManager.makeMove(move, id);
         },
         onChallengeAccepted : (fn: () => void) => {
           return lichessManager.onChallengeAccepted(fn);
         },
+        onChallenge: (fn: (data: { challenge: LichessChallenge })  => void) => {
+          return lichessManager.onChallenge(fn);
+        },
         onGameUpdate: (fn : (data: {gameState: LichessGameState}) => void) => {
           return lichessManager.onGameUpdate(fn);
         },
-        onNewGame: (fn: (data: {game: Game, homeColor: ChessGameColor}) => void) => {
+        onNewGame: (fn: (data: {game: Game, homeColor: ChessGameColor, player:LichessPlayer}) => void) => {
           return lichessManager.onNewGame(fn);
         },
         onGameFinish: (fn: () => void) => { 
@@ -73,6 +87,24 @@ export const LichessProvider: React.FC<Props> = (props) => {
         },
         sendDrawOffer: (gameId) => {
           return lichessManager.acceptOrOfferDraw(gameId)
+        },
+        acceptTakeback: (gameId) => {
+          return lichessManager.acceptOrOfferTakeback(gameId);
+        },
+        declineTakeback: (gameId) => {
+          return lichessManager.declineTakeback(gameId);
+        },
+        sendTakebackOffer: (gameId) => {
+          return lichessManager.acceptOrOfferTakeback(gameId);
+        },
+        onRematchAccept: () => {
+          return lichessManager.acceptChallenge();
+        },
+        onRematchDeny: () => {
+          return lichessManager.declineChallenge();
+        },
+        makeNewChallenge: (specs: GameSpecsRecord) => {
+          return lichessManager.sendANewChallenge(specs);
         }
       }
     })

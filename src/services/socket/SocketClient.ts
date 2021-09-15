@@ -44,8 +44,11 @@ import {
   GameTakebackOfferingDenyRequestPayload,
   AnalysisMoveRequestPayload,
   AnalysisRefocusRequestPayload,
-  AnalysisDrawnShapesUpdatedRequestPayload,
+  // AnalysisDrawnShapesUpdatedRequestPayload,
   SwitchRoomActivityRequestPayload,
+  // AnalysisDrawnShapesUpdatedRequestPayload, 
+  LichessGameJoinRequestPayload, 
+  LichessGameUpdateRequestPayload
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
@@ -105,10 +108,14 @@ type SendableMessagesMap = {
   gameChallengeAcceptRequestPayload: GameChallengeAcceptRequestPayload;
   gameChallengeDenyRequestPayload: GameChallengeDenyRequestPayload;
 
+  //Lichess
+  lichessGameJoinedPayload: LichessGameJoinRequestPayload;
+  lichessGameUpdatePayload: LichessGameUpdateRequestPayload;
+
   // Analysis
   analysisMoveRequestPayload: AnalysisMoveRequestPayload;
   analysisRefocusRequestPayload: AnalysisRefocusRequestPayload;
-  analysisDrawnShapesUpdatedRequestPayload: AnalysisDrawnShapesUpdatedRequestPayload;
+  // analysisDrawnShapesUpdatedRequestPayload: AnalysisDrawnShapesUpdatedRequestPayload;
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {

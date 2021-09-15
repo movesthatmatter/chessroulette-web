@@ -43,7 +43,12 @@ export const useTakebackStatus = (
       }
       const lastNotification = logArrayOrdered[logArrayOrdered.length - 1];
       if (gameAndOfferZipWithPrev.prev.offer?.type === 'takeback') {
-        if (isOfferNotification(lastNotification) && lastNotification.status === 'withdrawn') {
+        if (
+          isOfferNotification(lastNotification) &&
+          lastNotification.status === 'withdrawn' &&
+          gameAndOfferZipWithPrev.prev.game.history &&
+          gameAndOfferZipWithPrev.prev.game.history?.length < game.history.length
+        ) {
           return true;
         }
         return false;

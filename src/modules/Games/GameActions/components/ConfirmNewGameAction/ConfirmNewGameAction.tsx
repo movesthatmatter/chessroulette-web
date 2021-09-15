@@ -119,6 +119,7 @@ export const ConfirmNewGameAction: React.FC<Props> = ({
               {renderContent}
             </div>
             <CreateChallenge
+              activityType='play'
               gameSpecs={gameSpecs}
               onUpdated={(nextGameSpecs) => {
                 setGameSpecs(nextGameSpecs);
