@@ -13,7 +13,7 @@ type Props = {
   onPeerStream?: Parameters<PeerConnections['onPeerStream']>[0];
   onError?: Parameters<PeerConnections['onError']>[0];
 
-  onStateUpdate?: (pcsState: State['pcs']) => void;
+  onStateUpdate?: (pcsState: State) => void;
 };
 
 export type PeerConnectionsState =
@@ -26,12 +26,7 @@ export type PeerConnectionsState =
       open: (iceServers: IceServerRecord[], user: UserRecord) => void;
     }
   | {
-      status: 'opening';
-      destroy: () => void;
-      connect: PeerConnections['connect'];
-    }
-  | {
-      status: 'open';
+      status: 'ready';
       connected: boolean;
       connect: PeerConnections['connect'];
       disconnect: PeerConnections['disconnect'];
@@ -44,9 +39,7 @@ export type PeerConnectionsState =
 
 type Unsubscriber = () => void;
 
-type State = {
-  pcs: PeerConnectionsState;
-};
+type State = PeerConnectionsState;
 
 // The reason this is needed as a class is because it make the state
 //  sync up with the various functions that use it much simpler vs an FCM
@@ -60,12 +53,12 @@ export class PeerConnectionsHandler extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.state = {
-      pcs: { status: 'init' },
-    };
+    this.state = { status: 'init' };
 
     this.onStateUpdate();
+  }
 
+  componentDidMount() {
     // Open the connnection on mount
     this.open();
   }
@@ -76,16 +69,16 @@ export class PeerConnectionsHandler extends Component<Props, State> {
     this.destroy();
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(_: Props, prevState: State) {
     // TODO: Make sure this is triggered on flag changes
-    if (prevState.pcs !== this.state.pcs) {
+    if (prevState !== this.state) {
       this.onStateUpdate();
     }
   }
 
   private onStateUpdate() {
     if (this.props.onStateUpdate) {
-      this.props.onStateUpdate(this.state.pcs);
+      this.props.onStateUpdate(this.state);
     }
   }
 
@@ -106,23 +99,13 @@ export class PeerConnectionsHandler extends Component<Props, State> {
           this.props.onOpen();
         }
 
-        this.setState((prev) => {
-          // console.log('[usePeerConnections] on Open ATTEMPT to set state', instance.current);
-          if (!this.peerConnections) {
-            return prev;
-          }
-
-          return {
-            ...prev,
-            pcs: {
-              status: 'open',
-              connected: false,
-              client: this.peerConnections,
-              connect: this.connect.bind(this),
-              disconnect: this.disconnect.bind(this),
-              destroy: this.destroy.bind(this),
-            },
-          };
+        this.setState({
+          status: 'ready',
+          connected: false,
+          client: this.peerConnections,
+          connect: this.connect.bind(this),
+          disconnect: this.disconnect.bind(this),
+          destroy: this.destroy.bind(this),
         });
       }),
       this.peerConnections.onClose(() => {
@@ -130,15 +113,10 @@ export class PeerConnectionsHandler extends Component<Props, State> {
           this.props.onClose();
         }
 
-        this.setState((prev) => {
-          return {
-            ...prev,
-            pcs: {
-              status: 'closed',
-              open: this.open.bind(this),
-              destroy: this.destroy.bind(this),
-            },
-          };
+        this.setState({
+          status: 'closed',
+          open: this.open.bind(this),
+          destroy: this.destroy.bind(this),
         });
       }),
       this.peerConnections.onPeerConnected((...args) => {
@@ -147,16 +125,13 @@ export class PeerConnectionsHandler extends Component<Props, State> {
         }
 
         this.setState((prev) => {
-          if (!this.peerConnections && prev.pcs.status === 'open') {
+          if (!this.peerConnections && prev.status === 'ready') {
             return prev;
           }
 
           return {
             ...prev,
-            pcs: {
-              ...prev.pcs,
-              connected: true,
-            },
+            connected: true,
           };
         });
       }),
@@ -166,16 +141,13 @@ export class PeerConnectionsHandler extends Component<Props, State> {
         }
 
         this.setState((prev) => {
-          if (!(this.peerConnections && prev.pcs.status === 'open')) {
+          if (!(this.peerConnections && prev.status === 'ready')) {
             return prev;
           }
 
           return {
             ...prev,
-            pcs: {
-              ...prev.pcs,
-              connected: Object.keys(this.peerConnections.connections).length > 0,
-            },
+            connected: Object.keys(this.peerConnections.connections).length > 0,
           };
         });
       }),
@@ -198,11 +170,9 @@ export class PeerConnectionsHandler extends Component<Props, State> {
       this.peerConnections = undefined;
 
       this.setState({
-        pcs: {
-          status: 'closed',
-          open: this.open.bind(this),
-          destroy: this.destroy.bind(this),
-        },
+        status: 'closed',
+        open: this.open.bind(this),
+        destroy: this.destroy.bind(this),
       });
     }
   }
