@@ -15,7 +15,7 @@ import {
   GameChallengeOfferingRequestPayload,
   GameChallengeDenyRequestPayload,
   GameChallengeAcceptRequestPayload,
-  GameSpecsRecord,
+  GameSpecsRecord, GameTakebackOfferingRequestPayload, GameTakebackOfferingAcceptRequestPayload, GameTakebackOfferingDenyRequestPayload
 } from 'dstnd-io';
 
 export type OfferRematchProps = {
@@ -78,6 +78,18 @@ export const gameActionPayloads = {
   denyRematch: (): GameRematchDenyRequestPayload => ({
     kind: 'gameRematchDenyRequest',
     content: undefined,
+  }),
+  takebackOffer : () : GameTakebackOfferingRequestPayload => ({
+    kind: 'gameTakebackOfferingRequest',
+    content: undefined
+  }),
+  acceptTakeback: (): GameTakebackOfferingAcceptRequestPayload => ({
+    kind: 'gameTakebackOfferingAcceptRequest',
+    content: undefined
+  }),
+  denyTakeback: () : GameTakebackOfferingDenyRequestPayload => ({
+    kind: 'gameTakebackOfferingDenyRequest',
+    content: undefined
   }),
   cancelOffer: (): GameOfferingCancelRequestPayload => ({
     kind: 'gameOfferingCancelRequest',

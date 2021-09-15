@@ -39,6 +39,13 @@ import {
   GameChallengeOfferingRequestPayload,
   GameChallengeAcceptRequestPayload,
   GameChallengeDenyRequestPayload,
+  GameTakebackOfferingRequestPayload,
+  GameTakebackOfferingAcceptRequestPayload,
+  GameTakebackOfferingDenyRequestPayload,
+  AnalysisMoveRequestPayload,
+  AnalysisRefocusRequestPayload,
+  AnalysisDrawnShapesUpdatedRequestPayload,
+  SwitchRoomActivityRequestPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
@@ -46,7 +53,7 @@ type ReceivableMessagesMap = {
   peerJoinedRoom: PeerJoinedRoomPayload;
   myStats: MyStatsPayload;
   connectionOpened: ConnectionOpenedPayload;
-  
+
   joinRoomSuccess: JoinRoomSuccessPayload;
   joinRoomFailure: JoinRoomFailurePayload;
   joinedRoomUpdated: JoinedRoomUpdatedPayload;
@@ -54,7 +61,7 @@ type ReceivableMessagesMap = {
   ping: PingPayload;
 
   // Game
-  joinedGameUpdatedPayload: JoinedGameUpdatedPayload,
+  joinedGameUpdatedPayload: JoinedGameUpdatedPayload;
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {
@@ -72,6 +79,7 @@ type SendableMessagesMap = {
   // Room
   joinRoomRequest: JoinRoomRequestPayload;
   leaveRoomRequest: LeaveRoomRequestPayload;
+  switchRoomActivityRequestPayload: SwitchRoomActivityRequestPayload;
 
   //Chat
   broadcastChatMessage: BroadcastChatMessagePayload;
@@ -83,6 +91,9 @@ type SendableMessagesMap = {
   gameDrawOfferingRequestPayload: GameDrawOfferingRequestPayload;
   gameDrawAcceptRequestPayload: GameDrawAcceptRequestPayload;
   gameDrawDenyRequestPayload: GameDrawDenyRequestPayload;
+  gameTakebackOfferingRequestPayload: GameTakebackOfferingRequestPayload;
+  gameTakebackAcceptRequestPayload: GameTakebackOfferingAcceptRequestPayload;
+  gameTakebackDenyRequestPayload: GameTakebackOfferingDenyRequestPayload;
   gameRematchOfferingRequestPayload: GameRematchOfferingRequestPayload;
   gameRematchDenyRequestPayload: GameRematchDenyRequestPayload;
   gameRematchAcceptRequestPayload: GameRematchAcceptRequestPayload;
@@ -90,10 +101,14 @@ type SendableMessagesMap = {
   gameOfferingCancelRequestPayload: GameOfferingCancelRequestPayload;
   gameStatusCheckRequestPayload: GameStatusCheckRequestPayload;
 
-  gameChallengeOfferingRequestPayload: GameChallengeOfferingRequestPayload,
-  gameChallengeAcceptRequestPayload: GameChallengeAcceptRequestPayload,
-  gameChallengeDenyRequestPayload: GameChallengeDenyRequestPayload,
+  gameChallengeOfferingRequestPayload: GameChallengeOfferingRequestPayload;
+  gameChallengeAcceptRequestPayload: GameChallengeAcceptRequestPayload;
+  gameChallengeDenyRequestPayload: GameChallengeDenyRequestPayload;
 
+  // Analysis
+  analysisMoveRequestPayload: AnalysisMoveRequestPayload;
+  analysisRefocusRequestPayload: AnalysisRefocusRequestPayload;
+  analysisDrawnShapesUpdatedRequestPayload: AnalysisDrawnShapesUpdatedRequestPayload;
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {
@@ -104,11 +119,11 @@ type SendableMessagesMap = {
 
 export class SocketClient {
   private pubsy = new Pubsy<
-  {
-    onReady: null;
-    onMessage: SocketPayload;
-    onClose: null;
-  } & ReceivableMessagesMap
+    {
+      onReady: null;
+      onMessage: SocketPayload;
+      onClose: null;
+    } & ReceivableMessagesMap
   >();
 
   public connection: SocketX;
@@ -121,37 +136,36 @@ export class SocketClient {
     });
 
     this.connection.addEventListener('message', ({ data }) => {
-      io.toResult(socketPayload.decode(JSON.parse(data)))
-        .map((msg) => {
-          // I don't like this at all but there's no way to map
-          //  the types to the message in a clean way in typescript
-          //  as it doesn't (yet) support mapping by tagged union kinds
-          // See: https://github.com/microsoft/TypeScript/issues/30581
-          switch (msg.kind) {
-            case 'connectionOpened':
-              this.pubsy.publish('connectionOpened', msg);
-              break;
-            case 'peerJoinedRoom':
-              this.pubsy.publish('peerJoinedRoom', msg);
-              break;
-            case 'joinedRoomUpdated':
-              this.pubsy.publish('joinedRoomUpdated', msg);
-              break;
-            case 'myStats':
-              this.pubsy.publish('myStats', msg);
-              break;
-            case 'joinRoomSuccess':
-              this.pubsy.publish('joinRoomSuccess', msg);
-              break;
-            case 'joinRoomFailure':
-              this.pubsy.publish('joinRoomFailure', msg);
-              break;
-            default:
-              break;
-          }
+      io.toResult(socketPayload.decode(JSON.parse(data))).map((msg) => {
+        // I don't like this at all but there's no way to map
+        //  the types to the message in a clean way in typescript
+        //  as it doesn't (yet) support mapping by tagged union kinds
+        // See: https://github.com/microsoft/TypeScript/issues/30581
+        switch (msg.kind) {
+          case 'connectionOpened':
+            this.pubsy.publish('connectionOpened', msg);
+            break;
+          case 'peerJoinedRoom':
+            this.pubsy.publish('peerJoinedRoom', msg);
+            break;
+          case 'joinedRoomUpdated':
+            this.pubsy.publish('joinedRoomUpdated', msg);
+            break;
+          case 'myStats':
+            this.pubsy.publish('myStats', msg);
+            break;
+          case 'joinRoomSuccess':
+            this.pubsy.publish('joinRoomSuccess', msg);
+            break;
+          case 'joinRoomFailure':
+            this.pubsy.publish('joinRoomFailure', msg);
+            break;
+          default:
+            break;
+        }
 
-          this.pubsy.publish('onMessage', msg);
-        });
+        this.pubsy.publish('onMessage', msg);
+      });
     });
   }
 
@@ -165,7 +179,7 @@ export class SocketClient {
 
   onMessageType<K extends keyof ReceivableMessagesMap>(
     msg: K,
-    fn: (p: ReceivableMessagesMap[K]) => unknown,
+    fn: (p: ReceivableMessagesMap[K]) => unknown
   ) {
     return this.pubsy.subscribe(msg, fn);
   }

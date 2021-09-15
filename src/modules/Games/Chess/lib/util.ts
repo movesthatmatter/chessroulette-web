@@ -7,11 +7,21 @@ import {
   ChessGameStatePgn,
   chessGameUtils,
   ChessHistory,
+  ChessHistoryBlackMove,
+  ChessHistoryMove,
+  ChessHistoryWhiteMove,
   ChessMove,
   ChessPlayer,
   UserRecord,
 } from 'dstnd-io';
-import { FullMove, HalfMove, PairedMove, PairedHistory } from './types';
+import {
+  FullMove,
+  PairedMove,
+  PairedHistory,
+  PartialWhiteMove,
+  PartialBlackMove,
+  PartialMove,
+} from './types';
 import { flatten } from 'src/lib/util';
 import { getRelativeMaterialScore } from '../components/GameStateWidget/util';
 import { Game, GameFromGameState } from '../../types';
@@ -49,25 +59,47 @@ export const toChessColor = (c: 'w' | 'white' | 'b' | 'black') => {
   return c === 'b' || c === 'black' ? 'black' : 'white';
 };
 
-export const isFullMove = (pm: unknown): pm is FullMove => Array.isArray(pm) && pm.length === 2;
-export const isHalfMove = (pm: unknown): pm is HalfMove => Array.isArray(pm) && pm.length === 1;
-export const isPairedMove = (pm: unknown): pm is PairedMove => isFullMove(pm) || isHalfMove(pm);
+export const isPartialMove = (pm: PairedMove): pm is PartialMove =>
+  isPartialWhiteMove(pm) || isPartialBlackMove(pm);
+export const isPartialWhiteMove = (pm: PairedMove): pm is PartialWhiteMove =>
+  Array.isArray(pm) && pm.length === 1 && pm[0].color === 'white';
+export const isPartialBlackMove = (pm: PairedMove): pm is PartialBlackMove =>
+  Array.isArray(pm) && pm.length === 1 && pm[0].color === 'black';
+
+export const isChessHistoryBlackMove = (m: ChessHistoryMove): m is ChessHistoryBlackMove =>
+  m.color === 'black';
+export const isChessHistoryWhiteMove = (m: ChessHistoryMove): m is ChessHistoryWhiteMove =>
+  m.color === 'white';
+
+export const isFullMove = (pm: PairedMove): pm is FullMove =>
+  Array.isArray(pm) &&
+  pm.length === 2 &&
+  !!pm[0] &&
+  pm[0].color === 'white' &&
+  !!pm[1] &&
+  pm[1].color === 'black';
 
 export const toPairedHistory = (history: ChessHistory): PairedHistory =>
   history.reduce((prev, next) => {
+    const currentPartialMove: PartialMove = [next];
+
+    // If the length is zero just return the partial move
+    //  Note (could be a black one as well if the history starts in the middle)
     if (prev.length === 0) {
-      return [[next]];
+      return [currentPartialMove];
     }
 
-    const lastMove = prev.slice(-1)[0];
-    if (isFullMove(lastMove)) {
-      return [...prev, [next]];
+    // If the previous move is a partial white and the current move is a partial black
+    //  then just merge them
+    const prevPartialMove = prev.slice(-1)[0];
+    if (isPartialWhiteMove(prevPartialMove) && isPartialBlackMove(currentPartialMove)) {
+      const prevWithoutLast = prev.slice(0, -1);
+      const nextFullMove: FullMove = [prevPartialMove[0], currentPartialMove[0]];
+      return [...prevWithoutLast, nextFullMove];
     }
 
-    const nextFullMove: FullMove = [...lastMove, next];
-    const prevWithoutLastMove = prev.slice(0, -1);
-
-    return [...prevWithoutLastMove, nextFullMove];
+    // Otherwise just append the current white partial move to prev
+    return [...prev, currentPartialMove];
   }, [] as PairedHistory);
 
 export const pairedHistoryToHistory = (ph: PairedHistory): ChessHistory =>
@@ -78,9 +110,7 @@ export const pairedHistoryToHistory = (ph: PairedHistory): ChessHistory =>
 export type PairedIndex = [number, number];
 
 export const linearToPairedIndex = (history: ChessHistory, index: number): PairedIndex => {
-  const diff = history.length - 1 - index;
-
-  return [Math.floor(diff / 2), diff % 2];
+  return [Math.floor(index / 2), index % 2];
 };
 
 export const pairedToLinearIndex = (index: PairedIndex) => index[0] * 2 + index[1];
@@ -90,8 +120,13 @@ export const reversedLinearIndex = (history: ChessHistory, index: number) =>
 
 export const historyToPgn = (moves: ChessHistory): ChessGameStatePgn =>
   toPairedHistory(moves)
-    .map((pm, index) =>
-      isFullMove(pm) ? `${index + 1}. ${pm[0].san} ${pm[1].san}` : `${index + 1}. ${pm[0].san}`
+    .map(
+      (pm, index) =>
+        isFullMove(pm)
+          ? `${index + 1}. ${pm[0].san} ${pm[1].san}` // full move
+          : isPartialWhiteMove(pm)
+          ? `${index + 1}. ${pm[0].san}` // halfMove
+          : '' // if a PartialBlackMove do nothing as this won't be a valid PGN
     )
     .join(' ');
 
@@ -139,7 +174,7 @@ export const getGameAfterMove = (
   return new Err(undefined);
 };
 
-type UserAsPlayerStats =
+export type UserAsPlayerStats =
   | {
       isPlayer: true;
       player: ChessPlayer;
@@ -147,14 +182,15 @@ type UserAsPlayerStats =
       canPlay: boolean;
       materialScore: number;
     }
-  | ({
+  | {
       isPlayer: false;
       player: undefined;
       opponent: undefined;
       canPlay: false;
       materialScore: undefined;
-    } & {});
+    };
 
+// TODO: Deprecate in favor of PlayRoomActivity stats
 export const getPlayerStats = (game: Game, userId: UserRecord['id']): UserAsPlayerStats => {
   const player = getPlayer(userId, game.players);
 
@@ -176,16 +212,18 @@ export const getPlayerStats = (game: Game, userId: UserRecord['id']): UserAsPlay
       opponent,
       canPlay,
       materialScore: materialScore[player.color],
-    };
+    } as const;
   }
 
-  return {
-    player: undefined,
-    isPlayer: false,
-    opponent: undefined,
-    canPlay: false,
-    materialScore: undefined,
-  };
+  return defaultPlayerStats;
+};
+
+export const defaultPlayerStats: UserAsPlayerStats = {
+  player: undefined,
+  isPlayer: false,
+  opponent: undefined,
+  canPlay: false,
+  materialScore: undefined,
 };
 
 export const gameRecordToGame = <T extends ChessGameState>(g: T) => {

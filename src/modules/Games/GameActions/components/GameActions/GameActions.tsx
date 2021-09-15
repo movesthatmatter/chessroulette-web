@@ -1,37 +1,43 @@
-import { ChessGameState, ChessPlayer, RoomPlayActivityRecord } from 'dstnd-io';
 import React from 'react';
 import { ActionButton, Button } from 'src/components/Button';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { Refresh, Flag, Edit } from 'grommet-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHandshakeAltSlash } from '@fortawesome/free-solid-svg-icons';
+import { faHandshakeAltSlash, faUndo } from '@fortawesome/free-solid-svg-icons';
 import { spacers } from 'src/theme/spacers';
 import { noop } from 'src/lib/util';
 import { getUserDisplayName } from 'src/modules/User';
 import cx from 'classnames';
 import { useGameActions } from '../../hooks/useGameActions';
 import { ConfirmNewGameAction } from '../ConfirmNewGameAction';
-import { getOppositePlayer } from '../../../Chess/lib';
+import { useTakebackStatus } from '../../hooks';
+import {
+  roomPlayActivityParticipantToChessPlayer,
+  RoomPlayActivityWithGameAndParticipating,
+} from 'src/modules/Room/RoomActivity/activities/PlayActivity';
+import { getParticipantUserInfo } from 'src/modules/Room/RoomActivity/util/util';
 
 
 type Props = {
-  myPlayer: ChessPlayer;
-  game: ChessGameState;
-  roomActivity: RoomPlayActivityRecord;
+  activity: RoomPlayActivityWithGameAndParticipating;
   className?: string;
   isMobile?: boolean;
   onActionTaken?: (a: keyof ReturnType<typeof useGameActions>) => void;
 };
 
 export const GameActions: React.FC<Props> = ({
-  game,
-  myPlayer,
+  activity,
   isMobile = false,
   onActionTaken = noop,
   ...props
 }) => {
   const cls = useStyles();
   const actions = useGameActions();
+  const { game, offer, participants } = activity;
+
+  const myPlayer = roomPlayActivityParticipantToChessPlayer(participants.me);
+
+  const takebackSatus = useTakebackStatus(game, myPlayer, offer);
 
   const content = () => {
     const dynamicProps = isMobile
@@ -46,22 +52,13 @@ export const GameActions: React.FC<Props> = ({
           reverse: true,
         };
 
-    const otherPlayer = getOppositePlayer(myPlayer, game.players);
-
-    if (!otherPlayer) {
-      return null;
-    }
-
     if (game.state === 'finished' || game.state === 'stopped' || game.state === 'neverStarted') {
       return (
         <>
-          {(props.roomActivity.offer?.type === 'rematch' ||
-            props.roomActivity.offer?.type === 'challenge') &&
-          props.roomActivity.offer?.content.byUser.id === myPlayer.user.id ? (
+          {(offer?.type === 'rematch' || offer?.type === 'challenge') &&
+          offer?.content.byUser.id === participants.me.userId ? (
             <Button
-              label={
-                props.roomActivity.offer.type === 'rematch' ? 'Cancel Rematch' : 'Cancel Challenge'
-              }
+              label={offer.type === 'rematch' ? 'Cancel Rematch' : 'Cancel Challenge'}
               type="primary"
               clear
               className={cls.gameActionButton}
@@ -79,16 +76,16 @@ export const GameActions: React.FC<Props> = ({
               //  but another offer just came in. This ensures the client is not able to send
               //  2 notifications at the same time.
               //  TODO: But the server should take care of that as well
-              key={props.roomActivity.offer?.id}
+              key={offer?.id}
               title="Rematch"
               content={{
                 __html: `Challenge <strong>${getUserDisplayName(
-                  otherPlayer.user
+                  getParticipantUserInfo(participants.opponent.participant)
                 )}</strong> to a Rematch or create a New Game below`,
               }}
               prevGameSpecs={{
                 timeLimit: game.timeLimit,
-                preferredColor: otherPlayer.color,
+                preferredColor: participants.opponent.color,
               }}
               submitButton={(p) =>
                 p.isRematchable
@@ -106,7 +103,7 @@ export const GameActions: React.FC<Props> = ({
                   actions.onRematchOffer({ gameSpecs });
                   onActionTaken('onRematchOffer');
                 } else {
-                  actions.onOfferChallenge({ gameSpecs, toUserId: otherPlayer.user.id });
+                  actions.onOfferChallenge({ gameSpecs, toUserId: participants.opponent.userId });
                   onActionTaken('onOfferChallenge');
                 }
               }}
@@ -117,7 +114,7 @@ export const GameActions: React.FC<Props> = ({
                   confirmation="Rematch"
                   actionType="positive"
                   icon={Refresh}
-                  disabled={props.roomActivity.offer?.type === 'rematch'}
+                  disabled={offer?.type === 'rematch'}
                   onFirstClick={p.onConfirm}
                   onSubmit={() => {}}
                   className={cls.gameActionButton}
@@ -133,8 +130,7 @@ export const GameActions: React.FC<Props> = ({
     if (game.state === 'pending') {
       return (
         <>
-          {props.roomActivity.offer?.type === 'challenge' &&
-          props.roomActivity.offer?.content.byUser.id === myPlayer.user.id ? (
+          {offer?.type === 'challenge' && offer?.content.byUser.id === participants.me.userId ? (
             <Button
               label="Cancel"
               type="primary"
@@ -154,23 +150,23 @@ export const GameActions: React.FC<Props> = ({
               //  but another offer just came in. This ensures the client is not able to send
               //  2 notifications at the same time.
               //  TODO: But the server should take care of that as well
-              key={props.roomActivity.offer?.id}
+              key={offer?.id}
               title="Edit Game"
               content={{
                 __html: `Create a new game with <strong>${getUserDisplayName(
-                  otherPlayer.user
+                  getParticipantUserInfo(participants.opponent.participant)
                 )}</strong>`,
               }}
               prevGameSpecs={{
                 timeLimit: game.timeLimit,
-                preferredColor: myPlayer.color,
+                preferredColor: participants.me.color,
               }}
               submitButton={{
                 label: 'Submit',
                 type: 'primary',
               }}
               onSubmit={({ gameSpecs }) => {
-                actions.onOfferChallenge({ gameSpecs, toUserId: otherPlayer.user.id });
+                actions.onOfferChallenge({ gameSpecs, toUserId: participants.opponent.userId });
                 onActionTaken('onOfferChallenge');
               }}
               render={(p) => (
@@ -178,7 +174,7 @@ export const GameActions: React.FC<Props> = ({
                   type="primary"
                   label="Edit Game"
                   actionType="positive"
-                  disabled={props.roomActivity.offer?.type === 'challenge'}
+                  disabled={offer?.type === 'challenge'}
                   confirmation="Edit Game"
                   icon={Edit}
                   onFirstClick={p.onConfirm}
@@ -208,8 +204,7 @@ export const GameActions: React.FC<Props> = ({
             className={cls.gameActionButton}
             {...dynamicProps}
           />
-          {props.roomActivity.offer?.type === 'draw' &&
-          props.roomActivity.offer?.content.byUser.id === myPlayer.user.id ? (
+          {offer?.type === 'draw' && offer?.content.byUser.id === participants.me.userId ? (
             <Button
               label="Cancel Draw Offer"
               type="primary"
@@ -234,7 +229,23 @@ export const GameActions: React.FC<Props> = ({
                 actions.onOfferDraw();
                 onActionTaken('onOfferDraw');
               }}
-              disabled={props.roomActivity.offer?.type === 'draw'}
+              disabled={offer?.type === 'draw'}
+              className={cls.gameActionButton}
+              {...dynamicProps}
+            />
+          )}
+          {takebackSatus.show && (
+            <ActionButton
+              type="primary"
+              label="Takeback"
+              confirmation="Confirm"
+              actionType="attention"
+              iconComponent={<FontAwesomeIcon icon={faUndo} color="#fff" />}
+              onSubmit={() => {
+                actions.onTakebackOffer();
+                onActionTaken('onTakebackOffer');
+              }}
+              disabled={offer?.type === 'takeback'}
               className={cls.gameActionButton}
               {...dynamicProps}
             />

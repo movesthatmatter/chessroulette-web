@@ -1,19 +1,37 @@
 import { AsyncResultWrapper, Ok } from 'dstnd-io';
-
-export type AVStreamingConstraints = {
-  video: boolean;
-  audio: boolean;
-};
+import { Pubsy } from 'src/lib/Pubsy';
+import {AVStreamingConstraints} from './types';
 
 type DestroyStreamFn = () => void;
 
 // Note: As of Dec 5h, 2020, It currently doesn't seperate the Audio from Video if needed in the future!
 class AVStreamingClass {
+  private pubsy = new Pubsy<{
+    onUpdateConstraints: AVStreamingConstraints;
+  }>();
+
   private pendingStreamCreationPromise?: Promise<MediaStream>;
 
   public activeStreamsById: {
     [id: string]: MediaStream;
   } = {};
+
+  private _activeConstraints: AVStreamingConstraints = {
+    audio: true,
+    video: true,
+  };
+
+  
+  set activeConstraints({video, audio} : {video:boolean;audio:boolean}) {
+    this._activeConstraints = {
+      video, 
+      audio
+    }
+  }
+  
+  get activeConstraints() {
+    return this._activeConstraints;
+  }
 
   private getAnActiveStream = () => {
     const firstActiveStreamId = Object.keys(this.activeStreamsById)[0];
@@ -23,7 +41,7 @@ class AVStreamingClass {
     }
 
     return this.activeStreamsById[firstActiveStreamId];
-  }
+  };
 
   private hasActiveStream() {
     return !!this.getAnActiveStream();
@@ -60,7 +78,7 @@ class AVStreamingClass {
   // TODO: As of 12/09/2020 I haven't found a way to stop and restart the
   //  same getUserMedia stream, but if that would work than all we would need
   //  is to create one!
-  destroyStreamByIdAfter(streamId: string, ms = 250) {
+  destroyStreamByIdWithDelay(streamId: string, ms = 250) {
     setTimeout(() => {
       this.destroyStreamById(streamId);
     }, ms);
@@ -74,7 +92,7 @@ class AVStreamingClass {
     return clonedStream;
   }
 
-  private cloneAnActiveStream(constraints: AVStreamingConstraints) {
+  private cloneAnActiveStream() {
     const stream = this.getAnActiveStream();
 
     if (!stream) {
@@ -84,26 +102,35 @@ class AVStreamingClass {
     return this.cloneStream(stream);
   }
 
-  async getStream(
-    constraints: AVStreamingConstraints = {
-      video: true,
-      audio: true,
-    }
-  ): Promise<MediaStream> {
+  async getStream(): Promise<MediaStream> {
     if (this.pendingStreamCreationPromise) {
-      return this
-        .pendingStreamCreationPromise
-        .then((stream) => {
-          // Cloning here is imperative, otherwise all of the calls get the
-          //  same stream resulting in freezing on Safari
-          return this.cloneStream(stream)
-        });
-    }
-    else if (this.hasActiveStream()) {
-      return this.cloneAnActiveStream(constraints);
+      return this.pendingStreamCreationPromise.then((stream) => {
+        // Cloning here is imperative, otherwise all of the calls get the
+        //  same stream resulting in freezing on Safari
+        return this.cloneStream(stream);
+      });
+    } else if (this.hasActiveStream()) {
+      return this.cloneAnActiveStream();
     } else {
-      return this.createStream(constraints);
+      return this.createStream(this.activeConstraints);
     }
+  }
+
+  updateConstraints(nextConstraints: AVStreamingConstraints) {
+    const allActiveStreams = Object.values(this.activeStreamsById);
+
+    allActiveStreams.forEach((stream) => {
+
+      stream.getVideoTracks().forEach((videoTrack) => {
+        videoTrack.enabled = nextConstraints.video;
+      });
+
+      stream.getAudioTracks().forEach((autioTrack) => {
+        autioTrack.enabled = nextConstraints.audio;
+      });
+    });
+
+    this._activeConstraints = nextConstraints;
   }
 
   hasPermission(
@@ -117,20 +144,18 @@ class AVStreamingClass {
         return Promise.resolve(new Ok(true));
       }
 
-      return this
-        .createStream(constraints)
-        .then(
-          (stream) => {
-            // Destroy the streamer right away
-            this.destroyStreamById(stream.id);
+      return this.createStream(constraints).then(
+        (stream) => {
+          // Destroy the streamer right away
+          this.destroyStreamById(stream.id);
 
-            return new Ok(true);
-          },
-          () => {
-            // TOOO: Check the error because it might be something else then permission
-            return new Ok(false);
-          }
-        );
+          return new Ok(true);
+        },
+        () => {
+          // TOOO: Check the error because it might be something else then permission
+          return new Ok(false);
+        }
+      );
     });
   }
 }

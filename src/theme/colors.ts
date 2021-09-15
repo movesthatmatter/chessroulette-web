@@ -13,6 +13,8 @@ const attentionDarker = '#EFAD0A';
 
 const negative = '#FF6760';
 const negativeLight = '#FF7E77';
+const negativeLighter = '#FFADA9';
+const negativeLightest = '#FFD5D2';
 const negativeDarker = '#E74F48';
 
 const positive = '#16D090';
@@ -34,6 +36,8 @@ const secondary = neutral;
 const secondaryLight = neutralLight;
 const secondaryDark = neutralDark;
 
+const background = neutralLightest;
+
 export const colors = {
   primary,
   primaryHover,
@@ -51,6 +55,8 @@ export const colors = {
 
   negative,
   negativeLight,
+  negativeLighter,
+  negativeLightest,
   negativeDarker,
 
   positive,
@@ -69,5 +75,7 @@ export const colors = {
   neutralDarkest,
 
   chessBoardDark,
-  chessBoardLight
+  chessBoardLight,
+
+  background,
 };

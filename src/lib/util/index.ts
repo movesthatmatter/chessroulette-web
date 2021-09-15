@@ -115,3 +115,31 @@ export const flatten = <T>(a: T[]) =>
   a.reduce((accumulator, value) => accumulator.concat(value), [] as T[]);
 
 export const objectKeys = <O extends object>(o: O) => Object.keys(o) as (keyof O)[];
+
+export const toDictIndexedBy = <O extends object, KGetter extends (o: O) => string>(
+  list: O[],
+  getKey: KGetter
+) =>
+  list.reduce(
+    (prev, next) => ({
+      ...prev,
+      [getKey(next)]: next,
+    }),
+    {} as { [k: string]: O }
+  );
+
+export const addSliceToDict = <
+  O extends object,
+  K extends string,
+  V extends unknown,
+  S extends { [k in K]: V }
+>(
+  dict: O,
+  slice: S
+) =>
+  ({
+    ...dict,
+    ...slice,
+  } as O & S);
+
+export const isObject = (m: unknown): m is object => (m !== null && typeof m === 'object');

@@ -55,7 +55,8 @@ export class RoomMocker {
         id: String(chance.integer({min: 1})),
         usersInfo: {},
         messages: [],
-      }
+      },
+      pendingChallenges: {},
     };
   }
 
