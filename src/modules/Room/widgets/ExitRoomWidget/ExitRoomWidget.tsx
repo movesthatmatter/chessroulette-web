@@ -1,4 +1,3 @@
-import { FormClose } from 'grommet-icons';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Dialog } from 'src/components/Dialog';
@@ -9,9 +8,11 @@ import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { colors } from 'src/theme';
 import { useOnLeaveRoute } from './useOnLeaveRoute';
 
-type Props = {};
+type Props = {
+  render: (p: { leave: () => void }) => React.ReactNode;
+};
 
-export const ExitRoomButton: React.FC<Props> = () => {
+export const ExitRoomWidget: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [showConfrmation, setShowConfirmation] = useState(false);
   const history = useHistory();
@@ -24,9 +25,11 @@ export const ExitRoomButton: React.FC<Props> = () => {
 
   return (
     <div className={cls.container}>
-      <a className={cls.exitButton} title="Exit Room" onClick={() => history.push('/')}>
-        <FormClose className={cls.exitIcon} size="medium" />
-      </a>
+      {props.render({
+        leave: () => {
+          history.push('/');
+        },
+      })}
       <Dialog
         visible={showConfrmation}
         onClose={() => setShowConfirmation(false)}
