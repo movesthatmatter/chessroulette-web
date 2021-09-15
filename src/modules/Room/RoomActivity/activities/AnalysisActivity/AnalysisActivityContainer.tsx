@@ -19,7 +19,7 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
     //  the room still shows!
     // TODO: That should actually be somewhere global maybe!
     if (peerState.status === 'open') {
-      peerState.client.sendMessage(payload);
+      peerState.client.send(payload);
     }
   };
 

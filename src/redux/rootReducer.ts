@@ -2,21 +2,12 @@ import { combineReducers } from 'redux';
 import { stateSliceByKey as authentication } from 'src/services/Authentication';
 import { stateSliceByKey as peerProvider } from 'src/providers/PeerProvider/redux/reducer';
 import { stateSliceByKey as session } from 'src/services/Session/reducer';
-
-// All of these 3 could be under a "room" slice and part of the Room(s) module
-import { stateSliceByKey as roomBouncer } from 'src/modules/Room/RoomBouncer/redux/reducer';
-
 import { stateSliceByKey as room } from 'src/modules/Room/redux/reducer';
 
 const allModuleReducers = {
   ...authentication,
   ...peerProvider,
   ...session,
-
-  // All of these 3 could be under a "room" slice
-  ...roomBouncer,
-  // ...activityLog,
-
   ...room,
 };
 

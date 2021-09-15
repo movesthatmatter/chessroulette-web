@@ -30,26 +30,27 @@ export const FeedbackDialog: React.FC<Props> = ({ attemptToShowOnMount = false }
     );
   }
 
-  if (state.canShow.steps.rating) {
-    return (
-      <RateAndReviewDialog
-        onPostponed={() => {
-          feedbackDialog.markAllStepsAsSeen();
-        }}
-        onDone={() => setDoneRateAndReview(true)}
-      />
-    );
-  }
+  // Taken out on Sep 15th
+  // if (state.canShow.steps.rating) {
+  //   return (
+  //     <RateAndReviewDialog
+  //       onPostponed={() => {
+  //         feedbackDialog.markAllStepsAsSeen();
+  //       }}
+  //       onDone={() => setDoneRateAndReview(true)}
+  //     />
+  //   );
+  // }
 
-  if (state.canShow.steps.friendsInvite) {
-    return (
-      <InviteFriendsDialog
-        onDone={() => {
-          feedbackDialog.markStepAsSeen('friendsInvite');
-        }}
-      />
-    );
-  }
+  // if (state.canShow.steps.friendsInvite) {
+  //   return (
+  //     <InviteFriendsDialog
+  //       onDone={() => {
+  //         feedbackDialog.markStepAsSeen('friendsInvite');
+  //       }}
+  //     />
+  //   );
+  // }
 
   return null;
 };

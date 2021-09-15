@@ -22,8 +22,6 @@ export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
 
   const [stateWithPrev, setStateWithPrev] = useStateWithPrev({ game, offer, pendingChallenge });
 
-  console.log('stateWithPrev', stateWithPrev);
-
   useDebouncedEffect(
     () => {
       // if (game) {
@@ -37,7 +35,6 @@ export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
   useEffect(() => {
     const nextNotification = notificationFactory(stateWithPrev);
 
-    console.log('nextNotification', nextNotification);
     if (!nextNotification) {
       return;
     }
