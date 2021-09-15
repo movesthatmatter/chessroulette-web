@@ -10,7 +10,7 @@ export function useSession<T extends TValue>(
   key: string
 ): [T | undefined, TValueSetter<T | undefined>];
 export function useSession<T extends TValue>(key: string, defaultValue: T): [T, TValueSetter<T>];
-export function useSession<T>(key: string, defaultValue?: T) {
+export function useSession<T extends TValue>(key: string, defaultValue?: T) {
   const dispatch = useDispatch();
   const existentValue = useSelector(selectSession)[key] as T;
 
