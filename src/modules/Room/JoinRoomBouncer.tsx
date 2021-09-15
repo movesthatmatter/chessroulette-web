@@ -73,7 +73,8 @@ export const JoinRoomBouncer: React.FC<Props> = (props) => {
     return null;
   }
 
-  if (joinedRoom) {
+  // Ensure the current joioned room is the same one
+  if (joinedRoom?.slug === props.slug) {
     return <>{props.render(joinedRoom)}</>;
   }
 
