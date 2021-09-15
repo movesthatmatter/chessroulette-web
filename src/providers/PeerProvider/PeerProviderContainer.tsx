@@ -1,6 +1,8 @@
 import { IceServerRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Dialog } from 'src/components/Dialog';
+import { Page } from 'src/components/Page';
 import { resources } from 'src/resources';
 import { useAuthentication } from 'src/services/Authentication';
 import { SocketConnectionIdentificationHandler } from './Handlers';
@@ -43,17 +45,47 @@ export const PeerProviderContainer: React.FC<Props> = (props) => {
             isGuest: false,
             accessToken: auth.accessToken,
           })}
-      render={({ socket }) => (
-        <PeerProvider
-          iceServers={iceServers}
-          user={auth.user}
-          dispatch={dispatch}
-          socketClient={socket}
-          roomAndMe={peerProviderState}
-        >
-          {props.children}
-        </PeerProvider>
-      )}
+      render={(p) => {
+        if (p.status === 'disconnected') {
+          return (
+            <Page doNotTrack>
+              <Dialog
+                visible
+                title="You got disconnected!"
+                content="This could happen if you have another session opened or no internet!"
+                hasCloseButton={false}
+                buttonsStacked
+                buttons={[
+                  {
+                    label: 'Oh no! Reconnect Me',
+                    onClick: () => {
+                      window.location.reload();
+                    },
+                    type: 'primary',
+                    full: true,
+                  },
+                ]}
+              />
+            </Page>
+          );
+        }
+
+        if (p.status === 'open') {
+          return (
+            <PeerProvider
+              iceServers={iceServers}
+              user={auth.user}
+              dispatch={dispatch}
+              socketClient={p.socket}
+              roomAndMe={peerProviderState}
+            >
+              {props.children}
+            </PeerProvider>
+          );
+        }
+
+        return null;
+      }}
     />
   );
 };

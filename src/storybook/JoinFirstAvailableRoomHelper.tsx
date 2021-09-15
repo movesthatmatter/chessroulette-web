@@ -14,7 +14,7 @@ import * as roomResources from 'src/modules/Room/resources';
 
 type Props = Pick<
   SocketConsumerProps,
-  'autoDemandConnection' | 'fallbackRender'
+  'autoDemandConnection'
 > & {
   render: (props: { room: RoomRecord; me: PeerRecord }) => ReactNode;
 };
@@ -62,18 +62,18 @@ export const JoinFirstAvailableRoomHelper: React.FC<Props> = (props) => {
         }
       }}
       autoDemandConnection={props.autoDemandConnection}
-      fallbackRender={
-        props.fallbackRender ||
-        (() => (
-          <div>
-            No room available:
-            <ul>
-              <li>{'Make sure the <SocketProvider /> wraps your component'}</li>
-              <li>or Check the connection!</li>
-            </ul>
-          </div>
-        ))
-      }
+      // fallbackRender={
+      //   props.fallbackRender ||
+      //   (() => (
+      //     <div>
+      //       No room available:
+      //       <ul>
+      //         <li>{'Make sure the <SocketProvider /> wraps your component'}</li>
+      //         <li>or Check the connection!</li>
+      //       </ul>
+      //     </div>
+      //   ))
+      // }
       render={() => (
         <>
           {joinedRoom && me && (
