@@ -76,12 +76,14 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
                   />
                 </div>
               </div>
-              {activity.iamParticipating && (
-                <GameActions
-                  activity={activity}
-                  className={cx(cls.sideBottom, cls.floatingBoxOffsets)}
-                />
-              )}
+              <div className={cls.sideBottom}>
+                {activity.iamParticipating && (
+                  <GameActions
+                    activity={activity}
+                    className={cx(cls.sideBottom, cls.floatingBoxOffsets)}
+                  />
+                )}
+              </div>
             </aside>
             <ChessGameHistoryConsumer
               render={(c) => (
@@ -126,6 +128,9 @@ const useStyles = createUseStyles({
   },
   sideBottom: {
     height: '30%',
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
   },
 
   gameStateWidgetContainer: {
