@@ -82,6 +82,7 @@ export const NoActivity: React.FC<Props> = (props) => {
             id="empty-frozen-board" // TODO: This might need to change
             pgn=""
             homeColor="white"
+            canInteract
             onMove={() => {}}
             className={cls.board}
             overlayComponent={

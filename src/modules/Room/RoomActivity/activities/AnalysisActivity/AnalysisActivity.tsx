@@ -56,6 +56,7 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps>
               type="analysis"
               id={analysis.id}
               playable
+              canInteract
               pgn={displayedHistory ? chessHistoryToSimplePgn(displayedHistory) : pgnFromHistory}
               homeColor="white"
               onMove={(m) => {

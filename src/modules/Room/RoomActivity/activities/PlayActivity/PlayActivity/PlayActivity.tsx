@@ -93,6 +93,7 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
                   game={game}
                   size={boardSize}
                   homeColor={homeColor}
+                  canInteract={activity.iamParticipating}
                   playable={activity.iamParticipating && activity.participants.me.canPlay}
                   displayedPgn={historyToPgn(c.displayedHistory)}
                   // autoCommitMove // TODO: Add this and try it outs
