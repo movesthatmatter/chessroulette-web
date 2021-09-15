@@ -13,6 +13,7 @@ import {
   RegisteredUserRecord,
 } from 'dstnd-io';
 import { ISODateTimeBrand } from 'io-ts-isodatetime/dist/lib/ISODateTime';
+import { ISODateTimeToTimestamp } from 'src/lib/date';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { getRandomInt } from 'src/lib/util';
 import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';
@@ -181,8 +182,8 @@ export const getLastPendingNotificationOfType = (
   if (log.pending?.offerType === type) {
     return log.pending;
   }
-  return Object.values(log.history).sort((x, y) => {
-    return new Date(x.timestamp).getTime() - new Date(x.timestamp).getTime()
+  return Object.values(log.history).sort((d1, d2) => {
+    return ISODateTimeToTimestamp(d1.timestamp) - ISODateTimeToTimestamp(d2.timestamp)
   }).find(
     (s) => s.type === 'offer' && s.offerType === type && s.status === 'pending'
   );

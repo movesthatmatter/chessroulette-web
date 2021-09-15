@@ -110,6 +110,15 @@ export const ActivityLog: React.FC<Props> = (props) => {
     return null;
   }
 
+  const cancelLichessOffer = (n: OfferNotification) => {
+    if (n.offerType === 'draw'){
+      lichessGameActions.onDrawDecline()
+    }
+    if (n.offerType === 'takeback'){
+      lichessGameActions.onTakebackDecline();
+    }
+  }
+
   return (
     <div className={cls.container}>
       <div className={cls.scroller}>
@@ -153,7 +162,11 @@ export const ActivityLog: React.FC<Props> = (props) => {
                 }
               }}
               //TODO - can be better done but at the moment that means alterating the OfferNotification component
-              onCancelOffer={roomActivity?.type === 'play' ? gameActions.onOfferCanceled : noop}
+              onCancelOffer={roomActivity?.type === 'play' 
+              ? gameActions.onOfferCanceled 
+              : roomActivity?.type === 'lichess' 
+              ? cancelLichessOffer
+              : noop}
             />
           );
         })}

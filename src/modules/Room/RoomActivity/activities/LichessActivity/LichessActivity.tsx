@@ -17,6 +17,7 @@ import { authenticateAsExistentGuest } from 'src/services/Authentication/resourc
 import { addNotificationAction } from 'src/modules/Room/RoomActivityLog/redux/actions';
 import { RegisteredUserRecordWithLichessConnection, useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
+import { Date } from 'window-or-global';
 
 type Props = {
   activity: RoomLichessActivity;
