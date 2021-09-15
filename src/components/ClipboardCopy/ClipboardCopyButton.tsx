@@ -7,7 +7,6 @@ import { seconds } from 'src/lib/time';
 import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
 import { colors } from 'src/theme';
-import cx from 'classnames';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   value: string;
