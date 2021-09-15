@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { noop } from 'src/lib/util';
 import { SocketContext } from './SocketContext';
+import { SocketReceivableMessage } from './types';
 
 export type SocketConsumerProps = {
   autoDemandConnection?: boolean;
@@ -16,7 +17,7 @@ export type SocketConsumerProps = {
   }) => React.ReactNode;
 
   onReady?: (socket: SocketClient) => void;
-  onMessage?: (msg: Parameters<Parameters<SocketClient['onMessage']>[0]>[0]) => void;
+  onMessage?: (msg: SocketReceivableMessage) => void;
   onClose?: () => void;
 };
 
