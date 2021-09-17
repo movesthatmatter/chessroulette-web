@@ -3,7 +3,7 @@ import cx from 'classnames';
 import capitalize from 'capitalize';
 import Loader from 'react-loaders';
 import { UserRecord } from 'dstnd-io';
-import { IconButton } from 'src/components/Button';
+import { Button, IconButton } from 'src/components/Button';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import { colors, fonts } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
@@ -15,14 +15,18 @@ import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGame/util';
 import { renderMatch } from 'src/lib/renderMatch';
 import { Text } from 'src/components/Text';
-import { ClipboardCopyButton } from 'src/components/ClipboardCopy';
+import { ClipboardCopyWidget } from 'src/components/ClipboardCopy';
 import { toChallengeUrlPath } from 'src/lib/util';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCopy } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type Props = {
   notification: ChallengeNotification;
   className?: string;
   me: UserRecord;
   onCancel: (n: ChallengeNotification) => void;
+  onAccept: (n: ChallengeNotification) => void;
 };
 
 export const ChallengeNotificationItem: React.FC<Props> = ({
@@ -33,7 +37,8 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
 
-  const needsAttention = notification.status === 'pending' && notification.byUser.id !== me.id;
+  const isMyChallenge = notification.byUser.id === me.id;
+  const needsAttention = notification.status === 'pending' && !isMyChallenge;
 
   return (
     <div className={cx(cls.container, needsAttention && cls.attention, className)}>
@@ -41,66 +46,52 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
         style={{
           display: 'flex',
           flexDirection: 'column',
-          textAlign:
-            notification.byUser.id === me.id && notification.status === 'pending'
-              ? 'left'
-              : 'right',
         }}
       >
         <div
           style={{
             display: 'flex',
-            flexDirection: notification.byUser.id === me.id ? 'row' : 'row-reverse',
+            alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: notification.byUser.id === me.id ? 'row' : 'row-reverse',
-            }}
-          >
-            <PeerAvatar
-              peerUserInfo={notification.byUser}
-              className={cx({
-                [cls.avatarLeft]: notification.byUser.id !== me.id,
-                [cls.avatarRight]: notification.byUser.id === me.id,
-              })}
-            />
-            <div
-              style={{
-                textAlign: notification.byUser.id === me.id ? 'left' : 'right',
-              }}
-            >
+          <div style={{ display: 'flex' }}>
+            <PeerAvatar peerUserInfo={notification.byUser} className={cls.avatarRight} />
+            <div>
               {renderMatch(
                 () => null,
                 [
                   notification.status === 'pending',
                   () => (
                     <div>
-                      <div className={cls.title}>
-                        <Text size="small2">
-                          {notification.byUser.id === me.id ? (
-                            'Your '
-                          ) : (
-                            <strong>{getUserDisplayName(notification.byUser)}'s </strong>
-                          )}
-                          Pending Challenge
-                        </Text>
-                        <Loader type="ball-beat" active innerClassName={cls.loader} />
-                      </div>{' '}
+                      {isMyChallenge ? (
+                        <div
+                          className={cls.title}
+                          style={{
+                            display: 'flex',
+                          }}
+                        >
+                          <Text size="small2">Your Challenge is pending</Text>
+                          <Loader type="ball-beat" active innerClassName={cls.loader} />
+                        </div>
+                      ) : (
+                        <div
+                          className={cls.title}
+                          style={
+                            {
+                              // textAlign: 'right',
+                            }
+                          }
+                        >
+                          <Text size="small2">
+                            <strong>{getUserDisplayName(notification.byUser)}'s </strong>is
+                            challenging you
+                          </Text>
+                        </div>
+                      )}{' '}
                       A<strong>{' ' + capitalize(notification.gameSpecs.timeLimit) + ' '}</strong>(
                       {formatTimeLimit(chessGameTimeLimitMsMap[notification.gameSpecs.timeLimit])})
                       Game
-                      <ClipboardCopyButton
-                        label="Invite Friend"
-                        copiedlLabel="Challenge Link Copied"
-                        clear
-                        value={`${window.location.origin}/${toChallengeUrlPath(
-                          notification.challenge
-                        )}`}
-                        className={cx(cls.copyToClipboardBtn)}
-                      />
                     </div>
                   ),
                 ],
@@ -108,7 +99,7 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
                   notification.status === 'accepted',
                   () => (
                     <div>
-                      {notification.byUser.id === me.id ? (
+                      {isMyChallenge ? (
                         'Your'
                       ) : (
                         <strong>{getUserDisplayName(notification.byUser)}</strong>
@@ -124,10 +115,10 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
                   notification.status === 'withdrawn',
                   () => (
                     <div>
-                      {notification.byUser.id === me.id ? (
+                      {isMyChallenge ? (
                         'Your'
                       ) : (
-                        <strong>getUserDisplayName(notification.byUser)</strong>
+                        <strong>{getUserDisplayName(notification.byUser)}</strong>
                       )}{' '}
                       challenge for a
                       <strong>{' ' + capitalize(notification.gameSpecs.timeLimit) + ' '}</strong>(
@@ -139,14 +130,56 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
               )}
             </div>
           </div>
-          {notification.status === 'pending' && notification.byUser.id === me.id && (
-            <IconButton
-              type="primary"
-              icon={Close}
-              className={cls.attentionButton}
-              clear
-              onSubmit={() => props.onCancel(notification)}
-            />
+          {notification.status === 'pending' && (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+              }}
+            >
+              {isMyChallenge ? (
+                <>
+                  <ClipboardCopyWidget
+                    value={`${window.location.origin}/${toChallengeUrlPath(
+                      notification.challenge
+                    )}`}
+                    render={({ copied, copy }) => (
+                      <IconButton
+                        type="primary"
+                        icon={(p) => (
+                          <FontAwesomeIcon
+                            icon={copied ? faCheck : faCopy}
+                            className={p.className}
+                          />
+                        )}
+                        className={cls.subtleButton}
+                        clear
+                        onSubmit={copy}
+                        title="Invite Friend"
+                        // tooltip={copied ? 'Copied' : undefined}
+                      />
+                    )}
+                  />
+
+                  <IconButton
+                    type="primary"
+                    icon={Close}
+                    className={cls.attentionButton}
+                    clear
+                    onSubmit={() => props.onCancel(notification)}
+                    title="Cancel Challenge"
+                  />
+                </>
+              ) : (
+                <Button
+                  type="primary"
+                  label="Accept"
+                  onClick={() => props.onAccept(notification)}
+                  className={cls.challengeButton}
+                />
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -157,11 +190,11 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
 const useStyles = createUseStyles({
   container: {
     ...fonts.small1,
-    marginBottom: spacers.large,
+    marginBottom: spacers.default,
   },
   attention: {
-    borderRight: `3px solid ${colors.negativeLight}`,
-    paddingRight: spacers.default,
+    borderLeft: `3px solid ${colors.negativeLight}`,
+    paddingLeft: spacers.small,
   },
   avatarLeft: {
     marginLeft: spacers.small,
@@ -169,7 +202,7 @@ const useStyles = createUseStyles({
   avatarRight: {
     marginRight: spacers.small,
   },
-  denyButton: {
+  subtleButton: {
     marginRight: spacers.small,
     height: '30px',
     width: '30px',
@@ -186,11 +219,8 @@ const useStyles = createUseStyles({
   },
   challengeButton: {
     marginBottom: 0,
-    marginTop: spacers.small,
   },
-  title: {
-    display: 'flex',
-  },
+  title: {},
   loader: {
     alignContent: 'center',
     alignItems: 'center',
