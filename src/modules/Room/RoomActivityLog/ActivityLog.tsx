@@ -9,6 +9,8 @@ import { OfferNotificationItem } from './components/OfferNotificationItem';
 import { selectCurrentRoomActivityLog } from './redux/selectors';
 import { ChallengeNotificationItem } from './components/ChallengeNotificationItem';
 import { spacers } from 'src/theme/spacers';
+import { Text } from 'src/components/Text';
+import { resources } from 'src/resources';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -53,6 +55,11 @@ export const ActivityLog: React.FC<Props> = (props) => {
     <div className={cls.container}>
       <div className={cls.scroller}>
         <div ref={dummy} />
+        {log.length === 0 && (
+          <Text size="small1" className={cls.fallbackText}>
+            Waiting to see some moves that matter...
+          </Text>
+        )}
         {log.map((notification) => {
           if (notification.type === 'info') {
             return (
@@ -71,6 +78,12 @@ export const ActivityLog: React.FC<Props> = (props) => {
                 notification={notification}
                 me={myPeer.user}
                 onCancel={() => {}}
+                onAccept={(notification) => {
+                  resources.acceptChallenge({
+                    id: notification.challenge.id,
+                    userId: myPeer.user.id,
+                  });
+                }}
               />
             );
           }
@@ -126,8 +139,12 @@ const useStyles = createUseStyles({
     scrollBehavior: 'smooth',
     marginTop: spacers.small,
   },
+
   bottomPart: {
     borderTop: 'solid 1px',
     borderColor: colors.neutral,
+  },
+  fallbackText: {
+    marginBottom: spacers.large,
   },
 });
