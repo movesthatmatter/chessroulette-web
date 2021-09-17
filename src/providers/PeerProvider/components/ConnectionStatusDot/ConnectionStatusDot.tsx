@@ -18,7 +18,7 @@ const getStatusColor = (peer?: Peer) => {
 
   if (peer.hasJoinedRoom) {
     if (peer.connection.channels.streaming.on) {
-      return colors.primary;
+      return colors.negative;
     }
 
     if (peer.connection.channels.data.on) {
@@ -28,7 +28,7 @@ const getStatusColor = (peer?: Peer) => {
     return colors.attention;
   }
 
-  return colors.negative;
+  return colors.neutral;
 };
 
 export const ConnectionStatusDot: React.FC<PeerConnectionStatusDotProps> = ({
