@@ -51,7 +51,6 @@ export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, reverse
   const cls = useStyles();
   const room = useSelector(selectPeerProviderState).room;
   const peer = props.peer || room?.peersIncludingMe[props.peerUserInfo.id];
-
   const [showInfo, setShowInfo] = useState(false);
 
   return (
@@ -68,12 +67,14 @@ export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, reverse
           onMouseLeave: () => setShowInfo(false),
         })}
       >
-        <ConnectionStatusDot
+        {peer?.isMe || (
+          <ConnectionStatusDot
           peer={peer}
           containerClassName={cls.connectionDotContainer}
           dotClassName={cls.connectionDot}
           size="25%"
         />
+        )}
         <Avatar
           mutunachiId={peer ? Number(peer.user.avatarId) : Number(props.peerUserInfo?.avatarId)}
           size={size}
