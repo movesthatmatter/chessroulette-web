@@ -115,7 +115,7 @@ const useStyles = createUseStyles({
   },
   main: {
     padding: spacers.default,
-    width: `calc(100% - ${spacers.get(2)})`,
+    width: `calc(100% - ${spacers.get(2)}) !important`,
     flex: 1,
   },
   navigationMenu: {
