@@ -19,7 +19,7 @@ export const resolveOfferNotificationAction = createAction(
 
 export const clearLogAction = createAction('ClearLog');
 
-export const clearSpecificActivityLog = createAction(
+export const clearActivityLogForAllButActivity = createAction(
   'ClearSpecificActivityLog',
   (resolve) => (p : {activity: RoomActivityRecord['type']}) => resolve(p)
 )

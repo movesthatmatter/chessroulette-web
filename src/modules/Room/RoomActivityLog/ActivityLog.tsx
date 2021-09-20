@@ -12,8 +12,7 @@ import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
 import * as resources from '../resources';
 import { InfoNotificationWithActionItem } from './components/InfoNotificationWithAction';
-import { clearSpecificActivityLog } from './redux/actions';
-import { console } from 'window-or-global';
+import { clearActivityLogForAllButActivity } from './redux/actions';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -39,6 +38,14 @@ export const ActivityLog: React.FC<Props> = (props) => {
   const activityLog = useSelector(selectCurrentRoomActivityLog);
   const [log, setLog] = useState(processLog(activityLog));
   const dummy = useRef<HTMLDivElement>(null);
+  const activity = useSelector(selectRoomActivity);
+  const dispatch = useDispatch();
+
+useEffect(() => {
+  if (activity) {
+    dispatch(clearActivityLogForAllButActivity({activity: activity.type}))
+  }
+},[activity?.type])
 
   useEffect(() => {
     setLog(processLog(activityLog));

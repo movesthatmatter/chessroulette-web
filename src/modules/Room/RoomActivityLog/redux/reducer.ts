@@ -3,7 +3,7 @@ import { GenericStateSlice } from 'src/redux/types';
 import {
   addNotificationAction,
   clearLogAction,
-  clearSpecificActivityLog,
+  clearActivityLogForAllButActivity,
   resolveOfferNotificationAction,
 } from './actions';
 import {
@@ -83,7 +83,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
     };
   }),
 
-  handleAction(clearSpecificActivityLog, (state, { payload }) => {
+  handleAction(clearActivityLogForAllButActivity, (state, { payload }) => {
     console.log('CURRENT ROOM', state.currentRoom);
     const updatedHistory: Record<Notification['id'], Notification> = Object.keys(
       state.currentRoom.history
@@ -93,13 +93,13 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
           (state.currentRoom.history[entry] as RoomSpecificNotifications).activity ===
           payload.activity
         ) {
-          return acc;
+          return {
+            ...acc,
+            [entry]: state.currentRoom.history[entry],
+          };
         }
       }
-      return {
-        ...acc,
-        [entry]: state.currentRoom.history[entry],
-      };
+      return acc;
     }, {} as Record<Notification['id'], Notification>);
     console.log('updated history', updatedHistory);
     return {
