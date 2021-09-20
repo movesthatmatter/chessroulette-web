@@ -31,18 +31,22 @@ export const RoomSpecificInfoNotification: React.FC<Props> = ({ notification, me
         }}
       >
         <div>
-        {isDangerouslySetHtml(notification.content) ? (
-          <Text size="small1" dangerouslySetInnerHTML={notification.content} />
-        ) : (
-          <Text size="small1">{notification.content}</Text>
+          {isDangerouslySetHtml(notification.content) ? (
+            <Text size="small1" dangerouslySetInnerHTML={notification.content} />
+          ) : (
+            <Text size="small1">{notification.content}</Text>
+          )}
+        </div>
+        {notification.actionContent && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-start',
+            }}
+          >
+            {notification.actionContent}
+          </div>
         )}
-        </div>
-        <div style={{
-          display:'flex',
-          justifyContent:'flex-start'
-        }}>
-        {notification.actionContent}
-        </div>
       </div>
     </div>
   );

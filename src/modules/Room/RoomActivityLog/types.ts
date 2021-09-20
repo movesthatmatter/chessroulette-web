@@ -47,7 +47,7 @@ export type RoomSpecificNotifications = BaseNotification & {
   activity: Exclude<RoomActivityRecord['type'], | 'none'>;
   content: string | DangerouslySetInnerHTML;
   activityId: string;
-  actionContent: React.ReactNode
+  actionContent?: React.ReactNode
 }
 
 export type Notification = InfoNotification | OfferNotification | ChallengeNotification | RoomSpecificNotifications;
