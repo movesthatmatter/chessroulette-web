@@ -11,7 +11,7 @@ import { ChallengeNotificationItem } from './components/ChallengeNotificationIte
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
 import * as resources from '../resources';
-import { InfoNotificationWithActionItem } from './components/InfoNotificationWithAction';
+import { RoomSpecificInfoNotification } from './components/RoomSpecificInfoNotification';
 import { clearActivityLogForAllButActivity } from './redux/actions';
 
 type Props = {
@@ -105,7 +105,7 @@ useEffect(() => {
 
           if (notification.type === 'roomSpecific') {
             return (
-              <InfoNotificationWithActionItem
+              <RoomSpecificInfoNotification
                 notification={notification}
                 key={notification.id}
                 me={myPeer.user}

@@ -4,11 +4,10 @@ import { createUseStyles } from 'src/lib/jss';
 import { fonts } from 'src/theme';
 import cx from 'classnames';
 import { spacers } from 'src/theme/spacers';
-import { InfoNotificationWithAction, RoomSpecificNotifications } from '../../types';
+import { RoomSpecificNotifications } from '../../types';
 import { hasOwnProperty } from 'src/lib/util';
 import { DangerouslySetInnerHTML } from '../../types';
 import { Text } from 'src/components/Text';
-import { Button } from 'src/components/Button';
 
 type Props = {
   notification: RoomSpecificNotifications;
@@ -19,7 +18,7 @@ type Props = {
 const isDangerouslySetHtml = (t: unknown): t is DangerouslySetInnerHTML =>
   typeof t === 'object' && hasOwnProperty(t || {}, '__html');
 
-export const InfoNotificationWithActionItem: React.FC<Props> = ({ notification, me, className }) => {
+export const RoomSpecificInfoNotification: React.FC<Props> = ({ notification, me, className }) => {
   const cls = useStyles();
 
   return (
