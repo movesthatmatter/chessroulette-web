@@ -43,6 +43,9 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
   const room = useSelector(selectRoom);
 
   useEffect(() => {
+    if (activityLog.pending?.type === 'challenge' && activityLog.pending.status === 'pending'){
+      return;
+    }
     if (
       Object.values(activityLog.history).filter(
         (log) => log.type === 'roomSpecific' && log.activity === 'analysis' && log.activityId === analysis.id
