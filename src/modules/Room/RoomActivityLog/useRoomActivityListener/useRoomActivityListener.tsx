@@ -9,8 +9,6 @@ import {
   resolveOfferNotificationAction,
 } from '../redux/actions';
 import { JoinedRoom } from 'src/modules/Room/types';
-import { console } from 'window-or-global';
-// import { JoinedRoom } from '../../types';
 
 // This could depend on the room ID as well
 export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
@@ -18,18 +16,19 @@ export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
 
   const game = room?.currentActivity.type === 'play' ? room?.currentActivity.game : undefined;
   const offer = room?.currentActivity.type === 'play' ? room?.currentActivity.offer : undefined;
-  const pendingChallenge = room?.pendingChallenges ? Object.values(room.pendingChallenges)[0] : undefined;
-
-  const [stateWithPrev, setStateWithPrev] = useStateWithPrev({ game, offer, pendingChallenge });
+  const pendingRoomChallenge = room?.pendingChallenges
+    ? Object.values(room.pendingChallenges)[0]
+    : undefined;
+  const [stateWithPrev, setStateWithPrev] = useStateWithPrev({ game, offer, pendingRoomChallenge });
 
   useDebouncedEffect(
     () => {
       // if (game) {
-        setStateWithPrev({ game, offer, pendingChallenge });
+      setStateWithPrev({ game, offer, pendingRoomChallenge });
       // }
     },
     150, // This should be enough time for the game & offer to reconcile
-    [game, offer, pendingChallenge]
+    [game, offer, pendingRoomChallenge]
   );
 
   useEffect(() => {

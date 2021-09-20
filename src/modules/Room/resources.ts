@@ -13,6 +13,7 @@ import {
   AsyncResultWrapper,
   RoomResponsePayload,
   roomResponsePayload,
+  Resources,
 } from 'dstnd-io';
 import config from 'src/config';
 import { Result, Err } from 'ts-results';
@@ -97,3 +98,21 @@ export const createRoom = (req: CreateRoomRequest) =>
       return new Err('BadRequest');
     }
   });
+
+const { resource: createRoomChallengeResource } = Resources.Collections.Room.RoomChallenge.CreateRoomChallenge;
+
+export const createRoomChallenge = (req: Resources.Util.RequestOf<typeof createRoomChallengeResource>) => {
+  return createRoomChallengeResource.request(req, (params) => http.post(`api/rooms/challenges`, params));
+}
+
+const { resource: acceptRoomChallengeResource } = Resources.Collections.Room.RoomChallenge.AcceptRoomChallenge;
+
+export const acceptRoomChallenge = (req: Resources.Util.RequestOf<typeof acceptRoomChallengeResource>) => {
+  return acceptRoomChallengeResource.request(req, (params) => http.post(`api/rooms/challenges/accept`, params));
+}
+
+const { resource: removeRoomChallengeResource } = Resources.Collections.Room.RoomChallenge.RemoveRoomChallenge;
+
+export const deleteRoomChallenge = (req: Resources.Util.RequestOf<typeof removeRoomChallengeResource>) => {
+  return removeRoomChallengeResource.request(req, (params) => http.delete(`api/rooms/${params.roomId}/challenges/${params.challengeId}`));
+}

@@ -1,5 +1,5 @@
 import capitalize from 'capitalize';
-import { ChallengeRecord } from 'dstnd-io';
+import { ChallengeRecord, RoomChallengeRecord } from 'dstnd-io';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import React, { useEffect, useState } from 'react';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
@@ -12,13 +12,14 @@ import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { seconds } from 'src/lib/time';
 import { toChallengeUrlPath } from 'src/lib/util';
 import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGame/util';
+import { resources } from 'src/modules/Room';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { setTimeout } from 'window-or-global';
 
 type Props = {
-  pendingChallenge: ChallengeRecord;
+  pendingChallenge: RoomChallengeRecord;
 };
 
 export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) => {
@@ -108,8 +109,14 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
               label: 'Cancel Challenge',
               type: 'secondary',
               onClick: () => {
-                // TODO: Add this once we have room challenges
-                // deleteChallenge()
+                if (!roomConsumer) {
+                  return;
+                }
+
+                resources.deleteRoomChallenge({
+                  challengeId: pendingChallenge.id,
+                  roomId: pendingChallenge.roomId,
+                });
               },
             },
           ]}

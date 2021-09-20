@@ -10,7 +10,7 @@ import { selectCurrentRoomActivityLog } from './redux/selectors';
 import { ChallengeNotificationItem } from './components/ChallengeNotificationItem';
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
-import { resources } from 'src/resources';
+import * as resources from '../resources';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -77,11 +77,16 @@ export const ActivityLog: React.FC<Props> = (props) => {
                 key={notification.id}
                 notification={notification}
                 me={myPeer.user}
-                onCancel={() => {}}
+                onCancel={(notification) => {
+                  resources.deleteRoomChallenge({
+                    challengeId: notification.challenge.id,
+                    roomId: notification.challenge.roomId,
+                  });
+                }}
                 onAccept={(notification) => {
-                  resources.acceptChallenge({
-                    id: notification.challenge.id,
-                    userId: myPeer.user.id,
+                  resources.acceptRoomChallenge({
+                    challengeId: notification.challenge.id,
+                    roomId: notification.challenge.roomId,
                   });
                 }}
               />

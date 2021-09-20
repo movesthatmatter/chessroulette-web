@@ -22,7 +22,10 @@ export const withPendingChallenge = () => {
   const challenge = challengeMocker.record();
   const room = roomMocker.withProps({
     pendingChallenges: {
-      [challenge.id]: challenge,
+      [challenge.id]: {
+        ...challenge,
+        roomId: '23',
+      },
     },
   });
 

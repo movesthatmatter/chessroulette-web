@@ -53,7 +53,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
                   <SwitchActivityWidgetRoomConsumer
                     render={({ onSwitch, room }) => (
                       <NavigationLink
-                        title="Room"
+                        title="Activities"
                         withDropMenu={{
                           items: [
                             {

@@ -1,4 +1,4 @@
-import { ChallengeRecord, UserInfoRecord } from 'dstnd-io';
+import { RoomChallengeRecord, UserInfoRecord } from 'dstnd-io';
 import { ISODateTime } from 'io-ts-isodatetime';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 
@@ -22,9 +22,9 @@ export type ChallengeNotification = BaseNotification & {
   type: 'challenge';
   challengeType: 'open'; // specific to user
   byUser: UserInfoRecord;
-  gameSpecs: ChallengeRecord['gameSpecs'];
+  gameSpecs: RoomChallengeRecord['gameSpecs'];
   status: 'pending' | 'withdrawn' | 'accepted';
-  challenge: ChallengeRecord;
+  challenge: RoomChallengeRecord;
 };
 
 export type InfoNotification = BaseNotification & {

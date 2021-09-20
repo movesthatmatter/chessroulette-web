@@ -1,5 +1,8 @@
-import React from 'react';
-import { ChallengeRecord, metadata, RoomWithPlayActivityRecord } from 'dstnd-io';
+import {
+  metadata,
+  RoomChallengeRecord,
+  RoomWithPlayActivityRecord,
+} from 'dstnd-io';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { Game } from 'src/modules/Games';
 import HumanizeDuration from 'humanize-duration';
@@ -11,7 +14,7 @@ import { getPlayerByColor } from 'src/modules/Games/Chess/lib';
 type NotificationState = {
   game?: Game;
   offer?: RoomWithPlayActivityRecord['activity']['offer'];
-  pendingChallenge?: ChallengeRecord;
+  pendingRoomChallenge?: RoomChallengeRecord;
 };
 
 type NotificationFactoryReturn =
@@ -39,26 +42,26 @@ export const notificationFactory = ({
 }): NotificationFactoryReturn | undefined => {
   const now = new Date();
 
-  if (current.pendingChallenge) {
+  if (current.pendingRoomChallenge) {
     return {
       type: 'add',
       notification: {
         timestamp: toISODateTime(now),
         challengeType: 'open',
-        id: current.pendingChallenge.id,
+        id: current.pendingRoomChallenge.id,
         type: 'challenge',
         status: 'pending',
-        byUser: current.pendingChallenge.createdByUser,
-        gameSpecs: current.pendingChallenge.gameSpecs,
-        challenge: current.pendingChallenge,
+        byUser: current.pendingRoomChallenge.createdByUser,
+        gameSpecs: current.pendingRoomChallenge.gameSpecs,
+        challenge: current.pendingRoomChallenge,
       },
     };
   }
 
-  if (!current.pendingChallenge && prev.pendingChallenge) {
+  if (!current.pendingRoomChallenge && prev.pendingRoomChallenge) {
     return {
       type: 'update',
-      id: prev.pendingChallenge.id,
+      id: prev.pendingRoomChallenge.id,
       status: !!current.game ? 'accepted' : 'withdrawn',
     };
   }

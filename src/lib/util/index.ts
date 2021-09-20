@@ -94,7 +94,7 @@ export const prettyCountdown = (
 ) => format(ms, options);
 
 export const toRoomUrlPath = (room: RoomRecord) => room.slug;
-export const toChallengeUrlPath = (challenge: ChallengeRecord) => challenge.slug;
+export const toChallengeUrlPath = (challenge: { slug: string }) => challenge.slug;
 
 export const hasOwnProperty = <X extends {}, Y extends PropertyKey>(
   obj: X,

@@ -5,11 +5,17 @@ import { FaceTimeSetup } from 'src/components/FaceTime';
 
 type Props = {
   onSuccess: () => void;
+  hasPrev?: boolean;
+  submitButtonLabel?: string;
 };
 
 type ButtonState = 'notReady' | 'loading' | 'ready';
 
-export const AVCheckStep: React.FC<Props> = (props) => {
+export const AVCheckStep: React.FC<Props> = ({
+  hasPrev = true,
+  submitButtonLabel = 'Next',
+  ...props
+}) => {
   const wizardProps = useWizard();
   const [buttonState, setButtonState] = useState<ButtonState>('notReady');
 
@@ -17,13 +23,15 @@ export const AVCheckStep: React.FC<Props> = (props) => {
     <DialogWizardStep
       title="Wow! You look so ready! 😏"
       buttons={[
+        hasPrev
+          ? {
+              label: 'Prev',
+              clear: true,
+              onClick: wizardProps.previousStep,
+            }
+          : undefined,
         {
-          label: 'Prev',
-          clear: true,
-          onClick: wizardProps.previousStep,
-        },
-        {
-          label: 'Next',
+          label: submitButtonLabel,
           isLoading: buttonState === 'loading',
           disabled: buttonState === 'notReady',
           onClick: props.onSuccess,

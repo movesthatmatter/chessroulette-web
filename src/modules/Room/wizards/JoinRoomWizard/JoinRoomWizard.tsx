@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Wizard } from 'react-use-wizard';
-import { ChallengeRecord, RoomRecord, UserInfoRecord } from 'dstnd-io';
+import { RoomChallengeRecord, RoomRecord, UserInfoRecord } from 'dstnd-io';
 import { AVCheckStep } from '../steps/AVCheckStep';
-import { AcceptPlayChallengeStep } from '../steps/AcceptPlayChallengeStep';
 import { getRoomPendingChallenge } from '../../util';
-import { resources } from 'src/resources';
+// import { resources } from 'src/resources';
+import { AcceptRoomStep } from '../steps/AcceptRoomStep';
+import { resources } from '../..';
 
 type Props = {
   myUser: UserInfoRecord;
@@ -15,11 +16,11 @@ type Props = {
 type WizardState =
   | {
       challengeAccepted: false;
-      pendingChallenge: ChallengeRecord | undefined;
+      pendingChallenge: RoomChallengeRecord | undefined;
     }
   | {
       challengeAccepted: true;
-      pendingChallenge: ChallengeRecord;
+      pendingChallenge: RoomChallengeRecord;
     };
 
 export const JoinRoomWizard: React.FC<Props> = (props) => {
@@ -30,29 +31,29 @@ export const JoinRoomWizard: React.FC<Props> = (props) => {
 
   return (
     <Wizard>
-      {state.pendingChallenge && (
-        <AcceptPlayChallengeStep
-          roomInfo={props.roomInfo}
-          challenge={state.pendingChallenge}
-          onAccepted={() => {
-            if (!state.pendingChallenge) {
-              return;
-            }
-
-            setState({
-              pendingChallenge: state.pendingChallenge,
-              challengeAccepted: true,
-            });
-          }}
-        />
-      )}
+      <AcceptRoomStep
+        roomInfo={props.roomInfo}
+        onChallengeSkipped={() => {
+          setState({
+            challengeAccepted: false,
+            pendingChallenge: undefined,
+          });
+        }}
+        onChallengeAccepted={(pendingChallenge) => {
+          setState({
+            challengeAccepted: true,
+            pendingChallenge,
+          });
+        }}
+      />
       <AVCheckStep
+        submitButtonLabel="Join"
         onSuccess={() => {
           if (state.challengeAccepted) {
             resources
-              .acceptChallenge({
-                id: state.pendingChallenge.id,
-                userId: props.myUser.id,
+              .acceptRoomChallenge({
+                challengeId: state.pendingChallenge.id,
+                roomId: state.pendingChallenge.roomId,
               })
               // TODO: Handle error
               .map(() => {

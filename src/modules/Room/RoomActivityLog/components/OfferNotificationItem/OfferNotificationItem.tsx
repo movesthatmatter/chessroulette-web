@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserRecord } from 'dstnd-io';
 import { IconButton } from 'src/components/Button';
-import { createUseStyles, makeImportant } from 'src/lib/jss';
+import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import { colors, fonts } from 'src/theme';
 import cx from 'classnames';
 import { getUserDisplayName } from 'src/modules/User';
@@ -9,6 +9,8 @@ import { spacers } from 'src/theme/spacers';
 import { OfferNotification } from '../../types';
 import { Checkmark, Close } from 'grommet-icons';
 import { PeerAvatar } from 'src/providers/PeerProvider/components/PeerAvatar';
+import { Text } from 'src/components/Text';
+import Loader from 'react-loaders';
 
 type Props = {
   notification: OfferNotification;
@@ -54,20 +56,20 @@ const dict = {
       <strong>{getUserDisplayName(n.toUser)}</strong> accepted the draw offer
     </div>
   ),
-  'offer-takeback-pending': (n:OfferNotification) => (
+  'offer-takeback-pending': (n: OfferNotification) => (
     <div>
       <strong>{getUserDisplayName(n.byUser)}</strong> is asking{' '}
       <strong>{getUserDisplayName(n.toUser)}</strong> for a takeback
     </div>
   ),
-  'offer-takeback-accepted': (n:OfferNotification) => (
+  'offer-takeback-accepted': (n: OfferNotification) => (
     <div>
       <strong>{getUserDisplayName(n.toUser)}</strong> accepted the takeback request
     </div>
   ),
-  'offer-takeback-withdrawn' : (n:OfferNotification) => (
+  'offer-takeback-withdrawn': (n: OfferNotification) => (
     <div>
-      <strong>{getUserDisplayName(n.byUser)}</strong>'s request was sent into the void 
+      <strong>{getUserDisplayName(n.byUser)}</strong>'s request was sent into the void
     </div>
   ),
   'offer-challenge-pending': (n: OfferNotification) => (
@@ -104,7 +106,9 @@ export const OfferNotificationItem: React.FC<Props> = ({
   const cls = useStyles();
   const content = getContent(notification);
 
-  const needsAttention = notification.status === 'pending' && notification.toUser.id === me.id;
+  const isToMe = notification.toUser.id === me.id;
+  const isByMe = notification.byUser.id === me.id;
+  const needsAttention = notification.status === 'pending' && isToMe;
 
   return (
     <div className={cx(cls.container, needsAttention && cls.attention, className)}>
@@ -112,16 +116,13 @@ export const OfferNotificationItem: React.FC<Props> = ({
         style={{
           display: 'flex',
           flexDirection: 'column',
-          textAlign:
-            notification.byUser.id === me.id && notification.status === 'pending'
-              ? 'left'
-              : 'right',
+          textAlign: isByMe && notification.status === 'pending' ? 'left' : 'right',
         }}
       >
         <div
           style={{
             display: 'flex',
-            flexDirection: notification.byUser.id === me.id ? 'row' : 'row-reverse',
+            flexDirection: isByMe ? 'row' : 'row-reverse',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
@@ -130,25 +131,29 @@ export const OfferNotificationItem: React.FC<Props> = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              flexDirection: notification.byUser.id === me.id ? 'row' : 'row-reverse',
+              flexDirection: isByMe ? 'row' : 'row-reverse',
             }}
           >
             <PeerAvatar
               peerUserInfo={notification.byUser}
               className={cx({
-                [cls.avatarLeft]: notification.byUser.id !== me.id,
-                [cls.avatarRight]: notification.byUser.id === me.id,
+                [cls.avatarLeft]: !isByMe,
+                [cls.avatarRight]: isByMe,
               })}
             />
             <div
               style={{
-                textAlign: notification.byUser.id === me.id ? 'left' : 'right',
+                textAlign: isByMe ? 'left' : 'right',
+                display: notification.status === 'pending' ? 'flex' : 'inline',
               }}
             >
               {content}
+              {notification.status === 'pending' && (
+                <Loader type="ball-beat" active innerClassName={cls.loader} />
+              )}
             </div>
           </div>
-          {notification.status === 'pending' && notification.byUser.id === me.id && (
+          {notification.status === 'pending' && isByMe && (
             <IconButton
               type="primary"
               icon={Close}
@@ -159,7 +164,7 @@ export const OfferNotificationItem: React.FC<Props> = ({
           )}
         </div>
 
-        {notification.status === 'pending' && notification.toUser.id === me.id && (
+        {notification.status === 'pending' && isToMe && (
           <div
             style={{
               display: 'flex',
@@ -218,5 +223,18 @@ const useStyles = createUseStyles({
     ...makeImportant({
       marginBottom: 0,
     }),
+  },
+  loader: {
+    alignContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    paddingLeft: spacers.smaller,
+    ...({
+      '& > div': {
+        height: '7px',
+        width: '7px',
+        backgroundColor: colors.primary,
+      },
+    } as CSSProperties),
   },
 });
