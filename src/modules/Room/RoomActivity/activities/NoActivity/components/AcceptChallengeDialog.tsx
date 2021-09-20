@@ -34,13 +34,11 @@ export const AcceptChallengeDialog: React.FC<Props> = ({ pendingChallenge, onDis
             <>
               <div className={cls.centered}>
                 <Text size="body2">
-                  {/* Waiting for someone to join your */}
-                  <br />{' '}
                   <strong>{' ' + capitalize(pendingChallenge.gameSpecs.timeLimit) + ' '}</strong>(
                   {formatTimeLimit(chessGameTimeLimitMsMap[pendingChallenge.gameSpecs.timeLimit])})
                   Game
                 </Text>
-                <div className={cls.spacer} />
+                {/* <div className={cls.spacer} /> */}
               </div>
             </>
           }
