@@ -1,6 +1,9 @@
-import { RoomChallengeRecord, UserInfoRecord } from 'dstnd-io';
+import { RoomActivityRecord, RoomChallengeRecord, UserInfoRecord } from 'dstnd-io';
 import { ISODateTime } from 'io-ts-isodatetime';
+import React from 'react';
+import { ButtonProps } from 'src/components/Button';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
+import { RoomActivity } from '../RoomActivity/types';
 
 export type OfferType = NonNullable<RoomWithPlayActivity['activity']['offer']>['type'];
 export type DangerouslySetInnerHTML = { __html: string };
@@ -33,4 +36,18 @@ export type InfoNotification = BaseNotification & {
   content: string | DangerouslySetInnerHTML;
 };
 
-export type Notification = InfoNotification | OfferNotification | ChallengeNotification;
+export type InfoNotificationWithAction = Omit<InfoNotification, 'infoType' | 'type'> & {
+  type: 'infoWithAction',
+  actionContent: React.ReactNode;
+  activityId: string;
+}
+
+export type RoomSpecificNotifications = BaseNotification & {
+  type: 'roomSpecific',
+  activity: Exclude<RoomActivityRecord['type'], | 'none'>;
+  content: string | DangerouslySetInnerHTML;
+  activityId: string;
+  actionContent: React.ReactNode
+}
+
+export type Notification = InfoNotification | OfferNotification | ChallengeNotification | RoomSpecificNotifications;

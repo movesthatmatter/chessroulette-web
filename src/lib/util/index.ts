@@ -1,6 +1,7 @@
 import { differenceInMilliseconds } from 'date-fns';
 import humanizeDuration, { Humanizer } from 'humanize-duration';
 import { RoomRecord, ChallengeRecord } from 'dstnd-io';
+import { RoomAnalysisActivity } from 'src/modules/Room/RoomActivity/activities/AnalysisActivity/types';
 
 export const noop = () => {
   // do nothing

@@ -5,6 +5,8 @@ import { useRoomActivityListener } from 'src/modules/Room/RoomActivityLog/useRoo
 import { JoinedRoom } from '../types';
 import { RoomActivityCreationRecord } from 'dstnd-io';
 import { usePeerState } from 'src/providers/PeerProvider';
+import { clearSpecificActivityLog } from '../RoomActivityLog/redux/actions';
+import { useDispatch } from 'react-redux';
 
 type Props = {
   joinedRoom: JoinedRoom;
@@ -13,12 +15,15 @@ type Props = {
 export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
   const deviceSize = useDeviceSize();
   const peerState = usePeerState();
+  const dispatch = useDispatch();
 
   const switchActivity = useCallback(
     (content: RoomActivityCreationRecord) => {
       if (peerState.status !== 'open') {
         return;
       }
+      
+      dispatch(clearSpecificActivityLog({activity: joinedRoom.activity.type}))
 
       return peerState.client.send({
         kind: 'switchJoinedRoomActivityRequest',

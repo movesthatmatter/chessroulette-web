@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import { selectMyPeer } from 'src/providers/PeerProvider';
+import { selectMyPeer, selectRoomActivity } from 'src/providers/PeerProvider';
 import { colors } from 'src/theme';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { InfoNotificationItem } from './components/InfoNotificationItem';
@@ -11,6 +11,9 @@ import { ChallengeNotificationItem } from './components/ChallengeNotificationIte
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
 import * as resources from '../resources';
+import { InfoNotificationWithActionItem } from './components/InfoNotificationWithAction';
+import { clearSpecificActivityLog } from './redux/actions';
+import { console } from 'window-or-global';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -93,6 +96,15 @@ export const ActivityLog: React.FC<Props> = (props) => {
             );
           }
 
+          if (notification.type === 'roomSpecific') {
+            return (
+              <InfoNotificationWithActionItem
+                notification={notification}
+                key={notification.id}
+                me={myPeer.user}
+              />
+            );
+          }
           return (
             <OfferNotificationItem
               key={notification.id}
