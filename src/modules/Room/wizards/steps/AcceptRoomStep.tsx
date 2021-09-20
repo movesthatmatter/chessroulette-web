@@ -8,6 +8,7 @@ import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
 import { fonts, onlyMobile } from 'src/theme';
 import { getRoomPendingChallenge } from '../../util';
+import { getUserDisplayName } from 'src/modules/User';
 
 type Props = {
   roomInfo: RoomRecord;
@@ -25,7 +26,7 @@ export const AcceptRoomStep: React.FC<Props> = ({ roomInfo, onChallengeAccepted,
       title={
         <div className={cls.title}>
           <Text>
-            Ready to join the <strong>{roomInfo.name} Room</strong>?
+            Ready to join the <strong>{getUserDisplayName(roomInfo.createdByUser)}'s Room</strong>?
           </Text>
         </div>
       }

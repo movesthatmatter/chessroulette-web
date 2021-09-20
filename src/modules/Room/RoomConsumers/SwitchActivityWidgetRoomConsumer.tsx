@@ -53,6 +53,12 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
     return null;
   }
 
+  // Don't show if the user isn't the Host (creator of the room for now)
+  //  But later we could give admin roles to other peers
+  if (context.room.me.id !== context.room.createdBy) {
+    return null;
+  }
+
   return (
     <>
       {props.render({

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
@@ -9,9 +9,11 @@ import { ActivityCommonProps } from '../types';
 import { NavigationHeader } from 'src/modules/Room/Layouts';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { PendingChallengeDialog } from './components/PendingChallengeDialog';
+import { AcceptChallengeDialog } from './components/AcceptChallengeDialog';
 import { Button } from 'src/components/Button';
 import { spacers } from 'src/theme/spacers';
 import { CreateChallengeButton } from '../components/CreateChallengeButton';
+import { SwitchActivityWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/SwitchActivityWidgetRoomConsumer';
 
 type Props = ActivityCommonProps & {
   deviceSize: DeviceSize;
@@ -20,10 +22,30 @@ type Props = ActivityCommonProps & {
 export const NoActivity: React.FC<Props> = (props) => {
   const cls = useStyles();
   const roomConsumer = useRoomConsumer();
+  const [acceptChallengeDialogDismissed, setAccepdChallengeDialogDismissed] = useState(false);
 
   const pendingChallenge = roomConsumer?.room?.pendingChallenges
     ? Object.values(roomConsumer.room.pendingChallenges)[0]
     : undefined;
+
+  const overlayComponent = (() => {
+    if (pendingChallenge) {
+      if (pendingChallenge.createdByUser.id === roomConsumer?.room.me.id) {
+        return <PendingChallengeDialog pendingChallenge={pendingChallenge} />;
+      }
+
+      if (!acceptChallengeDialogDismissed) {
+        return (
+          <AcceptChallengeDialog
+            pendingChallenge={pendingChallenge}
+            onDismiss={() => setAccepdChallengeDialogDismissed(true)}
+          />
+        );
+      }
+    }
+
+    return undefined;
+  })();
 
   if (props.deviceSize.isMobile) {
     return (
@@ -38,9 +60,7 @@ export const NoActivity: React.FC<Props> = (props) => {
             homeColor="white"
             onMove={() => {}}
             className={cls.board}
-            overlayComponent={
-              pendingChallenge && <PendingChallengeDialog pendingChallenge={pendingChallenge} />
-            }
+            overlayComponent={overlayComponent}
           />
         )}
       />
@@ -53,28 +73,30 @@ export const NoActivity: React.FC<Props> = (props) => {
         <div className={cls.container}>
           <aside className={cls.side} style={{ height: boardSize, width: leftSide.width }}>
             <div className={cls.sideTop} />
-            <div className={cls.buttons}>
-              <Button
-                label="Open Analysis"
-                onClick={() => {
-                  if (roomConsumer) {
-                    roomConsumer.roomActions.switchActivity({
-                      activityType: 'analysis',
-                      history: [],
-                    });
-                  }
-                }}
-                className={cls.roomButton}
-                full
-                clear
-                withBadge={{
-                  text: 'New',
-                  side: 'right',
-                  color: 'negativeLight',
-                }}
-              />
-              {!pendingChallenge && <CreateChallengeButton label="Create Challenge" full />}
-            </div>
+            <SwitchActivityWidgetRoomConsumer
+              render={({ roomActions }) => (
+                <div className={cls.buttons}>
+                  <Button
+                    label="Open Analysis"
+                    onClick={() => {
+                      roomActions.switchActivity({
+                        activityType: 'analysis',
+                        history: [],
+                      });
+                    }}
+                    className={cls.roomButton}
+                    full
+                    clear
+                    withBadge={{
+                      text: 'New',
+                      side: 'right',
+                      color: 'negativeLight',
+                    }}
+                  />
+                  {!pendingChallenge && <CreateChallengeButton label="Create Challenge" full />}
+                </div>
+              )}
+            />
           </aside>
           <ChessBoard
             type="free"
@@ -85,9 +107,7 @@ export const NoActivity: React.FC<Props> = (props) => {
             canInteract
             onMove={() => {}}
             className={cls.board}
-            overlayComponent={
-              pendingChallenge && <PendingChallengeDialog pendingChallenge={pendingChallenge} />
-            }
+            overlayComponent={overlayComponent}
           />
         </div>
       )}
