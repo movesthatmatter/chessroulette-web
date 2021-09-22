@@ -9,6 +9,7 @@ import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton } from 'src/services/Authentication/widgets';
 import { Link, useLocation } from 'react-router-dom';
 import { FeedbackDialogConsumer } from 'src/providers/FeedbackProvider/FeedbackConsumer';
+import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
 
 type Props = {
   className?: string;
@@ -79,6 +80,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
     <div className={cx(cls.container, props.className)}>
       <div className={cls.desktopMenu}>
         <div className={cx(cls.linksContainer)}>{menuContent}</div>
+        <div style={{display:'flex', justifyContent:'center', alignItems:'center'}}><DarkModeSwitch/></div>
         {auth.authenticationType !== 'none' && (
           <div className={cls.authMenu}>
             {auth.authenticationType === 'user' ? (
