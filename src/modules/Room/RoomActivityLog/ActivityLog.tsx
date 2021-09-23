@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import { selectMyPeer } from 'src/providers/PeerProvider';
+import { selectMyPeer, selectRoomActivity } from 'src/providers/PeerProvider';
 import { colors } from 'src/theme';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { InfoNotificationItem } from './components/InfoNotificationItem';
@@ -11,6 +11,8 @@ import { ChallengeNotificationItem } from './components/ChallengeNotificationIte
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
 import * as resources from '../resources';
+import { RoomSpecificInfoNotification } from './components/RoomSpecificInfoNotification';
+import { clearActivityLogForAllButActivity } from './redux/actions';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -36,6 +38,14 @@ export const ActivityLog: React.FC<Props> = (props) => {
   const activityLog = useSelector(selectCurrentRoomActivityLog);
   const [log, setLog] = useState(processLog(activityLog));
   const dummy = useRef<HTMLDivElement>(null);
+  const activity = useSelector(selectRoomActivity);
+  const dispatch = useDispatch();
+
+useEffect(() => {
+  if (activity) {
+    dispatch(clearActivityLogForAllButActivity({activity: activity.type}))
+  }
+},[activity?.type])
 
   useEffect(() => {
     setLog(processLog(activityLog));
@@ -93,6 +103,15 @@ export const ActivityLog: React.FC<Props> = (props) => {
             );
           }
 
+          if (notification.type === 'roomSpecific') {
+            return (
+              <RoomSpecificInfoNotification
+                notification={notification}
+                key={notification.id}
+                me={myPeer.user}
+              />
+            );
+          }
           return (
             <OfferNotificationItem
               key={notification.id}

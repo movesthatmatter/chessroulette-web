@@ -7,7 +7,7 @@ import { Button, IconButton } from 'src/components/Button';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import { colors, fonts } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
-import { ChallengeNotification } from '../types';
+import { ChallengeNotification } from '../../types';
 import { Close } from 'grommet-icons';
 import { PeerAvatar } from 'src/providers/PeerProvider/components/PeerAvatar';
 import { getUserDisplayName } from 'src/modules/User';

@@ -1,4 +1,5 @@
 import { createAction } from 'deox';
+import { RoomActivityRecord } from 'dstnd-io';
 import { Notification, OfferNotification } from '../types';
 
 export const addNotificationAction = createAction(
@@ -17,3 +18,8 @@ export const resolveOfferNotificationAction = createAction(
 );
 
 export const clearLogAction = createAction('ClearLog');
+
+export const clearActivityLogForAllButActivity = createAction(
+  'ClearSpecificActivityLog',
+  (resolve) => (p : {activity: RoomActivityRecord['type']}) => resolve(p)
+)

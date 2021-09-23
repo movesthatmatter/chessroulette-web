@@ -19,7 +19,7 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
       if (peerState.status !== 'open') {
         return;
       }
-
+      
       return peerState.client.send({
         kind: 'switchJoinedRoomActivityRequest',
         content,

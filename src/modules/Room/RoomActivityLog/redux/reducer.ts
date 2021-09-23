@@ -1,7 +1,18 @@
 import { createReducer } from 'deox';
 import { GenericStateSlice } from 'src/redux/types';
-import { addNotificationAction, clearLogAction, resolveOfferNotificationAction } from './actions';
-import { ChallengeNotification, Notification, OfferNotification } from 'src/modules/Room/RoomActivityLog/types';
+import {
+  addNotificationAction,
+  clearLogAction,
+  clearActivityLogForAllButActivity,
+  resolveOfferNotificationAction,
+} from './actions';
+import {
+  ChallengeNotification,
+  Notification,
+  OfferNotification,
+  RoomSpecificNotifications,
+} from 'src/modules/Room/RoomActivityLog/types';
+import { console } from 'window-or-global';
 
 export type State = {
   currentRoom: {
@@ -68,6 +79,34 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       currentRoom: {
         history: {},
         pending: undefined,
+      },
+    };
+  }),
+
+  handleAction(clearActivityLogForAllButActivity, (state, { payload }) => {
+    console.log('CURRENT ROOM', state.currentRoom);
+    const updatedHistory: Record<Notification['id'], Notification> = Object.keys(
+      state.currentRoom.history
+    ).reduce((acc, entry) => {
+      if (state.currentRoom.history[entry].type === 'roomSpecific') {
+        if (
+          (state.currentRoom.history[entry] as RoomSpecificNotifications).activity ===
+          payload.activity
+        ) {
+          return {
+            ...acc,
+            [entry]: state.currentRoom.history[entry],
+          };
+        }
+      }
+      return acc;
+    }, {} as Record<Notification['id'], Notification>);
+    console.log('updated history', updatedHistory);
+    return {
+      ...state,
+      currentRoom: {
+        ...state.currentRoom,
+        history: updatedHistory,
       },
     };
   }),

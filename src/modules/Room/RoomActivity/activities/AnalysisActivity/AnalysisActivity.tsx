@@ -1,14 +1,26 @@
-import React from 'react';
-import { createUseStyles } from 'src/lib/jss';
-import { floatingShadow, softBorderRadius } from 'src/theme';
+import React, { useEffect } from 'react';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
+import { colors, floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { RoomAnalysisActivity } from './types';
 import { ActivityCommonProps } from '../types';
 import { ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/GameHistory';
 import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 import { LayoutContainerDimensions } from 'src/modules/Room/Layouts';
-import { SimplePGN } from 'dstnd-io';
+import { RoomRecord, SimplePGN } from 'dstnd-io';
 import { AnalysisPanel } from './components/AnalysisPanel';
+import { useDispatch, useSelector } from 'react-redux';
+import { addNotificationAction } from 'src/modules/Room/RoomActivityLog/redux/actions';
+import { toISODateTime } from 'src/lib/date/ISODateTime';
+import { Date, Object } from 'window-or-global';
+import { selectCurrentRoomActivityLog } from 'src/modules/Room/RoomActivityLog/redux/selectors';
+import { toRoomUrlPath } from 'src/lib/util';
+import { ClipboardCopyWidget } from 'src/components/ClipboardCopy';
+import { Button, IconButton } from 'src/components/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faCopy } from '@fortawesome/free-solid-svg-icons';
+import { spacers } from 'src/theme/spacers';
+import { selectRoom } from 'src/providers/PeerProvider';
 
 export type AnalysisActivityProps = ActivityCommonProps & {
   boardSize: number;
@@ -18,8 +30,7 @@ export type AnalysisActivityProps = ActivityCommonProps & {
   onPgnImported: (pgn: SimplePGN) => void;
 };
 
-export const AnalysisActivity: React.FC<AnalysisActivityProps>
- = ({
+export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
   analysis,
   boardSize,
   leftSide,
@@ -27,6 +38,51 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps>
 }) => {
   const cls = useStyles();
   const pgnFromHistory = analysis.history ? chessHistoryToSimplePgn(analysis.history) : '';
+  const dispatch = useDispatch();
+  const activityLog = useSelector(selectCurrentRoomActivityLog);
+  const room = useSelector(selectRoom);
+
+  useEffect(() => {
+    if (activityLog.pending?.type === 'challenge' && activityLog.pending.status === 'pending'){
+      return;
+    }
+    if (
+      Object.values(activityLog.history).filter(
+        (log) => log.type === 'roomSpecific' && log.activity === 'analysis' && log.activityId === analysis.id
+      ).length === 0
+    ) {
+      dispatch(
+        addNotificationAction({
+          notification: {
+            type: 'roomSpecific',
+            activity: 'analysis',
+            activityId: analysis.id,
+            timestamp: toISODateTime(new Date()),
+            id: new Date().getTime().toString(),
+            content: {
+              __html: `Welcome to the <strong>Analysis</strong> room.`,
+            },
+            actionContent: (
+              <ClipboardCopyWidget
+                value={`${window.location.origin}/${toRoomUrlPath(room as RoomRecord)}`}
+                render={({ copied, copy }) => (
+                  <Button
+                    type="primary"
+                    clear
+                    icon={() => (
+                      <FontAwesomeIcon icon={copied ? faCheck : faCopy} className={cls.icon} />
+                    )}
+                    onClick={copy}
+                    label={copied ? 'Link Copied!' : 'Invite Friend'}
+                  />
+                )}
+              />
+            ),
+          },
+        })
+      );
+    }
+  }, []);
 
   return (
     <ChessGameHistoryConsumer
@@ -105,4 +161,15 @@ const useStyles = createUseStyles({
   sideBottom: {
     height: '30%',
   },
+  subtleButton: {
+    marginRight: spacers.small,
+    height: '30px',
+    width: '30px',
+    ...makeImportant({
+      marginBottom: 0,
+    }),
+  },
+  icon: {
+    color: colors.primary,
+  }
 });
