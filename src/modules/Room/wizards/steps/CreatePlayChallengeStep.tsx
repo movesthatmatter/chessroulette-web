@@ -20,6 +20,7 @@ export const CreatePlayChallengeStep: React.FC<Props> = (props) => {
       buttons={[
         {
           label: 'Next',
+          withLoader: true,
           onClick: wizardProps.nextStep,
         },
       ]}

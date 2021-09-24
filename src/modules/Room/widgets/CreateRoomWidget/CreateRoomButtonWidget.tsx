@@ -8,6 +8,8 @@ import { CreatePlayRoomWizard } from '../../wizards/CreatePlayRoomWizard';
 import { CreateAnalysisRoomWizard } from '../../wizards/CreateAnalysisRoomWizard';
 import { Dialog } from 'src/components/Dialog';
 import * as resources from '../../resources';
+import { AsyncOk } from 'ts-async-results';
+import { UnknownAsyncResult } from 'src/lib/types';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activityType'>;
@@ -34,19 +36,20 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
               <CreatePlayRoomWizard
                 onFinished={({ gameSpecs }) => {
                   if (peerState.status !== 'open') {
-                    return;
+                    return AsyncOk.EMPTY;
                   }
 
-                  resources
+                  return resources
                     .createRoom({
-                      userId: peerState.me.id,
+                      // userId: peerState.me.id,
+                      userId: '2',
                       type: createRoomSpecs.type,
                       activityType: 'play',
                       gameSpecs,
                     })
                     .map((room) => {
                       history.push(toRoomUrlPath(room));
-                    });
+                    }) as unknown as UnknownAsyncResult;
                 }}
               />
             )}
@@ -54,10 +57,10 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
               <CreateAnalysisRoomWizard
                 onFinished={() => {
                   if (peerState.status !== 'open') {
-                    return;
+                    return AsyncOk.EMPTY;
                   }
 
-                  resources
+                  return resources
                     .createRoom({
                       userId: peerState.me.id,
                       type: createRoomSpecs.type,
@@ -72,7 +75,7 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
                     })
                     .map((room) => {
                       history.push(toRoomUrlPath(room));
-                    });
+                    }) as unknown as UnknownAsyncResult;
                 }}
               />
             )}

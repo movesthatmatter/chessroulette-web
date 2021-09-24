@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ButtonType } from '../type';
-import { IconProps } from 'grommet-icons';
-import { FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { buttonStyles } from '../styles/styles';
 import { borderRadius, colors, onlyMobile } from 'src/theme';
@@ -10,7 +8,7 @@ import { Text } from 'src/components/Text';
 import { CSSProperties } from 'src/lib/jss/types';
 import Loader from 'react-loaders';
 import 'loaders.css';
-import { AsyncResult } from 'dstnd-io';
+import { AsyncResult } from 'ts-async-results';
 import { Badge, BadgeProps } from 'src/components/Badge';
 import { spacers } from 'src/theme/spacers';
 

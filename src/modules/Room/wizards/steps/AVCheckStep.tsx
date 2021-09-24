@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useWizard } from 'react-use-wizard';
 import { DialogWizardStep } from 'src/components/DialogWizard/DialogWizardStep';
 import { FaceTimeSetup } from 'src/components/FaceTime';
+import { UnknownAsyncResult } from 'src/lib/types';
 
 type Props = {
-  onSuccess: () => void;
+  onSuccess: () => UnknownAsyncResult;
   hasPrev?: boolean;
   submitButtonLabel?: string;
 };
@@ -32,6 +33,7 @@ export const AVCheckStep: React.FC<Props> = ({
           : undefined,
         {
           label: submitButtonLabel,
+          withLoader: true,
           isLoading: buttonState === 'loading',
           disabled: buttonState === 'notReady',
           onClick: props.onSuccess,

@@ -6,6 +6,7 @@ import { VideoBox, VideoBoxProps } from 'src/components/VideoBox';
 import { colors, fonts, onlyMobile } from 'src/theme';
 import { Text } from 'src/components/Text';
 import { AspectRatio, AspectRatioProps } from 'src/components/AspectRatio';
+import { console } from 'window-or-global';
 
 export type FaceTimeProps = Omit<VideoBoxProps, 'stream'> & {
   aspectRatio?: AspectRatioProps['aspectRatio'];
@@ -40,6 +41,12 @@ export const FaceTime: React.FC<FaceTimeProps> = ({
   ...avStreamProps
 }) => {
   const cls = useStyles();
+
+  // useEffect(() => {
+  // }, [
+  //   streamConfig
+  // ]);
+  // console.log('FacetimeStreaming config updated', streamConfig);
 
   return (
     <div className={cx(cls.container, containerClassName)}>

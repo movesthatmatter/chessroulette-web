@@ -7,6 +7,7 @@ import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { colors, floatingShadow, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
+import { AsyncOk } from 'ts-async-results';
 import { JoinRoomWizard } from './JoinRoomWizard';
 
 export default {
@@ -49,7 +50,11 @@ export const withPendingChallenge = () => {
         >
           <JoinRoomWizard
             roomInfo={room}
-            onFinished={action('on finished')}
+            onFinished={() => {
+              action('on finished');
+
+              return AsyncOk.EMPTY;
+            }}
             myUser={userMocker.record()}
           />
         </div>

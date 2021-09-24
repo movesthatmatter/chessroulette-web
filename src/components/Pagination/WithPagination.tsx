@@ -1,4 +1,4 @@
-import { AsyncResult } from 'dstnd-io';
+import { AsyncResult } from 'ts-async-results';
 import { PaginatedResponse } from 'dstnd-io/dist/sdk/resource';
 import React from 'react';
 import { Paginator } from './Paginator';

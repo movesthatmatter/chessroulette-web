@@ -1,10 +1,11 @@
 import { action } from '@storybook/addon-actions';
-import { AsyncResultWrapper, Ok } from 'dstnd-io';
 import { delay } from 'fp-ts/lib/Task';
 import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { defaultTheme } from 'src/theme';
+import { AsyncResultWrapper } from 'ts-async-results';
+import { Ok } from 'ts-results';
 import { VerificationForm } from './VerificationForm';
 
 export default {

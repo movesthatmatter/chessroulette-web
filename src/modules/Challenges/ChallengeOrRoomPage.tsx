@@ -1,4 +1,4 @@
-import { AsyncResult, ChallengeRecord, RoomRecord } from 'dstnd-io';
+import { ChallengeRecord, RoomRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
@@ -9,6 +9,7 @@ import { ChallengePage } from './ChallengePage';
 import { AwesomeErrorWithAction } from 'src/components/AwesomeErrorWithAction/AwesomeErrorWithAction';
 import { RoomRoute, resources as roomResources } from 'src/modules/Room';
 import { resources } from 'src/resources';
+import { AsyncResult } from 'ts-async-results';
 
 type Props = {};
 

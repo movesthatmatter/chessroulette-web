@@ -6,11 +6,13 @@ import { getRoomPendingChallenge } from '../../util';
 // import { resources } from 'src/resources';
 import { AcceptRoomStep } from '../steps/AcceptRoomStep';
 import { resources } from '../..';
+import { UnknownAsyncResult } from 'src/lib/types';
+import { AsyncOk, AsyncResultWrapper } from 'ts-async-results';
 
 type Props = {
   myUser: UserInfoRecord;
   roomInfo: RoomRecord;
-  onFinished: () => void;
+  onFinished: () => UnknownAsyncResult;
 };
 
 type WizardState =
@@ -38,29 +40,31 @@ export const JoinRoomWizard: React.FC<Props> = (props) => {
             challengeAccepted: false,
             pendingChallenge: undefined,
           });
+
+          return AsyncOk.EMPTY;
         }}
         onChallengeAccepted={(pendingChallenge) => {
-          setState({
-            challengeAccepted: true,
-            pendingChallenge,
-          });
+            setState({
+              challengeAccepted: true,
+              pendingChallenge,
+            });
+          
+          return AsyncOk.EMPTY;
         }}
       />
       <AVCheckStep
         submitButtonLabel="Join"
         onSuccess={() => {
           if (state.challengeAccepted) {
-            resources
+            return resources
               .acceptRoomChallenge({
                 challengeId: state.pendingChallenge.id,
                 roomId: state.pendingChallenge.roomId,
               })
               // TODO: Handle error
-              .map(() => {
-                props.onFinished();
-              });
+              .flatMap(() => props.onFinished());
           } else {
-            props.onFinished();
+            return props.onFinished();
           }
         }}
       />

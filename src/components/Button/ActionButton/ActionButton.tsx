@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
+import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { colors } from 'src/theme/colors';
 import { Text } from 'src/components/Text';
 import cx from 'classnames';
@@ -9,10 +9,10 @@ import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { hasOwnProperty, noop } from 'src/lib/util';
 import { ButtonType } from '../type';
 import { buttonStyles } from '../styles/styles';
-import { AsyncResult } from 'dstnd-io';
+import { AsyncResult } from 'ts-async-results';
 import Loader from 'react-loaders';
 import 'loaders.css';
-import { fonts, onlyMobile, text } from 'src/theme';
+import { fonts } from 'src/theme';
 
 export type ActionButtonProps = {
   type: ButtonType;

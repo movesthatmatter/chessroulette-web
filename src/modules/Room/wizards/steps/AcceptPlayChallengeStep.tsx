@@ -7,11 +7,12 @@ import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
 import { fonts, onlyMobile } from 'src/theme';
+import { UnknownAsyncResult } from 'src/lib/types';
 
 type Props = {
   challenge: ChallengeRecord;
   roomInfo: RoomRecord;
-  onAccepted: () => void;
+  onAccepted: () => UnknownAsyncResult;
 };
 
 export const AcceptPlayChallengeStep: React.FC<Props> = ({ challenge, roomInfo, onAccepted }) => {
@@ -19,8 +20,9 @@ export const AcceptPlayChallengeStep: React.FC<Props> = ({ challenge, roomInfo, 
   const wizardProps = useWizard();
 
   const acceptAndGoNext = () => {
-    onAccepted();
-    wizardProps.nextStep();
+    return onAccepted().map(() => {
+      wizardProps.nextStep();
+    });
   };
 
   return (
@@ -36,6 +38,7 @@ export const AcceptPlayChallengeStep: React.FC<Props> = ({ challenge, roomInfo, 
       buttons={[
         {
           label: 'Accept Challenge',
+          withLoader: true,
           onClick: acceptAndGoNext,
         },
       ]}

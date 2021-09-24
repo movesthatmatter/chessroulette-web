@@ -2,11 +2,11 @@ import {
   io,
   VendorsAuthenticationRedirectUrlPayload,
   vendorsAuthenticationRedirectUrlResponsePayload,
-  AsyncResultWrapper,
-  Err,
   ExternalVendor,
 } from 'dstnd-io';
 import { http } from 'src/lib/http';
+import { AsyncResultWrapper } from 'ts-async-results';
+import { Err } from 'ts-results';
 
 
 type ApiError = 'BadRequest' | 'BadResponse';

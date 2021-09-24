@@ -11,6 +11,7 @@ import { JoinedRoom } from './types';
 import { useJoinedRoom } from './hooks/useJoinedRoom';
 import { JoinRoomWizard } from './wizards/JoinRoomWizard';
 import * as roomResources from './resources';
+import { AsyncOk } from 'ts-async-results';
 
 type Props = {
   slug: RoomRecord['slug'];
@@ -94,6 +95,8 @@ export const JoinRoomBouncer: React.FC<Props> = (props) => {
                     canJoin: true,
                   },
                 });
+
+                return AsyncOk.EMPTY;
               }}
             />
           </div>
