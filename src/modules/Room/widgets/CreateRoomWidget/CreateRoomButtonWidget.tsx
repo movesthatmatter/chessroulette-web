@@ -41,8 +41,7 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
 
                   return resources
                     .createRoom({
-                      // userId: peerState.me.id,
-                      userId: '2',
+                      userId: peerState.me.id,
                       type: createRoomSpecs.type,
                       activityType: 'play',
                       gameSpecs,
