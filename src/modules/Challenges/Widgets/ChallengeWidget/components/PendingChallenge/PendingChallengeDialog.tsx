@@ -1,8 +1,9 @@
-import { AsyncResult, RoomRecord } from 'dstnd-io';
+import { RoomRecord } from 'dstnd-io';
 import React from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
 import { resources } from 'src/resources';
 import { Events } from 'src/services/Analytics';
+import { AsyncResult } from 'ts-async-results';
 import {
   PendingChallengeContainer,
   PendingChallengeContainerProps,
@@ -48,13 +49,12 @@ export const PendingChallengeDialog: React.FC<PendingChallengeDialogProps> = ({
           label: 'Cancel',
           type: 'secondary',
           withLoader: true,
-          onClick: () => {
-            return resources
-              .deleteChallenge(challenge.id)
-              .map(AsyncResult.passThrough(() => {
+          onClick: () =>
+            resources.deleteChallenge(challenge.id).map(
+              AsyncResult.passThrough(() => {
                 onCanceled();
-              }));
-          },
+              })
+            ),
         },
       ]}
     />

@@ -1,3 +1,5 @@
+import { AsyncResult } from 'ts-async-results';
+
 export type DeepPartial<T> = T extends Function
   ? T
   : T extends object
@@ -21,3 +23,7 @@ export type WithRequiredKey<T extends object, K extends keyof T> = Omit<T, K> &
  *  https://github.com/microsoft/TypeScript/issues/31501
  */
 export type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never;
+
+// Utils for ts-async-results
+export type AnyAsyncResult = AsyncResult<any, any>;
+export type UnknownAsyncResult = AsyncResult<unknown, unknown>;

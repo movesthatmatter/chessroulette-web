@@ -1,5 +1,6 @@
 import ndjsonStream from 'can-ndjson-stream';
-import { AsyncResultWrapper, Err, Ok } from 'dstnd-io';
+import { AsyncResultWrapper } from 'ts-async-results';
+import { Err, Ok } from 'ts-results';
 import { NDJsonReader } from './types';
 import api from './api';
 

@@ -5,7 +5,7 @@ import { borderRadius, colors, onlyMobile, softBorderRadius, softOutline } from 
 import cx from 'classnames';
 import { ButtonType } from '../type';
 import { buttonStyles } from '../styles/styles';
-import { AsyncResult } from 'dstnd-io';
+import { AsyncResult } from 'ts-async-results';
 import Loader from 'react-loaders';
 import 'loaders.css';
 import { spacers } from 'src/theme/spacers';

@@ -1,6 +1,7 @@
-import { AsyncResultWrapper, Ok } from 'dstnd-io';
 import { Pubsy } from 'src/lib/Pubsy';
-import {AVStreamingConstraints} from './types';
+import { AsyncResultWrapper } from 'ts-async-results';
+import { Ok } from 'ts-results';
+import { AVStreamingConstraints } from './types';
 
 type DestroyStreamFn = () => void;
 
@@ -21,14 +22,13 @@ class AVStreamingClass {
     video: true,
   };
 
-  
-  set activeConstraints({video, audio} : {video:boolean;audio:boolean}) {
+  set activeConstraints({ video, audio }: { video: boolean; audio: boolean }) {
     this._activeConstraints = {
-      video, 
-      audio
-    }
+      video,
+      audio,
+    };
   }
-  
+
   get activeConstraints() {
     return this._activeConstraints;
   }
@@ -120,7 +120,6 @@ class AVStreamingClass {
     const allActiveStreams = Object.values(this.activeStreamsById);
 
     allActiveStreams.forEach((stream) => {
-
       stream.getVideoTracks().forEach((videoTrack) => {
         videoTrack.enabled = nextConstraints.video;
       });

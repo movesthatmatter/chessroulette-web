@@ -10,7 +10,6 @@ import {
   RegisterPeerRequestPayload,
   RegisterPeerResponsePayload,
   registerPeerResponsePayload,
-  AsyncResultWrapper,
   CreateChallengeResponse,
   ChallengeRecord,
   challengeRecord,
@@ -21,6 +20,7 @@ import {
 } from 'dstnd-io';
 import config from 'src/config';
 import { Result, Err, Ok } from 'ts-results';
+import { AsyncResultWrapper } from 'ts-async-results';
 
 type ApiError = 'BadRequest' | 'BadResponse';
 

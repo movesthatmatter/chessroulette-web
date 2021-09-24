@@ -1,4 +1,5 @@
-import { AsyncResult, AsyncResultWrapper, gameRecord, Ok } from 'dstnd-io';
+import { AsyncResult, AsyncResultWrapper } from 'ts-async-results';
+import { Ok } from 'ts-results';
 import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';

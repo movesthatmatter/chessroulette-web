@@ -1,4 +1,4 @@
-import { AsyncResult, CountryCode } from 'dstnd-io';
+import { CountryCode } from 'dstnd-io';
 import React from 'react';
 import { Button } from 'src/components/Button';
 import { Form, FormError, SubmissionErrors } from 'src/components/Form';
@@ -9,7 +9,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { validator } from 'src/lib/validator';
 import { GetCountries } from 'src/services/Location';
 import { colors, onlyMobile } from 'src/theme';
-import { console } from 'window-or-global';
+import { AsyncResult } from 'ts-async-results';
 
 export type RegistrationUserInfo =
   | {

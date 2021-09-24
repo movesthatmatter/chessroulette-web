@@ -3,9 +3,10 @@ import { Wizard } from 'react-use-wizard';
 import { GameSpecsRecord } from 'dstnd-io';
 import { CreatePlayChallengeStep } from './steps/CreatePlayChallengeStep';
 import { AVCheckStep } from './steps/AVCheckStep';
+import { UnknownAsyncResult } from 'src/lib/types';
 
 type Props = {
-  onFinished: (s: WizardState) => void;
+  onFinished: (s: WizardState) => UnknownAsyncResult;
 };
 
 type WizardState = {

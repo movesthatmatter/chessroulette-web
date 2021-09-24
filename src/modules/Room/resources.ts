@@ -10,13 +10,13 @@ import {
   PublicRoomResponsePayload,
   PublicRoomsResponsePayload,
   PrivateRoomResponsePayload,
-  AsyncResultWrapper,
   RoomResponsePayload,
   roomResponsePayload,
   Resources,
 } from 'dstnd-io';
 import config from 'src/config';
 import { Result, Err } from 'ts-results';
+import { AsyncResultWrapper } from 'ts-async-results';
 
 type ApiError = 'BadRequest' | 'BadResponse';
 

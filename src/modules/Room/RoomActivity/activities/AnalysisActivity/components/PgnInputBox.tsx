@@ -1,10 +1,11 @@
-import { Err, Ok, Result, SimplePGN } from 'dstnd-io';
+import { SimplePGN } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { getNewChessGame } from 'src/modules/Games/Chess/lib';
 import useDebouncedEffect from 'use-debounced-effect';
 import { TextArea } from 'src/components/TextArea';
+import { Err, Ok, Result } from 'ts-results';
 
 type Props = {
   onChange: (s: OnChangeState) => void;

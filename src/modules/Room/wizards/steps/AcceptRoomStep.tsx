@@ -9,14 +9,19 @@ import { Text } from 'src/components/Text';
 import { fonts, onlyMobile } from 'src/theme';
 import { getRoomPendingChallenge } from '../../util';
 import { getUserDisplayName } from 'src/modules/User';
+import { UnknownAsyncResult } from 'src/lib/types';
 
 type Props = {
   roomInfo: RoomRecord;
-  onChallengeSkipped: () => void;
-  onChallengeAccepted: (pendingChallenge: RoomChallengeRecord) => void;
+  onChallengeSkipped: () => UnknownAsyncResult;
+  onChallengeAccepted: (pendingChallenge: RoomChallengeRecord) => UnknownAsyncResult;
 };
 
-export const AcceptRoomStep: React.FC<Props> = ({ roomInfo, onChallengeAccepted, onChallengeSkipped }) => {
+export const AcceptRoomStep: React.FC<Props> = ({
+  roomInfo,
+  onChallengeAccepted,
+  onChallengeSkipped,
+}) => {
   const cls = useStyles();
   const wizardProps = useWizard();
   const pendingChallenge = getRoomPendingChallenge(roomInfo);
@@ -37,17 +42,19 @@ export const AcceptRoomStep: React.FC<Props> = ({ roomInfo, onChallengeAccepted,
               {
                 label: 'Skip',
                 clear: true,
-                onClick: () => {
-                  onChallengeSkipped();
-                  wizardProps.nextStep();
-                },
+                withLoader: true,
+                onClick: () =>
+                  onChallengeSkipped().map(() => {
+                    wizardProps.nextStep();
+                  }),
               },
               {
                 label: 'Accept Challenge',
-                onClick: () => {
-                  onChallengeAccepted(pendingChallenge);
-                  wizardProps.nextStep();
-                },
+                withLoader: true,
+                onClick: () =>
+                  onChallengeAccepted(pendingChallenge).map(() => {
+                    wizardProps.nextStep();
+                  }),
               },
             ]
           : [
