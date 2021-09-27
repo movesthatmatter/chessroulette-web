@@ -1,5 +1,5 @@
 import capitalize from 'capitalize';
-import { ChallengeRecord, RoomChallengeRecord } from 'dstnd-io';
+import { RoomChallengeRecord } from 'dstnd-io';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import React, { useEffect, useState } from 'react';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
@@ -15,6 +15,7 @@ import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGam
 import { resources } from 'src/modules/Room';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
+import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { spacers } from 'src/theme/spacers';
 import { setTimeout } from 'window-or-global';
 
@@ -26,6 +27,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
   const cls = useStyles();
   const roomConsumer = useRoomConsumer();
   const [canShowOtherActivities, setCanShowotherActivities] = useState(false);
+  const deviceSize = useDeviceSize();
 
   useEffect(() => {
     setTimeout(() => {
@@ -53,7 +55,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
                 </Text>
                 <div className={cls.spacer} />
               </div>
-              {canShowOtherActivities && (
+              {canShowOtherActivities && deviceSize.isDesktop && (
                 <>
                   <Hr text="Oh, btw" />
                   <div className={cls.centered}>
@@ -169,16 +171,30 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     textAlign: 'center',
-    paddingTop: spacers.default,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: spacers.default,
+
+    ...onlyMobile({
+      paddingTop: spacers.smaller,
+    }),
   },
   buttonsContainer: {
     paddingTop: spacers.get(0.75),
+
+    ...onlyMobile({
+      paddingTop: 0,
+    }),
   },
   copyToClipboardBtn: {
     marginTop: spacers.small,
     marginBottom: 0,
+
+    ...onlyMobile({
+      ...makeImportant({
+        marginBottom: spacers.small,
+      }),
+    }),
   },
   analysisButton: {
     marginTop: spacers.default,
@@ -186,5 +202,9 @@ const useStyles = createUseStyles({
   },
   spacer: {
     paddingBottom: spacers.default,
+
+    ...onlyMobile({
+      paddingBottom: spacers.smaller,
+    }),
   },
 });

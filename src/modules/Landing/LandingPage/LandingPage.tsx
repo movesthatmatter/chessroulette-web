@@ -5,15 +5,15 @@ import { createUseStyles } from 'src/lib/jss';
 import { colors, minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
 import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
-import { LichessChallengeButton } from 'src/modules/Challenges/Widgets/LichessChallengeButton/LichessChallengeButton';
-import { LichessProvider } from 'src/modules/LichessPlay/LichessAPI/LichessProvider';
 import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
 import { spacers } from 'src/theme/spacers';
+import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 
 type Props = {};
 
 export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
+  const deviceSize = useDeviceSize();
 
   return (
     <Page name="Home" contentClassName={cls.pageContent}>
@@ -56,13 +56,14 @@ export const LandingPage: React.FC<Props> = () => {
                   type: 'private',
                   activityType: 'play',
                 }}
-                size="small"
+                size={deviceSize.isDesktop ? 'small' : 'medium'}
                 style={{
                   marginRight: spacers.default,
                 }}
               />
             
-              <CreateRoomButtonWidget
+              {deviceSize.isDesktop && (
+                <CreateRoomButtonWidget
                 label="Analyze"
                 type="primary"
                 withBadge={{
@@ -78,6 +79,7 @@ export const LandingPage: React.FC<Props> = () => {
                   activityType: 'analysis',
                 }}
               />
+              )}
               {/* <LichessChallengeButton label="Lichess" size="small" type="secondary" /> */}
             </div>
           </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { floatingShadow, softBorderRadius } from 'src/theme';
+import { floatingShadow, onlySmallMobile, softBorderRadius } from 'src/theme';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { GenericLayoutDesktopRoomConsumer } from '../../../RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { GenericLayoutMobileRoomConsumer } from '../../../RoomConsumers/GenericLayoutMobileRoomConsumer';
@@ -52,6 +52,7 @@ export const NoActivity: React.FC<Props> = (props) => {
       <GenericLayoutMobileRoomConsumer
         renderTopOverlayHeader={() => <NavigationHeader darkMode />}
         renderActivity={(cd) => (
+          <div className={cls.mobileBoardWrapper}>
           <ChessBoard
             type="free"
             size={cd.boardSize}
@@ -62,6 +63,7 @@ export const NoActivity: React.FC<Props> = (props) => {
             className={cls.board}
             overlayComponent={overlayComponent}
           />
+          </div>
         )}
       />
     );
@@ -120,6 +122,14 @@ const useStyles = createUseStyles({
     display: 'flex',
     flex: 1,
     justifyContent: 'space-between',
+  },
+  mobileBoardWrapper: {
+    padding: '6px 12px 8px',
+
+    ...onlySmallMobile({
+      paddingLeft: '30px',
+      paddingRight: '30px',
+    }),
   },
   board: {
     ...floatingShadow,

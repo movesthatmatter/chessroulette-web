@@ -16,6 +16,7 @@ import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { DialogNotificationTypes } from '../type';
 import { RoomPlayActivityWithGame } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
+import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 
 export type GameStateDialogContentProps = {
   activity: RoomPlayActivityWithGame;
@@ -34,6 +35,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
   const activityLog = useSelector(selectCurrentRoomActivityLog);
   const gameActions = useGameActions();
   const roomConsumer = useRoomConsumer();
+  const deviceSize = useDeviceSize();
 
   // TODO: Make sure the game id matches the room activity game id
   useEffect(() => {
@@ -135,7 +137,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
             buttons={
               activity.iamParticipating
                 ? [
-                    {
+                    deviceSize.isDesktop && {
                       label: 'Analyze',
                       type: 'primary',
                       onClick: () => {
@@ -146,7 +148,6 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
                             history: game.history,
                           });
                         }
-                        // gameActions.onRematchOffer({});
                       },
                     },
                     {

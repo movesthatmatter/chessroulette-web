@@ -3,8 +3,10 @@ import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { ChessGame } from 'src/modules/Games/Chess';
+import { ChessGameHistoryConsumer, ChessGameHistoryProvider } from 'src/modules/Games/Chess/components/GameHistory';
 import { useGameTimesLeft } from 'src/modules/Games/Chess/components/GameStateWidget/useGameState';
 import { PlayerBox } from 'src/modules/Games/Chess/components/PlayerBox';
+import { historyToPgn } from 'src/modules/Games/Chess/lib';
 import { GenericLayoutMobileRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutMobileRoomConsumer';
 import { MobileChatWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/MobileChatWidgetRoomConsumer';
 import { MobileGameActionsWidget } from 'src/modules/Room/widgets/MobileGameActionsWidget';
@@ -61,53 +63,61 @@ export const PlayActivityMobile: React.FC<Props> = ({
         </div>
       )}
       renderActivity={({ boardSize }) => (
-        <div className={cls.mobileMainContainer}>
-          {activity.iamParticipating && (
-            <div className={cls.mobilePlayerWrapper}>
-              <PlayerBox
-                // This is needed for the countdown to reset the interval !!
-                key={`${game.id}-${activity.participants.opponent.color}`}
-                player={roomPlayActivityParticipantToChessPlayer(activity.participants.opponent)}
-                timeLeft={awayTimeLeft}
-                active={
-                  game.state === 'started' &&
-                  game.lastMoveBy !== activity.participants.opponent.color
-                }
-                gameTimeLimit={game.timeLimit}
-                material={activity.participants.opponent.materialScore}
-                onTimerFinished={() => onTimerFinished(activity.participants.opponent.color)}
+        <ChessGameHistoryProvider history={game.history || []}>
+          <div className={cls.mobileMainContainer}>
+            {activity.iamParticipating && (
+              <div className={cls.mobilePlayerWrapper}>
+                <PlayerBox
+                  // This is needed for the countdown to reset the interval !!
+                  key={`${game.id}-${activity.participants.opponent.color}`}
+                  player={roomPlayActivityParticipantToChessPlayer(activity.participants.opponent)}
+                  timeLeft={awayTimeLeft}
+                  active={
+                    game.state === 'started' &&
+                    game.lastMoveBy !== activity.participants.opponent.color
+                  }
+                  gameTimeLimit={game.timeLimit}
+                  material={activity.participants.opponent.materialScore}
+                  onTimerFinished={() => onTimerFinished(activity.participants.opponent.color)}
+                />
+              </div>
+            )}
+            <div className={cls.mobileChessGameWrapper}>
+              <ChessGameHistoryConsumer
+                render={(c) => (
+                  <ChessGame
+                    // Reset the State each time the game id changes
+                    key={game.id}
+                    game={game}
+                    size={boardSize}
+                    homeColor={homeColor}
+                    canInteract={activity.iamParticipating}
+                    playable={activity.iamParticipating && activity.participants.me.canPlay}
+                    // displayedPgn={displayedPgn}
+                    displayedPgn={historyToPgn(c.displayedHistory)}
+                    className={cls.board}
+                  />
+                )}
               />
             </div>
-          )}
-          <div className={cls.mobileChessGameWrapper}>
-            <ChessGame
-              // Reset the State each time the game id changes
-              key={game.id}
-              game={game}
-              size={boardSize}
-              homeColor={homeColor}
-              playable={activity.iamParticipating && activity.participants.me.canPlay}
-              displayedPgn={displayedPgn}
-              className={cls.board}
-            />
+            {activity.iamParticipating && (
+              <div className={cls.mobilePlayerWrapper}>
+                <PlayerBox
+                  // This is needed for the countdown to reset the interval !!
+                  key={`${game.id}-${activity.participants.me.color}`}
+                  player={roomPlayActivityParticipantToChessPlayer(activity.participants.me)}
+                  timeLeft={homeTimeLeft}
+                  active={
+                    game.state === 'started' && game.lastMoveBy !== activity.participants.me.color
+                  }
+                  gameTimeLimit={game.timeLimit}
+                  material={activity.participants.me.materialScore}
+                  onTimerFinished={() => onTimerFinished(activity.participants.opponent.color)}
+                />
+              </div>
+            )}
           </div>
-          {activity.iamParticipating && (
-            <div className={cls.mobilePlayerWrapper}>
-              <PlayerBox
-                // This is needed for the countdown to reset the interval !!
-                key={`${game.id}-${activity.participants.me.color}`}
-                player={roomPlayActivityParticipantToChessPlayer(activity.participants.me)}
-                timeLeft={homeTimeLeft}
-                active={
-                  game.state === 'started' && game.lastMoveBy !== activity.participants.me.color
-                }
-                gameTimeLimit={game.timeLimit}
-                material={activity.participants.me.materialScore}
-                onTimerFinished={() => onTimerFinished(activity.participants.opponent.color)}
-              />
-            </div>
-          )}
-        </div>
+        </ChessGameHistoryProvider>
       )}
     />
   );
@@ -120,7 +130,7 @@ const useStyles = createUseStyles({
     overflow: 'hidden',
   },
   iconButtonsContainer: {
-    padding: '0 12px 4px',
+    padding: '0 12px 8px',
 
     ...onlySmallMobile({
       padding: '0 8px 4px',
@@ -128,7 +138,7 @@ const useStyles = createUseStyles({
   },
 
   mobileMainContainer: {
-    paddingBottom: '8px',
+    paddingBottom: spacers.small,
   },
   mobileBoard: {
     ...floatingShadow,
