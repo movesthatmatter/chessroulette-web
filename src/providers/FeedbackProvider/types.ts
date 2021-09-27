@@ -13,16 +13,17 @@ export type SeenState =
     };
 
 export type FeedbackState = {
-  canShow: {
-    anyStep: boolean;
-    steps: {
-      rating: boolean;
-      friendsInvite: boolean;
-    };
-  };
   steps: {
     rating: SeenState;
     friendsInvite: SeenState;
+  };
+};
+
+export type FeedbackStateCanShow = {
+  anyStep: boolean;
+  steps: {
+    rating: boolean;
+    friendsInvite: boolean;
   };
 };
 

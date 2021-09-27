@@ -1,10 +1,9 @@
 import { createReducer } from 'deox';
-import { ISODateTimeToTimestamp } from 'src/lib/date';
+
 import { toISODateTime } from 'src/lib/date/ISODateTime';
-import { days, hours } from 'src/lib/time';
 import { objectKeys } from 'src/lib/util';
 import { GenericStateSlice } from 'src/redux/types';
-import { StepName, Steps } from './types';
+import { Steps, FeedbackState } from '../types';
 import {
   attempToShowAnyStepAction,
   finishStepAction,
@@ -13,16 +12,17 @@ import {
   posponeStepAction,
   forcefullyShowAllStepsStepsAction,
 } from './actions';
-import { FeedbackState } from './types';
+import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
+import { persistReducer } from 'redux-persist';
 
 const initialState: FeedbackState = {
-  canShow: {
-    anyStep: false,
-    steps: {
-      rating: false,
-      friendsInvite: false,
-    },
-  },
+  // canShow: {
+  //   anyStep: false,
+  //   steps: {
+  //     rating: false,
+  //     friendsInvite: false,
+  //   },
+  // },
   steps: {
     rating: {
       seen: false,
@@ -33,46 +33,13 @@ const initialState: FeedbackState = {
   },
 };
 
-// TODO: This should come from a Config somewhere
-const FEEDBACK_DIALOG_POSTPONING_TIME = {
-  feedback: hours(24),
-  friendsInvite: days(7),
-};
 
-const getCanShowFeedbackDialogStep = (step: Steps[StepName], at: Date, waitTimeMs: number) => {
-  return (
-    step.seen === false ||
-    (step.done === false && ISODateTimeToTimestamp(step.lastSeenAt) + waitTimeMs < at.getTime())
-  );
-};
-
-const getCanShow = (state: FeedbackState, at: Date): FeedbackState['canShow'] => {
-  const canShowRatingStep = getCanShowFeedbackDialogStep(
-    state.steps.rating,
-    at,
-    FEEDBACK_DIALOG_POSTPONING_TIME.feedback
-  );
-
-  const canShowFriendsInviteStep = getCanShowFeedbackDialogStep(
-    state.steps.friendsInvite,
-    at,
-    FEEDBACK_DIALOG_POSTPONING_TIME.friendsInvite
-  );
-
-  return {
-    anyStep: canShowRatingStep || canShowFriendsInviteStep,
-    steps: {
-      rating: canShowRatingStep,
-      friendsInvite: canShowFriendsInviteStep,
-    },
-  };
-};
 
 export const reducer = createReducer(initialState, (handleAction) => [
   handleAction([attempToShowAnyStepAction], (state, { payload }) => {
     return {
       ...state,
-      canShow: getCanShow(state, payload.at),
+      // canShow: getCanShow(state, payload.at),
     };
   }),
   handleAction([forcefullyShowAllStepsStepsAction], (state, { payload }) => {
@@ -109,7 +76,7 @@ export const reducer = createReducer(initialState, (handleAction) => [
 
     return {
       ...nextState,
-      canShow: getCanShow(nextState, payload.at),
+      // canShow: getCanShow(nextState, payload.at),
     };
   }),
   handleAction(markStepAsSeenAction, (state, { payload }) => {
@@ -129,7 +96,7 @@ export const reducer = createReducer(initialState, (handleAction) => [
 
     return {
       ...nextState,
-      canShow: getCanShow(nextState, payload.at),
+      // canShow: getCanShow(nextState, payload.at),
     };
   }),
   handleAction(finishStepAction, (state, { payload }) => {
@@ -147,7 +114,7 @@ export const reducer = createReducer(initialState, (handleAction) => [
 
     return {
       ...nextState,
-      canShow: getCanShow(nextState, payload.at),
+      // canShow: getCanShow(nextState, payload.at),
     };
   }),
   handleAction(markAllStepsAsSeenAction, (state, { payload }) => {
@@ -172,14 +139,27 @@ export const reducer = createReducer(initialState, (handleAction) => [
     };
     return {
       ...nextState,
-      canShow: getCanShow(nextState, payload.at),
+      // canShow: getCanShow(nextState, payload.at),
     };
   }),
 ]);
 
+const stateSliceByKeyWithoutPersist = {
+  feedback: reducer,
+};
+
 export const stateSliceByKey = {
-  feedbackDialog: reducer,
+  feedback: persistReducer(
+    {
+      key: 'feedback',
+      storage,
+    },
+    reducer
+  ),
 };
 
 export type ModuleState = ReturnType<typeof reducer>;
-export type ModuleStateSlice = GenericStateSlice<typeof stateSliceByKey, typeof reducer>;
+export type ModuleStateSlice = GenericStateSlice<
+  typeof stateSliceByKeyWithoutPersist,
+  typeof reducer
+>;

@@ -8,19 +8,17 @@ import { useWillUnmount } from 'src/lib/hooks/useWillUnmount';
 import { createUseStyles } from 'src/lib/jss';
 import { seconds } from 'src/lib/time';
 import { Events } from 'src/services/Analytics';
-import { Rating } from '../types';
-import { useFeedbackDialog } from '../useFeedbackDialog';
+import { Rating } from '../../types';
 import { locale } from './locale';
 
 type Props = {
-  onDone: () => void;
+  onDone: (rating: Rating) => void;
   onPostponed: () => void;
 };
 
 export const RateAndReviewDialog: React.FC<Props> = (props) => {
   const cls = useStyles();
   const { share } = useWebShare();
-  const feedbackDialog = useFeedbackDialog();
   const [rating, setRating] = useState<Rating>();
 
   useWillUnmount(() => {
@@ -29,9 +27,9 @@ export const RateAndReviewDialog: React.FC<Props> = (props) => {
     //  the users interaction there's a chance it will
     // get tracked/saved
     if (rating) {
-      feedbackDialog.finishRatingStep(rating);
+      props.onDone(rating);
     }
-  }, [rating, feedbackDialog]);
+  }, [rating]);
 
   useEffect(() => {
     Events.trackFeedbackDialogSeen('Rating Step');
@@ -41,7 +39,7 @@ export const RateAndReviewDialog: React.FC<Props> = (props) => {
     <Dialog
       visible
       hasCloseButton={false}
-      title={`Psss! How was your experience?`}
+      title={`How was your experience?`}
       content={
         <>
           {
@@ -140,7 +138,7 @@ export const RateAndReviewDialog: React.FC<Props> = (props) => {
                     onCopied={() => {
                       // Wait a bit till I show the Thank You
                       setTimeout(() => {
-                        props.onDone();
+                        props.onDone(rating);
                       }, seconds(2));
 
                       try {
@@ -177,13 +175,13 @@ export const RateAndReviewDialog: React.FC<Props> = (props) => {
               positive: 'I had a great experience!',
             }[rating];
 
-            window.open(`mailto:feedback@chessroulette.org?subject=${subject}`);
+            window.open(`mailto:feedback@chessroulette.live?subject=${subject}`);
 
             Events.trackFeedbackDialogReviewButtonPressed(rating);
 
             // Wait a bit to show the Thank You
             setTimeout(() => {
-              props.onDone();
+              props.onDone(rating);
             }, seconds(1));
           },
         },
@@ -191,7 +189,7 @@ export const RateAndReviewDialog: React.FC<Props> = (props) => {
           ? {
               type: 'secondary',
               label: `Done`,
-              onClick: props.onDone,
+              onClick: () => props.onDone(rating),
             }
           : {
               type: 'secondary',

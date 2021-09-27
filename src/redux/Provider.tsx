@@ -19,7 +19,7 @@ export const ReduxProvider: React.FunctionComponent = ({ children }) => (
           return children;
         }
 
-        return <AwesomeLoaderPage />
+        return <AwesomeLoaderPage />;
       }}
     </PersistGate>
   </Provider>

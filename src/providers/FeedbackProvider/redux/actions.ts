@@ -1,5 +1,5 @@
 import { createAction } from 'deox';
-import { StepName } from './types';
+import { StepName } from '../types';
 
 export const attempToShowAnyStepAction = createAction(
   'Feedback Dialog: Attempt To Show Any Step',

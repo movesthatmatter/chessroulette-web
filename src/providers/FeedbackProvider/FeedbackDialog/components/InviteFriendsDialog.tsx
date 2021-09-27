@@ -5,7 +5,6 @@ import { Dialog } from 'src/components/Dialog/Dialog';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { seconds } from 'src/lib/time';
 import { Events } from 'src/services/Analytics';
 import { colors } from 'src/theme';
 import { locale } from './locale';

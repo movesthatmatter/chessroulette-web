@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { RateAndReviewDialog, InviteFriendsDialog, ThankYouDialog } from './components';
-import { Rating } from './types';
-import { useFeedbackDialog } from './useFeedbackDialog';
+import { FeedbackState, Rating, StepName } from '../types';
 
 type Props = {
   onRated?: (rating: Rating) => void;
   attemptToShowOnMount?: boolean;
+  state: FeedbackState;
+  markAllStepsAsSeen: () => void;
+  attemptToShow: () => void;
+  markStepAsSeen: (step: StepName) => void;
+  finishRatingStep: (rating: Rating) => void;
 };
 
-export const FeedbackDialog: React.FC<Props> = ({ attemptToShowOnMount = false }) => {
-  const { state, ...actions } = useFeedbackDialog();
+export const FeedbackDialog: React.FC<Props> = ({
+  state,
+  attemptToShowOnMount = false,
+  ...actions
+}) => {
   const [doneRateAndReview, setDoneRateAndReview] = useState(false);
-  const feedbackDialog = useFeedbackDialog();
 
   useEffect(() => {
     if (attemptToShowOnMount) {
@@ -24,33 +30,32 @@ export const FeedbackDialog: React.FC<Props> = ({ attemptToShowOnMount = false }
       // This should be part of the Rate And Review Component
       <ThankYouDialog
         onClose={() => {
-          feedbackDialog.markAllStepsAsSeen();
+          actions.markAllStepsAsSeen();
         }}
       />
     );
   }
 
-  // Taken out on Sep 15th
-  // if (state.canShow.steps.rating) {
-  //   return (
-  //     <RateAndReviewDialog
-  //       onPostponed={() => {
-  //         feedbackDialog.markAllStepsAsSeen();
-  //       }}
-  //       onDone={() => setDoneRateAndReview(true)}
-  //     />
-  //   );
-  // }
-
   // if (state.canShow.steps.friendsInvite) {
   //   return (
   //     <InviteFriendsDialog
   //       onDone={() => {
-  //         feedbackDialog.markStepAsSeen('friendsInvite');
+  //         actions.markStepAsSeen('friendsInvite');
   //       }}
   //     />
   //   );
   // }
 
-  return null;
+  // Taken out on Sep 15th
+  return (
+    <RateAndReviewDialog
+      onPostponed={() => {
+        actions.markAllStepsAsSeen();
+      }}
+      onDone={(rating) => {
+        actions.finishRatingStep(rating);
+        setDoneRateAndReview(true);
+      }}
+    />
+  );
 };
