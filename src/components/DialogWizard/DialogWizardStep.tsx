@@ -90,13 +90,13 @@ const useStyles = createUseStyles({
     },
 
     ...onlyMobile({
-      paddingLeft: '18px',
-      paddingRight: '18px',
-      paddingBottom: '16px',
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingBottom: 0,
     }),
   },
   buttonContainer: {
-    marginLeft: '16px',
+    marginLeft: spacers.default,
 
     '&:first-child': {
       marginLeft: 0,

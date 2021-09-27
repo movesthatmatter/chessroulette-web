@@ -67,8 +67,7 @@ const useStyles = createUseStyles({
 
     ...onlyMobile({
       width: '100%',
-      maxWidth: '140px',
-      minWidth: '100px',
+      maxWidth: '170px',
     }),
   },
   miniContainer: {

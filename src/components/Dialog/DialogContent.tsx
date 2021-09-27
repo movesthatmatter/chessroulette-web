@@ -145,13 +145,16 @@ const useStyles = createUseStyles({
     paddingRight: spacers.large,
     paddingBottom: spacers.default,
 
-    ...onlyMobile({
-      ...makeImportant({
-        paddingLeft: '18px',
-        paddingRight: '18px',
-        paddingBottom: '12px',
-      }),
-    }),
+    ...onlyMobile(
+      {
+        ...makeImportant({
+          paddingLeft: '18px',
+          paddingRight: '18px',
+          paddingBottom: '12px',
+        }),
+      },
+      fonts.subtitle1
+    ),
   },
   contentWrapper: {
     paddingLeft: spacers.large,
@@ -161,7 +164,7 @@ const useStyles = createUseStyles({
     ...onlyMobile({
       paddingLeft: '18px',
       paddingRight: '18px',
-      paddingBottom: '18px',
+      paddingBottom: '12px',
     }),
   },
   contentTextWrapper: {
@@ -180,20 +183,28 @@ const useStyles = createUseStyles({
     paddingTop: spacers.default,
 
     ...onlyMobile({
-      paddingLeft: '18px',
-      paddingRight: '18px',
-      paddingBottom: '16px',
+      paddingLeft: spacers.default,
+      paddingRight: spacers.default,
+      paddingBottom: spacers.default,
     }),
   },
   buttonContainer: {
-    marginLeft: '16px',
+    marginLeft: spacers.default,
+
+    ...onlyMobile({
+      marginLeft: spacers.small,
+    }),
 
     '&:first-child': {
       marginLeft: 0,
     },
   },
   stackedButtonContainer: {
-    marginBottom: '16px',
+    marginBottom: spacers.default,
+
+    ...onlyMobile({
+      marginBottom: spacers.small,
+    }),
 
     '&:last-child': {
       marginBottom: 0,
