@@ -1,11 +1,13 @@
 import { RoomRecord } from 'dstnd-io';
 import { Peer } from 'src/providers/PeerProvider';
 import { RoomMember } from './types';
+import deepCopy from 'deep-copy';
 
 export const toRoomMember = (peer: Peer): RoomMember => ({
   isRoomMember: true,
   userId: peer.userId,
-  peer,
+  // Ensure this creates a new object so React triggers a render correctly
+  peer: deepCopy(peer),
 });
 
 export const getRoomPendingChallenge = (room: RoomRecord) => {

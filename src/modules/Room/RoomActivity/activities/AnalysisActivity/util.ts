@@ -4,13 +4,15 @@ import { BaseRoomAnalysisActivity } from '../../redux/types';
 import { RoomActivityParticipant } from '../../types';
 import { toRoomActivityPresentParticipant } from '../../util/participantsUtil';
 import { RoomAnalysisActivityParticipant, RoomAnalysisActivity } from './types';
+import deepCopy from 'deep-copy';
 
 const toActivityParticipant = (
   participant: RoomActivityParticipant
 ): RoomAnalysisActivityParticipant => ({
   isRoomActivitySpecificParticipant: true,
   roomActivitySpecificParticipantType: 'analysis',
-  participant,
+  // Ensure this creates a new object so React triggers a render correctly
+  participant: deepCopy(participant),
   userId: participant.userId,
 });
 

@@ -58,6 +58,7 @@
     "date-fns": "^2.12.0",
     "dateformat": "^3.0.3",
     "debounce": "^1.2.0",
+    "deep-copy": "^1.4.2",
     "deox": "^3.2.1",
     "dstnd-io": "https://github.com/dstnd/dstnd-io.git#v0.2.0-2",
     "env-cmd": "^10.1.0",

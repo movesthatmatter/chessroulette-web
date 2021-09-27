@@ -104,8 +104,8 @@ const membersToPlayingParticipants = (game: Game, members: RoomMember[]) => {
 const getParticipants = (game: Game, membersMap: RoomMembersMap) => {
   const [playerA, playerB] = game.players;
   const materialScore = getRelativeMaterialScore(game);
-  const recordA = toRecord(playerA, membersMap, game, materialScore);
-  const recordB = toRecord(playerB, membersMap, game, materialScore);
+  const recordA = toParticipantRecord(playerA, membersMap, game, materialScore);
+  const recordB = toParticipantRecord(playerB, membersMap, game, materialScore);
 
   const whiteRecord = recordA.player.color === 'white' ? recordA : recordB;
   const blackRecord = whiteRecord.player.user.id === recordB.player.user.id ? recordA : recordB;
@@ -116,7 +116,7 @@ const getParticipants = (game: Game, membersMap: RoomMembersMap) => {
   };
 };
 
-const toRecord = <TPlayer extends ChessPlayerWhite | ChessPlayerBlack>(
+const toParticipantRecord = <TPlayer extends ChessPlayerWhite | ChessPlayerBlack>(
   player: TPlayer,
   membersMap: RoomMembersMap,
   game: Game,

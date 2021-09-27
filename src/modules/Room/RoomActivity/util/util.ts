@@ -13,9 +13,6 @@ export const toRoomActivity = (
   members: RoomMember[]
 ): RoomActivity => {
   if (currentRoomActivity.type === 'play') {
-    // return toRoomPlayActivity(currentRoomActivity, members.map(toRoomActivityParticipant));
-    // return toRoomPlayActivity(currentRoomActivity, members);
-    // const participants = ;
     return toRoomPlayActivity(currentRoomActivity, members);
   }
 
