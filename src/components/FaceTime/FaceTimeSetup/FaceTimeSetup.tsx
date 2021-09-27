@@ -6,11 +6,10 @@ import {
   PeerStreamingConfigOn,
 } from 'src/services/peers';
 import { AspectRatio } from 'src/components/AspectRatio';
-import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
 import { FaceTime } from '../FaceTime';
 import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
-import { colors, softBorderRadius } from 'src/theme';
+import { CustomTheme, softBorderRadius } from 'src/theme';
 import useInstance from '@use-it/instance';
 import { seconds } from 'src/lib/time';
 import Loader from 'react-loaders';
@@ -79,16 +78,15 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
               height: 3,
             }}
           >
-            <Box
-              fill
-              justify="center"
-              alignContent="center"
-              align="center"
-              pad="medium"
-              style={{
-                textAlign: 'center',
-              }}
-            >
+            <div
+                style={{
+                  textAlign: 'center',
+                  alignContent:'center',
+                  alignItems:'center',
+                  display:'flex',
+                  justifyContent:'center',
+                }}
+              >
               {permissionState === 'pending' && (
                 <>
                   <Loader type="line-scale-pulse-out" active innerClassName={cls.loader} />
@@ -101,7 +99,7 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
                   settings to allow them.
                 </Text>
               )}
-            </Box>
+            </div>
           </AspectRatio>
         }
       />
@@ -109,13 +107,13 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     ...softBorderRadius,
     overflow: 'hidden',
   },
   noFacetime: {
-    background: colors.neutral,
+    background: theme.colors.neutral,
   },
   facetime: {
     ...softBorderRadius,
@@ -125,8 +123,8 @@ const useStyles = createUseStyles({
     transform: 'scale(.7)',
     ...({
       '& > div': {
-        backgroundColor: colors.primary,
+        backgroundColor: theme.colors.primary,
       },
     } as CSSProperties),
   },
-});
+}));

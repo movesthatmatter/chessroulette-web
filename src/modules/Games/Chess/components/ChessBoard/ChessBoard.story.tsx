@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import { ChessBoard } from './ChessBoard';
 //import 'src/modules/Games/Chess/components/ChessBoard/node_modules/react-chessground/dist/styles/chessground.css';
 import { GameMocker } from 'src/mocks/records/GameMocker';
-import { Grommet } from 'grommet';
-import { defaultTheme } from 'src/theme';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { chessGameActions, ChessGameColor } from 'dstnd-io';
 import { toISODateTime } from 'io-ts-isodatetime';
@@ -87,7 +85,6 @@ export const withNotification = () =>
     const game = gameMocker.started();
 
     return (
-      <Grommet theme={defaultTheme}>
         <ChessBoard
           type="play"
           id={game.id}
@@ -109,6 +106,5 @@ export const withNotification = () =>
             />
           )}
         />
-      </Grommet>
     );
   });

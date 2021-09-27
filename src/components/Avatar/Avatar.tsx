@@ -1,17 +1,17 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { AvatarProps as GAvatarProps } from 'grommet';
-import { colors } from 'src/theme';
 import { AspectRatio } from '../AspectRatio';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { getBoxShadow } from 'src/theme/util';
 import hexToRgba from 'hex-to-rgba';
 import cx from 'classnames';
+import { darkTheme, lightTheme } from 'src/theme';
 
 export type AvatarProps = GAvatarProps & {
   className?: string;
   hasBorder?: boolean;
-  darkMode?: boolean;
+  darkBG?: boolean;
   size?: string | number;
   monochrome?: boolean;
 } & (
@@ -26,13 +26,13 @@ export type AvatarProps = GAvatarProps & {
   );
 
 const bkgColors = [
-  colors.negativeLight,
-  colors.positiveLight,
-  colors.primaryLight,
-  colors.attentionLight,
+ lightTheme.colors.negativeLight,
+ lightTheme.colors.positiveLight,
+ lightTheme.colors.primaryLight,
+ lightTheme.colors.attentionLight,
 
   // Better to have 5 or odd number
-  colors.attentionLight,
+  lightTheme.colors.attentionLight,
 ];
 
 const getColor = (mid: number) => bkgColors[mid % bkgColors.length];
@@ -40,7 +40,7 @@ const getColor = (mid: number) => bkgColors[mid % bkgColors.length];
 export const Avatar: React.FC<AvatarProps> = ({
   className,
   hasBorder = false,
-  darkMode = false,
+  darkBG = false,
   size = 32,
   monochrome = false,
 
@@ -49,7 +49,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   const cls = useStyles();
 
   const bkgColor =
-    props.mutunachiId && !monochrome ? getColor(props.mutunachiId) : colors.neutralLighter;
+    props.mutunachiId && !monochrome ? getColor(props.mutunachiId) : lightTheme.colors.neutralLighter;
 
   return (
     <div>
@@ -58,7 +58,7 @@ export const Avatar: React.FC<AvatarProps> = ({
         style={{
           width: size,
           background: bkgColor,
-          border: `2px solid ${darkMode ? colors.neutralLightest : colors.neutralLightest}`,
+          border: `2px solid ${darkBG ? darkTheme.colors.neutralLightest : lightTheme.colors.neutralLightest}`,
           boxShadow: getBoxShadow(0, 2, 16, 0, hexToRgba(bkgColor, 0.3)),
         }}
       >

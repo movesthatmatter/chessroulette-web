@@ -8,7 +8,8 @@ import { UserAccountInfo } from '../../types';
 import { Form, FormError, SubmissionErrors } from 'src/components/Form';
 import { validator } from 'src/lib/validator';
 import * as resources from '../../resources';
-import { colors } from 'src/theme';
+import { CustomTheme } from 'src/theme';
+import { FacebookAuthButton } from 'src/vendors/facebook/FacebookAuthButton/FacebookAuthButton';
 import { CodeVerificationForm } from '../CodeVerificationForm';
 import { Emoji } from 'src/components/Emoji';
 import { TwitchAuthButton } from 'src/vendors/twitch/TwitchAuthButton/TwitchAuthButton';
@@ -83,7 +84,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
                 key="email"
                 label="What's your Email?"
                 placeholder="beth.harmon@queens.gambit"
-                onChange={(e) => p.onChange('email', e.target.value)}
+                onChange={(e) => p.onChange('email', e.currentTarget.value)}
                 onBlur={() => p.validateField('email')}
                 validationError={
                   p.errors.validationErrors?.email || p.errors.submissionValidationErrors?.email
@@ -154,7 +155,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   buttonRows: {
     display: 'flex',
     flexDirection: 'column',
@@ -166,6 +167,6 @@ const useStyles = createUseStyles({
     paddingBottom: '24px',
   },
   infoText: {
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker,
   },
-});
+}));

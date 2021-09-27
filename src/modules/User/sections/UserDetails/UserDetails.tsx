@@ -40,14 +40,14 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
         <div className={cls.requiredFieldsContainer}>
           <TextInput
             label="Email"
-            value={user.email}
+            defaultValue={user.email}
             readOnly
             placeholder="beth.harmon@queens.gambit"
             className={cls.input}
           />
           <TextInput
             label="Username"
-            value={user.username}
+            defaultValue={user.username}
             readOnly
             placeholder="beth.harmon"
             className={cls.input}
@@ -87,10 +87,10 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                 <div className={cls.inputWrapper}>
                   <TextInput
                     label="First Name"
-                    value={p.model.firstName}
+                    defaultValue={p.model.firstName}
                     placeholder="Beth"
                     className={cls.input}
-                    onChange={({ target }) => p.onChange('firstName', target.value)}
+                    onChange={({ currentTarget }) => p.onChange('firstName', currentTarget.value)}
                     validationError={
                       p.errors.validationErrors?.firstName ||
                       p.errors.submissionValidationErrors?.firstName
@@ -100,10 +100,10 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                 <div className={cls.inputWrapper}>
                   <TextInput
                     label="Last Name"
-                    value={p.model.lastName}
+                    defaultValue={p.model.lastName}
                     placeholder="Beth"
                     className={cls.input}
-                    onChange={({ target }) => p.onChange('lastName', target.value)}
+                    onChange={({ currentTarget }) => p.onChange('lastName', currentTarget.value)}
                     validationError={
                       p.errors.validationErrors?.lastName ||
                       p.errors.submissionValidationErrors?.lastName

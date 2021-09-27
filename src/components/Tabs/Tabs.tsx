@@ -1,12 +1,12 @@
 import React from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
-import { colors, fonts, text } from 'src/theme';
+import { CustomTheme, darkTheme, fonts, lightTheme } from 'src/theme';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { spacers } from 'src/theme/spacers';
 import { noop } from 'src/lib/util';
-import { Button } from '../Button';
+import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 
 type TabProps = {
   title: string;
@@ -28,7 +28,10 @@ export const Tabs: React.FC<TabsProps> = ({
   renderTabRightEndComponent,
 }) => {
   const cls = useStyles();
-
+  const {theme} = useLightDarkMode();
+  const colors = {
+    ...(theme === 'light' ? lightTheme.colors : darkTheme.colors)
+  }
   return (
     <>
       <div className={cls.tabBar}>
@@ -49,7 +52,7 @@ export const Tabs: React.FC<TabsProps> = ({
                       color: colors.neutralDarker,
                     }
                   : {
-                      color: text.baseColor,
+                      color: colors.text,
                     }
               }
             >
@@ -72,11 +75,11 @@ export const Tabs: React.FC<TabsProps> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   tabBar: {
     display: 'flex',
     flexDirection: 'row',
-    borderBottom: `1px solid ${colors.neutral}`,
+    borderBottom: `1px solid ${theme.colors.neutral}`,
   },
   iconWrapper: {
     marginRight: spacers.small,
@@ -85,7 +88,7 @@ const useStyles = createUseStyles({
     paddingTop: spacers.default,
     paddingBottom: spacers.default,
     marginRight: spacers.default,
-    borderColor: colors.neutral,
+    borderColor: theme.colors.neutral,
     '&:hover': {
       cursor: 'pointer',
 
@@ -93,12 +96,12 @@ const useStyles = createUseStyles({
         '& $tabButtonText': {
           ...makeImportant({
             ...fonts.subtitle2,
-            color: text.baseColor,
+            color: theme.text.baseColor,
           }),
         },
         '& $tabButtonIcon': {
           ...makeImportant({
-            color: colors.primary,
+            color: theme.colors.primary,
           }),
         },
       } as NestedCSSElement),
@@ -108,4 +111,4 @@ const useStyles = createUseStyles({
   tabButtonIcon: {
     marginRight: spacers.small,
   },
-});
+}));

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { colors, text, hideOnDesktop, hideOnMobile, floatingShadow } from 'src/theme';
+import { hideOnDesktop, hideOnMobile, floatingShadow, CustomTheme } from 'src/theme';
 import { Menu } from 'grommet-icons';
 import cx from 'classnames';
 import { FormClose } from 'grommet-icons';
@@ -77,7 +77,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
   );
 
   return (
-    <div className={cx(cls.container, props.className)}>
+    <div className={cx(cls.containerMenu, props.className)}>
       <div className={cls.desktopMenu}>
         <div className={cx(cls.linksContainer)}>{menuContent}</div>
         <div style={{display:'flex', justifyContent:'center', alignItems:'center'}}><DarkModeSwitch/></div>
@@ -125,8 +125,8 @@ export const NavigationMenu: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
-  container: {},
+const useStyles = createUseStyles<CustomTheme>(theme => ({
+  containerMenu: {},
   mobileOverlay: {
     position: 'fixed',
     top: 0,
@@ -186,7 +186,7 @@ const useStyles = createUseStyles({
   },
 
   drawerMenuContainer: {
-    background: colors.white,
+    background: theme.colors.white,
     padding: '0 24px',
     height: '100%',
 
@@ -197,7 +197,7 @@ const useStyles = createUseStyles({
 
   drawerUserMenuWrapper: {
     padding: '32px 0',
-    borderBottom: `1px solid ${colors.neutralLighter}`,
+    borderBottom: `1px solid ${theme.colors.neutralLighter}`,
   },
   drawerMenuContent: {
     display: 'flex',
@@ -242,19 +242,19 @@ const useStyles = createUseStyles({
   link: {
     textTransform: 'capitalize',
     textDecoration: 'none',
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
     fontFamily: 'Lato, Open Sans, sans serif',
     fontSize: '16px',
     textAlign: 'center',
 
     '&:hover': {
-      borderBottom: `3px solid ${text.primaryColor}`,
-      color: text.primaryColor,
+      borderBottom: `3px solid ${theme.text.primaryColor}`,
+      color: theme.text.primaryColor,
     },
   },
   activeLink: {
-    borderBottom: `3px solid ${text.primaryColor}`,
-    color: text.primaryColor,
+    borderBottom: `3px solid ${theme.text.primaryColor}`,
+    color: theme.text.primaryColor,
   },
 
   onlyMobile: {
@@ -287,4 +287,4 @@ const useStyles = createUseStyles({
     zIndex: 1,
     transform: 'scale(.9) translate(-20px, -5px)',
   },
-});
+}));

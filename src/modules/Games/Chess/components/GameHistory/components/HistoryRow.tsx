@@ -5,7 +5,7 @@ import { spacers } from 'src/theme/spacers';
 import { isPartialBlackMove, PairedMove } from '../../../lib';
 import cx from 'classnames';
 import { HistoryList } from './HistoryList';
-import { colors, softBorderRadius } from 'src/theme';
+import { CustomTheme, softBorderRadius } from 'src/theme';
 import { HTMLDivElement } from 'window-or-global';
 import { ChessHistoryIndex } from 'dstnd-io';
 import { isChessRecursiveHistoryIndex } from 'dstnd-io/dist/analysis/analysisActions';
@@ -151,7 +151,7 @@ export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
   }
 );
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {},
   row: {
     display: 'flex',
@@ -188,13 +188,13 @@ const useStyles = createUseStyles({
 
   nestedHistory: {
     marginTop: spacers.smaller,
-    background: hexToRgba(colors.primary, 0.075),
-    border: `1px solid ${colors.negativeLight}`,
-    borderColor: hexToRgba(colors.primary, 0.1),
+    background: hexToRgba(theme.colors.primary, 0.075),
+    border: `1px solid ${theme.colors.negativeLight}`,
+    borderColor: hexToRgba(theme.colors.primary, 0.1),
     borderWidth: 0,
     borderLeftWidth: '1px',
     borderTopWidth: '1px',
-    borderLeftColor: hexToRgba(colors.primary, 0.4),
+    borderLeftColor: hexToRgba(theme.colors.primary, 0.4),
     borderBottomWidth: '1px',
     ...softBorderRadius,
 
@@ -203,4 +203,4 @@ const useStyles = createUseStyles({
   rowBelowNested: {
     // marginTop: spacers.small,
   },
-});
+}));

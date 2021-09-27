@@ -1,9 +1,11 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import {
-  colors,
+  CustomTheme,
+  darkTheme,
   floatingShadow,
   hideOnMobile,
+  lightTheme,
   MOBILE_BREAKPOINT,
   onlyDesktop,
   softBorderRadius,
@@ -22,6 +24,7 @@ import { useWindowWidth } from '@react-hook/window-size';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { getUserDisplayName } from 'src/modules/User';
 import { drawEmoji, formatTimeLimit, getMyResult, getResult, getScore, winningEmoji } from './util';
+import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 
 type Props = {
   game: GameRecordFinished | GameRecordStopped;
@@ -31,6 +34,10 @@ type Props = {
 export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   const cls = useStyles();
   const windowWidth = useWindowWidth();
+  const {theme} = useLightDarkMode();
+  const colors = {
+    ...(theme === 'light' ? lightTheme.colors : darkTheme.colors)
+  }
 
   const result = getResult(game);
   const avatarSize = windowWidth < MOBILE_BREAKPOINT ? '32px' : '72px';
@@ -152,15 +159,15 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    background: colors.white,
+    background: theme.colors.background,
     padding: spacers.default,
     marginBottom: spacers.large,
-    border: `1px solid ${colors.neutral}`,
+    border: `1px solid ${theme.colors.neutral}`,
     ...softBorderRadius,
     ...floatingShadow,
   },
@@ -237,4 +244,4 @@ const useStyles = createUseStyles({
   onlyDesktop: {
     ...hideOnMobile,
   },
-});
+}));

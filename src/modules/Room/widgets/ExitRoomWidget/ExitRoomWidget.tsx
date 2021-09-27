@@ -5,7 +5,7 @@ import { Emoji } from 'src/components/Emoji';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import { colors } from 'src/theme';
+import { CustomTheme } from 'src/theme';
 import { useOnLeaveRoute } from './useOnLeaveRoute';
 
 type Props = {
@@ -67,11 +67,11 @@ export const ExitRoomWidget: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {},
   exitButton: {
     cursor: 'pointer',
-    color: colors.neutralDark,
+    color: theme.colors.neutralDark,
     display: 'flex',
     flex: 1,
     justifyContent: 'center',
@@ -80,14 +80,14 @@ const useStyles = createUseStyles({
 
     ...({
       '&:hover $exitIcon': {
-        fill: `${colors.neutralDarker} !important`,
-        stroke: `${colors.neutralDarker} !important`,
+        fill: `${theme.colors.neutralDarker} !important`,
+        stroke: `${theme.colors.neutralDarker} !important`,
       },
     } as CSSProperties),
   },
   exitIcon: {
-    fill: `${colors.neutralDark} !important`,
-    stroke: `${colors.neutralDark} !important`,
+    fill: `${theme.colors.neutralDark} !important`,
+    stroke: `${theme.colors.neutralDark} !important`,
   },
   exitText: {
     lineHeight: 0,
@@ -106,4 +106,4 @@ const useStyles = createUseStyles({
   mutunachi: {
     height: '100%',
   },
-});
+}));

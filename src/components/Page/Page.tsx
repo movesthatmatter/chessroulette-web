@@ -3,12 +3,14 @@ import { createUseStyles } from 'src/lib/jss';
 import { Logo } from 'src/components/Logo';
 import { Footer } from '../Footer';
 import { NavigationMenu } from '../Navigation/NavigationMenu';
-import { colors, fonts, text } from 'src/theme';
+import { fonts } from 'src/theme';
 import { Events } from 'src/services/Analytics';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { Text } from '../Text';
 import { getBoxShadow } from 'src/theme/util';
+import { useTheme } from 'react-jss';
+import {CustomTheme} from 'src/theme';
 
 export type PageProps = {
   // This name will be used on analytics
@@ -77,7 +79,7 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   root: {
     width: '100%',
     height: '100%',
@@ -86,7 +88,7 @@ const useStyles = createUseStyles({
   },
   container: {
     flex: '1 0',
-    background: colors.neutralLightest,
+    background: theme.colors.background
   },
   footer: {
     flexShrink: 0,
@@ -124,18 +126,18 @@ const useStyles = createUseStyles({
     flex: 1,
   },
   title: {
-    color: text.baseColor,
+    color: theme.text.baseColor,
     ...fonts.title1,
   },
 
   preFooter: {
-    background: colors.neutralLightest,
+    background: theme.colors.neutralLightest,
     paddingBottom: spacers.default,
     boxShadow: getBoxShadow(0, 12, 12, -12, 'rgba(16, 30, 115, 0.08)'),
     position: 'relative',
   },
   text: {
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
   },
   responsive: {
     width: '100%',
@@ -146,4 +148,4 @@ const useStyles = createUseStyles({
     display: 'flex',
     justifyContent: 'center',
   },
-});
+}));

@@ -3,7 +3,7 @@ import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ButtonType } from '../type';
 import cx from 'classnames';
 import { buttonStyles } from '../styles/styles';
-import { borderRadius, colors, onlyMobile } from 'src/theme';
+import { borderRadius, CustomTheme, onlyMobile } from 'src/theme';
 import { Text } from 'src/components/Text';
 import { CSSProperties } from 'src/lib/jss/types';
 import Loader from 'react-loaders';
@@ -136,10 +136,10 @@ export const Button: React.FC<ButtonProps> = ({
   );
 };
 
-const useStyles = createUseStyles({
-  ...buttonStyles,
+const useStyles = createUseStyles<CustomTheme>(theme => ({
+  ...buttonStyles(theme),
   button: {
-    ...buttonStyles.button,
+    ...buttonStyles(theme).button,
     position: 'relative',
     zIndex: 0,
   },
@@ -177,7 +177,7 @@ const useStyles = createUseStyles({
     minWidth: '250px',
   },
   label: {
-    color: colors.white,
+    color: theme.colors.white,
     fontWeight: 600, // TODO: Make it SemiBold
     fontSize: '14px',
     lineHeight: '32px',
@@ -222,8 +222,8 @@ const useStyles = createUseStyles({
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   icon: makeImportant({
-    fill: colors.white,
-    stroke: colors.white,
+    fill: theme.colors.white,
+    stroke: theme.colors.white,
     width: spacers.default,
     height: spacers.default,
   }),
@@ -243,4 +243,4 @@ const useStyles = createUseStyles({
     left: '-14px',
     zIndex: 1,
   },
-});
+}));

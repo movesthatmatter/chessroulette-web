@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { Box, TextInput, Button } from 'grommet';
+import { TextInput } from 'grommet';
 import { noop } from 'src/lib/util';
-import { colors, onlyMobile } from 'src/theme';
+import { CustomTheme, lightTheme, onlyMobile } from 'src/theme';
 import { seconds } from 'src/lib/time';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import cx from 'classnames';
+import { Button } from '../Button';
 
 type Props = {
   value: string;
@@ -37,14 +38,13 @@ export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, copyButtonLabe
   };
 
   return (
-    <Box
-      direction="row"
+    <div
+      style={{display:'flex', flexDirection:'row', height:'100%', width:'100%'}}
       className={cx(
         cls.container,
         copied && cls.containerCopied,
         props.readonly && cls.readonlyContainer
       )}
-      fill
     >
       <TextInput
         value={props.value}
@@ -56,46 +56,45 @@ export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, copyButtonLabe
       <Button
         {...(copyButtonLabel
           ? {
-              label: <div className={cls.buttonLabelWrapper}>{copyButtonLabel}</div>,
-              icon: (
+              label: copyButtonLabel,
+              icon: () => (
                 <FontAwesomeIcon
                   icon={copied ? faCheck : faCopy}
-                  color={colors.neutralDarkest}
+                  color={lightTheme.colors.neutralDarkest}
                   className={cls.copyIcon}
                 />
               ),
             }
           : {
-              icon: (
+              label:'',
+              icon:() => (
                 <FontAwesomeIcon
                   icon={copied ? faCheck : faCopy}
-                  color={colors.neutralDarkest}
+                  color={lightTheme.colors.neutralDarkest}
                   className={cls.copyIcon}
                 />
               ),
             })}
         className={cx(cls.copyButton)}
         size="small"
-        plain
-        focusIndicator
         onClick={copy}
       />
-    </Box>
+    </div>
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
-    border: `1px solid ${colors.neutral}`,
+    border: `1px solid ${theme.colors.neutral}`,
     borderRadius: '40px',
     overflow: 'hidden',
     transition: 'border 150ms ease-in',
   },
   containerCopied: {
-    borderColor: colors.positive,
+    borderColor: theme.colors.positive,
   },
   readonlyContainer: {
-    background: colors.neutral,
+    background: theme.colors.neutral,
   },
   textInput: {
     ...makeImportant({
@@ -118,11 +117,11 @@ const useStyles = createUseStyles({
     }),
   },
   copyButton: {
-    background: `${colors.neutral} !important`,
+    background: `${theme.colors.neutral} !important`,
     padding: '0 1em 0 .7em !important',
 
     '&:active': {
-      background: `${colors.neutralDark} !important`,
+      background: `${theme.colors.neutralDark} !important`,
     },
 
     '&:hover': {
@@ -134,7 +133,7 @@ const useStyles = createUseStyles({
     },
   },
   copyButtonSuccess: {
-    background: `${colors.positive} !important`,
+    background: `${theme.colors.positive} !important`,
   },
   copyIcon: {
     width: '16px !important',
@@ -145,7 +144,7 @@ const useStyles = createUseStyles({
     }),
   },
   buttonLabelWrapper: {
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
     whiteSpace: 'nowrap',
   },
-});
+}));

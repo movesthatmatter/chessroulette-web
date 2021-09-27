@@ -2,7 +2,7 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { AspectRatio, AspectRatioProps } from '../AspectRatio';
-import { colors, minMediaQuery } from 'src/theme';
+import { CustomTheme, minMediaQuery } from 'src/theme';
 
 const errorsMap = {
   resourceNotFound: {
@@ -46,7 +46,7 @@ export const AwesomeError: React.FC<AwesomeErrorProps> = ({
 
 
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     width: '100%',
     textAlign: 'center',
@@ -83,11 +83,11 @@ const useStyles = createUseStyles({
   },
   title: {
     marginBottom: 0,
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker,
   },
   description: {
     fontSize: '50%',
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker,
     fontWeight: 400,
   }
-});
+}));

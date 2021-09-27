@@ -34,6 +34,17 @@ import m25 from './assets/mutunachi_25.png';
 import m26 from './assets/mutunachi_26.png';
 import m27 from './assets/mutunachi_27.png';
 
+import mw1 from './assets/mutunachi_white_1.png';
+import mw2 from './assets/mutunachi_white_2.png';
+import mw3 from './assets/mutunachi_white_3.png';
+import mw4 from './assets/mutunachi_white_4.png';
+import mw5 from './assets/mutunachi_white_5.png';
+import mw6 from './assets/mutunachi_white_6.png';
+import mw7 from './assets/mutunachi_white_7.png';
+import mw8 from './assets/mutunachi_white_8.png';
+import mw9 from './assets/mutunachi_white_9.png';
+import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
+
 const map: {[k: string]: unknown} = {
   '0': m0,
   '1': m1,
@@ -66,6 +77,18 @@ const map: {[k: string]: unknown} = {
   '27': m27,
 };
 
+const mapWhite : {[k: string]: unknown} = {
+  '1' : mw1,
+  '2' : mw2,
+  '3' : mw3,
+  '4' : mw4,
+  '5' : mw5,
+  '6' : mw6,
+  '7' : mw7,
+  '8' : mw8,
+  '9' : mw9
+}
+
 export type MutunachiProps = React.DetailedHTMLProps<
 React.ImgHTMLAttributes<HTMLImageElement>,
 HTMLImageElement
@@ -84,7 +107,8 @@ export const Mutunachi: React.FC<MutunachiProps> = ({
   ...imgProps
 }) => {
   const cls = useStyles();
-  const src = mid ? map[mid] : map[String(getRandomInt(0, 18))];
+  const {theme} = useLightDarkMode();
+  const src = mid ? (theme === 'light' ? map[mid] : mapWhite[mid]) : map[String(getRandomInt(0, 18))];
 
   return (
     <img

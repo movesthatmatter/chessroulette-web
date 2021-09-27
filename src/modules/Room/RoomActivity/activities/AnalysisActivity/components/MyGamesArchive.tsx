@@ -3,7 +3,7 @@ import { createUseStyles, CSSProperties, NestedCSSElement } from 'src/lib/jss';
 import { GamesArchiveProvider } from 'src/modules/GamesArchive';
 import { CompactArchivedGame } from 'src/modules/GamesArchive/components/ArchivedGame/CompactArchivedGame';
 import { spacers } from 'src/theme/spacers';
-import { colors, floatingShadow, softBorderRadius } from 'src/theme';
+import { CustomTheme, floatingShadow, softBorderRadius } from 'src/theme';
 import { GameRecord } from 'dstnd-io';
 import { Text } from 'src/components/Text';
 import { renderMatch } from 'src/lib/renderMatch';
@@ -75,7 +75,7 @@ export const MyGamesArchive: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   row: {
     marginBottom: spacers.small,
     position: 'relative',
@@ -104,7 +104,7 @@ const useStyles = createUseStyles({
     top: 0,
     right: 0,
     bottom: 0,
-    background: colors.neutralDarkest,
+    background: theme.colors.neutralDarkest,
     opacity: 0.5,
     zIndex: 98,
   },
@@ -121,7 +121,7 @@ const useStyles = createUseStyles({
     bottom: 0,
     zIndex: 99,
 
-    color: colors.white,
+    color: theme.colors.white,
   },
   loader: {
     display: 'flex',
@@ -132,8 +132,8 @@ const useStyles = createUseStyles({
     transform: 'scale(.7)',
     ...({
       '& > div': {
-        backgroundColor: colors.primary,
+        backgroundColor: theme.colors.primary,
       },
     } as CSSProperties),
   },
-});
+}));

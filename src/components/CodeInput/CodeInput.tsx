@@ -1,8 +1,9 @@
 import React from 'react';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import ReactCodeInput from 'react-verification-code-input';
-import { colors, defaultTheme, fonts, onlyMobile } from 'src/theme';
+import { CustomTheme, onlyMobile } from 'src/theme';
 import cx from 'classnames';
+import { fontFamily } from 'src/theme/text';
 
 type Props = Omit<
   React.ComponentProps<typeof ReactCodeInput>, 'fieldWidth' | 'fieldHeight' | 'fields' | 'type'
@@ -33,7 +34,7 @@ export const CodeInput: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     marginBottom: '16px',
   },
@@ -52,10 +53,10 @@ const useStyles = createUseStyles({
       },
       '& input': {
         ...makeImportant({
-          fontFamily: defaultTheme.global?.font?.family,
+          fontFamily: fontFamily.family,
 
           borderRadius: '8px',
-          border: `1px solid ${colors.neutral}`,
+          border: `1px solid ${theme.colors.neutral}`,
         }),
 
         ...onlyMobile({
@@ -69,10 +70,10 @@ const useStyles = createUseStyles({
         '&:focus': {
           ...makeImportant({
             borderWidth: '2px',
-            caretColor: colors.neutral,
+            caretColor: theme.colors.neutral,
           }),
         }
       },
     } as CSSProperties,
   },
-});
+}));

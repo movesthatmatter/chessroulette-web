@@ -3,7 +3,7 @@ import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { PeerStreamingConfig } from 'src/services/peers';
 import { VideoBox, VideoBoxProps } from 'src/components/VideoBox';
-import { colors, fonts, onlyMobile } from 'src/theme';
+import { CustomTheme, fonts, onlyMobile } from 'src/theme';
 import { Text } from 'src/components/Text';
 import { AspectRatio, AspectRatioProps } from 'src/components/AspectRatio';
 import { console } from 'window-or-global';
@@ -86,7 +86,7 @@ export const FaceTime: React.FC<FaceTimeProps> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     position: 'relative',
   },
@@ -121,7 +121,7 @@ const useStyles = createUseStyles({
     textAlign: 'right',
   },
   label: {
-    color: colors.white,
+    color: theme.colors.white,
     ...fonts.subtitle1,
 
     paddingLeft: '12px',
@@ -133,4 +133,4 @@ const useStyles = createUseStyles({
       paddingBottom: '2px',
     }),
   },
-});
+}));

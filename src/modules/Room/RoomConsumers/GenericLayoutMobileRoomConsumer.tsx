@@ -37,7 +37,7 @@ export const GenericLayoutMobileRoomConsumer: React.FC<Props> = ({
       getTopArea={(dimensions) => (
         <StreamingBoxRoomConsumer
           aspectRatio={dimensions.container}
-          headerOverlay={() => <NavigationHeader darkMode />}
+          headerOverlay={() => <NavigationHeader darkBG />}
           mainOverlay={() => (
             <div
               style={{

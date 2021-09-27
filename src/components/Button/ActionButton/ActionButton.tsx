@@ -12,7 +12,7 @@ import { buttonStyles } from '../styles/styles';
 import { AsyncResult } from 'ts-async-results';
 import Loader from 'react-loaders';
 import 'loaders.css';
-import { fonts, onlyMobile } from 'src/theme';
+import { fonts, onlyMobile, CustomTheme } from 'src/theme';
 
 export type ActionButtonProps = {
   type: ButtonType;
@@ -198,10 +198,10 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   );
 };
 
-const useStyles = createUseStyles({
-  ...buttonStyles,
+const useStyles = createUseStyles<CustomTheme>(theme => ({
+  ...buttonStyles(theme),
   button: {
-    ...buttonStyles.button,
+    ...buttonStyles(theme).button,
     ...fonts.small1,
     display: 'flex',
     flexDirection: 'row',
@@ -213,7 +213,7 @@ const useStyles = createUseStyles({
     },
   },
   full: {
-    ...buttonStyles.full,
+    ...buttonStyles(theme).full,
 
     ...({
       '& $labelWrapper': {
@@ -229,7 +229,7 @@ const useStyles = createUseStyles({
   },
   label: {
     ...fonts.small1,
-    color: colors.white,
+    color: theme.colors.white,
     fontWeight: 600, // TODO: Make it SemiBold
     lineHeight: '32px',
     direction: 'ltr',
@@ -253,8 +253,8 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
   },
   icon: {
-    fill: `${colors.white} !important`,
-    stroke: `${colors.white} !important`,
+    fill: `${theme.colors.white} !important`,
+    stroke: `${theme.colors.white} !important`,
     width: '16px !important',
     height: '16px !important',
   },
@@ -269,4 +269,4 @@ const useStyles = createUseStyles({
     paddingTop: '4px',
     transform: 'scale(.5)',
   },
-});
+}));

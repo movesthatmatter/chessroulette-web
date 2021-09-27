@@ -8,7 +8,7 @@ import { TextInput } from 'src/components/TextInput';
 import { createUseStyles } from 'src/lib/jss';
 import { validator } from 'src/lib/validator';
 import { GetCountries } from 'src/services/Location';
-import { colors, onlyMobile } from 'src/theme';
+import { CustomTheme, onlyMobile } from 'src/theme';
 import { AsyncResult } from 'ts-async-results';
 
 export type RegistrationUserInfo =
@@ -95,8 +95,8 @@ export const RegistrationForm: React.FC<Props> = (props) => {
             <TextInput
               label="Let's pick a great Username"
               placeholder={p.model.username || "bethHarmon"}
-              value={p.model.username}
-              onChange={(e) => p.onChange('username', e.target.value)}
+              defaultValue={p.model.username}
+              onChange={(e) => p.onChange('username', e.currentTarget.value)}
               validationError={
                 p.errors.validationErrors?.username || p.errors.submissionValidationErrors?.username
               }
@@ -108,8 +108,8 @@ export const RegistrationForm: React.FC<Props> = (props) => {
                   : "What's your First Name?"
               }
               placeholder="Beth"
-              value={p.model.firstName}
-              onChange={(e) => p.onChange('firstName', e.target.value)}
+              defaultValue={p.model.firstName}
+              onChange={(e) => p.onChange('firstName', e.currentTarget.value)}
               validationError={
                 p.errors.validationErrors?.firstName ||
                 p.errors.submissionValidationErrors?.firstName
@@ -118,8 +118,8 @@ export const RegistrationForm: React.FC<Props> = (props) => {
             <TextInput
               label="And your Last Name?"
               placeholder="Harmon"
-              value={p.model.lastName}
-              onChange={(e) => p.onChange('lastName', e.target.value)}
+              defaultValue={p.model.lastName}
+              onChange={(e) => p.onChange('lastName', e.currentTarget.value)}
               validationError={
                 p.errors.validationErrors?.lastName || p.errors.submissionValidationErrors?.lastName
               }
@@ -165,7 +165,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   infoTextWrapper: {
     textAlign: 'center',
     paddingBottom: '24px',
@@ -176,6 +176,6 @@ const useStyles = createUseStyles({
     }),
   },
   infoText: {
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker,
   },
-});
+}));

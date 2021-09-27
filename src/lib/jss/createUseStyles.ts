@@ -1,5 +1,7 @@
 import { createUseStyles as createUseStylesJSS, DefaultTheme, useTheme } from 'react-jss';
-import { Styles } from 'jss';
+import {
+  Styles,
+} from 'jss';
 import { CSSProperties } from './types';
 
 // Add stricter types for this function

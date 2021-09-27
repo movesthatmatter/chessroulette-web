@@ -6,7 +6,7 @@ import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { Events } from 'src/services/Analytics';
-import { colors } from 'src/theme';
+import { CustomTheme } from 'src/theme';
 import { locale } from './locale';
 
 type Props = {
@@ -101,13 +101,13 @@ export const InviteFriendsDialog: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {},
   link: {
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
     fontFamily: 'Lato, Open Sans, sans serif',
   },
   top: {
     paddingBottom: '8px',
   },
-});
+}));

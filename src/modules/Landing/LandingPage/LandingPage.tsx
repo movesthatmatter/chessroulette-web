@@ -1,13 +1,15 @@
 import React from 'react';
 import { Page } from 'src/components/Page';
 import chessBackground from './assets/chess_icons.png';
+import darkChessBackground from './assets/darksplash.svg';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
+import { minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile, CustomTheme } from 'src/theme';
 import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
 import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
 import { spacers } from 'src/theme/spacers';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
+import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 
 type Props = {};
 
@@ -15,6 +17,7 @@ export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
   const deviceSize = useDeviceSize();
 
+  const {theme} = useLightDarkMode();
   return (
     <Page name="Home" contentClassName={cls.pageContent}>
       <div className={cls.container}>
@@ -28,7 +31,7 @@ export const LandingPage: React.FC<Props> = () => {
             }}
           >
             <img
-              src={chessBackground}
+              src={theme === 'light' ? chessBackground : darkChessBackground}
               style={{
                 width: '95%',
                 margin: '0 auto',
@@ -92,13 +95,13 @@ export const LandingPage: React.FC<Props> = () => {
 const tabletBreakPoint = 600;
 const desktopBreakPoint = 769;
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     height: '100%',
-
+    color: theme.text.baseColor,
     fontSize: '32px',
 
     ...minMediaQuery(tabletBreakPoint, {
@@ -147,7 +150,7 @@ const useStyles = createUseStyles({
   text: {
     ...fonts.body1,
     lineHeight: '1em',
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
 
     ...onlySmallMobile({
       fontSize: '12px',
@@ -187,4 +190,4 @@ const useStyles = createUseStyles({
       display: 'none',
     }),
   },
-});
+}));

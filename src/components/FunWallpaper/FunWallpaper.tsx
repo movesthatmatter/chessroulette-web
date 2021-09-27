@@ -1,10 +1,10 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors } from 'src/theme';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
+import { CustomTheme } from 'src/theme';
 
 type Props = React.HTMLProps<HTMLDivElement> & {};
 
@@ -56,15 +56,15 @@ export const FunWallpaper: React.FC<Props> = ({ className, children, ...contentD
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   body: {
-    background: colors.primaryLight,
+    background: theme.colors.primaryLight,
   },
   container: {
     display: 'flex',
     height: '100vh',
     position: 'relative',
-    background: colors.primaryLight,
+    background: theme.colors.primaryLight,
   },
   mutunachi: {
     width: '200px',
@@ -87,4 +87,4 @@ const useStyles = createUseStyles({
     margin: '0 auto',
     zIndex: 99,
   },
-});
+}));

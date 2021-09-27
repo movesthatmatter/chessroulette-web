@@ -2,7 +2,7 @@ import { FontAwesomeIcon, FontAwesomeIconProps } from '@fortawesome/react-fontaw
 import React from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, softBorderRadius, softOutline } from 'src/theme';
+import { CustomTheme, softBorderRadius, softOutline } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { noop } from 'src/lib/util';
@@ -46,7 +46,7 @@ export const ClearIconButton: React.FC<Props> = ({ onClick = noop, ...props }) =
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     position: 'relative',
     height: spacers.default,
@@ -61,7 +61,7 @@ const useStyles = createUseStyles({
   },
   iconDisabled: {
     cursor: 'auto',
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker,
     '&:hover': {
       opacity: 1,
     },
@@ -78,9 +78,9 @@ const useStyles = createUseStyles({
     marginLeft: spacers.small,
     padding: spacers.small,
     lineHeight: 0,
-    background: colors.white,
+    background: theme.colors.white,
     boxShadow: '0 6px 13px rgba(16, 30, 115, 0.08)',
     ...softOutline,
     ...softBorderRadius,
   },
-});
+}));

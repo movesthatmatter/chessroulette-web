@@ -6,8 +6,9 @@ import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { AspectRatio } from '../AspectRatio';
 import { Text } from 'src/components/Text';
 import cx from 'classnames';
-import { colors, effects } from 'src/theme';
+import { CustomTheme, effects } from 'src/theme';
 import { seconds } from 'src/lib/time';
+import { console } from 'window-or-global';
 
 type Props = {
   minimal?: boolean;
@@ -64,7 +65,9 @@ export const AwesomeLoader: React.FC<Props> = ({ sayings = defaultSayings, size 
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => {
+  console.log('THEME ', theme);
+  return {
   container: {
     width: '100%',
     textAlign: 'center',
@@ -72,7 +75,7 @@ const useStyles = createUseStyles({
   mask: {
     margin: '0 auto',
     overflow: 'hidden',
-    background: `linear-gradient(top, ${colors.primaryLight} 100%, #fff 0%)`,
+    background: `linear-gradient(top, ${theme.colors.primaryLight} 100%, #fff 0%)`,
     position: 'relative',
     borderRadius: '50%',
     marginBottom: '16px',
@@ -116,4 +119,4 @@ const useStyles = createUseStyles({
   text: {
     fontSize: '14px',
   },
-});
+}});

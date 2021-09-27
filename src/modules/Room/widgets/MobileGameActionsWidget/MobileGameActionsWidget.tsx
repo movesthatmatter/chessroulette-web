@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Layer } from 'grommet';
 import { AppsRounded } from 'grommet-icons';
-import { colors, floatingShadow, softBorderRadius } from 'src/theme';
+import { floatingShadow, lightTheme, softBorderRadius } from 'src/theme';
 import { GameActions } from 'src/modules/Games/GameActions';
 import { Text } from 'src/components/Text';
 import { spacers } from 'src/theme/spacers';
@@ -15,10 +15,9 @@ type Props = {
 export const MobileGameActionsWidget: React.FC<Props> = ({ activity }) => {
   const cls = useStyles();
   const [show, setShow] = useState(false);
-
   return (
     <>
-      <AppsRounded color={colors.white} onClick={() => setShow(true)} className={cls.button} />
+      <AppsRounded color={lightTheme.colors.white} onClick={() => setShow(true)} className={cls.button} />
       {show && (
         <Layer
           responsive={false}

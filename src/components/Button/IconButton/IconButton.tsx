@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { Icon as GIcon } from 'grommet-icons';
-import { borderRadius, colors, onlyMobile, softBorderRadius, softOutline } from 'src/theme';
+import { borderRadius, CustomTheme, onlyMobile, softBorderRadius, softOutline } from 'src/theme';
 import cx from 'classnames';
 import { ButtonType } from '../type';
 import { buttonStyles } from '../styles/styles';
@@ -88,10 +88,10 @@ export const IconButton: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   ...buttonStyles,
   button: {
-    ...buttonStyles.button,
+    ...buttonStyles(theme).button,
     ...onlyMobile({
       ...makeImportant({
         height: '28px',
@@ -104,7 +104,7 @@ const useStyles = createUseStyles({
     position: 'relative',
   },
   clear: {
-    ...buttonStyles.clear,
+    ...buttonStyles(theme).clear,
   },
   iconWrapper: {
     width: '32px',
@@ -124,9 +124,9 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
   },
   icon: {
-    fill: `${colors.white} !important`,
-    stroke: `${colors.white} !important`,
-    color: `${colors.white} !important`,
+    fill: `${theme.colors.white} !important`,
+    stroke: `${theme.colors.white} !important`,
+    color: `${theme.colors.white} !important`,
     width: '16px !important',
     height: '16px !important',
 
@@ -162,9 +162,9 @@ const useStyles = createUseStyles({
     marginLeft: spacers.small,
     padding: spacers.small,
     lineHeight: 0,
-    background: colors.white,
+    background: theme.colors.white,
     boxShadow: '0 6px 13px rgba(16, 30, 115, 0.08)',
     ...softOutline,
     ...softBorderRadius,
   },
-});
+}));

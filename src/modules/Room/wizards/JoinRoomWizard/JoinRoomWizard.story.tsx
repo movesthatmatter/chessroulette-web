@@ -5,7 +5,7 @@ import { FunWallpaper } from 'src/components/FunWallpaper/FunWallpaper';
 import { ChallengeMocker, UserInfoMocker } from 'src/mocks/records';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
-import { colors, floatingShadow, softBorderRadius } from 'src/theme';
+import { floatingShadow, lightTheme, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { AsyncOk } from 'ts-async-results';
 import { JoinRoomWizard } from './JoinRoomWizard';
@@ -42,7 +42,7 @@ export const withPendingChallenge = () => {
         <div
           style={{
             width: 320,
-            background: colors.white,
+            background: lightTheme.colors.white,
             padding: spacers.large,
             ...softBorderRadius,
             ...floatingShadow,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors } from 'src/theme';
+import { CustomTheme } from 'src/theme';
 import { Text } from '../Text';
 
 type Props = {
@@ -29,7 +29,7 @@ export const Hr: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     textAlign: 'center',
     lineHeight: '15px',
@@ -47,13 +47,13 @@ const useStyles = createUseStyles({
     margin: 0,
     padding: 0,
     lineHeight: '16px',
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker,
   },
   line: {
     position: 'absolute',
     top: '10px',
     left: 0,
     right: 0,
-    borderTop: `1px solid ${colors.neutral}`,
+    borderTop: `1px solid ${theme.colors.neutral}`,
   },
-});
+}));

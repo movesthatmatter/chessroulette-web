@@ -15,8 +15,16 @@ import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGam
 import { resources } from 'src/modules/Room';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { Events } from 'src/services/Analytics';
-import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
+import {
+  CustomTheme,
+  darkTheme,
+  floatingShadow,
+  lightTheme,
+  onlyMobile,
+  softBorderRadius,
+} from 'src/theme';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
+import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 import { spacers } from 'src/theme/spacers';
 import { setTimeout } from 'window-or-global';
 
@@ -29,6 +37,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
   const roomConsumer = useRoomConsumer();
   const [canShowOtherActivities, setCanShowotherActivities] = useState(false);
   const deviceSize = useDeviceSize();
+  const { theme } = useLightDarkMode();
 
   useEffect(() => {
     setTimeout(() => {
@@ -90,7 +99,10 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
               <div className={cls.centered}>
                 {/* <Text size="small1">Share the Magic Link with a friend!</Text> */}
                 {/* <br/> */}
-                <Text size="small1" color={colors.negative}>
+                <Text
+                  size="small1"
+                  color={theme === 'light' ? lightTheme.colors.negative : darkTheme.colors.negative}
+                >
                   Share the Magic Link with a friend!
                 </Text>
               </div>
@@ -131,7 +143,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   container: {
     position: 'absolute',
     top: 0,
@@ -150,7 +162,7 @@ const useStyles = createUseStyles({
     ...softBorderRadius,
     padding: 0,
     position: 'relative',
-    background: colors.white,
+    background: theme.colors.white,
 
     ...makeImportant({
       borderRadius: '8px',
@@ -210,4 +222,4 @@ const useStyles = createUseStyles({
       paddingBottom: spacers.smaller,
     }),
   },
-});
+}));

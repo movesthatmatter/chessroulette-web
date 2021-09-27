@@ -2,8 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
 import React, { useRef } from 'react';
-import { Box, Grommet } from 'grommet';
-import { defaultTheme } from 'src/theme';
 import { StreamingBox } from 'src/components/StreamingBox';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
@@ -79,7 +77,7 @@ const initHistory: ChatHistoryRecord = {
 };
 
 export const empty = () => (
-  <Grommet theme={defaultTheme} full>
+  <>
     <div
       style={{
         width: '100%',
@@ -142,11 +140,11 @@ export const empty = () => (
         )}
       />
     </div>
-  </Grommet>
+  </>
 );
 
 export const withChessGame = () => (
-  <Grommet theme={defaultTheme} full>
+  <>
     <WithLocalStream
       render={(stream) => {
         const me = peerMock.withChannels({
@@ -258,7 +256,7 @@ export const withChessGame = () => (
         );
       }}
     />
-  </Grommet>
+  </>
 );
 
 const LayoutComponent: React.FC<{
@@ -415,8 +413,8 @@ const LayoutComponent: React.FC<{
 };
 
 export const multipleResolutions = () => (
-  <Grommet theme={defaultTheme} full>
-    <Box fill direction="row" wrap>
+  <>
+    <div style={{display:'flex'}}>
       <LayoutComponent
         containerWidth={400}
         top={80}
@@ -465,6 +463,6 @@ export const multipleResolutions = () => (
         bottom={30}
         aspectRatio={{ width: 4, height: 3 }}
       />
-    </Box>
-  </Grommet>
+    </div>
+  </>
 );

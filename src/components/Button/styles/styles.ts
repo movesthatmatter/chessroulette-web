@@ -1,10 +1,10 @@
 import { CSSProperties } from 'src/lib/jss/types';
-import { borderRadius, colors, onlyMobile } from 'src/theme';
+import { borderRadius, CustomTheme, onlyMobile } from 'src/theme';
 import { buttonEffects } from './effects';
 import hexToRGBA from 'hex-to-rgba';
 import { makeImportant } from 'src/lib/jss';
 
-const button: CSSProperties = {
+const button = (theme: CustomTheme): CSSProperties => ({
   cursor: 'pointer',
   width: 'auto',
   border: 0,
@@ -34,10 +34,10 @@ const button: CSSProperties = {
 
   ...borderRadius,
   ...{
-    ...buttonEffects.onClickTransition,
+    ...buttonEffects(theme).onClickTransition,
     '&:disabled': {
-      background: colors.neutral,
-      ...buttonEffects.onClickTransition['&:disabled'],
+      background: theme.colors.neutral,
+      ...buttonEffects(theme).onClickTransition['&:disabled'],
     },
   },
 
@@ -48,30 +48,30 @@ const button: CSSProperties = {
       marginBottom: '13px',
     }),
   }),
-};
+});
 
-const iconButton: CSSProperties = {
+const iconButton = (theme: CustomTheme): CSSProperties => ({
   '&:disabled': {
     ...{
       '&$clear$iconButton $icon': {
-        fill: `${colors.neutral} !important`,
-        stroke: `${colors.neutral} !important`,
-        color: `${colors.neutral} !important`,
+        fill: `${theme.colors.neutral} !important`,
+        stroke: `${theme.colors.neutral} !important`,
+        color: `${theme.colors.neutral} !important`,
       },
     } as CSSProperties['nestedKey'],
   },
-};
+});
 
-const clear: CSSProperties = {
+const clear = (theme: CustomTheme): CSSProperties => ({
   borderWidth: '1px !important',
   borderStyle: 'solid !important',
-  borderColor: colors.neutral,
+  borderColor: theme.colors.neutral,
 
   background: 'transparent !important',
 
   ...({
     '& $label': {
-      color: `${colors.neutralDarkest} !important`,
+      color: `${theme.colors.neutralDarkest} !important`,
       // fontWeight: 200,
       lineHeight: '30px',
 
@@ -92,12 +92,12 @@ const clear: CSSProperties = {
     },
     '& $icon': {
       // color: `${colors.black} !important`,
-      fill: `${colors.black} !important`,
-      stroke: `${colors.black} !important`,
-      color: `${colors.black} !important`,
+      fill: `${theme.colors.black} !important`,
+      stroke: `${theme.colors.black} !important`,
+      color: `${theme.colors.black} !important`,
     },
   } as CSSProperties['nestedKey']),
-};
+});
 
 const hasLoader: CSSProperties = {
   position: 'relative',
@@ -112,190 +112,206 @@ const full: CSSProperties = {
   }),
 };
 
-const primary: CSSProperties = {
-  background: colors.primary,
-  ...buttonEffects.primaryButtonShadow,
+const primary = (theme: CustomTheme): CSSProperties => ({
+  background: theme.colors.primary,
+  ...buttonEffects(theme).primaryButtonShadow,
 
   '&:active': {
     ...({
       '& $iconWrapper': {
-        boxShadow: `0 3px 6px 0 ${hexToRGBA(colors.primary, 0.36)}`,
+        boxShadow: `0 3px 6px 0 ${hexToRGBA(theme.colors.primary, 0.36)}`,
       },
     } as CSSProperties['nestedKey']),
   },
 
   ...({
     '&$clear': {
-      borderColor: `${colors.primary} !important`,
-      ...buttonEffects.primaryClearButtonShadow,
+      borderColor: `${theme.colors.primary} !important`,
+      ...buttonEffects(theme).primaryClearButtonShadow,
     },
     '&$clear$hasLoader $loader > div': {
-      backgroundColor: `${colors.primary} !important`,
+      backgroundColor: `${theme.colors.primary} !important`,
     },
     '&$clear$iconButton $icon': {
-      fill: `${colors.primary} !important`,
-      stroke: `${colors.primary} !important`,
-      color: `${colors.primary} !important`,
+      fill: `${theme.colors.primary} !important`,
+      stroke: `${theme.colors.primary} !important`,
+      color: `${theme.colors.primary} !important`,
     },
     '&$clear$iconButton$hasLoader $loader > div': {
       backgroundColor: `transparent !important`,
-      borderColor: `${colors.primary} !important`,
+      borderColor: `${theme.colors.primary} !important`,
       borderBottomColor: `transparent !important`,
     },
   } as CSSProperties['nestedKey']),
-};
+});
 
-const secondary: CSSProperties = {
-  background: colors.secondary,
-  ...buttonEffects.secondaryButtonShadow,
+const secondary = (theme: CustomTheme): CSSProperties => ({
+  background: theme.colors.secondary,
+  ...buttonEffects(theme).secondaryButtonShadow,
 
   '&:active': {
     ...({
       '& $iconWrapper': {
-        boxShadow: `0 3px 6px 0 ${hexToRGBA(colors.secondary, 0.36)}`,
+        boxShadow: `0 3px 6px 0 ${hexToRGBA(theme.colors.secondary, 0.36)}`,
       },
     } as CSSProperties['nestedKey']),
   },
 
   ...({
     '&$clear': {
-      borderColor: `${colors.secondary} !important`,
-      ...buttonEffects.secondaryClearButtonShadow,
+      borderColor: `${theme.colors.secondary} !important`,
+      ...buttonEffects(theme).secondaryClearButtonShadow,
     },
     '&$clear$hasLoader $loader > div': {
-      backgroundColor: `${colors.secondary} !important`,
+      backgroundColor: `${theme.colors.secondary} !important`,
     },
     '&$clear$iconButton $icon': {
-      fill: `${colors.secondary} !important`,
-      stroke: `${colors.secondary} !important`,
-      color: `${colors.secondary} !important`,
+      fill: `${theme.colors.secondary} !important`,
+      stroke: `${theme.colors.secondary} !important`,
+      color: `${theme.colors.secondary} !important`,
     },
     '&$clear$iconButton$hasLoader $loader > div': {
       backgroundColor: `transparent !important`,
-      borderColor: `${colors.secondary} !important`,
+      borderColor: `${theme.colors.secondary} !important`,
       borderBottomColor: `transparent !important`,
     },
     '& $icon': {
-      fill: `${colors.neutralDarkest} !important`,
-      stroke: `${colors.neutralDarkest} !important`,
-      color: `${colors.neutralDarkest} !important`,
+      fill: `${theme.colors.neutralDarkest} !important`,
+      stroke: `${theme.colors.neutralDarkest} !important`,
+      color: `${theme.colors.neutralDarkest} !important`,
     },
     '& $label': {
-      color: colors.neutralDarkest,
+      color: theme.colors.neutralDarkest,
     },
   } as CSSProperties['nestedKey']),
-};
+});
 
-const positive: CSSProperties = {
-  background: colors.positive,
+const positive = (theme: CustomTheme): CSSProperties => ({
+  background: theme.colors.positive,
 
-  ...buttonEffects.positiveButtonShadow,
+  ...buttonEffects(theme).positiveButtonShadow,
 
   '&:active': {
     ...({
       '& $iconWrapper': {
-        boxShadow: `0 3px 6px 0 ${hexToRGBA(colors.positive, 0.36)}`,
+        boxShadow: `0 3px 6px 0 ${hexToRGBA(theme.colors.positive, 0.36)}`,
       },
     } as CSSProperties['nestedKey']),
   },
 
   ...({
     '&$clear': {
-      borderColor: `${colors.positive} !important`,
-      ...buttonEffects.positiveClearButtonShadow,
+      borderColor: `${theme.colors.positive} !important`,
+      ...buttonEffects(theme).positiveClearButtonShadow,
     },
     '&$clear$iconButton $icon': {
-      fill: `${colors.positive} !important`,
-      stroke: `${colors.positive} !important`,
-      color: `${colors.positive} !important`,
+      fill: `${theme.colors.positive} !important`,
+      stroke: `${theme.colors.positive} !important`,
+      color: `${theme.colors.positive} !important`,
     },
     '&$clear$iconButton$hasLoader $loader > div': {
       backgroundColor: `transparent !important`,
-      borderColor: `${colors.positive} !important`,
+      borderColor: `${theme.colors.positive} !important`,
       borderBottomColor: `transparent !important`,
     },
     '&$clear$hasLoader $loader > div': {
-      backgroundColor: `${colors.positive} !important`,
+      backgroundColor: `${theme.colors.positive} !important`,
     },
   } as CSSProperties['nestedKey']),
-};
+});
 
-const negative: CSSProperties = {
-  background: `${colors.negative}`,
-  ...buttonEffects.negativeButtonShadow,
+const negative = (theme: CustomTheme): CSSProperties => ({
+  background: `${theme.colors.negative}`,
+  ...buttonEffects(theme).negativeButtonShadow,
 
   '&:active': {
     ...({
       '& $iconWrapper': {
-        boxShadow: `0 3px 6px 0 ${hexToRGBA(colors.negative, 0.36)}`,
+        boxShadow: `0 3px 6px 0 ${hexToRGBA(theme.colors.negative, 0.36)}`,
       },
     } as CSSProperties['nestedKey']),
   },
 
   ...({
     '&$clear': {
-      borderColor: `${colors.negative} !important`,
-      ...buttonEffects.negativeClearButtonShadow,
+      borderColor: `${theme.colors.negative} !important`,
+      ...buttonEffects(theme).negativeClearButtonShadow,
     },
     '&$clear$hasLoader $loader > div': {
-      backgroundColor: `${colors.negative} !important`,
+      backgroundColor: `${theme.colors.negative} !important`,
     },
     '&$clear$iconButton$hasLoader $loader > div': {
       backgroundColor: `transparent !important`,
-      borderColor: `${colors.negative} !important`,
+      borderColor: `${theme.colors.negative} !important`,
       borderBottomColor: `transparent !important`,
     },
     '&$clear$iconButton $icon': {
-      fill: `${colors.negative} !important`,
-      stroke: `${colors.negative} !important`,
-      color: `${colors.negative} !important`,
+      fill: `${theme.colors.negative} !important`,
+      stroke: `${theme.colors.negative} !important`,
+      color: `${theme.colors.negative} !important`,
     },
   } as CSSProperties['nestedKey']),
-};
+});
 
-const attention: CSSProperties = {
-  background: colors.attention,
-  ...buttonEffects.attentionButtonShadow,
+const attention = (theme: CustomTheme): CSSProperties => ({
+  background: theme.colors.attention,
+  ...buttonEffects(theme).attentionButtonShadow,
 
   '&:active': {
     ...({
       '& $iconWrapper': {
-        boxShadow: `0 3px 6px 0 ${hexToRGBA(colors.attention, 0.36)}`,
+        boxShadow: `0 3px 6px 0 ${hexToRGBA(theme.colors.attention, 0.36)}`,
       },
     } as CSSProperties['nestedKey']),
   },
 
   ...({
     '&$clear': {
-      borderColor: `${colors.attention} !important`,
-      ...buttonEffects.attentionClearButtonShadow,
+      borderColor: `${theme.colors.attention} !important`,
+      ...buttonEffects(theme).attentionClearButtonShadow,
     },
     '&$clear$iconButton $icon': {
-      fill: `${colors.attention} !important`,
-      stroke: `${colors.attention} !important`,
-      color: `${colors.attention} !important`,
+      fill: `${theme.colors.attention} !important`,
+      stroke: `${theme.colors.attention} !important`,
+      color: `${theme.colors.attention} !important`,
     },
     '&$clear$iconButton$hasLoader $loader > div': {
       backgroundColor: `transparent !important`,
-      borderColor: `${colors.attention} !important`,
+      borderColor: `${theme.colors.attention} !important`,
       borderBottomColor: `transparent !important`,
     },
     '&$clear$hasLoader $loader > div': {
-      backgroundColor: `${colors.attention} !important`,
+      backgroundColor: `${theme.colors.attention} !important`,
     },
   } as CSSProperties['nestedKey']),
-};
+});
 
-export const buttonStyles = {
-  button,
-  iconButton,
-  clear,
+export const buttonStyles = (theme: CustomTheme) => ({
+  button: {
+    ...button(theme)
+  },
+  iconButton: {
+    ...iconButton(theme)
+  },
+  clear: {
+    ...clear(theme)
+  },
   full,
   hasLoader,
 
-  primary,
-  secondary,
-  positive,
-  negative,
-  attention,
-} as const;
+  primary: {
+    ...primary(theme)
+  },
+  secondary: {
+    ...secondary(theme)
+  },
+  positive: {
+    ...positive(theme)
+  },
+  negative: {
+    ...negative(theme)
+  },
+  attention: {
+    ...attention(theme)
+  },
+}) as const;

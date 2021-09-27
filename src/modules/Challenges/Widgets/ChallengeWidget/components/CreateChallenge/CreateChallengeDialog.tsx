@@ -1,12 +1,10 @@
-import { ChallengeRecord, GameSpecsRecord, RoomRecord, UserRecord } from 'dstnd-io';
-import { CheckBox } from 'grommet';
+import { AsyncResult, ChallengeRecord, GameSpecsRecord, RoomRecord, UserRecord } from 'dstnd-io';
 import React, { useState } from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { createUseStyles } from 'src/lib/jss';
 import { resources } from 'src/resources';
 import { Events } from 'src/services/Analytics';
-import { AsyncResult } from 'ts-async-results';
 import { CreateChallenge } from './CreateChallenge';
 
 type Props = Pick<DialogProps, 'title' | 'visible'> & {
@@ -85,7 +83,7 @@ export const CreateChallengeDialog: React.FC<Props> = ({
       content={
         <div>
           <CreateChallenge gameSpecs={gameSpecs} onUpdated={setGameSpecs} />
-          <CheckBox />
+          <input type='checkbox' />
         </div>
       }
       buttons={[

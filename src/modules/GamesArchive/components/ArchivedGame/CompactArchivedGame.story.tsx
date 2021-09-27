@@ -1,10 +1,8 @@
 import { ChessGameStateFinished, GameRecordFromGameState } from 'dstnd-io';
-import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { GameMocker } from 'src/mocks/records';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
-import { colors, defaultTheme } from 'src/theme';
 import { ArchivedGame } from './ArchivedGame';
 import { CompactArchivedGame } from './CompactArchivedGame';
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, softBorderRadius } from 'src/theme';
+import { darkTheme, lightTheme, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
-import { console } from 'window-or-global';
 import { getColor } from './util';
+import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 
 type Props = {
   homePercent: number; // A value from 0 to 1
@@ -12,6 +12,10 @@ type Props = {
 
 export const Graphic: React.FC<Props> = ({ homePercent }) => {
   const cls = useStyles();
+  const {theme} = useLightDarkMode();
+  const colors = {
+    ...(theme === 'light' ? lightTheme.colors : darkTheme.colors)
+  }
 
   const bottomPercentage = Math.floor(homePercent * 100);
   const topPercentage = 100 - bottomPercentage;

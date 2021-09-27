@@ -4,7 +4,7 @@ import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
 import { AspectRatio } from 'src/components/AspectRatio';
 import ReactTwitchEmbedVideo from 'react-twitch-embed-video';
 import { spacers } from 'src/theme/spacers';
-import { effects, onlyDesktop, text } from 'src/theme';
+import { darkTheme, effects, lightTheme, onlyDesktop } from 'src/theme';
 import { getCollaboratorsByPlatform } from './resources';
 import { CollaboratorRecord } from 'dstnd-io';
 import { toStreamerCollectionByRank } from './twitchSDK/useGetStreamerCollectionWithLiveStatus';
@@ -13,6 +13,7 @@ import { Avatar } from 'src/components/Avatar';
 import { CollaboratorAsStreamer } from './types';
 import { Text } from 'src/components/Text';
 import { AnchorLink } from 'src/components/AnchorLink';
+import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 
 type Props = {};
 
@@ -27,6 +28,7 @@ const toCollaboratorStreamer = (
 export const LivePage: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [streamers, setStreamers] = useState<CollaboratorAsStreamer[]>([]);
+  const {theme} = useLightDarkMode();
 
   useEffect(() => {
     getCollaboratorsByPlatform({
@@ -141,7 +143,7 @@ export const LivePage: React.FC<Props> = (props) => {
                           asParagraph
                           style={{
                             marginTop: '.2em',
-                            color: text.baseColor,
+                            color: theme ==='dark' ? darkTheme.text.baseColor : lightTheme.text.baseColor,
                           }}
                         >
                           {(s.about || '').length > 75 ? `${s.about?.slice(0, 75)}...` : s.about}

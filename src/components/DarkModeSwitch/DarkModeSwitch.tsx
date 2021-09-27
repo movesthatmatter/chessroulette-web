@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, effects } from 'src/theme';
+import { CustomTheme, effects } from 'src/theme';
 import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 import cx from 'classnames';
 import { Sun, Moon } from 'grommet-icons';
@@ -9,19 +9,19 @@ type Props = {};
 
 export const DarkModeSwitch: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const {darkModeSetting, setDarkMode} = useLightDarkMode();
+  const {theme, switchTheme} = useLightDarkMode();
 
   return (
     <div className={cls.container}>
       <div className={cls.darkRoomSwitcher}>
         <div className={cls.toggleButton} 
-        onClick={() => setDarkMode(!darkModeSetting.useDarkMode)}
+          onClick={() => switchTheme()}
         >
         <div className={cx(cls.switch,{
-          [cls.switchOn] : darkModeSetting.useDarkMode,
-          [cls.switchOff] : !darkModeSetting.useDarkMode
+          [cls.switchOn] : theme === 'light',
+          [cls.switchOff] : theme === 'dark'
         })}>
-          {darkModeSetting.useDarkMode ? <Sun className={cls.iconSun}/> : <Moon className={cls.iconMoon}/>}
+          {theme === 'light' ? <Sun className={cls.iconSun}/> : <Moon className={cls.iconMoon}/>}
         </div>
         </div>
       </div>
@@ -29,7 +29,7 @@ export const DarkModeSwitch: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display:'flex',
     width: 'fit-contents'
@@ -40,7 +40,7 @@ const useStyles = createUseStyles({
     width:'20px',
     height:'20px',
     borderRadius: '50%',
-    backgroundColor: colors.black,
+    backgroundColor: theme.colors.black,
     position: 'relative',
     transition: 'inherit',
     ...effects.floatingShadow,
@@ -62,21 +62,21 @@ const useStyles = createUseStyles({
     ...effects.borderRadius,
     margin: '0 auto',
     padding: '2px',
-    backgroundColor: colors.neutral,
+    backgroundColor: theme.colors.neutral,
     overflow: 'hidden',
     cursor: 'pointer',
     transition: 'all 0.3s linear'
   },
   iconSun:{
-    fill: `${colors.white} !important`,
-    color: `${colors.white} !important`,
+    fill: `${theme.colors.white} !important`,
+    color: `${theme.colors.white} !important`,
     width:'15px !important',
     height:'15px !important'
   },
   iconMoon: {
-    fill: `${colors.white} !important`,
-    color: `${colors.white} !important`,
+    fill: `${theme.colors.white} !important`,
+    color: `${theme.colors.white} !important`,
     width:'15px !important',
     height:'15px !important'
   }
-});
+}));

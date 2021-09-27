@@ -3,7 +3,7 @@ import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { ChatHistoryRecord } from 'dstnd-io';
 import { Message } from './components';
-import { colors, onlySmallMobile } from 'src/theme';
+import { CustomTheme, onlySmallMobile } from 'src/theme';
 import { IconButton } from 'src/components/Button';
 import { Send } from 'grommet-icons';
 import { CSSProperties } from 'src/lib/jss/types';
@@ -73,7 +73,7 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -94,7 +94,7 @@ const useStyles = createUseStyles({
   },
   inputContainer: {
     borderTop: 'solid 1px',
-    borderColor: colors.neutral,
+    borderColor: theme.colors.neutral,
     paddingTop: '16px',
     display: 'flex',
     flex: 1,
@@ -119,4 +119,4 @@ const useStyles = createUseStyles({
     width: '100%',
     height: '100%',
   },
-});
+}));

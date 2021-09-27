@@ -1,9 +1,7 @@
 import { action } from '@storybook/addon-actions';
-import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { Button } from 'src/components/Button';
-import { defaultTheme } from 'src/theme';
 import { WithDialog } from './WithDialog';
 
 export default {
@@ -12,7 +10,6 @@ export default {
 };
 
 export const defaultStory = () => (
-  <Grommet theme={defaultTheme}>
     <WithDialog
       content="works"
       buttons={[
@@ -32,5 +29,4 @@ export const defaultStory = () => (
       ]}
       render={(p) => <Button label="Confirm" onClick={p.onOpen} />}
     />
-  </Grommet>
 );

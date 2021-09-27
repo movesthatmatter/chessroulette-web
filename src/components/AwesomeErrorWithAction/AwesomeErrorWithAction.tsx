@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, fonts, minMediaQuery } from 'src/theme';
+import { CustomTheme, fonts, minMediaQuery } from 'src/theme';
 import { ButtonProps } from '../Button';
 import { Dialog } from '../Dialog';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
@@ -29,7 +29,7 @@ export const AwesomeErrorWithAction: React.FC<Props> = ({ buttons, title, desc, 
                 <div className={cls.title} style={{ marginBottom: '10px' }}>
                   {title}
                 </div>
-                <div style={{ color: colors.neutralDarker, ...fonts.body2 }}>{desc}</div>
+                <div className={cls.foot} style={{ ...fonts.body2 }}>{desc}</div>
               </div>
             </div>
           }
@@ -39,7 +39,7 @@ export const AwesomeErrorWithAction: React.FC<Props> = ({ buttons, title, desc, 
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
     height: '100vh',
@@ -61,11 +61,14 @@ const useStyles = createUseStyles({
   },
   title: {
     marginBottom: 0,
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker,
   },
   description: {
     fontSize: '50%',
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker,
     fontWeight: 400,
   },
-});
+  foot: {
+    color: theme.colors.neutralDarker
+  }
+}));

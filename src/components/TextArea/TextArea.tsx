@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createUseStyles, CSSProperties, makeImportant, NestedCSSElement } from 'src/lib/jss';
-import { colors, effects, onlyMobile } from 'src/theme';
+import { CustomTheme, effects, onlyMobile } from 'src/theme';
 import { Text } from '../Text/Text';
 import cx from 'classnames';
 import { getBoxShadow } from 'src/theme/util';
@@ -61,7 +61,7 @@ export const TextArea: React.FC<Props> = ({ className, label, value, ...props })
 
 const padding = spacers.get(0.75);
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     marginBottom: '12px',
 
@@ -90,7 +90,7 @@ const useStyles = createUseStyles({
     borderTopLeftRadius: '40px',
     borderTopRightRadius: '40px',
     borderStyle: 'solid',
-    borderColor: colors.neutral,
+    borderColor: theme.colors.neutral,
     borderWidth: 0,
     borderTopWidth: `1px`,
     borderLeftWidth: `1px`,
@@ -101,7 +101,7 @@ const useStyles = createUseStyles({
     height: '16px',
     marginTop: '-2px',
     borderStyle: 'solid',
-    borderColor: colors.neutral,
+    borderColor: theme.colors.neutral,
     borderWidth: 0,
     borderBottomWidth: `1px`,
     borderLeftWidth: `1px`,
@@ -127,31 +127,31 @@ const useStyles = createUseStyles({
   inputWrapperError: {
     ...makeImportant({
       '& $topPadding': {
-        borderColor: colors.negative,
-        boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(colors.negative, 0.08)),
+        borderColor: theme.colors.negative,
+        boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(theme.colors.negative, 0.08)),
       },
       '& $bottomPadding': {
-        borderColor: colors.negative,
-        boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(colors.negative, 0.08)),
+        borderColor: theme.colors.negative,
+        boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(theme.colors.negative, 0.08)),
       },
       '& $textAreaWrapper': {
-        borderColor: colors.negative,
-        boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(colors.negative, 0.08)),
+        borderColor: theme.colors.negative,
+        boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(theme.colors.negative, 0.08)),
       },
     } as CSSProperties),
   },
   inputWrapperReadonly: {
     ...makeImportant({
       '& $topPadding': {
-        background: colors.neutralLighter,
+        background: theme.colors.neutralLighter,
         boxShadow: 'none',
       },
       '& $bottomPadding': {
-        background: colors.neutralLighter,
+        background: theme.colors.neutralLighter,
         boxShadow: 'none',
       },
       '& $textAreaWrapper': {
-        background: colors.neutralLighter,
+        background: theme.colors.neutralLighter,
         boxShadow: 'none',
       },
     } as CSSProperties),
@@ -168,7 +168,7 @@ const useStyles = createUseStyles({
     paddingLeft: padding,
     paddingRight: padding,
     borderStyle: 'solid',
-    borderColor: colors.neutral,
+    borderColor: theme.colors.neutral,
     borderWidth: 0,
     borderLeftWidth: `1px`,
     borderRightWidth: `1px`,
@@ -187,7 +187,7 @@ const useStyles = createUseStyles({
     ...({
       '&:read-only': {
         ...makeImportant({
-          background: colors.neutralLighter,
+          background: theme.colors.neutralLighter,
         }),
         '&:focus': {
           boxShadow: 'none',
@@ -220,7 +220,7 @@ const useStyles = createUseStyles({
   },
   errorInput: {},
   errorMessageWrapper: {
-    color: colors.negativeLight,
+    color: theme.colors.negativeLight,
     paddingLeft: '12px',
   },
-});
+}));

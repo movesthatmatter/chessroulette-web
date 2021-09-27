@@ -1,5 +1,5 @@
 import React from 'react';
-import { colors, effects, fonts, onlyMobile, text } from 'src/theme';
+import { CustomTheme, darkTheme, effects, fonts, lightTheme, onlyMobile } from 'src/theme';
 import Select, { Props as SelectProps } from 'react-select';
 import { noop } from 'src/lib/util';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
@@ -7,6 +7,7 @@ import { Text } from 'src/components/Text';
 import cx from 'classnames';
 import { getBoxShadow } from 'src/theme/util';
 import hexToRgba from 'hex-to-rgba';
+import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 
 export type SelectInputOption = {
   value: string;
@@ -26,7 +27,10 @@ export const SelectInput: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
-
+  const {theme} = useLightDarkMode();
+  const colors = {
+    ...(theme === 'light' ? lightTheme.colors : darkTheme.colors)
+  }
   return (
     <div className={cx(cls.container, className)}>
       {label && (
@@ -136,7 +140,7 @@ export const SelectInput: React.FC<Props> = ({
             }),
 
             placeholder: () => ({
-              color: text.disabledColor,
+              color: lightTheme.text.disabledColor,
               fontSize: '13px',
 
               ...onlyMobile({
@@ -158,7 +162,7 @@ export const SelectInput: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {},
   labelWrapper: {
     paddingBottom: '4px',
@@ -166,7 +170,7 @@ const useStyles = createUseStyles({
   },
   inputWrapper: {},
   errorMessageWrapper: {
-    color: colors.negativeLight,
+    color: theme.colors.negativeLight,
     paddingLeft: '12px',
   },
-});
+}));

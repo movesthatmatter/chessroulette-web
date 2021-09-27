@@ -8,8 +8,7 @@ import { WithPagination } from 'src/components/Pagination';
 import { ArchivedGame } from './components/ArchivedGame';
 import { Text } from 'src/components/Text';
 import Loader from 'react-loaders';
-import { colors } from 'src/theme';
-import { AwesomeError } from 'src/components/AwesomeError';
+import { CustomTheme } from 'src/theme';
 
 type Props = {
   userId: RegisteredUserRecord['id'];
@@ -59,7 +58,7 @@ export const GamesArchive: React.FC<Props> = ({ userId, pageSize = 10 }) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -78,7 +77,7 @@ const useStyles = createUseStyles({
     transform: 'scale(.7)',
     ...({
       '& > div': {
-        backgroundColor: `${colors.primaryLight} !important`,
+        backgroundColor: `${theme.colors.primaryLight} !important`,
       },
     } as CSSProperties['nestedKey']),
   },
@@ -89,6 +88,6 @@ const useStyles = createUseStyles({
     height: '100%',
   },
   emptyMessage: {
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker,
   },
-});
+}));

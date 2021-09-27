@@ -25,7 +25,7 @@ export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
         <div className={cls.header}>
           <Logo withBeta={false} asLink={false} mini withOutline className={cls.logoStreamingBox} />
           <div className={cls.peerInfoWrapper}>
-            <PeerInfo darkMode reversed peerUserInfo={inFocus} />
+            <PeerInfo darkBG reversed peerUserInfo={inFocus} />
           </div>
         </div>
       )}

@@ -6,7 +6,7 @@ import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ChatContainer } from 'src/modules/Chat';
 import { ChatIconWithBadge } from 'src/modules/Chat/components/ChatIconWithBadge';
 import { selectChatHistory } from 'src/providers/PeerProvider';
-import { colors, hardBorderRadius } from 'src/theme';
+import { hardBorderRadius, lightTheme } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 
 type Props = {
@@ -44,7 +44,7 @@ export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight })
   return (
     <>
       <ChatIconWithBadge
-        color={colors.white}
+        color={lightTheme.colors.white}
         onClick={() => {
           markMessagesAsRead();
 

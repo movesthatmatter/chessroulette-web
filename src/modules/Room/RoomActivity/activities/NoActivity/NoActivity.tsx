@@ -50,7 +50,7 @@ export const NoActivity: React.FC<Props> = (props) => {
   if (props.deviceSize.isMobile) {
     return (
       <GenericLayoutMobileRoomConsumer
-        renderTopOverlayHeader={() => <NavigationHeader darkMode />}
+        renderTopOverlayHeader={() => <NavigationHeader darkBG />}
         renderActivity={(cd) => (
           <div className={cls.mobileBoardWrapper}>
           <ChessBoard

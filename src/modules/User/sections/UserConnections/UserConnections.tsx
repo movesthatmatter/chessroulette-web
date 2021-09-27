@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { connectExternalAccountEffect } from 'src/services/Authentication';
-import { colors, effects } from 'src/theme';
+import { CustomTheme, effects } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { LichessAuthButton } from 'src/vendors/lichess';
 import { TwitchAuthButton } from 'src/vendors/twitch/TwitchAuthButton/TwitchAuthButton';
@@ -100,12 +100,12 @@ export const UserConnections: React.FC<Props> = ({ user }) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   container: {},
   item: {
     paddingBottom: spacers.large,
     paddingTop: spacers.large,
-    borderBottom: `1px solid ${colors.neutralDark}`,
+    borderBottom: `1px solid ${theme.colors.neutralDark}`,
     display: 'flex',
     alignContent: 'center',
     alignItems: 'center',
@@ -117,4 +117,4 @@ const useStyles = createUseStyles({
     padding: '5px 15px',
     ...effects.borderRadius,
   },
-});
+}));

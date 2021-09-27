@@ -1,6 +1,5 @@
 import React from 'react';
 import { ChessGameState, ChessPlayer } from 'dstnd-io';
-import { Box } from 'grommet';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, fonts } from 'src/theme';
@@ -27,10 +26,10 @@ export const PlayerBox: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
   return (
-    <Box fill className={cls.container} direction="row">
-      <Box fill direction="row">
+    <div className={cls.container} style={{display:'flex', flexDirection:'row'}}>
+      <div style={{display:'flex', justifyContent:'center'}}>
         <PeerAvatar peerUserInfo={player.user} hasUserInfo />
-        <Box className={cls.playerInfo}>
+        <div className={cls.playerInfo}>
           <Text className={cls.playerNameText}>{getUserDisplayName(player.user)}</Text>
           <div
             style={{
@@ -40,8 +39,8 @@ export const PlayerBox: React.FC<Props> = ({
           >
             <Text size="small1">{material > 0 && `+${material}`}</Text>
           </div>
-        </Box>
-      </Box>
+        </div>
+      </div>
       {gameTimeLimit !== 'untimed' && (
         <Countdown
           timeLeft={timeLeft}
@@ -50,7 +49,7 @@ export const PlayerBox: React.FC<Props> = ({
           gameTimeClass={gameTimeLimit}
         />
       )}
-    </Box>
+    </div>
   );
 };
 

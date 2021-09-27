@@ -6,8 +6,7 @@ import dateFormat from 'dateformat';
 import { useInterval } from 'src/lib/hooks';
 import { Text } from 'src/components/Text';
 import { timeLeftToFormatMajor, timeLeftToFormatMinor, timeLeftToInterval } from './util';
-import { text } from 'src/theme/text';
-import { colors, maxMediaQuery, onlyMobile } from 'src/theme';
+import { CustomTheme, maxMediaQuery, onlyMobile } from 'src/theme';
 import { minutes } from 'src/lib/time';
 import { GameRecord } from 'dstnd-io';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
@@ -90,12 +89,12 @@ export const Countdown: React.FC<Props> = ({ onFinished = () => noop, gameTimeCl
   return <div className={cx(cls.container, props.className)}>{clock}</div>;
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {},
   text: {
     fontSize: '32px',
     lineHeight: '32px',
-    color: text.disabledColor,
+    color: theme.text.disabledColor,
     ...maxMediaQuery(1300, {
       fontSize: '24px',
       lineHeight: '24px',
@@ -106,7 +105,7 @@ const useStyles = createUseStyles({
     }),
   },
   textActive: {
-    color: text.primaryColor,
+    color: theme.text.primaryColor,
   },
   major: {
     fontWeight: 700,
@@ -117,12 +116,12 @@ const useStyles = createUseStyles({
   paused: {},
   countdownMilliseconds: {
     ...makeImportant({
-      color: colors.negative,
+      color: theme.colors.negative,
     }),
   },
   blink: {
     animation: '$blink 1s steps(5, start) infinite',
-    color: text.primaryColor,
+    color: theme.text.primaryColor,
   },
   '@keyframes blink': {
     ...{
@@ -131,4 +130,4 @@ const useStyles = createUseStyles({
       }
     } as NestedCSSElement,
   },
-});
+}));

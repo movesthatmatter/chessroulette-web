@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, floatingShadow, hideOnMobile, onlyDesktop, softBorderRadius } from 'src/theme';
+import { CustomTheme, darkTheme, floatingShadow, hideOnMobile, lightTheme, onlyDesktop, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { Avatar } from 'src/components/Avatar';
@@ -13,6 +13,7 @@ import { MiniClipboardCopyButton } from 'src/components/ClipboardCopy';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { getUserDisplayName } from 'src/modules/User';
 import { drawEmoji, getMyResult, getScore, winningEmoji } from './util';
+import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 
 type Props = {
   game: GameRecordFinished | GameRecordStopped;
@@ -29,6 +30,10 @@ export const CompactArchivedGame: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
   const avatarSize = '28px';
+  const {theme} = useLightDarkMode();
+  const colors = {
+    ...(theme === 'light' ? lightTheme.colors : darkTheme.colors)
+  }
 
   const myUserResult = myUserId ? getMyResult(game, myUserId) : undefined;
   const borderLeftColor = myUserResult
@@ -144,14 +149,14 @@ export const CompactArchivedGame: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    background: colors.white,
+    background: theme.colors.white,
     padding: spacers.small,
-    border: `1px solid ${colors.neutral}`,
+    border: `1px solid ${theme.colors.neutral}`,
     ...softBorderRadius,
     ...floatingShadow,
   },
@@ -229,4 +234,4 @@ const useStyles = createUseStyles({
   onlyDesktop: {
     ...hideOnMobile,
   },
-});
+}));

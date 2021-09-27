@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { colors, softBorderRadius, text } from 'src/theme';
+import { CustomTheme, darkTheme, lightTheme, softBorderRadius } from 'src/theme';
 import { Text } from '../Text';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { range } from 'src/lib/util';
+import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 
 export type PaginatorProps = {
   totalPages: number;
@@ -56,6 +57,10 @@ const getNextPagerState = (props: Pick<PaginatorProps, 'totalPages' | 'pageIndex
 
 export const Paginator = (props: PaginatorProps) => {
   const cls = useStyles();
+  const {theme} = useLightDarkMode();
+  const colors = {
+    ...(theme === 'light' ? lightTheme.colors : darkTheme.colors)
+  }
 
   const [pagerState, setPagerState] = useState(getNextPagerState(props));
 
@@ -129,7 +134,7 @@ export const Paginator = (props: PaginatorProps) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
     alignContent: 'center',
@@ -151,14 +156,14 @@ const useStyles = createUseStyles({
     padding: '4px 12px',
   },
   activePage: {
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
     ...softBorderRadius,
   },
 
   pageNumber: {
-    color: text.disabledColor,
+    color: theme.text.disabledColor,
   },
   activePageNumber: {
-    color: colors.white,
+    color: theme.colors.white,
   },
-});
+}));

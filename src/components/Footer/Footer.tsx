@@ -1,17 +1,21 @@
 import React from 'react';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
-import { colors, effects, onlyMobile, text } from 'src/theme';
+import { CustomTheme, darkTheme, effects, lightTheme, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Text } from '../Text';
 import { Link } from 'react-router-dom';
 import { AnchorLink } from '../AnchorLink';
 import { Instagram as InstagramIcon, Facebook as FacebookIcon } from 'grommet-icons';
+import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 
 type Props = {};
 
 export const Footer: React.FC<Props> = () => {
   const cls = useStyles();
-
+  const {theme} = useLightDarkMode();
+  const text = {
+    ...(theme === 'light' ? lightTheme.text : darkTheme.text)
+  }
   return (
     <>
       <div className={cls.container}>
@@ -77,9 +81,9 @@ export const Footer: React.FC<Props> = () => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   topContainer: {
-    background: colors.neutralLightest,
+    background: theme.colors.neutralLightest,
     paddingBottom: '8px',
     ...effects.floatingShadow,
     position: 'relative',
@@ -89,7 +93,7 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
   },
   container: {
-    background: colors.neutralLighter,
+    background: theme.colors.neutralLighter,
   },
   responsive: {
     width: '100%',
@@ -117,7 +121,7 @@ const useStyles = createUseStyles({
     }),
   },
   link: {
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
     textDecoration: 'none',
 
     '&:hover': {
@@ -127,7 +131,7 @@ const useStyles = createUseStyles({
     paddingLeft: spacers.larger,
   },
   text: {
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
   },
   socialLink: {
     verticalAlign: 'center',
@@ -145,7 +149,7 @@ const useStyles = createUseStyles({
     marginRight: spacers.small,
   },
   socialLinkText: {
-    color: text.baseColor,
+    color: theme.text.baseColor,
   },
 
   row: {
@@ -157,4 +161,4 @@ const useStyles = createUseStyles({
       justifyContent: 'center',
     }),
   },
-});
+}));

@@ -10,7 +10,7 @@ import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGam
 import { resources } from 'src/modules/Room';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { getUserDisplayName } from 'src/modules/User';
-import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
+import { CustomTheme, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { noop } from 'src/lib/util';
 import { AsyncResult } from 'ts-async-results';
@@ -80,7 +80,7 @@ export const AcceptChallengeDialog: React.FC<Props> = ({ pendingChallenge, onDis
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     position: 'absolute',
     top: 0,
@@ -99,7 +99,7 @@ const useStyles = createUseStyles({
     ...softBorderRadius,
     padding: 0,
     position: 'relative',
-    background: colors.white,
+    background: theme.colors.white,
 
     ...makeImportant({
       borderRadius: '8px',
@@ -141,4 +141,4 @@ const useStyles = createUseStyles({
   spacer: {
     paddingBottom: spacers.default,
   },
-});
+}));

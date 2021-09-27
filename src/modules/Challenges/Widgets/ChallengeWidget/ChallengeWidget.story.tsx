@@ -1,11 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { action } from '@storybook/addon-actions';
-import { Grommet } from 'grommet';
 import React from 'react';
 import { SocketProvider } from 'src/providers/SocketProvider';
 import { ChallengeMocker, UserRecordMocker } from 'src/mocks/records';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
-import { defaultTheme } from 'src/theme';
 import { ChallengeWidget } from './ChallengeWidget';
 
 export default {
@@ -17,7 +15,6 @@ const challengeMocker = new ChallengeMocker();
 const userMocker = new UserRecordMocker();
 
 export const createPublicChallenge = () => (
-  <Grommet theme={defaultTheme}>
     <StorybookReduxProvider
       initialState={{
         authentication: {
@@ -35,11 +32,9 @@ export const createPublicChallenge = () => (
         onMatched={action('on matched')}
       />
     </StorybookReduxProvider>
-  </Grommet>
 );
 
 export const createPrivateChallenge = () => (
-  <Grommet theme={defaultTheme}>
     <StorybookReduxProvider
       initialState={{
         authentication: {
@@ -57,11 +52,9 @@ export const createPrivateChallenge = () => (
         onMatched={action('on matched')}
       />
     </StorybookReduxProvider>
-  </Grommet>
 );
 
 export const acceptChallenge = () => (
-  <Grommet theme={defaultTheme}>
     <StorybookReduxProvider
       initialState={{
         authentication: {
@@ -78,7 +71,6 @@ export const acceptChallenge = () => (
         onCanceled={action('on canceled')}
       />
     </StorybookReduxProvider>
-  </Grommet>
 );
 
 export const pendingPublicChallenge = () => {
@@ -89,7 +81,6 @@ export const pendingPublicChallenge = () => {
   });
 
   return (
-    <Grommet theme={defaultTheme}>
       <StorybookReduxProvider
         initialState={{
           authentication: {
@@ -108,7 +99,6 @@ export const pendingPublicChallenge = () => {
           />
         </SocketProvider>
       </StorybookReduxProvider>
-    </Grommet>
   );
 };
 
@@ -120,7 +110,6 @@ export const pendingPrivateChallenge = () => {
   });
 
   return (
-    <Grommet theme={defaultTheme}>
       <StorybookReduxProvider
         initialState={{
           authentication: {
@@ -139,6 +128,5 @@ export const pendingPrivateChallenge = () => {
           />
         </SocketProvider>
       </StorybookReduxProvider>
-    </Grommet>
   );
 };

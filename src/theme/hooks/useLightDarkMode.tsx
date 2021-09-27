@@ -1,42 +1,26 @@
-import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { switchThemeAction } from "../redux/actions";
+import { selectTheme } from "../redux/selectors";
+import {ThemeState} from 'src/theme/redux/reducer';
+import { console } from "window-or-global";
+import { useEffect } from "react";
 
-type DarkMode = {
-  useDarkMode : boolean;
-}
+export const useLightDarkMode = () : {
+  theme: ThemeState['theme'],
+  switchTheme: () => void;
+} => {
+  const theme = useSelector(selectTheme);
+  const dispatch = useDispatch();
 
-export const useLightDarkMode = () => {
-  const [storedValue, setStoredValue] = useState<DarkMode>(() => {
-    try { 
-      const value = window.localStorage.getItem('useDarkMode');
-      return value? JSON.parse(value) : {
-        useDarkMode: false
-      };
-    }
-    catch (e) {
-      return {
-        useDarkMode: false
-      }
-    }
-  })
-  const [error, setError] = useState(null);
+  useEffect(() => {console.log('new themee', theme)}, [theme])
 
-  useEffect(() => {
-    try {
-      window.localStorage.setItem('useDarkMode', JSON.stringify(storedValue))
-    } catch (e) {
-      setError(e);
-    }
-  },[storedValue])
-
-  const setDarkMode = (value : boolean) => {
-      setStoredValue({
-        useDarkMode: value
-      })
+  const switchTheme = () => {
+    console.log('switch theme')
+    dispatch(switchThemeAction());
   }
 
   return {
-    darkModeSetting: storedValue,
-    setDarkMode,
-    error
+    theme,
+    switchTheme
   }
 }

@@ -5,7 +5,7 @@ import Loader from 'react-loaders';
 import { UserRecord } from 'dstnd-io';
 import { Button, IconButton } from 'src/components/Button';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { colors, fonts } from 'src/theme';
+import { CustomTheme, fonts } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { ChallengeNotification } from '../types';
 import { Close } from 'grommet-icons';
@@ -187,13 +187,13 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     ...fonts.small1,
     marginBottom: spacers.default,
   },
   attention: {
-    borderLeft: `3px solid ${colors.negativeLight}`,
+    borderLeft: `3px solid ${theme.colors.negativeLight}`,
     paddingLeft: spacers.small,
   },
   avatarLeft: {
@@ -230,7 +230,7 @@ const useStyles = createUseStyles({
       '& > div': {
         height: '7px',
         width: '7px',
-        backgroundColor: colors.primary,
+        backgroundColor: theme.colors.primary,
       },
     } as CSSProperties),
   },
@@ -238,4 +238,4 @@ const useStyles = createUseStyles({
     marginBottom: 0,
     marginTop: spacers.small,
   },
-});
+}));

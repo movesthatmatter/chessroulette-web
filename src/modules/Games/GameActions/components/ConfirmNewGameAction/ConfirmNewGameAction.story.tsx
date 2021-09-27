@@ -1,11 +1,9 @@
 
 import { action } from '@storybook/addon-actions';
 /* eslint-disable import/no-extraneous-dependencies */
-import { Grommet } from 'grommet';
 import React from 'react';
 import { Button } from 'src/components/Button';
 import { GameMocker } from 'src/mocks/records';
-import { defaultTheme } from 'src/theme';
 import { ConfirmNewGameAction } from './ConfirmNewGameAction';
 
 export default {
@@ -21,7 +19,7 @@ const prevGame = gameMocker.withProps({
 });
 
 export const defaultStory = () => (
-  <Grommet theme={defaultTheme}>
+  <>
     <ConfirmNewGameAction
       title="Rematch"
       content={`Challenge ${prevGame.players[1].user.name}`}
@@ -49,5 +47,5 @@ export const defaultStory = () => (
       onSubmit={action('on submit')}
       render={(p) => <Button onClick={p.onConfirm} label="New Game" />}
     />
-  </Grommet>
+  </>
 );

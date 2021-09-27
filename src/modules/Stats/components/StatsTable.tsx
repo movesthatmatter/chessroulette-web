@@ -1,13 +1,5 @@
 import React, { ReactNode } from 'react';
-import {
-  Table as GTable,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHeader,
-  TableRow,
-  Text,
-} from 'grommet';
+import { Text } from 'src/components/Text';
 
 type Props<T extends object> = {
   caption: string;
@@ -22,41 +14,42 @@ export class StatsTable<T extends object> extends React.Component<Props<T>> {
     const columns = Object.keys(props.columnsMap) as (keyof typeof props.columnsMap)[];
 
     return (
-      <GTable caption={props.caption} style={{
+      <div style={{
         border: '1px solid #ececec',
       }}>
-        <TableHeader>
-          <TableRow>
+        {props.caption}
+        <div>
+          <div>
             {columns.map((key) => (
-              <TableCell key={String(key)} scope="col" align="center">
+              <div key={String(key)} style={{alignContent:'center', alignItems:'center'}}>
                 <Text><strong>{key}</strong></Text>
-              </TableCell>
+              </div>
             ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+          </div>
+        </div>
+        <div>
           {props.data.map((datum) => (
-            <TableRow key={datum.id}>
+            <div key={datum.id}>
               {columns.map((key) => (
-                <TableCell key={String(key)} align="center">
+                <div key={String(key)} style={{alignContent:'center', alignItems:'center'}}>
                   <Text>{props.columnsMap[key]?.format(datum) ?? datum[key]}</Text>
-                </TableCell>
+                </div>
               ))}
-            </TableRow>
+            </div>
           ))}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
+        </div>
+        <div>
+          <div>
             {columns.map((key, index) => {
               return (
-                <TableCell key={String(key)} align={'right' as 'center'}>
+                <div key={String(key)} style={{alignContent:'center', alignItems:'center'}}>
                   {index < columns.length - 1 ? '' : <Text>{`Total ${props.data.length}`}</Text>}
-                </TableCell>
+                </div>
               );
             })}
-          </TableRow>
-        </TableFooter>
-      </GTable>
+          </div>
+        </div>
+      </div>
     );
   }
 }
