@@ -35,7 +35,7 @@ export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
 
 const useStyles = createUseStyles({
   logoStreamingBox: {
-    padding: spacers.get(0.7),
+    padding: spacers.get(.7),
     marginTop: '-5px',
     width: '48px',
   },
@@ -49,6 +49,6 @@ const useStyles = createUseStyles({
     display: 'flex',
     alignContent: 'flex-end',
     justifyContent: 'flex-end',
-    padding: spacers.default,
+    padding: spacers.get(.7),
   },
 });
