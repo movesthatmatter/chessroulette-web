@@ -6,11 +6,14 @@ import { SocketClient } from 'src/services/socket/SocketClient';
 import useInstance from '@use-it/instance';
 import { Pubsy } from 'src/lib/Pubsy';
 import { Game } from 'src/modules/Games/types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 
 type EventListeners = {
-  onGameUpdated: Game;
+  onGameUpdated: {
+    prev: Game | undefined;
+    next: Game;
+  };
 };
 
 // TODO: Rename this to useGame as now it's also an event listener
@@ -20,6 +23,7 @@ type EventListeners = {
 export const useGameActions = () => {
   const peerState = usePeerState();
   const pubsy = useInstance<Pubsy<EventListeners>>(new Pubsy<EventListeners>());
+  const [prevGame, setPrevGame] = useState<Game>();
 
   // Subscribe to Game Updates
   useEffect(() => {
@@ -27,9 +31,19 @@ export const useGameActions = () => {
       const unsubscribers = [
         peerState.client.onMessage((payload) => {
           if (payload.kind === 'joinedGameUpdated') {
-            pubsy.publish('onGameUpdated', gameRecordToGame(payload.content));
+            setPrevGame((prev) => {
+              const next = gameRecordToGame(payload.content);
+              pubsy.publish('onGameUpdated', { prev, next });
+
+              return next;
+            });
           } else if (payload.kind === 'joinedRoomAndGameUpdated') {
-            pubsy.publish('onGameUpdated', gameRecordToGame(payload.content.game));
+            setPrevGame((prev) => {
+              const next = gameRecordToGame(payload.content.game);
+              pubsy.publish('onGameUpdated', { prev, next });
+
+              return next;
+            });
           }
         }),
       ];
@@ -137,6 +151,7 @@ export const useGameActions = () => {
 
     onGameStatusCheck: () => request(gameActionPayloads.statusCheck()),
 
-    onGameUpdatedEventListener: (fn: (g: Game) => void) => pubsy.subscribe('onGameUpdated', fn),
+    onGameUpdatedEventListener: (fn: (g: { prev: Game | undefined; next: Game }) => void) =>
+      pubsy.subscribe('onGameUpdated', fn),
   };
 };

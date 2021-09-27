@@ -28,7 +28,7 @@ export const ActivityRoomConsumer: React.FC<Props> = () => {
           }
         }),
         // Play Activity listener
-        gameActions.onGameUpdatedEventListener((nextGame) => {
+        gameActions.onGameUpdatedEventListener(({ next: nextGame }) => {
           dispatch(updateJoinedGameAction(nextGame));
         }),
       ];
