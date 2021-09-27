@@ -8,6 +8,7 @@ import config from './config';
 import { GA } from './services/Analytics';
 import { ScrollToTop } from './components/ScrollToTop';
 import { LichessProvider } from './modules/LichessPlay/LichessAPI/LichessProvider';
+import { FeedbackProvider } from './providers/FeedbackProvider/FeedbackProvider';
 
 function App() {
   useEffect(() => {
@@ -28,8 +29,10 @@ function App() {
             id={{ minify: !config.DEBUG }}
           >
             <ThemeProvider theme={defaultTheme}>
-              <Routes />
-              <ScrollToTop />
+              <FeedbackProvider>
+                <Routes />
+                <ScrollToTop />
+              </FeedbackProvider>
             </ThemeProvider>
           </JssProvider>
         </LichessProvider>

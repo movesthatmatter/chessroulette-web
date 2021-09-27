@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessGame } from 'src/modules/Games/Chess';
@@ -16,6 +16,7 @@ import {
 import { historyToPgn } from 'src/modules/Games/Chess/lib';
 import { floatingBoxContainerOffsets, floatingBoxOffsets } from '../../styles';
 import cx from 'classnames';
+import { useFeedbackActions } from 'src/providers/FeedbackProvider/useFeedback';
 
 export type PlayActivityProps = ActivityCommonProps & {
   activity: RoomPlayActivityWithGame;
@@ -24,10 +25,17 @@ export type PlayActivityProps = ActivityCommonProps & {
 export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize }) => {
   const cls = useStyles();
   const gameActions = useGameActions();
+  const feedbackActions = useFeedbackActions();
 
   // Default to White
   const homeColor = activity.iamParticipating ? activity.participants.me.color : 'white';
   const { game } = activity;
+
+  useEffect(() => {
+    if (activity.iamParticipating && game.winner === activity.participants.me.color) {
+      feedbackActions.attemptToShowIfPossible();
+    }
+  }, [activity.iamParticipating, game]);
 
   if (deviceSize.isMobile) {
     return (
