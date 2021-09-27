@@ -3,6 +3,7 @@ import { FaceTime, FaceTimeProps } from 'src/components/FaceTime';
 import { createUseStyles } from 'src/lib/jss';
 import { getUserDisplayName } from 'src/modules/User';
 import { fonts, softBorderRadius } from 'src/theme';
+import { spacers } from 'src/theme/spacers';
 import { Streamer, StreamersMap } from '../types';
 import { Reel } from './components/Reel/Reel';
 import { reducer, initialState, initAction, focusAction, updateAction } from './reducer';
@@ -129,8 +130,8 @@ const useStyles = createUseStyles({
     overflow: 'auto',
 
     width: '22.2%',
-    paddingRight: '8px',
-    paddingBottom: '8px',
+    paddingRight: spacers.get(.7),
+    paddingBottom: spacers.get(.7),
   },
   reelScroller: {
     minHeight: '100%',
