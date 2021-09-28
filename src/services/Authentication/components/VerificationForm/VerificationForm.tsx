@@ -106,7 +106,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
       )}
       <Hr text="Or Continue With" />
       <div className={cls.buttonRows}>
-        <LichessAuthButton
+        {/* <LichessAuthButton
           full
           label="Lichess"
           type="secondary"
@@ -117,7 +117,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
               accessToken,
             });
           }}
-        />
+        /> */}
         <TwitchAuthButton
           full
           label="Twitch"
