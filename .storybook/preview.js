@@ -3,6 +3,7 @@ import { addDecorator } from '@storybook/react';
 import { configure } from '@storybook/react';
 import WebFont from 'webfontloader'
 import {StorybookThemeProvider} from '../src/storybook/StorybookThemeProvider';
+import {StorybookReduxProvider} from '../src/storybook/StorybookReduxProvider'
 
 WebFont.load({
   google: {
@@ -22,7 +23,9 @@ configure(
     ] , module );
 
 addDecorator(storyFn => (
-  <StorybookThemeProvider>
-    {storyFn()}
-  </StorybookThemeProvider>
+  <StorybookReduxProvider>
+   <StorybookThemeProvider>
+     {storyFn()}
+   </StorybookThemeProvider>
+  </StorybookReduxProvider>
 ));
