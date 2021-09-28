@@ -9,8 +9,6 @@ import { CreateChallenge } from 'src/modules/Challenges/Widgets/ChallengeWidget/
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { getRoomPendingChallenge } from 'src/modules/Room/util';
 import { Room } from 'src/providers/PeerProvider';
-import usePrevious from 'use-previous';
-import { PendingChallengeDialog } from '../NoActivity/components/PendingChallengeDialog';
 
 type Props = {
   visible: boolean;

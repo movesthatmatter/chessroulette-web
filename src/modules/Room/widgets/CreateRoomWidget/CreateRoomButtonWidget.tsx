@@ -10,6 +10,7 @@ import { Dialog } from 'src/components/Dialog';
 import * as resources from '../../resources';
 import { AsyncOk } from 'ts-async-results';
 import { UnknownAsyncResult } from 'src/lib/types';
+import { Events } from 'src/services/Analytics';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activityType'>;
@@ -47,6 +48,7 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
                       gameSpecs,
                     })
                     .map((room) => {
+                      Events.trackRoomCreated(room);
                       history.push(toRoomUrlPath(room));
                     }) as unknown as UnknownAsyncResult;
                 }}
@@ -73,6 +75,7 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
                           }),
                     })
                     .map((room) => {
+                      Events.trackRoomCreated(room);
                       history.push(toRoomUrlPath(room));
                     }) as unknown as UnknownAsyncResult;
                 }}

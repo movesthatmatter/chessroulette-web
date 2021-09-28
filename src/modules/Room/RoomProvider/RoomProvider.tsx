@@ -5,6 +5,7 @@ import { useRoomActivityListener } from 'src/modules/Room/RoomActivityLog/useRoo
 import { JoinedRoom } from '../types';
 import { RoomActivityCreationRecord } from 'dstnd-io';
 import { usePeerState } from 'src/providers/PeerProvider';
+import { Events } from 'src/services/Analytics';
 
 type Props = {
   joinedRoom: JoinedRoom;
@@ -19,6 +20,8 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
       if (peerState.status !== 'open') {
         return;
       }
+
+      Events.trackSwitchedRoomActivity(content.activityType);
 
       return peerState.client.send({
         kind: 'switchJoinedRoomActivityRequest',
@@ -47,6 +50,10 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
       },
     });
   }, [joinedRoom, deviceSize, switchActivity]);
+
+  useEffect(() => {
+    Events.trackRoomJoined(joinedRoom);
+  }, []);
 
   return (
     <RoomProviderContext.Provider value={contextState}>

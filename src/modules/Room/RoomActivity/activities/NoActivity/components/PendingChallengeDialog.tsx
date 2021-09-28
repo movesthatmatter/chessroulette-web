@@ -14,6 +14,7 @@ import { toChallengeUrlPath } from 'src/lib/util';
 import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGame/util';
 import { resources } from 'src/modules/Room';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
+import { Events } from 'src/services/Analytics';
 import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { spacers } from 'src/theme/spacers';
@@ -118,6 +119,8 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
                 resources.deleteRoomChallenge({
                   challengeId: pendingChallenge.id,
                   roomId: pendingChallenge.roomId,
+                }).map(() => {
+                  Events.trackRoomChallengeCanceled(pendingChallenge);
                 });
               },
             },

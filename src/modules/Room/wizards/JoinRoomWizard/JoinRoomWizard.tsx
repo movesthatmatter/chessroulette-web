@@ -7,7 +7,8 @@ import { getRoomPendingChallenge } from '../../util';
 import { AcceptRoomStep } from '../steps/AcceptRoomStep';
 import { resources } from '../..';
 import { UnknownAsyncResult } from 'src/lib/types';
-import { AsyncOk, AsyncResultWrapper } from 'ts-async-results';
+import { AsyncOk, AsyncResult, AsyncResultWrapper } from 'ts-async-results';
+import { Events } from 'src/services/Analytics';
 
 type Props = {
   myUser: UserInfoRecord;
@@ -61,6 +62,9 @@ export const JoinRoomWizard: React.FC<Props> = (props) => {
                 challengeId: state.pendingChallenge.id,
                 roomId: state.pendingChallenge.roomId,
               })
+              .map(AsyncResult.passThrough(() => {
+                Events.trackRoomChallengeAccepted(state.pendingChallenge);
+              }))
               // TODO: Handle error
               .flatMap(() => props.onFinished());
           } else {

@@ -13,6 +13,8 @@ import { getUserDisplayName } from 'src/modules/User';
 import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { noop } from 'src/lib/util';
+import { AsyncResult } from 'ts-async-results';
+import { Events } from 'src/services/Analytics';
 
 type Props = {
   pendingChallenge: RoomChallengeRecord;
@@ -54,10 +56,16 @@ export const AcceptChallengeDialog: React.FC<Props> = ({ pendingChallenge, onDis
                   return;
                 }
 
-                resources.acceptRoomChallenge({
-                  challengeId: pendingChallenge.id,
-                  roomId: pendingChallenge.roomId,
-                });
+                resources
+                  .acceptRoomChallenge({
+                    challengeId: pendingChallenge.id,
+                    roomId: pendingChallenge.roomId,
+                  })
+                  .map(
+                    AsyncResult.passThrough(() => {
+                      Events.trackRoomChallengeAccepted(pendingChallenge);
+                    })
+                  );
               },
             },
             {
