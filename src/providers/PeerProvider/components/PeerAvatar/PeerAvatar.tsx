@@ -9,11 +9,13 @@ import { selectPeerProviderState } from '../../redux/selectors';
 import { Text } from 'src/components/Text';
 import { spacers } from 'src/theme/spacers';
 import { getUserDisplayName } from 'src/modules/User';
+import cx from 'classnames';
 
 type Props = {
   size?: string;
   className?: string;
   hasUserInfo?: boolean;
+  reversed?: boolean;
 } & (
   | {
       peer: Peer;
@@ -45,11 +47,10 @@ const getStatusInfo = (peer?: Peer) => {
   return `${getUserDisplayName(peer.user)} Is Not In The Room`;
 };
 
-export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, ...props }) => {
+export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, reversed, ...props }) => {
   const cls = useStyles();
   const room = useSelector(selectPeerProviderState).room;
   const peer = props.peer || room?.peersIncludingMe[props.peerUserInfo.id];
-
   const [showInfo, setShowInfo] = useState(false);
 
   return (
@@ -66,18 +67,20 @@ export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, ...prop
           onMouseLeave: () => setShowInfo(false),
         })}
       >
-        <ConnectionStatusDot
+        {peer?.isMe || (
+          <ConnectionStatusDot
           peer={peer}
           containerClassName={cls.connectionDotContainer}
           dotClassName={cls.connectionDot}
           size="25%"
         />
+        )}
         <Avatar
           mutunachiId={peer ? Number(peer.user.avatarId) : Number(props.peerUserInfo?.avatarId)}
           size={size}
         />
         {hasUserInfo && showInfo && (
-          <div className={cls.infoContainer}>
+          <div className={cx(cls.infoContainer, reversed && cls.infoContainerReversed)}>
             <div className={cls.infoText}>
               <Text size="small1">{getStatusInfo(peer)}</Text>
             </div>
@@ -94,7 +97,7 @@ const useStyles = createUseStyles({
   },
   connectionDotContainer: {
     position: 'absolute',
-    zIndex: 9,
+    zIndex: 5,
     bottom: 'calc(15% - 2px)',
     right: 'calc(10% - 2px)',
   },
@@ -107,7 +110,11 @@ const useStyles = createUseStyles({
     top: 0,
     bottom: 0,
     left: '100%',
-    zIndex: 999,
+    zIndex: 0,
+  },
+  infoContainerReversed: {
+    right: '100%',
+    left: 'auto',
   },
   infoText: {
     marginLeft: spacers.small,

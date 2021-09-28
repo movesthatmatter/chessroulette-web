@@ -1,12 +1,10 @@
 import React from 'react';
 import { ChessGameState, ChessPlayer } from 'dstnd-io';
 import { Box } from 'grommet';
-import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, fonts } from 'src/theme';
 import { Countdown } from '../Countdown';
-// import { PeerWithConnectionStatusDisplay } from 'src/providers/PeerProvider';
 import { PeerAvatar } from 'src/providers/PeerProvider/components/PeerAvatar';
 import { getUserDisplayName } from 'src/modules/User';
 
@@ -58,16 +56,17 @@ export const PlayerBox: React.FC<Props> = ({
 
 const useStyles = createUseStyles({
   container: {},
-  playerInfo: {
-    marginLeft: '8px',
-  },
   avatar: {
     height: '32px',
     width: '32px',
     background: '#ddd',
     ...floatingShadow,
   },
+  playerInfo: {
+    marginLeft: '8px',
+  },
   playerNameText: {
     ...fonts.small2,
+    wordBreak: 'break-all',
   },
 });

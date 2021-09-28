@@ -1,52 +1,37 @@
 import { createContext } from 'react';
-import { PeerMessageEnvelope } from 'src/services/peers';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { Peer, Room } from './types';
 import { PeerConnectionsErrors } from './lib/PeerConnections';
-import { Proxy } from './lib/Proxy';
 import { RoomCredentials } from './types';
 
-export type PeerContextProps =
+export type PeerContextState =
   | {
-      state: 'joined';
-      proxy: Proxy;
-      room: Room;
+      status: 'init';
+    }
+  | ({
+      status: 'open'; // think about this as "ready"
+      client: SocketClient;
       me: Peer;
-
-      connected: boolean;
-      connectToRoom: () => void;
-      disconnectFromRoom: () => void;
-
-      broadcastMessage: (m: PeerMessageEnvelope['message']) => void;
-      // @deprecate in favor of SendMessage
-      request: SocketClient['send'];
-
-      sendMessage: SocketClient['send'];
-      onMessage: SocketClient['onMessage'];
-
-      leaveRoom: () => void;
-    }
+    } & (
+      | {
+          hasJoinedRoom: true;
+          room: Room;
+          connected: boolean;
+          connectionAttempt: boolean;
+          connectToRoom: () => void;
+          disconnectFromRoom: () => void;
+          leaveRoom: () => void;
+        }
+      | {
+          hasJoinedRoom: false;
+          joinRoom: (c: RoomCredentials) => void;
+        }
+    ))
   | {
-      state: 'notJoined';
-      proxy: Proxy;
-      me: Peer;
+      status: 'closed';
+      error?: PeerConnectionsErrors;
+    };
 
-      // @deprecate in favor of SendMessage
-      request: SocketClient['send'];
-
-      sendMessage: SocketClient['send'];
-      onMessage: SocketClient['onMessage'];
-
-      joinRoom: (c: RoomCredentials) => void;
-    }
-  | {
-      state: 'init';
-    }
-  | {
-    state: 'error';
-    error: PeerConnectionsErrors;
-  }
-
-export const PeerContext = createContext<PeerContextProps>({
-  state: 'init',
+export const PeerContext = createContext<PeerContextState>({
+  status: 'init',
 });

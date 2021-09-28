@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState } from 'react';
+import React from 'react';
 import { Grommet, Box } from 'grommet';
 import { defaultTheme } from 'src/theme';
 import { ClipboardCopy } from './ClipboardCopy';
@@ -28,6 +28,20 @@ export const withAutoCopy = () => (
         value="This should auto copy"
         autoCopy
         onCopied={action('copied')}
+      />
+    </Box>
+  </Grommet>
+);
+
+
+export const readonly = () => (
+  <Grommet theme={defaultTheme} full>
+    <Box width="large">
+      <ClipboardCopy
+        value="This should auto copy"
+        autoCopy
+        onCopied={action('copied')}
+        readonly
       />
     </Box>
   </Grommet>

@@ -7,9 +7,8 @@ import { validator } from 'src/lib/validator';
 import { CodeInput } from 'src/components/CodeInput';
 import { Text } from 'src/components/Text';
 import { colors, onlyMobile, SMALL_MOBILE_BREAKPOINT } from 'src/theme';
-import { Emoji } from 'src/components/Emoji';
-import { AsyncResult } from 'dstnd-io';
 import { useWindowWidth } from '@react-hook/window-size';
+import { AsyncResult } from 'ts-async-results';
 
 
 type Props = {

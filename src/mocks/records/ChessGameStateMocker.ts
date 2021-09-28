@@ -17,7 +17,7 @@ import { getRandomInt } from 'src/lib/util';
 
 const userRecordMock = new UserRecordMocker();
 
-const pgnToChessHistory = (
+export const pgnToChessHistory = (
   pgn: string,
   timeLimit: {
     white: number;

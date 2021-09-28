@@ -6,7 +6,7 @@ import { RegistrationForm, RegistrationUserInfo } from '../../components/Registr
 import { VerificationForm } from '../../components/VerificationForm';
 import * as resources from '../../resources';
 import { keyInObject } from 'src/lib/util';
-import { AsyncResult, CreateUserAccountRequestPayload, RegisteredUserRecord } from 'dstnd-io';
+import { CreateUserAccountRequestPayload, RegisteredUserRecord } from 'dstnd-io';
 import { CodeVerificationForm } from '../../components/CodeVerificationForm';
 import { UserAccountInfo } from '../../types';
 import { colors, onlyMobile } from 'src/theme';
@@ -14,6 +14,7 @@ import { Emoji } from 'src/components/Emoji';
 import capitalize from 'capitalize';
 import { useAuthenticationService } from '../../useAuthentication';
 import { Events } from 'src/services/Analytics';
+import { AsyncResult } from 'ts-async-results';
 
 type Props = {
   visible: boolean;
@@ -108,7 +109,9 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
                   ...(keyInObject(r.external.user, 'lastName') && {
                     firstName: r.external.user.lastName,
                   }),
-                 
+                 ...(r.external.vendor === 'lichess' && {
+                   username: r.external.user.username
+                 })
                 },
                 verifiedExternalVendorInfo: {
                   vendor: input.vendor,

@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions';
-import { AsyncResultWrapper, Err, Ok } from 'dstnd-io';
+import { AsyncResultWrapper } from 'ts-async-results';
+import { Err, Ok } from 'ts-results';
 import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';

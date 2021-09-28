@@ -1,0 +1,191 @@
+import React from 'react';
+import { createUseStyles } from 'src/lib/jss';
+import { spacers } from 'src/theme/spacers';
+import cx from 'classnames';
+import { colors, softBorderRadius } from 'src/theme';
+import { RoomDetailsConsumer } from './RoomDetailsConsumer';
+import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
+import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
+import { DesktopRoomLayout, LayoutContainerDimensions } from '../Layouts';
+import { Logo } from 'src/components/Logo';
+import { UserMenu } from 'src/components/Navigation';
+import { getBoxShadow } from 'src/theme/util';
+import { NavigationLink } from 'src/components/NavigationLink';
+import { SwitchActivityWidgetRoomConsumer } from './SwitchActivityWidgetRoomConsumer';
+import { RoomControlMenuConsumer } from './RoomControlMenuConsumer';
+
+type Props = {
+  renderActivity: (d: {
+    isMobile: boolean;
+    boardSize: number;
+    leftSide: LayoutContainerDimensions;
+    // TODO: might need a bunch of other dimensinos like the marging size or the bottom to inform the activity
+  }) => React.ReactNode;
+};
+
+const TOP_HEIGHT = 70;
+const BOTTOM_HEIGHT = 66;
+const MIN_SPACE_BETWEEN = spacers.largePx;
+
+// TODO: This isn't provided for now and don't think it needs to be but for now it sits here
+export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
+  const cls = useStyles();
+
+  return (
+    <div className={cls.container}>
+      <DesktopRoomLayout
+        ratios={{
+          leftSide: 1.2,
+          mainArea: 3,
+          rightSide: 2.1,
+        }}
+        topHeight={TOP_HEIGHT}
+        bottomHeight={BOTTOM_HEIGHT}
+        minSpaceBetween={MIN_SPACE_BETWEEN}
+        renderTopComponent={({ left, right, center }) => (
+          <div className={cls.top}>
+            <div className={cls.mainTop}>
+              <div className={cls.logoWrapper} style={{ flex: 1 }}>
+                <Logo asLink withBeta />
+              </div>
+              <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
+                <div className={cls.linksContainer}>
+                  <SwitchActivityWidgetRoomConsumer
+                    render={({ onSwitch, room }) => (
+                      <NavigationLink
+                        title="Activities"
+                        withDropMenu={{
+                          items: [
+                            {
+                              title: 'Play',
+                              disabled: room.currentActivity.type === 'play',
+                              onClick: () => onSwitch({ activityType: 'play' }),
+                            },
+                            {
+                              title: 'Analyze',
+                              disabled:
+                                (room.currentActivity.type === 'play' &&
+                                  room.currentActivity.game?.state === 'started') ||
+                                room.currentActivity.type === 'analysis',
+                              onClick: () => onSwitch({ activityType: 'analysis' }),
+                            },
+                          ],
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+                <UserMenu reversed showPeerStatus />
+              </div>
+            </div>
+            <div style={{ width: right.width }} />
+          </div>
+        )}
+        renderRightSideComponent={({ container }) => (
+          <div className={cx(cls.side, cls.rightSide)}>
+            <div style={{ height: `${TOP_HEIGHT}px` }}>
+              <div className={cls.roomInfoContainer}>
+                <RoomDetailsConsumer />
+                <RoomControlMenuConsumer />
+              </div>
+            </div>
+            <div className={cls.rightSideStretchedContainer}>
+              <div>
+                <StreamingBoxRoomConsumer containerClassName={cls.streamingBox} />
+              </div>
+              <RoomTabsWidgetRoomConsumer
+                bottomContainerHeight={BOTTOM_HEIGHT + container.verticalPadding - 1}
+              />
+            </div>
+          </div>
+        )}
+        renderBottomComponent={() => null}
+        renderActivityComponent={(extendedDimensions) => (
+          <div className={cls.activityContainer}>
+            {props.renderActivity({
+              isMobile: false,
+              boardSize: extendedDimensions.center.width,
+              leftSide: {
+                ...extendedDimensions.left,
+                width: extendedDimensions.left.width + extendedDimensions.main.horizontalPadding,
+              },
+            })}
+          </div>
+        )}
+      />
+    </div>
+  );
+};
+
+const useStyles = createUseStyles({
+  container: {
+    width: '100%',
+    height: '100%',
+
+    display: 'flex',
+    flexDirection: 'column',
+    background: colors.background,
+  },
+  top: {
+    display: 'flex',
+    height: '100%',
+    flex: 1,
+  },
+  mainTop: {
+    flex: 1,
+    flexDirection: 'row',
+    display: 'flex',
+    paddingLeft: spacers.large,
+    paddingRight: spacers.large,
+  },
+  userMenuWrapper: {
+    display: 'flex',
+  },
+  logoWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  side: {
+    display: 'flex',
+    height: '100%',
+    flexDirection: 'column',
+  },
+  rightSide: {
+    background: colors.white,
+    boxShadow: getBoxShadow(0, 0, 26, 10, 'rgba(16, 30, 115, 0.08)'),
+    paddingLeft: `${MIN_SPACE_BETWEEN}px`,
+    paddingRight: `${MIN_SPACE_BETWEEN}px`,
+  },
+  roomInfoContainer: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: spacers.default,
+  },
+  rightSideStretchedContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    overflow: 'hidden',
+    alignItems: 'stretch',
+    height: '100%',
+  },
+  streamingBox: {
+    ...softBorderRadius,
+    overflow: 'hidden',
+
+    // Fix issue on Safari with Border Radiuses not working
+    transform: 'translateZ(0)',
+  },
+  activityContainer: {
+    position: 'relative',
+    zIndex: 1,
+  },
+
+  linksContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    flex: 1,
+  },
+});

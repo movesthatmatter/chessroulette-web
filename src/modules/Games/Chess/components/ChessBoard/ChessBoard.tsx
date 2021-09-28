@@ -6,23 +6,34 @@ import {
   ChessGameColor,
   ChessGameStateFen,
   ChessGameStatePgn,
+  ChessHistoryMove,
   ChessMove,
   GameRecord,
 } from 'dstnd-io';
 import { StyledChessBoard, StyledChessBoardProps } from './StyledChessBoard';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { ChessgroundProps } from 'react-chessground';
 
 export type ChessBoardProps = Omit<StyledChessBoardProps, 'onMove' | 'fen'> & {
   id: GameRecord['id'];
   pgn: GameRecord['pgn'];
+  type: 'play' | 'analysis' | 'free';
+  config?: {
+    showDests?: boolean;
+  };
   homeColor: ChessGameColor;
   orientation?: ChessGameColor;
   playable?: boolean;
+  canInteract?: boolean;
 
   // This speeds up rendering as it doesn't wait for the
   //  move to be saved first
   autoCommitMove?: boolean;
-  onMove: (p: { move: ChessMove; fen: ChessGameStateFen; pgn: ChessGameStatePgn }) => void;
+  onMove: (p: {
+    move: Omit<ChessHistoryMove, 'clock'>;
+    fen: ChessGameStateFen;
+    pgn: ChessGameStatePgn;
+  }) => void;
   onPreMove?: (m: ChessMove) => void;
 };
 
@@ -101,21 +112,39 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
       this.applyPreMove(this.state.preMove);
     }
 
-    // If there are changes in the props commit them
+    // If there are changes in the pgn and uncommited moves, commit them now!
     if (prevProps.pgn !== this.props.pgn) {
       this.commit();
     }
   }
 
-  private calcMovable() {
-    return {
+  private calcMovable(): ChessgroundProps['movable'] {
+    const base = {
       free: false,
-      // This is what determines wether a someone can move a piece!
-      dests: this.props.playable ? toDests(this.chess) : undefined,
-      color: this.props.homeColor,
-      // Don't show the dests
-      showDests: false,
+      // This is what determines wether someone can move a piece!
+      dests: this.props.canInteract && this.props.playable ? toDests(this.chess) : undefined,
+      showDests: !!this.props.config?.showDests,
     } as const;
+
+    if (this.props.type === 'analysis') {
+      return {
+        ...base,
+        color: 'both',
+      };
+    }
+
+    if (this.props.type === 'play') {
+      return {
+        ...base,
+        color: this.props.homeColor,
+      };
+    }
+
+    return {
+      ...base,
+      free: true,
+      color: 'both',
+    };
   }
 
   private applyPreMove(preMove: ChessMove) {
@@ -125,6 +154,10 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
   }
 
   private onPreMove(nextPreMove: ChessMove) {
+    if (!this.props.canInteract) {
+      return;
+    }
+
     const movedPiece = this.chess.get(nextPreMove.from);
 
     if (movedPiece && this.isPromotable(nextPreMove)) {
@@ -155,6 +188,10 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
   }
 
   private onMove(nextMove: ChessMove) {
+    if (!this.props.canInteract) {
+      return;
+    }
+
     this.setState({
       pendingPromotionalMove: undefined,
     });
@@ -201,20 +238,34 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
     }
 
     const nextChessState = getCurrentChessState(this.chess);
+    const history = this.chess.history({ verbose: true });
+    const nextHistoryMove = history[history.length - 1];
 
     this.setState({
       uncommited: nextChessState,
     });
 
     this.props.onMove({
-      move: nextMove,
+      move: {
+        ...(nextHistoryMove as ChessMove),
+        color: toChessColor(nextHistoryMove.color),
+        san: nextHistoryMove.san,
+      },
       fen: nextChessState.fen,
       pgn: nextChessState.pgn,
     });
   }
 
   render() {
-    const { pgn, id, playable, orientation, homeColor, ...boardProps } = this.props;
+    const {
+      pgn,
+      id,
+      playable,
+      orientation,
+      homeColor,
+      canInteract = false,
+      ...boardProps
+    } = this.props;
     const chessState = this.state.uncommited || this.state.current;
 
     return (
@@ -223,7 +274,7 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         key={id}
         {...boardProps}
         disableContextMenu
-        preMoveEnabled={this.state.current.isPreMovable}
+        preMoveEnabled={this.props.canInteract && this.state.current.isPreMovable}
         viewOnly={false}
         fen={chessState.fen}
         turnColor={chessState.turn}

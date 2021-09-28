@@ -9,14 +9,13 @@ import { Form, FormError, SubmissionErrors } from 'src/components/Form';
 import { validator } from 'src/lib/validator';
 import * as resources from '../../resources';
 import { colors } from 'src/theme';
-import { FacebookAuthButton } from 'src/vendors/facebook/FacebookAuthButton/FacebookAuthButton';
-import { AsyncResult } from 'dstnd-io';
 import { CodeVerificationForm } from '../CodeVerificationForm';
 import { Emoji } from 'src/components/Emoji';
 import { TwitchAuthButton } from 'src/vendors/twitch/TwitchAuthButton/TwitchAuthButton';
 import { spacers } from 'src/theme/spacers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitch } from '@fortawesome/free-brands-svg-icons';
+import { AsyncResult } from 'ts-async-results';
 
 type Model = {
   code: string;
@@ -107,7 +106,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
       )}
       <Hr text="Or Continue With" />
       <div className={cls.buttonRows}>
-        <LichessAuthButton
+        {/* <LichessAuthButton
           full
           label="Lichess"
           type="secondary"
@@ -118,7 +117,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
               accessToken,
             });
           }}
-        />
+        /> */}
         <TwitchAuthButton
           full
           label="Twitch"

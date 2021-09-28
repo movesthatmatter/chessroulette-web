@@ -3,9 +3,56 @@ import { gameActionPayloads } from './payloads';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { Events } from 'src/services/Analytics';
 import { SocketClient } from 'src/services/socket/SocketClient';
+import useInstance from '@use-it/instance';
+import { Pubsy } from 'src/lib/Pubsy';
+import { Game } from 'src/modules/Games/types';
+import { useEffect, useState } from 'react';
+import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 
+type EventListeners = {
+  onGameUpdated: {
+    prev: Game | undefined;
+    next: Game;
+  };
+};
+
+// TODO: Rename this to useGame as now it's also an event listener
+//  could return actions and events or smgth like that
+// TODO: Also the action names starting with "on" are misleading as those are
+//  simply imperative actions not listeners!
 export const useGameActions = () => {
   const peerState = usePeerState();
+  const pubsy = useInstance<Pubsy<EventListeners>>(new Pubsy<EventListeners>());
+  const [prevGame, setPrevGame] = useState<Game>();
+
+  // Subscribe to Game Updates
+  useEffect(() => {
+    if (peerState.status === 'open') {
+      const unsubscribers = [
+        peerState.client.onMessage((payload) => {
+          if (payload.kind === 'joinedGameUpdated') {
+            setPrevGame((prev) => {
+              const next = gameRecordToGame(payload.content);
+              pubsy.publish('onGameUpdated', { prev, next });
+
+              return next;
+            });
+          } else if (payload.kind === 'joinedRoomAndGameUpdated') {
+            setPrevGame((prev) => {
+              const next = gameRecordToGame(payload.content.game);
+              pubsy.publish('onGameUpdated', { prev, next });
+
+              return next;
+            });
+          }
+        }),
+      ];
+
+      return () => {
+        unsubscribers.forEach((unsubscribe) => unsubscribe());
+      };
+    }
+  }, [peerState.status]);
 
   const request: SocketClient['send'] = (payload) => {
     // TODO: Look into what to do if not open!
@@ -13,7 +60,7 @@ export const useGameActions = () => {
     //  the room still shows!
     // TODO: That should actually be somewhere global maybe!
     if (peerState.status === 'open') {
-      peerState.client.sendMessage(payload);
+      peerState.client.send(payload);
     }
   };
 
@@ -86,10 +133,25 @@ export const useGameActions = () => {
       Events.trackRematchDenied();
     },
 
+    onTakebackOffer: () => {
+      request(gameActionPayloads.takebackOffer());
+    },
+
+    onTakebackAccepted: () => {
+      request(gameActionPayloads.acceptTakeback());
+    },
+
+    onTakebackDeny: () => {
+      request(gameActionPayloads.denyTakeback());
+    },
+
     onOfferCanceled: () => request(gameActionPayloads.cancelOffer()),
 
     onTimerFinished: () => request(gameActionPayloads.statusCheck()),
 
     onGameStatusCheck: () => request(gameActionPayloads.statusCheck()),
+
+    onGameUpdatedEventListener: (fn: (g: { prev: Game | undefined; next: Game }) => void) =>
+      pubsy.subscribe('onGameUpdated', fn),
   };
 };

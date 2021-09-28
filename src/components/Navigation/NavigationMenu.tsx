@@ -5,11 +5,10 @@ import { Menu } from 'grommet-icons';
 import cx from 'classnames';
 import { FormClose } from 'grommet-icons';
 import { UserMenu } from './UserMenu';
-import { useFeedbackDialog } from '../FeedbackDialog/useFeedbackDialog';
 import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton } from 'src/services/Authentication/widgets';
-import { Badge } from '../Badge';
 import { Link, useLocation } from 'react-router-dom';
+import { FeedbackDialogConsumer } from 'src/providers/FeedbackProvider/FeedbackConsumer';
 
 type Props = {
   className?: string;
@@ -18,7 +17,6 @@ type Props = {
 export const NavigationMenu: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [open, setOpen] = useState(false);
-  const feedbackDialog = useFeedbackDialog();
   const auth = useAuthentication();
   const location = useLocation();
 
@@ -31,12 +29,12 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         >
           Live
         </Link>
-        <Badge
+        {/* <Badge
           color="negative"
           text="New"
           className={cls.linkBadge}
           textClassName={cls.linkBadgeText}
-        />
+        /> */}
       </div>
       <div className={cls.linkWrapper}>
         <a
@@ -56,18 +54,23 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         </a>
       </div>
       <div className={cls.linkWrapper}>
-        <a
-          className={cls.link}
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
+        <FeedbackDialogConsumer
+          render={(feedbackActions) => (
+            <a
+              className={cls.link}
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
 
-            setOpen(false);
-            feedbackDialog.forcefullyShowAllSteps();
-          }}
-        >
-          Leave Feedback
-        </a>
+                setOpen(false);
+
+                feedbackActions.forcefullyShow();
+              }}
+            >
+              Leave Feedback
+            </a>
+          )}
+        />
       </div>
     </>
   );
@@ -79,7 +82,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         {auth.authenticationType !== 'none' && (
           <div className={cls.authMenu}>
             {auth.authenticationType === 'user' ? (
-              <UserMenu reversed withDropMenu />
+              <UserMenu withDropMenu />
             ) : (
               <AuthenticationButton />
             )}
@@ -198,7 +201,6 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    // background: 'red',
     ...({
       '& $linkWrapper': {
         padding: '16px 0',

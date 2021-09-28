@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { createUseStyles, CSSProperties } from 'src/lib/jss';
+import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import { colors } from 'src/theme/colors';
 import { Text } from 'src/components/Text';
 import cx from 'classnames';
@@ -9,9 +9,10 @@ import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { hasOwnProperty, noop } from 'src/lib/util';
 import { ButtonType } from '../type';
 import { buttonStyles } from '../styles/styles';
-import { AsyncResult } from 'dstnd-io';
+import { AsyncResult } from 'ts-async-results';
 import Loader from 'react-loaders';
 import 'loaders.css';
+import { fonts, onlyMobile } from 'src/theme';
 
 export type ActionButtonProps = {
   type: ButtonType;
@@ -201,6 +202,7 @@ const useStyles = createUseStyles({
   ...buttonStyles,
   button: {
     ...buttonStyles.button,
+    ...fonts.small1,
     display: 'flex',
     flexDirection: 'row',
     paddingLeft: 0,
@@ -226,10 +228,20 @@ const useStyles = createUseStyles({
     position: 'relative',
   },
   label: {
+    ...fonts.small1,
     color: colors.white,
     fontWeight: 600, // TODO: Make it SemiBold
     lineHeight: '32px',
     direction: 'ltr',
+
+    ...onlyMobile({
+      ...makeImportant({
+        fontSize: '12px',
+        lineHeight: '32px',
+        paddingRight: '13px',
+        paddingLeft: '13px',
+      }),
+    }),
   },
   iconWrapper: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',

@@ -52,7 +52,12 @@ export class ActivePeerConnection {
           this.pubsy.publish('onMessage', msg);
         })
         .mapErr(() => {
-          logsy.error('[ActivePeerConnection] with Peer:', peerId, 'OnMessageHandler Decoding Error', data);
+          logsy.error(
+            '[ActivePeerConnection] with Peer:',
+            peerId,
+            'OnMessageHandler Decoding Error',
+            data
+          );
         });
     };
 
@@ -116,13 +121,11 @@ export class ActivePeerConnection {
   destroy() {
     this.connection.close();
 
-    Object
-      .values(this.unsubscribers)
-      .forEach((unsubscribe) => {
-        if (unsubscribe) {
-          unsubscribe();
-        }
-      });
+    Object.values(this.unsubscribers).forEach((unsubscribe) => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    });
 
     logsy.info('[ActivePeerConnection] with Peer:', this.peerId, 'Destroyed.');
   }

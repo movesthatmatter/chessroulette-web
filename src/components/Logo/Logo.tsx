@@ -1,33 +1,58 @@
-import React from 'react';
-import { createUseStyles, makeImportant } from 'src/lib/jss';
-import logo from 'src/assets/logo.svg';
-import logoWhite from 'src/assets/logo_white.svg';
+import React, { useMemo } from 'react';
+import { createUseStyles, CSSProperties } from 'src/lib/jss';
+import logoLight from './assets/Logo_light_full.svg';
+import logoDark from './assets/Logo_dark_full.svg';
+import logoDarkWithBeta from './assets/Logo_dark_full_w_beta.svg';
+import logoLightSingle from './assets/Logo_light_single.svg';
+import logoDarkSingle from './assets/Logo_dark_single.svg';
+import logoDarkSingleStroke from './assets/Logo_dark_single_stroke_variation.svg';
 import { onlyMobile, text } from 'src/theme';
-import { Badge } from '../Badge';
 import cx from 'classnames';
 import { Link } from 'react-router-dom';
 
 type Props = {
   asLink?: boolean;
   darkMode?: boolean;
+  withBeta?: boolean;
+  withOutline?: boolean;
+  mini?: boolean;
+  className?: string;
+  imgClassName?: string;
+  width?: string;
+  style?: CSSProperties;
 };
 
-export const Logo: React.FC<Props> = ({ asLink = true, darkMode = false }) => {
+export const Logo: React.FC<Props> = ({
+  asLink = true,
+  withBeta = false,
+  mini = false,
+  darkMode = false,
+  withOutline = false,
+  className,
+  imgClassName,
+  style,
+}) => {
   const cls = useStyles();
 
+  const imgSrc = useMemo(() => {
+    if (mini) {
+      if (!darkMode && withOutline) {
+        return logoDarkSingleStroke;
+      }
+
+      return darkMode ? logoLightSingle : logoDarkSingle;
+    }
+
+    if (withBeta && !darkMode) {
+      return logoDarkWithBeta;
+    }
+
+    return darkMode ? logoLight : logoDark;
+  }, [mini, darkMode, withOutline]);
+
   const content = (
-    <div className={cls.container}>
-      <img src={darkMode ? logoWhite : logo} alt="Chessroulette Logo" className={cls.img} />
-      <Badge
-        text="Beta"
-        textSize="small2"
-        className={cls.badge}
-        textClassName={cx(
-          cls.badgeText,
-          darkMode ? cls.badgeTextWhiteBkg : cls.badgeTextWhiteWhite
-        )}
-        color="primary"
-      />
+    <div className={cx(cls.container, mini && cls.miniContainer, className)} style={style}>
+      <img src={imgSrc} alt="Chessroulette Logo" className={cx(cls.img, imgClassName)} />
     </div>
   );
 
@@ -36,42 +61,19 @@ export const Logo: React.FC<Props> = ({ asLink = true, darkMode = false }) => {
 
 const useStyles = createUseStyles({
   container: {
-    width: '160px',
     position: 'relative',
     display: 'block',
+    width: '220px',
 
     ...onlyMobile({
       width: '100%',
-      maxWidth: '140px',
-      minWidth: '100px',
+      maxWidth: '170px',
     }),
+  },
+  miniContainer: {
+    width: '50px',
   },
   img: {
     width: '100%',
-  },
-  badge: {
-    position: 'absolute',
-    right: '-16px',
-    top: '-4px',
-  },
-  badgeText: {
-    fontSize: '10px',
-    lineHeight: '13px',
-    ...makeImportant({
-      boxShadow: 'none',
-    }),
-  },
-  badgeTextWhiteBkg: {
-    ...makeImportant({
-      backgroundColor: 'white',
-      color: text.baseColor,
-      boxShadow: 'none',
-    }),
-  },
-  badgeTextWhiteWhite: {
-    ...makeImportant({
-      backgroundColor: text.baseColor,
-      boxShadow: 'none',
-    }),
   },
 });

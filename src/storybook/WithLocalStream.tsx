@@ -16,7 +16,8 @@ export const WithLocalStream: React.FC<Props> = ({
     const client = getAVStreaming();
 
     (async () => {
-      const stream = await client.getStream(constraints);
+      client.updateConstraints(constraints);
+      const stream = await client.getStream();
 
       setLocalStream(stream);
     })();

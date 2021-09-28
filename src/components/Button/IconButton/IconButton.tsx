@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { Icon as GIcon } from 'grommet-icons';
-import { borderRadius, colors, onlyMobile } from 'src/theme';
+import { borderRadius, colors, onlyMobile, softBorderRadius, softOutline } from 'src/theme';
 import cx from 'classnames';
 import { ButtonType } from '../type';
 import { buttonStyles } from '../styles/styles';
-import { AsyncResult } from 'dstnd-io';
+import { AsyncResult } from 'ts-async-results';
 import Loader from 'react-loaders';
 import 'loaders.css';
+import { spacers } from 'src/theme/spacers';
+import { Text } from 'src/components/Text';
 
 type Props = {
   icon: GIcon;
@@ -17,6 +19,8 @@ type Props = {
   disabled?: boolean;
   withLoader?: boolean;
   className?: string;
+  title?: string;
+  tooltip?: string;
 };
 
 export const IconButton: React.FC<Props> = ({
@@ -41,6 +45,7 @@ export const IconButton: React.FC<Props> = ({
         isLoading && cls.hasLoader,
         props.className
       )}
+      title={props.title}
       onClick={() => {
         if (isLoading) {
           return;
@@ -72,6 +77,13 @@ export const IconButton: React.FC<Props> = ({
           <Icon className={cls.icon} />
         )}
       </div>
+      {props.tooltip && (
+        <div className={cls.tooltipContainer}>
+          <div className={cls.tooltipText}>
+            <Text size="small1">{props.tooltip}</Text>
+          </div>
+        </div>
+      )}
     </button>
   );
 };
@@ -88,6 +100,8 @@ const useStyles = createUseStyles({
         marginBottom: '13px',
       }),
     }),
+
+    position: 'relative',
   },
   clear: {
     ...buttonStyles.clear,
@@ -112,6 +126,7 @@ const useStyles = createUseStyles({
   icon: {
     fill: `${colors.white} !important`,
     stroke: `${colors.white} !important`,
+    color: `${colors.white} !important`,
     width: '16px !important',
     height: '16px !important',
 
@@ -134,5 +149,22 @@ const useStyles = createUseStyles({
   loader: {
     transform: 'scale(.6)',
     display: 'flex',
+  },
+  tooltipContainer: {
+    position: 'absolute',
+    transition: 'all 500ms linear',
+    bottom: '-120%',
+    transform: 'translateX(-25%)',
+    marginTop: spacers.large,
+    zIndex: 999,
+  },
+  tooltipText: {
+    marginLeft: spacers.small,
+    padding: spacers.small,
+    lineHeight: 0,
+    background: colors.white,
+    boxShadow: '0 6px 13px rgba(16, 30, 115, 0.08)',
+    ...softOutline,
+    ...softBorderRadius,
   },
 });

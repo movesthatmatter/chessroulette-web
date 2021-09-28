@@ -2,14 +2,14 @@ import {
   io,
   VendorsAuthenticationRedirectUrlPayload,
   vendorsAuthenticationRedirectUrlResponsePayload,
-  AsyncResultWrapper,
-  Err,
   VerifyUserRequestPayload,
   VerifyLichessUserResponsePayload, 
   verifyLichessUserResponsePayload, VerifyTwitchUserResponsePayload, verifyTwitchUserResponsePayload
 } from 'dstnd-io';
 import config from 'src/config';
 import { getHttpInstance } from 'src/lib/http';
+import { AsyncResultWrapper } from 'ts-async-results';
+import { Err } from 'ts-results';
 
 const http = getHttpInstance({
   baseURL: `${config.HTTP_ENDPOINT}/vendors/lichess/oauth`,

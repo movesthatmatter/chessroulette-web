@@ -340,7 +340,7 @@ export const defaultStory = () => (
           }}
         />
         <Button
-          label="With Icon Reversed"
+          label="With Icon Rev"
           type="secondary"
           reverse
           size="medium"
@@ -433,7 +433,7 @@ export const defaultStory = () => (
           }}
         />
         <Button
-          label="With Icon Reversed"
+          label="With Icon Rev"
           type="secondary"
           reverse
           clear

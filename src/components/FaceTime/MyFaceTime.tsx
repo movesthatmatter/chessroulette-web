@@ -9,13 +9,7 @@ type Props = Omit<FaceTimeProps, 'streamConfig'> & {
 };
 
 // Automatically opens a local stream
-export const MyFaceTime: React.FC<Props> = ({
-  constraints = {
-    audio: true,
-    video: true,
-  },
-  ...props
-}) => {
+export const MyFaceTime: React.FC<Props> = (props) => {
   const AVStreaming = useInstance<AVStreaming>(getAVStreaming);
   const [myStreamConfig, setMyStreamConfig] = useState<PeerStreamingConfig>({ on: false });
 
@@ -24,7 +18,7 @@ export const MyFaceTime: React.FC<Props> = ({
       return;
     }
 
-    const streamPromise = AVStreaming.getStream(constraints).then((stream) => {
+    const streamPromise = AVStreaming.getStream().then((stream) => {
       setMyStreamConfig({
         on: true,
         type: 'audio-video',

@@ -56,6 +56,7 @@ const iconButton: CSSProperties = {
       '&$clear$iconButton $icon': {
         fill: `${colors.neutral} !important`,
         stroke: `${colors.neutral} !important`,
+        color: `${colors.neutral} !important`,
       },
     } as CSSProperties['nestedKey'],
   },
@@ -72,7 +73,7 @@ const clear: CSSProperties = {
     '& $label': {
       color: `${colors.neutralDarkest} !important`,
       // fontWeight: 200,
-      lineHeight: '28px',
+      lineHeight: '30px',
 
       ...onlyMobile({
         ...makeImportant({
@@ -81,11 +82,11 @@ const clear: CSSProperties = {
       }),
     },
     '& $iconWrapper': {
-      height: '26px',
+      height: '29px',
 
       ...onlyMobile({
         ...makeImportant({
-          height: '26px',
+          height: '29px',
         }),
       }),
     },
@@ -93,6 +94,7 @@ const clear: CSSProperties = {
       // color: `${colors.black} !important`,
       fill: `${colors.black} !important`,
       stroke: `${colors.black} !important`,
+      color: `${colors.black} !important`,
     },
   } as CSSProperties['nestedKey']),
 };
@@ -133,6 +135,7 @@ const primary: CSSProperties = {
     '&$clear$iconButton $icon': {
       fill: `${colors.primary} !important`,
       stroke: `${colors.primary} !important`,
+      color: `${colors.primary} !important`,
     },
     '&$clear$iconButton$hasLoader $loader > div': {
       backgroundColor: `transparent !important`,
@@ -165,6 +168,7 @@ const secondary: CSSProperties = {
     '&$clear$iconButton $icon': {
       fill: `${colors.secondary} !important`,
       stroke: `${colors.secondary} !important`,
+      color: `${colors.secondary} !important`,
     },
     '&$clear$iconButton$hasLoader $loader > div': {
       backgroundColor: `transparent !important`,
@@ -174,6 +178,7 @@ const secondary: CSSProperties = {
     '& $icon': {
       fill: `${colors.neutralDarkest} !important`,
       stroke: `${colors.neutralDarkest} !important`,
+      color: `${colors.neutralDarkest} !important`,
     },
     '& $label': {
       color: colors.neutralDarkest,
@@ -202,6 +207,7 @@ const positive: CSSProperties = {
     '&$clear$iconButton $icon': {
       fill: `${colors.positive} !important`,
       stroke: `${colors.positive} !important`,
+      color: `${colors.positive} !important`,
     },
     '&$clear$iconButton$hasLoader $loader > div': {
       backgroundColor: `transparent !important`,
@@ -242,6 +248,7 @@ const negative: CSSProperties = {
     '&$clear$iconButton $icon': {
       fill: `${colors.negative} !important`,
       stroke: `${colors.negative} !important`,
+      color: `${colors.negative} !important`,
     },
   } as CSSProperties['nestedKey']),
 };
@@ -266,6 +273,7 @@ const attention: CSSProperties = {
     '&$clear$iconButton $icon': {
       fill: `${colors.attention} !important`,
       stroke: `${colors.attention} !important`,
+      color: `${colors.attention} !important`,
     },
     '&$clear$iconButton$hasLoader $loader > div': {
       backgroundColor: `transparent !important`,

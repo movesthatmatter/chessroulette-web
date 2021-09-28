@@ -1,7 +1,7 @@
 import React from 'react';
 import { objectKeys } from 'src/lib/util';
 import objectEquals from 'object-equals';
-import { AsyncResult } from 'dstnd-io';
+import { AsyncResult } from 'ts-async-results';
 
 type BaseModel = {
   [field: string]: string;

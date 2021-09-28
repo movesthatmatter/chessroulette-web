@@ -1,56 +1,41 @@
 import capitalize from 'capitalize';
-import { ChessPlayer } from 'dstnd-io';
 import { Box } from 'grommet';
 import React, { useEffect, useState } from 'react';
 import { DialogProps } from 'src/components/Dialog/Dialog';
 import { Emoji } from 'src/components/Emoji';
-import { useFeedbackDialog } from 'src/components/FeedbackDialog/useFeedbackDialog';
-import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 import { Text } from 'src/components/Text';
 import { getPlayerByColor } from '../../../Chess/lib';
 import { useGameActions } from '../../../GameActions';
 import { useSelector } from 'react-redux';
-import { selectCurrentRoomActivityLog } from 'src/modules/ActivityLog/redux/selectors';
+import { selectCurrentRoomActivityLog } from 'src/modules/Room/RoomActivityLog/redux/selectors';
 import { getUserDisplayName } from 'src/modules/User';
-import { Game } from '../../../types';
 import { DialogContent } from 'src/components/Dialog';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
-import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
+import { DialogNotificationTypes } from '../type';
+import { RoomPlayActivityWithGame } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
+import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
+import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 
 export type GameStateDialogContentProps = {
-  isMobile: boolean;
-  room: RoomWithPlayActivity;
-  game: Game;
-  myPlayer?: ChessPlayer;
+  activity: RoomPlayActivityWithGame;
+  dialogNotificationTypes: DialogNotificationTypes;
   target?: DialogProps['target'];
 };
 
-const areBothPlayersJoined = ({ peersIncludingMe }: RoomWithPlayActivity, game: Game) => {
-  const [playerA, playerB] = game.players;
-
-  return playerA.user.id in peersIncludingMe && playerB.user.id in peersIncludingMe;
-};
-
-const isWaitingForOpponent = (room: RoomWithPlayActivity, game: Game) => {
-  const bothPlayersJoined = areBothPlayersJoined(room, game);
-
-  return !bothPlayersJoined && game.state === 'pending';
-};
-
 export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
-  room,
-  game,
-  myPlayer,
-  isMobile,
+  activity,
+  dialogNotificationTypes,
 }) => {
   const cls = useStyles();
+  const { game } = activity;
 
   const [gameResultSeen, setGameResultSeen] = useState(false);
-  const feedbackDialog = useFeedbackDialog();
   const activityLog = useSelector(selectCurrentRoomActivityLog);
   const gameActions = useGameActions();
+  const roomConsumer = useRoomConsumer();
+  const deviceSize = useDeviceSize();
 
   // TODO: Make sure the game id matches the room activity game id
   useEffect(() => {
@@ -58,44 +43,47 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
     setGameResultSeen(false);
   }, [game.state]);
 
-  // TODO: Take this out of here!
-  useEffect(() => {
-    if (
-      gameResultSeen &&
-      (game.state === 'finished' || game.state === 'stopped') &&
-      game.winner === myPlayer?.color
-    ) {
-      // Ask for Feedback only the first time (or next time if postponed) she wins!
-      feedbackDialog.attemptToShow();
-    }
-  }, [gameResultSeen, game.state, game.winner, myPlayer]);
+  // TODO: Take the Feedback out of here!
+  // const feedbackDialog = useFeedbackDialog();
+  // useEffect(() => {
+  //   if (
+  //     gameResultSeen &&
+  //     (game.state === 'finished' || game.state === 'stopped') &&
+  //     activity.iamParticipating &&
+  //     game.winner === activity.participants.me.color
+  //   ) {
+  //     // Ask for Feedback only the first time (or next time if postponed) she wins!
+  //     feedbackDialog.attemptToShow();
+  //   }
+  // }, [gameResultSeen, game.state, game.winner, activity]);
 
   const content = (() => {
-    if (isWaitingForOpponent(room, game)) {
-      return (
-        <DialogContent
-          title="Waiting for opponent!"
-          hasCloseButton={false}
-          graphic={
-            <div
-              style={{
-                textAlign: 'center',
-                paddingBottom: '16px',
-              }}
-            >
-              <Mutunachi
-                mid={20}
-                style={{
-                  width: '60%',
-                  display: 'inline',
-                }}
-              />
-            </div>
-          }
-          content="But first let me take a nap..."
-        />
-      );
-    }
+    // TODO: This needs to be added back in some fashion!
+    // if (isWaitingForOpponent(room, game)) {
+    //   return (
+    //     <DialogContent
+    //       title="Waiting for opponent!"
+    //       hasCloseButton={false}
+    //       graphic={
+    //         <div
+    //           style={{
+    //             textAlign: 'center',
+    //             paddingBottom: '16px',
+    //           }}
+    //         >
+    //           <Mutunachi
+    //             mid={20}
+    //             style={{
+    //               width: '60%',
+    //               display: 'inline',
+    //             }}
+    //           />
+    //         </div>
+    //       }
+    //       content="But first let me take a nap..."
+    //     />
+    //   );
+    // }
 
     if (!activityLog.pending) {
       if ((game.state === 'finished' || game.state === 'stopped') && !gameResultSeen) {
@@ -103,9 +91,12 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           <DialogContent
             title="Game Ended"
             content={
-              <Box align="center" style={{
-                textAlign: 'center',
-              }}>
+              <Box
+                align="center"
+                style={{
+                  textAlign: 'center',
+                }}
+              >
                 {game.state === 'finished' && (
                   <Text>
                     {game.winner === '1/2' ? (
@@ -126,7 +117,6 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
                       'Game Ended in a Draw!'
                     ) : (
                       <>
-
                         <strong>
                           {getUserDisplayName(
                             getPlayerByColor(otherChessColor(game.winner), game.players).user
@@ -145,8 +135,21 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
             }
             onClose={() => setGameResultSeen(true)}
             buttons={
-              myPlayer
+              activity.iamParticipating
                 ? [
+                    deviceSize.isDesktop && {
+                      label: 'Analyze',
+                      type: 'primary',
+                      onClick: () => {
+                        setGameResultSeen(true);
+                        if (roomConsumer) {
+                          roomConsumer.roomActions.switchActivity({
+                            activityType: 'analysis',
+                            history: game.history,
+                          });
+                        }
+                      },
+                    },
                     {
                       label: 'Rematch',
                       type: 'positive',
@@ -190,20 +193,24 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
       }
     }
 
-    // Don't show the offers on desktop as the ActivityLog takes care of it
-    if (!isMobile) {
+    // Don't show the offers
+    // if (!canShowOffers) {
+    //   return null;
+    // }
+    if (dialogNotificationTypes === 'not-during-started-game' && game.state === 'started') {
       return null;
     }
 
-    // If only watcher don's show the offers
-    if (!myPlayer) {
+    // If not participating in the activity don's show the offers
+    if (!activity.iamParticipating) {
       return null;
     }
 
     // me as sender
     if (
       activityLog.pending?.status === 'pending' &&
-      activityLog.pending.byUser.id === myPlayer?.user.id
+      activityLog.pending.type === 'offer' &&
+      activityLog.pending.byUser.id === activity.participants.me.userId
     ) {
       return (
         <DialogContent
@@ -231,8 +238,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
     }
 
     // me as receiver
-    // me as watcher
-    if (activityLog.pending?.offerType === 'challenge') {
+    if (activityLog.pending?.type === 'offer' && activityLog.pending?.offerType === 'challenge') {
       return (
         <DialogContent
           title="Challenge Offer"
@@ -245,25 +251,23 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
               </Text>
             </Box>
           }
-          buttons={
-            myPlayer && [
-              {
-                label: 'Deny',
-                type: 'secondary',
-                onClick: () => gameActions.onChallengeDenied(),
-              },
-              {
-                label: 'Accept',
-                type: 'primary',
-                onClick: () => gameActions.onChallengeAccepted(),
-              },
-            ]
-          }
+          buttons={[
+            {
+              label: 'Deny',
+              type: 'secondary',
+              onClick: () => gameActions.onChallengeDenied(),
+            },
+            {
+              label: 'Accept',
+              type: 'primary',
+              onClick: () => gameActions.onChallengeAccepted(),
+            },
+          ]}
         />
       );
     }
 
-    if (activityLog.pending?.offerType === 'rematch') {
+    if (activityLog.pending?.type === 'offer' && activityLog.pending?.offerType === 'rematch') {
       return (
         <DialogContent
           title="Rematch Offer"
@@ -276,25 +280,23 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
               </Text>
             </Box>
           }
-          buttons={
-            myPlayer && [
-              {
-                label: 'Deny',
-                type: 'secondary',
-                onClick: () => gameActions.onRematchDenied(),
-              },
-              {
-                label: 'Accept',
-                type: 'primary',
-                onClick: () => gameActions.onRematchAccepted(),
-              },
-            ]
-          }
+          buttons={[
+            {
+              label: 'Deny',
+              type: 'secondary',
+              onClick: () => gameActions.onRematchDenied(),
+            },
+            {
+              label: 'Accept',
+              type: 'primary',
+              onClick: () => gameActions.onRematchAccepted(),
+            },
+          ]}
         />
       );
     }
 
-    if (activityLog.pending?.offerType === 'draw') {
+    if (activityLog.pending?.type === 'offer' && activityLog.pending?.offerType === 'draw') {
       return (
         <DialogContent
           title="Draw Offer"
@@ -307,20 +309,18 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
               </Text>
             </Box>
           }
-          buttons={
-            myPlayer && [
-              {
-                label: 'Deny',
-                type: 'secondary',
-                onClick: () => gameActions.onDrawDenied(),
-              },
-              {
-                label: 'Accept',
-                type: 'primary',
-                onClick: () => gameActions.onDrawAccepted(),
-              },
-            ]
-          }
+          buttons={[
+            {
+              label: 'Deny',
+              type: 'secondary',
+              onClick: () => gameActions.onDrawDenied(),
+            },
+            {
+              label: 'Accept',
+              type: 'primary',
+              onClick: () => gameActions.onDrawAccepted(),
+            },
+          ]}
         />
       );
     }

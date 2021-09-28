@@ -21,7 +21,7 @@ export const UserConnections: React.FC<Props> = ({ user }) => {
 
   return (
     <div className={cls.container}>
-      <div className={cls.item}>
+      {/* <div className={cls.item}>
         <Text>Lichess</Text>
         <div style={{ flex: 1 }} />
         {user.externalAccounts?.lichess?.userId ? (
@@ -45,7 +45,7 @@ export const UserConnections: React.FC<Props> = ({ user }) => {
             }}
           />
         )}
-      </div>
+      </div> */}
       <div className={cls.item}>
         <Text>Twitch</Text>
         <div style={{flex: 1}}/>

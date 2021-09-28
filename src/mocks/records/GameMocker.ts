@@ -6,8 +6,12 @@ import {
   ChessGameStateNeverStarted,
   ChessGameStateStarted,
   ChessGameStatePending,
+  ChessHistory,
 } from 'dstnd-io';
+import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { Game, GameFromGameState } from 'src/modules/Games';
+import { historyToPgn } from 'src/modules/Games/Chess/lib';
+import { pgnToChessHistory } from './ChessGameStateMocker';
 import { GameRecordMocker } from './GameRecordMocker';
 
 const gameRecordMocker = new GameRecordMocker();
@@ -50,5 +54,22 @@ export class GameMocker {
       ...this.record(),
       ...gameRecordFromProps,
     } as Game;
+  }
+
+  withPgn(pgn: string): Game {
+    return this.withProps({
+      pgn,
+      history: pgnToChessHistory(pgn, {
+        white: chessGameTimeLimitMsMap.blitz3,
+        black: chessGameTimeLimitMsMap.blitz3,
+      }),
+    });
+  }
+
+  withHistory(history: ChessHistory): Game {
+    return this.withProps({
+      pgn: historyToPgn(history),
+      history,
+    });
   }
 }

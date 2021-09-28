@@ -6,6 +6,7 @@ import { Text } from 'src/components/Text';
 import { hasOwnProperty, noop } from 'src/lib/util';
 import { FormClose } from 'grommet-icons';
 import cx from 'classnames';
+import { spacers } from 'src/theme/spacers';
 
 type DangerouslySetInnerHTML = { __html: string };
 
@@ -19,6 +20,7 @@ export type DialogContentProps = {
   onClose?: () => void;
   className?: string;
   contentContainerClass?: string;
+  buttonsContainerClass?: string;
 };
 
 const isDangerouslySetHtml = (t: unknown): t is DangerouslySetInnerHTML =>
@@ -60,7 +62,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({
       </div>
       {props.buttons && (
         <div
-          className={cls.buttonsWrapper}
+          className={cx(cls.buttonsWrapper, props.buttonsContainerClass)}
           {...(props.buttonsStacked && {
             style: {
               flexDirection: 'column',
@@ -139,27 +141,30 @@ const useStyles = createUseStyles({
   title: {
     ...fonts.subtitle1,
     textAlign: 'center',
-    paddingLeft: '32px',
-    paddingRight: '32px',
-    paddingBottom: '16px',
+    paddingLeft: spacers.large,
+    paddingRight: spacers.large,
+    paddingBottom: spacers.default,
 
-    ...onlyMobile({
-      ...makeImportant({
-        paddingLeft: '18px',
-        paddingRight: '18px',
-        paddingBottom: '12px',
-      }),
-    }),
+    ...onlyMobile(
+      {
+        ...makeImportant({
+          paddingLeft: '18px',
+          paddingRight: '18px',
+          paddingBottom: '12px',
+        }),
+      },
+      fonts.subtitle1
+    ),
   },
   contentWrapper: {
-    paddingLeft: '32px',
-    paddingRight: '32px',
-    paddingBottom: '32px',
+    paddingLeft: spacers.large,
+    paddingRight: spacers.large,
+    paddingBottom: spacers.default,
 
     ...onlyMobile({
       paddingLeft: '18px',
       paddingRight: '18px',
-      paddingBottom: '18px',
+      paddingBottom: '12px',
     }),
   },
   contentTextWrapper: {
@@ -172,25 +177,34 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingLeft: '32px',
-    paddingRight: '32px',
-    paddingBottom: '24px',
+    paddingLeft: spacers.large,
+    paddingRight: spacers.large,
+    paddingBottom: spacers.default,
+    paddingTop: spacers.default,
 
     ...onlyMobile({
-      paddingLeft: '18px',
-      paddingRight: '18px',
-      paddingBottom: '16px',
+      paddingLeft: spacers.default,
+      paddingRight: spacers.default,
+      paddingBottom: spacers.default,
     }),
   },
   buttonContainer: {
-    marginLeft: '16px',
+    marginLeft: spacers.default,
+
+    ...onlyMobile({
+      marginLeft: spacers.small,
+    }),
 
     '&:first-child': {
       marginLeft: 0,
     },
   },
   stackedButtonContainer: {
-    marginBottom: '16px',
+    marginBottom: spacers.default,
+
+    ...onlyMobile({
+      marginBottom: spacers.small,
+    }),
 
     '&:last-child': {
       marginBottom: 0,

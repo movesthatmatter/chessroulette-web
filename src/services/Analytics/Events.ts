@@ -1,5 +1,8 @@
 import capitalize from 'capitalize';
+import { RoomChallengeRecord, RoomRecord } from 'dstnd-io';
 import ReactGA from 'react-ga';
+import { RoomActivity } from 'src/modules/Room/RoomActivity/types';
+import { Room } from 'src/providers/PeerProvider';
 
 const trackEvent = ({
   category,
@@ -12,6 +15,7 @@ const trackEvent = ({
   value?: number;
   description?: string;
   nonInteraction?: boolean;
+  // dimensions?: Record<string, string | number>;
 }) => {
   ReactGA.event({
     category,
@@ -23,6 +27,7 @@ const trackEvent = ({
 
     ...rest,
   });
+
 };
 
 type ChallengeType = 'Friendly Challenge' | 'Quick Pairing';
@@ -87,6 +92,15 @@ export const Events = {
       description: capitalize(type),
     }),
 
+  trackRoomCreated: (room: RoomRecord) =>
+    trackEvent({
+      category: EventCategory.Room,
+      action: `Room Created: ${capitalize(room.type)}`,
+      description: `Room Type: ${capitalize(room.type)} | Activity: ${capitalize(
+        room.activity.type
+      )}`,
+    }),
+
   trackRoomJoiningConfirmed: (type: 'public' | 'private') =>
     trackEvent({
       category: EventCategory.Room,
@@ -99,6 +113,43 @@ export const Events = {
       category: EventCategory.Room,
       action: 'Room Joining Canceled',
       description: capitalize(type),
+    }),
+
+  trackRoomJoined: (room: Room) =>
+    trackEvent({
+      category: EventCategory.Room,
+      action: 'Room Joined',
+      description: `Room Type: ${capitalize(room.type)} | Activity: ${capitalize(
+        room.activity.type
+      )}`,
+    }),
+
+  trackSwitchedRoomActivity: (type: RoomActivity['type']) =>
+    trackEvent({
+      category: EventCategory.Room,
+      action: 'Room Activity Switched',
+      description: capitalize(type),
+    }),
+
+  trackRoomChallengeCreated: (roomChallenge: RoomChallengeRecord) =>
+    trackEvent({
+      category: EventCategory.Room,
+      action: 'Room Challenge Created',
+      description: `TimeLimit: ${capitalize(roomChallenge.gameSpecs.timeLimit)}`,
+    }),
+
+  trackRoomChallengeAccepted: (roomChallenge: RoomChallengeRecord) =>
+    trackEvent({
+      category: EventCategory.Room,
+      action: 'Room Challenge Accepted',
+      description: `TimeLimit: ${capitalize(roomChallenge.gameSpecs.timeLimit)}`,
+    }),
+
+  trackRoomChallengeCanceled: (roomChallenge: RoomChallengeRecord) =>
+    trackEvent({
+      category: EventCategory.Room,
+      action: 'Room Challenge Canceled',
+      description: `TimeLimit: ${capitalize(roomChallenge.gameSpecs.timeLimit)}`,
     }),
 
   trackDrawOffered: () =>
@@ -209,23 +260,26 @@ export const Events = {
 
   // Others
 
-  trackBrowserNotSupportedDialogShown: () => trackEvent({
-    category: EventCategory.App,
-    action: 'Browser Not Supported Dialog Show',
-    nonInteraction: true,
-  }),
+  trackBrowserNotSupportedDialogShown: () =>
+    trackEvent({
+      category: EventCategory.App,
+      action: 'Browser Not Supported Dialog Show',
+      nonInteraction: true,
+    }),
 
   // Authentication
   trackAuthenticated: (
     type: 'login' | 'registration',
     via: 'email' | 'facebook' | 'lichess' | 'twitch'
-  ) => trackEvent({
-    category: EventCategory.App,
-    action: capitalize(type),
-    description: `Via ${capitalize(via)}`,
-  }),
-  trackDeauthenticated: () => trackEvent({
-    category: EventCategory.App,
-    action: 'Logout',
-  }),
+  ) =>
+    trackEvent({
+      category: EventCategory.App,
+      action: capitalize(type),
+      description: `Via ${capitalize(via)}`,
+    }),
+  trackDeauthenticated: () =>
+    trackEvent({
+      category: EventCategory.App,
+      action: 'Logout',
+    }),
 };

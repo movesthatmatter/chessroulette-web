@@ -1,7 +1,4 @@
-import axios, {
-  AxiosRequestConfig,
-  AxiosResponse,
-} from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import config from 'src/config';
 import { authenticationService } from 'src/services/Authentication';
 
@@ -76,15 +73,17 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
 
   // Add the Authentication Header
   instance.interceptors.request.use(async (request) => {
-    const accessTokenResult = await authenticationService
-      .get()
-      .resolve();
+    const accessTokenResult = await authenticationService.get().resolve();
 
-    if (accessTokenResult.ok && !accessTokenResult.val.isGuest) {
+    if (accessTokenResult.ok) {
       request.headers = {
         ...request.headers,
-        'Authorization': `Bearer ${accessTokenResult.val.accessToken}`,
-      }
+        Authorization: `Bearer ${
+          accessTokenResult.val.isGuest
+            ? accessTokenResult.val.id
+            : accessTokenResult.val.accessToken
+        }`,
+      };
     }
 
     return request;
@@ -92,7 +91,6 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
 
   instance.interceptors.response.use(undefined, (e) => {
     if (e instanceof Error) {
-
       // This isn't the best way to check the error, but it works for now!
       // Anytime the server returns a 401 it means the Authenticated User isn't correct
       //  so just deauthenticate it!

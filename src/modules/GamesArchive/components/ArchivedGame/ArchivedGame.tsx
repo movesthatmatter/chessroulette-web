@@ -13,58 +13,20 @@ import cx from 'classnames';
 import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
-import HumanizeDuration from 'humanize-duration';
 import { GameRecordFinished, GameRecordStopped, RegisteredUserRecord } from 'dstnd-io';
 import { Emoji } from 'src/components/Emoji';
 import dateformat from 'dateformat';
 import capitalize from 'capitalize';
-import { ClipboardCopy } from 'src/components/ClipboardCopy';
+import { ClipboardCopy, MiniClipboardCopyButton } from 'src/components/ClipboardCopy';
 import { useWindowWidth } from '@react-hook/window-size';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
-import { getPlayer } from 'src/modules/Games/Chess/lib';
 import { getUserDisplayName } from 'src/modules/User';
+import { drawEmoji, formatTimeLimit, getMyResult, getResult, getScore, winningEmoji } from './util';
 
 type Props = {
   game: GameRecordFinished | GameRecordStopped;
   myUserId?: RegisteredUserRecord['id'];
 };
-
-const formatTimeLimit = HumanizeDuration.humanizer({
-  largest: 2,
-  round: true,
-});
-
-const winningEmoji = '🏆';
-const losingEmoji = '🥶';
-const drawEmoji = '';
-
-const getResult = (game: GameRecordFinished | GameRecordStopped) => {
-  if (game.winner === '1/2') {
-    return 'Game Ended in a Draw!';
-  }
-
-  if (game.state === 'stopped') {
-    return 'Game Was Stopped!';
-  }
-
-  return 'Game Ended in Check Mate!';
-};
-
-const getMyResult = (game: GameRecordFinished | GameRecordStopped, myId: string) => {
-  const meAsPlayer = getPlayer(myId, game.players);
-
-  if (!meAsPlayer) {
-    return undefined;
-  }
-
-  if (game.winner === '1/2') {
-    return 'draw' as const;
-  }
-
-  return (game.winner === meAsPlayer.color)
-    ? 'won' as const
-    : 'lost' as const;
-}
 
 export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   const cls = useStyles();
@@ -74,11 +36,13 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   const avatarSize = windowWidth < MOBILE_BREAKPOINT ? '32px' : '72px';
 
   const myUserResult = myUserId ? getMyResult(game, myUserId) : undefined;
-  const borderLeftColor = myUserResult ?({
-    'won': colors.positive,
-    'lost': colors.negative,
-    'draw': colors.primary,
-  })[myUserResult] : colors.neutral;
+  const borderLeftColor = myUserResult
+    ? {
+        won: colors.positive,
+        lost: colors.negative,
+        draw: colors.primary,
+      }[myUserResult]
+    : colors.neutral;
 
   return (
     <div
@@ -89,13 +53,17 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
       }}
     >
       <div className={cls.top}>
-        <Text className={cls.title}>
+        <Text className={cls.title} size="subtitle1">
+          {getScore(game)}{' | '}
           <strong>
             {capitalize(game.timeLimit)} ({formatTimeLimit(chessGameTimeLimitMsMap[game.timeLimit])}
             )
           </strong>{' '}
           played on <strong>{dateformat(game.createdAt, 'mmmm dd, yyyy HH:MM')}</strong>
         </Text>
+        <div className={cls.copyToClipboard}>
+          <MiniClipboardCopyButton value={game.pgn} />
+        </div>
       </div>
       <div className={cls.sideWrapper}>
         {(() => {
@@ -176,9 +144,9 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
         <div className={cls.resultWrapper}>
           <Text size="subtitle1">{result}</Text>
         </div>
-        <div className={cls.pgnWrapper}>
+        {/* <div className={cls.pgnWrapper}>
           <ClipboardCopy value={game.pgn} />
-        </div>
+        </div> */}
       </div>
     </div>
   );
@@ -222,6 +190,7 @@ const useStyles = createUseStyles({
   },
   top: {
     paddingBottom: spacers.default,
+    display: 'flex',
   },
   bottom: {
     paddingTop: spacers.default,
@@ -236,9 +205,15 @@ const useStyles = createUseStyles({
     alignItems: 'center',
     justifyItems: 'center',
     justifyContent: 'center',
-    paddingBottom: spacers.default,
+    // paddingBottom: spacers.default,
   },
-  title: {},
+  title: {
+    flex: 1,
+  },
+  copyToClipboard: {
+    paddingLeft: spacers.small,
+
+  },
   playerInfo: {
     display: 'flex',
     alignItems: 'center',

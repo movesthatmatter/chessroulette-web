@@ -1,16 +1,19 @@
 import React from 'react';
 import { Page } from 'src/components/Page';
-import { ChallengeButtonWidget } from 'src/modules/Challenges';
 import chessBackground from './assets/chess_icons.png';
 import { createUseStyles } from 'src/lib/jss';
 import { colors, minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
 import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
+import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
+import { spacers } from 'src/theme/spacers';
+import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 
 type Props = {};
 
 export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
+  const deviceSize = useDeviceSize();
 
   return (
     <Page name="Home" contentClassName={cls.pageContent}>
@@ -46,20 +49,38 @@ export const LandingPage: React.FC<Props> = () => {
               </h3>
             </div>
             <div className={cls.buttonWrapper}>
-              <ChallengeButtonWidget
-                label="Play Friend"
-                challengeType="private"
-                size="small"
+              <CreateRoomButtonWidget
+                label="Play"
+                type="primary"
+                createRoomSpecs={{
+                  type: 'private',
+                  activityType: 'play',
+                }}
+                size={deviceSize.isDesktop ? 'small' : 'medium'}
                 style={{
-                  marginRight: '16px',
+                  marginRight: spacers.default,
                 }}
               />
-              <ChallengeButtonWidget
-                label="Quick Game"
+            
+              {deviceSize.isDesktop && (
+                <CreateRoomButtonWidget
+                label="Analyze"
+                type="primary"
+                withBadge={{
+                  text: 'New',
+                  color: 'negative',
+                  side: 'right',
+
+                }}
+                clear
                 size="small"
-                challengeType="public"
-                type="secondary"
+                createRoomSpecs={{
+                  type: 'private',
+                  activityType: 'analysis',
+                }}
               />
+              )}
+              {/* <LichessChallengeButton label="Lichess" size="small" type="secondary" /> */}
             </div>
           </div>
         </div>

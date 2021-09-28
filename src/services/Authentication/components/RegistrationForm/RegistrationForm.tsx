@@ -1,4 +1,4 @@
-import { AsyncResult, CountryCode } from 'dstnd-io';
+import { CountryCode } from 'dstnd-io';
 import React from 'react';
 import { Button } from 'src/components/Button';
 import { Form, FormError, SubmissionErrors } from 'src/components/Form';
@@ -9,6 +9,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { validator } from 'src/lib/validator';
 import { GetCountries } from 'src/services/Location';
 import { colors, onlyMobile } from 'src/theme';
+import { AsyncResult } from 'ts-async-results';
 
 export type RegistrationUserInfo =
   | {
@@ -17,6 +18,7 @@ export type RegistrationUserInfo =
     }
   | {
       type: 'external';
+      username?: string;
       email?: string;
       firstName?: string;
       lastName?: string;
@@ -37,7 +39,6 @@ type Props = {
 
 export const RegistrationForm: React.FC<Props> = (props) => {
   const cls = useStyles();
-
   const initialModel =
     props.userInfo.type === 'internal'
       ? {
@@ -49,7 +50,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
         }
       : {
           email: props.userInfo.email || '',
-          username: '',
+          username: props.userInfo.username || '',
           firstName: props.userInfo.firstName || '',
           lastName: props.userInfo.lastName || '',
           country: '',
@@ -93,7 +94,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
             /> */}
             <TextInput
               label="Let's pick a great Username"
-              placeholder="bethHarmon"
+              placeholder={p.model.username || "bethHarmon"}
               value={p.model.username}
               onChange={(e) => p.onChange('username', e.target.value)}
               validationError={
