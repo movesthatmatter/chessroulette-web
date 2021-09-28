@@ -1,6 +1,7 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import config from 'src/config';
 import { createUseStyles } from 'src/lib/jss';
+import { VideoElement } from './VideoElement';
 import cx from 'classnames';
 
 type VideoAttributes = React.DetailedHTMLProps<
@@ -18,38 +19,22 @@ export const VideoBox: React.FunctionComponent<VideoBoxProps> = ({
   ...videoProps
 }) => {
   const cls = useStyles();
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
-    }
-
-    return () => {
-      // Ensure the stream isn't used by this video anymore!
-      if (videoRef.current) {
-        videoRef.current.srcObject = null;
-      }
-    };
-  }, [stream.id]);
 
   return (
-    <video
+    <VideoElement
       // Make sure the video refreshes if the stream id changes
       key={stream.id}
-      ref={videoRef}
+      className={cx(cls.video, className)}
       // Hardcode this here for now to stop the hallow effect in dev mode
       // But let them be overwritten by specifc props
       {...(config.ENV === 'dev' && {
         muted: true,
       })}
       {...videoProps}
-      className={cx(cls.video, className)}
-      autoPlay
-      playsInline
-    >
-      <track kind="main" />
-    </video>
+      onMounted={(ref) => {
+        ref.srcObject = stream;
+      }}
+    />
   );
 };
 
