@@ -4,7 +4,7 @@ import { darkTheme, lightTheme, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { getColor } from './util';
-import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = {
   homePercent: number; // A value from 0 to 1
@@ -12,10 +12,8 @@ type Props = {
 
 export const Graphic: React.FC<Props> = ({ homePercent }) => {
   const cls = useStyles();
-  const {theme} = useLightDarkMode();
-  const colors = {
-    ...(theme === 'light' ? lightTheme.colors : darkTheme.colors)
-  }
+  const {theme} = useColorTheme();
+  const colors = theme.colors;
 
   const bottomPercentage = Math.floor(homePercent * 100);
   const topPercentage = 100 - bottomPercentage;

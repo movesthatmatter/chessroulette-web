@@ -6,7 +6,7 @@ import { Tabs } from 'src/components/Tabs';
 import { ActivityLog } from 'src/modules/Room/RoomActivityLog';
 import { selectCurrentRoomActivityLog } from 'src/modules/Room/RoomActivityLog/redux/selectors';
 import { ChatContainer } from 'src/modules/Chat';
-import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { darkTheme, lightTheme } from 'src/theme';
 
 export type RoomTabsWidgetProps = {
@@ -17,7 +17,7 @@ export type RoomTabsWidgetProps = {
 export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
   const activityLog = useSelector(selectCurrentRoomActivityLog);
   const [tab, setTab] = useState(0);
-  const { theme } = useLightDarkMode();
+  const { theme } = useColorTheme();
 
   useEffect(() => {
     if (
@@ -41,7 +41,7 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
             <div
               style={{
                 borderColor:
-                  theme === 'dark' ? darkTheme.colors.neutral : lightTheme.colors.neutral,
+                  theme.colors.neutral,
                 overflow: 'hidden',
                 flex: 1,
               }}
@@ -61,7 +61,7 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
             <div
               style={{
                 borderColor:
-                  theme === 'dark' ? darkTheme.colors.neutral : lightTheme.colors.neutral,
+                  theme.colors.neutral,
                 overflow: 'hidden',
                 flex: 1,
               }}

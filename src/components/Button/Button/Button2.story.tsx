@@ -4,12 +4,6 @@ import React from 'react';
 import { Button } from './Button2';
 import { Dashboard, Group, Save, Tape, ObjectGroup, Key } from 'grommet-icons';
 import { delay } from 'src/lib/time';
-import { StorybookThemeProvider } from 'src/storybook/StorybookThemeProvider';
-import { darkTheme } from 'src/theme';
-import { noop } from 'src/lib/util';
-import { useStorybookThemeProvider } from 'src/storybook/useStorybookThemeProvider';
-import { ThemeProvider } from 'react-jss';
-import { StorybookThemeConsumer } from 'src/storybook/StorybookThemeConsumer';
 
 export default {
   component: Button,
@@ -472,11 +466,3 @@ export const defaultStory = () => (
   </div>
 );
 
-export const darkModeButtons = () =>
-  React.createElement(() => {
-    return (
-      <StorybookThemeConsumer themeName="dark">
-        <Button label="Simple" size="medium" onClick={noop} />
-      </StorybookThemeConsumer>
-    );
-  });

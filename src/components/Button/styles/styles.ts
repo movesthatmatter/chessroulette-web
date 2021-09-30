@@ -1,7 +1,6 @@
 import { CSSProperties } from 'src/lib/jss/types';
 import { borderRadius, CustomTheme, onlyMobile } from 'src/theme';
 import { buttonEffects } from './effects';
-import hexToRGBA from 'hex-to-rgba';
 import { makeImportant } from 'src/lib/jss';
 
 const button = (theme: CustomTheme): CSSProperties => ({
@@ -36,7 +35,7 @@ const button = (theme: CustomTheme): CSSProperties => ({
   ...{
     ...buttonEffects(theme).onClickTransition,
     '&:disabled': {
-      background: theme.colors.neutral,
+      background: theme.button.backgrounds.neutral,
       ...buttonEffects(theme).onClickTransition['&:disabled'],
     },
   },
@@ -113,13 +112,13 @@ const full: CSSProperties = {
 };
 
 const primary = (theme: CustomTheme): CSSProperties => ({
-  background: theme.colors.primary,
+  background: theme.button.backgrounds.primary,
   ...buttonEffects(theme).primaryButtonShadow,
 
   '&:active': {
     ...({
       '& $iconWrapper': {
-        boxShadow: `0 3px 6px 0 ${hexToRGBA(theme.colors.primary, 0.36)}`,
+        boxShadow: theme.button.iconWrapper.primary.boxShadow,
       },
     } as CSSProperties['nestedKey']),
   },
@@ -146,13 +145,13 @@ const primary = (theme: CustomTheme): CSSProperties => ({
 });
 
 const secondary = (theme: CustomTheme): CSSProperties => ({
-  background: theme.colors.secondary,
+  background: theme.button.backgrounds.secondary,
   ...buttonEffects(theme).secondaryButtonShadow,
 
   '&:active': {
     ...({
       '& $iconWrapper': {
-        boxShadow: `0 3px 6px 0 ${hexToRGBA(theme.colors.secondary, 0.36)}`,
+        boxShadow: theme.button.iconWrapper.secondary.boxShadow,
       },
     } as CSSProperties['nestedKey']),
   },
@@ -187,14 +186,14 @@ const secondary = (theme: CustomTheme): CSSProperties => ({
 });
 
 const positive = (theme: CustomTheme): CSSProperties => ({
-  background: theme.colors.positive,
+  background: theme.button.backgrounds.positive,
 
   ...buttonEffects(theme).positiveButtonShadow,
 
   '&:active': {
     ...({
       '& $iconWrapper': {
-        boxShadow: `0 3px 6px 0 ${hexToRGBA(theme.colors.positive, 0.36)}`,
+        boxShadow: theme.button.iconWrapper.positive.boxShadow,
       },
     } as CSSProperties['nestedKey']),
   },
@@ -221,13 +220,13 @@ const positive = (theme: CustomTheme): CSSProperties => ({
 });
 
 const negative = (theme: CustomTheme): CSSProperties => ({
-  background: `${theme.colors.negative}`,
+  background: theme.button.backgrounds.negative,
   ...buttonEffects(theme).negativeButtonShadow,
 
   '&:active': {
     ...({
       '& $iconWrapper': {
-        boxShadow: `0 3px 6px 0 ${hexToRGBA(theme.colors.negative, 0.36)}`,
+        boxShadow: theme.button.iconWrapper.negative.boxShadow,
       },
     } as CSSProperties['nestedKey']),
   },
@@ -254,13 +253,13 @@ const negative = (theme: CustomTheme): CSSProperties => ({
 });
 
 const attention = (theme: CustomTheme): CSSProperties => ({
-  background: theme.colors.attention,
+  background: theme.button.backgrounds.attention,
   ...buttonEffects(theme).attentionButtonShadow,
 
   '&:active': {
     ...({
       '& $iconWrapper': {
-        boxShadow: `0 3px 6px 0 ${hexToRGBA(theme.colors.attention, 0.36)}`,
+        boxShadow: theme.button.iconWrapper.attention.boxShadow,
       },
     } as CSSProperties['nestedKey']),
   },

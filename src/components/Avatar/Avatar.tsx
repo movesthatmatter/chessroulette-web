@@ -64,7 +64,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       >
         <AspectRatio aspectRatio={1}>
           {props.mutunachiId ? (
-            <Mutunachi mid={props.mutunachiId} className={cls.mutunachiContainer} />
+            <Mutunachi mid={props.mutunachiId} className={cls.mutunachiContainer} avatar/>
           ) : (
             <img src={props.imageUrl} className={cls.imageContainer} />
           )}

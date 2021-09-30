@@ -13,7 +13,7 @@ import { MiniClipboardCopyButton } from 'src/components/ClipboardCopy';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { getUserDisplayName } from 'src/modules/User';
 import { drawEmoji, getMyResult, getScore, winningEmoji } from './util';
-import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = {
   game: GameRecordFinished | GameRecordStopped;
@@ -30,10 +30,8 @@ export const CompactArchivedGame: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
   const avatarSize = '28px';
-  const {theme} = useLightDarkMode();
-  const colors = {
-    ...(theme === 'light' ? lightTheme.colors : darkTheme.colors)
-  }
+  const {theme} = useColorTheme();
+  const colors = theme.colors;
 
   const myUserResult = myUserId ? getMyResult(game, myUserId) : undefined;
   const borderLeftColor = myUserResult

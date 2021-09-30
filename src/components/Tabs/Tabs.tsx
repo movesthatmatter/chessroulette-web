@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { spacers } from 'src/theme/spacers';
 import { noop } from 'src/lib/util';
-import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type TabProps = {
   title: string;
@@ -28,10 +28,8 @@ export const Tabs: React.FC<TabsProps> = ({
   renderTabRightEndComponent,
 }) => {
   const cls = useStyles();
-  const {theme} = useLightDarkMode();
-  const colors = {
-    ...(theme === 'light' ? lightTheme.colors : darkTheme.colors)
-  }
+  const {theme} = useColorTheme();
+  const colors = theme.colors
   return (
     <>
       <div className={cls.tabBar}>

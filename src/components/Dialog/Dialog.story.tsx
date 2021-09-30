@@ -1,7 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { action } from '@storybook/addon-actions';
+import { Text } from 'grommet';
 import React, { useState } from 'react';
 import { Button } from '../Button';
+import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
 import { Dialog } from './Dialog';
 
 export default {
@@ -14,7 +16,7 @@ export const startOpen = () => (
     <Dialog
       visible
       title="How are you?"
-      content="I hope everything is alight!"
+      content={<><Text>"I hope everything is alight!"</Text><br/><DarkModeSwitch/></>}
       buttons={[
         {
           label: 'Cancel',

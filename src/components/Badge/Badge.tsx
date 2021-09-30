@@ -6,7 +6,7 @@ import cx from 'classnames';
 import { getBoxShadow } from 'src/theme/util';
 import hexToRgba from 'hex-to-rgba';
 import { CustomTheme, darkTheme, lightTheme } from 'src/theme';
-import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 export type BadgeProps = {
   text: string;
@@ -19,10 +19,8 @@ export type BadgeProps = {
 
 export const Badge: React.FC<BadgeProps> = ({ textSize = 'small2', ...props }) => {
   const cls = useStyles();
-  const {theme} = useLightDarkMode();
-  const colors = {
-    ...(theme === 'light' ? lightTheme.colors : darkTheme.colors)
-  }
+  const {theme} = useColorTheme();
+  const colors = theme.colors
   return (
     <div className={cx(props.className, cls.container)} style={props.style}>
       <Text

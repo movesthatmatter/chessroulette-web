@@ -8,8 +8,8 @@ import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
 import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
 import { spacers } from 'src/theme/spacers';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
-import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 
 type Props = {};
 
@@ -17,7 +17,7 @@ export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
   const deviceSize = useDeviceSize();
 
-  const {theme} = useLightDarkMode();
+  const {themeName} = useColorTheme();
   return (
     <Page name="Home" contentClassName={cls.pageContent}>
       <div className={cls.container}>
@@ -31,7 +31,7 @@ export const LandingPage: React.FC<Props> = () => {
             }}
           >
             <img
-              src={theme === 'light' ? chessBackground : darkChessBackground}
+              src={themeName === 'light' ? chessBackground : darkChessBackground}
               style={{
                 width: '95%',
                 margin: '0 auto',

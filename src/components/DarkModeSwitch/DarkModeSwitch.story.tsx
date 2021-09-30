@@ -1,9 +1,5 @@
 import { DarkModeSwitch } from './DarkModeSwitch';
 import React from 'react';
-import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
-import { StorybookThemeConsumer } from 'src/storybook/StorybookThemeConsumer';
-import { useSelector } from 'react-redux';
-import { selectTheme } from 'src/theme/redux/selectors';
 
 export default {
   component: DarkModeSwitch,
@@ -13,18 +9,16 @@ export default {
 export const defaultStory = () =>
   React.createElement(() => {
     return (
-      <StorybookReduxProvider>
-        <SwitchStoryComponent/>
-      </StorybookReduxProvider>
+    <DarkModeSwitch/>
     );
   });
 
 
-const SwitchStoryComponent : React.FC = () => {
-  const theme = useSelector(selectTheme);
-  return (
-    <StorybookThemeConsumer themeName={theme}>
-     <DarkModeSwitch />
-  </StorybookThemeConsumer>
-  )
-}
+// const SwitchStoryComponent : React.FC = () => {
+//   const theme = useSelector(selectTheme);
+//   return (
+//     <StorybookThemeConsumer themeName={theme}>
+//      <DarkModeSwitch />
+//   </StorybookThemeConsumer>
+//   )
+// }

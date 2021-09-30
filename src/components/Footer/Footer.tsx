@@ -6,16 +6,14 @@ import { Text } from '../Text';
 import { Link } from 'react-router-dom';
 import { AnchorLink } from '../AnchorLink';
 import { Instagram as InstagramIcon, Facebook as FacebookIcon } from 'grommet-icons';
-import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = {};
 
 export const Footer: React.FC<Props> = () => {
   const cls = useStyles();
-  const {theme} = useLightDarkMode();
-  const text = {
-    ...(theme === 'light' ? lightTheme.text : darkTheme.text)
-  }
+  const {theme} = useColorTheme();
+  const text = theme.text;
   return (
     <>
       <div className={cls.container}>
@@ -32,7 +30,7 @@ export const Footer: React.FC<Props> = () => {
                   target="_blank"
                   baseColor={text.baseColor}
                 >
-                  <InstagramIcon size="16px" className={cls.socialIcon} />
+                  <InstagramIcon size="16px" className={cls.socialIcon} color={theme.colors.neutralDarkest}/>
                   <Text size="body2">Instagram</Text>
                 </AnchorLink>
                 <AnchorLink
@@ -41,7 +39,7 @@ export const Footer: React.FC<Props> = () => {
                   href="https://www.facebook.com/chessroulette/"
                   target="_blank"
                 >
-                  <FacebookIcon size="16px" className={cls.socialIcon} />
+                  <FacebookIcon size="16px" className={cls.socialIcon} color={theme.colors.neutralDarkest}/>
                   <Text size="body2">Facebook</Text>
                 </AnchorLink>
               </div>

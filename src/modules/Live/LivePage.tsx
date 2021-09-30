@@ -13,7 +13,7 @@ import { Avatar } from 'src/components/Avatar';
 import { CollaboratorAsStreamer } from './types';
 import { Text } from 'src/components/Text';
 import { AnchorLink } from 'src/components/AnchorLink';
-import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = {};
 
@@ -28,7 +28,7 @@ const toCollaboratorStreamer = (
 export const LivePage: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [streamers, setStreamers] = useState<CollaboratorAsStreamer[]>([]);
-  const {theme} = useLightDarkMode();
+  const {themeName} = useColorTheme();
 
   useEffect(() => {
     getCollaboratorsByPlatform({
@@ -143,7 +143,7 @@ export const LivePage: React.FC<Props> = (props) => {
                           asParagraph
                           style={{
                             marginTop: '.2em',
-                            color: theme ==='dark' ? darkTheme.text.baseColor : lightTheme.text.baseColor,
+                            color: themeName ==='dark' ? darkTheme.text.baseColor : lightTheme.text.baseColor,
                           }}
                         >
                           {(s.about || '').length > 75 ? `${s.about?.slice(0, 75)}...` : s.about}

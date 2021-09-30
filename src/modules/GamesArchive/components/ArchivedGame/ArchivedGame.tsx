@@ -24,7 +24,7 @@ import { useWindowWidth } from '@react-hook/window-size';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { getUserDisplayName } from 'src/modules/User';
 import { drawEmoji, formatTimeLimit, getMyResult, getResult, getScore, winningEmoji } from './util';
-import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = {
   game: GameRecordFinished | GameRecordStopped;
@@ -34,10 +34,8 @@ type Props = {
 export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   const cls = useStyles();
   const windowWidth = useWindowWidth();
-  const {theme} = useLightDarkMode();
-  const colors = {
-    ...(theme === 'light' ? lightTheme.colors : darkTheme.colors)
-  }
+  const {theme} = useColorTheme();
+  const colors = theme.colors;
 
   const result = getResult(game);
   const avatarSize = windowWidth < MOBILE_BREAKPOINT ? '32px' : '72px';

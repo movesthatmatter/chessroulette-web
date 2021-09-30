@@ -9,7 +9,7 @@ import logoDarkSingleStroke from './assets/Logo_dark_single_stroke_variation.svg
 import { onlyMobile } from 'src/theme';
 import cx from 'classnames';
 import { Link } from 'react-router-dom';
-import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = {
   asLink?: boolean;
@@ -34,7 +34,7 @@ export const Logo: React.FC<Props> = ({
   style,
 }) => {
   const cls = useStyles();
-  const {theme} = useLightDarkMode();
+  const {themeName} = useColorTheme();
 
   const imgSrc = useMemo(() => {
     if (mini) {
@@ -44,17 +44,17 @@ export const Logo: React.FC<Props> = ({
 
       return darkBG ? logoLightSingle : logoDarkSingle;
     }
-    if (theme === 'light'){
+    if (themeName === 'light'){
       if (withBeta) {
         return logoDarkWithBeta;
       }
       return logoDark;
     }
-    if (theme === 'dark'){
+    if (themeName === 'dark'){
       return logoLight
     }
     return darkBG ? logoLight : logoDark;
-  }, [mini, darkBG, withOutline, theme]);
+  }, [mini, darkBG, withOutline, themeName]);
 
   const content = (
     <div className={cx(cls.container, mini && cls.miniContainer, className)} style={style}>

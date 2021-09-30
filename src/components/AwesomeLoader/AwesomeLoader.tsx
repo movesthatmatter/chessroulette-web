@@ -8,7 +8,6 @@ import { Text } from 'src/components/Text';
 import cx from 'classnames';
 import { CustomTheme, effects } from 'src/theme';
 import { seconds } from 'src/lib/time';
-import { console } from 'window-or-global';
 
 type Props = {
   minimal?: boolean;
@@ -65,9 +64,7 @@ export const AwesomeLoader: React.FC<Props> = ({ sayings = defaultSayings, size 
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => {
-  console.log('THEME ', theme);
-  return {
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     width: '100%',
     textAlign: 'center',
@@ -119,4 +116,4 @@ const useStyles = createUseStyles<CustomTheme>(theme => {
   text: {
     fontSize: '14px',
   },
-}});
+}));

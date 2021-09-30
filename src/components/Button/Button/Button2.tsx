@@ -177,8 +177,8 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     minWidth: '250px',
   },
   label: {
-    color: theme.colors.white,
-    fontWeight: 600, // TODO: Make it SemiBold
+    color: theme.button.color,
+    fontWeight: theme.button.font.weight, // TODO: Make it SemiBold
     fontSize: '14px',
     lineHeight: '32px',
     paddingRight: '16px',
@@ -219,7 +219,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+   // backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   icon: makeImportant({
     fill: theme.colors.white,

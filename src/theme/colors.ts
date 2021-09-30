@@ -1,51 +1,9 @@
-// const primary = '#5A20FE';
-// const primaryHover = '#74A3FE';
-// const primaryLight = '#A9C1FD';
-// const primaryLightest = '#EBF0FF';
-// const primaryDark = '#366BEF';
-
-// const chessBoardDark = '#7e9ac7';
-// const chessBoardLight = '#dee5f0';
-
-// const attention = '#FAC032';
-// const attentionLight = '#FCDF98';
-// const attentionDarker = '#EFAD0A';
-
-// const negative = '#FF6760';
-// const negativeLight = '#FF7E77';
-// const negativeLighter = '#FFADA9';
-// const negativeLightest = '#FFD5D2';
-// const negativeDarker = '#E74F48';
-
-// const positive = '#16D090';
-// const positiveLight = '#34EEAE';
-// const positiveDarker = '#03B575';
-
-// const white = '#fff';
-// const black = '#25282B';
-
-// const neutral = '#DFE5EF';
-// const neutralLight = '#DBDDE0';
-// const neutralLighter = '#E6ECF5';
-// const neutralLightest = '#F6F8FB';
-// const neutralDark = '#CACCCF';
-// const neutralDarker = '#A0A4A8';
-// const neutralDarkest = '#52575C';
-
-// const textColor = '#001B36';
-
-// const secondary = neutral;
-// const secondaryLight = neutralLight;
-// const secondaryDark = neutralDark;
-
-// const background = neutralLightest;
-
 const dark = {
   primary: '#CE186B',
-  primaryHover: '#74A3FE',
-  primaryLight: '#A9C1FD',
-  primaryLightest: '#EBF0FF',
-  primaryDark: '#366BEF',
+  primaryHover: '#F545A2',
+  primaryLight: '#ea79b3',
+  primaryLightest: '#F5B2C4',
+  primaryDark: '#CF1484',
 
   chessBoardDark: '#7e9ac7',
   chessBoardLight: '#dee5f0',
@@ -54,38 +12,37 @@ const dark = {
   attentionLight: '#FCDF98',
   attentionDarker: '#EFAD0A',
 
-  negative: '#000',
-  negativeLight: '#FF7E77',
-  negativeLighter: '#FFADA9',
-  negativeLightest: '#FFD5D2',
-  negativeDarker: '#E74F48',
+  negative: '#B71FDE',
+  negativeLight: '#FB76A1',
+  negativeLighter: '#FCBFD5',
+  negativeLightest: '#E3CFCB',
+  negativeDarker: '#44074B',
 
-  positive: '#16D090',
-  positiveLight: '#34EEAE',
-  positiveDarker: '#03B575',
+  positive: '#19D2CA',
+  positiveLight: '#63BFE2',
+  positiveDarker: '#3F88F7',
 
-  white: '#fff',
-  black: '#25282B',
+  black: '#F2F2F2',
+  white: '#171717',
 
   text: '#E2E8F0',
 
-  neutral: '#32323c',
-  neutralLight: '#29283C',
+  neutral: '#DFE5EF',
+  neutralDark: '#DBDDE0',
+  neutralDarker: '#E6ECF5',
+  neutralDarkest: '#F6F8FB',
+  neutralLight: '#262444',
   neutralLighter: '#212036',
   neutralLightest: '#161A2B',
-  neutralDark: '#CACCCF',
-  neutralDarker: '#A0A4A8',
-  neutralDarkest: '#E2E8F0',
 
-  secondary: '#DFE5EF',
-  secondaryLight: '#DBDDE0',
-  secondaryDark: '#CACCCF',
+  secondary: '#ED4873',
+  secondaryLight: '#F899B5',
+  secondaryDark: '#AC4ABC',
 
   background: '#161A2B',
 
-  modalBackground: '#21212b',
+  modalBackground: '#1C1C29',
 
-  textInputBackground: '#21212b',
 }
 
  const light = {
@@ -132,52 +89,9 @@ const dark = {
   background: '#F6F8FB',
 
   modalBackground: '#fff',
-
-  textInputBackground: '#fff',
  }
 
 export const colors = {
   light,
   dark,
-  // primary,
-  // primaryHover,
-  // primaryLight,
-  // primaryLightest,
-  // primaryDark,
-
-  // secondary,
-  // secondaryLight,
-  // secondaryDark,
-
-  // attention,
-  // attentionLight,
-  // attentionDarker,
-
-  // negative,
-  // negativeLight,
-  // negativeLighter,
-  // negativeLightest,
-  // negativeDarker,
-
-  // positive,
-  // positiveLight,
-  // positiveDarker,
-
-  // white,
-  // black,
-
-  // textColor,
-
-  // neutral,
-  // neutralLight,
-  // neutralLighter,
-  // neutralLightest,
-  // neutralDark,
-  // neutralDarker,
-  // neutralDarkest,
-
-  // chessBoardDark,
-  // chessBoardLight,
-
-  // background,
 };

@@ -23,8 +23,8 @@ import {
   onlyMobile,
   softBorderRadius,
 } from 'src/theme';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
-import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
 import { spacers } from 'src/theme/spacers';
 import { setTimeout } from 'window-or-global';
 
@@ -37,7 +37,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
   const roomConsumer = useRoomConsumer();
   const [canShowOtherActivities, setCanShowotherActivities] = useState(false);
   const deviceSize = useDeviceSize();
-  const { theme } = useLightDarkMode();
+  const { theme } = useColorTheme();
 
   useEffect(() => {
     setTimeout(() => {
@@ -101,7 +101,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
                 {/* <br/> */}
                 <Text
                   size="small1"
-                  color={theme === 'light' ? lightTheme.colors.negative : darkTheme.colors.negative}
+                  color={theme.colors.negative}
                 >
                   Share the Magic Link with a friend!
                 </Text>

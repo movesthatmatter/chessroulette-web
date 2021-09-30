@@ -1,54 +1,52 @@
-import hexToRGBA from 'hex-to-rgba';
 import { CSSProperties } from 'src/lib/jss';
 import { CustomTheme } from 'src/theme';
-import { getBoxShadow } from 'src/theme/util';
 
 const primaryButtonShadow = (theme: CustomTheme): CSSProperties => ({
-  boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(theme.colors.primary, 0.26)),
+  boxShadow: theme.button.effects.primary.boxShadow,
 });
 
 const primaryClearButtonShadow = (theme: CustomTheme): CSSProperties => ({
-  boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(theme.colors.primary, 0.1)),
+  boxShadow: theme.button.effects.primaryClear.boxShadow,
 });
 
 const secondaryButtonShadow = (theme: CustomTheme): CSSProperties => ({
-  boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(theme.colors.secondary, 0.26)),
+  boxShadow: theme.button.effects.secondary.boxShadow,
 });
 
 const secondaryClearButtonShadow = (theme: CustomTheme): CSSProperties => ({
-  boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(theme.colors.secondary, 0.16)),
+  boxShadow: theme.button.effects.secondaryClear.boxShadow,
 });
 
 const attentionButtonShadow = (theme: CustomTheme): CSSProperties => ({
-  boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(theme.colors.attention, 0.26)),
+  boxShadow: theme.button.effects.attention.boxShadow,
 });
 
 const attentionClearButtonShadow = (theme: CustomTheme): CSSProperties => ({
-  boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(theme.colors.attention, 0.16)),
+  boxShadow: theme.button.effects.attentionClear.boxShadow,
 });
 
 const positiveButtonShadow = (theme: CustomTheme): CSSProperties => ({
-  boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(theme.colors.positive, 0.26)),
+  boxShadow: theme.button.effects.positive.boxShadow,
 });
 
 const positiveClearButtonShadow = (theme: CustomTheme): CSSProperties => ({
-  boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(theme.colors.positive, 0.16)),
+  boxShadow: theme.button.effects.positiveClear.boxShadow,
 });
 
 const negativeButtonShadow = (theme: CustomTheme): CSSProperties => ({
-  boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(theme.colors.negative, 0.26)),
+  boxShadow: theme.button.effects.negative.boxShadow,
 });
 
 const negativeClearButtonShadow = (theme: CustomTheme): CSSProperties => ({
-  boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(theme.colors.negative, 0.16)),
+  boxShadow: theme.button.effects.negativeClear.boxShadow,
 });
 
 const neutralButtonShadow = (theme: CustomTheme): CSSProperties => ({
-  boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(theme.colors.neutral, 0.26)),
+  boxShadow: theme.button.effects.neutral.boxShadow,
 });
 
 const neutralClearButtonShadow = (theme: CustomTheme): CSSProperties => ({
-  boxShadow: getBoxShadow(0, 6, 12, 0, hexToRGBA(theme.colors.neutral, 0.16)),
+  boxShadow: theme.button.effects.neutralClear.boxShadow,
 });
 
 const onClickTransition = {

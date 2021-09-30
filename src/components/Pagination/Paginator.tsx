@@ -7,7 +7,7 @@ import { Text } from '../Text';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { range } from 'src/lib/util';
-import { useLightDarkMode } from 'src/theme/hooks/useLightDarkMode';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 export type PaginatorProps = {
   totalPages: number;
@@ -57,10 +57,8 @@ const getNextPagerState = (props: Pick<PaginatorProps, 'totalPages' | 'pageIndex
 
 export const Paginator = (props: PaginatorProps) => {
   const cls = useStyles();
-  const {theme} = useLightDarkMode();
-  const colors = {
-    ...(theme === 'light' ? lightTheme.colors : darkTheme.colors)
-  }
+  const {theme} = useColorTheme();
+  const colors = theme.colors
 
   const [pagerState, setPagerState] = useState(getNextPagerState(props));
 
