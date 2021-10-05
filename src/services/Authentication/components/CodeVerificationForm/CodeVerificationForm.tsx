@@ -55,6 +55,7 @@ export const CodeVerificationForm: React.FC<Props> = (props) => {
             }}
             // onComplete={debounce(p.submit, 250)}
             fieldSize={codeInputFieldSize}
+            {...(p.errors.submissionGenericError || p.errors.submissionValidationErrors?.code) && {inputError: true}}
           />
           {(p.errors.submissionGenericError || p.errors.submissionValidationErrors?.code) && (
             <FormError

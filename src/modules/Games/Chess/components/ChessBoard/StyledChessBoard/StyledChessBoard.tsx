@@ -242,6 +242,41 @@ const useStyles = createUseStyles<CustomTheme>( theme => ({
           },
         },
       },
+
+      '& .cg-wrap svg circle[stroke="#15781B"]' : {
+        stroke: '#FF9416  !important',
+      },
+      '& .cg-wrap svg line[stroke="#15781B"]' : {
+        stroke: '#FF9416  !important',
+      },
+      '& .cg-wrap svg marker[id="arrowhead-g"] path' : {
+        fill: '#FF9416 !important',
+      },
+
+      '& .cg-wrap svg circle[stroke="#882020"]' : {
+        stroke: '#E485BF  !important',
+      },
+      '& .cg-wrap svg line[stroke="#882020"]' : {
+        stroke: '#E485BF  !important',
+      },
+      '& .cg-wrap svg marker[id="arrowhead-r"] path' : {
+        fill: '#E485BF !important',
+      },
+
+      '& .cg-wrap svg circle[stroke="#003088"]' : {
+        stroke: '#8354E9  !important',
+      },
+      '& .cg-wrap svg line[stroke="#003088"]' : {
+        stroke: '#8354E9  !important',
+      },
+      '& .cg-wrap svg marker[id="arrowhead-b"] path' : {
+        fill: '#8354E9 !important',
+      },
+
+      '& cg-board square.check' : {
+         background: theme.board.check,
+      },
+
       '& cg-board square.selected' : {
         backgroundColor: theme.board.selectedSquare
       },

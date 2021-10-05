@@ -188,7 +188,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
 
   nestedHistory: {
     marginTop: spacers.smaller,
-    background: hexToRgba(theme.colors.primary, 0.075),
+    background: hexToRgba(theme.analysis.historyPanelColor, 0.070),
     border: `1px solid ${theme.colors.negativeLight}`,
     borderColor: hexToRgba(theme.colors.primary, 0.1),
     borderWidth: 0,

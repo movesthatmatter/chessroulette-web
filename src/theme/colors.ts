@@ -12,11 +12,11 @@ const dark = {
   attentionLight: '#F59C70',
   attentionDarker: '#E67811',
 
-  negative: '#3BC0C8',
-  negativeLight: '#AC4ABC',
+  negative: '#BD3030',
+  negativeLight: '#D05252',
   negativeLighter: '#FB76A1',
   negativeLightest: '#E485BF',
-  negativeDarker: '#44074B',
+  negativeDarker: '#A81919',
 
   positive: '#518EC7',
   positiveLight: '#3FCEE1',

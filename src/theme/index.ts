@@ -114,7 +114,8 @@ export const lightTheme = {
     image : blueBoard,
     pieces: lightPieces,
     selectedSquare: '#14551e80',
-    lastMove: '#9bc70069'
+    lastMove: '#9bc70069',
+    check: 'radial-gradient(ellipse at center,rgba(255,0,0,1) 0,rgba(231,0,0,1) 25%,rgba(169,0,0,0) 89%,rgba(158,0,0,0) 100%)'
   },
   chat: {
     messageBackground: colors.light.neutral,
@@ -124,6 +125,9 @@ export const lightTheme = {
     backgroundColor: colors.light.white,
     ...effects.softOutline,
     ...floatingShadow,
+  },
+  analysis : {
+    historyPanelColor: colors.light.primary
   }
 };
 
@@ -154,7 +158,7 @@ export const darkTheme = {
     containerColor: '#7774CA'
   },
   lines: {
-    color: colors.dark.primary,
+    color: '#29283a',
   },
   button: {
     backgrounds: {
@@ -234,7 +238,8 @@ export const darkTheme = {
     image : darkBoard,
     pieces: darkPieces,
     selectedSquare: '#55145380',
-    lastMove: '#2e0c2d80'
+    lastMove: '#2e0c2d80',
+    check: 'radial-gradient(64.15% 64.15% at 50.28% 50.31%, rgba(206, 24, 107, 0.81) 39.58%, rgba(206, 24, 107, 0) 100%)',
   },
   chat: {
     messageBackground: 'linear-gradient(270deg, #1977F2 0%, #43D1BE 100%)',
@@ -244,6 +249,9 @@ export const darkTheme = {
     backgroundColor: '#21212B',
     border: '',
     boxShadow: ''
+  },
+  analysis: {
+    historyPanelColor: colors.dark.positiveDarker,
   }
 };
 

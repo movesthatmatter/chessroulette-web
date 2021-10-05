@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import ReactCodeInput from 'react-verification-code-input';
 import { CustomTheme, onlyMobile } from 'src/theme';
 import cx from 'classnames';
 import { fontFamily } from 'src/theme/text';
+import { console } from 'window-or-global';
 
 type Props = Omit<
   React.ComponentProps<typeof ReactCodeInput>, 'fieldWidth' | 'fieldHeight' | 'fields' | 'type'
 > & {
   fieldsCount?: number;
   fieldSize?: number;
+  inputError?: boolean;
 };
 
 export const CodeInput: React.FC<Props> = ({
@@ -19,13 +21,13 @@ export const CodeInput: React.FC<Props> = ({
   ...restProps
 }) => {
   const cls = useStyles();
-
+  useEffect(() => {console.log('input erro', restProps.inputError)},[restProps.inputError])
   return (
     <div className={cx(cls.container, className)}>
       <ReactCodeInput
         type="number"
         fields={fieldsCount}
-        className={cls.codeInput}
+        className={cx(cls.codeInput, restProps.inputError && cls.codeInputErrorWrapper)}
         fieldWidth={fieldSize}
         fieldHeight={fieldSize}
         {...restProps}
@@ -38,11 +40,17 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     marginBottom: '16px',
   },
+  codeInputErrorWrapper: {
+    '&$codeInput input': {
+      ...makeImportant({
+        border : `1px solid ${theme.colors.negative}`
+      }),
+    },
+  },
   codeInput: {
     ...makeImportant({
       width: '100%',
     }),
-
     ...{
       '& > div': {
         ...makeImportant({
@@ -51,12 +59,14 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
           justifyContent: 'space-between',
         }),
       },
+      
       '& input': {
         ...makeImportant({
           fontFamily: fontFamily.family,
-
+          backgroundColor: theme.textInput.backgroundColor,
+          color:theme.colors.text,
           borderRadius: '8px',
-          border: `1px solid ${theme.colors.neutral}`,
+          border: theme.textInput.border
         }),
 
         ...onlyMobile({
