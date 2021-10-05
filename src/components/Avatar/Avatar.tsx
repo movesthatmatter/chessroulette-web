@@ -7,6 +7,7 @@ import { getBoxShadow } from 'src/theme/util';
 import hexToRgba from 'hex-to-rgba';
 import cx from 'classnames';
 import { darkTheme, lightTheme } from 'src/theme';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 export type AvatarProps = GAvatarProps & {
   className?: string;
@@ -50,7 +51,7 @@ export const Avatar: React.FC<AvatarProps> = ({
 
   const bkgColor =
     props.mutunachiId && !monochrome ? getColor(props.mutunachiId) : lightTheme.colors.neutralLighter;
-
+  const {themeName} = useColorTheme();
   return (
     <div>
       <div
@@ -59,7 +60,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           width: size,
           background: bkgColor,
           border: `2px solid ${darkBG ? darkTheme.colors.neutralLightest : lightTheme.colors.neutralLightest}`,
-          boxShadow: getBoxShadow(0, 2, 16, 0, hexToRgba(bkgColor, 0.3)),
+          ... (themeName === 'light' && {boxShadow: getBoxShadow(0, 2, 16, 0, hexToRgba(bkgColor, 0.3))}),
         }}
       >
         <AspectRatio aspectRatio={1}>

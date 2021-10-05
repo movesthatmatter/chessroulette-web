@@ -18,10 +18,8 @@ export const FloatingBox: React.FC<FloatingBoxProps> = ({ children, className, .
 
 const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
-    ...floatingShadow,
+    ...theme.flatingBox,
     ...softBorderRadius,
-    ...softOutline,
     padding: spacers.default,
-    background: theme.colors.white,
   },
 }));

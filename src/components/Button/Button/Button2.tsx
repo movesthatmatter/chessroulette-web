@@ -177,14 +177,14 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     minWidth: '250px',
   },
   label: {
-    color: theme.button.color,
+    //color: theme.button.color,
     fontWeight: theme.button.font.weight, // TODO: Make it SemiBold
     fontSize: '14px',
     lineHeight: '32px',
     paddingRight: '16px',
     paddingLeft: '16px',
     flex: 1,
-
+    
     ...onlyMobile({
       ...makeImportant({
         fontSize: '12px',
@@ -215,15 +215,15 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     }),
 
     ...borderRadius,
-
+    color: theme.button.icon.color,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   icon: makeImportant({
-    fill: theme.colors.white,
-    stroke: theme.colors.white,
+    fill: theme.button.icon.color,
+    stroke: theme.button.icon.color,
     width: spacers.default,
     height: spacers.default,
   }),

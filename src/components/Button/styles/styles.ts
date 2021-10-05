@@ -17,10 +17,11 @@ const button = (theme: CustomTheme): CSSProperties => ({
   '&:hover': {
     opacity: '.8',
   },
-
+  color: theme.button.color,
   ...{
     '&:disabled&:hover': {
       opacity: '1 !important',
+      color: theme.button.disabledColor,
     },
   } as CSSProperties,
 
@@ -36,6 +37,7 @@ const button = (theme: CustomTheme): CSSProperties => ({
     ...buttonEffects(theme).onClickTransition,
     '&:disabled': {
       background: theme.button.backgrounds.neutral,
+      color: theme.button.disabledColor,
       ...buttonEffects(theme).onClickTransition['&:disabled'],
     },
   },
@@ -114,7 +116,7 @@ const full: CSSProperties = {
 const primary = (theme: CustomTheme): CSSProperties => ({
   background: theme.button.backgrounds.primary,
   ...buttonEffects(theme).primaryButtonShadow,
-
+  color:theme.button.color,
   '&:active': {
     ...({
       '& $iconWrapper': {
@@ -147,7 +149,7 @@ const primary = (theme: CustomTheme): CSSProperties => ({
 const secondary = (theme: CustomTheme): CSSProperties => ({
   background: theme.button.backgrounds.secondary,
   ...buttonEffects(theme).secondaryButtonShadow,
-
+  color:theme.button.color,
   '&:active': {
     ...({
       '& $iconWrapper': {
@@ -187,7 +189,7 @@ const secondary = (theme: CustomTheme): CSSProperties => ({
 
 const positive = (theme: CustomTheme): CSSProperties => ({
   background: theme.button.backgrounds.positive,
-
+  color:theme.button.color,
   ...buttonEffects(theme).positiveButtonShadow,
 
   '&:active': {
@@ -222,7 +224,7 @@ const positive = (theme: CustomTheme): CSSProperties => ({
 const negative = (theme: CustomTheme): CSSProperties => ({
   background: theme.button.backgrounds.negative,
   ...buttonEffects(theme).negativeButtonShadow,
-
+  color:theme.button.color,
   '&:active': {
     ...({
       '& $iconWrapper': {
@@ -255,7 +257,7 @@ const negative = (theme: CustomTheme): CSSProperties => ({
 const attention = (theme: CustomTheme): CSSProperties => ({
   background: theme.button.backgrounds.attention,
   ...buttonEffects(theme).attentionButtonShadow,
-
+  color:theme.button.color,
   '&:active': {
     ...({
       '& $iconWrapper': {

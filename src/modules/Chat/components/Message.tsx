@@ -79,9 +79,10 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     display: 'inline-block',
   },
   myMessageContent: {
-    backgroundColor: theme.colors.neutral,
+    background: theme.chat.messageBackground,
     borderBottomRightRadius: 0,
     marginLeft: 'auto',
+    color: theme.chat.myMessageColor
   },
   otherMessageContent: {
     marginRight: '30px',

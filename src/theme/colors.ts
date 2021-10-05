@@ -1,47 +1,47 @@
 const dark = {
   primary: '#CE186B',
-  primaryHover: '#F545A2',
-  primaryLight: '#ea79b3',
-  primaryLightest: '#F5B2C4',
+  primaryHover: '#D427A8',
+  primaryLight: '#E34E89',
+  primaryLightest: '#F545A2',
   primaryDark: '#CF1484',
 
   chessBoardDark: '#7e9ac7',
   chessBoardLight: '#dee5f0',
 
-  attention: '#FAC032',
-  attentionLight: '#FCDF98',
-  attentionDarker: '#EFAD0A',
+  attention: '#FF9416',
+  attentionLight: '#F59C70',
+  attentionDarker: '#E67811',
 
-  negative: '#B71FDE',
-  negativeLight: '#FB76A1',
-  negativeLighter: '#FCBFD5',
-  negativeLightest: '#E3CFCB',
+  negative: '#3BC0C8',
+  negativeLight: '#AC4ABC',
+  negativeLighter: '#FB76A1',
+  negativeLightest: '#E485BF',
   negativeDarker: '#44074B',
 
-  positive: '#19D2CA',
-  positiveLight: '#63BFE2',
-  positiveDarker: '#3F88F7',
+  positive: '#518EC7',
+  positiveLight: '#3FCEE1',
+  positiveDarker: '#63BFE2',
 
   black: '#F2F2F2',
-  white: '#171717',
+  white: '#161626',
 
   text: '#E2E8F0',
 
   neutral: '#DFE5EF',
-  neutralDark: '#DBDDE0',
-  neutralDarker: '#E6ECF5',
-  neutralDarkest: '#F6F8FB',
-  neutralLight: '#262444',
-  neutralLighter: '#212036',
-  neutralLightest: '#161A2B',
+  neutralLight: '#212036',
+  neutralLighter: '#17181F',
+  neutralLightest: '#161618',
+  neutralDark: '#E2E8F0',
+  neutralDarker: '#DBDDE0',
+  neutralDarkest: '#E6ECF5',
 
-  secondary: '#ED4873',
-  secondaryLight: '#F899B5',
-  secondaryDark: '#AC4ABC',
+  secondary: '#E34E89',
+  secondaryLight: '#FCBFD5',
+  secondaryDark: '#D13D6C',
 
   background: '#161A2B',
 
-  modalBackground: '#1C1C29',
+  modalBackground: '#1C1C28',
 
 }
 

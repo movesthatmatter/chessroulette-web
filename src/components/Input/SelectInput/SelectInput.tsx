@@ -66,13 +66,11 @@ export const SelectInput: React.FC<Props> = ({
               ...prev,
               overflow: 'hidden',
               padding: 0,
-              //color: colors.text,
-              //backgroundColor: theme.textInput.backgroundColor,
+              color: colors.text,
+              backgroundColor: theme.textInput.backgroundColor,
             }),
-            option: (prev) => ({
+            option: (prev, {isFocused}) => ({
               ...prev,
-              //color: colors.text,
-              //backgroundColor: theme.textInput.backgroundColor,
               '&:first-of-type': {
                 marginTop: '-4px',
               },
@@ -80,6 +78,7 @@ export const SelectInput: React.FC<Props> = ({
                 marginBottom: '-4px',
               },
               fontSize: '14px',
+            ...(isFocused && {backgroundColor: theme.selectInput.focused})
             }),
             valueContainer: (prev) => ({
               ...prev,
@@ -89,7 +88,7 @@ export const SelectInput: React.FC<Props> = ({
             singleValue: (prev) => ({
               ...prev,
               ...fonts.small1,
-              color: theme.selectInput.textColor
+              color: theme.selectInput.textColor,
             }),
             control: (prev, state) => ({
               ...prev,
@@ -145,7 +144,7 @@ export const SelectInput: React.FC<Props> = ({
             }),
             container: (prev) => ({
               ...prev,
-              //backgroundColor: theme.textInput.backgroundColor,
+              // backgroundColor: theme.textInput.backgroundColor,
               borderRadius: 16,
             }),
             placeholder: () => ({

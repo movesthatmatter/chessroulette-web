@@ -122,7 +122,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
         <TwitchAuthButton
           full
           label="Twitch"
-          type="primary"
+          // type="primary"
           onSuccess={(accessToken) => {
             props.onSubmit({
               type: 'external',

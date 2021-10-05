@@ -147,7 +147,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
 
   bottomPart: {
     borderTop: 'solid 1px',
-    borderColor: theme.colors.neutral,
+    borderColor: theme.lines.color,
   },
   fallbackText: {
     marginBottom: spacers.large,

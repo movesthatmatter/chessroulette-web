@@ -26,8 +26,8 @@ function App() {
           //  prerendererd classes since those can't be removed (for now)
           // The idea of prefixing the mounted classes is to decrease the
           //  initial html size as much as possible!
-          classNamePrefix={config.PRERENDERING ? undefined : 'cr-'}
-          id={{ minify: !config.DEBUG }}
+          //classNamePrefix={config.PRERENDERING ? undefined : 'cr-'}
+          //id={{ minify: !config.DEBUG }}
         >
           <ThemeProvider theme={themeName === 'light' ? lightTheme : darkTheme}>
             <FeedbackProvider>

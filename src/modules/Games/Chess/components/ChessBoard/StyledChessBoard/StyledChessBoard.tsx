@@ -8,7 +8,7 @@ import { Square } from 'chess.js';
 import { pieces } from '../pieces';
 import { noop } from 'src/lib/util';
 import 'react-chessground/dist/styles/chessground.css';
-import { softOutline } from 'src/theme';
+import { CustomTheme, softOutline } from 'src/theme';
 
 export type StyledChessBoardProps = Omit<
   ChessgroundProps,
@@ -168,14 +168,52 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>( theme => ({
   container: {
     padding: 0,
     position: 'relative',
 
     ...({
       '& .cg-wrap': {
-        backgroundImage: `url(${blueBoard})`,
+        backgroundImage: `url(${theme.board.image})`,
+      },
+
+      '& .cg-wrap piece.rook.white' : {
+        backgroundImage: `url(${theme.board.pieces.wR})`
+      },
+      '& .cg-wrap piece.queen.white' : {
+        backgroundImage: `url(${theme.board.pieces.wQ})`
+      },
+      '& .cg-wrap piece.knight.white' : {
+        backgroundImage: `url(${theme.board.pieces.wN})`
+      },
+      '& .cg-wrap piece.bishop.white' : {
+        backgroundImage: `url(${theme.board.pieces.wB})`
+      },
+      '& .cg-wrap piece.pawn.white' : {
+        backgroundImage: `url(${theme.board.pieces.wP})`
+      },
+      '& .cg-wrap piece.king.white' : {
+        backgroundImage: `url(${theme.board.pieces.wK})`
+      },
+
+      '& .cg-wrap piece.rook.black' : {
+        backgroundImage: `url(${theme.board.pieces.bR})`
+      },
+      '& .cg-wrap piece.queen.black' : {
+        backgroundImage: `url(${theme.board.pieces.bQ})`
+      },
+      '& .cg-wrap piece.knight.black' : {
+        backgroundImage: `url(${theme.board.pieces.bN})`
+      },
+      '& .cg-wrap piece.bishop.black' : {
+        backgroundImage: `url(${theme.board.pieces.bB})`
+      },
+      '& .cg-wrap piece.pawn.black' : {
+        backgroundImage: `url(${theme.board.pieces.bP})`
+      },
+      '& .cg-wrap piece.king.black' : {
+        backgroundImage: `url(${theme.board.pieces.bK})`
       },
 
       '& cg-helper': {
@@ -203,6 +241,12 @@ const useStyles = createUseStyles({
             color: '#8ca2ad',
           },
         },
+      },
+      '& cg-board square.selected' : {
+        backgroundColor: theme.board.selectedSquare
+      },
+      '& cg-board square.last-move' : {
+        backgroundColor : theme.board.lastMove
       },
       '& .cg-wrap coords.files': {
         bottom: '0%',
@@ -256,4 +300,4 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
   },
-});
+}));

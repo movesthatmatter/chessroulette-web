@@ -94,7 +94,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   },
   inputContainer: {
     borderTop: 'solid 1px',
-    borderColor: theme.colors.neutral,
+    borderColor: theme.lines.color,
     paddingTop: '16px',
     display: 'flex',
     flex: 1,
@@ -108,6 +108,8 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     height: '100%',
   },
   inputBox: {
+    backgroundColor:theme.colors.white,
+    color: theme.colors.text,
     flex: 1,
     fontSize: '13px',
     fontFamily: 'Lato, Open Sans, sans-serif',

@@ -77,7 +77,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   tabBar: {
     display: 'flex',
     flexDirection: 'row',
-    borderBottom: `1px solid ${theme.colors.neutral}`,
+    borderBottom: `1px solid ${theme.lines.color}`,
   },
   iconWrapper: {
     marginRight: spacers.small,

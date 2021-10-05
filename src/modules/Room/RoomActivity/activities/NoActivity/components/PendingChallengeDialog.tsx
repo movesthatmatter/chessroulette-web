@@ -78,7 +78,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
                       withBadge={{
                         text: 'New',
                         side: 'right',
-                        color: 'negativeLight',
+                        color: 'negativeDarker',
                       }}
                       onClick={() => {
                         if (!roomConsumer) {
@@ -108,6 +108,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
               </div>
 
               <ClipboardCopyButton
+                type='primary'
                 label="Invite Friend"
                 copiedlLabel="Challenge Link Copied"
                 value={`${window.location.origin}/${toChallengeUrlPath(pendingChallenge)}`}
@@ -162,7 +163,7 @@ const useStyles = createUseStyles<CustomTheme>((theme) => ({
     ...softBorderRadius,
     padding: 0,
     position: 'relative',
-    background: theme.colors.white,
+    background: theme.colors.modalBackground,
 
     ...makeImportant({
       borderRadius: '8px',

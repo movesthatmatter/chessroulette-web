@@ -10,6 +10,7 @@ import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidge
 import { spacers } from 'src/theme/spacers';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
+import { useBodyClass } from 'src/lib/hooks/useBodyClass';
 
 type Props = {};
 
@@ -18,9 +19,11 @@ export const LandingPage: React.FC<Props> = () => {
   const deviceSize = useDeviceSize();
 
   const {themeName} = useColorTheme();
+  useBodyClass([cls.indexBackground]);
+
   return (
     <Page name="Home" contentClassName={cls.pageContent}>
-      <div className={cls.container}>
+      <div className={cls.containerLanding}>
         <div className={cls.inner}>
           <div
             style={{
@@ -71,7 +74,7 @@ export const LandingPage: React.FC<Props> = () => {
                 type="primary"
                 withBadge={{
                   text: 'New',
-                  color: 'negative',
+                  color: 'negativeDarker',
                   side: 'right',
 
                 }}
@@ -96,7 +99,10 @@ const tabletBreakPoint = 600;
 const desktopBreakPoint = 769;
 
 const useStyles = createUseStyles<CustomTheme>(theme => ({
-  container: {
+  indexBackground: {
+    backgroundColor: theme.colors.background
+  },
+  containerLanding: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',

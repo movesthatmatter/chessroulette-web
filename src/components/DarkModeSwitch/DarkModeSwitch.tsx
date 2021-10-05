@@ -13,7 +13,7 @@ export const DarkModeSwitch: React.FC<Props> = (props) => {
   const {themeName: theme, switchTheme} = useColorTheme();
   const [animate, setAnimate] = useState(0);
   return (
-    <div className={cls.container}>
+    <div className={cls.containerSwitch}>
       <div className={cls.darkRoomSwitcher}>
         {/* <Text style={{...fonts.small1, marginRight: '5px'}} className={cls.text}>Dark</Text> */}
         <div className={cls.toggleButton} 
@@ -42,7 +42,7 @@ export const DarkModeSwitch: React.FC<Props> = (props) => {
 };
 
 const useStyles = createUseStyles<CustomTheme>(theme => ({
-  container: {
+  containerSwitch: {
     display:'flex',
     width: 'fit-contents'
   },

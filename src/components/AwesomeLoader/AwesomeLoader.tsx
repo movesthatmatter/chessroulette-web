@@ -34,7 +34,7 @@ const shuffleMids = () => shuffle(range(18, 0));
 
 const animationIntervalMs = seconds(3);
 
-export const AwesomeLoader: React.FC<Props> = ({ sayings = defaultSayings, size = 200, minimal, className }) => {
+export const AwesomeLoader: React.FC<Props> = ({ sayings = defaultSayings, size = 200, minimal, className, }) => {
   const cls = useStyles();
   const [shuffled, setShuffled] = useState(shuffleMids());
   const [index, setIndex] = useState(0);
@@ -72,7 +72,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   mask: {
     margin: '0 auto',
     overflow: 'hidden',
-    background: `linear-gradient(top, ${theme.colors.primaryLight} 100%, #fff 0%)`,
+    background: theme.mutunachi.containerColor,
     position: 'relative',
     borderRadius: '50%',
     marginBottom: '16px',

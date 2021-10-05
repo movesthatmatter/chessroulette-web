@@ -92,7 +92,7 @@ export const NoActivity: React.FC<Props> = (props) => {
                     withBadge={{
                       text: 'New',
                       side: 'right',
-                      color: 'negativeLight',
+                      color: 'negativeDarker',
                     }}
                   />
                   {!pendingChallenge && <CreateChallengeButton label="Create Challenge" full />}

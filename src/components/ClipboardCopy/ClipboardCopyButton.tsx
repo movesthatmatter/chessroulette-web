@@ -64,6 +64,6 @@ export const ClipboardCopyButton: React.FC<Props> = ({
 
 const useStyles = createUseStyles<CustomTheme>((theme) => ({
   icon: {
-    color: theme.colors.white,
+    color: theme.button.icon.color,
   },
 }));

@@ -84,25 +84,21 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     }),
   },
   topPadding: {
-    background: 'white',
+    background: theme.textArea.backgroundColor,
     height: '16px',
     marginBottom: '-2px',
     borderTopLeftRadius: '40px',
     borderTopRightRadius: '40px',
-    borderStyle: 'solid',
-    borderColor: theme.colors.neutral,
-    borderWidth: 0,
+    ...theme.textArea.border,
     borderTopWidth: `1px`,
     borderLeftWidth: `1px`,
     borderRightWidth: `1px`,
   },
   bottomPadding: {
-    background: 'white',
+    background: theme.textArea.backgroundColor,
     height: '16px',
     marginTop: '-2px',
-    borderStyle: 'solid',
-    borderColor: theme.colors.neutral,
-    borderWidth: 0,
+    ...theme.textArea.border,
     borderBottomWidth: `1px`,
     borderLeftWidth: `1px`,
     borderRightWidth: `1px`,
@@ -128,15 +124,15 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     ...makeImportant({
       '& $topPadding': {
         borderColor: theme.colors.negative,
-        boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(theme.colors.negative, 0.08)),
+        boxShadow: theme.textArea.boxShadow,
       },
       '& $bottomPadding': {
         borderColor: theme.colors.negative,
-        boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(theme.colors.negative, 0.08)),
+        boxShadow: theme.textArea.boxShadow,
       },
       '& $textAreaWrapper': {
         borderColor: theme.colors.negative,
-        boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(theme.colors.negative, 0.08)),
+        boxShadow: theme.textArea.boxShadow
       },
     } as CSSProperties),
   },
@@ -163,22 +159,20 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     } as NestedCSSElement),
   },
   textAreaWrapper: {
-    background: 'white',
+    background: theme.textArea.backgroundColor,
     display: 'flex',
     paddingLeft: padding,
     paddingRight: padding,
-    borderStyle: 'solid',
-    borderColor: theme.colors.neutral,
-    borderWidth: 0,
+    ...theme.textArea.border,
     borderLeftWidth: `1px`,
     borderRightWidth: `1px`,
   },
   textArea: {
     width: '100%',
     lineHeight: '1.5em',
-
+    background: theme.textArea.backgroundColor,
     resize: 'vertical', // Limit the resizing only for vertical
-
+    color: theme.colors.text,
     ...makeImportant({
       padding: 0,
       margin: 0,

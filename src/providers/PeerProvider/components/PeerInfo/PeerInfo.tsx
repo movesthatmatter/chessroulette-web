@@ -72,7 +72,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     flexDirection: 'row-reverse',
   },
   containerDarkMode: {
-    color: theme.colors.white,
+    color: '#fff',
   },
   userNameText: {
     ...fonts.small2,

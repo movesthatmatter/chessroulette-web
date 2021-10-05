@@ -54,6 +54,6 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     top: '10px',
     left: 0,
     right: 0,
-    borderTop: `1px solid ${theme.colors.neutral}`,
+    borderTop: `1px solid ${theme.lines.color}`,
   },
 }));

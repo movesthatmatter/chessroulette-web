@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createUseStyles, makeImportant } from 'src/lib/jss';
+import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import { Icon as GIcon } from 'grommet-icons';
 import { borderRadius, CustomTheme, onlyMobile, softBorderRadius, softOutline } from 'src/theme';
 import cx from 'classnames';
@@ -74,7 +74,7 @@ export const IconButton: React.FC<Props> = ({
         {isLoading ? (
           <Loader type="ball-clip-rotate" active innerClassName={cls.loader} />
         ) : (
-          <Icon className={cls.icon} />
+          <Icon className={cls.icon}/>
         )}
       </div>
       {props.tooltip && (

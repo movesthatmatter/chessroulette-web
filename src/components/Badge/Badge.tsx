@@ -19,7 +19,7 @@ export type BadgeProps = {
 
 export const Badge: React.FC<BadgeProps> = ({ textSize = 'small2', ...props }) => {
   const cls = useStyles();
-  const {theme} = useColorTheme();
+  const {theme,themeName} = useColorTheme();
   const colors = theme.colors
   return (
     <div className={cx(props.className, cls.container)} style={props.style}>
@@ -29,6 +29,7 @@ export const Badge: React.FC<BadgeProps> = ({ textSize = 'small2', ...props }) =
         style={{
           backgroundColor: colors[props.color],
           boxShadow: getBoxShadow(0, 2, 4, 0, hexToRgba(colors[props.color], 0.16)),
+          color: themeName === 'light' ? 'white' : theme.colors.text
         }}
       >
         {props.text}
@@ -46,6 +47,5 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     float: 'left',
     borderRadius: '16px',
     padding: '1px 6px 2px',
-    color: theme.colors.text,
   },
 }));

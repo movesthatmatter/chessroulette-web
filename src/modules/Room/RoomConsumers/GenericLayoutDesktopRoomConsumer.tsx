@@ -13,6 +13,7 @@ import { getBoxShadow } from 'src/theme/util';
 import { NavigationLink } from 'src/components/NavigationLink';
 import { SwitchActivityWidgetRoomConsumer } from './SwitchActivityWidgetRoomConsumer';
 import { RoomControlMenuConsumer } from './RoomControlMenuConsumer';
+import { DarkModeSwitch } from 'src/components/DarkModeSwitch/DarkModeSwitch';
 
 type Props = {
   renderActivity: (d: {
@@ -45,7 +46,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
         renderTopComponent={({ left, right, center }) => (
           <div className={cls.top}>
             <div className={cls.mainTop}>
-              <div className={cls.logoWrapper} style={{ flex: 1 }}>
+              <div className={cls.logoWrapper} style={{ flex: 1, marginRight:'10px' }}>
                 <Logo asLink withBeta />
               </div>
               <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
@@ -75,6 +76,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
                     )}
                   />
                 </div>
+                <DarkModeSwitch/>
                 <UserMenu reversed showPeerStatus />
               </div>
             </div>
@@ -121,7 +123,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     width: '100%',
     height: '100%',
-
+    color: theme.text.baseColor,
     display: 'flex',
     flexDirection: 'column',
     background: theme.colors.background,

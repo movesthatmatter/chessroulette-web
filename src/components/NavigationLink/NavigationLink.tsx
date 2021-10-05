@@ -82,7 +82,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   link: {
     ...fonts.small1,
     textDecoration: 'none',
-    color: theme.colors.neutralDarkest,
+    color: theme.colors.primary,
     fontFamily: 'Lato, Open Sans, sans serif',
     fontSize: spacers.default,
     textAlign: 'center',
@@ -132,7 +132,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     paddingRight: spacers.small,
   },
   caretIcon: {
-    color: theme.colors.neutralDarkest,
+    color: theme.colors.primaryDark,
   },
 
   menuWrapper: {
