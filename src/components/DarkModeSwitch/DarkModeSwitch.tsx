@@ -57,8 +57,8 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     color:theme.colors.text
   },
   switch: {
-    width:'20px',
-    height:'20px',
+    width:'15px',
+    height:'15px',
     borderRadius: '50%',
     backgroundColor: 'black',
     position: 'relative',
@@ -71,13 +71,13 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     transitionTimingFunction: 'cubic-bezier(1.000, 0.670, 0.350, 1.300)'
   },
   switchMask: {
-    width:'20px',
-    height:'20px',
+    width:'15px',
+    height:'15px',
     borderRadius: '50%',
     backgroundColor: theme.colors.neutral,
     position: 'absolute',
-    top: '-3px',
-    left: '11px',
+    top: '-1px',
+    left: '9px',
     display:'flex',
     justifyContent:'center',
     alignContent:'center',
@@ -138,8 +138,8 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   },
   toggleButton: {
     position:'relative',
-    width:'40px',
-    height:'20px',
+    width:'30px',
+    height:'15px',
     ...effects.borderRadius,
     margin: '0 auto',
     padding: '2px',

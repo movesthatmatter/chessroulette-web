@@ -9,7 +9,12 @@ import {light as lightPieces, dark as darkPieces} from 'src/modules/Games/Chess/
 
 export const lightTheme = {
   colors: colors.light,
-  text: light,
+  text: {
+    baseColor :'#001B36',
+    primaryColor: '#25282B',
+    disabledColor: '#A4A8B5',
+    family: 'Lato, Open Sans, sans-serif',
+  },
   textInput: {
     border: '1px solid #DFE5EF',
     backgroundColor: colors.light.white,
@@ -115,7 +120,13 @@ export const lightTheme = {
     pieces: lightPieces,
     selectedSquare: '#14551e80',
     lastMove: '#9bc70069',
-    check: 'radial-gradient(ellipse at center,rgba(255,0,0,1) 0,rgba(231,0,0,1) 25%,rgba(169,0,0,0) 89%,rgba(158,0,0,0) 100%)'
+    check: 'radial-gradient(ellipse at center,rgba(255,0,0,1) 0,rgba(231,0,0,1) 25%,rgba(169,0,0,0) 89%,rgba(158,0,0,0) 100%)',
+    arrows: {
+      color1: '#15781B',
+      color2: '#882020',
+      color3: '#003088',
+      color4: '#e68f00',
+    }
   },
   chat: {
     messageBackground: colors.light.neutral,
@@ -133,7 +144,12 @@ export const lightTheme = {
 
 export const darkTheme = {
   colors: colors.dark,
-  text: dark,
+  text: {
+    baseColor :'#E2E8F0',
+    primaryColor: '#E2E8F0',
+    disabledColor: '#A4A8B5',
+    family: 'Lato, Open Sans, sans-serif',
+  },
   textInput: {
     border: '1px solid #5B196D',
     backgroundColor: '#21212B',
@@ -240,6 +256,12 @@ export const darkTheme = {
     selectedSquare: '#55145380',
     lastMove: '#2e0c2d80',
     check: 'radial-gradient(64.15% 64.15% at 50.28% 50.31%, rgba(206, 24, 107, 0.81) 39.58%, rgba(206, 24, 107, 0) 100%)',
+    arrows: {
+      color1: '#FF9416',
+      color2: '#E485BF',
+      color3: '#8354E9',
+      color4: '#3BC0C8',
+    }
   },
   chat: {
     messageBackground: 'linear-gradient(270deg, #1977F2 0%, #43D1BE 100%)',

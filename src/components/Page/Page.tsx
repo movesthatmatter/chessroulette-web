@@ -131,7 +131,7 @@ const useStyles = createUseStyles<CustomTheme>((theme) => ({
   },
 
   preFooter: {
-    background: theme.colors.neutralLightest,
+    // background: theme.colors.neutralLightest,
     paddingBottom: spacers.default,
     boxShadow: getBoxShadow(0, 12, 12, -12, 'rgba(16, 30, 115, 0.08)'),
     position: 'relative',

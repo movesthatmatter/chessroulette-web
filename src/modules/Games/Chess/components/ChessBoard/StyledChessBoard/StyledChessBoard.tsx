@@ -244,33 +244,43 @@ const useStyles = createUseStyles<CustomTheme>( theme => ({
       },
 
       '& .cg-wrap svg circle[stroke="#15781B"]' : {
-        stroke: '#FF9416  !important',
+        stroke: `${theme.board.arrows.color1} !important`,
       },
       '& .cg-wrap svg line[stroke="#15781B"]' : {
-        stroke: '#FF9416  !important',
+        stroke: `${theme.board.arrows.color1} !important`,
       },
       '& .cg-wrap svg marker[id="arrowhead-g"] path' : {
-        fill: '#FF9416 !important',
+        fill: `${theme.board.arrows.color1} !important`,
       },
 
       '& .cg-wrap svg circle[stroke="#882020"]' : {
-        stroke: '#E485BF  !important',
+        stroke: `${theme.board.arrows.color2} !important`,
       },
       '& .cg-wrap svg line[stroke="#882020"]' : {
-        stroke: '#E485BF  !important',
+        stroke: `${theme.board.arrows.color2} !important`,
       },
       '& .cg-wrap svg marker[id="arrowhead-r"] path' : {
-        fill: '#E485BF !important',
+        fill: `${theme.board.arrows.color2} !important`,
       },
 
       '& .cg-wrap svg circle[stroke="#003088"]' : {
-        stroke: '#8354E9  !important',
+        stroke: `${theme.board.arrows.color3} !important`,
       },
       '& .cg-wrap svg line[stroke="#003088"]' : {
-        stroke: '#8354E9  !important',
+        stroke: `${theme.board.arrows.color3} !important`,
       },
       '& .cg-wrap svg marker[id="arrowhead-b"] path' : {
-        fill: '#8354E9 !important',
+        fill: `${theme.board.arrows.color3} !important`,
+      },
+
+      '& .cg-wrap svg circle[stroke="#e68f00"]' : {
+        stroke: `${theme.board.arrows.color4} !important`,
+      },
+      '& .cg-wrap svg line[stroke="#e68f00"]' : {
+        stroke: `${theme.board.arrows.color4} !important`,
+      },
+      '& .cg-wrap svg marker[id="arrowhead-y"] path' : {
+        fill: `${theme.board.arrows.color4} !important`,
       },
 
       '& cg-board square.check' : {

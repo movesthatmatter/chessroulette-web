@@ -27,7 +27,7 @@ export const PlayerBox: React.FC<Props> = ({
   const cls = useStyles();
   return (
     <div className={cls.container} style={{display:'flex', flexDirection:'row'}}>
-      <div style={{display:'flex', justifyContent:'center'}}>
+      <div style={{display:'flex', justifyContent:'center', flex: 1}}>
         <PeerAvatar peerUserInfo={player.user} hasUserInfo />
         <div className={cls.playerInfo}>
           <Text className={cls.playerNameText}>{getUserDisplayName(player.user)}</Text>
