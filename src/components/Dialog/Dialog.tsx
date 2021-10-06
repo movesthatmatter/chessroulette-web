@@ -49,7 +49,7 @@ export const Dialog: React.FC<DialogProps> = ({
 
 const useStyles = createUseStyles<CustomTheme>((theme) => ({
   container: {
-    backgroundColor: theme.colors.modalBackground,
+    backgroundColor: theme.modal.background,
     ...softBorderRadius,
     padding: 0,
     position: 'relative',
@@ -69,6 +69,6 @@ const useStyles = createUseStyles<CustomTheme>((theme) => ({
   },
   background: {
     borderRadius: '8px !important',
-    backgroundColor: theme.colors.modalBackground,
+    backgroundColor: theme.modal.background,
   },
 }));

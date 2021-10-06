@@ -72,7 +72,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   },
   inputWrapper: {},
   textInput: {
-    color: theme.colors.text,
+    color: theme.text.baseColor,
     width: '100%',
     boxSizing: 'border-box',
     paddingLeft: '11px',

@@ -66,7 +66,7 @@ export const SelectInput: React.FC<Props> = ({
               ...prev,
               overflow: 'hidden',
               padding: 0,
-              color: colors.text,
+              color: theme.text.baseColor,
               backgroundColor: theme.textInput.backgroundColor,
             }),
             option: (prev, {isFocused}) => ({

@@ -50,7 +50,7 @@ export const Tabs: React.FC<TabsProps> = ({
                       color: colors.neutralDarker,
                     }
                   : {
-                      color: colors.text,
+                      color: theme.text.baseColor,
                     }
               }
             >

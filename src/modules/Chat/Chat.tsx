@@ -109,7 +109,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   },
   inputBox: {
     backgroundColor:theme.colors.white,
-    color: theme.colors.text,
+    color: theme.text.baseColor,
     flex: 1,
     fontSize: '13px',
     fontFamily: 'Lato, Open Sans, sans-serif',

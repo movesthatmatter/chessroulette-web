@@ -3,7 +3,6 @@ import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import ReactCodeInput from 'react-verification-code-input';
 import { CustomTheme, onlyMobile } from 'src/theme';
 import cx from 'classnames';
-import { fontFamily } from 'src/theme/text';
 import { console } from 'window-or-global';
 
 type Props = Omit<
@@ -62,9 +61,9 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
       
       '& input': {
         ...makeImportant({
-          fontFamily: fontFamily.family,
+          fontFamily: theme.text.family,
           backgroundColor: theme.textInput.backgroundColor,
-          color:theme.colors.text,
+          color:theme.text.baseColor,
           borderRadius: '8px',
           border: theme.textInput.border
         }),

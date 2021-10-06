@@ -54,7 +54,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     textAlign: 'center',
   },
   text:{
-    color:theme.colors.text
+    color:theme.text.baseColor
   },
   switch: {
     width:'15px',

@@ -25,6 +25,6 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     alignContent: 'center',
     alignItems: 'center',
     backgroundColor: theme.colors.background,
-    color: theme.colors.text,
+    color: theme.text.baseColor,
   },
 }));

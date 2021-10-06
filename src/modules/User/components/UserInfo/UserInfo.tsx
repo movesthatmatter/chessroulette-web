@@ -46,6 +46,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   },
   userNameText: {
     ...fonts.small2,
+    color:theme.text.baseColor,
   },
   spacer: {
     paddingLeft: spacers.small,

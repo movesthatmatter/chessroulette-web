@@ -163,7 +163,7 @@ const useStyles = createUseStyles<CustomTheme>((theme) => ({
     ...softBorderRadius,
     padding: 0,
     position: 'relative',
-    background: theme.colors.modalBackground,
+    background: theme.modal.background,
 
     ...makeImportant({
       borderRadius: '8px',

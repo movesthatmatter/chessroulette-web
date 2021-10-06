@@ -1,4 +1,3 @@
-import { dark, light } from './text';
 import { colors } from './colors';
 import { getBoxShadow } from './util';
 import hexToRgba from 'hex-to-rgba';
@@ -10,10 +9,13 @@ import {light as lightPieces, dark as darkPieces} from 'src/modules/Games/Chess/
 export const lightTheme = {
   colors: colors.light,
   text: {
-    baseColor :'#001B36',
-    primaryColor: '#25282B',
+    primaryColor :'#001B36',
+    baseColor: '#25282B',
     disabledColor: '#A4A8B5',
     family: 'Lato, Open Sans, sans-serif',
+  },
+  modal: {
+    background: '#fff'
   },
   textInput: {
     border: '1px solid #DFE5EF',
@@ -38,7 +40,7 @@ export const lightTheme = {
   selectInput: {
     borderColor: colors.light.neutral,
     backgroundColor: colors.light.white,
-    textColor: colors.light.text,
+    textColor: '#25282B',
     focused: '#DEEBFF',
   },
   button: {
@@ -164,6 +166,9 @@ export const darkTheme = {
     },
     boxShadow: ''
   },
+  modal: {
+    background: '#1C1C28'
+  },
   selectInput: {
     borderColor: '#5B196D',
     backgroundColor: '#21212B',
@@ -279,8 +284,6 @@ export const darkTheme = {
 
 export type CustomTheme = typeof lightTheme;
 
-// export * from './colors';
 export * from './effects';
 export * from './fonts';
-// export * from './text';
 export * from './mediaQueries';

@@ -172,7 +172,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     lineHeight: '1.5em',
     background: theme.textArea.backgroundColor,
     resize: 'vertical', // Limit the resizing only for vertical
-    color: theme.colors.text,
+    color: theme.text.baseColor,
     ...makeImportant({
       padding: 0,
       margin: 0,

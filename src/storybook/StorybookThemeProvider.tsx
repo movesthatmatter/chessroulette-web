@@ -20,7 +20,7 @@ export const StorybookThemeProvider: React.FC = (props) => {
           right: '0',
           bottom: '0',
           padding: '10px',
-          color: selectedTheme.colors.text,
+          color: selectedTheme.text.baseColor,
           fontFamily: 'Lato',
           ...fonts.body1,
         }}

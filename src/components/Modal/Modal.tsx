@@ -67,6 +67,6 @@ const useStyles = createUseStyles<CustomTheme>( theme => ({
     margin: '0 auto',
     padding: '20px',
     position: 'fixed',
-    color: theme.colors.text
+    color: theme.text.baseColor
   },
 }));

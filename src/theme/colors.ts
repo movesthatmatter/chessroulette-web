@@ -25,8 +25,6 @@ const dark = {
   black: '#F2F2F2',
   white: '#161626',
 
-  text: '#E2E8F0',
-
   neutral: '#DFE5EF',
   neutralLight: '#212036',
   neutralLighter: '#17181F',
@@ -40,9 +38,6 @@ const dark = {
   secondaryDark: '#D13D6C',
 
   background: '#161A2B',
-
-  modalBackground: '#1C1C28',
-
 }
 
  const light = {
@@ -72,8 +67,6 @@ const dark = {
   white: '#fff',
   black: '#25282B',
 
-  text: '#52575C',
-
   neutral: '#DFE5EF',
   neutralLight: '#DBDDE0',
   neutralLighter: '#E6ECF5',
@@ -87,8 +80,6 @@ const dark = {
   secondaryDark: '#CACCCF',
 
   background: '#F6F8FB',
-
-  modalBackground: '#fff',
  }
 
 export const colors = {
