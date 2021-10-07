@@ -78,7 +78,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
                       withBadge={{
                         text: 'New',
                         side: 'right',
-                        color: 'negativeDarker',
+                        color: theme.badge.color
                       }}
                       onClick={() => {
                         if (!roomConsumer) {

@@ -35,7 +35,7 @@ export const TextArea: React.FC<Props> = ({ className, label, value, ...props })
           cls.inputWrapper,
           isFocused && cls.inputWrapperFocused,
           props.readOnly && cls.inputWrapperReadonly,
-          isInvalid && cls.inputWrapperError
+          isInvalid &&  cls.inputWrapperError
         )}
       >
         <div className={cls.topPadding} />

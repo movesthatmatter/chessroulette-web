@@ -9,6 +9,10 @@ export const floatingShadowDarkMode: CSSProperties = {
   boxShadow: '0 12px 26px rgba(0, 0, 0)',
 }
 
+export const textShadowDarkMode: CSSProperties = {
+  textShadow: '0 0 14px black',
+}
+
 export const softBorderRadius: CSSProperties = {
   borderRadius: '8px',
 };
@@ -30,4 +34,5 @@ export const effects = {
   softBorderRadius,
   floatingShadow,
   softOutline,
+  textShadowDarkMode
 }

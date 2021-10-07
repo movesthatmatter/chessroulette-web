@@ -79,7 +79,7 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
               full
               onClick={() => setShowImportPanel(true)}
               className={cls.button}
-              icon={Upload}
+              //icon={Upload}
             />
           </div>
         </>

@@ -100,7 +100,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   link: {
     ...fonts.small1,
     textDecoration: 'none',
-    color: theme.colors.neutralDarkest,
+    color: theme.text.baseColor,
     fontFamily: 'Lato, Open Sans, sans serif',
     fontSize: spacers.default,
     textAlign: 'center',
@@ -126,7 +126,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   nestedLink: {
     ...fonts.small1,
     display: 'block',
-    color: theme.colors.neutralDarkest,
+    color: theme.text.baseColor,
     fontFamily: 'Lato, Open Sans, sans serif',
     fontSize: spacers.default,
     cursor: 'pointer',
@@ -134,8 +134,8 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     paddingTop: spacers.small,
 
     '&:hover': {
-      fontWeight: 'bold',
-      color: theme.text.primaryColor,
+      //fontWeight: 'bold',
+      color: theme.colors.primary,
     },
   },
   disabledNestedLink: {

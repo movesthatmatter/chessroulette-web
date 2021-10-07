@@ -3,7 +3,7 @@ import { createUseStyles, CSSProperties, NestedCSSElement } from 'src/lib/jss';
 import { GamesArchiveProvider } from 'src/modules/GamesArchive';
 import { CompactArchivedGame } from 'src/modules/GamesArchive/components/ArchivedGame/CompactArchivedGame';
 import { spacers } from 'src/theme/spacers';
-import { CustomTheme, floatingShadow, softBorderRadius } from 'src/theme';
+import { CustomTheme, floatingShadow, textShadowDarkMode, softBorderRadius } from 'src/theme';
 import { GameRecord } from 'dstnd-io';
 import { Text } from 'src/components/Text';
 import { renderMatch } from 'src/lib/renderMatch';
@@ -11,6 +11,7 @@ import Loader from 'react-loaders';
 import { FloatingBox } from 'src/components/FloatingBox';
 import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton } from 'src/services/Authentication/widgets';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = {
   onSelect: (g: GameRecord) => void;
@@ -19,6 +20,7 @@ type Props = {
 export const MyGamesArchive: React.FC<Props> = (props) => {
   const cls = useStyles();
   const auth = useAuthentication();
+  const {themeName} = useColorTheme();
 
   if (auth.authenticationType !== 'user') {
     return (
@@ -48,7 +50,7 @@ export const MyGamesArchive: React.FC<Props> = (props) => {
                 <div className={cls.hovered}>
                   <div className={cls.hoveredBkg} />
                   <div className={cls.hoveredContent} onClick={() => props.onSelect(game)}>
-                    <Text size="subtitle1">Analyze</Text>
+                    <Text size='subtitle1' style={themeName === 'dark' ? {...textShadowDarkMode}: {}}>Analyze</Text>
                   </div>
                 </div>
               </div>
@@ -104,8 +106,8 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     top: 0,
     right: 0,
     bottom: 0,
-    background: theme.colors.neutralDarkest,
-    opacity: 0.5,
+    background: theme.colors.neutralLightest,
+    opacity: 0.70,
     zIndex: 98,
   },
   hoveredContent: {
@@ -121,7 +123,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     bottom: 0,
     zIndex: 99,
 
-    color: theme.colors.white,
+    color: theme.colors.black,
   },
   loader: {
     display: 'flex',

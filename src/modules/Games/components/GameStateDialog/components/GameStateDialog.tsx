@@ -239,7 +239,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           buttons={[
             {
               label: 'Cancel',
-              type: 'secondary',
+              type: 'negative',
               onClick: () => gameActions.onOfferCanceled(),
             },
           ]}
@@ -272,12 +272,12 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           buttons={[
             {
               label: 'Deny',
-              type: 'secondary',
+              type: 'negative',
               onClick: () => gameActions.onChallengeDenied(),
             },
             {
               label: 'Accept',
-              type: 'primary',
+              type: 'positive',
               onClick: () => gameActions.onChallengeAccepted(),
             },
           ]}
@@ -309,12 +309,12 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           buttons={[
             {
               label: 'Deny',
-              type: 'secondary',
+              type: 'negative',
               onClick: () => gameActions.onRematchDenied(),
             },
             {
               label: 'Accept',
-              type: 'primary',
+              type: 'positive',
               onClick: () => gameActions.onRematchAccepted(),
             },
           ]}
@@ -346,7 +346,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           buttons={[
             {
               label: 'Deny',
-              type: 'secondary',
+              type: 'negative',
               onClick: () => gameActions.onDrawDenied(),
             },
             {
@@ -388,7 +388,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     alignItems: 'center',
   },
   dialog: {
-    ...floatingShadow,
+    boxShadow: theme.dialog.boxShadow,
     ...softBorderRadius,
     padding: 0,
     position: 'relative',

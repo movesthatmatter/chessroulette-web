@@ -14,6 +14,7 @@ import { Button } from 'src/components/Button';
 import { spacers } from 'src/theme/spacers';
 import { CreateChallengeButton } from '../components/CreateChallengeButton';
 import { SwitchActivityWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/SwitchActivityWidgetRoomConsumer';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = ActivityCommonProps & {
   deviceSize: DeviceSize;
@@ -23,6 +24,7 @@ export const NoActivity: React.FC<Props> = (props) => {
   const cls = useStyles();
   const roomConsumer = useRoomConsumer();
   const [acceptChallengeDialogDismissed, setAccepdChallengeDialogDismissed] = useState(false);
+  const {theme} = useColorTheme();
 
   const pendingChallenge = roomConsumer?.room?.pendingChallenges
     ? Object.values(roomConsumer.room.pendingChallenges)[0]
@@ -92,7 +94,7 @@ export const NoActivity: React.FC<Props> = (props) => {
                     withBadge={{
                       text: 'New',
                       side: 'right',
-                      color: 'negativeDarker',
+                      color: theme.badge.color
                     }}
                   />
                   {!pendingChallenge && <CreateChallengeButton label="Create Challenge" full />}

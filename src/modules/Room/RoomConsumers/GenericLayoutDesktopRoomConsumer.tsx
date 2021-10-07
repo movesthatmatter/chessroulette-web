@@ -77,6 +77,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
                   />
                 </div>
                 <DarkModeSwitch/>
+                <div style={{width:'20px'}}/>
                 <UserMenu reversed showPeerStatus />
               </div>
             </div>
@@ -188,6 +189,6 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   linksContainer: {
     display: 'flex',
     alignItems: 'center',
-    flex: 1,
+    flex: 3,
   },
 }));

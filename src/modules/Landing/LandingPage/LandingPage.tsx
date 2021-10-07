@@ -1,8 +1,8 @@
 import React from 'react';
 import { Page } from 'src/components/Page';
 import chessBackground from './assets/chess_icons.png';
-import darkChessBackground from './assets/darksplash.svg';
-import { createUseStyles } from 'src/lib/jss';
+import darkChessBackground from './assets/dark_splash.svg';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile, CustomTheme } from 'src/theme';
 import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
@@ -22,7 +22,7 @@ export const LandingPage: React.FC<Props> = () => {
   useBodyClass([cls.indexBackground]);
 
   return (
-    <Page name="Home" contentClassName={cls.pageContent}>
+    <Page name="Home" contentClassName={cls.pageContent} containerClassname={cls.pageContainer}>
       <div className={cls.containerLanding}>
         <div className={cls.inner}>
           <div
@@ -74,7 +74,7 @@ export const LandingPage: React.FC<Props> = () => {
                 type="primary"
                 withBadge={{
                   text: 'New',
-                  color: 'negativeDarker',
+                  color: theme.badge.color,
                   side: 'right',
 
                 }}
@@ -101,6 +101,11 @@ const desktopBreakPoint = 769;
 const useStyles = createUseStyles<CustomTheme>(theme => ({
   indexBackground: {
     backgroundColor: theme.colors.background
+  },
+  pageContainer: {
+    ...makeImportant({
+      ...theme.landingPage
+    })
   },
   containerLanding: {
     display: 'flex',

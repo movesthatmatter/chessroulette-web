@@ -224,7 +224,7 @@ const positive = (theme: CustomTheme): CSSProperties => ({
 const negative = (theme: CustomTheme): CSSProperties => ({
   background: theme.button.backgrounds.negative,
   ...buttonEffects(theme).negativeButtonShadow,
-  color:theme.button.color,
+  color:theme.colors.white,
   '&:active': {
     ...({
       '& $iconWrapper': {

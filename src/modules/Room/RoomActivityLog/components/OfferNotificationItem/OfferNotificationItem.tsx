@@ -199,7 +199,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     marginBottom: spacers.large,
   },
   attention: {
-    borderRight: `3px solid ${theme.colors.negativeLight}`,
+    borderRight: `3px solid ${theme.colors.neutralDark}`,
     paddingRight: spacers.default,
   },
   avatarLeft: {
@@ -214,6 +214,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     width: '30px',
     ...makeImportant({
       marginBottom: 0,
+      borderColor: theme.button.icon.borderColor
     }),
   },
   attentionButton: {
@@ -221,6 +222,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     width: '30px',
     ...makeImportant({
       marginBottom: 0,
+      borderColor: theme.button.icon.borderColor
     }),
   },
   loader: {

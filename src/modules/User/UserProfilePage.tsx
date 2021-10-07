@@ -90,7 +90,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     }),
   },
   menuContainer: {
-    borderRight: `1px solid ${theme.colors.neutral}`,
+    borderRight: `1px solid ${theme.colors.neutralLight}`,
     flex: 0.25,
     display: 'flex',
     flexDirection: 'column',
@@ -110,13 +110,13 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     color: theme.colors.neutralDarkest,
 
     '&:hover': {
-      borderRight: `3px solid ${theme.text.primaryColor}`,
-      color: theme.text.primaryColor,
-      fontWeight: 'bold',
+      //borderRight: `3px solid ${theme.text.primaryColor}`,
+      color: theme.colors.primary,
+      //fontWeight: 'bold',
     },
   },
   activeMenuLink: {
-    borderRight: `3px solid ${theme.text.primaryColor}`,
+    borderRight: `3px solid ${theme.colors.primary}`,
     color: theme.text.primaryColor,
     fontWeight: 'bold',
   },

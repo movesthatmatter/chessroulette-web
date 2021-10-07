@@ -56,21 +56,25 @@ export const GameActions: React.FC<Props> = ({
       return (
         <>
           {(offer?.type === 'rematch' || offer?.type === 'challenge') &&
-          offer?.content.byUser.id === participants.me.userId ? (
-            <Button
-              label={offer.type === 'rematch' ? 'Cancel Rematch' : 'Cancel Challenge'}
-              type="primary"
-              clear
-              className={cls.gameActionButton}
-              onClick={() => {
-                actions.onOfferCanceled();
-                onActionTaken('onOfferCanceled');
-              }}
-              style={{
-                marginTop: spacers.default,
-              }}
-            />
-          ) : (
+
+          //NOTE - This removes the Confirmation Button because we already have the option in the GameStateDialog
+          //
+
+          // offer?.content.byUser.id === participants.me.userId ? (
+          //   <Button
+          //     label={offer.type === 'rematch' ? 'Cancel Rematch' : 'Cancel Challenge'}
+          //     type="primary"
+          //     clear
+          //     className={cls.gameActionButton}
+          //     onClick={() => {
+          //       actions.onOfferCanceled();
+          //       onActionTaken('onOfferCanceled');
+          //     }}
+          //     style={{
+          //       marginTop: spacers.default,
+          //     }}
+          //   />
+           (
             <ConfirmNewGameAction
               // This is needed in order to reset the state if the Dialog already opened
               //  but another offer just came in. This ensures the client is not able to send
@@ -133,7 +137,7 @@ export const GameActions: React.FC<Props> = ({
           {offer?.type === 'challenge' && offer?.content.byUser.id === participants.me.userId ? (
             <Button
               label="Cancel"
-              type="primary"
+              type="negative"
               clear
               className={cls.gameActionButton}
               onClick={() => {
@@ -163,7 +167,7 @@ export const GameActions: React.FC<Props> = ({
               }}
               submitButton={{
                 label: 'Submit',
-                type: 'primary',
+                type: 'positive',
               }}
               onSubmit={({ gameSpecs }) => {
                 actions.onOfferChallenge({ gameSpecs, toUserId: participants.opponent.userId });
@@ -207,7 +211,7 @@ export const GameActions: React.FC<Props> = ({
           {offer?.type === 'draw' && offer?.content.byUser.id === participants.me.userId ? (
             <Button
               label="Cancel Draw Offer"
-              type="primary"
+              type="negative"
               clear
               className={cls.gameActionButton}
               onClick={() => {

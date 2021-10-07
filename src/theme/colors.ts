@@ -29,9 +29,9 @@ const dark = {
   neutralLight: '#212036',
   neutralLighter: '#17181F',
   neutralLightest: '#161618',
-  neutralDark: '#E2E8F0',
-  neutralDarker: '#DBDDE0',
-  neutralDarkest: '#E6ECF5',
+  neutralDarker: '#E2E8F0',
+  neutralDarkest: '#DBDDE0',
+  neutralDark: '#2D3247',
 
   secondary: '#E34E89',
   secondaryLight: '#FCBFD5',

@@ -248,8 +248,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     textAlign: 'center',
 
     '&:hover': {
-      borderBottom: `3px solid ${theme.text.primaryColor}`,
-      color: theme.text.primaryColor,
+      ...theme.links.hover,
     },
   },
   activeLink: {

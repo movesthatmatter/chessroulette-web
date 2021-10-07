@@ -133,7 +133,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
 
     zIndex: 999,
     background: theme.colors.white,
-    ...floatingShadow,
+    ...theme.floatingShadow,
     ...hardBorderRadius,
   },
   openedMenuLabelWrapper: {
@@ -171,8 +171,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     textAlign: 'right',
 
     '&:hover': {
-      borderBottom: `3px solid ${theme.text.primaryColor}`,
-      color: theme.text.primaryColor,
+     ...theme.links.hover
     },
   },
   caretIcon: {

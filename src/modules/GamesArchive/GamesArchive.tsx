@@ -63,6 +63,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
+    color: theme.text.primaryColor
   },
   gameContainerWrapper: {
     flex: 1,

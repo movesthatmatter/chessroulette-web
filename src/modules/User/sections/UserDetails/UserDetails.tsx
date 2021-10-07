@@ -9,11 +9,10 @@ import { updateUserAction } from 'src/services/Authentication/actions';
 import { CountryCode, RegisteredUserRecord } from 'dstnd-io';
 import { useDispatch } from 'react-redux';
 import { Avatar } from 'src/components/Avatar';
-import { Hr } from 'src/components/Hr';
 import { GetCountries } from 'src/services/Location';
 import { SelectInput } from 'src/components/Input/SelectInput';
-import { onlyDesktop, onlyMobile } from 'src/theme';
-import { SearchBar } from 'src/components/SearchBar/SearchBar';
+import { CustomTheme, onlyDesktop, onlyMobile } from 'src/theme';
+import { Text } from 'src/components/Text';
 
 type Props = {
   user: RegisteredUserRecord;
@@ -179,12 +178,12 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>( theme => ({
   container: {
     height: '100%',
     // display: 'flex',
     // flexDirection: 'row',
-
+    color: theme.text.baseColor,
     ...onlyDesktop({
       width: '50%',
     }),
@@ -211,4 +210,4 @@ const useStyles = createUseStyles({
   },
   inputWrapper: {},
   input: {},
-});
+}));

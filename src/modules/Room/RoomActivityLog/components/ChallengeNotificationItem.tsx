@@ -215,8 +215,8 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     width: '30px',
     ...makeImportant({
       marginBottom: 0,
+      borderColor: theme.button.icon.borderColor,
     }),
-    borderColor: theme.button.icon.borderColor,
   },
   challengeButton: {
     marginBottom: 0,

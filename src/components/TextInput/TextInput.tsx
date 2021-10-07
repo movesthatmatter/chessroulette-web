@@ -80,6 +80,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
       '&:read-only': {
         ...makeImportant({
           background: theme.textInput.backgroundColor,
+          ...theme.textInput.readOnly,
         }),
         '&:focus': {
           boxShadow: 'none',

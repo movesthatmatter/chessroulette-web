@@ -28,7 +28,7 @@ export const Badge: React.FC<BadgeProps> = ({ textSize = 'small2', ...props }) =
         className={cx(cls.text, props.textClassName)}
         style={{
           backgroundColor: colors[props.color],
-          boxShadow: getBoxShadow(0, 2, 4, 0, hexToRgba(colors[props.color], 0.16)),
+          //boxShadow: getBoxShadow(0, 2, 4, 0, hexToRgba(colors[props.color], 0.16)),
           color: themeName === 'light' ? 'white' : theme.text.baseColor
         }}
       >

@@ -8,10 +8,18 @@ import {light as lightPieces, dark as darkPieces} from 'src/modules/Games/Chess/
 
 export const lightTheme = {
   colors: colors.light,
+  landingPage: {
+    backgroundColor: colors.light.background,
+    backgroundImage: ''
+  },
+  badge: {
+    color: 'black' as keyof typeof colors.light
+  },
   text: {
     primaryColor :'#001B36',
     baseColor: '#25282B',
     disabledColor: '#A4A8B5',
+    subtle: '#A4A8B5',
     family: 'Lato, Open Sans, sans-serif',
   },
   modal: {
@@ -20,7 +28,10 @@ export const lightTheme = {
   textInput: {
     border: '1px solid #DFE5EF',
     backgroundColor: colors.light.white,
-    boxShadow : getBoxShadow(0, 12, 26, 0, hexToRgba(colors.light.negative, 0.08))
+    boxShadow : getBoxShadow(0, 12, 26, 0, hexToRgba(colors.light.negative, 0.08)),
+    readOnly: {
+      border: '1px solid #fff',
+    }
   },
   textArea: {
     backgroundColor: colors.light.white,
@@ -141,21 +152,47 @@ export const lightTheme = {
   },
   analysis : {
     historyPanelColor: colors.light.primary
+  },
+  floatingShadow: {
+    boxShadow: '0 12px 26px rgba(16, 30, 115, 0.08)',
+  },
+  dialog: {
+    boxShadow: '0 12px 26px rgb(16 30 115 / 8%)'
+  },
+  borders: {
+    border: `1px solid ${colors.light.neutral}`
+  },
+  depthBackground: {
+    backgroundColor: colors.light.white
+  },
+  links: {
+    hover: {
+      borderBottom: `3px solid #001B36`,
+      color: '#001B36',
+    }
   }
 };
 
 export const darkTheme = {
   colors: colors.dark,
+  landingPage : {
+    backgroundColor: '#27104e',
+    backgroundImage: 'linear-gradient(19deg, #27104e 0%, #161a2b 25%)',
+  },
   text: {
     baseColor :'#E2E8F0',
-    primaryColor: '#E2E8F0',
+    primaryColor: '#cacacb',
     disabledColor: '#A4A8B5',
+    subtle: '#787878',
     family: 'Lato, Open Sans, sans-serif',
   },
   textInput: {
     border: '1px solid #5B196D',
     backgroundColor: '#21212B',
-    boxShadow: ''
+    boxShadow: '',
+    readOnly: {
+      border: '1px solid #1B1C30'
+    }
   },
   textArea: {
     backgroundColor: '#21212B',
@@ -165,6 +202,9 @@ export const darkTheme = {
       borderWidth: 0,
     },
     boxShadow: ''
+  },
+  badge:{
+    color: 'white' as keyof typeof colors.dark
   },
   modal: {
     background: '#1C1C28'
@@ -184,10 +224,10 @@ export const darkTheme = {
   button: {
     backgrounds: {
       primary : colors.dark.primary,
-      secondary : 'linear-gradient(270deg, #D527A7 0%, #B515DD 100%)',
+      secondary: 'linear-gradient(270deg, #D932D1 0%, #4F8FC7 100%)',
       attention: colors.dark.attention,
-      positive: 'linear-gradient(270deg, #D932D1 0%, #4F8FC7 100%)',
-      negative: colors.dark.negative,
+      positive : 'linear-gradient(270deg, #D527A7 0%, #B515DD 100%)',
+      negative: colors.dark.negativeLightest,
       neutral: '##DBDDE0',
     },
     icon: {
@@ -277,8 +317,26 @@ export const darkTheme = {
     border: '',
     boxShadow: ''
   },
+  dialog: {
+    boxShadow:'0 12px 26px rgb(0 0 0 / 35%)'
+  },
+  borders: {
+    border: 'none'
+  },
+  depthBackground: {
+    backgroundColor: colors.dark.white
+  },
   analysis: {
     historyPanelColor: colors.dark.positiveDarker,
+  },
+  floatingShadow: {
+    boxShadow: ''
+  },
+  links: {
+    hover: {
+      color: colors.dark.primary,
+      borderBottom: 'none'
+    }
   }
 };
 

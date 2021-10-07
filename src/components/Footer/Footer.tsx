@@ -44,15 +44,19 @@ export const Footer: React.FC<Props> = () => {
                 </AnchorLink>
               </div>
             </div>
-            <div>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+              <div className={cls.linkContainerSpacer}>
               <AnchorLink
                 href="https://gabrielctroia.medium.com/meet-chessroulette-org-a-quarantine-project-e4108f05db39"
                 className={cls.link}
+                target='blank'
               >
                 <Text size="body2" className={cls.text}>
                   About
                 </Text>
               </AnchorLink>
+              </div>
+              <div className={cls.linkContainerSpacer}>
               <AnchorLink
                 href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage"
                 className={cls.link}
@@ -61,16 +65,21 @@ export const Footer: React.FC<Props> = () => {
                   Get In Touch
                 </Text>
               </AnchorLink>
+              </div>
+              <div className={cls.linkContainerSpacer}>
               <Link to="/privacy-policy" className={cls.link}>
                 <Text size="body2" className={cls.text}>
                   Privacy Policy
                 </Text>
               </Link>
+              </div>
+              <div className={cls.linkContainerSpacer}>
               <Link to="/tos" className={cls.link}>
                 <Text size="body2" className={cls.text}>
                   Terms of Service
                 </Text>
               </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -83,7 +92,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   topContainer: {
     background: theme.colors.neutralLightest,
     paddingBottom: '8px',
-    ...effects.floatingShadow,
+    ...theme.floatingShadow,
     position: 'relative',
   },
   centralizeContent: {
@@ -123,13 +132,11 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     textDecoration: 'none',
 
     '&:hover': {
-      textDecoration: 'underline',
+      borderBottom: `2px solid ${theme.colors.neutralDarkest}`
     },
-
-    paddingLeft: spacers.larger,
   },
   text: {
-    color: theme.colors.neutralDarkest,
+    color: theme.text.subtle,
   },
   socialLink: {
     verticalAlign: 'center',
@@ -149,7 +156,9 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   socialLinkText: {
     color: theme.text.baseColor,
   },
-
+  linkContainerSpacer: {
+    paddingLeft: spacers.larger,
+  },
   row: {
     paddingTop: spacers.default,
     display: 'flex',

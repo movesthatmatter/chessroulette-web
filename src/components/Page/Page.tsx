@@ -11,6 +11,7 @@ import { Text } from '../Text';
 import { getBoxShadow } from 'src/theme/util';
 import { useTheme } from 'react-jss';
 import {CustomTheme} from 'src/theme';
+import { useBodyClass } from 'src/lib/hooks/useBodyClass';
 
 export type PageProps = {
   // This name will be used on analytics
@@ -18,7 +19,7 @@ export type PageProps = {
 
   contentClassName?: string;
   footerClassName?: string;
-
+  containerClassname? :string;
   logoAsLink?: boolean;
   title?: string;
 } & (
@@ -34,7 +35,7 @@ export type PageProps = {
 
 export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
   const cls = useStyles();
-
+  useBodyClass([cls.indexBackground])
   useEffect(() => {
     if (props.name) {
       Events.trackPageView(props.name);
@@ -43,7 +44,7 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
 
   return (
     <div className={cls.root}>
-      <div className={cls.container}>
+      <div className={`${cls.container} ${props.containerClassname}`}>
         <div className={`${cls.content} ${props.contentClassName}`}>
           <div className={cls.top}>
             <div className={`${cls.topMain} ${cls.responsive}`}>
@@ -86,9 +87,13 @@ const useStyles = createUseStyles<CustomTheme>((theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  indexBackground: {
+    backgroundColor: theme.colors.background
+  },
   container: {
     flex: '1 0',
-    background: theme.colors.background
+    background: theme.colors.background,
+    color: theme.text.baseColor,
   },
   footer: {
     flexShrink: 0,

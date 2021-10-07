@@ -116,13 +116,13 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     paddingTop: spacers.small,
 
     '&:hover': {
-      fontWeight: 'bold',
-      color: theme.text.primaryColor,
+      //fontWeight: 'bold',
+      color: theme.colors.primaryHover,
     },
   },
   disabledNestedLink: {
     cursor: 'auto',
-    color: theme.colors.neutralDarker,
+    color: theme.text.disabledColor,
     '&:hover': {
       fontWeight: 'normal',
       color: theme.text.disabledColor,
