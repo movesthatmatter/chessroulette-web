@@ -1,5 +1,5 @@
 import React from 'react';
-import { lightTheme } from 'src/theme';
+import { themes } from 'src/theme';
 import { BrowserRouter } from 'react-router-dom';
 import { StorybookReduxProvider } from './StorybookReduxProvider';
 import { UserRecordMocker } from 'src/mocks/records';
@@ -34,7 +34,7 @@ export const StorybookBaseProvider: React.FunctionComponent<Props> = ({
   const withRedux = withAuthentication || props.withRedux;
 
   const base = (
-    <ThemeProvider theme={lightTheme}>
+    <ThemeProvider theme={themes.lightDefault}>
       <BrowserRouter>{children}</BrowserRouter>
     </ThemeProvider>
   );

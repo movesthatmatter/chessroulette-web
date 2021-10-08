@@ -127,14 +127,14 @@ export type MutunachiProps = React.DetailedHTMLProps<
 
 export const Mutunachi: React.FC<MutunachiProps> = ({ mid, className, random, avatar, ...imgProps }) => {
   const cls = useStyles();
-  const { themeName } = useColorTheme();
+  const { theme } = useColorTheme();
   const src = avatar ? 
     (mid ? map[mid] : map[String(getRandomInt(0,18))])
     : mid
-    ? themeName === 'light'
+    ? theme.name === 'lightDefault'
       ? map[mid]
       : mapWhite[mid]
-    : themeName === 'light'
+    : theme.name === 'darkDefault'
     ? map[String(getRandomInt(0, 18))]
     : mapWhite[String(getRandomInt(0, 18))];
 

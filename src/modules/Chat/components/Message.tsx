@@ -79,10 +79,15 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     display: 'inline-block',
   },
   myMessageContent: {
-    background: theme.chat.messageBackground,
     borderBottomRightRadius: 0,
     marginLeft: 'auto',
-    color: theme.chat.myMessageColor
+    ...(theme.name === 'lightDefault' ? {
+      background: theme.colors.neutral,
+      color : '#001b36',
+    }: {
+      background: 'linear-gradient(270deg, #1977F2 0%, #43D1BE 100%)',
+      color: theme.colors.white
+    })
   },
   otherMessageContent: {
     marginRight: '30px',

@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Layer } from 'grommet';
 import { AppsRounded } from 'grommet-icons';
-import { floatingShadow, lightTheme, softBorderRadius } from 'src/theme';
+import { floatingShadow, softBorderRadius } from 'src/theme';
 import { GameActions } from 'src/modules/Games/GameActions';
 import { Text } from 'src/components/Text';
 import { spacers } from 'src/theme/spacers';
 import { RoomPlayActivityWithGameAndParticipating } from '../../RoomActivity/activities/PlayActivity';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = {
   activity: RoomPlayActivityWithGameAndParticipating;
@@ -15,9 +16,10 @@ type Props = {
 export const MobileGameActionsWidget: React.FC<Props> = ({ activity }) => {
   const cls = useStyles();
   const [show, setShow] = useState(false);
+  const {theme} = useColorTheme();
   return (
     <>
-      <AppsRounded color={lightTheme.colors.white} onClick={() => setShow(true)} className={cls.button} />
+      <AppsRounded color={theme.colors.white} onClick={() => setShow(true)} className={cls.button} />
       {show && (
         <Layer
           responsive={false}

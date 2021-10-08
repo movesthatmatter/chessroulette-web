@@ -72,7 +72,11 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   mask: {
     margin: '0 auto',
     overflow: 'hidden',
-    background: theme.mutunachi.containerColor,
+    ...(theme.name === 'lightDefault' ? {
+      background: `linear-gradient(top, ${theme.colors.primaryLight} 100%, #fff 0%)`
+    }: {
+      backgound: '#7774CA'
+    }),
     position: 'relative',
     borderRadius: '50%',
     marginBottom: '16px',

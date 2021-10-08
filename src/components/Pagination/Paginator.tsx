@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { CustomTheme, darkTheme, lightTheme, softBorderRadius } from 'src/theme';
+import { CustomTheme, softBorderRadius } from 'src/theme';
 import { Text } from '../Text';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

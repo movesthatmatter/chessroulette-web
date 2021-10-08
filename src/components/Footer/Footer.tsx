@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
-import { CustomTheme, darkTheme, effects, lightTheme, onlyMobile } from 'src/theme';
+import { CustomTheme, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Text } from '../Text';
 import { Link } from 'react-router-dom';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
-import { CustomTheme, darkTheme, fonts, lightTheme } from 'src/theme';
+import { CustomTheme, fonts } from 'src/theme';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { spacers } from 'src/theme/spacers';

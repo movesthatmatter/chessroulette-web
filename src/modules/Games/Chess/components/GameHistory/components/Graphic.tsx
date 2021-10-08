@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { darkTheme, lightTheme, softBorderRadius } from 'src/theme';
+import { softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { getColor } from './util';

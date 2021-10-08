@@ -20,7 +20,7 @@ type Props = {
 export const MyGamesArchive: React.FC<Props> = (props) => {
   const cls = useStyles();
   const auth = useAuthentication();
-  const {themeName} = useColorTheme();
+  const {theme} = useColorTheme();
 
   if (auth.authenticationType !== 'user') {
     return (
@@ -50,7 +50,7 @@ export const MyGamesArchive: React.FC<Props> = (props) => {
                 <div className={cls.hovered}>
                   <div className={cls.hoveredBkg} />
                   <div className={cls.hoveredContent} onClick={() => props.onSelect(game)}>
-                    <Text size='subtitle1' style={themeName === 'dark' ? {...textShadowDarkMode}: {}}>Analyze</Text>
+                    <Text size='subtitle1' style={theme.name === 'darkDefault' ? {...textShadowDarkMode}: {}}>Analyze</Text>
                   </div>
                 </div>
               </div>

@@ -6,8 +6,8 @@ import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { getBoxShadow } from 'src/theme/util';
 import hexToRgba from 'hex-to-rgba';
 import cx from 'classnames';
-import { darkTheme, lightTheme } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { themes } from 'src/theme';
 
 export type AvatarProps = GAvatarProps & {
   className?: string;
@@ -27,13 +27,13 @@ export type AvatarProps = GAvatarProps & {
   );
 
 const bkgColors = [
- lightTheme.colors.negativeLight,
- lightTheme.colors.positiveLight,
- lightTheme.colors.primaryLight,
- lightTheme.colors.attentionLight,
+ themes.lightDefault.colors.negativeLight,
+ themes.lightDefault.colors.positiveLight,
+ themes.lightDefault.colors.primaryLight,
+ themes.lightDefault.colors.attentionLight,
 
   // Better to have 5 or odd number
-  lightTheme.colors.attentionLight,
+  themes.lightDefault.colors.attentionLight,
 ];
 
 const getColor = (mid: number) => bkgColors[mid % bkgColors.length];
@@ -50,8 +50,8 @@ export const Avatar: React.FC<AvatarProps> = ({
   const cls = useStyles();
 
   const bkgColor =
-    props.mutunachiId && !monochrome ? getColor(props.mutunachiId) : lightTheme.colors.neutralLighter;
-  const {themeName} = useColorTheme();
+    props.mutunachiId && !monochrome ? getColor(props.mutunachiId) : themes.lightDefault.colors.neutralLighter;
+  const {theme} = useColorTheme();
   return (
     <div>
       <div
@@ -59,8 +59,8 @@ export const Avatar: React.FC<AvatarProps> = ({
         style={{
           width: size,
           background: bkgColor,
-          border: `2px solid ${darkBG ? darkTheme.colors.neutralLightest : lightTheme.colors.neutralLightest}`,
-          ... (themeName === 'light' && {boxShadow: getBoxShadow(0, 2, 16, 0, hexToRgba(bkgColor, 0.3))}),
+          border: `2px solid ${darkBG ? themes.darkDefault.colors.neutralLightest : themes.lightDefault.colors.neutralLightest}`,
+          ... (theme.name === 'lightDefault' && {boxShadow: getBoxShadow(0, 2, 16, 0, hexToRgba(bkgColor, 0.3))}),
         }}
       >
         <AspectRatio aspectRatio={1}>

@@ -38,9 +38,9 @@ const dark = {
   secondaryDark: '#D13D6C',
 
   background: '#161A2B',
-}
+};
 
- const light = {
+const light = {
   primary: '#5A20FE',
   primaryHover: '#74A3FE',
   primaryLight: '#A9C1FD',
@@ -80,7 +80,12 @@ const dark = {
   secondaryDark: '#CACCCF',
 
   background: '#F6F8FB',
- }
+};
+
+export type ColorPalette = keyof typeof light;
+export type Colors = {
+  [k in ColorPalette]: string;
+};
 
 export const colors = {
   light,

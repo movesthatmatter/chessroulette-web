@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { CustomTheme, darkTheme, floatingShadow, hideOnMobile, lightTheme, onlyDesktop, softBorderRadius } from 'src/theme';
+import { CustomTheme, hideOnMobile, onlyDesktop, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { Avatar } from 'src/components/Avatar';
@@ -32,7 +32,7 @@ export const CompactArchivedGame: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
   const avatarSize = '28px';
-  const {theme, themeName} = useColorTheme();
+  const {theme} = useColorTheme();
   const colors = theme.colors;
 
   const myUserResult = myUserId ? getMyResult(game, myUserId) : undefined;
@@ -104,8 +104,8 @@ export const CompactArchivedGame: React.FC<Props> = ({
           );
         })()}
         <div className={cls.middleSide}>
-          {themeName === 'light' && <Emoji symbol="⚡" className={cls.vsEmoji} />}
-          {themeName === 'dark' && <FontAwesomeIcon icon={faBolt} color='white' size='sm'/>}
+          {theme.name === 'lightDefault' && <Emoji symbol="⚡" className={cls.vsEmoji} />}
+          {theme.name === 'darkDefault' && <FontAwesomeIcon icon={faBolt} color='white' size='sm'/>}
         </div>
         <div className={cx(cls.side, cls.rightSide)}>
           {(() => {

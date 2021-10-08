@@ -33,7 +33,7 @@ type Props = {
 export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   const cls = useStyles();
   const windowWidth = useWindowWidth();
-  const {theme, themeName} = useColorTheme();
+  const {theme} = useColorTheme();
   const colors = theme.colors;
 
   const result = getResult(game);
@@ -81,11 +81,11 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
           return (
             <div className={cx(cls.side, cls.leftSide)}>
               <div className={cls.filler}>
-                {themeName === 'light' && <Emoji
+                {theme.name === 'lightDefault' && <Emoji
                   symbol={result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji}
                   className={cx(cls.emoji, cls.onlyDesktop)}
                 />}
-                {themeName === 'dark' &&  result === 'won' && <FontAwesomeIcon icon={faTrophy} color='white' size='2x'/>}
+                {theme.name === 'darkDefault' &&  result === 'won' && <FontAwesomeIcon icon={faTrophy} color='white' size='2x'/>}
               </div>
               <div className={cx(cls.playerInfo, cls.playerInfoLeftSide)}>
                 <Text
@@ -106,8 +106,8 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
           );
         })()}
         <div className={cls.middleSide}>
-          {themeName === 'light' && <Emoji symbol="⚡" className={cls.vsEmoji}/>}
-          {themeName ==='dark' && <FontAwesomeIcon icon={faBolt} color='white' size='1x'/>}
+          {theme.name === 'lightDefault' && <Emoji symbol="⚡" className={cls.vsEmoji}/>}
+          {theme.name === 'darkDefault' && <FontAwesomeIcon icon={faBolt} color='white' size='1x'/>}
         </div>
         <div className={cx(cls.side, cls.rightSide)}>
           {(() => {
@@ -136,11 +136,11 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
                   </Text>
                 </div>
                 <div className={cls.filler}>
-                  {themeName === 'light' &&  <Emoji
+                  {theme.name === 'lightDefault' &&  <Emoji
                     symbol={result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji}
                     className={cx(cls.emoji, cls.onlyDesktop)}
                   />}
-                  {themeName === 'dark' &&  result === 'won' && <FontAwesomeIcon icon={faTrophy} color='white' size='2x'/>}
+                  {theme.name === 'darkDefault' &&  result === 'won' && <FontAwesomeIcon icon={faTrophy} color='white' size='2x'/>}
                 </div>
               </>
             );

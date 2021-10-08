@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { TextInput } from 'grommet';
 import { noop } from 'src/lib/util';
-import { CustomTheme, lightTheme, onlyMobile } from 'src/theme';
+import { CustomTheme, themes, onlyMobile } from 'src/theme';
 import { seconds } from 'src/lib/time';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
@@ -60,7 +60,7 @@ export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, copyButtonLabe
               icon: () => (
                 <FontAwesomeIcon
                   icon={copied ? faCheck : faCopy}
-                  color={lightTheme.colors.neutralDarkest}
+                  color={themes.lightDefault.colors.neutralDarkest}
                   className={cls.copyIcon}
                 />
               ),
@@ -70,7 +70,7 @@ export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, copyButtonLabe
               icon:() => (
                 <FontAwesomeIcon
                   icon={copied ? faCheck : faCopy}
-                  color={lightTheme.colors.neutralDarkest}
+                  color={themes.lightDefault.colors.neutralDarkest}
                   className={cls.copyIcon}
                 />
               ),

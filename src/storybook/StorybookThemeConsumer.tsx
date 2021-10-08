@@ -1,5 +1,5 @@
 import React from 'react';
-import { darkTheme, lightTheme } from "src/theme";
+import { themes } from "src/theme";
 import { ThemeProvider } from 'react-jss';
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 }
 
 export const StorybookThemeConsumer: React.FC<Props> = (props) => {
-  const theme = props.themeName === 'light' ? lightTheme : darkTheme;
+  const theme = props.themeName === 'light' ? themes.lightDefault : themes.darkDefault;
   
   return (
     <ThemeProvider theme={theme}>

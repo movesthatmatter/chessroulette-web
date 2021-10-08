@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chessground, { ChessgroundProps, ChessgroundApi } from 'react-chessground';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import blueBoard from '../assets/board/blue.svg';
+import blueBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/board/blue.svg';
 import cx from 'classnames';
 import { ChessGameColor, ChessMove, PromotionalChessPieceType } from 'dstnd-io';
 import { Square } from 'chess.js';
@@ -9,6 +9,9 @@ import { pieces } from '../pieces';
 import { noop } from 'src/lib/util';
 import 'react-chessground/dist/styles/chessground.css';
 import { CustomTheme, softOutline } from 'src/theme';
+import {light as lightPieces} from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
+import darkBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/board/blue_darkMode.svg';
+import {dark as darkPieces} from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
 
 export type StyledChessBoardProps = Omit<
   ChessgroundProps,
@@ -168,52 +171,78 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>( theme => ({
+const useStyles = createUseStyles<CustomTheme>( theme => {
+  const colors = theme.name === 'lightDefault' ? {
+    image : blueBoard,
+    pieces: lightPieces,
+    selectedSquare: '#14551e80',
+    lastMove: '#9bc70069',
+    check: 'radial-gradient(ellipse at center,rgba(255,0,0,1) 0,rgba(231,0,0,1) 25%,rgba(169,0,0,0) 89%,rgba(158,0,0,0) 100%)',
+    arrows: {
+      color1: '#15781B',
+      color2: '#882020',
+      color3: '#003088',
+      color4: '#e68f00',
+    }
+  } : {
+    image : darkBoard,
+    pieces: darkPieces,
+    selectedSquare: '#55145380',
+    lastMove: '#2e0c2d80',
+    check: 'radial-gradient(64.15% 64.15% at 50.28% 50.31%, rgba(206, 24, 107, 0.81) 39.58%, rgba(206, 24, 107, 0) 100%)',
+    arrows: {
+      color1: '#FF9416',
+      color2: '#E485BF',
+      color3: '#8354E9',
+      color4: '#3BC0C8',
+    }
+  }
+  return {
   container: {
     padding: 0,
     position: 'relative',
 
     ...({
       '& .cg-wrap': {
-        backgroundImage: `url(${theme.board.image})`,
+        backgroundImage: `url(${colors.image})`,
       },
 
       '& .cg-wrap piece.rook.white' : {
-        backgroundImage: `url(${theme.board.pieces.wR})`
+        backgroundImage: `url(${colors.pieces.wR})`
       },
       '& .cg-wrap piece.queen.white' : {
-        backgroundImage: `url(${theme.board.pieces.wQ})`
+        backgroundImage: `url(${colors.pieces.wQ})`
       },
       '& .cg-wrap piece.knight.white' : {
-        backgroundImage: `url(${theme.board.pieces.wN})`
+        backgroundImage: `url(${colors.pieces.wN})`
       },
       '& .cg-wrap piece.bishop.white' : {
-        backgroundImage: `url(${theme.board.pieces.wB})`
+        backgroundImage: `url(${colors.pieces.wB})`
       },
       '& .cg-wrap piece.pawn.white' : {
-        backgroundImage: `url(${theme.board.pieces.wP})`
+        backgroundImage: `url(${colors.pieces.wP})`
       },
       '& .cg-wrap piece.king.white' : {
-        backgroundImage: `url(${theme.board.pieces.wK})`
+        backgroundImage: `url(${colors.pieces.wK})`
       },
 
       '& .cg-wrap piece.rook.black' : {
-        backgroundImage: `url(${theme.board.pieces.bR})`
+        backgroundImage: `url(${colors.pieces.bR})`
       },
       '& .cg-wrap piece.queen.black' : {
-        backgroundImage: `url(${theme.board.pieces.bQ})`
+        backgroundImage: `url(${colors.pieces.bQ})`
       },
       '& .cg-wrap piece.knight.black' : {
-        backgroundImage: `url(${theme.board.pieces.bN})`
+        backgroundImage: `url(${colors.pieces.bN})`
       },
       '& .cg-wrap piece.bishop.black' : {
-        backgroundImage: `url(${theme.board.pieces.bB})`
+        backgroundImage: `url(${colors.pieces.bB})`
       },
       '& .cg-wrap piece.pawn.black' : {
-        backgroundImage: `url(${theme.board.pieces.bP})`
+        backgroundImage: `url(${colors.pieces.bP})`
       },
       '& .cg-wrap piece.king.black' : {
-        backgroundImage: `url(${theme.board.pieces.bK})`
+        backgroundImage: `url(${colors.pieces.bK})`
       },
 
       '& cg-helper': {
@@ -244,54 +273,54 @@ const useStyles = createUseStyles<CustomTheme>( theme => ({
       },
 
       '& .cg-wrap svg circle[stroke="#15781B"]' : {
-        stroke: `${theme.board.arrows.color1} !important`,
+        stroke: `${colors.arrows.color1} !important`,
       },
       '& .cg-wrap svg line[stroke="#15781B"]' : {
-        stroke: `${theme.board.arrows.color1} !important`,
+        stroke: `${colors.arrows.color1} !important`,
       },
       '& .cg-wrap svg marker[id="arrowhead-g"] path' : {
-        fill: `${theme.board.arrows.color1} !important`,
+        fill: `${colors.arrows.color1} !important`,
       },
 
       '& .cg-wrap svg circle[stroke="#882020"]' : {
-        stroke: `${theme.board.arrows.color2} !important`,
+        stroke: `${colors.arrows.color2} !important`,
       },
       '& .cg-wrap svg line[stroke="#882020"]' : {
-        stroke: `${theme.board.arrows.color2} !important`,
+        stroke: `${colors.arrows.color2} !important`,
       },
       '& .cg-wrap svg marker[id="arrowhead-r"] path' : {
-        fill: `${theme.board.arrows.color2} !important`,
+        fill: `${colors.arrows.color2} !important`,
       },
 
       '& .cg-wrap svg circle[stroke="#003088"]' : {
-        stroke: `${theme.board.arrows.color3} !important`,
+        stroke: `${colors.arrows.color3} !important`,
       },
       '& .cg-wrap svg line[stroke="#003088"]' : {
-        stroke: `${theme.board.arrows.color3} !important`,
+        stroke: `${colors.arrows.color3} !important`,
       },
       '& .cg-wrap svg marker[id="arrowhead-b"] path' : {
-        fill: `${theme.board.arrows.color3} !important`,
+        fill: `${colors.arrows.color3} !important`,
       },
 
       '& .cg-wrap svg circle[stroke="#e68f00"]' : {
-        stroke: `${theme.board.arrows.color4} !important`,
+        stroke: `${colors.arrows.color4} !important`,
       },
       '& .cg-wrap svg line[stroke="#e68f00"]' : {
-        stroke: `${theme.board.arrows.color4} !important`,
+        stroke: `${colors.arrows.color4} !important`,
       },
       '& .cg-wrap svg marker[id="arrowhead-y"] path' : {
-        fill: `${theme.board.arrows.color4} !important`,
+        fill: `${colors.arrows.color4} !important`,
       },
 
       '& cg-board square.check' : {
-         background: theme.board.check,
+         background: colors.check,
       },
 
       '& cg-board square.selected' : {
-        backgroundColor: theme.board.selectedSquare
+        backgroundColor: colors.selectedSquare
       },
       '& cg-board square.last-move' : {
-        backgroundColor : theme.board.lastMove
+        backgroundColor : colors.lastMove
       },
       '& .cg-wrap coords.files': {
         bottom: '0%',
@@ -345,4 +374,4 @@ const useStyles = createUseStyles<CustomTheme>( theme => ({
     display: 'flex',
     flexDirection: 'column',
   },
-}));
+}});

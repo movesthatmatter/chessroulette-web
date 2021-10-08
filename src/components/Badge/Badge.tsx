@@ -3,14 +3,13 @@ import { createUseStyles } from 'src/lib/jss';
 import { Text, TextProps } from '../Text';
 import { CSSProperties } from 'src/lib/jss/types';
 import cx from 'classnames';
-import { getBoxShadow } from 'src/theme/util';
-import hexToRgba from 'hex-to-rgba';
-import { CustomTheme, darkTheme, lightTheme } from 'src/theme';
+import { CustomTheme } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { ColorPalette } from 'src/theme/colors';
 
 export type BadgeProps = {
   text: string;
-  color: keyof typeof lightTheme.colors;
+  color: ColorPalette;
   className?: string;
   style?: CSSProperties;
   textSize?: TextProps['size'];
@@ -19,7 +18,7 @@ export type BadgeProps = {
 
 export const Badge: React.FC<BadgeProps> = ({ textSize = 'small2', ...props }) => {
   const cls = useStyles();
-  const {theme,themeName} = useColorTheme();
+  const {theme} = useColorTheme();
   const colors = theme.colors
   return (
     <div className={cx(props.className, cls.container)} style={props.style}>
@@ -29,7 +28,7 @@ export const Badge: React.FC<BadgeProps> = ({ textSize = 'small2', ...props }) =
         style={{
           backgroundColor: colors[props.color],
           //boxShadow: getBoxShadow(0, 2, 4, 0, hexToRgba(colors[props.color], 0.16)),
-          color: themeName === 'light' ? 'white' : theme.text.baseColor
+          color: theme.name === 'lightDefault' ? 'white' : theme.text.baseColor
         }}
       >
         {props.text}

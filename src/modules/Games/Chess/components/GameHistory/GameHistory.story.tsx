@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { second } from 'src/lib/time';
 import { pgnToChessHistory } from 'src/mocks/records';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
-import { lightTheme } from 'src/theme';
+import { themes } from 'src/theme';
 import { GameHistory } from './GameHistory';
 
 const getHistory = (pgn: string) => {
@@ -24,7 +24,7 @@ export default {
 
 export const defaultStory = () => (
   <StorybookBaseProvider>
-    <div style={{ background: lightTheme.colors.neutralLighter }}>
+    <div style={{ background: themes.lightDefault.colors.neutralLighter }}>
       <GameHistory
         history={getHistory('1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 a6 5. Nc3 Qc7 6. Bd3 Nc6')}
         focusedIndex={2}

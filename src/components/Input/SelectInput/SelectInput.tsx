@@ -1,5 +1,5 @@
 import React from 'react';
-import { CustomTheme, darkTheme, effects, fonts, lightTheme, onlyMobile } from 'src/theme';
+import { CustomTheme, effects, fonts, onlyMobile } from 'src/theme';
 import Select, { Props as SelectProps } from 'react-select';
 import { noop } from 'src/lib/util';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
@@ -148,7 +148,7 @@ export const SelectInput: React.FC<Props> = ({
               borderRadius: 16,
             }),
             placeholder: () => ({
-              color: lightTheme.text.disabledColor,
+              color: theme.text.disabledColor,
               fontSize: '13px',
               ...onlyMobile({
                 ...makeImportant({

@@ -17,9 +17,7 @@ import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer'
 import { Events } from 'src/services/Analytics';
 import {
   CustomTheme,
-  darkTheme,
   floatingShadow,
-  lightTheme,
   onlyMobile,
   softBorderRadius,
 } from 'src/theme';
@@ -78,7 +76,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
                       withBadge={{
                         text: 'New',
                         side: 'right',
-                        color: theme.badge.color
+                        color: theme.name ==='lightDefault' ? 'negative' : 'white',
                       }}
                       onClick={() => {
                         if (!roomConsumer) {

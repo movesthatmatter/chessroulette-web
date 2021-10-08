@@ -12,7 +12,7 @@ import cx from 'classnames';
 import { noop } from 'src/lib/util';
 import { Modal } from '../Modal/Modal';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
-import { Layer, LayerProps } from 'grommet';
+import { LayerProps } from 'grommet';
 
 export type DialogProps = {
   visible: boolean;
@@ -26,7 +26,7 @@ export const Dialog: React.FC<DialogProps> = ({
   ...props
 }) => {
   const cls = useStyles();
-  const { themeName } = useColorTheme();
+  const { theme } = useColorTheme();
 
   if (!props.visible) {
     return null;
@@ -39,7 +39,7 @@ export const Dialog: React.FC<DialogProps> = ({
         onClickOutside: onClose,
         onEsc: onClose,
       })}
-      style={themeName === 'light' ? floatingShadow : floatingShadowDarkMode}
+      style={theme.name === 'lightDefault' ? floatingShadow : floatingShadowDarkMode}
 
     >
       <DialogContent className={cls.background} hasCloseButton={hasCloseButton} onClose={onClose} {...props} />

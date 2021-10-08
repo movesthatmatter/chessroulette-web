@@ -18,9 +18,10 @@ export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
   const deviceSize = useDeviceSize();
 
-  const {themeName} = useColorTheme();
+  const {theme} = useColorTheme();
   useBodyClass([cls.indexBackground]);
 
+  useBodyClass([cls.indexBackground]);
   return (
     <Page name="Home" contentClassName={cls.pageContent} containerClassname={cls.pageContainer}>
       <div className={cls.containerLanding}>
@@ -34,7 +35,7 @@ export const LandingPage: React.FC<Props> = () => {
             }}
           >
             <img
-              src={themeName === 'light' ? chessBackground : darkChessBackground}
+              src={theme.name === 'lightDefault' ? chessBackground : darkChessBackground}
               style={{
                 width: '95%',
                 margin: '0 auto',
@@ -74,7 +75,7 @@ export const LandingPage: React.FC<Props> = () => {
                 type="primary"
                 withBadge={{
                   text: 'New',
-                  color: theme.badge.color,
+                  color: theme.name ==='lightDefault' ? 'negative' : 'white',
                   side: 'right',
 
                 }}
@@ -104,7 +105,12 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   },
   pageContainer: {
     ...makeImportant({
-      ...theme.landingPage
+      ...(theme.name === 'lightDefault' ? {
+        backgroundColor: theme.colors.background
+      } : {
+        backgroundColor: '#27104e',
+        backgroundImage: 'linear-gradient(19deg, #27104e 0%, #161a2b 25%)',
+      })
     })
   },
   containerLanding: {

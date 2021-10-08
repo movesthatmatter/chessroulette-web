@@ -4,13 +4,12 @@ import { CustomTheme, effects, fonts } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import cx from 'classnames';
 import { Sun, Moon } from 'grommet-icons';
-import { Text } from '../Text';
 
 type Props = {};
 
 export const DarkModeSwitch: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const {themeName: theme, switchTheme} = useColorTheme();
+  const {theme, switchTheme} = useColorTheme();
   const [animate, setAnimate] = useState(0);
   return (
     <div className={cls.containerSwitch}>
@@ -26,13 +25,13 @@ export const DarkModeSwitch: React.FC<Props> = (props) => {
           }}
         >
         <div className={cx(cls.switch,{
-           [cls.switchOn] : theme === 'light',
-        }, (animate === 1 && theme === 'light') && cls.animateOn, (animate === 1 && theme === 'dark') && cls.animateOff )}>
+           [cls.switchOn] : theme.name === 'lightDefault',
+        }, (animate === 1 && theme.name === 'lightDefault') && cls.animateOn, (animate === 1 && theme.name === 'darkDefault') && cls.animateOff )}>
           {/* {theme === 'light' ? <Sun className={cls.iconSun}/> : <Moon className={cls.iconMoon}/>} */}
         </div>
         <div className={cx(cls.switchMask,{
-           [cls.maskOn] : theme === 'light',
-        }, (animate === 1 && theme === 'light') && cls.animateMaskOn, (animate === 1 && theme === 'dark') && cls.animateMaskOff )}>
+           [cls.maskOn] : theme.name === 'lightDefault',
+        }, (animate === 1 && theme.name === 'lightDefault') && cls.animateMaskOn, (animate === 1 && theme.name === 'darkDefault') && cls.animateMaskOff )}>
         </div>
         </div>
         {/* <Text style={{...fonts.small1, marginLeft: '5px'}} className={cls.text}>Light</Text> */}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { createUseStyles } from 'src/lib/jss';
-import { CustomTheme, lightTheme } from 'src/theme';
+import { CustomTheme, themes } from 'src/theme';
 import { Peer } from '../../types';
 
 export type PeerConnectionStatusDotProps = {
@@ -13,22 +13,22 @@ export type PeerConnectionStatusDotProps = {
 
 const getStatusColor = (peer?: Peer) => {
   if (!peer) {
-    return lightTheme.colors.neutral;
+    return themes.lightDefault.colors.neutral;
   }
 
   if (peer.hasJoinedRoom) {
     if (peer.connection.channels.streaming.on) {
-      return lightTheme.colors.negative;
+      return themes.lightDefault.colors.negative;
     }
 
     if (peer.connection.channels.data.on) {
-      return lightTheme.colors.positive;
+      return themes.lightDefault.colors.positive;
     }
 
-    return lightTheme.colors.attention;
+    return themes.lightDefault.colors.attention;
   }
 
-  return lightTheme.colors.neutral;
+  return themes.lightDefault.colors.neutral;
 };
 
 export const ConnectionStatusDot: React.FC<PeerConnectionStatusDotProps> = ({

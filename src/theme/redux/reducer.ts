@@ -3,20 +3,20 @@ import { persistReducer } from "redux-persist";
 import { GenericStateSlice } from "src/redux/types";
 import storageSession from 'redux-persist/lib/storage/session';
 import {switchThemeAction} from './actions';
+import { CustomTheme } from "..";
 
 export type ThemeState = {
-  theme: 'light' | 'dark';
+  theme: CustomTheme['name']
 }
 
 const defaultState: ThemeState = {
-  theme: 'light'
+  theme: 'lightDefault'
 }
 
 export const reducer = createReducer(defaultState as ThemeState, (handleAction) => [
   handleAction(switchThemeAction, (prev) => {
-    console.log('yes reducer!!');
     return {
-      theme: prev.theme === 'dark' ? 'light' : 'dark'
+      theme: prev.theme === 'darkDefault' ? 'lightDefault' : 'darkDefault'
     }
   })
 ])

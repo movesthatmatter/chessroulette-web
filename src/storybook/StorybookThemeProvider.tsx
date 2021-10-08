@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { darkTheme, fonts, lightTheme } from 'src/theme';
+import React from 'react';
+import { fonts, themes } from 'src/theme';
 import { ThemeProvider } from 'react-jss';
 import { useSelector } from 'react-redux';
 import { selectTheme } from 'src/theme/redux/selectors';
@@ -7,7 +7,7 @@ import { DarkModeSwitch } from 'src/components/DarkModeSwitch/DarkModeSwitch';
 
 export const StorybookThemeProvider: React.FC = (props) => {
   const theme = useSelector(selectTheme);
-  const selectedTheme = theme === 'light' ? lightTheme : darkTheme;
+  const selectedTheme = theme === 'lightDefault' ? themes.lightDefault : themes.darkDefault;
   return (
     <ThemeProvider theme={selectedTheme}>
       <div

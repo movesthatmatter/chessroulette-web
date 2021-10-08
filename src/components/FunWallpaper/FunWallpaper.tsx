@@ -4,15 +4,14 @@ import { useBodyClass } from 'src/lib/hooks/useBodyClass';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
-import { CustomTheme, darkTheme, lightTheme } from 'src/theme';
-import { useSelector } from 'react-redux';
-import { selectTheme } from 'src/theme/redux/selectors';
+import { CustomTheme, themes } from 'src/theme';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = React.HTMLProps<HTMLDivElement> & {};
 
 export const FunWallpaper: React.FC<Props> = ({ className, children, ...contentDivProps }) => {
   const cls = useStyles();
-  const theme = useSelector(selectTheme);
+  const {theme} = useColorTheme();
 
   useBodyClass([cls.body]);
 
@@ -21,14 +20,14 @@ export const FunWallpaper: React.FC<Props> = ({ className, children, ...contentD
       className={cls.container}
       style={{
         backgroundColor:
-          theme === 'light' ? lightTheme.colors.primaryLight : darkTheme.colors.neutralLight,
+          theme.name === 'lightDefault' ? themes.lightDefault.colors.primaryLight : themes.darkDefault.colors.neutralLight,
       }}
     >
       <div
         className={cls.background}
         style={{
           backgroundColor:
-            theme === 'light' ? lightTheme.colors.primaryLight : darkTheme.colors.neutralLight,
+          theme.name === 'lightDefault' ? themes.lightDefault.colors.primaryLight : themes.darkDefault.colors.neutralLight,
         }}
       >
         <Mutunachi

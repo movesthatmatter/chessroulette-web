@@ -388,7 +388,11 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     alignItems: 'center',
   },
   dialog: {
-    boxShadow: theme.dialog.boxShadow,
+    ...(theme.name === 'lightDefault' ? {
+      ...theme.floatingShadow,
+    } : {
+      boxShadow:'0 12px 26px rgb(0 0 0 / 35%)'
+    }),
     ...softBorderRadius,
     padding: 0,
     position: 'relative',

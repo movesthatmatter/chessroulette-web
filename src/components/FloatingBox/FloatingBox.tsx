@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { CustomTheme, floatingShadow, softBorderRadius, softOutline } from 'src/theme';
+import { CustomTheme, effects, floatingShadow, softBorderRadius, } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 
@@ -18,7 +18,13 @@ export const FloatingBox: React.FC<FloatingBoxProps> = ({ children, className, .
 
 const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
-    ...theme.flatingBox,
+    ...(theme.name === 'lightDefault' ? {
+      backgroundColor: theme.colors.white,
+    ...effects.softOutline,
+    ...floatingShadow,
+    }: {
+      backgroundColor: '#21212B',
+    }),
     ...softBorderRadius,
     padding: spacers.default,
   },
