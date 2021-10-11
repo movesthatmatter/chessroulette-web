@@ -8,10 +8,10 @@ import { ScrollToTop } from './components/ScrollToTop';
 import { LichessProvider } from './modules/LichessPlay/LichessAPI/LichessProvider';
 import { FeedbackProvider } from './providers/FeedbackProvider/FeedbackProvider';
 import { useColorTheme } from './theme/hooks/useColorTheme';
-import { darkTheme, lightTheme } from './theme';
+import { themes } from './theme';
 
 function App() {
-  const { themeName } = useColorTheme();
+  const { theme } = useColorTheme();
 
   useEffect(() => {
     GA.init();
@@ -29,7 +29,7 @@ function App() {
           //classNamePrefix={config.PRERENDERING ? undefined : 'cr-'}
           //id={{ minify: !config.DEBUG }}
         >
-          <ThemeProvider theme={themeName === 'light' ? lightTheme : darkTheme}>
+          <ThemeProvider theme={theme.name === 'lightDefault' ? themes.lightDefault : themes.darkDefault}>
             <FeedbackProvider>
               <Routes />
               <ScrollToTop />

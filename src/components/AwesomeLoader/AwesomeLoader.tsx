@@ -75,7 +75,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     ...(theme.name === 'lightDefault' ? {
       background: `linear-gradient(top, ${theme.colors.primaryLight} 100%, #fff 0%)`
     }: {
-      backgound: '#7774CA'
+      backgroundColor: '#7774CA'
     }),
     position: 'relative',
     borderRadius: '50%',

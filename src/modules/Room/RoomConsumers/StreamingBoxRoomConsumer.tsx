@@ -4,16 +4,18 @@ import { Logo } from 'src/components/Logo';
 import { StreamingBox, StreamingBoxProps } from 'src/components/StreamingBox';
 import { createUseStyles } from 'src/lib/jss';
 import { PeerInfo } from 'src/providers/PeerProvider';
-import { hideOnDesktop, onlyMobile } from 'src/theme';
+import { hideOnDesktop, onlyDesktop, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { RoomProviderContext } from '../RoomProvider';
 
-type Props = Omit<StreamingBoxProps, 'room'> & {};
+type Props = Omit<StreamingBoxProps, 'room'> & {
+  isMobile?: boolean;
+};
 
 export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
   const cls = useStyles();
   const roomContext = useContext(RoomProviderContext);
-
+  
   if (!roomContext) {
     // Show Loader
     return null;
@@ -29,9 +31,9 @@ export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
           <div style={{flex: 1, ...hideOnDesktop}}/>
           <div className={cls.peerInfoWrapper}>
             <PeerInfo darkBG reversed peerUserInfo={inFocus} />
-            <div style={{marginTop: '10px', alignSelf:'flex-end', ...hideOnDesktop}}>
+            {props.isMobile && <div style={{marginTop: '10px', alignSelf:'flex-end'}}>
               <DarkModeSwitch/>
-            </div>
+            </div>}
           </div>
         </div>
       )}

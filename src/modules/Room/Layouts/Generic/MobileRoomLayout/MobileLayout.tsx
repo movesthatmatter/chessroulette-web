@@ -90,6 +90,6 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     borderRadius: '16px 16px 0 0',
     paddingTop: '16px',
     marginTop: '-16px',
-    background: theme.colors.neutralLightest,
+    background: theme.colors.background,
   },
 }));

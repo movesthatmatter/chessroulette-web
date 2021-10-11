@@ -1,9 +1,9 @@
 import { action } from '@storybook/addon-actions';
-import { Ok } from 'dstnd-io';
 import { delay } from 'fp-ts/lib/Task';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { AsyncResultWrapper } from 'ts-async-results';
+import { AsyncResultWrapper,AsyncOk } from 'ts-async-results';
+import { Ok } from 'ts-results';
 import { RegistrationForm } from './RegistrationForm';
 
 export default {

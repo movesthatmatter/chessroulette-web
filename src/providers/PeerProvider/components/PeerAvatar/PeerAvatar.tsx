@@ -9,7 +9,7 @@ import { Text } from 'src/components/Text';
 import { spacers } from 'src/theme/spacers';
 import { getUserDisplayName } from 'src/modules/User';
 import cx from 'classnames';
-import { CustomTheme } from 'src/theme';
+import { CustomTheme, onlyDesktop, onlyMobile } from 'src/theme';
 
 type Props = {
   size?: string;
@@ -110,7 +110,12 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     top: 0,
     bottom: 0,
     left: '100%',
-    zIndex: 0,
+    ...onlyDesktop({
+      zIndex: 0,
+    }),
+    ...onlyMobile({
+      zIndex: 10
+    }),
   },
   infoContainerReversed: {
     right: '100%',

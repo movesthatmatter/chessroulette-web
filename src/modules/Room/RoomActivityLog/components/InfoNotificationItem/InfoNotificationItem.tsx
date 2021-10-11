@@ -30,9 +30,6 @@ export const InfoNotificationItem: React.FC<Props> = ({ notification, me, classN
           textAlign: 'right',
         }}
       >
-        <div className={cls.iconContainer}>
-        <div className={cls.icon}/>
-        </div>
         {isDangerouslySetHtml(notification.content) ? (
           <Text size="small1" dangerouslySetInnerHTML={notification.content} style = {{textAlign: 'left'}}/>
         ) : (

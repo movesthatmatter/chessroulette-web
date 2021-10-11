@@ -5,6 +5,7 @@ import logoDark from './assets/Logo_dark_full.svg';
 import logoDarkWithBeta from './assets/Logo_dark_full_w_beta.svg';
 import logoLightSingle from './assets/Logo_light_single.svg';
 import logoDarkSingle from './assets/Logo_dark_single.svg';
+import logoLightWithBeta from './assets/light_with_beta.svg';
 import logoDarkSingleStroke from './assets/Logo_dark_single_stroke_variation.svg';
 import { onlyMobile } from 'src/theme';
 import cx from 'classnames';
@@ -51,6 +52,9 @@ export const Logo: React.FC<Props> = ({
       return logoDark;
     }
     if (theme.name === 'darkDefault'){
+      if (withBeta){
+        return logoLightWithBeta
+      }
       return logoLight
     }
     return darkBG ? logoLight : logoDark;

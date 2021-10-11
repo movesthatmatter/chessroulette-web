@@ -140,6 +140,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   },
   title: {
     ...fonts.subtitle1,
+    color:theme.text.baseColor,
     textAlign: 'center',
     paddingLeft: spacers.large,
     paddingRight: spacers.large,
@@ -160,7 +161,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     paddingLeft: spacers.large,
     paddingRight: spacers.large,
     paddingBottom: spacers.default,
-
+    color: theme.text.baseColor,
     ...onlyMobile({
       paddingLeft: '18px',
       paddingRight: '18px',

@@ -278,6 +278,7 @@ const useStyles = createUseStyles({
     alignItems: 'flex-end',
     display: 'flex',
     flexDirection: 'column',
+    zIndex: 99
   },
   gameActionButton: {
     ...({
