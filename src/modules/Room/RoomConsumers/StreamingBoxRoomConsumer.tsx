@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
+import { DarkModeSwitch } from 'src/components/DarkModeSwitch/DarkModeSwitch';
 import { Logo } from 'src/components/Logo';
 import { StreamingBox, StreamingBoxProps } from 'src/components/StreamingBox';
 import { createUseStyles } from 'src/lib/jss';
 import { PeerInfo } from 'src/providers/PeerProvider';
+import { hideOnDesktop, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { RoomProviderContext } from '../RoomProvider';
 
@@ -24,8 +26,12 @@ export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
       headerOverlay={({ inFocus }) => (
         <div className={cls.header}>
           <Logo withBeta={false} asLink={false} mini withOutline className={cls.logoStreamingBox} />
+          <div style={{flex: 1, ...hideOnDesktop}}/>
           <div className={cls.peerInfoWrapper}>
             <PeerInfo darkBG reversed peerUserInfo={inFocus} />
+            <div style={{marginTop: '10px', alignSelf:'flex-end', ...hideOnDesktop}}>
+              <DarkModeSwitch/>
+            </div>
           </div>
         </div>
       )}
@@ -45,6 +51,10 @@ const useStyles = createUseStyles({
     flexDirection: 'row',
   },
   peerInfoWrapper: {
+    ...onlyMobile({
+      flexDirection:'column',
+      justifyContent:'flex-end'
+    }),
     flex: 1,
     display: 'flex',
     alignContent: 'flex-end',

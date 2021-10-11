@@ -73,7 +73,8 @@ const useStyles = createUseStyles({
 
     ...onlyMobile({
       width: '100%',
-      maxWidth: '170px',
+      maxWidth: '140px',
+      //minWidth: '100px',
     }),
   },
   miniContainer: {
