@@ -80,7 +80,9 @@ export const NavigationMenu: React.FC<Props> = (props) => {
     <div className={cx(cls.containerMenu, props.className)}>
       <div className={cls.desktopMenu}>
         <div className={cx(cls.linksContainer)}>{menuContent}</div>
-        <div style={{display:'flex', justifyContent:'center', alignItems:'center'}}><DarkModeSwitch/></div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <DarkModeSwitch />
+        </div>
         {auth.authenticationType !== 'none' && (
           <div className={cls.authMenu}>
             {auth.authenticationType === 'user' ? (
@@ -92,6 +94,9 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         )}
       </div>
       <div className={cx(cls.onlyMobile)}>
+        <div style={{ marginRight: '20px', justifyContent:'center', display:'flex', alignContent:'center', alignItems:'center' }}>
+          <DarkModeSwitch />
+        </div>
         <div className={cls.menuWrapper} onClick={() => setOpen((prev) => !prev)}>
           {/* <Badge text="New" color="negative" className={cls.newBadge} /> */}
           <Menu className={cls.drawerOpenBtn} />
@@ -125,7 +130,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   containerMenu: {},
   mobileOverlay: {
     position: 'fixed',
@@ -197,7 +202,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
 
   drawerUserMenuWrapper: {
     padding: '32px 0',
-    borderBottom: `1px solid ${theme.colors.neutralLighter}`,
+    borderBottom: `1px solid ${theme.name === 'lightDefault' ? theme.colors.neutralLighter : theme.colors.neutralDark}`,
   },
   drawerMenuContent: {
     display: 'flex',
@@ -280,6 +285,10 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
 
   menuWrapper: {
     position: 'relative',
+    display:'flex',
+    justifyContent:'center',
+    alignContent:'center',
+    alignItems: 'center',
   },
   newBadge: {
     position: 'absolute',

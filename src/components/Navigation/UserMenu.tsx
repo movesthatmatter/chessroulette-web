@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { useAuthentication } from 'src/services/Authentication';
-import { CustomTheme, floatingShadow, hardBorderRadius } from 'src/theme';
+import { CustomTheme, floatingShadow, hardBorderRadius, onlyMobile } from 'src/theme';
 import cx from 'classnames';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { Link } from 'react-router-dom';
@@ -122,6 +122,11 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     position: 'relative',
   },
   menuContentWrapper: {
+    ...(theme.name === 'darkDefault' && {
+      ...onlyMobile({
+        boxShadow:'0 10px 20px rgb(0 0 0 / 50%) !important'
+      })
+    }),
     position: 'absolute',
     top: '-12px',
     paddingTop: '12px',
@@ -143,6 +148,9 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   },
   menuContent: {
     paddingTop: '16px',
+    ...onlyMobile({
+      paddingBottom:'16px'
+    })
   },
   label: {
     display: 'flex',

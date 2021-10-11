@@ -33,7 +33,7 @@ type Props = {
 export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   const cls = useStyles();
   const windowWidth = useWindowWidth();
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
   const colors = theme.colors;
 
   const result = getResult(game);
@@ -58,7 +58,8 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
     >
       <div className={cls.top}>
         <Text className={cls.title} size="subtitle1">
-          {getScore(game)}{' | '}
+          {getScore(game)}
+          {' | '}
           <strong>
             {capitalize(game.timeLimit)} ({formatTimeLimit(chessGameTimeLimitMsMap[game.timeLimit])}
             )
@@ -81,11 +82,20 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
           return (
             <div className={cx(cls.side, cls.leftSide)}>
               <div className={cls.filler}>
-                {theme.name === 'lightDefault' && <Emoji
-                  symbol={result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji}
-                  className={cx(cls.emoji, cls.onlyDesktop)}
-                />}
-                {theme.name === 'darkDefault' &&  result === 'won' && <FontAwesomeIcon icon={faTrophy} color='white' size='2x'/>}
+                {theme.name === 'lightDefault' && (
+                  <Emoji
+                    symbol={result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji}
+                    className={cx(cls.emoji, cls.onlyDesktop)}
+                  />
+                )}
+                {theme.name === 'darkDefault' && result === 'won' && (
+                  <FontAwesomeIcon
+                    icon={faTrophy}
+                    color="white"
+                    size="2x"
+                    className={cls.onlyDesktop}
+                  />
+                )}
               </div>
               <div className={cx(cls.playerInfo, cls.playerInfoLeftSide)}>
                 <Text
@@ -106,8 +116,10 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
           );
         })()}
         <div className={cls.middleSide}>
-          {theme.name === 'lightDefault' && <Emoji symbol="⚡" className={cls.vsEmoji}/>}
-          {theme.name === 'darkDefault' && <FontAwesomeIcon icon={faBolt} color='white' size='1x'/>}
+          {theme.name === 'lightDefault' && <Emoji symbol="⚡" className={cls.vsEmoji} />}
+          {theme.name === 'darkDefault' && (
+            <FontAwesomeIcon icon={faBolt} color="white" size="1x" />
+          )}
         </div>
         <div className={cx(cls.side, cls.rightSide)}>
           {(() => {
@@ -136,11 +148,20 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
                   </Text>
                 </div>
                 <div className={cls.filler}>
-                  {theme.name === 'lightDefault' &&  <Emoji
-                    symbol={result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji}
-                    className={cx(cls.emoji, cls.onlyDesktop)}
-                  />}
-                  {theme.name === 'darkDefault' &&  result === 'won' && <FontAwesomeIcon icon={faTrophy} color='white' size='2x'/>}
+                  {theme.name === 'lightDefault' && (
+                    <Emoji
+                      symbol={result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji}
+                      className={cx(cls.emoji, cls.onlyDesktop)}
+                    />
+                  )}
+                  {theme.name === 'darkDefault' && result === 'won' && (
+                    <FontAwesomeIcon
+                      icon={faTrophy}
+                      color="white"
+                      size="2x"
+                      className={cls.onlyDesktop}
+                    />
+                  )}
                 </div>
               </>
             );
@@ -159,7 +180,7 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -169,7 +190,8 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     marginBottom: spacers.large,
     ...theme.borders,
     ...softBorderRadius,
-    ...theme.floatingShadow
+    ...theme.floatingShadow,
+    overflowWrap: 'anywhere'
   },
   sideWrapper: {
     display: 'flex',
@@ -219,7 +241,6 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   },
   copyToClipboard: {
     paddingLeft: spacers.small,
-
   },
   playerInfo: {
     display: 'flex',

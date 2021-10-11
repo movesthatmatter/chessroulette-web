@@ -31,7 +31,7 @@ export const Footer: React.FC<Props> = () => {
                   baseColor={text.baseColor}
                 >
                   <InstagramIcon size="16px" className={cls.socialIcon} color={theme.colors.neutralDarkest}/>
-                  <Text size="body2">Instagram</Text>
+                  <Text size="body2" className={cls.text}>Instagram</Text>
                 </AnchorLink>
                 <AnchorLink
                   className={cls.socialLink}
@@ -40,7 +40,7 @@ export const Footer: React.FC<Props> = () => {
                   target="_blank"
                 >
                   <FacebookIcon size="16px" className={cls.socialIcon} color={theme.colors.neutralDarkest}/>
-                  <Text size="body2">Facebook</Text>
+                  <Text size="body2" className={cls.text}>Facebook</Text>
                 </AnchorLink>
               </div>
             </div>
@@ -128,7 +128,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     }),
   },
   link: {
-    color: theme.colors.neutralDarkest,
+    color: theme.colors.neutralLightest,
     textDecoration: 'none',
 
     '&:hover': {
