@@ -12,6 +12,10 @@ import {
   ChessHistoryWhiteMove,
   ChessMove,
   ChessPlayer,
+  ChessPlayerBlack,
+  ChessPlayersBySide,
+  ChessPlayerWhite,
+  GameRecord,
   UserRecord,
 } from 'dstnd-io';
 import {
@@ -25,6 +29,7 @@ import {
 import { flatten } from 'src/lib/util';
 import { getRelativeMaterialScore } from '../components/GameStateWidget/util';
 import { Game, GameFromGameState } from '../../types';
+
 
 export const getStartingPgn = () => getNewChessGame().pgn();
 export const getStartingFen = () => getNewChessGame().fen();
@@ -276,4 +281,50 @@ export const getPlayer = (
 
 export const getPlayerByColor = (color: ChessGameColor, players: ChessGameState['players']) => {
   return players[0].color === color ? players[0] : players[1];
+};
+
+
+// Added on Oct 7th 2021. These are the future and do belong in the dstnd-io
+type ChessPlayersByColor = {
+  white: ChessPlayerWhite;
+  black: ChessPlayerBlack;
+};
+
+// These belong in the Chess Game IO Repo
+export const toChessPlayersByColor = ([
+  playerA,
+  playerB,
+]: GameRecord['players']): ChessPlayersByColor => {
+  if (playerA.color === 'white' && playerB.color === 'black') {
+    return {
+      white: playerA,
+      black: playerB,
+    };
+  }
+
+  return {
+    // This is needed because otherwise Typescript Fails but this is correct
+    white: playerB as ChessPlayerWhite,
+    black: playerA as ChessPlayerBlack,
+  };
+};
+
+// These belong in the Chess Game IO Repo
+export const toChessPlayersBySide = (
+  players: GameRecord['players'],
+  homeColor: ChessGameColor
+): ChessPlayersBySide => {
+  const playersByColor = toChessPlayersByColor(players);
+
+  if (playersByColor.white.color === homeColor) {
+    return {
+      home: playersByColor.white,
+      away: playersByColor.black,
+    };
+  }
+
+  return {
+    home: playersByColor.black,
+    away: playersByColor.white,
+  };
 };

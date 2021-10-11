@@ -55,13 +55,23 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
               boardSize={boardSize}
               leftSide={leftSide}
               deviceSize={props.deviceSize}
+              participants={props.activity.participants}
               analysis={props.activity.analysis}
-              onPgnImported={(pgn) => {
+              onImportedPgn={(pgn) => {
                 request({
                   kind: 'analysisImportPgnRequest',
                   content: {
                     id: props.activity.analysisId,
                     pgn,
+                  },
+                });
+              }}
+              onImportedGame={(game) => {
+                request({
+                  kind: 'analysisImportGameRequest',
+                  content: {
+                    id: props.activity.analysisId,
+                    gameId: game.id,
                   },
                 });
               }}

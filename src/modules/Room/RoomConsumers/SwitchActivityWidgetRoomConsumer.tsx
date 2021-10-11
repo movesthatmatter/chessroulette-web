@@ -66,7 +66,7 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
         onSwitch: (s) => {
           if (s.activityType === 'analysis') {
             context.roomActions.switchActivity({
-              activityType: 'analysis',
+              ...s,
               history: s.history || [],
             });
           } else if (s.activityType === 'play') {

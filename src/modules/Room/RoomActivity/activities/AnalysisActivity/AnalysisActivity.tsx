@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
@@ -7,26 +7,56 @@ import { ActivityCommonProps } from '../types';
 import { ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/GameHistory';
 import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 import { LayoutContainerDimensions } from 'src/modules/Room/Layouts';
-import { SimplePGN } from 'dstnd-io';
-import { AnalysisPanel } from './components/AnalysisPanel';
+import { AnalysisPanel, AnalysisPanelProps } from './components/AnalysisPanel';
+import { AnalysisRecord, ChessGameColor } from 'dstnd-io';
+import { toChessPlayersBySide } from 'src/modules/Games/Chess/lib';
 
 export type AnalysisActivityProps = ActivityCommonProps & {
+  participants: RoomAnalysisActivity['participants'];
+  analysis: NonNullable<RoomAnalysisActivity['analysis']>;
   boardSize: number;
   leftSide: LayoutContainerDimensions;
-  analysis: NonNullable<RoomAnalysisActivity['analysis']>;
-
-  onPgnImported: (pgn: SimplePGN) => void;
+  onImportedPgn: AnalysisPanelProps['onImportedPgn'];
+  onImportedGame: AnalysisPanelProps['onImportedGame'];
 };
 
-export const AnalysisActivity: React.FC<AnalysisActivityProps>
- = ({
+const getParticipantsBySide = (
+  analysis: AnalysisRecord,
+  participants: RoomAnalysisActivity['participants'],
+  defaultHomeColor: ChessGameColor = 'white'
+) => {
+  if (!analysis.game) {
+    return undefined;
+  }
+
+  const myParticipant = Object.values(participants).find((p) => p.participant.isMe);
+  const myParticipantAsPlayer = analysis.game?.players.find(
+    (p) => p.user.id === myParticipant?.userId
+  );
+
+  return toChessPlayersBySide(
+    analysis.game.players,
+    myParticipantAsPlayer?.color || defaultHomeColor
+  );
+};
+
+export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
+  participants,
   analysis,
   boardSize,
   leftSide,
-  onPgnImported,
+  onImportedPgn,
+  onImportedGame,
 }) => {
   const cls = useStyles();
   const pgnFromHistory = analysis.history ? chessHistoryToSimplePgn(analysis.history) : '';
+  const [participantsBySide, setParticipantsBySide] = useState(
+    getParticipantsBySide(analysis, participants)
+  );
+
+  useEffect(() => {
+    setParticipantsBySide(getParticipantsBySide(analysis, participants));
+  }, [analysis.game?.players, participants]);
 
   return (
     <ChessGameHistoryConsumer
@@ -39,18 +69,25 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps>
                   ? {
                       history,
                       displayedHistory,
+                      displayedIndex,
                     }
                   : undefined
               }
-              onPgnImported={onPgnImported}
+              onImportedPgn={onImportedPgn}
+              onImportedGame={onImportedGame}
+              gameAndParticipants={
+                analysis.game && participantsBySide
+                  ? {
+                      players: participantsBySide,
+
+                      // TODO: This should be memoized or somewhere up the chain so it doesn't change too often
+                      game: analysis.game,
+                    }
+                  : undefined
+              }
             />
           </aside>
-          <div
-            className={cls.boardContainer}
-            style={{
-              height: boardSize,
-            }}
-          >
+          <div className={cls.boardContainer} style={{ height: boardSize }}>
             <ChessBoard
               size={boardSize}
               type="analysis"
@@ -58,7 +95,7 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps>
               playable
               canInteract
               pgn={displayedHistory ? chessHistoryToSimplePgn(displayedHistory) : pgnFromHistory}
-              homeColor="white"
+              homeColor={participantsBySide?.home.color || 'white'}
               onMove={(m) => {
                 onAddMove(
                   {

@@ -1,6 +1,5 @@
 import { debounce } from 'debounce';
 import { ChessHistoryIndex, ChessRecursiveHistory } from 'dstnd-io';
-import { getChessHistoryMoveIndex } from 'dstnd-io/dist/analysis/analysisActions';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   isPartialBlackMove,

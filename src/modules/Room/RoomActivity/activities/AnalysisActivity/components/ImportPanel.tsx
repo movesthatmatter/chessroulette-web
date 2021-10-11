@@ -1,16 +1,17 @@
-import { SimplePGN } from 'dstnd-io';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import cx from 'classnames';
+import { GameRecord, SimplePGN } from 'dstnd-io';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import { MyGamesArchive } from './MyGamesArchive';
-import cx from 'classnames';
 import { PgnInputBox } from './PgnInputBox';
 import { Button, IconButton } from 'src/components/Button';
 import { FormPrevious } from 'grommet-icons';
 import { CustomTheme } from 'src/theme';
 
-type Props = {
-  onImported: (pgn: SimplePGN) => void;
+export type ImportPanelProps = {
+  onImportedPgn: (pgn: SimplePGN) => void;
+  onImportedGame: (game: GameRecord) => void;
 } & (
   | {
       hasBackButton?: false;
@@ -22,10 +23,17 @@ type Props = {
     }
 );
 
-export const ImportPanel: React.FC<Props> = (props) => {
+export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
   const cls = useStyles();
   const [pgn, setPgn] = useState<SimplePGN>();
+  const [selectedGame, setSelectedGame] = useState<GameRecord>();
   const [isValidating, setIsValidating] = useState(false);
+
+  useEffect(() => {
+    if (selectedGame?.pgn) {
+      setPgn(selectedGame.pgn as SimplePGN);
+    }
+  }, [selectedGame]);
 
   return (
     <>
@@ -40,7 +48,7 @@ export const ImportPanel: React.FC<Props> = (props) => {
               width: '100%',
             }}
           >
-            <MyGamesArchive onSelect={(g) => setPgn(g.pgn as SimplePGN)} />
+            <MyGamesArchive onSelect={setSelectedGame} />
           </div>
         </div>
       </div>
@@ -49,6 +57,7 @@ export const ImportPanel: React.FC<Props> = (props) => {
         value={pgn}
         onChange={(s) => {
           setIsValidating(s.isLoading);
+
           if (s.isLoading) {
             return;
           }
@@ -57,7 +66,9 @@ export const ImportPanel: React.FC<Props> = (props) => {
             setPgn(s.pgn);
             return;
           }
+
           setPgn(undefined);
+          setSelectedGame(undefined);
         }}
         containerClassName={cx(cls.box, cls.pgnInputBox)}
         contentClassName={cls.pgnInputBox}
@@ -78,10 +89,18 @@ export const ImportPanel: React.FC<Props> = (props) => {
           full
           isLoading={isValidating}
           onClick={() => {
-            if (pgn) {
-              props.onImported(pgn);
-              setPgn(undefined);
+            if (!pgn) {
+              return;
             }
+
+            if (selectedGame?.pgn === pgn) {
+              props.onImportedGame(selectedGame);
+            } else {
+              props.onImportedPgn(pgn);
+            }
+
+            setPgn(undefined);
+            setSelectedGame(undefined);
           }}
           containerClassName={cls.button}
           className={cls.noMarging}
