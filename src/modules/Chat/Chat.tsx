@@ -59,6 +59,7 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
           <IconButton
             disabled={input.length === 0}
             icon={Send}
+            iconType="grommet"
             type="primary"
             onSubmit={() => {
               if (input.trim() !== '') {

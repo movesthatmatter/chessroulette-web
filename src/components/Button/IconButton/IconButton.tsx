@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
+import { createUseStyles, CSSProperties, makeImportant, NestedCSSElement } from 'src/lib/jss';
 import { Icon as GIcon } from 'grommet-icons';
 import { borderRadius, CustomTheme, onlyMobile, softBorderRadius, softOutline } from 'src/theme';
 import cx from 'classnames';
@@ -10,10 +10,29 @@ import Loader from 'react-loaders';
 import 'loaders.css';
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
+import { getSizers } from 'src/theme/sizers';
+import { IconProps as IconlyIconProps } from 'react-iconly';
+import { FontAwesomeIcon, FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
+import { IconlyIcon } from './components/IconlyIcon';
+import { buttonEffects } from '../styles';
+
+const sizers = getSizers(1); // This is twice the regular size
+
+const IconSizeInPxByName = {
+  small: sizers.get(0.75),
+  default: sizers.get(1),
+  large: sizers.get(1.5),
+} as const;
+
+const WrapperSizeInPxByName = {
+  small: sizers.get(1.5),
+  default: sizers.get(2),
+  large: sizers.get(3),
+} as const;
 
 type Props = {
-  icon: GIcon;
   onSubmit: (() => void) | (() => Promise<any>) | (() => AsyncResult<any, any>);
+  size?: keyof typeof IconSizeInPxByName;
   type?: ButtonType;
   clear?: boolean;
   disabled?: boolean;
@@ -21,16 +40,53 @@ type Props = {
   className?: string;
   title?: string;
   tooltip?: string;
+  tooltipOnHover?: boolean;
+} & IconProps;
+
+type IconProps =
+  | {
+      iconType: 'grommet';
+      icon: GIcon;
+    }
+  | {
+      iconType: 'iconly';
+      icon: React.FC<IconlyIconProps>;
+    }
+  | {
+      iconType: 'fontAwesome';
+      icon: FontAwesomeIconProps['icon'];
+    };
+
+const getIcon = (
+  {
+    size = 'default',
+    ...props
+  }: IconProps & Pick<Props, 'clear' | 'disabled' | 'type' | 'withLoader' | 'size'>,
+  { className, style }: { className?: string; style?: CSSProperties }
+) => {
+  if (props.iconType === 'iconly') {
+    const { icon: Icon, ...restProps } = props;
+    return <IconlyIcon Icon={props.icon} {...restProps} sizeInPx={IconSizeInPxByName[size]} />;
+  }
+
+  if (props.iconType === 'grommet') {
+    const { icon: Icon } = props;
+    return <Icon className={className} />;
+  }
+
+  return <FontAwesomeIcon icon={props.icon} className={className} style={style} />;
 };
 
 export const IconButton: React.FC<Props> = ({
   type = 'primary',
   clear = false,
   withLoader = false,
+  tooltipOnHover = true,
+  size = 'default',
   ...props
 }) => {
   const cls = useStyles();
-  const Icon = props.icon;
+  // const Icon = props.icon;
   const [isLoading, setIsLoading] = useState(false);
 
   return (
@@ -45,6 +101,11 @@ export const IconButton: React.FC<Props> = ({
         isLoading && cls.hasLoader,
         props.className
       )}
+      style={{
+        width: WrapperSizeInPxByName[size],
+        height: WrapperSizeInPxByName[size],
+        lineHeight: WrapperSizeInPxByName[size],
+      }}
       title={props.title}
       onClick={() => {
         if (isLoading) {
@@ -70,16 +131,22 @@ export const IconButton: React.FC<Props> = ({
         }
       }}
     >
-      <div className={cls.iconWrapper}>
+      <div
+        className={cls.iconWrapper}
+        style={{
+          width: WrapperSizeInPxByName[size],
+          height: WrapperSizeInPxByName[size],
+        }}
+      >
         {isLoading ? (
           <Loader type="ball-clip-rotate" active innerClassName={cls.loader} />
         ) : (
-          <Icon className={cls.icon}/>
+          getIcon({ ...props, clear, type, size }, { className: cls.icon })
         )}
       </div>
       {props.tooltip && (
-        <div className={cls.tooltipContainer}>
-          <div className={cls.tooltipText}>
+        <div className={cx(cls.tooltipContainer)}>
+          <div className={cx(cls.tooltipText, tooltipOnHover && cls.tooltipOnHover)}>
             <Text size="small1">{props.tooltip}</Text>
           </div>
         </div>
@@ -88,32 +155,53 @@ export const IconButton: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   ...buttonStyles,
+  secondary: {
+    ...buttonStyles.secondary,
+    ...({
+      '&$clear': {
+        borderColor: `${colors.secondaryDark} !important`,
+        ...buttonEffects.secondaryClearButtonShadow,
+      },
+    } as NestedCSSElement),
+  },
   button: {
     ...buttonStyles(theme).button,
+    height: sizers.default,
+    width: sizers.default,
+    lineHeight: sizers.default,
     ...onlyMobile({
       ...makeImportant({
-        height: '28px',
-        width: '28px',
-        lineHeight: '28px',
+        height: `${sizers.smallPx - 4}px`,
+        width: `${sizers.smallPx - 4}px`,
+        lineHeight: `${sizers.smallPx - 4}px`,
         marginBottom: '13px',
       }),
     }),
 
     position: 'relative',
+
+    ...({
+      '&:hover $tooltipOnHover': {
+        ...makeImportant({
+          opacity: 1,
+          transitionDelay: '.75s',
+        }),
+      },
+    } as NestedCSSElement),
   },
   clear: {
     ...buttonStyles(theme).clear,
   },
   iconWrapper: {
-    width: '32px',
-    height: '32px',
+    width: sizers.default,
+    height: sizers.default,
 
     ...onlyMobile({
       ...makeImportant({
-        width: '28px',
-        height: '28px',
+        width: `${sizers.smallPx - 4}px`,
+        height: `${sizers.smallPx - 4}px`,
       }),
     }),
 
@@ -152,11 +240,16 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   },
   tooltipContainer: {
     position: 'absolute',
-    transition: 'all 500ms linear',
+    transition: 'opacity 500ms linear',
+
     bottom: '-120%',
     transform: 'translateX(-25%)',
     marginTop: spacers.large,
     zIndex: 999,
+  },
+  tooltipOnHover: {
+    opacity: 0,
+    transitionDelay: '0s',
   },
   tooltipText: {
     marginLeft: spacers.small,

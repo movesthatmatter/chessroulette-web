@@ -12,12 +12,17 @@ type Props = {
   iconProps?: Omit<FontAwesomeIconProps, 'icon'>;
   title?: string;
   tooltip?: string;
+  tooltipOnHover?: boolean;
   onClick?: () => void;
   className?: string;
   disabled?: boolean;
 };
 
-export const ClearIconButton: React.FC<Props> = ({ onClick = noop, ...props }) => {
+export const ClearIconButton: React.FC<Props> = ({
+  onClick = noop,
+  tooltipOnHover = true,
+  ...props
+}) => {
   const cls = useStyles();
 
   return (
@@ -36,7 +41,7 @@ export const ClearIconButton: React.FC<Props> = ({ onClick = noop, ...props }) =
         {...props.iconProps}
       />
       {props.tooltip && (
-        <div className={cls.tooltipContainer}>
+        <div className={cx(cls.tooltipContainer, tooltipOnHover && cls.tooltipOnHover)}>
           <div className={cls.tooltipText}>
             <Text size="small1">{props.tooltip}</Text>
           </div>
@@ -73,6 +78,13 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     transform: 'translateX(-50%)',
     marginTop: spacers.large,
     zIndex: 999,
+  },
+  tooltipOnHover: {
+    display: 'none',
+
+    '&:hover': {
+      display: 'block',
+    },
   },
   tooltipText: {
     marginLeft: spacers.small,

@@ -85,6 +85,7 @@
     "react-div-100vh": "^0.5.6",
     "react-dom": "^16.13.1",
     "react-ga": "^2.7.0",
+    "react-iconly": "^2.2.3",
     "react-jss": "^10.1.1",
     "react-linkify": "^1.0.0-alpha",
     "react-loaders": "^3.0.1",

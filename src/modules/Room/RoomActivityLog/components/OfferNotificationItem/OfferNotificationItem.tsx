@@ -1,15 +1,15 @@
 import React from 'react';
+import cx from 'classnames';
+import Loader from 'react-loaders';
 import { UserRecord } from 'dstnd-io';
 import { IconButton } from 'src/components/Button';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import { CustomTheme, fonts } from 'src/theme';
-import cx from 'classnames';
 import { getUserDisplayName } from 'src/modules/User';
 import { spacers } from 'src/theme/spacers';
 import { OfferNotification } from '../../types';
 import { Checkmark, Close } from 'grommet-icons';
 import { PeerAvatar } from 'src/providers/PeerProvider/components/PeerAvatar';
-import Loader from 'react-loaders';
 
 type Props = {
   notification: OfferNotification;
@@ -155,6 +155,7 @@ export const OfferNotificationItem: React.FC<Props> = ({
           {notification.status === 'pending' && isByMe && (
             <IconButton
               type="primary"
+              iconType="grommet"
               icon={Close}
               className={cls.attentionButton}
               clear
@@ -174,6 +175,7 @@ export const OfferNotificationItem: React.FC<Props> = ({
           >
             <IconButton
               type="primary"
+              iconType="grommet"
               icon={Close}
               className={cls.denyButton}
               clear
@@ -181,6 +183,7 @@ export const OfferNotificationItem: React.FC<Props> = ({
             />
             <IconButton
               type="primary"
+              iconType="grommet"
               icon={Checkmark}
               className={cls.attentionButton}
               // clear

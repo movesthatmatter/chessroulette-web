@@ -14410,6 +14410,11 @@ react-hotkeys@2.0.0:
   dependencies:
     prop-types "^15.6.1"
 
+react-iconly@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/react-iconly/-/react-iconly-2.2.3.tgz#9fd6622a6cb9aec7622203c4c679d8a6c0632379"
+  integrity sha512-jSheFmP4tvP+ril6Ng0iKyXo3A0ceqGWGZGmEu4sm5H0azpYoIdoRpYWrwavDOz9F9orFhDeKHKnBeL48HIw4w==
+
 react-input-autosize@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/react-input-autosize/-/react-input-autosize-2.2.2.tgz#fcaa7020568ec206bc04be36f4eb68e647c4d8c2"
