@@ -1,9 +1,12 @@
 const dark = {
   primary: '#CE186B',
-  primaryHover: '#D427A8',
-  primaryLight: '#E34E89',
+  primaryLight: '#A383FF',
+  primaryLighter: '#BFA8FF',
   primaryLightest: '#F545A2',
   primaryDark: '#CF1484',
+  primaryDarker: '#2E0899',
+  primaryDarkest: '#210A64',
+  primaryHover: '#D427A8',
 
   chessBoardDark: '#7e9ac7',
   chessBoardLight: '#dee5f0',
@@ -42,10 +45,13 @@ const dark = {
 
 const light = {
   primary: '#5A20FE',
-  primaryHover: '#74A3FE',
-  primaryLight: '#A9C1FD',
-  primaryLightest: '#EBF0FF',
-  primaryDark: '#366BEF',
+  primaryLight: '#A383FF',
+  primaryLighter: '#BFA8FF',
+  primaryLightest: '#E7DFFF',
+  primaryDark: '#410ED1',
+  primaryDarker: '#2E0899',
+  primaryDarkest: '#210A64',
+  primaryHover: '#7645FF',
 
   chessBoardDark: '#7e9ac7',
   chessBoardLight: '#dee5f0',
