@@ -1,4 +1,4 @@
-import { ChessHistory, ChessHistoryIndex, ChessPlayer, GameRecord, SimplePGN } from 'dstnd-io';
+import { ChessGameColor, ChessHistory, ChessHistoryIndex, SimplePGN } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
@@ -6,35 +6,30 @@ import { spacers } from 'src/theme/spacers';
 import { FenBox } from './FenBox';
 import { PgnBox } from './PgnBox';
 import { Button } from 'src/components/Button';
-import { Upload } from 'grommet-icons';
 import { ImportPanel, ImportPanelProps } from './ImportPanel';
 import { ConfirmButton } from 'src/components/Button/ConfirmButton';
-import { FloatingBox } from 'src/components/FloatingBox';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
-import { AnalysisStateWidget } from './AnalysisStateWidget';
+import { AnalysisStateWidget, AnalysisStateWidgetProps } from './AnalysisStateWidget';
 
 export type AnalysisPanelProps = {
   onImportedPgn: ImportPanelProps['onImportedPgn'];
   onImportedGame: ImportPanelProps['onImportedGame'];
   analysisRecord?: {
     history: ChessHistory;
-    displayedHistory: ChessHistory;
+    displayedHistory:
+     ChessHistory;
     displayedIndex: ChessHistoryIndex;
   };
-  gameAndParticipants?: {
-    game: GameRecord;
-    players: {
-      home: ChessPlayer;
-      away: ChessPlayer;
-    };
-  };
+  homeColor: ChessGameColor;
+  gameAndPlayers?: AnalysisStateWidgetProps['gameAndPlayers'];
 };
 
 export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
+  homeColor,
   onImportedPgn,
   onImportedGame,
   analysisRecord,
-  gameAndParticipants,
+  gameAndPlayers,
 }) => {
   const cls = useStyles();
   const [hasLoadedAnalysis, setHasLoadedAnalysis] = useState(!!analysisRecord);
@@ -54,7 +49,8 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
         <>
           <AnalysisStateWidget
             displayedIndex={analysisRecord.displayedIndex}
-            gameAndPlayers={gameAndParticipants}
+            homeColor={homeColor}
+            gameAndPlayers={gameAndPlayers}
             boxClassName={cls.containerWithHorizontalPadding}
             boxContainerClassName={cls.historyContainer}
             historyBoxContentClassName={cls.historyBoxContent}

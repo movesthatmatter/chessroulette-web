@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import cx from 'classnames';
 import {
   analysis,
+  ChessGameColor,
   ChessHistoryIndex,
   ChessHistoryMove,
-  ChessPlayer,
+  ChessPlayerBlack,
+  ChessPlayerWhite,
   GameRecord,
 } from 'dstnd-io';
 import { FloatingBox } from 'src/components/FloatingBox';
@@ -13,19 +15,22 @@ import { PlayerBox } from 'src/modules/Games/Chess/components/PlayerBox';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { toDictIndexedBy } from 'src/lib/util';
 import { gameRecordToGame, getPlayerStats } from 'src/modules/Games/Chess/lib';
-import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
+import { chessHistoryToSimplePgn, otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 
-type Props = {
+export type AnalysisStateWidgetProps = {
   displayedIndex: ChessHistoryIndex;
   gameAndPlayers?: {
     game: GameRecord;
+
+    // TODO: This should be typed outside!
     players: {
-      home: ChessPlayer;
-      away: ChessPlayer;
+      black: ChessPlayerBlack;
+      white: ChessPlayerWhite;
     };
   };
+  homeColor: ChessGameColor;
   boxClassName: string;
   boxContainerClassName: string;
   historyBoxContentClassName: string;
@@ -40,7 +45,7 @@ const toTimeLeftMove = (m: ChessHistoryMove): TimeLeftMove => ({
 
 const getPlayersGameInfo = (
   displayedIndex: ChessHistoryIndex,
-  gameAndPlayers?: Props['gameAndPlayers']
+  gameAndPlayers?: AnalysisStateWidgetProps['gameAndPlayers']
 ) => {
   // If we don't have the game, players or the game history don't do anything
   if (!gameAndPlayers) {
@@ -79,25 +84,27 @@ const getPlayersGameInfo = (
   return {
     players,
     timeLeft: {
-      away: last2MovesByColor[players.away.color].clock,
-      home: last2MovesByColor[players.home.color].clock,
+      white: last2MovesByColor.white.clock,
+      black: last2MovesByColor.black.clock,
     },
     stats: {
-      away: getPlayerStats(gameSnapshot, players.away.user.id),
-      home: getPlayerStats(gameSnapshot, players.home.user.id),
+      white: getPlayerStats(gameSnapshot, players.white.user.id),
+      black: getPlayerStats(gameSnapshot, players.black.user.id),
     },
     game,
   };
 };
 
-export const AnalysisStateWidget: React.FC<Props> = ({
+export const AnalysisStateWidget: React.FC<AnalysisStateWidgetProps> = ({
   displayedIndex,
   gameAndPlayers,
+  homeColor,
   boxClassName,
   boxContainerClassName,
   historyBoxContentClassName,
 }) => {
   const cls = useStyles();
+  const awayColor = otherChessColor(homeColor);
 
   const [playersGameInfo, setPlayersGameInfo] = useState(
     getPlayersGameInfo(displayedIndex, gameAndPlayers)
@@ -109,14 +116,14 @@ export const AnalysisStateWidget: React.FC<Props> = ({
 
   return (
     <>
-      {playersGameInfo?.players.away && (
+      {playersGameInfo?.players[awayColor] && (
         <div className={cx(boxClassName, cls.playerInfoTop)}>
           <PlayerBox
-            player={playersGameInfo.players.away}
-            timeLeft={playersGameInfo.timeLeft.away}
+            player={playersGameInfo.players[awayColor]}
+            timeLeft={playersGameInfo.timeLeft[awayColor]}
             active={false}
             gameTimeLimit={playersGameInfo.game.timeLimit}
-            material={playersGameInfo.stats.away.materialScore}
+            material={playersGameInfo.stats[awayColor].materialScore}
           />
         </div>
       )}
@@ -125,14 +132,14 @@ export const AnalysisStateWidget: React.FC<Props> = ({
           <ChessGameHistoryProvided />
         </FloatingBox>
       </div>
-      {playersGameInfo?.players.home && (
+      {playersGameInfo?.players[homeColor] && (
         <div className={cx(boxClassName, cls.playerInfoBottom)}>
           <PlayerBox
-            player={playersGameInfo.players.home}
-            timeLeft={playersGameInfo.timeLeft.home}
+            player={playersGameInfo.players[homeColor]}
+            timeLeft={playersGameInfo.timeLeft[homeColor]}
             active={false}
             gameTimeLimit={playersGameInfo.game.timeLimit}
-            material={playersGameInfo.stats.home.materialScore}
+            material={playersGameInfo.stats[homeColor].materialScore}
           />
         </div>
       )}

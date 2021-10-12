@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
@@ -8,9 +8,8 @@ import { ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/Gam
 import { chessHistoryToSimplePgn, otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { LayoutContainerDimensions } from 'src/modules/Room/Layouts';
 import { AnalysisPanel, AnalysisPanelProps } from './components/AnalysisPanel';
-import { AnalysisRecord, ChessGameColor } from 'dstnd-io';
-import { toChessPlayersBySide } from 'src/modules/Games/Chess/lib';
-import { setInterval, setTimeout } from 'window-or-global';
+import { AnalysisRecord } from 'dstnd-io';
+import { toChessPlayersByColor } from 'src/modules/Games/Chess/lib';
 import { BoardSettingsWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/BoardSettingsWidgetRoomConsumer';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { spacers } from 'src/theme/spacers';
@@ -24,16 +23,24 @@ export type AnalysisActivityProps = ActivityCommonProps & {
   onImportedGame: AnalysisPanelProps['onImportedGame'];
 };
 
-type Orientation = 'home' | 'away';
-
-const getParticipantsBySide = (
-  analysis: AnalysisRecord,
-  participants: RoomAnalysisActivity['participants'],
-  orientationInverted: boolean = false,
-  defaultHomeColor: ChessGameColor = 'white'
-) => {
+const getParticipantsByColor = (analysis: AnalysisRecord) => {
   if (!analysis.game) {
     return undefined;
+  }
+
+  return toChessPlayersByColor(analysis.game.players);
+};
+
+// This always defaults to White
+const getHomeColor = (
+  analysis: AnalysisRecord,
+  participants: RoomAnalysisActivity['participants'],
+  orientationInverted: boolean = false
+) => {
+  const defaultHomeColor = 'white';
+
+  if (!analysis.game) {
+    return orientationInverted ? otherChessColor(defaultHomeColor) : defaultHomeColor;
   }
 
   const myParticipant = Object.values(participants).find((p) => p.participant.isMe);
@@ -43,10 +50,7 @@ const getParticipantsBySide = (
 
   const homeColor = myParticipantAsPlayer?.color || defaultHomeColor;
 
-  return toChessPlayersBySide(
-    analysis.game.players,
-    orientationInverted ? otherChessColor(homeColor) : homeColor
-  );
+  return orientationInverted ? otherChessColor(homeColor) : homeColor;
 };
 
 export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
@@ -60,18 +64,8 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
   const cls = useStyles();
   const pgnFromHistory = analysis.history ? chessHistoryToSimplePgn(analysis.history) : '';
   const roomConsumer = useRoomConsumer();
-
-  const [participantsBySide, setParticipantsBySide] = useState(
-    getParticipantsBySide(analysis, participants, roomConsumer?.boardOrientation !== 'home')
-  );
-
-  useEffect(() => {
-    setParticipantsBySide(
-      getParticipantsBySide(analysis, participants, roomConsumer?.boardOrientation !== 'home')
-    );
-  }, [analysis.game?.players, participants, roomConsumer?.boardOrientation]);
-
-  const defaultHomeColor = roomConsumer?.boardOrientation === 'home' ? 'white' : 'black';
+  const participantsByColor = getParticipantsByColor(analysis);
+  const homeColor = getHomeColor(analysis, participants, roomConsumer?.boardOrientation === 'away');
 
   return (
     <ChessGameHistoryConsumer
@@ -90,10 +84,11 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
               }
               onImportedPgn={onImportedPgn}
               onImportedGame={onImportedGame}
-              gameAndParticipants={
-                analysis.game && participantsBySide
+              homeColor={homeColor}
+              gameAndPlayers={
+                analysis.game && participantsByColor
                   ? {
-                      players: participantsBySide,
+                      players: participantsByColor,
 
                       // TODO: This should be memoized or somewhere up the chain so it doesn't change too often
                       game: analysis.game,
@@ -110,7 +105,7 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
               playable
               canInteract
               pgn={displayedHistory ? chessHistoryToSimplePgn(displayedHistory) : pgnFromHistory}
-              homeColor={participantsBySide?.home.color || defaultHomeColor}
+              homeColor={homeColor}
               onMove={(m) => {
                 onAddMove(
                   {
