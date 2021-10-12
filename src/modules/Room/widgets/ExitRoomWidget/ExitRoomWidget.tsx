@@ -6,6 +6,7 @@ import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { CustomTheme } from 'src/theme';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { useOnLeaveRoute } from './useOnLeaveRoute';
 
 type Props = {
@@ -16,6 +17,7 @@ export const ExitRoomWidget: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [showConfrmation, setShowConfirmation] = useState(false);
   const history = useHistory();
+  const {theme} = useColorTheme();
 
   const unblockRouteTransition = useOnLeaveRoute(() => {
     setShowConfirmation(true);
@@ -54,7 +56,7 @@ export const ExitRoomWidget: React.FC<Props> = (props) => {
             onClick: () => unblockRouteTransition(),
           },
           {
-            type: 'secondary',
+            type: theme.name === 'lightDefault' ? 'secondary' : 'positive',
             label: "I'm staying!",
             full: true,
             onClick: () => {

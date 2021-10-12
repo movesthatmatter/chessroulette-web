@@ -58,11 +58,12 @@ export const LandingPage: React.FC<Props> = () => {
             <div className={cls.buttonWrapper}>
               <CreateRoomButtonWidget
                 label="Play"
-                type="primary"
+                type='primary'
                 createRoomSpecs={{
                   type: 'private',
                   activityType: 'play',
                 }}
+                className={cls.playButton}
                 size={deviceSize.isDesktop ? 'small' : 'medium'}
                 style={{
                   marginRight: spacers.default,
@@ -207,4 +208,10 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
       display: 'none',
     }),
   },
+  playButton: {
+    ...makeImportant({
+      background: theme.colors.primary,
+      color: 'white'
+    }) 
+  }
 }));

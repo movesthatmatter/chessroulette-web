@@ -2,7 +2,7 @@ import { RegisteredUserRecord } from 'dstnd-io';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Text } from 'src/components/Text';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { connectExternalAccountEffect } from 'src/services/Authentication';
 import { CustomTheme, effects } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
@@ -69,7 +69,8 @@ export const UserConnections: React.FC<Props> = ({ user }) => {
               size="medium"
               type="primary"
               label="Connect Twitch"
-              style={{ backgroundColor: '#6441a5', marginBottom: 0, width:'100%' }}
+              className={cls.twitch}
+              style={{ background: '#6441a5', marginBottom: 0, width:'100%' }}
               onSuccess={async (accessToken) => {
                 dispatch(
                   connectExternalAccountEffect({
@@ -125,6 +126,11 @@ const useStyles = createUseStyles<CustomTheme>((theme) => ({
   buttons: {},
   icon:{
     color: theme.colors.primary
+  },
+  twitch: {
+    ...makeImportant({
+      background: '#6441a5'
+    })
   },
   connectedContainer: {
     display: 'flex',

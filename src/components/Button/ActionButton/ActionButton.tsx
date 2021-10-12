@@ -255,6 +255,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   icon: {
     fill: `${theme.colors.white} !important`,
     stroke: `${theme.colors.white} !important`,
+    color: `${theme.colors.white} !important`,
     width: '16px !important',
     height: '16px !important',
   },

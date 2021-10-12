@@ -41,11 +41,11 @@ export const defaultThemeDark = {
   },
   button: {
     backgrounds: {
-      primary : colors.dark.primary,
-      secondary: 'linear-gradient(270deg, #D932D1 0%, #4F8FC7 100%)',
+      primary : 'linear-gradient(89.89deg, #B515DE 1.74%, #D528A6 82.04%)',
+      positive: 'linear-gradient(91.41deg, #1775CE 47.4%, #3BC0C8 97.79%)',
       attention: colors.dark.attention,
-      positive : 'linear-gradient(270deg, #D527A7 0%, #B515DD 100%)',
-      negative: colors.dark.negativeLightest,
+      secondary : 'linear-gradient(332deg, #ED65D4 6.21%, #1775CE 52.98%)',
+      negative:'linear-gradient(90.67deg, #CE186B 36.29%, #FB3B80 99.64%)',
       neutral: '##DBDDE0',
     },
     icon: {

@@ -121,7 +121,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
           buttons={[
             {
               label: 'Cancel Challenge',
-              type: 'secondary',
+              type: theme.name === 'lightDefault' ? 'secondary' : 'negative',
               onClick: () => {
                 if (!roomConsumer) {
                   return;
