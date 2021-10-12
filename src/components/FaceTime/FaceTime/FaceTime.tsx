@@ -86,7 +86,7 @@ export const FaceTime: React.FC<FaceTimeProps> = ({
   );
 };
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     position: 'relative',
   },
