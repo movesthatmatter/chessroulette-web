@@ -30,7 +30,6 @@ import { flatten } from 'src/lib/util';
 import { getRelativeMaterialScore } from '../components/GameStateWidget/util';
 import { Game, GameFromGameState } from '../../types';
 
-
 export const getStartingPgn = () => getNewChessGame().pgn();
 export const getStartingFen = () => getNewChessGame().fen();
 
@@ -283,7 +282,6 @@ export const getPlayerByColor = (color: ChessGameColor, players: ChessGameState[
   return players[0].color === color ? players[0] : players[1];
 };
 
-
 // Added on Oct 7th 2021. These are the future and do belong in the dstnd-io
 type ChessPlayersByColor = {
   white: ChessPlayerWhite;
@@ -327,4 +325,11 @@ export const toChessPlayersBySide = (
     home: playersByColor.black,
     away: playersByColor.white,
   };
+};
+
+export const invertChessPlayersSide = (players: ChessPlayersBySide): ChessPlayersBySide => {
+  return {
+    away: players.home,
+    home: players.away,
+  } as ChessPlayersBySide;
 };

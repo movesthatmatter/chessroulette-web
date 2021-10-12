@@ -6,18 +6,21 @@ import { PlayerBox } from '../PlayerBox/PlayerBox';
 import cx from 'classnames';
 import { noop } from 'src/lib/util';
 import { Game } from 'src/modules/Games';
-import { roomPlayActivityParticipantToChessPlayer } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
-import { PlayParticipants } from 'src/modules/Games/types';
-import { useGameTimesLeft } from './useGameState';
+import {
+  roomPlayActivityParticipantToChessPlayer,
+  RoomPlayParticipantsByColor,
+} from 'src/modules/Room/RoomActivity/activities/PlayActivity';
+import { useGameTimesLeftByColor } from './useGameState';
 import { ChessGameHistoryProvided } from '../GameHistory/ChessGameHistoryProvider/ChessGameHistoryProvided';
 import { FloatingBox } from 'src/components/FloatingBox';
 import { spacers } from 'src/theme/spacers';
+import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 
 type Props = {
   game: Game;
   onTimerFinished?: (color: ChessGameColor) => void;
-
-  playParticipants: PlayParticipants;
+  homeColor: ChessGameColor;
+  playParticipants: RoomPlayParticipantsByColor;
   containerClassName?: string;
   floatingBoxClassName?: string;
 };
@@ -25,26 +28,30 @@ type Props = {
 export const GameStateWidget: React.FC<Props> = ({
   game,
   playParticipants,
+  homeColor,
   onTimerFinished = noop,
   ...props
 }) => {
   const cls = useStyles();
 
-  const homePlayer = roomPlayActivityParticipantToChessPlayer(playParticipants.home);
-  const awayPlayer = roomPlayActivityParticipantToChessPlayer(playParticipants.away);
-
-  const { away: awayTimeLeft, home: homeTimeLeft } = useGameTimesLeft(game, playParticipants);
+  const awayColor = otherChessColor(homeColor);
+  const timeLeft = useGameTimesLeftByColor(game);
+  const players = {
+    white: roomPlayActivityParticipantToChessPlayer(playParticipants.white),
+    black: roomPlayActivityParticipantToChessPlayer(playParticipants.black),
+  } as const;
 
   return (
     <div className={cx(cls.container, props.containerClassName)}>
       <div className={cx(cls.player, cls.playerTop)}>
         <PlayerBox
-          player={awayPlayer}
-          timeLeft={awayTimeLeft}
-          active={game.state === 'started' && game.lastMoveBy !== awayPlayer.color}
+          key={`pb-${players[awayColor].user.id}`}
+          player={players[awayColor]}
+          timeLeft={timeLeft[awayColor]}
+          active={game.state === 'started' && game.lastMoveBy === homeColor}
           gameTimeLimit={game.timeLimit}
-          material={playParticipants.away.materialScore}
-          onTimerFinished={() => onTimerFinished(awayPlayer.color)}
+          material={playParticipants[awayColor].materialScore}
+          onTimerFinished={() => onTimerFinished(awayColor)}
         />
         <div className={cls.spacer} />
       </div>
@@ -54,12 +61,13 @@ export const GameStateWidget: React.FC<Props> = ({
       <div className={cls.player}>
         <div className={cls.spacer} />
         <PlayerBox
-          player={homePlayer}
-          timeLeft={homeTimeLeft}
-          active={game.state === 'started' && game.lastMoveBy !== homePlayer.color}
+          key={`pb-${players[homeColor].user.id}`}
+          player={players[homeColor]}
+          timeLeft={timeLeft[homeColor]}
+          active={game.state === 'started' && game.lastMoveBy === awayColor}
           gameTimeLimit={game.timeLimit}
-          material={playParticipants.home.materialScore}
-          onTimerFinished={() => onTimerFinished(homePlayer.color)}
+          material={playParticipants[homeColor].materialScore}
+          onTimerFinished={() => onTimerFinished(homeColor)}
         />
       </div>
     </div>

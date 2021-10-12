@@ -2,6 +2,7 @@ import { ActivePiecesRecord } from 'dstnd-io';
 import { objectKeys } from 'src/lib/util';
 import { PlayParticipants } from 'src/modules/Games';
 import { Game } from 'src/modules/Games/types';
+import { RoomPlayParticipantsByColor } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 
 const pointsByMaterial = {
   p: 1,
@@ -57,4 +58,19 @@ export const getPlayersTimeLeft = (game: Game, participants: PlayParticipants) =
       : game.timeLeft[participants.away.color];
 
   return { home, away } as const;
+};
+
+export const getPlayersTimeLeftByColor = (game: Game) => {
+  const now = new Date().getTime();
+
+  return {
+    white:
+      game.state === 'started' && game.lastMoveBy !== 'white'
+        ? game.timeLeft.white - (now - new Date(game.lastMoveAt).getTime())
+        : game.timeLeft.white,
+    black:
+      game.state === 'started' && game.lastMoveBy !== 'black'
+        ? game.timeLeft.black - (now - new Date(game.lastMoveAt).getTime())
+        : game.timeLeft.black,
+  } as const;
 };
