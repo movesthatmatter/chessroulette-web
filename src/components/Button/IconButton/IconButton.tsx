@@ -51,6 +51,7 @@ type IconProps =
   | {
       iconType: 'iconly';
       icon: React.FC<IconlyIconProps>;
+      iconPrimaryColor?: string;
     }
   | {
       iconType: 'fontAwesome';
@@ -65,8 +66,16 @@ const getIcon = (
   { className, style }: { className?: string; style?: CSSProperties }
 ) => {
   if (props.iconType === 'iconly') {
-    const { icon: Icon, ...restProps } = props;
-    return <IconlyIcon Icon={props.icon} {...restProps} sizeInPx={IconSizeInPxByName[size]} />;
+    const { icon: Icon, iconPrimaryColor, ...restProps } = props;
+    console.log('iconPrimaryColor', iconPrimaryColor);
+    return (
+      <IconlyIcon
+        Icon={props.icon}
+        primaryColor={iconPrimaryColor}
+        sizeInPx={IconSizeInPxByName[size]}
+        {...restProps}
+      />
+    );
   }
 
   if (props.iconType === 'grommet') {

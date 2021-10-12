@@ -10,6 +10,7 @@ type Props = Omit<IconProps, 'size'> & {
   clear?: boolean;
   disabled?: boolean;
   withLoader?: boolean;
+  primaryColor?: string;
 };
 
 export const IconlyIcon: React.FC<Props> = ({
@@ -19,11 +20,13 @@ export const IconlyIcon: React.FC<Props> = ({
   type = 'primary',
   disabled,
   withLoader,
+  primaryColor,
   ...iconProps
 }) => (
   <Icon
     primaryColor={
-      disabled && clear
+      primaryColor ||
+      (disabled && clear
         ? colors.neutralLight
         : type === 'secondary' && clear
         ? colors.secondaryDark
@@ -31,7 +34,7 @@ export const IconlyIcon: React.FC<Props> = ({
         ? colors[type]
         : type === 'secondary'
         ? colors.neutralDarkest
-        : colors.white
+        : colors.white)
     }
     style={{
       width: sizeInPx,
