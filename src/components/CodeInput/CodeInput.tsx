@@ -3,7 +3,6 @@ import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import ReactCodeInput from 'react-verification-code-input';
 import { CustomTheme, onlyMobile } from 'src/theme';
 import cx from 'classnames';
-import { console } from 'window-or-global';
 
 type Props = Omit<
   React.ComponentProps<typeof ReactCodeInput>, 'fieldWidth' | 'fieldHeight' | 'fields' | 'type'
@@ -20,7 +19,6 @@ export const CodeInput: React.FC<Props> = ({
   ...restProps
 }) => {
   const cls = useStyles();
-  useEffect(() => {console.log('input erro', restProps.inputError)},[restProps.inputError])
   return (
     <div className={cx(cls.container, className)}>
       <ReactCodeInput

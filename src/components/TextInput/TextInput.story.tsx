@@ -1,3 +1,4 @@
+import { action } from '@storybook/addon-actions';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { console } from 'window-or-global';
@@ -25,7 +26,7 @@ export const withValue = () => (
     }}
   >
     <TextInput label="With Value" defaultValue="A bad value" onChange={(event) => {
-      console.log(event.currentTarget.value)
+      action(event.currentTarget.value);
     }}/>
   </div>
 );
@@ -49,7 +50,7 @@ export const withPlaceholder = () => (
     }}
   >
     <TextInput placeholder="My Placeholder"  onChange={(event) => {
-      console.log(event.currentTarget.value)
+      action(event.currentTarget.value);
     }}/>
   </div>
 );
@@ -61,7 +62,7 @@ export const asReadonly = () => (
     }}
   >
     <TextInput label="My Label" defaultValue="My Readonly Value" onChange={(event) => {
-      console.log(event.currentTarget.value)
+      action(event.currentTarget.value);
     }}/>
   </div>
 );
