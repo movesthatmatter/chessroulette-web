@@ -7,6 +7,7 @@ import cx from 'classnames';
 import { PgnInputBox } from './PgnInputBox';
 import { Button, IconButton } from 'src/components/Button';
 import { FormPrevious } from 'grommet-icons';
+import { CustomTheme } from 'src/theme';
 
 type Props = {
   onImported: (pgn: SimplePGN) => void;
@@ -64,10 +65,10 @@ export const ImportPanel: React.FC<Props> = (props) => {
       <div className={cx(cls.box, cls.buttonWrapper)}>
         {props.hasBackButton && (
           <IconButton
-            type="secondary"
+            type='primary'
             icon={FormPrevious}
             onSubmit={() => props.onBackButtonClicked()}
-            className={cls.button}
+            className={cx(cls.button, cls.iconButton)}
           />
         )}
         <Button
@@ -93,7 +94,7 @@ export const ImportPanel: React.FC<Props> = (props) => {
 const FLOATING_SHADOW_HORIZONTAL_OFFSET = spacers.large;
 const FLOATING_SHADOW_BOTTOM_OFFSET = `48px`;
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   // TODO: Have a centralized box class since it's used in other places
   box: {
     paddingLeft: FLOATING_SHADOW_HORIZONTAL_OFFSET,
@@ -138,10 +139,13 @@ const useStyles = createUseStyles({
     width: '100%',
     height: '100%',
   },
+  iconButton: {
+    background: theme.button.backgrounds.primary,
+  },
   button: {
     marginBottom: 0,
     marginLeft: spacers.small,
-
+   
     '&:first-child': {
       marginLeft: 0,
     },
@@ -152,4 +156,4 @@ const useStyles = createUseStyles({
   buttonWrapper: {
     display: 'flex',
   },
-});
+}));
