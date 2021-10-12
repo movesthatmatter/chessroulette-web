@@ -27,7 +27,7 @@ export const fromStartingPosition = () =>
         type="play"
         id={game.id}
         pgn={game.pgn}
-        homeColor="black"
+        playableColor="black"
         onMove={({ fen }) => {}}
         size={400}
       />
@@ -45,7 +45,7 @@ export const playable = () =>
         id={game.id}
         pgn={game.pgn}
         size={600}
-        homeColor={turn}
+        playableColor={turn}
         playable
         onMove={(m) => {
           if (game.state === 'pending' || game.state === 'started') {
@@ -73,7 +73,7 @@ export const withGameStarted = () =>
         id={game.id}
         pgn={game.pgn}
         size={400}
-        homeColor="black"
+        playableColor="black"
         onMove={({ fen }) => {}}
       />
     );
@@ -90,7 +90,7 @@ export const withNotification = () =>
           id={game.id}
           pgn={game.pgn}
           size={400}
-          homeColor="black"
+          playableColor="black"
           onMove={({ fen }) => {}}
           overlayComponent={(p) => (
             <DialogContent

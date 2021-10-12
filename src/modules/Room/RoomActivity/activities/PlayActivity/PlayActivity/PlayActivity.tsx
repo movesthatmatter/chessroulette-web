@@ -114,9 +114,10 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
                     key={game.id}
                     game={game}
                     size={boardSize}
-                    homeColor={homeColor}
+                    orientation={homeColor}
                     canInteract={activity.iamParticipating}
                     playable={activity.iamParticipating && activity.participants.me.canPlay}
+                    playableColor={activity.iamParticipating ? activity.participants.me.color : homeColor}
                     displayedPgn={historyToPgn(c.displayedHistory)}
                     // autoCommitMove // TODO: Add this and try it outs
                     className={cls.board}

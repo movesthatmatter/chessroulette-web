@@ -21,9 +21,9 @@ export type ChessBoardProps = Omit<StyledChessBoardProps, 'onMove' | 'fen'> & {
   config?: {
     showDests?: boolean;
   };
-  homeColor: ChessGameColor;
-  orientation?: ChessGameColor;
+  playableColor: ChessGameColor;
   playable?: boolean;
+  orientation?: ChessGameColor;
   canInteract?: boolean;
 
   // This speeds up rendering as it doesn't wait for the
@@ -106,9 +106,9 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
 
   componentDidUpdate(prevProps: ChessBoardProps) {
     const chessState = getCurrentChessState(this.chess);
-    const { homeColor } = this.props;
+    const { playableColor } = this.props;
 
-    if (this.state.preMove && chessState.turn === homeColor) {
+    if (this.state.preMove && chessState.turn === playableColor) {
       this.applyPreMove(this.state.preMove);
     }
 
@@ -136,7 +136,7 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
     if (this.props.type === 'play') {
       return {
         ...base,
-        color: this.props.homeColor,
+        color: this.props.playableColor,
       };
     }
 
@@ -262,7 +262,7 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
       id,
       playable,
       orientation,
-      homeColor,
+      playableColor,
       canInteract = false,
       ...boardProps
     } = this.props;
@@ -282,7 +282,7 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         resizable
         movable={this.calcMovable()}
         lastMove={chessState.lastMove && [chessState.lastMove.from, chessState.lastMove.to]}
-        orientation={orientation || homeColor}
+        orientation={orientation || playableColor}
         onPreMove={(preMove) => this.onPreMove(preMove)}
         onPreMoveCanceled={() => this.setState({ preMove: undefined })}
         onMove={(m) => this.onMove(m)}
