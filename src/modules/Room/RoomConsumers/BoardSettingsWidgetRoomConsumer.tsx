@@ -2,20 +2,25 @@ import React from 'react';
 import { IconButton } from 'src/components/Button';
 import { useRoomConsumer } from './useRoomConsumer';
 import { Swap } from 'react-iconly';
+import { createUseStyles } from 'src/lib/jss';
+import { colors } from 'src/theme';
 
 type Props = {
   containerClassName?: string;
 };
 
 export const BoardSettingsWidgetRoomConsumer: React.FC<Props> = (props) => {
+  const cls = useStyles();
   const roomConsumer = useRoomConsumer();
 
   return (
     <div className={props.containerClassName}>
       <IconButton
         type="primary"
-        size="small"
+        size="default"
         title="Flip Board"
+        iconPrimaryColor={colors.white}
+        className={cls.button}
         iconType="iconly"
         icon={Swap}
         onSubmit={() => {
@@ -29,3 +34,9 @@ export const BoardSettingsWidgetRoomConsumer: React.FC<Props> = (props) => {
     </div>
   );
 };
+
+const useStyles = createUseStyles({
+  button: {
+    background: colors.primaryLight,
+  },
+});
