@@ -4,6 +4,7 @@ import { stateSliceByKey as peerProvider } from 'src/providers/PeerProvider/redu
 import { stateSliceByKey as feedbackProvider } from 'src/providers/FeedbackProvider/redux/reducer';
 import { stateSliceByKey as session } from 'src/services/Session/reducer';
 import { stateSliceByKey as room } from 'src/modules/Room/redux/reducer';
+import { stateSliceByKey as theme} from 'src/theme/redux/reducer';
 
 const allModuleReducers = {
   ...authentication,
@@ -11,6 +12,7 @@ const allModuleReducers = {
   ...feedbackProvider,
   ...session,
   ...room,
+  ...theme,
 };
 
 export const rootReducer = combineReducers({

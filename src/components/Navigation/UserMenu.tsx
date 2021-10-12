@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { useAuthentication } from 'src/services/Authentication';
-import { colors, floatingShadow, hardBorderRadius, text } from 'src/theme';
+import { CustomTheme, floatingShadow, hardBorderRadius, onlyMobile } from 'src/theme';
 import cx from 'classnames';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { Link } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { spacers } from 'src/theme/spacers';
 
 type Props = {
-  darkMode?: boolean;
+  darkBG?: boolean;
   reversed?: boolean;
   withDropMenu?: boolean;
   linksTarget?: 'blank' | 'self';
@@ -19,7 +19,7 @@ type Props = {
 };
 
 export const UserMenu: React.FC<Props> = ({
-  darkMode = false,
+  darkBG = false,
   reversed = false,
   withDropMenu = false,
   linksTarget = 'self',
@@ -40,7 +40,7 @@ export const UserMenu: React.FC<Props> = ({
 
   const labelContent = (
     <div
-      className={cx(cls.container, darkMode && cls.containerDarkMode, withDropMenu && cls.asLink)}
+      className={cx(cls.container, darkBG && cls.containerDarkMode, withDropMenu && cls.asLink)}
     >
       <div
         className={cx(cls.label)}
@@ -103,13 +103,13 @@ export const UserMenu: React.FC<Props> = ({
   return labelContent;
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
     flex: 1,
   },
   containerDarkMode: {
-    color: colors.white,
+    color: theme.colors.white,
   },
   asLink: {
     cursor: 'pointer',
@@ -122,6 +122,11 @@ const useStyles = createUseStyles({
     position: 'relative',
   },
   menuContentWrapper: {
+    ...(theme.name === 'darkDefault' && {
+      ...onlyMobile({
+        boxShadow:'0 10px 20px rgb(0 0 0 / 50%) !important'
+      })
+    }),
     position: 'absolute',
     top: '-12px',
     paddingTop: '12px',
@@ -132,17 +137,20 @@ const useStyles = createUseStyles({
     width: '200px',
 
     zIndex: 999,
-    background: colors.white,
-    ...floatingShadow,
+    background: theme.colors.white,
+    ...theme.floatingShadow,
     ...hardBorderRadius,
   },
   openedMenuLabelWrapper: {
     paddingBottom: '16px',
-    borderBottom: `1px solid ${colors.neutralLighter}`,
+    borderBottom: `1px solid ${theme.colors.neutralLighter}`,
     display: 'flex',
   },
   menuContent: {
     paddingTop: '16px',
+    ...onlyMobile({
+      paddingBottom:'16px'
+    })
   },
   label: {
     display: 'flex',
@@ -165,20 +173,19 @@ const useStyles = createUseStyles({
   link: {
     textTransform: 'capitalize',
     textDecoration: 'none',
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
     fontFamily: 'Lato, Open Sans, sans serif',
     fontSize: '16px',
     textAlign: 'right',
 
     '&:hover': {
-      borderBottom: `3px solid ${text.primaryColor}`,
-      color: text.primaryColor,
+     ...theme.links.hover
     },
   },
   caretIcon: {
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
   },
   spacer: {
     paddingRight: spacers.default,
   },
-});
+}));

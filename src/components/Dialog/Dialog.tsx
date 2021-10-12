@@ -1,14 +1,20 @@
-import { Layer, LayerProps } from 'grommet';
 import React from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
+import {
+  CustomTheme,
+  floatingShadow,
+  floatingShadowDarkMode,
+  onlyMobile,
+  softBorderRadius,
+} from 'src/theme';
 import { DialogContent, DialogContentProps } from './DialogContent';
 import cx from 'classnames';
 import { noop } from 'src/lib/util';
+import { Modal } from '../Modal/Modal';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 export type DialogProps = {
   visible: boolean;
-  target?: LayerProps['target'];
 } & DialogContentProps;
 
 export const Dialog: React.FC<DialogProps> = ({
@@ -18,38 +24,33 @@ export const Dialog: React.FC<DialogProps> = ({
   ...props
 }) => {
   const cls = useStyles();
+  const { theme } = useColorTheme();
 
   if (!props.visible) {
     return null;
   }
 
   return (
-    <Layer
+    <Modal
       className={cx(cls.container, className)}
-      position="center"
-      // Note: Took the animation out because during the transition it renders
-      //  the content weirdly!
-      animation={false}
-      target={props.target}
-      modal
-      responsive={false}
       {...(hasCloseButton && {
         onClickOutside: onClose,
         onEsc: onClose,
       })}
+      style={theme.name === 'lightDefault' ? floatingShadow : floatingShadowDarkMode}
+
     >
-      <DialogContent hasCloseButton={hasCloseButton} onClose={onClose} {...props} />
-    </Layer>
+      <DialogContent className={cls.background} hasCloseButton={hasCloseButton} onClose={onClose} {...props} />
+    </Modal>
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   container: {
-    ...floatingShadow,
+    backgroundColor: theme.modal.background,
     ...softBorderRadius,
     padding: 0,
     position: 'relative',
-
     ...makeImportant({
       borderRadius: '8px',
       minWidth: '200px',
@@ -64,4 +65,8 @@ const useStyles = createUseStyles({
       }),
     }),
   },
-});
+  background: {
+    borderRadius: '8px !important',
+    backgroundColor: theme.modal.background,
+  },
+}));

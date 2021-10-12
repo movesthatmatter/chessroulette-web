@@ -2,7 +2,7 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
-import { colors, softBorderRadius } from 'src/theme';
+import { CustomTheme, softBorderRadius } from 'src/theme';
 import { RoomDetailsConsumer } from './RoomDetailsConsumer';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
 import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
@@ -13,6 +13,7 @@ import { getBoxShadow } from 'src/theme/util';
 import { NavigationLink } from 'src/components/NavigationLink';
 import { SwitchActivityWidgetRoomConsumer } from './SwitchActivityWidgetRoomConsumer';
 import { RoomControlMenuConsumer } from './RoomControlMenuConsumer';
+import { DarkModeSwitch } from 'src/components/DarkModeSwitch/DarkModeSwitch';
 
 type Props = {
   renderActivity: (d: {
@@ -45,7 +46,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
         renderTopComponent={({ left, right, center }) => (
           <div className={cls.top}>
             <div className={cls.mainTop}>
-              <div className={cls.logoWrapper} style={{ flex: 1 }}>
+              <div className={cls.logoWrapper} style={{ flex: 1, marginRight:'10px' }}>
                 <Logo asLink withBeta />
               </div>
               <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
@@ -75,6 +76,8 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
                     )}
                   />
                 </div>
+                <DarkModeSwitch/>
+                <div style={{width:'20px'}}/>
                 <UserMenu reversed showPeerStatus />
               </div>
             </div>
@@ -117,14 +120,14 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     width: '100%',
     height: '100%',
-
+    color: theme.text.baseColor,
     display: 'flex',
     flexDirection: 'column',
-    background: colors.background,
+    background: theme.colors.background,
   },
   top: {
     display: 'flex',
@@ -151,7 +154,7 @@ const useStyles = createUseStyles({
     flexDirection: 'column',
   },
   rightSide: {
-    background: colors.white,
+    background: theme.colors.white,
     boxShadow: getBoxShadow(0, 0, 26, 10, 'rgba(16, 30, 115, 0.08)'),
     paddingLeft: `${MIN_SPACE_BETWEEN}px`,
     paddingRight: `${MIN_SPACE_BETWEEN}px`,
@@ -186,6 +189,6 @@ const useStyles = createUseStyles({
   linksContainer: {
     display: 'flex',
     alignItems: 'center',
-    flex: 1,
+    flex: 3,
   },
-});
+}));

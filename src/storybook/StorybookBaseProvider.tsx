@@ -1,10 +1,10 @@
 import React from 'react';
-import { Grommet } from 'grommet';
-import { defaultTheme } from 'src/theme';
+import { themes } from 'src/theme';
 import { BrowserRouter } from 'react-router-dom';
 import { StorybookReduxProvider } from './StorybookReduxProvider';
 import { UserRecordMocker } from 'src/mocks/records';
 import { RootState } from 'src/redux/rootReducer';
+import { ThemeProvider } from 'react-jss';
 
 type Props = {
   withAuthentication?: boolean;
@@ -21,11 +21,11 @@ type Props = {
 const userMocker = new UserRecordMocker();
 
 // This provides all the utilities needed to render a Basic Story:
-//   - Grommet Theme
 //   - Browser Router
 //
 // This is generally only needed when using a component that depends on other components
 //  that might use some of the providers above
+
 export const StorybookBaseProvider: React.FunctionComponent<Props> = ({
   children,
   withAuthentication = false,
@@ -34,9 +34,9 @@ export const StorybookBaseProvider: React.FunctionComponent<Props> = ({
   const withRedux = withAuthentication || props.withRedux;
 
   const base = (
-    <Grommet theme={defaultTheme} full>
+    <ThemeProvider theme={themes.lightDefault}>
       <BrowserRouter>{children}</BrowserRouter>
-    </Grommet>
+    </ThemeProvider>
   );
 
   if (withRedux) {

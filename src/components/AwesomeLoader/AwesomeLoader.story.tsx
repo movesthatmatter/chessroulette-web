@@ -1,7 +1,5 @@
-import { Box, Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { defaultTheme } from 'src/theme';
 import { AwesomeLoader } from './AwesomeLoader';
 import { AwesomeLoaderPage } from './AwesomeLoaderPage';
 
@@ -16,16 +14,12 @@ export const defaultStory = () => (
       width: '300px',
     }}
   >
-    <Grommet theme={defaultTheme}>
       <AwesomeLoader />
-    </Grommet>
   </div>
 );
 
 export const asPage = () => (
-  <Grommet theme={defaultTheme}>
     <AwesomeLoaderPage />
-  </Grommet>
 );
 
 export const minimal = () => (
@@ -34,15 +28,12 @@ export const minimal = () => (
       width: '100px',
     }}
   >
-    <Grommet theme={defaultTheme}>
       <AwesomeLoader minimal />
-    </Grommet>
   </div>
 );
 
 export const gamePendingSayings = () => (
   <div style={{ width: '300px' }}>
-    <Grommet theme={defaultTheme}>
       <AwesomeLoader
         sayings={[
           'Loading...',
@@ -54,6 +45,5 @@ export const gamePendingSayings = () => (
           `Still time to polish your chess`,
         ]}
       />
-    </Grommet>
   </div>
 );

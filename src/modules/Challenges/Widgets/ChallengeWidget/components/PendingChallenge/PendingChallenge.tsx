@@ -6,7 +6,7 @@ import { ClipboardCopy } from 'src/components/ClipboardCopy';
 import { createUseStyles } from 'src/lib/jss';
 import { toChallengeUrlPath } from 'src/lib/util';
 import useWebShare from 'react-use-web-share';
-import { colors } from 'src/theme';
+import { CustomTheme } from 'src/theme';
 
 export type PendingChallengeProps = {
   challenge: ChallengeRecord;
@@ -14,7 +14,7 @@ export type PendingChallengeProps = {
 
 export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
   const cls = useStyles();
-  const [copiedMagicLink, setCopiedMagicLink] = useState(false);
+  const [_, setCopiedMagicLink] = useState(false);
   const { share } = useWebShare();
 
   return (
@@ -61,7 +61,7 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     textAlign: 'center',
   },
@@ -70,6 +70,6 @@ const useStyles = createUseStyles({
     paddingBottom: '8px',
   },
   importantText: {
-    color: colors.negative,
+    color: theme.colors.negative,
   },
-});
+}));

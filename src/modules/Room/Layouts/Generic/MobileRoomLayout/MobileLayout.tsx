@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
 import Div100vh from 'react-div-100vh';
-import { colors } from 'src/theme';
+import { CustomTheme } from 'src/theme';
 
 type Dimensions = {
   width: number;
@@ -56,7 +56,7 @@ export const MobileRoomLayout: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     height: '100vh',
     width: '100vw',
@@ -90,6 +90,6 @@ const useStyles = createUseStyles({
     borderRadius: '16px 16px 0 0',
     paddingTop: '16px',
     marginTop: '-16px',
-    background: colors.neutralLightest,
+    background: theme.colors.background,
   },
-});
+}));

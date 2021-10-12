@@ -9,11 +9,10 @@ import { updateUserAction } from 'src/services/Authentication/actions';
 import { CountryCode, RegisteredUserRecord } from 'dstnd-io';
 import { useDispatch } from 'react-redux';
 import { Avatar } from 'src/components/Avatar';
-import { Hr } from 'src/components/Hr';
 import { GetCountries } from 'src/services/Location';
 import { SelectInput } from 'src/components/Input/SelectInput';
-import { onlyDesktop, onlyMobile } from 'src/theme';
-import { SearchBar } from 'src/components/SearchBar/SearchBar';
+import { CustomTheme, onlyDesktop, onlyMobile } from 'src/theme';
+import { Text } from 'src/components/Text';
 
 type Props = {
   user: RegisteredUserRecord;
@@ -40,14 +39,14 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
         <div className={cls.requiredFieldsContainer}>
           <TextInput
             label="Email"
-            value={user.email}
+            defaultValue={user.email}
             readOnly
             placeholder="beth.harmon@queens.gambit"
             className={cls.input}
           />
           <TextInput
             label="Username"
-            value={user.username}
+            defaultValue={user.username}
             readOnly
             placeholder="beth.harmon"
             className={cls.input}
@@ -87,10 +86,10 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                 <div className={cls.inputWrapper}>
                   <TextInput
                     label="First Name"
-                    value={p.model.firstName}
+                    defaultValue={p.model.firstName}
                     placeholder="Beth"
                     className={cls.input}
-                    onChange={({ target }) => p.onChange('firstName', target.value)}
+                    onChange={({ currentTarget }) => p.onChange('firstName', currentTarget.value)}
                     validationError={
                       p.errors.validationErrors?.firstName ||
                       p.errors.submissionValidationErrors?.firstName
@@ -100,10 +99,10 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                 <div className={cls.inputWrapper}>
                   <TextInput
                     label="Last Name"
-                    value={p.model.lastName}
+                    defaultValue={p.model.lastName}
                     placeholder="Beth"
                     className={cls.input}
-                    onChange={({ target }) => p.onChange('lastName', target.value)}
+                    onChange={({ currentTarget }) => p.onChange('lastName', currentTarget.value)}
                     validationError={
                       p.errors.validationErrors?.lastName ||
                       p.errors.submissionValidationErrors?.lastName
@@ -179,12 +178,12 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>( theme => ({
   container: {
     height: '100%',
     // display: 'flex',
     // flexDirection: 'row',
-
+    color: theme.text.baseColor,
     ...onlyDesktop({
       width: '50%',
     }),
@@ -211,4 +210,4 @@ const useStyles = createUseStyles({
   },
   inputWrapper: {},
   input: {},
-});
+}));

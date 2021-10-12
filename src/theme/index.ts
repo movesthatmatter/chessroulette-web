@@ -1,45 +1,27 @@
-import { deepMerge } from 'grommet/utils';
-import { grommet, ThemeType } from 'grommet';
-import { text } from './text';
+import { Colors} from './colors';
+import { defaultThemeDark, darkTheme as darkDefault } from './themes/dark';
+import { lightTheme as lightDefault} from './themes/light';
 
-const customTheme: ThemeType = {
-  global: {
-    colors: {
-      brand: 'rgb(84, 196, 242)',
-      text: {
-        dark: '#f8f8f8',
-        light: text.primaryColor,
-      },
-    },
-    font: {
-      family: 'Lato, Open Sans, sans-serif',
-    },
-  },
-  button: {
-    default: {
-      color: 'brand',
-      border: {
-        color: 'brand',
-        width: '2px',
-      },
-    },
-    primary: {
-      background: { color: 'brand' },
-      color: 'light-1',
-    },
-    secondary: {
-      border: { color: 'brand', width: '2px' },
-    },
-    active: {
-      background: { color: 'brand-contrast' },
-    },
-  },
+export const themes = { 
+  lightDefault,
+  darkDefault
+}
+// type ThemeWithoutName = Omit<typeof darkDefault,'name'>;
+export type DefaultTheme =  typeof defaultThemeDark & {
+  name: 'darkDefault' | 'lightDefault';
 };
 
-export const defaultTheme = deepMerge(grommet, customTheme);
+export type CustomTheme = DefaultTheme
 
-export * from './colors';
+type PartialProps<T extends Omit<typeof defaultThemeDark, 'colors'>> = {
+  [k in keyof T] : Partial<T[k]>
+}
+
+export type Theme = {
+  colors : Colors
+} 
+& PartialProps<Omit<typeof defaultThemeDark,'colors'>>
+
 export * from './effects';
 export * from './fonts';
-export * from './text';
 export * from './mediaQueries';

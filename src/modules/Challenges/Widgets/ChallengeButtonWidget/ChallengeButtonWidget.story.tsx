@@ -1,7 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { Grommet } from 'grommet';
-import { defaultTheme } from 'src/theme';
 import { ChallengeButtonWidget } from './ChallengeButtonWidget';
 import { SocketConsumer, SocketProvider } from 'src/providers/SocketProvider';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
@@ -29,7 +27,6 @@ export const defaultStory = () => (
         })
       }}
       render={() => (
-        <Grommet theme={defaultTheme}>
           <div style={{ width: '200px' }}>
             <StorybookReduxProvider initialState={{
               authentication: {
@@ -47,7 +44,6 @@ export const defaultStory = () => (
               />
             </StorybookReduxProvider>
           </div>
-        </Grommet>
       )}
     />
   </SocketProvider>

@@ -6,16 +6,16 @@ import { UserMenu } from 'src/components/Navigation/UserMenu';
 
 type Props = {
   logoAsLink?: boolean;
-  darkMode?: boolean,
+  darkBG?: boolean,
 };
 
-export const NavigationHeader: React.FC<Props> = ({ logoAsLink = true, darkMode = false }) => {
+export const NavigationHeader: React.FC<Props> = ({ logoAsLink = true, darkBG = false }) => {
   const cls = useStyles();
 
   return (
     <div className={cls.container}>
-      <Logo asLink={logoAsLink} darkMode={darkMode} />
-      <UserMenu darkMode={darkMode} reversed />
+      <Logo asLink={logoAsLink} darkBG={darkBG} />
+      <UserMenu darkBG={darkBG} reversed />
     </div>
   );
 };

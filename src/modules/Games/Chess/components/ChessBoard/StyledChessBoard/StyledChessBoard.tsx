@@ -1,14 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chessground, { ChessgroundProps, ChessgroundApi } from 'react-chessground';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import blueBoard from '../assets/board/blue.svg';
+import blueBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/board/blue.svg';
 import cx from 'classnames';
 import { ChessGameColor, ChessMove, PromotionalChessPieceType } from 'dstnd-io';
 import { Square } from 'chess.js';
 import { pieces } from '../pieces';
 import { noop } from 'src/lib/util';
 import 'react-chessground/dist/styles/chessground.css';
-import { softOutline } from 'src/theme';
+import { CustomTheme, softOutline } from 'src/theme';
+import {light as lightPieces} from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
+import darkBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/board/blue_darkMode.svg';
+import {dark as darkPieces} from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
 
 export type StyledChessBoardProps = Omit<
   ChessgroundProps,
@@ -168,14 +171,78 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>( theme => {
+  const colors = theme.name === 'lightDefault' ? {
+    image : blueBoard,
+    pieces: lightPieces,
+    selectedSquare: '#14551e80',
+    lastMove: '#9bc70069',
+    check: 'radial-gradient(ellipse at center,rgba(255,0,0,1) 0,rgba(231,0,0,1) 25%,rgba(169,0,0,0) 89%,rgba(158,0,0,0) 100%)',
+    arrows: {
+      color1: '#15781B',
+      color2: '#882020',
+      color3: '#003088',
+      color4: '#e68f00',
+    }
+  } : {
+    image : darkBoard,
+    pieces: darkPieces,
+    selectedSquare: '#55145380',
+    lastMove: '#2e0c2d80',
+    check: 'radial-gradient(64.15% 64.15% at 50.28% 50.31%, rgba(206, 24, 107, 0.81) 39.58%, rgba(206, 24, 107, 0) 100%)',
+    arrows: {
+      color1: '#FF9416',
+      color2: '#E485BF',
+      color3: '#8354E9',
+      color4: '#3BC0C8',
+    }
+  }
+  return {
   container: {
     padding: 0,
     position: 'relative',
 
     ...({
       '& .cg-wrap': {
-        backgroundImage: `url(${blueBoard})`,
+        backgroundImage: `url(${colors.image})`,
+      },
+
+      '& .cg-wrap piece.rook.white' : {
+        backgroundImage: `url(${colors.pieces.wR})`
+      },
+      '& .cg-wrap piece.queen.white' : {
+        backgroundImage: `url(${colors.pieces.wQ})`
+      },
+      '& .cg-wrap piece.knight.white' : {
+        backgroundImage: `url(${colors.pieces.wN})`
+      },
+      '& .cg-wrap piece.bishop.white' : {
+        backgroundImage: `url(${colors.pieces.wB})`
+      },
+      '& .cg-wrap piece.pawn.white' : {
+        backgroundImage: `url(${colors.pieces.wP})`
+      },
+      '& .cg-wrap piece.king.white' : {
+        backgroundImage: `url(${colors.pieces.wK})`
+      },
+
+      '& .cg-wrap piece.rook.black' : {
+        backgroundImage: `url(${colors.pieces.bR})`
+      },
+      '& .cg-wrap piece.queen.black' : {
+        backgroundImage: `url(${colors.pieces.bQ})`
+      },
+      '& .cg-wrap piece.knight.black' : {
+        backgroundImage: `url(${colors.pieces.bN})`
+      },
+      '& .cg-wrap piece.bishop.black' : {
+        backgroundImage: `url(${colors.pieces.bB})`
+      },
+      '& .cg-wrap piece.pawn.black' : {
+        backgroundImage: `url(${colors.pieces.bP})`
+      },
+      '& .cg-wrap piece.king.black' : {
+        backgroundImage: `url(${colors.pieces.bK})`
       },
 
       '& cg-helper': {
@@ -203,6 +270,57 @@ const useStyles = createUseStyles({
             color: '#8ca2ad',
           },
         },
+      },
+
+      '& .cg-wrap svg circle[stroke="#15781B"]' : {
+        stroke: `${colors.arrows.color1} !important`,
+      },
+      '& .cg-wrap svg line[stroke="#15781B"]' : {
+        stroke: `${colors.arrows.color1} !important`,
+      },
+      '& .cg-wrap svg marker[id="arrowhead-g"] path' : {
+        fill: `${colors.arrows.color1} !important`,
+      },
+
+      '& .cg-wrap svg circle[stroke="#882020"]' : {
+        stroke: `${colors.arrows.color2} !important`,
+      },
+      '& .cg-wrap svg line[stroke="#882020"]' : {
+        stroke: `${colors.arrows.color2} !important`,
+      },
+      '& .cg-wrap svg marker[id="arrowhead-r"] path' : {
+        fill: `${colors.arrows.color2} !important`,
+      },
+
+      '& .cg-wrap svg circle[stroke="#003088"]' : {
+        stroke: `${colors.arrows.color3} !important`,
+      },
+      '& .cg-wrap svg line[stroke="#003088"]' : {
+        stroke: `${colors.arrows.color3} !important`,
+      },
+      '& .cg-wrap svg marker[id="arrowhead-b"] path' : {
+        fill: `${colors.arrows.color3} !important`,
+      },
+
+      '& .cg-wrap svg circle[stroke="#e68f00"]' : {
+        stroke: `${colors.arrows.color4} !important`,
+      },
+      '& .cg-wrap svg line[stroke="#e68f00"]' : {
+        stroke: `${colors.arrows.color4} !important`,
+      },
+      '& .cg-wrap svg marker[id="arrowhead-y"] path' : {
+        fill: `${colors.arrows.color4} !important`,
+      },
+
+      '& cg-board square.check' : {
+         background: colors.check,
+      },
+
+      '& cg-board square.selected' : {
+        backgroundColor: colors.selectedSquare
+      },
+      '& cg-board square.last-move' : {
+        backgroundColor : colors.lastMove
       },
       '& .cg-wrap coords.files': {
         bottom: '0%',
@@ -256,4 +374,4 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
   },
-});
+}});

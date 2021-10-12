@@ -9,10 +9,7 @@ import {
   Validate,
   SafariOption,
   Gremlin,
-  TapeOption,
 } from 'grommet-icons';
-import { Grommet } from 'grommet';
-import { defaultTheme } from 'src/theme';
 import { delay } from 'src/lib/time';
 
 export default {
@@ -21,7 +18,6 @@ export default {
 };
 
 export const defaultStory = () => (
-  <Grommet theme={defaultTheme}>
     <div
       style={{
         display: 'flex',
@@ -299,5 +295,4 @@ export const defaultStory = () => (
         </div>
       </div>
     </div>
-  </Grommet>
 );

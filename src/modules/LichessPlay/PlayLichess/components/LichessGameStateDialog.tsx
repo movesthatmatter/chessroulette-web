@@ -1,11 +1,10 @@
-import { Box } from 'grommet';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { DialogContent } from 'src/components/Dialog';
 import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { Game } from 'src/modules/Games';
 import { getPlayerByColor } from 'src/modules/Games/Chess/lib';
-import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
+import { CustomTheme, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { LichessGameDialogContext } from './LichessGameStateDialogProvider';
 
 type Props = NonNullable<LichessGameDialogContext>;
@@ -25,7 +24,7 @@ export const LichessGameStateDialog: React.FC<Props> = ({ game, status }) => {
         <DialogContent
           title="Game Finished"
           content={
-            <Box align="center">
+            <div style={{display:'flex', justifyContent:'center', alignContent:'center', alignItems:'center'}}>
               {status === 'mate' ? (
                 <Text>
                   <strong>{getPlayerByColor(game.winner, game.players).user.name}</strong>
@@ -55,7 +54,7 @@ export const LichessGameStateDialog: React.FC<Props> = ({ game, status }) => {
                   {` won!`}
                 </Text>
               )}
-            </Box>
+            </div>
           }
           hasCloseButton={false}
           buttons={[
@@ -76,9 +75,9 @@ export const LichessGameStateDialog: React.FC<Props> = ({ game, status }) => {
         <DialogContent
           title="Game Finished"
           content={
-            <Box align="center">
+            <div style={{alignContent:'center', alignItems:'center'}}>
               <Text> Game ended in a draw.</Text>
-            </Box>
+            </div>
           }
           hasCloseButton={false}
           buttons={[
@@ -106,7 +105,7 @@ export const LichessGameStateDialog: React.FC<Props> = ({ game, status }) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     position: 'absolute',
     top: 0,
@@ -125,7 +124,7 @@ const useStyles = createUseStyles({
     ...softBorderRadius,
     padding: 0,
     position: 'relative',
-    background: colors.white,
+    background: theme.colors.white,
 
     ...makeImportant({
       borderRadius: '8px',
@@ -141,4 +140,4 @@ const useStyles = createUseStyles({
       }),
     }),
   },
-});
+}));

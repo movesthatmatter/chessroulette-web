@@ -1,17 +1,19 @@
 import React from 'react';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
-import { colors, effects, onlyMobile, text } from 'src/theme';
+import { CustomTheme, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Text } from '../Text';
 import { Link } from 'react-router-dom';
 import { AnchorLink } from '../AnchorLink';
 import { Instagram as InstagramIcon, Facebook as FacebookIcon } from 'grommet-icons';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = {};
 
 export const Footer: React.FC<Props> = () => {
   const cls = useStyles();
-
+  const {theme} = useColorTheme();
+  const text = theme.text;
   return (
     <>
       <div className={cls.container}>
@@ -28,8 +30,8 @@ export const Footer: React.FC<Props> = () => {
                   target="_blank"
                   baseColor={text.baseColor}
                 >
-                  <InstagramIcon size="16px" className={cls.socialIcon} />
-                  <Text size="body2">Instagram</Text>
+                  <InstagramIcon size="16px" className={cls.socialIcon} color={theme.colors.neutralDarkest}/>
+                  <Text size="body2" className={cls.text}>Instagram</Text>
                 </AnchorLink>
                 <AnchorLink
                   className={cls.socialLink}
@@ -37,20 +39,24 @@ export const Footer: React.FC<Props> = () => {
                   href="https://www.facebook.com/chessroulette/"
                   target="_blank"
                 >
-                  <FacebookIcon size="16px" className={cls.socialIcon} />
-                  <Text size="body2">Facebook</Text>
+                  <FacebookIcon size="16px" className={cls.socialIcon} color={theme.colors.neutralDarkest}/>
+                  <Text size="body2" className={cls.text}>Facebook</Text>
                 </AnchorLink>
               </div>
             </div>
-            <div>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+              <div className={cls.linkContainerSpacer}>
               <AnchorLink
                 href="https://gabrielctroia.medium.com/meet-chessroulette-org-a-quarantine-project-e4108f05db39"
                 className={cls.link}
+                target='blank'
               >
                 <Text size="body2" className={cls.text}>
                   About
                 </Text>
               </AnchorLink>
+              </div>
+              <div className={cls.linkContainerSpacer}>
               <AnchorLink
                 href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage"
                 className={cls.link}
@@ -59,16 +65,21 @@ export const Footer: React.FC<Props> = () => {
                   Get In Touch
                 </Text>
               </AnchorLink>
+              </div>
+              <div className={cls.linkContainerSpacer}>
               <Link to="/privacy-policy" className={cls.link}>
                 <Text size="body2" className={cls.text}>
                   Privacy Policy
                 </Text>
               </Link>
+              </div>
+              <div className={cls.linkContainerSpacer}>
               <Link to="/tos" className={cls.link}>
                 <Text size="body2" className={cls.text}>
                   Terms of Service
                 </Text>
               </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -77,11 +88,11 @@ export const Footer: React.FC<Props> = () => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   topContainer: {
-    background: colors.neutralLightest,
+    background: theme.colors.neutralLightest,
     paddingBottom: '8px',
-    ...effects.floatingShadow,
+    ...theme.floatingShadow,
     position: 'relative',
   },
   centralizeContent: {
@@ -89,7 +100,7 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
   },
   container: {
-    background: colors.neutralLighter,
+    background: theme.colors.neutralLighter,
   },
   responsive: {
     width: '100%',
@@ -117,17 +128,15 @@ const useStyles = createUseStyles({
     }),
   },
   link: {
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralLightest,
     textDecoration: 'none',
 
     '&:hover': {
-      textDecoration: 'underline',
+      borderBottom: `2px solid ${theme.colors.neutralDarkest}`
     },
-
-    paddingLeft: spacers.larger,
   },
   text: {
-    color: colors.neutralDarkest,
+    color: theme.text.subtle,
   },
   socialLink: {
     verticalAlign: 'center',
@@ -145,9 +154,11 @@ const useStyles = createUseStyles({
     marginRight: spacers.small,
   },
   socialLinkText: {
-    color: text.baseColor,
+    color: theme.text.baseColor,
   },
-
+  linkContainerSpacer: {
+    paddingLeft: spacers.larger,
+  },
   row: {
     paddingTop: spacers.default,
     display: 'flex',
@@ -157,4 +168,4 @@ const useStyles = createUseStyles({
       justifyContent: 'center',
     }),
   },
-});
+}));

@@ -2,7 +2,7 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { ChatMessageRecord, UserInfoRecord, UserRecord } from 'dstnd-io';
-import { colors, fonts } from 'src/theme';
+import { CustomTheme, fonts } from 'src/theme';
 import { Text } from 'src/components/Text';
 import Linkify from 'react-linkify';
 import { SecureLink } from 'react-secure-link';
@@ -54,7 +54,7 @@ export const Message: React.FC<Props> = ({ myId, message, fromUser, canShowUserI
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {},
   message: {
     // background: 'red',
@@ -79,16 +79,22 @@ const useStyles = createUseStyles({
     display: 'inline-block',
   },
   myMessageContent: {
-    backgroundColor: colors.neutral,
     borderBottomRightRadius: 0,
     marginLeft: 'auto',
+    ...(theme.name === 'lightDefault' ? {
+      background: theme.colors.neutral,
+      color : '#001b36',
+    }: {
+      background: 'linear-gradient(270deg, #1977F2 0%, #43D1BE 100%)',
+      color: theme.colors.white
+    })
   },
   otherMessageContent: {
     marginRight: '30px',
     textAlign: 'left',
     borderStyle: 'solid',
     borderWidth: '1px',
-    borderColor: colors.neutral,
+    borderColor: theme.colors.neutral,
     borderBottomLeftRadius: 0,
   },
   messageSender: {
@@ -96,4 +102,4 @@ const useStyles = createUseStyles({
     fontWeight: 300,
     paddingTop: '8px',
   },
-});
+}));

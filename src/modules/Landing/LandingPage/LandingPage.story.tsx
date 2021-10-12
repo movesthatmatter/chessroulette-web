@@ -1,7 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { Grommet } from 'grommet';
-import { defaultTheme } from 'src/theme';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 import { UserRecordMocker } from 'src/mocks/records';
 import { LandingPage } from './LandingPage';
@@ -17,9 +15,7 @@ const userA = userRecordMocker.record(false);
 
 export const defaultStory = () => (
   <StorybookReduxProvider initialState={{}}>
-    <Grommet theme={defaultTheme} full>
       <LandingPage />
-    </Grommet>
   </StorybookReduxProvider>
 );
 
@@ -33,8 +29,6 @@ export const withUser = () => (
       },
     }}
   >
-    <Grommet theme={defaultTheme} full>
       <LandingPage />
-    </Grommet>
   </StorybookReduxProvider>
 );

@@ -1,5 +1,4 @@
 import capitalize from 'capitalize';
-import { Box } from 'grommet';
 import React, { useEffect, useState } from 'react';
 import { DialogProps } from 'src/components/Dialog/Dialog';
 import { Emoji } from 'src/components/Emoji';
@@ -11,7 +10,7 @@ import { selectCurrentRoomActivityLog } from 'src/modules/Room/RoomActivityLog/r
 import { getUserDisplayName } from 'src/modules/User';
 import { DialogContent } from 'src/components/Dialog';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
+import { CustomTheme, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { DialogNotificationTypes } from '../type';
 import { RoomPlayActivityWithGame } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
@@ -21,7 +20,7 @@ import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 export type GameStateDialogContentProps = {
   activity: RoomPlayActivityWithGame;
   dialogNotificationTypes: DialogNotificationTypes;
-  target?: DialogProps['target'];
+  // target?: DialogProps['target'];
 };
 
 export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
@@ -91,10 +90,13 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           <DialogContent
             title="Game Ended"
             content={
-              <Box
-                align="center"
+              <div
                 style={{
                   textAlign: 'center',
+                  alignContent:'center',
+                  alignItems:'center',
+                  display:'flex',
+                  justifyContent:'center'
                 }}
               >
                 {game.state === 'finished' && (
@@ -131,7 +133,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
                     )}
                   </Text>
                 )}
-              </Box>
+              </div>
             }
             onClose={() => setGameResultSeen(true)}
             buttons={
@@ -217,19 +219,27 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           title="Pending Offer"
           hasCloseButton={false}
           content={
-            <Box align="center">
+            <div
+                style={{
+                  textAlign: 'center',
+                  alignContent:'center',
+                  alignItems:'center',
+                  display:'flex',
+                  justifyContent:'center'
+                }}
+              >
               <Text>
                 Waiting for <strong>{getUserDisplayName(activityLog.pending.toUser)}</strong>
                 {` `}
                 to make a decision...
               </Text>
-            </Box>
+            </div>
           }
           onClose={() => () => gameActions.onOfferCanceled()}
           buttons={[
             {
               label: 'Cancel',
-              type: 'secondary',
+              type: 'negative',
               onClick: () => gameActions.onOfferCanceled(),
             },
           ]}
@@ -244,22 +254,30 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           title="Challenge Offer"
           hasCloseButton={false}
           content={
-            <Box align="center">
+            <div
+                style={{
+                  textAlign: 'center',
+                  alignContent:'center',
+                  alignItems:'center',
+                  display:'flex',
+                  justifyContent:'center'
+                }}
+              >
               <Text>
                 <strong>{getUserDisplayName(activityLog.pending.byUser)}</strong>
                 {` is challenging you to a New Game`}
               </Text>
-            </Box>
+            </div>
           }
           buttons={[
             {
               label: 'Deny',
-              type: 'secondary',
+              type: 'negative',
               onClick: () => gameActions.onChallengeDenied(),
             },
             {
               label: 'Accept',
-              type: 'primary',
+              type: 'positive',
               onClick: () => gameActions.onChallengeAccepted(),
             },
           ]}
@@ -273,22 +291,30 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           title="Rematch Offer"
           hasCloseButton={false}
           content={
-            <Box align="center">
+            <div
+                style={{
+                  textAlign: 'center',
+                  alignContent:'center',
+                  alignItems:'center',
+                  display:'flex',
+                  justifyContent:'center'
+                }}
+              >
               <Text>
                 <strong>{getUserDisplayName(activityLog.pending.byUser)}</strong>
                 {` is Offering a Rematch`}
               </Text>
-            </Box>
+            </div>
           }
           buttons={[
             {
               label: 'Deny',
-              type: 'secondary',
+              type: 'negative',
               onClick: () => gameActions.onRematchDenied(),
             },
             {
               label: 'Accept',
-              type: 'primary',
+              type: 'positive',
               onClick: () => gameActions.onRematchAccepted(),
             },
           ]}
@@ -302,17 +328,25 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           title="Draw Offer"
           hasCloseButton={false}
           content={
-            <Box align="center">
+            <div
+                style={{
+                  textAlign: 'center',
+                  alignContent:'center',
+                  alignItems:'center',
+                  display:'flex',
+                  justifyContent:'center'
+                }}
+              >
               <Text>
                 <strong>{getUserDisplayName(activityLog.pending.byUser)}</strong>
                 {` is offering a Draw`}
               </Text>
-            </Box>
+            </div>
           }
           buttons={[
             {
               label: 'Deny',
-              type: 'secondary',
+              type: 'negative',
               onClick: () => gameActions.onDrawDenied(),
             },
             {
@@ -339,7 +373,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     position: 'absolute',
     top: 0,
@@ -354,11 +388,15 @@ const useStyles = createUseStyles({
     alignItems: 'center',
   },
   dialog: {
-    ...floatingShadow,
+    ...(theme.name === 'lightDefault' ? {
+      ...theme.floatingShadow,
+    } : {
+      boxShadow:'0 12px 26px rgb(0 0 0 / 35%)'
+    }),
     ...softBorderRadius,
     padding: 0,
     position: 'relative',
-    background: colors.white,
+    background: theme.colors.white,
 
     ...makeImportant({
       borderRadius: '8px',
@@ -374,4 +412,4 @@ const useStyles = createUseStyles({
       }),
     }),
   },
-});
+}));

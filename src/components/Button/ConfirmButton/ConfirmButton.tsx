@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContentProps, DialogProps } from 'src/components/Dialog';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { Button, ButtonProps } from '../Button';
 
 type Props = {
@@ -16,7 +17,7 @@ type Props = {
 export const ConfirmButton: React.FC<Props> = ({ dialogProps, visible = false, ...props }) => {
   const [isVisible, setIsVisible] = useState(visible);
   const { buttons, ...restDialogProps } = dialogProps;
-
+  const {theme} = useColorTheme();
   return (
     <>
       <Dialog
@@ -26,7 +27,7 @@ export const ConfirmButton: React.FC<Props> = ({ dialogProps, visible = false, .
         onClose={() => setIsVisible(false)}
         buttons={[
           {
-            type: 'secondary',
+            type: theme.name === 'lightDefault' ? 'primary' : 'positive',
             ...props.cancelButtonProps,
             label: props.cancelButtonProps?.label || 'Cancel',
             onClick: () => setIsVisible(false),

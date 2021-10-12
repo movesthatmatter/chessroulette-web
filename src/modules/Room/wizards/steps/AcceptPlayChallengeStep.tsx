@@ -6,7 +6,7 @@ import { DialogWizardStep } from 'src/components/DialogWizard/DialogWizardStep';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
-import { fonts, onlyMobile } from 'src/theme';
+import { CustomTheme, fonts, onlyMobile } from 'src/theme';
 import { UnknownAsyncResult } from 'src/lib/types';
 
 type Props = {
@@ -52,9 +52,10 @@ export const AcceptPlayChallengeStep: React.FC<Props> = ({ challenge, roomInfo, 
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     textAlign: 'center',
+    color: theme.text.baseColor
   },
   title: {
     ...fonts.subtitle1,
@@ -69,4 +70,4 @@ const useStyles = createUseStyles({
       }),
     }),
   },
-});
+}));

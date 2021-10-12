@@ -1,10 +1,8 @@
-import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { getRandomInt, range } from 'src/lib/util';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
-import { defaultTheme } from 'src/theme';
 import { Stats } from './Stats';
 
 
@@ -22,8 +20,6 @@ export const defaultStory = () => React.createElement(() => {
   const peers = range(getRandomInt(4, 14)).map(() => peerMocker.record());
 
   return (
-    <Grommet theme={defaultTheme}>
       <Stats rooms={rooms} peers={peers} />
-    </Grommet>
   )
 })

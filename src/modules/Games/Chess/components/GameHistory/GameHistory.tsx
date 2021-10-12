@@ -2,8 +2,6 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { spacers } from 'src/theme/spacers';
-import { colors, softBorderRadius } from 'src/theme';
-import { debounce } from 'debounce';
 import { HistoryList, HistoryListProps } from './components/HistoryList';
 import { ChessRecursiveHistory } from 'dstnd-io';
 import { Text } from 'src/components/Text';

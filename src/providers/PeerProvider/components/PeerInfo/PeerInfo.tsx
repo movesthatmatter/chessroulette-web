@@ -2,7 +2,7 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { Peer } from 'src/providers/PeerProvider';
-import { colors, fonts } from 'src/theme';
+import { CustomTheme, fonts } from 'src/theme';
 import { Text } from '../../../../components/Text';
 import { getUserDisplayName } from 'src/modules/User';
 import { PeerAvatar } from '../PeerAvatar';
@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import { selectPeerProviderState } from '../../redux/selectors';
 
 type Props = {
-  darkMode?: boolean;
+  darkBG?: boolean;
   reversed?: boolean;
   showPeerStatus?: boolean;
 } & (
@@ -27,7 +27,7 @@ type Props = {
 );
 
 export const PeerInfo: React.FC<Props> = ({
-  darkMode,
+  darkBG,
   reversed,
   showPeerStatus = true,
   ...props
@@ -44,7 +44,7 @@ export const PeerInfo: React.FC<Props> = ({
     <div
       className={cx(
         cls.container,
-        darkMode && cls.containerDarkMode,
+        darkBG && cls.containerDarkMode,
         reversed && cls.containerReversed
       )}
     >
@@ -64,7 +64,7 @@ export const PeerInfo: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
   },
@@ -72,7 +72,7 @@ const useStyles = createUseStyles({
     flexDirection: 'row-reverse',
   },
   containerDarkMode: {
-    color: colors.white,
+    color: '#fff',
   },
   userNameText: {
     ...fonts.small2,
@@ -88,4 +88,4 @@ const useStyles = createUseStyles({
   textWrapperCentered: {
     justifyContent: 'center',
   },
-});
+}));

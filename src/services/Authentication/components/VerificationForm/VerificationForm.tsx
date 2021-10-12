@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Button } from 'src/components/Button';
 import { Hr } from 'src/components/Hr';
 import { TextInput } from 'src/components/TextInput';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { LichessAuthButton } from 'src/vendors/lichess/LichessAuthButton';
 import { UserAccountInfo } from '../../types';
 import { Form, FormError, SubmissionErrors } from 'src/components/Form';
 import { validator } from 'src/lib/validator';
 import * as resources from '../../resources';
-import { colors } from 'src/theme';
+import { CustomTheme } from 'src/theme';
+import { FacebookAuthButton } from 'src/vendors/facebook/FacebookAuthButton/FacebookAuthButton';
 import { CodeVerificationForm } from '../CodeVerificationForm';
 import { Emoji } from 'src/components/Emoji';
 import { TwitchAuthButton } from 'src/vendors/twitch/TwitchAuthButton/TwitchAuthButton';
@@ -16,6 +17,7 @@ import { spacers } from 'src/theme/spacers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitch } from '@fortawesome/free-brands-svg-icons';
 import { AsyncResult } from 'ts-async-results';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Model = {
   code: string;
@@ -29,6 +31,7 @@ type Props = {
 export const VerificationForm: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [emailToBeVerified, setEmailToBeVerified] = useState<string>();
+  const {theme} = useColorTheme();
 
   return (
     <div>
@@ -83,7 +86,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
                 key="email"
                 label="What's your Email?"
                 placeholder="beth.harmon@queens.gambit"
-                onChange={(e) => p.onChange('email', e.target.value)}
+                onChange={(e) => p.onChange('email', e.currentTarget.value)}
                 onBlur={() => p.validateField('email')}
                 validationError={
                   p.errors.validationErrors?.email || p.errors.submissionValidationErrors?.email
@@ -96,7 +99,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
               <Button
                 label="Send Verification"
                 full
-                type="positive"
+                type={theme.name === 'lightDefault' ? "positive" : 'primary'}
                 withLoader
                 onClick={p.submit}
               />
@@ -110,6 +113,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
           full
           label="Lichess"
           type="secondary"
+          className={cls.lichess}
           onSuccess={(accessToken) => {
             props.onSubmit({
               type: 'external',
@@ -129,8 +133,9 @@ export const VerificationForm: React.FC<Props> = (props) => {
               accessToken,
             });
           }}
-          style={{ backgroundColor: '#6441a5' }}
-          icon={() => <FontAwesomeIcon icon={faTwitch} color="white" size="lg" />}
+          className={cls.twitch}
+          style={{ background: '#6441a5 !important' }}
+          icon={() => <FontAwesomeIcon icon={faTwitch} color={theme.colors.white} size="lg" />}
           iconWrapperStyle={{
             backgroundColor: 'rgba(255, 255, 255, 0)',
             padding: '0px',
@@ -154,7 +159,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   buttonRows: {
     display: 'flex',
     flexDirection: 'column',
@@ -166,6 +171,16 @@ const useStyles = createUseStyles({
     paddingBottom: '24px',
   },
   infoText: {
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker,
   },
-});
+  twitch: {
+    background: '#6441a5 !important' 
+  },
+  lichess: {
+    ...(theme.name === 'darkDefault' && {
+      ...makeImportant({
+        background: '#CF1484',
+      })
+    })
+  }
+}));

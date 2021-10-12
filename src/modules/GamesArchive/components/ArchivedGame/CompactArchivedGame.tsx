@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, floatingShadow, hideOnMobile, onlyDesktop, softBorderRadius } from 'src/theme';
+import { CustomTheme, hideOnMobile, onlyDesktop, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { Avatar } from 'src/components/Avatar';
@@ -13,6 +13,9 @@ import { MiniClipboardCopyButton } from 'src/components/ClipboardCopy';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { getUserDisplayName } from 'src/modules/User';
 import { drawEmoji, getMyResult, getScore, winningEmoji } from './util';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBolt } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   game: GameRecordFinished | GameRecordStopped;
@@ -29,13 +32,15 @@ export const CompactArchivedGame: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
   const avatarSize = '28px';
+  const {theme} = useColorTheme();
+  const colors = theme.colors;
 
   const myUserResult = myUserId ? getMyResult(game, myUserId) : undefined;
   const borderLeftColor = myUserResult
     ? {
         won: colors.positive,
         lost: colors.negative,
-        draw: colors.primary,
+        draw: colors.attention,
       }[myUserResult]
     : colors.neutral;
 
@@ -48,7 +53,7 @@ export const CompactArchivedGame: React.FC<Props> = ({
       }}
     >
       <div className={cls.top}>
-        <Text className={cls.title} size="subtitle2">
+        <Text className={cls.title} size='small2'>
           {getScore(game)}
           {' | '}
           {capitalize(game.timeLimit)}
@@ -82,11 +87,11 @@ export const CompactArchivedGame: React.FC<Props> = ({
               <div className={cx(cls.playerInfo, cls.playerInfoLeftSide)}>
                 <Text
                   className={cls.playerName}
-                  size="small1"
+                  size="small2"
                   style={
                     result === 'won'
                       ? {
-                          fontWeight: 'bold',
+                          color: colors.primaryLight
                         }
                       : undefined
                   }
@@ -99,7 +104,8 @@ export const CompactArchivedGame: React.FC<Props> = ({
           );
         })()}
         <div className={cls.middleSide}>
-          <Emoji symbol="⚡" className={cls.vsEmoji} />
+          {theme.name === 'lightDefault' && <Emoji symbol="⚡" className={cls.vsEmoji} />}
+          {theme.name === 'darkDefault' && <FontAwesomeIcon icon={faBolt} color='white' size='sm'/>}
         </div>
         <div className={cx(cls.side, cls.rightSide)}>
           {(() => {
@@ -116,11 +122,11 @@ export const CompactArchivedGame: React.FC<Props> = ({
                   <Avatar mutunachiId={Number(player.user.avatarId)} size={avatarSize} />
                   <Text
                     className={cls.playerName}
-                    size="small1"
+                    size="small2"
                     style={
                       result === 'won'
                         ? {
-                            fontWeight: 'bold',
+                            color:colors.primaryLight
                           }
                         : undefined
                     }
@@ -144,16 +150,16 @@ export const CompactArchivedGame: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    background: colors.white,
+    background: theme.colors.white,
     padding: spacers.small,
-    border: `1px solid ${colors.neutral}`,
+    ...theme.borders,
     ...softBorderRadius,
-    ...floatingShadow,
+    ...theme.floatingShadow,
   },
   sideWrapper: {
     display: 'flex',
@@ -200,6 +206,7 @@ const useStyles = createUseStyles({
   },
   title: {
     flex: 1,
+    color: theme.text.primaryColor
   },
   copyToClipboard: {
     paddingLeft: spacers.small,
@@ -219,6 +226,7 @@ const useStyles = createUseStyles({
     paddingRight: spacers.smaller,
     overflowWrap: 'anywhere',
     wordBreak: 'break-all',
+    color: theme.text.primaryColor
   },
   emoji: {
     fontSize: '26px',
@@ -229,4 +237,4 @@ const useStyles = createUseStyles({
   onlyDesktop: {
     ...hideOnMobile,
   },
-});
+}));

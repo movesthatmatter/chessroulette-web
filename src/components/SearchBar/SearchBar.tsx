@@ -18,9 +18,9 @@ export const SearchBar: React.FC<Props> = ({ onSearch }) => {
     <div className={cls.container}>
       <TextInput
         placeholder="Search"
-        value={searchValue}
+        defaultValue={searchValue}
         onChange={(e) => {
-          setSearchValue(e.target.value);
+          setSearchValue(e.currentTarget.value);
         }}
       />
     </div>

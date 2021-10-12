@@ -1,13 +1,16 @@
 import React from 'react';
 import { Page } from 'src/components/Page';
 import chessBackground from './assets/chess_icons.png';
-import { createUseStyles } from 'src/lib/jss';
-import { colors, minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
+import darkChessBackground from './assets/dark_splash.svg';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
+import { minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile, CustomTheme } from 'src/theme';
 import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
 import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
 import { spacers } from 'src/theme/spacers';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
+import { useBodyClass } from 'src/lib/hooks/useBodyClass';
 
 type Props = {};
 
@@ -15,9 +18,13 @@ export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
   const deviceSize = useDeviceSize();
 
+  const {theme} = useColorTheme();
+  useBodyClass([cls.indexBackground]);
+
+  useBodyClass([cls.indexBackground]);
   return (
-    <Page name="Home" contentClassName={cls.pageContent}>
-      <div className={cls.container}>
+    <Page name="Home" contentClassName={cls.pageContent} containerClassname={cls.pageContainer}>
+      <div className={cls.containerLanding}>
         <div className={cls.inner}>
           <div
             style={{
@@ -28,7 +35,7 @@ export const LandingPage: React.FC<Props> = () => {
             }}
           >
             <img
-              src={chessBackground}
+              src={theme.name === 'lightDefault' ? chessBackground : darkChessBackground}
               style={{
                 width: '95%',
                 margin: '0 auto',
@@ -51,11 +58,12 @@ export const LandingPage: React.FC<Props> = () => {
             <div className={cls.buttonWrapper}>
               <CreateRoomButtonWidget
                 label="Play"
-                type="primary"
+                type='primary'
                 createRoomSpecs={{
                   type: 'private',
                   activityType: 'play',
                 }}
+                className={cls.playButton}
                 size={deviceSize.isDesktop ? 'small' : 'medium'}
                 style={{
                   marginRight: spacers.default,
@@ -68,7 +76,7 @@ export const LandingPage: React.FC<Props> = () => {
                 type="primary"
                 withBadge={{
                   text: 'New',
-                  color: 'negative',
+                  color: theme.name ==='lightDefault' ? 'negative' : 'white',
                   side: 'right',
 
                 }}
@@ -92,13 +100,26 @@ export const LandingPage: React.FC<Props> = () => {
 const tabletBreakPoint = 600;
 const desktopBreakPoint = 769;
 
-const useStyles = createUseStyles({
-  container: {
+const useStyles = createUseStyles<CustomTheme>(theme => ({
+  indexBackground: {
+    backgroundColor: theme.colors.background
+  },
+  pageContainer: {
+    ...makeImportant({
+      ...(theme.name === 'lightDefault' ? {
+        backgroundColor: theme.colors.background
+      } : {
+        backgroundColor: '#27104e',
+        backgroundImage: 'linear-gradient(19deg, #27104e 0%, #161a2b 25%)',
+      })
+    })
+  },
+  containerLanding: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     height: '100%',
-
+    color: theme.text.baseColor,
     fontSize: '32px',
 
     ...minMediaQuery(tabletBreakPoint, {
@@ -147,7 +168,7 @@ const useStyles = createUseStyles({
   text: {
     ...fonts.body1,
     lineHeight: '1em',
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
 
     ...onlySmallMobile({
       fontSize: '12px',
@@ -187,4 +208,10 @@ const useStyles = createUseStyles({
       display: 'none',
     }),
   },
-});
+  playButton: {
+    ...makeImportant({
+      background: theme.colors.primary,
+      color: 'white'
+    }) 
+  }
+}));

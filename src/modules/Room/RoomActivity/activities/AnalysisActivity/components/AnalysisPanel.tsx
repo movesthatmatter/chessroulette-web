@@ -11,6 +11,7 @@ import { Upload } from 'grommet-icons';
 import { ImportPanel } from './ImportPanel';
 import { ConfirmButton } from 'src/components/Button/ConfirmButton';
 import { FloatingBox } from 'src/components/FloatingBox';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = {
   onPgnImported: (pgn: SimplePGN) => void;
@@ -24,6 +25,7 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
   const cls = useStyles();
   const [hasLoadedAnalysis, setHasLoadedAnalysis] = useState(!!analysisRecord);
   const [showImportPanel, setShowImportPanel] = useState(!hasLoadedAnalysis);
+  const {theme} = useColorTheme();
 
   useEffect(() => {
     const nextHasLoadedAnalysis = !!analysisRecord;
@@ -54,7 +56,7 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
             <ConfirmButton
               buttonProps={{
                 label: 'Clear',
-                type: 'secondary',
+                type: theme.name === 'lightDefault' ? 'secondary' : 'negative',
                 full: true,
                 className: cls.button,
               }}
@@ -79,7 +81,7 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
               full
               onClick={() => setShowImportPanel(true)}
               className={cls.button}
-              icon={Upload}
+              //icon={Upload}
             />
           </div>
         </>

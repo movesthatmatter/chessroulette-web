@@ -34,7 +34,18 @@ import m25 from './assets/mutunachi_25.png';
 import m26 from './assets/mutunachi_26.png';
 import m27 from './assets/mutunachi_27.png';
 
-const map: {[k: string]: unknown} = {
+import mw1 from './assets/mutunachi_white_1.png';
+import mw2 from './assets/mutunachi_white_2.png';
+import mw3 from './assets/mutunachi_white_3.png';
+import mw4 from './assets/mutunachi_white_4.png';
+import mw5 from './assets/mutunachi_white_5.png';
+import mw6 from './assets/mutunachi_white_6.png';
+import mw7 from './assets/mutunachi_white_7.png';
+import mw8 from './assets/mutunachi_white_8.png';
+import mw9 from './assets/mutunachi_white_9.png';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+
+const map: { [k: string]: unknown } = {
   '0': m0,
   '1': m1,
   '2': m2,
@@ -66,33 +77,69 @@ const map: {[k: string]: unknown} = {
   '27': m27,
 };
 
-export type MutunachiProps = React.DetailedHTMLProps<
-React.ImgHTMLAttributes<HTMLImageElement>,
-HTMLImageElement
-> & ({
-  mid: keyof typeof map;
-  random?: never;
-} | {
-  mid?: never;
-  random: true;
-});
+const mapWhite: { [k: string]: unknown } = {
+  '0': mw1,
+  '1': mw2,
+  '2': mw3,
+  '3': mw4,
+  '4': mw5,
+  '5': mw6,
+  '6': mw7,
+  '7': mw8,
+  '8': mw9,
+  '9': mw1,
+  '10': mw2,
+  '11': mw3,
+  '12': mw4,
+  '13': mw5,
+  '14': mw6,
+  '15': mw7,
+  '16': mw8,
+  '17': mw9,
+  '18': mw1,
+  '19': mw2,
+  '20': mw3,
+  '21': mw4,
+  '22': mw5,
+  '23': mw6,
+  '24': mw7,
+  '25': mw8,
+  '26': mw9,
+  '27': mw2,
+};
 
-export const Mutunachi: React.FC<MutunachiProps> = ({
-  mid,
-  className,
-  random,
-  ...imgProps
-}) => {
+export type MutunachiProps = React.DetailedHTMLProps<
+  React.ImgHTMLAttributes<HTMLImageElement>,
+  HTMLImageElement
+> &
+  (
+    | {
+        mid: keyof typeof map;
+        random?: never;
+      }
+    | {
+        mid?: never;
+        random: true;
+      }
+  ) & {
+    avatar? : boolean;
+  };
+
+export const Mutunachi: React.FC<MutunachiProps> = ({ mid, className, random, avatar, ...imgProps }) => {
   const cls = useStyles();
-  const src = mid ? map[mid] : map[String(getRandomInt(0, 18))];
+  const { theme } = useColorTheme();
+  const src = avatar ? 
+    (mid ? map[mid] : map[String(getRandomInt(0,18))])
+    : mid
+    ? theme.name === 'lightDefault'
+      ? map[mid]
+      : mapWhite[mid]
+    : theme.name === 'darkDefault'
+    ? map[String(getRandomInt(0, 18))]
+    : mapWhite[String(getRandomInt(0, 18))];
 
   return (
-    <img
-      className={cx(cls.img, className)}
-      src={src as string}
-      alt="Mutunachi"
-      {...imgProps}
-    />
+    <img className={cx(cls.img, className)} src={src as string} alt="Mutunachi" {...imgProps} />
   );
 };
 

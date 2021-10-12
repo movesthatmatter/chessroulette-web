@@ -1,8 +1,7 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import {
-  colors,
-  floatingShadow,
+  CustomTheme,
   hideOnMobile,
   MOBILE_BREAKPOINT,
   onlyDesktop,
@@ -22,6 +21,9 @@ import { useWindowWidth } from '@react-hook/window-size';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { getUserDisplayName } from 'src/modules/User';
 import { drawEmoji, formatTimeLimit, getMyResult, getResult, getScore, winningEmoji } from './util';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBolt, faTrophy } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   game: GameRecordFinished | GameRecordStopped;
@@ -31,6 +33,8 @@ type Props = {
 export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   const cls = useStyles();
   const windowWidth = useWindowWidth();
+  const { theme } = useColorTheme();
+  const colors = theme.colors;
 
   const result = getResult(game);
   const avatarSize = windowWidth < MOBILE_BREAKPOINT ? '32px' : '72px';
@@ -40,7 +44,7 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
     ? {
         won: colors.positive,
         lost: colors.negative,
-        draw: colors.primary,
+        draw: colors.attention,
       }[myUserResult]
     : colors.neutral;
 
@@ -54,7 +58,8 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
     >
       <div className={cls.top}>
         <Text className={cls.title} size="subtitle1">
-          {getScore(game)}{' | '}
+          {getScore(game)}
+          {' | '}
           <strong>
             {capitalize(game.timeLimit)} ({formatTimeLimit(chessGameTimeLimitMsMap[game.timeLimit])}
             )
@@ -77,10 +82,20 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
           return (
             <div className={cx(cls.side, cls.leftSide)}>
               <div className={cls.filler}>
-                <Emoji
-                  symbol={result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji}
-                  className={cx(cls.emoji, cls.onlyDesktop)}
-                />
+                {theme.name === 'lightDefault' && (
+                  <Emoji
+                    symbol={result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji}
+                    className={cx(cls.emoji, cls.onlyDesktop)}
+                  />
+                )}
+                {theme.name === 'darkDefault' && result === 'won' && (
+                  <FontAwesomeIcon
+                    icon={faTrophy}
+                    color="white"
+                    size="2x"
+                    className={cls.onlyDesktop}
+                  />
+                )}
               </div>
               <div className={cx(cls.playerInfo, cls.playerInfoLeftSide)}>
                 <Text
@@ -101,7 +116,10 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
           );
         })()}
         <div className={cls.middleSide}>
-          <Emoji symbol="⚡" className={cls.vsEmoji} />
+          {theme.name === 'lightDefault' && <Emoji symbol="⚡" className={cls.vsEmoji} />}
+          {theme.name === 'darkDefault' && (
+            <FontAwesomeIcon icon={faBolt} color="white" size="1x" />
+          )}
         </div>
         <div className={cx(cls.side, cls.rightSide)}>
           {(() => {
@@ -130,10 +148,20 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
                   </Text>
                 </div>
                 <div className={cls.filler}>
-                  <Emoji
-                    symbol={result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji}
-                    className={cx(cls.emoji, cls.onlyDesktop)}
-                  />
+                  {theme.name === 'lightDefault' && (
+                    <Emoji
+                      symbol={result === 'won' ? winningEmoji : result === 'lost' ? '' : drawEmoji}
+                      className={cx(cls.emoji, cls.onlyDesktop)}
+                    />
+                  )}
+                  {theme.name === 'darkDefault' && result === 'won' && (
+                    <FontAwesomeIcon
+                      icon={faTrophy}
+                      color="white"
+                      size="2x"
+                      className={cls.onlyDesktop}
+                    />
+                  )}
                 </div>
               </>
             );
@@ -152,17 +180,18 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    background: colors.white,
+    background: theme.depthBackground.backgroundColor,
     padding: spacers.default,
     marginBottom: spacers.large,
-    border: `1px solid ${colors.neutral}`,
+    ...theme.borders,
     ...softBorderRadius,
-    ...floatingShadow,
+    ...theme.floatingShadow,
+    overflowWrap: 'anywhere'
   },
   sideWrapper: {
     display: 'flex',
@@ -212,7 +241,6 @@ const useStyles = createUseStyles({
   },
   copyToClipboard: {
     paddingLeft: spacers.small,
-
   },
   playerInfo: {
     display: 'flex',
@@ -237,4 +265,4 @@ const useStyles = createUseStyles({
   onlyDesktop: {
     ...hideOnMobile,
   },
-});
+}));

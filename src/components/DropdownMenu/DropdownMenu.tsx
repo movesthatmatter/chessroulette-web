@@ -2,7 +2,7 @@ import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef } from 'react';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { colors, floatingShadow, fonts, softOutline, softBorderRadius, text } from 'src/theme';
+import { floatingShadow, fonts, softOutline, softBorderRadius, CustomTheme } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 
@@ -83,7 +83,7 @@ export const DropdownMenu: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   linkWrapper: {
     position: 'relative',
     display: 'inline-block',
@@ -100,14 +100,14 @@ const useStyles = createUseStyles({
   link: {
     ...fonts.small1,
     textDecoration: 'none',
-    color: colors.neutralDarkest,
+    color: theme.text.baseColor,
     fontFamily: 'Lato, Open Sans, sans serif',
     fontSize: spacers.default,
     textAlign: 'center',
     cursor: 'pointer',
 
     '&:hover': {
-      borderBottom: `3px solid ${text.primaryColor}`,
+      borderBottom: `3px solid ${theme.text.primaryColor}`,
     },
 
     position: 'relative',
@@ -126,7 +126,7 @@ const useStyles = createUseStyles({
   nestedLink: {
     ...fonts.small1,
     display: 'block',
-    color: colors.neutralDarkest,
+    color: theme.text.baseColor,
     fontFamily: 'Lato, Open Sans, sans serif',
     fontSize: spacers.default,
     cursor: 'pointer',
@@ -134,23 +134,23 @@ const useStyles = createUseStyles({
     paddingTop: spacers.small,
 
     '&:hover': {
-      fontWeight: 'bold',
-      color: text.primaryColor,
+      //fontWeight: 'bold',
+      color: theme.colors.primary,
     },
   },
   disabledNestedLink: {
     cursor: 'auto',
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker,
     '&:hover': {
       fontWeight: 'normal',
-      color: text.disabledColor,
+      color: theme.text.disabledColor,
     },
   },
   spacer: {
     paddingRight: spacers.small,
   },
   caretIcon: {
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
   },
 
   menuWrapper: {
@@ -161,7 +161,7 @@ const useStyles = createUseStyles({
     position: 'absolute',
     minWidth: '100%',
     zIndex: 8,
-    background: colors.white,
+    background: theme.colors.white,
     ...floatingShadow,
     ...softBorderRadius,
     ...softOutline,
@@ -174,7 +174,7 @@ const useStyles = createUseStyles({
   },
   openedMenuLabelWrapper: {
     paddingBottom: spacers.default,
-    borderBottom: `1px solid ${colors.neutralLighter}`,
+    borderBottom: `1px solid ${theme.colors.neutralLighter}`,
     display: 'flex',
   },
   menuContent: {
@@ -194,4 +194,4 @@ const useStyles = createUseStyles({
       }),
     },
   },
-});
+}));

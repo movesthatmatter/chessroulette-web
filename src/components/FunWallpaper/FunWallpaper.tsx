@@ -1,21 +1,35 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { colors } from 'src/theme';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
+import { CustomTheme, themes } from 'src/theme';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = React.HTMLProps<HTMLDivElement> & {};
 
 export const FunWallpaper: React.FC<Props> = ({ className, children, ...contentDivProps }) => {
   const cls = useStyles();
+  const {theme} = useColorTheme();
 
   useBodyClass([cls.body]);
 
   return (
-    <div className={cls.container}>
-      <div className={cls.background}>
+    <div
+      className={cls.container}
+      style={{
+        backgroundColor:
+          theme.name === 'lightDefault' ? themes.lightDefault.colors.primaryLight : themes.darkDefault.colors.neutralLight,
+      }}
+    >
+      <div
+        className={cls.background}
+        style={{
+          backgroundColor:
+          theme.name === 'lightDefault' ? themes.lightDefault.colors.primaryLight : themes.darkDefault.colors.neutralLight,
+        }}
+      >
         <Mutunachi
           mid="5"
           className={cls.mutunachi}
@@ -56,15 +70,12 @@ export const FunWallpaper: React.FC<Props> = ({ className, children, ...contentD
   );
 };
 
-const useStyles = createUseStyles({
-  body: {
-    background: colors.primaryLight,
-  },
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
+  body: {},
   container: {
     display: 'flex',
     height: '100vh',
     position: 'relative',
-    background: colors.primaryLight,
   },
   mutunachi: {
     width: '200px',
@@ -87,4 +98,4 @@ const useStyles = createUseStyles({
     margin: '0 auto',
     zIndex: 99,
   },
-});
+}));

@@ -1,5 +1,5 @@
 import React from 'react';
-import { colors, effects, fonts, onlyMobile, text } from 'src/theme';
+import { CustomTheme, effects, fonts, onlyMobile } from 'src/theme';
 import Select, { Props as SelectProps } from 'react-select';
 import { noop } from 'src/lib/util';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
@@ -7,6 +7,7 @@ import { Text } from 'src/components/Text';
 import cx from 'classnames';
 import { getBoxShadow } from 'src/theme/util';
 import hexToRgba from 'hex-to-rgba';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 export type SelectInputOption = {
   value: string;
@@ -26,7 +27,8 @@ export const SelectInput: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
-
+  const {theme} = useColorTheme();
+  const colors = theme.colors;
   return (
     <div className={cx(cls.container, className)}>
       {label && (
@@ -52,6 +54,9 @@ export const SelectInput: React.FC<Props> = ({
             colors: {
               ...theme.colors,
               primary: colors.primary,
+              primaryLight: colors.primary,
+              neutralDark: colors.neutral,
+              neutralDarker: colors.neutral,
               danger: colors.negative,
               neutral: colors.neutral,
             },
@@ -61,8 +66,10 @@ export const SelectInput: React.FC<Props> = ({
               ...prev,
               overflow: 'hidden',
               padding: 0,
+              color: theme.text.baseColor,
+              backgroundColor: theme.textInput.backgroundColor,
             }),
-            option: (prev) => ({
+            option: (prev, {isFocused}) => ({
               ...prev,
               '&:first-of-type': {
                 marginTop: '-4px',
@@ -71,6 +78,7 @@ export const SelectInput: React.FC<Props> = ({
                 marginBottom: '-4px',
               },
               fontSize: '14px',
+            ...(isFocused && {backgroundColor: theme.selectInput.focused})
             }),
             valueContainer: (prev) => ({
               ...prev,
@@ -80,12 +88,13 @@ export const SelectInput: React.FC<Props> = ({
             singleValue: (prev) => ({
               ...prev,
               ...fonts.small1,
+              color: theme.selectInput.textColor,
             }),
             control: (prev, state) => ({
               ...prev,
               fontSize: '14px',
               minHeight: '32px',
-
+              backgroundColor: theme.textInput.backgroundColor,
               ...onlyMobile({
                 ...makeImportant({
                   minHeight: '28px',
@@ -110,12 +119,12 @@ export const SelectInput: React.FC<Props> = ({
                     },
                   }
                 : {
-                    borderColor: colors.neutral,
+                    borderColor: theme.selectInput.borderColor,
                     ':hover': {
-                      borderColor: colors.neutral,
+                      borderColor: theme.selectInput.borderColor,
                     },
                     ':active': {
-                      borderColor: colors.neutral,
+                      borderColor: theme.selectInput.borderColor,
                     },
                   }),
             }),
@@ -123,7 +132,6 @@ export const SelectInput: React.FC<Props> = ({
               ...prev,
               paddingTop: '5px',
               paddingBottom: '5px',
-
               ...onlyMobile({
                 ...makeImportant({
                   paddingTop: '3px',
@@ -134,11 +142,14 @@ export const SelectInput: React.FC<Props> = ({
             indicatorSeparator: () => ({
               display: 'none',
             }),
-
+            container: (prev) => ({
+              ...prev,
+              // backgroundColor: theme.textInput.backgroundColor,
+              borderRadius: 16,
+            }),
             placeholder: () => ({
-              color: text.disabledColor,
+              color: theme.text.disabledColor,
               fontSize: '13px',
-
               ...onlyMobile({
                 ...makeImportant({
                   fontSize: '12px',
@@ -158,7 +169,7 @@ export const SelectInput: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {},
   labelWrapper: {
     paddingBottom: '4px',
@@ -166,7 +177,7 @@ const useStyles = createUseStyles({
   },
   inputWrapper: {},
   errorMessageWrapper: {
-    color: colors.negativeLight,
+    color: theme.colors.negativeLight,
     paddingLeft: '12px',
   },
-});
+}));

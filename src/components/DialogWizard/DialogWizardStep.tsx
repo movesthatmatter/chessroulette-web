@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { fonts, onlyMobile } from 'src/theme';
+import { CustomTheme, fonts, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Button } from '../Button';
 import { DialogContentProps } from '../Dialog/DialogContent';
@@ -52,11 +52,12 @@ export const DialogWizardStep: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>( theme => ({
   container: {
     flex: 1,
     paddingLeft: 0,
     paddingRight: 0,
+    color: theme.text.baseColor
   },
   title: {
     ...fonts.subtitle1,
@@ -115,4 +116,4 @@ const useStyles = createUseStyles({
       marginBottom: 0,
     }),
   },
-});
+}));

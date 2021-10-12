@@ -5,14 +5,16 @@ import logoDark from './assets/Logo_dark_full.svg';
 import logoDarkWithBeta from './assets/Logo_dark_full_w_beta.svg';
 import logoLightSingle from './assets/Logo_light_single.svg';
 import logoDarkSingle from './assets/Logo_dark_single.svg';
+import logoLightWithBeta from './assets/light_with_beta.svg';
 import logoDarkSingleStroke from './assets/Logo_dark_single_stroke_variation.svg';
-import { onlyMobile, text } from 'src/theme';
+import { onlyMobile } from 'src/theme';
 import cx from 'classnames';
 import { Link } from 'react-router-dom';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = {
   asLink?: boolean;
-  darkMode?: boolean;
+  darkBG?: boolean;
   withBeta?: boolean;
   withOutline?: boolean;
   mini?: boolean;
@@ -26,29 +28,37 @@ export const Logo: React.FC<Props> = ({
   asLink = true,
   withBeta = false,
   mini = false,
-  darkMode = false,
+  darkBG = false,
   withOutline = false,
   className,
   imgClassName,
   style,
 }) => {
   const cls = useStyles();
+  const {theme} = useColorTheme();
 
   const imgSrc = useMemo(() => {
     if (mini) {
-      if (!darkMode && withOutline) {
+      if (!darkBG && withOutline) {
         return logoDarkSingleStroke;
       }
 
-      return darkMode ? logoLightSingle : logoDarkSingle;
+      return darkBG ? logoLightSingle : logoDarkSingle;
     }
-
-    if (withBeta && !darkMode) {
-      return logoDarkWithBeta;
+    if (theme.name === 'lightDefault'){
+      if (withBeta) {
+        return logoDarkWithBeta;
+      }
+      return logoDark;
     }
-
-    return darkMode ? logoLight : logoDark;
-  }, [mini, darkMode, withOutline]);
+    if (theme.name === 'darkDefault'){
+      if (withBeta){
+        return logoLightWithBeta
+      }
+      return logoLight
+    }
+    return darkBG ? logoLight : logoDark;
+  }, [mini, darkBG, withOutline, theme]);
 
   const content = (
     <div className={cx(cls.container, mini && cls.miniContainer, className)} style={style}>
@@ -67,7 +77,8 @@ const useStyles = createUseStyles({
 
     ...onlyMobile({
       width: '100%',
-      maxWidth: '170px',
+      maxWidth: '140px',
+      //minWidth: '100px',
     }),
   },
   miniContainer: {

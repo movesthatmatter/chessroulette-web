@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import ReactCodeInput from 'react-verification-code-input';
-import { colors, defaultTheme, fonts, onlyMobile } from 'src/theme';
+import { CustomTheme, onlyMobile } from 'src/theme';
 import cx from 'classnames';
 
 type Props = Omit<
@@ -9,6 +9,7 @@ type Props = Omit<
 > & {
   fieldsCount?: number;
   fieldSize?: number;
+  inputError?: boolean;
 };
 
 export const CodeInput: React.FC<Props> = ({
@@ -18,13 +19,12 @@ export const CodeInput: React.FC<Props> = ({
   ...restProps
 }) => {
   const cls = useStyles();
-
   return (
     <div className={cx(cls.container, className)}>
       <ReactCodeInput
         type="number"
         fields={fieldsCount}
-        className={cls.codeInput}
+        className={cx(cls.codeInput, restProps.inputError && cls.codeInputErrorWrapper)}
         fieldWidth={fieldSize}
         fieldHeight={fieldSize}
         {...restProps}
@@ -33,15 +33,21 @@ export const CodeInput: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     marginBottom: '16px',
+  },
+  codeInputErrorWrapper: {
+    '&$codeInput input': {
+      ...makeImportant({
+        border : `1px solid ${theme.colors.negative}`
+      }),
+    },
   },
   codeInput: {
     ...makeImportant({
       width: '100%',
     }),
-
     ...{
       '& > div': {
         ...makeImportant({
@@ -50,12 +56,14 @@ const useStyles = createUseStyles({
           justifyContent: 'space-between',
         }),
       },
+      
       '& input': {
         ...makeImportant({
-          fontFamily: defaultTheme.global?.font?.family,
-
+          fontFamily: theme.text.family,
+          backgroundColor: theme.textInput.backgroundColor,
+          color:theme.text.baseColor,
           borderRadius: '8px',
-          border: `1px solid ${colors.neutral}`,
+          border: theme.textInput.border
         }),
 
         ...onlyMobile({
@@ -69,10 +77,10 @@ const useStyles = createUseStyles({
         '&:focus': {
           ...makeImportant({
             borderWidth: '2px',
-            caretColor: colors.neutral,
+            caretColor: theme.colors.neutral,
           }),
         }
       },
     } as CSSProperties,
   },
-});
+}));

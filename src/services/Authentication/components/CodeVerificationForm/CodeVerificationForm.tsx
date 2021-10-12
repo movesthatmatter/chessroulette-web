@@ -6,7 +6,7 @@ import { Form, FormError, SubmissionErrors } from 'src/components/Form';
 import { validator } from 'src/lib/validator';
 import { CodeInput } from 'src/components/CodeInput';
 import { Text } from 'src/components/Text';
-import { colors, onlyMobile, SMALL_MOBILE_BREAKPOINT } from 'src/theme';
+import {  CustomTheme, onlyMobile, SMALL_MOBILE_BREAKPOINT } from 'src/theme';
 import { useWindowWidth } from '@react-hook/window-size';
 import { AsyncResult } from 'ts-async-results';
 
@@ -55,6 +55,7 @@ export const CodeVerificationForm: React.FC<Props> = (props) => {
             }}
             // onComplete={debounce(p.submit, 250)}
             fieldSize={codeInputFieldSize}
+            {...(p.errors.submissionGenericError || p.errors.submissionValidationErrors?.code) && {inputError: true}}
           />
           {(p.errors.submissionGenericError || p.errors.submissionValidationErrors?.code) && (
             <FormError
@@ -76,7 +77,7 @@ export const CodeVerificationForm: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   infoTextWrapper: {
     textAlign: 'center',
     paddingBottom: '24px',
@@ -86,6 +87,6 @@ const useStyles = createUseStyles({
     }),
   },
   infoText: {
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker,
   },
-});
+}));

@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { AuthenticatedPage } from 'src/components/Page';
 import { createUseStyles } from 'src/lib/jss';
-import { colors, hideOnMobile, onlyDesktop, text } from 'src/theme';
+import { CustomTheme, hideOnMobile, onlyDesktop } from 'src/theme';
 import { GamesArchive } from '../GamesArchive';
 import { Menu } from './components/Menu';
 import { UserDetails } from './sections/UserDetails';
@@ -76,7 +76,7 @@ export const UserProfilePage: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
@@ -90,7 +90,7 @@ const useStyles = createUseStyles({
     }),
   },
   menuContainer: {
-    borderRight: `1px solid ${colors.neutral}`,
+    borderRight: `1px solid ${theme.colors.neutralLight}`,
     flex: 0.25,
     display: 'flex',
     flexDirection: 'column',
@@ -107,17 +107,17 @@ const useStyles = createUseStyles({
     textDecoration: 'none',
     padding: '4px 20px 4px 0',
     marginBottom: '16px',
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
 
     '&:hover': {
-      borderRight: `3px solid ${text.primaryColor}`,
-      color: text.primaryColor,
-      fontWeight: 'bold',
+      //borderRight: `3px solid ${theme.text.primaryColor}`,
+      color: theme.colors.primary,
+      //fontWeight: 'bold',
     },
   },
   activeMenuLink: {
-    borderRight: `3px solid ${text.primaryColor}`,
-    color: text.primaryColor,
+    borderRight: `3px solid ${theme.colors.primary}`,
+    color: theme.text.primaryColor,
     fontWeight: 'bold',
   },
   onlyDesktop: {
@@ -129,4 +129,4 @@ const useStyles = createUseStyles({
     lineHeight: 0,
     paddingBottom: spacers.default,
   },
-});
+}));

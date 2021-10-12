@@ -2,14 +2,13 @@ import React from 'react';
 import { UserRecord } from 'dstnd-io';
 import { IconButton } from 'src/components/Button';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { colors, fonts } from 'src/theme';
+import { CustomTheme, fonts } from 'src/theme';
 import cx from 'classnames';
 import { getUserDisplayName } from 'src/modules/User';
 import { spacers } from 'src/theme/spacers';
 import { OfferNotification } from '../../types';
 import { Checkmark, Close } from 'grommet-icons';
 import { PeerAvatar } from 'src/providers/PeerProvider/components/PeerAvatar';
-import { Text } from 'src/components/Text';
 import Loader from 'react-loaders';
 
 type Props = {
@@ -194,13 +193,13 @@ export const OfferNotificationItem: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     ...fonts.small1,
     marginBottom: spacers.large,
   },
   attention: {
-    borderRight: `3px solid ${colors.negativeLight}`,
+    borderRight: `3px solid ${theme.colors.neutralDark}`,
     paddingRight: spacers.default,
   },
   avatarLeft: {
@@ -215,6 +214,7 @@ const useStyles = createUseStyles({
     width: '30px',
     ...makeImportant({
       marginBottom: 0,
+      borderColor: theme.button.icon.borderColor
     }),
   },
   attentionButton: {
@@ -222,6 +222,7 @@ const useStyles = createUseStyles({
     width: '30px',
     ...makeImportant({
       marginBottom: 0,
+      borderColor: theme.button.icon.borderColor
     }),
   },
   loader: {
@@ -233,8 +234,8 @@ const useStyles = createUseStyles({
       '& > div': {
         height: '7px',
         width: '7px',
-        backgroundColor: colors.primary,
+        backgroundColor: theme.colors.primary,
       },
     } as CSSProperties),
   },
-});
+}));

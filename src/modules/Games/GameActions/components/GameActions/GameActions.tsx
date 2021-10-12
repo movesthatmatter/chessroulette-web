@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActionButton, Button } from 'src/components/Button';
-import { createUseStyles, CSSProperties } from 'src/lib/jss';
+import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import { Refresh, Flag, Edit } from 'grommet-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHandshake, faUndo } from '@fortawesome/free-solid-svg-icons';
@@ -16,6 +16,8 @@ import {
   RoomPlayActivityWithGameAndParticipating,
 } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 import { getParticipantUserInfo } from 'src/modules/Room/RoomActivity/util/util';
+import { CustomTheme, themes } from 'src/theme';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 
 type Props = {
@@ -34,7 +36,7 @@ export const GameActions: React.FC<Props> = ({
   const cls = useStyles();
   const actions = useGameActions();
   const { game, offer, participants } = activity;
-
+  const {theme} = useColorTheme();
   const myPlayer = roomPlayActivityParticipantToChessPlayer(participants.me);
 
   const takebackSatus = useTakebackStatus(game, myPlayer, offer);
@@ -56,21 +58,25 @@ export const GameActions: React.FC<Props> = ({
       return (
         <>
           {(offer?.type === 'rematch' || offer?.type === 'challenge') &&
-          offer?.content.byUser.id === participants.me.userId ? (
-            <Button
-              label={offer.type === 'rematch' ? 'Cancel Rematch' : 'Cancel Challenge'}
-              type="primary"
-              clear
-              className={cls.gameActionButton}
-              onClick={() => {
-                actions.onOfferCanceled();
-                onActionTaken('onOfferCanceled');
-              }}
-              style={{
-                marginTop: spacers.default,
-              }}
-            />
-          ) : (
+
+          //NOTE - This removes the Confirmation Button because we already have the option in the GameStateDialog
+          //
+
+          // offer?.content.byUser.id === participants.me.userId ? (
+          //   <Button
+          //     label={offer.type === 'rematch' ? 'Cancel Rematch' : 'Cancel Challenge'}
+          //     type="primary"
+          //     clear
+          //     className={cls.gameActionButton}
+          //     onClick={() => {
+          //       actions.onOfferCanceled();
+          //       onActionTaken('onOfferCanceled');
+          //     }}
+          //     style={{
+          //       marginTop: spacers.default,
+          //     }}
+          //   />
+           (
             <ConfirmNewGameAction
               // This is needed in order to reset the state if the Dialog already opened
               //  but another offer just came in. This ensures the client is not able to send
@@ -133,7 +139,7 @@ export const GameActions: React.FC<Props> = ({
           {offer?.type === 'challenge' && offer?.content.byUser.id === participants.me.userId ? (
             <Button
               label="Cancel"
-              type="primary"
+              type="negative"
               clear
               className={cls.gameActionButton}
               onClick={() => {
@@ -163,7 +169,7 @@ export const GameActions: React.FC<Props> = ({
               }}
               submitButton={{
                 label: 'Submit',
-                type: 'primary',
+                type: 'positive',
               }}
               onSubmit={({ gameSpecs }) => {
                 actions.onOfferChallenge({ gameSpecs, toUserId: participants.opponent.userId });
@@ -207,7 +213,7 @@ export const GameActions: React.FC<Props> = ({
           {offer?.type === 'draw' && offer?.content.byUser.id === participants.me.userId ? (
             <Button
               label="Cancel Draw Offer"
-              type="primary"
+              type="negative"
               clear
               className={cls.gameActionButton}
               onClick={() => {
@@ -224,7 +230,7 @@ export const GameActions: React.FC<Props> = ({
               label="Offer Draw"
               confirmation="Confirm"
               actionType="attention"
-              iconComponent={<FontAwesomeIcon icon={faHandshake} color="#fff" />}
+              iconComponent={<FontAwesomeIcon icon={faHandshake} color={theme.colors.white} />}
               onSubmit={() => {
                 actions.onOfferDraw();
                 onActionTaken('onOfferDraw');
@@ -240,7 +246,7 @@ export const GameActions: React.FC<Props> = ({
               label="Takeback"
               confirmation="Confirm"
               actionType="attention"
-              iconComponent={<FontAwesomeIcon icon={faUndo} color="#fff" />}
+              iconComponent={<FontAwesomeIcon icon={faUndo} color={theme.colors.white} />}
               onSubmit={() => {
                 actions.onTakebackOffer();
                 onActionTaken('onTakebackOffer');
@@ -264,7 +270,7 @@ export const GameActions: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
   },
@@ -274,12 +280,16 @@ const useStyles = createUseStyles({
     alignItems: 'flex-end',
     display: 'flex',
     flexDirection: 'column',
+    zIndex: 99
   },
   gameActionButton: {
+    ...makeImportant({
+      color: theme.colors.black,
+    }),
     ...({
       '&:last-of-type': {
         marginBottom: '0px !important',
       },
     } as CSSProperties),
   },
-});
+}));

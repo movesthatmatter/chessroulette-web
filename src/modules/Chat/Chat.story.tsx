@@ -1,10 +1,7 @@
-import { action } from '@storybook/addon-actions';
-import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
 import { ChatHistoryRecord, ChatMessageRecord, UserInfoRecord } from 'dstnd-io';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
-import { defaultTheme } from 'src/theme';
 import { Chat } from './Chat';
 import { minutes, seconds } from 'src/lib/time';
 import { toISODateTime } from 'io-ts-isodatetime';
@@ -91,7 +88,6 @@ export const defaultStory = () =>
     const me = peerA;
 
     return (
-      <Grommet theme={defaultTheme}>
         <div
           style={{
             width: '400px',
@@ -105,7 +101,6 @@ export const defaultStory = () =>
             onSend={(content) => setHistory((prev) => prependMessage(prev, me.user, content))}
           />
         </div>
-      </Grommet>
     );
   });
 
@@ -114,7 +109,6 @@ export const dualView = () =>
     const [history, setHistory] = useState<ChatHistoryRecord>(initHistory);
 
     return (
-      <Grommet theme={defaultTheme}>
         <div
           style={{
             display: 'flex',
@@ -148,7 +142,6 @@ export const dualView = () =>
             />
           </div>
         </div>
-      </Grommet>
     );
   });
 
@@ -161,7 +154,6 @@ export const dualEmpty = () =>
     });
 
     return (
-      <Grommet theme={defaultTheme}>
         <div
           style={{
             display: 'flex',
@@ -195,6 +187,5 @@ export const dualEmpty = () =>
             />
           </div>
         </div>
-      </Grommet>
     );
   });

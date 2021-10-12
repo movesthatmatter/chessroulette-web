@@ -1,9 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { action } from '@storybook/addon-actions';
-import { Grommet } from 'grommet';
 import React, { useState } from 'react';
-import { defaultTheme } from 'src/theme';
 import { Button } from '../Button';
+import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
+import { Text } from '../Text';
 import { Dialog } from './Dialog';
 
 export default {
@@ -12,11 +12,11 @@ export default {
 };
 
 export const startOpen = () => (
-  <Grommet theme={defaultTheme}>
+  <>
     <Dialog
       visible
       title="How are you?"
-      content="I hope everything is alight!"
+      content={<><Text>"I hope everything is alight!"</Text><br/><DarkModeSwitch/></>}
       buttons={[
         {
           label: 'Cancel',
@@ -33,11 +33,11 @@ export const startOpen = () => (
       ]}
       onClose={action('on close')}
     />
-  </Grommet>
+  </>
 );
 
 export const withLongTitle = () => (
-  <Grommet theme={defaultTheme}>
+  <>
     <Dialog
       visible
       title="How are you? This should be a super long title"
@@ -58,11 +58,11 @@ export const withLongTitle = () => (
       ]}
       onClose={action('on close')}
     />
-  </Grommet>
+  </>
 );
 
 export const withContentAsHtml = () => (
-  <Grommet theme={defaultTheme}>
+  <>
     <Dialog
       visible
       title="How are you? This should be a super long title"
@@ -86,7 +86,7 @@ export const withContentAsHtml = () => (
       ]}
       onClose={action('on close')}
     />
-  </Grommet>
+  </>
 );
 
 export const openOnDemand = () =>
@@ -94,7 +94,7 @@ export const openOnDemand = () =>
     const [show, setShow] = useState(false);
 
     return (
-      <Grommet theme={defaultTheme}>
+      <>
         <Button label="Open" onClick={() => setShow(true)} />
         <Dialog
           visible={show}
@@ -117,7 +117,7 @@ export const openOnDemand = () =>
             action('on close')();
           }}
         />
-      </Grommet>
+      </>
     );
   });
 
@@ -126,7 +126,7 @@ export const with3buttons = () =>
     const [show, setShow] = useState(false);
 
     return (
-      <Grommet theme={defaultTheme}>
+      <>
         <Button label="Open" onClick={() => setShow(true)} />
         <Dialog
           visible={show}
@@ -152,6 +152,6 @@ export const with3buttons = () =>
           ]}
           onClose={() => setShow(false)}
         />
-      </Grommet>
+      </>
     );
   });

@@ -71,11 +71,11 @@ const useStyles = createUseStyles({
     ...softBorderRadius,
     overflow: 'hidden',
     position: 'relative',
-    zIndex: 997,
+    zIndex: 9,
   },
   smallFacetime: {
     position: 'relative',
-    zIndex: 998,
+    zIndex: 8,
   },
   smallFacetimeBorder: {
     position: 'absolute',
@@ -83,7 +83,7 @@ const useStyles = createUseStyles({
     bottom: 0,
     left: 0,
     right: 0,
-    zIndex: 999,
+    zIndex: 10,
     border: '1px solid white',
     ...softBorderRadius,
   },

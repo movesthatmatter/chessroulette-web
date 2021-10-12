@@ -1,12 +1,13 @@
 import { UserRecord } from 'dstnd-io';
-import { Layer } from 'grommet';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Modal } from 'src/components/Modal/Modal';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ChatContainer } from 'src/modules/Chat';
 import { ChatIconWithBadge } from 'src/modules/Chat/components/ChatIconWithBadge';
 import { selectChatHistory } from 'src/providers/PeerProvider';
-import { colors, hardBorderRadius } from 'src/theme';
+import { CustomTheme, hardBorderRadius } from 'src/theme';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { spacers } from 'src/theme/spacers';
 
 type Props = {
@@ -20,6 +21,7 @@ export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight })
   const [newMessageCounter, setNewMessageCounter] = useState(0);
   const [show, setShow] = useState(false);
   const [closedAt, setClosedAt] = useState(new Date());
+  const {theme} = useColorTheme();
 
   useEffect(() => {
     if (chatHistory && !show) {
@@ -44,7 +46,7 @@ export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight })
   return (
     <>
       <ChatIconWithBadge
-        color={colors.white}
+        color='white'
         onClick={() => {
           markMessagesAsRead();
 
@@ -53,30 +55,30 @@ export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight })
         newMessagesCount={newMessageCounter}
       />
       {show && (
-        <Layer
-          modal={true}
-          responsive={false}
-          position="bottom"
-          animation="slide"
+        <Modal
           className={cls.chatContainer}
           style={{
-            height: containerHeight,
+            height: `${containerHeight}px`,
           }}
-          onClickOutside={() => {
+          onClose={() => {
             setShow(false);
           }}
         >
           <ChatContainer />
-        </Layer>
+        </Modal>
       )}
     </>
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>( theme => ({
   container: {},
   chatContainer: {
-    width: `calc(100% - ${spacers.default})`,
+    //width: `calc(100% - ${spacers.default})`,
+    width: '100%',
+    position:'absolute',
+    bottom:'0',
+    background: theme.colors.white,
     padding: spacers.small,
     ...makeImportant({
       ...hardBorderRadius,
@@ -85,4 +87,4 @@ const useStyles = createUseStyles({
       overflow: 'hidden',
     }),
   },
-});
+}));

@@ -1,9 +1,7 @@
-import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { UserRecordMocker } from 'src/mocks/records';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
-import { defaultTheme } from 'src/theme';
 import { UserProfilePage } from './UserProfilePage';
 
 export default {
@@ -26,8 +24,6 @@ export const defaultStory = () => (
       // TODO: the game will be added here
     }}
   >
-    <Grommet theme={defaultTheme}>
       <UserProfilePage />
-    </Grommet>
   </StorybookReduxProvider>
 );

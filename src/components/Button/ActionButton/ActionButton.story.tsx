@@ -1,10 +1,8 @@
-import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useState } from 'react';
-import { defaultTheme } from 'src/theme';
 import { ActionButton } from './ActionButton';
 import { Anchor, Upload } from 'grommet-icons';
-import { action, actions } from '@storybook/addon-actions';
+import { action } from '@storybook/addon-actions';
 import { delay } from 'src/lib/time';
 
 export default {
@@ -13,311 +11,309 @@ export default {
 };
 
 export const defaultStory = () => (
-  <Grommet theme={defaultTheme}>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+    }}
+  >
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
+        width: '300px',
+        // padding: '0 32px',
       }}
     >
+      <h5>Aligned Left</h5>
       <div
         style={{
-          width: '300px',
-          // padding: '0 32px',
+          marginBottom: '16px',
         }}
       >
-        <h5>Aligned Left</h5>
+        <ActionButton
+          type="primary"
+          actionType="positive"
+          label="Action A"
+          icon={Anchor}
+          onSubmit={action('on submit action a')}
+        />
+      </div>
+      <div
+        style={{
+          marginBottom: '16px',
+        }}
+      >
+        <ActionButton
+          type="attention"
+          actionType="negative"
+          label="Action A"
+          icon={Anchor}
+          onSubmit={action('on submit action a')}
+        />
+      </div>
+      <div
+        style={{
+          marginBottom: '16px',
+        }}
+      >
+        <ActionButton
+          type="attention"
+          actionType="negative"
+          label="No Hover Action A"
+          hideLabelUntilHover={false}
+          icon={Anchor}
+          onSubmit={action('on submit action a')}
+        />
+      </div>
+      <div
+        style={{
+          marginBottom: '16px',
+        }}
+      >
+        <ActionButton
+          type="attention"
+          actionType="negative"
+          label="No Hover Action A"
+          hideLabelUntilHover={false}
+          disabled
+          icon={Anchor}
+          onSubmit={action('on submit action a')}
+        />
+      </div>
+    </div>
+    <div
+      style={{
+        width: '300px',
+        textAlign: 'right',
+      }}
+    >
+      <h5>Aligned Right</h5>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          flexDirection: 'column',
+        }}
+      >
         <div
           style={{
             marginBottom: '16px',
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'flex-end',
           }}
         >
           <ActionButton
             type="primary"
+            actionType="negative"
+            label="Action B"
+            icon={Upload}
+            reverse
+            onSubmit={action('on submit action b')}
+          />
+        </div>
+        <div
+          style={{
+            marginBottom: '16px',
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <ActionButton
+            type="attention"
             actionType="positive"
-            label="Action A"
-            icon={Anchor}
-            onSubmit={action('on submit action a')}
+            label="Action B"
+            icon={Upload}
+            reverse
+            onSubmit={action('on submit action b')}
+            confirmation="Really ?"
           />
         </div>
         <div
           style={{
             marginBottom: '16px',
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'flex-end',
           }}
         >
           <ActionButton
-            type="attention"
+            type="primary"
             actionType="negative"
-            label="Action A"
-            icon={Anchor}
-            onSubmit={action('on submit action a')}
-          />
-        </div>
-        <div
-          style={{
-            marginBottom: '16px',
-          }}
-        >
-          <ActionButton
-            type="attention"
-            actionType="negative"
-            label="No Hover Action A"
+            label="No Hover Action B"
+            icon={Upload}
+            reverse
             hideLabelUntilHover={false}
-            icon={Anchor}
-            onSubmit={action('on submit action a')}
+            onSubmit={action('on submit action b')}
           />
         </div>
         <div
           style={{
             marginBottom: '16px',
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'flex-end',
           }}
         >
           <ActionButton
-            type="attention"
+            type="primary"
             actionType="negative"
-            label="No Hover Action A"
-            hideLabelUntilHover={false}
+            label="No Hover Action B"
+            icon={Upload}
             disabled
-            icon={Anchor}
-            onSubmit={action('on submit action a')}
-          />
-        </div>
-      </div>
-      <div
-        style={{
-          width: '300px',
-          textAlign: 'right',
-        }}
-      >
-        <h5>Aligned Right</h5>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            flexDirection: 'column',
-          }}
-        >
-          <div
-            style={{
-              marginBottom: '16px',
-              flex: 1,
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <ActionButton
-              type="primary"
-              actionType="negative"
-              label="Action B"
-              icon={Upload}
-              reverse
-              onSubmit={action('on submit action b')}
-            />
-          </div>
-          <div
-            style={{
-              marginBottom: '16px',
-              flex: 1,
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <ActionButton
-              type="attention"
-              actionType="positive"
-              label="Action B"
-              icon={Upload}
-              reverse
-              onSubmit={action('on submit action b')}
-              confirmation="Really ?"
-            />
-          </div>
-          <div
-            style={{
-              marginBottom: '16px',
-              flex: 1,
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <ActionButton
-              type="primary"
-              actionType="negative"
-              label="No Hover Action B"
-              icon={Upload}
-              reverse
-              hideLabelUntilHover={false}
-              onSubmit={action('on submit action b')}
-            />
-          </div>
-          <div
-            style={{
-              marginBottom: '16px',
-              flex: 1,
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <ActionButton
-              type="primary"
-              actionType="negative"
-              label="No Hover Action B"
-              icon={Upload}
-              disabled
-              reverse
-              hideLabelUntilHover={false}
-              onSubmit={action('on submit action b')}
-            />
-          </div>
-        </div>
-      </div>
-      <div
-        style={{
-          width: '300px',
-          // padding: '0 32px',
-        }}
-      >
-        <h5>With Loader</h5>
-        <div
-          style={{
-            marginBottom: '16px',
-          }}
-        >
-          <ActionButton
-            type="primary"
-            actionType="positive"
-            label="Action A"
-            withLoader
-            icon={Anchor}
-            onSubmit={() => {
-              action('on submit')();
-
-              return delay(2000).then(action('on submit response'));
-            }}
-          />
-        </div>
-        <div
-          style={{
-            marginBottom: '16px',
-          }}
-        >
-          <ActionButton
-            type="attention"
-            actionType="negative"
-            label="Action A"
-            withLoader
-            icon={Anchor}
-            onSubmit={() => {
-              action('on submit')();
-
-              return delay(2000).then(action('on submit response'));
-            }}
-          />
-        </div>
-        <div
-          style={{
-            marginBottom: '16px',
-          }}
-        >
-          <ActionButton
-            type="attention"
-            actionType="negative"
-            label="No Hover Action A"
-            withLoader
+            reverse
             hideLabelUntilHover={false}
-            icon={Anchor}
-            onSubmit={() => {
-              action('on submit')();
-
-              return delay(2000).then(action('on submit response'));
-            }}
+            onSubmit={action('on submit action b')}
           />
-        </div>
-      </div>
-      <div
-        style={{
-          width: '300px',
-          textAlign: 'right',
-        }}
-      >
-        <h5>Aligned Right</h5>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            flexDirection: 'column',
-          }}
-        >
-          <div
-            style={{
-              marginBottom: '16px',
-              flex: 1,
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <ActionButton
-              type="primary"
-              actionType="negative"
-              label="Action B"
-              icon={Upload}
-              reverse
-              onSubmit={() => {
-                action('on submit')();
-
-                return delay(2000).then(action('on submit response'));
-              }}
-            />
-          </div>
-          <div
-            style={{
-              marginBottom: '16px',
-              flex: 1,
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <ActionButton
-              type="attention"
-              actionType="positive"
-              label="Action B"
-              icon={Upload}
-              reverse
-              onSubmit={() => {
-                action('on submit')();
-
-                return delay(2000).then(action('on submit response'));
-              }}
-              confirmation="Really ?"
-            />
-          </div>
-          <div
-            style={{
-              marginBottom: '16px',
-              flex: 1,
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <ActionButton
-              type="primary"
-              actionType="negative"
-              label="No Hover Action B"
-              icon={Upload}
-              reverse
-              hideLabelUntilHover={false}
-              onSubmit={() => {
-                action('on submit')();
-
-                return delay(2000).then(action('on submit response'));
-              }}
-            />
-          </div>
         </div>
       </div>
     </div>
-  </Grommet>
+    <div
+      style={{
+        width: '300px',
+        // padding: '0 32px',
+      }}
+    >
+      <h5>With Loader</h5>
+      <div
+        style={{
+          marginBottom: '16px',
+        }}
+      >
+        <ActionButton
+          type="primary"
+          actionType="positive"
+          label="Action A"
+          withLoader
+          icon={Anchor}
+          onSubmit={() => {
+            action('on submit')();
+
+            return delay(2000).then(action('on submit response'));
+          }}
+        />
+      </div>
+      <div
+        style={{
+          marginBottom: '16px',
+        }}
+      >
+        <ActionButton
+          type="attention"
+          actionType="negative"
+          label="Action A"
+          withLoader
+          icon={Anchor}
+          onSubmit={() => {
+            action('on submit')();
+
+            return delay(2000).then(action('on submit response'));
+          }}
+        />
+      </div>
+      <div
+        style={{
+          marginBottom: '16px',
+        }}
+      >
+        <ActionButton
+          type="attention"
+          actionType="negative"
+          label="No Hover Action A"
+          withLoader
+          hideLabelUntilHover={false}
+          icon={Anchor}
+          onSubmit={() => {
+            action('on submit')();
+
+            return delay(2000).then(action('on submit response'));
+          }}
+        />
+      </div>
+    </div>
+    <div
+      style={{
+        width: '300px',
+        textAlign: 'right',
+      }}
+    >
+      <h5>Aligned Right</h5>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          flexDirection: 'column',
+        }}
+      >
+        <div
+          style={{
+            marginBottom: '16px',
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <ActionButton
+            type="primary"
+            actionType="negative"
+            label="Action B"
+            icon={Upload}
+            reverse
+            onSubmit={() => {
+              action('on submit')();
+
+              return delay(2000).then(action('on submit response'));
+            }}
+          />
+        </div>
+        <div
+          style={{
+            marginBottom: '16px',
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <ActionButton
+            type="attention"
+            actionType="positive"
+            label="Action B"
+            icon={Upload}
+            reverse
+            onSubmit={() => {
+              action('on submit')();
+
+              return delay(2000).then(action('on submit response'));
+            }}
+            confirmation="Really ?"
+          />
+        </div>
+        <div
+          style={{
+            marginBottom: '16px',
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <ActionButton
+            type="primary"
+            actionType="negative"
+            label="No Hover Action B"
+            icon={Upload}
+            reverse
+            hideLabelUntilHover={false}
+            onSubmit={() => {
+              action('on submit')();
+
+              return delay(2000).then(action('on submit response'));
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 );
 
 export const diablingOnFirstClickStory = () =>
@@ -327,50 +323,48 @@ export const diablingOnFirstClickStory = () =>
     useEffect(action(`Disabled: ${isDisabled}`), [isDisabled]);
 
     return (
-      <Grommet theme={defaultTheme}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+        }}
+      >
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
+            width: '300px',
+            // padding: '0 32px',
           }}
         >
+          <h5>Aligned Left</h5>
           <div
             style={{
-              width: '300px',
-              // padding: '0 32px',
+              marginBottom: '16px',
             }}
           >
-            <h5>Aligned Left</h5>
-            <div
-              style={{
-                marginBottom: '16px',
+            <ActionButton
+              type="primary"
+              actionType="positive"
+              label="Action A"
+              icon={Anchor}
+              disabled={isDisabled}
+              onFirstClick={() => {
+                action('Going to disable')();
+                setTimeout(() => {
+                  setIsDisabled(true);
+                }, 1000);
               }}
-            >
-              <ActionButton
-                type="primary"
-                actionType="positive"
-                label="Action A"
-                icon={Anchor}
-                disabled={isDisabled}
-                onFirstClick={() => {
-                  action('Going to disable')();
-                  setTimeout(() => {
-                    setIsDisabled(true);
-                  }, 1000);
-                }}
-                onSubmit={() => {
-                  action('on submit action a')();
-                }}
-              />
-            </div>
+              onSubmit={() => {
+                action('on submit action a')();
+              }}
+            />
           </div>
         </div>
-      </Grommet>
+      </div>
     );
   });
 
-  export const enablingAfterTwoSecondsStory = () =>
+export const enablingAfterTwoSecondsStory = () =>
   React.createElement(() => {
     const [isDisabled, setIsDisabled] = useState(true);
 
@@ -380,48 +374,46 @@ export const diablingOnFirstClickStory = () =>
       setTimeout(() => {
         setIsDisabled(false);
       }, 2 * 1000);
-    }, [])
+    }, []);
 
     return (
-      <Grommet theme={defaultTheme}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+        }}
+      >
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
+            width: '300px',
+            // padding: '0 32px',
           }}
         >
+          <h5>Aligned Left</h5>
           <div
             style={{
-              width: '300px',
-              // padding: '0 32px',
+              marginBottom: '16px',
             }}
           >
-            <h5>Aligned Left</h5>
-            <div
-              style={{
-                marginBottom: '16px',
+            <ActionButton
+              type="primary"
+              actionType="positive"
+              label="Action A"
+              icon={Anchor}
+              disabled={isDisabled}
+              onFirstClick={() => {
+                action('On First Click')();
+                // setTimeout(() => {
+                //   setIsDisabled(true);
+                // }, 1000);
               }}
-            >
-              <ActionButton
-                type="primary"
-                actionType="positive"
-                label="Action A"
-                icon={Anchor}
-                disabled={isDisabled}
-                onFirstClick={() => {
-                  action('On First Click')();
-                  // setTimeout(() => {
-                  //   setIsDisabled(true);
-                  // }, 1000);
-                }}
-                onSubmit={() => {
-                  action('On Submit')();
-                }}
-              />
-            </div>
+              onSubmit={() => {
+                action('On Submit')();
+              }}
+            />
           </div>
         </div>
-      </Grommet>
+      </div>
     );
   });

@@ -9,7 +9,7 @@ import { keyInObject } from 'src/lib/util';
 import { CreateUserAccountRequestPayload, RegisteredUserRecord } from 'dstnd-io';
 import { CodeVerificationForm } from '../../components/CodeVerificationForm';
 import { UserAccountInfo } from '../../types';
-import { colors, onlyMobile } from 'src/theme';
+import { CustomTheme, onlyMobile } from 'src/theme';
 import { Emoji } from 'src/components/Emoji';
 import capitalize from 'capitalize';
 import { useAuthenticationService } from '../../useAuthentication';
@@ -252,7 +252,7 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {},
   contentContainer: {
     paddingTop: '16px',
@@ -275,6 +275,6 @@ const useStyles = createUseStyles({
     }),
   },
   infoText: {
-    color: colors.neutralDarker,
+    color: theme.colors.neutralDarker
   },
-});
+}));
