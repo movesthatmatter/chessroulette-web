@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { Layer } from 'grommet';
 import { AppsRounded } from 'grommet-icons';
 import { CustomTheme, floatingShadow, softBorderRadius } from 'src/theme';
 import { GameActions } from 'src/modules/Games/GameActions';

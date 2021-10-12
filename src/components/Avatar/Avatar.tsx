@@ -1,6 +1,5 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { AvatarProps as GAvatarProps } from 'grommet';
 import { AspectRatio } from '../AspectRatio';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { getBoxShadow } from 'src/theme/util';
@@ -9,7 +8,7 @@ import cx from 'classnames';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { themes } from 'src/theme';
 
-export type AvatarProps = GAvatarProps & {
+export type AvatarProps = {
   className?: string;
   hasBorder?: boolean;
   darkBG?: boolean;

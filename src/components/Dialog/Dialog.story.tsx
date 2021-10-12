@@ -1,9 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { action } from '@storybook/addon-actions';
-import { Text } from 'grommet';
 import React, { useState } from 'react';
 import { Button } from '../Button';
 import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
+import { Text } from '../Text';
 import { Dialog } from './Dialog';
 
 export default {

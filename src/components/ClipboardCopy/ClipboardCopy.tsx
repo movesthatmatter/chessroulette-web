@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { TextInput } from 'grommet';
 import { noop } from 'src/lib/util';
 import { CustomTheme, themes, onlyMobile } from 'src/theme';
 import { seconds } from 'src/lib/time';
@@ -9,6 +8,7 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import cx from 'classnames';
 import { Button } from '../Button';
+import { TextInput } from '../TextInput';
 
 type Props = {
   value: string;
@@ -47,9 +47,7 @@ export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, copyButtonLabe
       )}
     >
       <TextInput
-        value={props.value}
-        plain
-        size="small"
+        defaultValue={props.value}
         className={cls.textInput}
         readOnly={props.readonly}
       />

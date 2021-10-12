@@ -12,11 +12,9 @@ import cx from 'classnames';
 import { noop } from 'src/lib/util';
 import { Modal } from '../Modal/Modal';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
-import { LayerProps } from 'grommet';
 
 export type DialogProps = {
   visible: boolean;
-  target?: LayerProps['target'];
 } & DialogContentProps;
 
 export const Dialog: React.FC<DialogProps> = ({

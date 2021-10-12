@@ -1,5 +1,4 @@
 import { UserRecord } from 'dstnd-io';
-import { Layer } from 'grommet';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Modal } from 'src/components/Modal/Modal';
