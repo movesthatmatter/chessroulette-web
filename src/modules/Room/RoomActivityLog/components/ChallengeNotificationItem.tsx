@@ -184,7 +184,7 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     ...fonts.small1,
     marginBottom: spacers.default,

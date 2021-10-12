@@ -107,7 +107,7 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     ...softBorderRadius,
     overflow: 'hidden',

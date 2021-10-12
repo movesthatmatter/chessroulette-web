@@ -101,7 +101,7 @@ export const InviteFriendsDialog: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {},
   link: {
     color: theme.colors.neutralDarkest,

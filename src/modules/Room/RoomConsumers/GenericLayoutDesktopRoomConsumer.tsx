@@ -94,7 +94,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
                   }}
                 >
                   <DarkModeSwitch />
-                  <div className={cls.spacer} />
+                  <div style={{ width: spacers.large }} />
                   <RoomControlMenuConsumer />
                 </div>
               </div>
@@ -127,7 +127,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     width: '100%',
     height: '100%',

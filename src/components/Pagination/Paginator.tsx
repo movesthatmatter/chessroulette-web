@@ -133,7 +133,7 @@ export const Paginator = (props: PaginatorProps) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'flex',
     alignContent: 'center',

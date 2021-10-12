@@ -78,7 +78,7 @@ export const AcceptRoomStep: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     textAlign: 'center',
     color: theme.text.baseColor

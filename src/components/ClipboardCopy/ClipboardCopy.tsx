@@ -81,7 +81,7 @@ export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, copyButtonLabe
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     border: `1px solid ${theme.colors.neutral}`,
     borderRadius: '40px',

@@ -99,7 +99,7 @@ export const LandingPage: React.FC<Props> = () => {
 const tabletBreakPoint = 600;
 const desktopBreakPoint = 769;
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   indexBackground: {
     backgroundColor: theme.colors.background,
   },

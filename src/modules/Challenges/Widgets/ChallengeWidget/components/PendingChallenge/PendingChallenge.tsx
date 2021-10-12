@@ -61,7 +61,7 @@ export const PendingChallenge: React.FC<PendingChallengeProps> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     textAlign: 'center',
   },

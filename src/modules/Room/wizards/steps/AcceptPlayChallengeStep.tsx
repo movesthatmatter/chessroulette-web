@@ -52,7 +52,7 @@ export const AcceptPlayChallengeStep: React.FC<Props> = ({ challenge, roomInfo, 
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     textAlign: 'center',
     color: theme.text.baseColor

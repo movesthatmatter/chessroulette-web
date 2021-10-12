@@ -114,7 +114,7 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
 const FLOATING_SHADOW_HORIZONTAL_OFFSET = spacers.large;
 const FLOATING_SHADOW_BOTTOM_OFFSET = `48px`;
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   // TODO: Have a centralized box class since it's used in other places
   box: {
     paddingLeft: FLOATING_SHADOW_HORIZONTAL_OFFSET,

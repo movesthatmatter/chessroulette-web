@@ -89,7 +89,7 @@ export const Countdown: React.FC<Props> = ({ onFinished = () => noop, gameTimeCl
   return <div className={cx(cls.container, props.className)}>{clock}</div>;
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {},
   text: {
     fontSize: '32px',

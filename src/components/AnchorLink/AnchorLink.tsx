@@ -29,7 +29,7 @@ export const AnchorLink: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     textDecoration: 'none',
     fontFamily: 'Lato, Open Sans, sans serif',

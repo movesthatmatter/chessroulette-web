@@ -74,7 +74,7 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',

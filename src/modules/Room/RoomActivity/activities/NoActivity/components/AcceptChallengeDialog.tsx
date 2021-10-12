@@ -80,7 +80,7 @@ export const AcceptChallengeDialog: React.FC<Props> = ({ pendingChallenge, onDis
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     position: 'absolute',
     top: 0,

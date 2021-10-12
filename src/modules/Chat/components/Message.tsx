@@ -54,7 +54,7 @@ export const Message: React.FC<Props> = ({ myId, message, fromUser, canShowUserI
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {},
   message: {
     // background: 'red',

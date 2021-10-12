@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import cx from 'classnames';
 import { createUseStyles, CSSProperties, makeImportant, NestedCSSElement } from 'src/lib/jss';
 import { Icon as GIcon } from 'grommet-icons';
-import { borderRadius, CustomTheme, onlyMobile, softBorderRadius, softOutline } from 'src/theme';
-import cx from 'classnames';
+import { borderRadius, onlyMobile, softBorderRadius, softOutline } from 'src/theme';
 import { ButtonType } from '../type';
 import { buttonStyles } from '../styles/styles';
 import { AsyncResult } from 'ts-async-results';
@@ -164,8 +164,8 @@ export const IconButton: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
-  ...buttonStyles,
+const useStyles = createUseStyles((theme) => ({
+  ...buttonStyles(theme),
   secondary: {
     ...buttonStyles(theme).secondary,
     ...({

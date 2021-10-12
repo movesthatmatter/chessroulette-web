@@ -71,7 +71,7 @@ export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight })
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>( theme => ({
+const useStyles = createUseStyles( theme => ({
   container: {},
   chatContainer: {
     //width: `calc(100% - ${spacers.default})`,

@@ -92,7 +92,7 @@ export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, reverse
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     position: 'relative',
   },

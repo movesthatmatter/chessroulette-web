@@ -33,7 +33,7 @@ export const CodeInput: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     marginBottom: '16px',
   },

@@ -40,7 +40,7 @@ export const InfoNotificationItem: React.FC<Props> = ({ notification, me, classN
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     ...fonts.small1,
     marginBottom: spacers.large,

@@ -51,7 +51,7 @@ export const ClearIconButton: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     position: 'relative',
     height: spacers.default,

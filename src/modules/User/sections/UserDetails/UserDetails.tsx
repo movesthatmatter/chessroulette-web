@@ -178,7 +178,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>( theme => ({
+const useStyles = createUseStyles( theme => ({
   container: {
     height: '100%',
     // display: 'flex',

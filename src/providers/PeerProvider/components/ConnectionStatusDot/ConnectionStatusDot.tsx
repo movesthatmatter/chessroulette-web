@@ -57,7 +57,7 @@ export const ConnectionStatusDot: React.FC<PeerConnectionStatusDotProps> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   dot: {
     height: '100%',
     width: '100%',

@@ -93,7 +93,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     ...floatingShadow,
     ...softBorderRadius,

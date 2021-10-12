@@ -37,7 +37,7 @@ export const BoardSettingsWidgetRoomConsumer: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   button: {
     background: theme.colors.primaryLight,
   },

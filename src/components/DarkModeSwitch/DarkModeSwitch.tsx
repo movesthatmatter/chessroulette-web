@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { CustomTheme, effects, fonts, onlyDesktop, onlyMobile } from 'src/theme';
+import { effects, onlyDesktop, onlyMobile } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import cx from 'classnames';
-import { Sun, Moon } from 'grommet-icons';
 
 type Props = {};
 
@@ -31,8 +30,8 @@ export const DarkModeSwitch: React.FC<Props> = (props) => {
               {
                 [cls.switchOn]: theme.name === 'lightDefault',
               },
-              animate === 1 && theme.name === 'lightDefault' && cls.animateOn,
-              animate === 1 && theme.name === 'darkDefault' && cls.animateOff
+              animate === 1 && theme.name === 'lightDefault' && cls.animationOn,
+              animate === 1 && theme.name === 'darkDefault' && cls.animationOff
             )}
           >
             {/* {theme === 'light' ? <Sun className={cls.iconSun}/> : <Moon className={cls.iconMoon}/>} */}
@@ -43,8 +42,8 @@ export const DarkModeSwitch: React.FC<Props> = (props) => {
               {
                 [cls.maskOn]: theme.name === 'lightDefault',
               },
-              animate === 1 && theme.name === 'lightDefault' && cls.animateMaskOn,
-              animate === 1 && theme.name === 'darkDefault' && cls.animateMaskOff
+              animate === 1 && theme.name === 'lightDefault' && cls.animationMaskOn,
+              animate === 1 && theme.name === 'darkDefault' && cls.animationMaskOff
             )}
           ></div>
         </div>
@@ -54,7 +53,7 @@ export const DarkModeSwitch: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   containerSwitch: {
     display: 'flex',
     width: 'fit-contents',

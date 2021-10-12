@@ -23,7 +23,7 @@ export const PrivacyPolicy: React.FC<Props> = () => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>( theme => ({
+const useStyles = createUseStyles( theme => ({
   container: {},
   article: {
     ...{

@@ -39,7 +39,7 @@ export const Modal: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   backdrop: {
     backgroundColor: 'rgba(0,0,0, 75%)',
     width: '100%',

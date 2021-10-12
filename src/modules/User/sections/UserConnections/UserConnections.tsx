@@ -108,7 +108,7 @@ export const UserConnections: React.FC<Props> = ({ user }) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'column',

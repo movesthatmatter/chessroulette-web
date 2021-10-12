@@ -105,7 +105,7 @@ export const LichessGameStateDialog: React.FC<Props> = ({ game, status }) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     position: 'absolute',
     top: 0,
