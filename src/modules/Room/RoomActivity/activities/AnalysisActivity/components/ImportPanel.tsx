@@ -76,7 +76,8 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
       <div className={cx(cls.box, cls.buttonWrapper)}>
         {props.hasBackButton && (
           <IconButton
-            type='primary'
+            type="secondary"
+            iconType="grommet"
             icon={FormPrevious}
             onSubmit={() => props.onBackButtonClicked()}
             className={cx(cls.button, cls.iconButton)}
@@ -113,7 +114,7 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
 const FLOATING_SHADOW_HORIZONTAL_OFFSET = spacers.large;
 const FLOATING_SHADOW_BOTTOM_OFFSET = `48px`;
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   // TODO: Have a centralized box class since it's used in other places
   box: {
     paddingLeft: FLOATING_SHADOW_HORIZONTAL_OFFSET,
@@ -164,7 +165,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   button: {
     marginBottom: 0,
     marginLeft: spacers.small,
-   
+
     '&:first-child': {
       marginLeft: 0,
     },

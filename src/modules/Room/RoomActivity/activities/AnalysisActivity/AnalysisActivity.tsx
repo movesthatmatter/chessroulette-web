@@ -5,11 +5,15 @@ import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { RoomAnalysisActivity } from './types';
 import { ActivityCommonProps } from '../types';
 import { ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/GameHistory';
-import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
+import { chessHistoryToSimplePgn, otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { LayoutContainerDimensions } from 'src/modules/Room/Layouts';
 import { AnalysisPanel, AnalysisPanelProps } from './components/AnalysisPanel';
 import { AnalysisRecord, ChessGameColor } from 'dstnd-io';
 import { toChessPlayersBySide } from 'src/modules/Games/Chess/lib';
+import { setInterval, setTimeout } from 'window-or-global';
+import { BoardSettingsWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/BoardSettingsWidgetRoomConsumer';
+import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
+import { spacers } from 'src/theme/spacers';
 
 export type AnalysisActivityProps = ActivityCommonProps & {
   participants: RoomAnalysisActivity['participants'];
@@ -20,9 +24,12 @@ export type AnalysisActivityProps = ActivityCommonProps & {
   onImportedGame: AnalysisPanelProps['onImportedGame'];
 };
 
+type Orientation = 'home' | 'away';
+
 const getParticipantsBySide = (
   analysis: AnalysisRecord,
   participants: RoomAnalysisActivity['participants'],
+  orientationInverted: boolean = false,
   defaultHomeColor: ChessGameColor = 'white'
 ) => {
   if (!analysis.game) {
@@ -34,9 +41,11 @@ const getParticipantsBySide = (
     (p) => p.user.id === myParticipant?.userId
   );
 
+  const homeColor = myParticipantAsPlayer?.color || defaultHomeColor;
+
   return toChessPlayersBySide(
     analysis.game.players,
-    myParticipantAsPlayer?.color || defaultHomeColor
+    orientationInverted ? otherChessColor(homeColor) : homeColor
   );
 };
 
@@ -50,13 +59,19 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
 }) => {
   const cls = useStyles();
   const pgnFromHistory = analysis.history ? chessHistoryToSimplePgn(analysis.history) : '';
+  const roomConsumer = useRoomConsumer();
+
   const [participantsBySide, setParticipantsBySide] = useState(
-    getParticipantsBySide(analysis, participants)
+    getParticipantsBySide(analysis, participants, roomConsumer?.boardOrientation !== 'home')
   );
 
   useEffect(() => {
-    setParticipantsBySide(getParticipantsBySide(analysis, participants));
-  }, [analysis.game?.players, participants]);
+    setParticipantsBySide(
+      getParticipantsBySide(analysis, participants, roomConsumer?.boardOrientation !== 'home')
+    );
+  }, [analysis.game?.players, participants, roomConsumer?.boardOrientation]);
+
+  const defaultHomeColor = roomConsumer?.boardOrientation === 'home' ? 'white' : 'black';
 
   return (
     <ChessGameHistoryConsumer
@@ -95,7 +110,7 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
               playable
               canInteract
               pgn={displayedHistory ? chessHistoryToSimplePgn(displayedHistory) : pgnFromHistory}
-              homeColor={participantsBySide?.home.color || 'white'}
+              homeColor={participantsBySide?.home.color || defaultHomeColor}
               onMove={(m) => {
                 onAddMove(
                   {
@@ -107,6 +122,7 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
               }}
               className={cls.board}
             />
+            <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
           </div>
         </div>
       )}
@@ -141,5 +157,10 @@ const useStyles = createUseStyles({
   },
   sideBottom: {
     height: '30%',
+  },
+  settingsBar: {
+    paddingTop: spacers.small,
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
 });
