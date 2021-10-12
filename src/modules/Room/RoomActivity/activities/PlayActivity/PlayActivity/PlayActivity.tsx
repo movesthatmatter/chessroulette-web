@@ -174,7 +174,7 @@ const useStyles = createUseStyles({
     flex: 1,
   },
   settingsBar: {
-    paddingTop: spacers.small,
+    paddingTop: spacers.default,
     display: 'flex',
     justifyContent: 'flex-end',
   },
