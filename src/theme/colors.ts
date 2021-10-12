@@ -1,15 +1,12 @@
 const dark = {
   primary: '#CE186B',
-  primaryLight: '#A383FF',
-  primaryLighter: '#BFA8FF',
-  primaryLightest: '#F545A2',
-  primaryDark: '#CF1484',
-  primaryDarker: '#2E0899',
-  primaryDarkest: '#210A64',
+  primaryLight: '#D82E7B',
+  primaryLighter: '#DB5087',
+  primaryLightest: '#E1639C',
+  primaryDark: '#BB0D5C',
+  primaryDarker: '#980548',
+  primaryDarkest: '#73034D',
   primaryHover: '#D427A8',
-
-  chessBoardDark: '#7e9ac7',
-  chessBoardLight: '#dee5f0',
 
   attention: '#FF9416',
   attentionLight: '#F59C70',
@@ -36,9 +33,9 @@ const dark = {
   neutralDarkest: '#DBDDE0',
   neutralDark: '#2D3247',
 
-  secondary: '#E34E89',
-  secondaryLight: '#FCBFD5',
-  secondaryDark: '#D13D6C',
+  secondary: '#8354E9',
+  secondaryLight: '#AC4ABC',
+  secondaryDark: '#6C21DF',
 
   background: '#161A2B',
 };
@@ -52,9 +49,6 @@ const light = {
   primaryDarker: '#2E0899',
   primaryDarkest: '#210A64',
   primaryHover: '#7645FF',
-
-  chessBoardDark: '#7e9ac7',
-  chessBoardLight: '#dee5f0',
 
   attention: '#FAC032',
   attentionLight: '#FCDF98',
@@ -88,7 +82,7 @@ const light = {
   background: '#F6F8FB',
 };
 
-export type ColorPalette = keyof typeof light;
+export type ColorPalette = keyof (typeof light | typeof dark);
 export type Colors = {
   [k in ColorPalette]: string;
 };
@@ -96,4 +90,9 @@ export type Colors = {
 export const colors = {
   light,
   dark,
+  universal: {
+    black: '#000',
+    white: '#fff',
+  }
 };
+

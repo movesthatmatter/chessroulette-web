@@ -94,7 +94,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   text: {
     fontSize: '32px',
     lineHeight: '32px',
-    color: theme.text.disabledColor,
+    color: theme.text.subtle,
     ...maxMediaQuery(1300, {
       fontSize: '24px',
       lineHeight: '24px',
@@ -105,7 +105,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     }),
   },
   textActive: {
-    color: theme.text.primaryColor,
+    color: theme.text.baseColor,
   },
   major: {
     fontWeight: 700,

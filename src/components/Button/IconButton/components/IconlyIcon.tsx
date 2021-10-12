@@ -1,6 +1,6 @@
 import React from 'react';
 import { IconProps } from 'react-iconly';
-import { colors } from 'src/theme';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { ButtonType } from '../../type';
 
 type Props = Omit<IconProps, 'size'> & {
@@ -22,23 +22,27 @@ export const IconlyIcon: React.FC<Props> = ({
   withLoader,
   primaryColor,
   ...iconProps
-}) => (
-  <Icon
-    primaryColor={
-      primaryColor ||
-      (disabled && clear
-        ? colors.neutralLight
-        : type === 'secondary' && clear
-        ? colors.secondaryDark
-        : clear
-        ? colors[type]
-        : type === 'secondary'
-        ? colors.neutralDarkest
-        : colors.white)
-    }
-    style={{
-      width: sizeInPx,
-    }}
-    {...iconProps}
-  />
-);
+}) => {
+  const { theme } = useColorTheme();
+
+  return (
+    <Icon
+      primaryColor={
+        primaryColor ||
+        (disabled && clear
+          ? theme.colors.neutralLight
+          : type === 'secondary' && clear
+          ? theme.colors.secondaryDark
+          : clear
+          ? theme.colors[type]
+          : type === 'secondary'
+          ? theme.colors.neutralDarkest
+          : theme.colors.white)
+      }
+      style={{
+        width: sizeInPx,
+      }}
+      {...iconProps}
+    />
+  );
+};

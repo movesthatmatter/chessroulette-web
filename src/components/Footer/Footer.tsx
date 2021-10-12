@@ -30,7 +30,7 @@ export const Footer: React.FC<Props> = () => {
                   target="_blank"
                   baseColor={text.baseColor}
                 >
-                  <InstagramIcon size="16px" className={cls.socialIcon} color={theme.colors.neutralDarkest}/>
+                  <InstagramIcon size="16px" className={cls.socialIcon} color={theme.text.subtle}/>
                   <Text size="body2" className={cls.text}>Instagram</Text>
                 </AnchorLink>
                 <AnchorLink
@@ -39,7 +39,7 @@ export const Footer: React.FC<Props> = () => {
                   href="https://www.facebook.com/chessroulette/"
                   target="_blank"
                 >
-                  <FacebookIcon size="16px" className={cls.socialIcon} color={theme.colors.neutralDarkest}/>
+                  <FacebookIcon size="16px" className={cls.socialIcon} color={theme.text.subtle}/>
                   <Text size="body2" className={cls.text}>Facebook</Text>
                 </AnchorLink>
               </div>

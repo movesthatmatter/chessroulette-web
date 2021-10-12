@@ -46,7 +46,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
         renderTopComponent={({ left, right, center }) => (
           <div className={cls.top}>
             <div className={cls.mainTop}>
-              <div className={cls.logoWrapper} style={{ flex: 1, marginRight:'10px' }}>
+              <div className={cls.logoWrapper} style={{ flex: 1, marginRight: '10px' }}>
                 <Logo asLink withBeta />
               </div>
               <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
@@ -76,8 +76,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
                     )}
                   />
                 </div>
-                <DarkModeSwitch/>
-                <div style={{width:'20px'}}/>
+                <div style={{ width: '20px' }} />
                 <UserMenu reversed showPeerStatus />
               </div>
             </div>
@@ -89,7 +88,15 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
             <div style={{ height: `${TOP_HEIGHT}px` }}>
               <div className={cls.roomInfoContainer}>
                 <RoomDetailsConsumer />
-                <RoomControlMenuConsumer />
+                <div
+                  style={{
+                    display: 'flex',
+                  }}
+                >
+                  <DarkModeSwitch />
+                  <div className={cls.spacer} />
+                  <RoomControlMenuConsumer />
+                </div>
               </div>
             </div>
             <div className={cls.rightSideStretchedContainer}>
@@ -120,7 +127,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   container: {
     width: '100%',
     height: '100%',

@@ -2,14 +2,7 @@
 import { action } from '@storybook/addon-actions';
 import React from 'react';
 import { IconButton } from './IconButton';
-import {
-  Upload,
-  Achievement,
-  BackTen,
-  Validate,
-  SafariOption,
-  Gremlin,
-} from 'grommet-icons';
+import { Upload, Achievement, BackTen, Validate, SafariOption, Gremlin } from 'grommet-icons';
 import { delay } from 'src/lib/time';
 import { Swap, Chart, Category, Buy, Send, Game } from 'react-iconly';
 
@@ -19,6 +12,7 @@ export default {
 };
 
 export const defaultStory = () => (
+  <>
     <div
       style={{
         display: 'flex',
@@ -193,7 +187,7 @@ export const defaultStory = () => (
         }}
       >
         <h6>With Loader</h6>
-        <div style={{ marginBottom: '16px' }} >
+        <div style={{ marginBottom: '16px' }}>
           <IconButton
             type="primary"
             withLoader
@@ -206,7 +200,7 @@ export const defaultStory = () => (
             icon={Achievement}
           />
         </div>
-        <div style={{ marginBottom: '16px' }} >
+        <div style={{ marginBottom: '16px' }}>
           <IconButton
             type="secondary"
             withLoader
@@ -815,4 +809,5 @@ export const defaultStory = () => (
         </div>
       </div>
     </div>
+  </>
 );

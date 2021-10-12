@@ -3,7 +3,8 @@ import { IconButton } from 'src/components/Button';
 import { useRoomConsumer } from './useRoomConsumer';
 import { Swap } from 'react-iconly';
 import { createUseStyles } from 'src/lib/jss';
-import { colors } from 'src/theme';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { CustomTheme } from 'src/theme';
 
 type Props = {
   containerClassName?: string;
@@ -12,6 +13,7 @@ type Props = {
 export const BoardSettingsWidgetRoomConsumer: React.FC<Props> = (props) => {
   const cls = useStyles();
   const roomConsumer = useRoomConsumer();
+  const { theme } = useColorTheme();
 
   return (
     <div className={props.containerClassName}>
@@ -19,7 +21,7 @@ export const BoardSettingsWidgetRoomConsumer: React.FC<Props> = (props) => {
         type="primary"
         size="default"
         title="Flip Board"
-        iconPrimaryColor={colors.white}
+        iconPrimaryColor={theme.colors.white}
         className={cls.button}
         iconType="iconly"
         icon={Swap}
@@ -35,8 +37,8 @@ export const BoardSettingsWidgetRoomConsumer: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   button: {
-    background: colors.primaryLight,
+    background: theme.colors.primaryLight,
   },
-});
+}));

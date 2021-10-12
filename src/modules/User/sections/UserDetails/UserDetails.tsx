@@ -166,7 +166,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                   withLoader
                   full
                   disabled={!p.canSubmit}
-                  type="positive"
+                  type="primary"
                   onClick={p.submit}
                 />
               </div>

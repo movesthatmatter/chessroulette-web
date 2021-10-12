@@ -67,7 +67,7 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
                   fontWeight: 300,
                 }}
               >
-                Made with ❤️ around the world!
+                Made with ❤️around the world!
               </Text>
             </div>
           </div>

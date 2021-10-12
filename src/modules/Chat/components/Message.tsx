@@ -85,8 +85,9 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
       background: theme.colors.neutral,
       color : '#001b36',
     }: {
-      background: 'linear-gradient(270deg, #1977F2 0%, #43D1BE 100%)',
-      color: theme.colors.white
+      background: theme.colors.primaryDark,
+      // background: 'linear-gradient(270deg, #1977F2 0%, #43D1BE 100%)',
+      color: theme.colors.black
     })
   },
   otherMessageContent: {

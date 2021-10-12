@@ -18,6 +18,7 @@ import {
 import { getParticipantUserInfo } from 'src/modules/Room/RoomActivity/util/util';
 import { CustomTheme, themes } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { colors } from 'src/theme/colors';
 
 
 type Props = {
@@ -230,7 +231,7 @@ export const GameActions: React.FC<Props> = ({
               label="Offer Draw"
               confirmation="Confirm"
               actionType="attention"
-              iconComponent={<FontAwesomeIcon icon={faHandshake} color={theme.colors.white} />}
+              iconComponent={<FontAwesomeIcon icon={faHandshake} color={colors.universal.white} />}
               onSubmit={() => {
                 actions.onOfferDraw();
                 onActionTaken('onOfferDraw');
@@ -246,7 +247,7 @@ export const GameActions: React.FC<Props> = ({
               label="Takeback"
               confirmation="Confirm"
               actionType="attention"
-              iconComponent={<FontAwesomeIcon icon={faUndo} color={theme.colors.white} />}
+              iconComponent={<FontAwesomeIcon icon={faUndo} color={colors.universal.white} />}
               onSubmit={() => {
                 actions.onTakebackOffer();
                 onActionTaken('onTakebackOffer');

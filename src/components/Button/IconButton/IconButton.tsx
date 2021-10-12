@@ -20,7 +20,7 @@ const sizers = getSizers(1); // This is twice the regular size
 
 const IconSizeInPxByName = {
   small: sizers.get(0.75),
-  default: sizers.get(1),
+  default: sizers.get(1.25),
   large: sizers.get(1.5),
 } as const;
 
@@ -167,11 +167,11 @@ export const IconButton: React.FC<Props> = ({
 const useStyles = createUseStyles<CustomTheme>((theme) => ({
   ...buttonStyles,
   secondary: {
-    ...buttonStyles.secondary,
+    ...buttonStyles(theme).secondary,
     ...({
       '&$clear': {
-        borderColor: `${colors.secondaryDark} !important`,
-        ...buttonEffects.secondaryClearButtonShadow,
+        borderColor: `${theme.colors.secondaryDark} !important`,
+        ...buttonEffects(theme).secondaryClearButtonShadow,
       },
     } as NestedCSSElement),
   },
