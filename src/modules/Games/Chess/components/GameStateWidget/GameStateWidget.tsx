@@ -35,7 +35,7 @@ export const GameStateWidget: React.FC<Props> = ({
   const cls = useStyles();
 
   const awayColor = otherChessColor(homeColor);
-  const timeLeft = useGameTimesLeftByColor(game);
+  const timeLeft = useGameTimesLeftByColor(game, [homeColor]);
   const players = {
     white: roomPlayActivityParticipantToChessPlayer(playParticipants.white),
     black: roomPlayActivityParticipantToChessPlayer(playParticipants.black),
