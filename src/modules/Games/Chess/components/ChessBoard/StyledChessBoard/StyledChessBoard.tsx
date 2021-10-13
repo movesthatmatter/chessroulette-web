@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chessground, { ChessgroundProps, ChessgroundApi } from 'react-chessground';
-import { createUseStyles, CSSProperties } from 'src/lib/jss';
+import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import blueBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/board/blue.svg';
 import cx from 'classnames';
 import { ChessGameColor, ChessMove, PromotionalChessPieceType } from 'dstnd-io';
 import { Square } from 'chess.js';
 import { noop } from 'src/lib/util';
 import 'react-chessground/dist/styles/chessground.css';
-import { CustomTheme, softOutline } from 'src/theme';
-import {light as lightPieces} from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
+import { light as lightPieces } from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
 import darkBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/board/blue_darkMode.svg';
-import {dark as darkPieces} from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
+import { dark as darkPieces } from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 export type StyledChessBoardProps = Omit<
@@ -57,7 +56,7 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
   const cls = useStyles();
   const [uniqueKey, setUniquKey] = useState(new Date().getTime());
   const chessgroundRef = useRef<ChessgroundApi>();
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
   const pieces = theme.name === 'lightDefault' ? lightPieces : darkPieces;
 
   useEffect(() => {
@@ -130,7 +129,10 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
       {promotionalMove && (
         <div className={cls.promoDialogLayer}>
           <div
-            className={cls.promoDialogContainer}
+            className={cx(
+              cls.promoDialogContainer,
+              promotionalMove.color !== orientation && cls.promoDialogContainerFlipped
+            )}
             style={{
               left: `${promotionalSquareToPercentage(promotionalMove, orientation)}%`,
             }}
@@ -173,207 +175,224 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
   );
 };
 
-const useStyles = createUseStyles( theme => {
-  const colors = theme.name === 'lightDefault' ? {
-    image : blueBoard,
-    pieces: lightPieces,
-    selectedSquare: '#14551e80',
-    lastMove: '#9bc70069',
-    check: 'radial-gradient(ellipse at center,rgba(255,0,0,1) 0,rgba(231,0,0,1) 25%,rgba(169,0,0,0) 89%,rgba(158,0,0,0) 100%)',
-    arrows: {
-      color1: '#15781B',
-      color2: '#882020',
-      color3: '#003088',
-      color4: '#e68f00',
-    }
-  } : {
-    image : darkBoard,
-    pieces: darkPieces,
-    selectedSquare: '#4D164B',
-    lastMove: '#9C1F5B70',
-    check: 'radial-gradient(64.15% 64.15% at 50.28% 50.31%, rgba(206, 24, 107, 0.81) 39.58%, rgba(206, 24, 107, 0) 100%)',
-    arrows: {
-      color1: '#FF9416',
-      color2: '#E485BF',
-      color3: '#8354E9',
-      color4: '#3BC0C8',
-    }
-  }
+const useStyles = createUseStyles((theme) => {
+  const colors =
+    theme.name === 'lightDefault'
+      ? {
+          image: blueBoard,
+          pieces: lightPieces,
+          selectedSquare: '#14551e80',
+          lastMove: '#9bc70069',
+          check:
+            'radial-gradient(ellipse at center,rgba(255,0,0,1) 0,rgba(231,0,0,1) 25%,rgba(169,0,0,0) 89%,rgba(158,0,0,0) 100%)',
+          arrows: {
+            color1: '#15781B',
+            color2: '#882020',
+            color3: '#003088',
+            color4: '#e68f00',
+          },
+        }
+      : {
+          image: darkBoard,
+          pieces: darkPieces,
+          selectedSquare: '#4D164B',
+          lastMove: '#9C1F5B70',
+          check:
+            'radial-gradient(64.15% 64.15% at 50.28% 50.31%, rgba(206, 24, 107, 0.81) 39.58%, rgba(206, 24, 107, 0) 100%)',
+          arrows: {
+            color1: '#FF9416',
+            color2: '#E485BF',
+            color3: '#8354E9',
+            color4: '#3BC0C8',
+          },
+        };
+
   return {
-  container: {
-    padding: 0,
-    position: 'relative',
+    container: {
+      padding: 0,
+      position: 'relative',
 
-    ...({
-      '& .cg-wrap': {
-        backgroundImage: `url(${colors.image})`,
-      },
+      ...({
+        '& .cg-wrap': {
+          backgroundImage: `url(${colors.image})`,
+        },
 
-      '& .cg-wrap piece.rook.white' : {
-        backgroundImage: `url(${colors.pieces.wR})`
-      },
-      '& .cg-wrap piece.queen.white' : {
-        backgroundImage: `url(${colors.pieces.wQ})`
-      },
-      '& .cg-wrap piece.knight.white' : {
-        backgroundImage: `url(${colors.pieces.wN})`
-      },
-      '& .cg-wrap piece.bishop.white' : {
-        backgroundImage: `url(${colors.pieces.wB})`
-      },
-      '& .cg-wrap piece.pawn.white' : {
-        backgroundImage: `url(${colors.pieces.wP})`
-      },
-      '& .cg-wrap piece.king.white' : {
-        backgroundImage: `url(${colors.pieces.wK})`
-      },
+        '& .cg-wrap piece.rook.white': {
+          backgroundImage: `url(${colors.pieces.wR})`,
+        },
+        '& .cg-wrap piece.queen.white': {
+          backgroundImage: `url(${colors.pieces.wQ})`,
+        },
+        '& .cg-wrap piece.knight.white': {
+          backgroundImage: `url(${colors.pieces.wN})`,
+        },
+        '& .cg-wrap piece.bishop.white': {
+          backgroundImage: `url(${colors.pieces.wB})`,
+        },
+        '& .cg-wrap piece.pawn.white': {
+          backgroundImage: `url(${colors.pieces.wP})`,
+        },
+        '& .cg-wrap piece.king.white': {
+          backgroundImage: `url(${colors.pieces.wK})`,
+        },
 
-      '& .cg-wrap piece.rook.black' : {
-        backgroundImage: `url(${colors.pieces.bR})`
-      },
-      '& .cg-wrap piece.queen.black' : {
-        backgroundImage: `url(${colors.pieces.bQ})`
-      },
-      '& .cg-wrap piece.knight.black' : {
-        backgroundImage: `url(${colors.pieces.bN})`
-      },
-      '& .cg-wrap piece.bishop.black' : {
-        backgroundImage: `url(${colors.pieces.bB})`
-      },
-      '& .cg-wrap piece.pawn.black' : {
-        backgroundImage: `url(${colors.pieces.bP})`
-      },
-      '& .cg-wrap piece.king.black' : {
-        backgroundImage: `url(${colors.pieces.bK})`
-      },
+        '& .cg-wrap piece.rook.black': {
+          backgroundImage: `url(${colors.pieces.bR})`,
+        },
+        '& .cg-wrap piece.queen.black': {
+          backgroundImage: `url(${colors.pieces.bQ})`,
+        },
+        '& .cg-wrap piece.knight.black': {
+          backgroundImage: `url(${colors.pieces.bN})`,
+        },
+        '& .cg-wrap piece.bishop.black': {
+          backgroundImage: `url(${colors.pieces.bB})`,
+        },
+        '& .cg-wrap piece.pawn.black': {
+          backgroundImage: `url(${colors.pieces.bP})`,
+        },
+        '& .cg-wrap piece.king.black': {
+          backgroundImage: `url(${colors.pieces.bK})`,
+        },
 
-      '& cg-helper': {
-        // Override the default "display: table" because the paddingBottom
-        //  of a table doesn't always equal the width of the same element
-        display: 'block',
-      },
+        '& cg-helper': {
+          // Override the default "display: table" because the paddingBottom
+          //  of a table doesn't always equal the width of the same element
+          display: 'block',
+        },
 
-      '& piece': {
-        top: '.5%',
-        left: '.5%',
-        width: '11%',
-        height: '11%',
-      },
+        '& piece': {
+          top: '.5%',
+          left: '.5%',
+          width: '11%',
+          height: '11%',
+        },
 
-      '& .cg-wrap coords.ranks': {
-        top: '-4.5%',
-        left: '.5%',
-        '& coord': {
-          textTransform: 'none',
-          color: '#dee3e6',
+        '& .cg-wrap coords.ranks': {
+          top: '-4.5%',
+          left: '.5%',
+          '& coord': {
+            textTransform: 'none',
+            color: '#dee3e6',
+            fontSize: '11px',
+
+            '&:nth-child(even)': {
+              color: '#8ca2ad',
+            },
+          },
+        },
+
+        '& .cg-wrap svg circle[stroke="#15781B"]': {
+          stroke: `${colors.arrows.color1} !important`,
+        },
+        '& .cg-wrap svg line[stroke="#15781B"]': {
+          stroke: `${colors.arrows.color1} !important`,
+        },
+        '& .cg-wrap svg marker[id="arrowhead-g"] path': {
+          fill: `${colors.arrows.color1} !important`,
+        },
+
+        '& .cg-wrap svg circle[stroke="#882020"]': {
+          stroke: `${colors.arrows.color2} !important`,
+        },
+        '& .cg-wrap svg line[stroke="#882020"]': {
+          stroke: `${colors.arrows.color2} !important`,
+        },
+        '& .cg-wrap svg marker[id="arrowhead-r"] path': {
+          fill: `${colors.arrows.color2} !important`,
+        },
+
+        '& .cg-wrap svg circle[stroke="#003088"]': {
+          stroke: `${colors.arrows.color3} !important`,
+        },
+        '& .cg-wrap svg line[stroke="#003088"]': {
+          stroke: `${colors.arrows.color3} !important`,
+        },
+        '& .cg-wrap svg marker[id="arrowhead-b"] path': {
+          fill: `${colors.arrows.color3} !important`,
+        },
+
+        '& .cg-wrap svg circle[stroke="#e68f00"]': {
+          stroke: `${colors.arrows.color4} !important`,
+        },
+        '& .cg-wrap svg line[stroke="#e68f00"]': {
+          stroke: `${colors.arrows.color4} !important`,
+        },
+        '& .cg-wrap svg marker[id="arrowhead-y"] path': {
+          fill: `${colors.arrows.color4} !important`,
+        },
+
+        '& cg-board square.check': {
+          background: colors.check,
+        },
+
+        '& cg-board square.selected': {
+          backgroundColor: colors.selectedSquare,
+        },
+        '& cg-board square.last-move': {
+          backgroundColor: colors.lastMove,
+        },
+        '& .cg-wrap coords.files': {
+          bottom: '0%',
+          left: '5%',
           fontSize: '11px',
 
-          '&:nth-child(even)': {
-            color: '#8ca2ad',
+          '& coord': {
+            textTransform: 'none',
+            color: '#dee3e6',
+
+            '&:nth-child(even)': {
+              color: '#8ca2ad',
+            },
           },
         },
-      },
 
-      '& .cg-wrap svg circle[stroke="#15781B"]' : {
-        stroke: `${colors.arrows.color1} !important`,
-      },
-      '& .cg-wrap svg line[stroke="#15781B"]' : {
-        stroke: `${colors.arrows.color1} !important`,
-      },
-      '& .cg-wrap svg marker[id="arrowhead-g"] path' : {
-        fill: `${colors.arrows.color1} !important`,
-      },
-
-      '& .cg-wrap svg circle[stroke="#882020"]' : {
-        stroke: `${colors.arrows.color2} !important`,
-      },
-      '& .cg-wrap svg line[stroke="#882020"]' : {
-        stroke: `${colors.arrows.color2} !important`,
-      },
-      '& .cg-wrap svg marker[id="arrowhead-r"] path' : {
-        fill: `${colors.arrows.color2} !important`,
-      },
-
-      '& .cg-wrap svg circle[stroke="#003088"]' : {
-        stroke: `${colors.arrows.color3} !important`,
-      },
-      '& .cg-wrap svg line[stroke="#003088"]' : {
-        stroke: `${colors.arrows.color3} !important`,
-      },
-      '& .cg-wrap svg marker[id="arrowhead-b"] path' : {
-        fill: `${colors.arrows.color3} !important`,
-      },
-
-      '& .cg-wrap svg circle[stroke="#e68f00"]' : {
-        stroke: `${colors.arrows.color4} !important`,
-      },
-      '& .cg-wrap svg line[stroke="#e68f00"]' : {
-        stroke: `${colors.arrows.color4} !important`,
-      },
-      '& .cg-wrap svg marker[id="arrowhead-y"] path' : {
-        fill: `${colors.arrows.color4} !important`,
-      },
-
-      '& cg-board square.check' : {
-         background: colors.check,
-      },
-
-      '& cg-board square.selected' : {
-        backgroundColor: colors.selectedSquare
-      },
-      '& cg-board square.last-move' : {
-        backgroundColor : colors.lastMove
-      },
-      '& .cg-wrap coords.files': {
-        bottom: '0%',
-        left: '5%',
-        fontSize: '11px',
-
-        '& coord': {
-          textTransform: 'none',
-          color: '#dee3e6',
+        // Reverse it for black orientation
+        '& .orientation-black coords.ranks coord': {
+          color: '#8ca2ad !important',
 
           '&:nth-child(even)': {
-            color: '#8ca2ad',
+            color: '#dee3e6 !important',
           },
         },
-      },
+        '& .orientation-black coords.files coord': {
+          color: '#8ca2ad !important',
 
-      // Reverse it for black orientation
-      '& .orientation-black coords.ranks coord': {
-        color: '#8ca2ad !important',
-
-        '&:nth-child(even)': {
-          color: '#dee3e6 !important',
+          '&:nth-child(even)': {
+            color: '#dee3e6 !important',
+          },
         },
-      },
-      '& .orientation-black coords.files coord': {
-        color: '#8ca2ad !important',
+      } as CSSProperties),
+    },
+    promoDialogLayer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      background: `rgba(0, 0, 0, .3)`,
+      zIndex: 9,
+    },
+    promoDialogContainer: {
+      background: theme.name === 'lightDefault' ? '#fff' : '#092330',
+      position: 'absolute',
+      top: 0,
+    },
+    promoDialogContainerFlipped: {
+      ...makeImportant({
+        top: 'auto',
+        bottom: 0,
+      }),
 
-        '&:nth-child(even)': {
-          color: '#dee3e6 !important',
-        },
+      '& $promoPiecesContainer': {
+        flexDirection: 'column-reverse',
       },
-    } as CSSProperties),
-  },
-  promoDialogLayer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    background: `rgba(0, 0, 0, .3)`,
-    zIndex: 9,
-  },
-  promoDialogContainer: {
-    background: theme.name === 'lightDefault' ? '#fff' : '#092330',
-    position: 'absolute',
-    top: 0,
-  },
-  promoPiecesContainer: {
-    textAlign: 'center',
-    cursor: 'pointer',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-}});
+    },
+    promoPiecesContainer: {
+      textAlign: 'center',
+      cursor: 'pointer',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+  };
+});
