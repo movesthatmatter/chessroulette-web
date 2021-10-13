@@ -24,11 +24,11 @@ export const timeLeftToFormatMinor = (
 
 export const timeLeftToInterval = (timeLeftMs: number) => {
   if (timeLeftMs < minutes(1)) {
-    return seconds(.5);
+    return seconds(.05);
   }
 
   if (timeLeftMs < hours(1)) {
-    return second();
+    return seconds(0.1);
   }
   return minutes(1);
 };
