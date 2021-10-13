@@ -6793,9 +6793,9 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.2.0-2":
-  version "0.2.0-2"
-  resolved "https://github.com/dstnd/dstnd-io.git#8f724221c95d2dbe5af506c867f6ec8567ef7b19"
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#756953a":
+  version "0.2.0"
+  resolved "https://github.com/dstnd/dstnd-io.git#756953ad421eaba7ab4294091640f0c5cb4c0ebe"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"
@@ -14409,6 +14409,11 @@ react-hotkeys@2.0.0:
   integrity sha512-3n3OU8vLX/pfcJrR3xJ1zlww6KS1kEJt0Whxc4FiGV+MJrQ1mYSYI3qS/11d2MJDFm8IhOXMTFQirfu6AVOF6Q==
   dependencies:
     prop-types "^15.6.1"
+
+react-iconly@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/react-iconly/-/react-iconly-2.2.3.tgz#9fd6622a6cb9aec7622203c4c679d8a6c0632379"
+  integrity sha512-jSheFmP4tvP+ril6Ng0iKyXo3A0ceqGWGZGmEu4sm5H0azpYoIdoRpYWrwavDOz9F9orFhDeKHKnBeL48HIw4w==
 
 react-input-autosize@^2.2.2:
   version "2.2.2"

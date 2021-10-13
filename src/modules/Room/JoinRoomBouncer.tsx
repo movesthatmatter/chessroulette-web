@@ -108,7 +108,7 @@ export const JoinRoomBouncer: React.FC<Props> = (props) => {
   return <AwesomeLoaderPage />;
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'flex',
     flex: 1,

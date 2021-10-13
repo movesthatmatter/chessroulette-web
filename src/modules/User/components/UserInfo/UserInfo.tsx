@@ -34,7 +34,7 @@ export const UserInfo: React.FC<Props> = ({ darkBG, reversed, user }) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'flex',
   },

@@ -56,7 +56,8 @@ export const ExitRoomWidget: React.FC<Props> = (props) => {
             onClick: () => unblockRouteTransition(),
           },
           {
-            type: theme.name === 'lightDefault' ? 'secondary' : 'positive',
+            // type: theme.name === 'lightDefault' ? 'secondary' : 'positive',
+            type: 'primary',
             label: "I'm staying!",
             full: true,
             onClick: () => {
@@ -69,7 +70,7 @@ export const ExitRoomWidget: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {},
   exitButton: {
     cursor: 'pointer',

@@ -10,6 +10,7 @@ import { spacers } from 'src/theme/spacers';
 import { getUserDisplayName } from 'src/modules/User';
 import cx from 'classnames';
 import { CustomTheme, onlyDesktop, onlyMobile } from 'src/theme';
+import { colors } from 'src/theme/colors';
 
 type Props = {
   size?: string;
@@ -69,11 +70,11 @@ export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, reverse
       >
         {peer?.isMe || (
           <ConnectionStatusDot
-          peer={peer}
-          containerClassName={cls.connectionDotContainer}
-          dotClassName={cls.connectionDot}
-          size="25%"
-        />
+            peer={peer}
+            containerClassName={cls.connectionDotContainer}
+            dotClassName={cls.connectionDot}
+            size="25%"
+          />
         )}
         <Avatar
           mutunachiId={peer ? Number(peer.user.avatarId) : Number(props.peerUserInfo?.avatarId)}
@@ -91,7 +92,7 @@ export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, reverse
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     position: 'relative',
   },
@@ -102,7 +103,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     right: 'calc(10% - 2px)',
   },
   connectionDot: {
-    border: `2px solid ${theme.colors.white}`,
+    border: `2px solid ${colors.universal.white}`,
   },
   infoContainer: {
     position: 'absolute',
@@ -114,7 +115,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
       zIndex: 0,
     }),
     ...onlyMobile({
-      zIndex: 10
+      zIndex: 10,
     }),
   },
   infoContainerReversed: {

@@ -159,7 +159,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   buttonRows: {
     display: 'flex',
     flexDirection: 'column',

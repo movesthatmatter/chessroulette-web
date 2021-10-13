@@ -36,7 +36,7 @@ export const Menu: React.FC<Props> = (props) => {
           </Link>
         ))}
         <div className={cls.logoutButtonWrapper}>
-          <LogoutButton clear full type="secondary" className={cls.logoutButton} />
+          <LogoutButton clear full type="primary" className={cls.logoutButton} />
         </div>
       </div>
     </div>

@@ -198,7 +198,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   ...buttonStyles(theme),
   button: {
     ...buttonStyles(theme).button,
@@ -229,7 +229,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   },
   label: {
     ...fonts.small1,
-    color: theme.colors.white,
+    color: colors.universal.white,
     fontWeight: 600, // TODO: Make it SemiBold
     lineHeight: '32px',
     direction: 'ltr',
@@ -253,9 +253,9 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     justifyContent: 'center',
   },
   icon: {
-    fill: `${theme.colors.white} !important`,
-    stroke: `${theme.colors.white} !important`,
-    color: `${theme.colors.white} !important`,
+    fill: `${colors.universal.white} !important`,
+    stroke: `${colors.universal.white} !important`,
+    color: `${colors.universal.white} !important`,
     width: '16px !important',
     height: '16px !important',
   },

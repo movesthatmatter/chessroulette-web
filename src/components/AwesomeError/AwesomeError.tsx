@@ -46,7 +46,7 @@ export const AwesomeError: React.FC<AwesomeErrorProps> = ({
 
 
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     width: '100%',
     textAlign: 'center',

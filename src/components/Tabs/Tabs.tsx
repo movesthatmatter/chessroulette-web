@@ -73,7 +73,7 @@ export const Tabs: React.FC<TabsProps> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   tabBar: {
     display: 'flex',
     flexDirection: 'row',

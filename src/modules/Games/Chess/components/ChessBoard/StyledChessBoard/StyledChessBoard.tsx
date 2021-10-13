@@ -171,7 +171,7 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>( theme => {
+const useStyles = createUseStyles( theme => {
   const colors = theme.name === 'lightDefault' ? {
     image : blueBoard,
     pieces: lightPieces,

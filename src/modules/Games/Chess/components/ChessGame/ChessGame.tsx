@@ -25,7 +25,7 @@ export const ChessGame: React.FC<ChessGameProps> = ({ game, displayedPgn, ...che
       pgn={displayedPgn === undefined ? game.pgn : displayedPgn}
       onMove={({ move }) => {
         // TODO: Add the history here as well
-        actions.onMove(move, [], chessGameProps.homeColor);
+        actions.onMove(move, [], chessGameProps.playableColor);
       }}
       overlayComponent={<GameStateDialogConsumer />}
       {...chessGameProps}

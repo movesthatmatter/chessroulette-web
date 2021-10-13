@@ -76,7 +76,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
                       withBadge={{
                         text: 'New',
                         side: 'right',
-                        color: theme.name ==='lightDefault' ? 'negative' : 'white',
+                        color: theme.name ==='lightDefault' ? 'negative' : 'primaryDark',
                       }}
                       onClick={() => {
                         if (!roomConsumer) {
@@ -142,7 +142,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     position: 'absolute',
     top: 0,

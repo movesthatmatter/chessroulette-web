@@ -1,3 +1,4 @@
+import { AnalysisRecord } from 'dstnd-io';
 import React from 'react';
 import { GameHistory, GameHistoryProps } from '../GameHistory';
 import { ChessGameHistoryConsumer } from './ChessGameHistoryConsumer';

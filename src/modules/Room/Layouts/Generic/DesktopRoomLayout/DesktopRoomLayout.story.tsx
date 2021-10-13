@@ -209,7 +209,7 @@ export const withChessGame = () => (
                 return (
                   <ChessBoard
                     type="play"
-                    homeColor="black"
+                    playableColor="black"
                     playable
                     pgn={game.pgn}
                     id={game.id}

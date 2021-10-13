@@ -2,7 +2,7 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
-import { CustomTheme, softBorderRadius } from 'src/theme';
+import { softBorderRadius } from 'src/theme';
 import { RoomDetailsConsumer } from './RoomDetailsConsumer';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
 import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
@@ -24,8 +24,8 @@ type Props = {
   }) => React.ReactNode;
 };
 
-const TOP_HEIGHT = 70;
-const BOTTOM_HEIGHT = 66;
+const TOP_HEIGHT = 90;
+const BOTTOM_HEIGHT = 56;
 const MIN_SPACE_BETWEEN = spacers.largePx;
 
 // TODO: This isn't provided for now and don't think it needs to be but for now it sits here
@@ -46,7 +46,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
         renderTopComponent={({ left, right, center }) => (
           <div className={cls.top}>
             <div className={cls.mainTop}>
-              <div className={cls.logoWrapper} style={{ flex: 1, marginRight:'10px' }}>
+              <div className={cls.logoWrapper} style={{ flex: 1, marginRight: '10px' }}>
                 <Logo asLink withBeta />
               </div>
               <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
@@ -76,8 +76,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
                     )}
                   />
                 </div>
-                <DarkModeSwitch/>
-                <div style={{width:'20px'}}/>
+                <div style={{ width: '20px' }} />
                 <UserMenu reversed showPeerStatus />
               </div>
             </div>
@@ -86,10 +85,18 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
         )}
         renderRightSideComponent={({ container }) => (
           <div className={cx(cls.side, cls.rightSide)}>
-            <div style={{ height: `${TOP_HEIGHT}px` }}>
+            <div className={cls.rightSideTop} style={{ height: `${TOP_HEIGHT}px` }}>
               <div className={cls.roomInfoContainer}>
                 <RoomDetailsConsumer />
-                <RoomControlMenuConsumer />
+                <div
+                  style={{
+                    display: 'flex',
+                  }}
+                >
+                  <DarkModeSwitch />
+                  <div style={{ width: spacers.large }} />
+                  <RoomControlMenuConsumer />
+                </div>
               </div>
             </div>
             <div className={cls.rightSideStretchedContainer}>
@@ -120,7 +127,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     width: '100%',
     height: '100%',
@@ -138,8 +145,11 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     flex: 1,
     flexDirection: 'row',
     display: 'flex',
+    paddingTop: spacers.default,
+    paddingBottom: spacers.larger,
     paddingLeft: spacers.large,
     paddingRight: spacers.large,
+    // background: 'red',
   },
   userMenuWrapper: {
     display: 'flex',
@@ -159,12 +169,16 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     paddingLeft: `${MIN_SPACE_BETWEEN}px`,
     paddingRight: `${MIN_SPACE_BETWEEN}px`,
   },
+  rightSideTop: {
+    display: 'flex',
+  },
   roomInfoContainer: {
     flex: 1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: spacers.default,
+    paddingTop: spacers.small,
+    paddingBottom: spacers.large,
   },
   rightSideStretchedContainer: {
     display: 'flex',

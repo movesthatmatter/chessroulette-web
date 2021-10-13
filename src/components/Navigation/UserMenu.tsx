@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { useAuthentication } from 'src/services/Authentication';
-import { CustomTheme, floatingShadow, hardBorderRadius, onlyMobile } from 'src/theme';
+import { hardBorderRadius, onlyMobile } from 'src/theme';
 import cx from 'classnames';
 import { useOnClickOutside } from 'src/lib/hooks/useOnClickOutside';
 import { Link } from 'react-router-dom';
@@ -103,7 +103,7 @@ export const UserMenu: React.FC<Props> = ({
   return labelContent;
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'flex',
     flex: 1,

@@ -169,7 +169,7 @@ export const SelectInput: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {},
   labelWrapper: {
     paddingBottom: '4px',

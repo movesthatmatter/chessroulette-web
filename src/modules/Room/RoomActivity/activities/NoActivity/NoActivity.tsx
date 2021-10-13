@@ -60,7 +60,7 @@ export const NoActivity: React.FC<Props> = (props) => {
             size={cd.boardSize}
             id="empty-frozen-board" // TODO: This might need to change
             pgn=""
-            homeColor="white"
+            playableColor="white"
             onMove={() => {}}
             className={cls.board}
             overlayComponent={overlayComponent}
@@ -94,7 +94,7 @@ export const NoActivity: React.FC<Props> = (props) => {
                     withBadge={{
                       text: 'New',
                       side: 'right',
-                      color: theme.name ==='lightDefault' ? 'negative' : 'white',
+                      color: theme.name ==='lightDefault' ? 'negative' : 'primaryDark',
                     }}
                   />
                   {!pendingChallenge && <CreateChallengeButton label="Create Challenge" full />}
@@ -107,7 +107,7 @@ export const NoActivity: React.FC<Props> = (props) => {
             size={boardSize}
             id="empty-frozen-board" // TODO: This might need to change
             pgn=""
-            homeColor="white"
+            playableColor="white"
             canInteract
             onMove={() => {}}
             className={cls.board}

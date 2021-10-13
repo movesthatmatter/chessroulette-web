@@ -41,7 +41,7 @@ export const MobileGameActionsWidget: React.FC<Props> = ({ activity }) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {},
   button: {
     ...floatingShadow,

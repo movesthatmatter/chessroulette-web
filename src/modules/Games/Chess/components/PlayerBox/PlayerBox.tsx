@@ -53,7 +53,7 @@ export const PlayerBox: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     color: theme.text.baseColor
   },

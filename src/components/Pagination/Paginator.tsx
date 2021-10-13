@@ -8,6 +8,7 @@ import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { range } from 'src/lib/util';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { colors } from 'src/theme/colors';
 
 export type PaginatorProps = {
   totalPages: number;
@@ -132,7 +133,7 @@ export const Paginator = (props: PaginatorProps) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'flex',
     alignContent: 'center',
@@ -162,6 +163,6 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     color: theme.text.disabledColor,
   },
   activePageNumber: {
-    color: theme.colors.white,
+    color: colors.universal.white,
   },
 }));

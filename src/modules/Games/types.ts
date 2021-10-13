@@ -20,3 +20,5 @@ export type PlayParticipants = {
   away: RoomPlayActivityParticipant;
   home: RoomPlayActivityParticipant;
 };
+
+export type BoardOrientation = 'home' | 'away';

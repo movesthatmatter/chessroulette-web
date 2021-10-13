@@ -18,7 +18,7 @@ export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
   const deviceSize = useDeviceSize();
 
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
   useBodyClass([cls.indexBackground]);
 
   useBodyClass([cls.indexBackground]);
@@ -58,7 +58,7 @@ export const LandingPage: React.FC<Props> = () => {
             <div className={cls.buttonWrapper}>
               <CreateRoomButtonWidget
                 label="Play"
-                type='primary'
+                type="primary"
                 createRoomSpecs={{
                   type: 'private',
                   activityType: 'play',
@@ -69,24 +69,23 @@ export const LandingPage: React.FC<Props> = () => {
                   marginRight: spacers.default,
                 }}
               />
-            
+
               {deviceSize.isDesktop && (
                 <CreateRoomButtonWidget
-                label="Analyze"
-                type="primary"
-                withBadge={{
-                  text: 'New',
-                  color: theme.name ==='lightDefault' ? 'negative' : 'white',
-                  side: 'right',
-
-                }}
-                clear
-                size="small"
-                createRoomSpecs={{
-                  type: 'private',
-                  activityType: 'analysis',
-                }}
-              />
+                  label="Analyze"
+                  type="primary"
+                  withBadge={{
+                    text: 'New',
+                    color: theme.name === 'lightDefault' ? 'negative' : 'primaryDark',
+                    side: 'right',
+                  }}
+                  clear
+                  size="small"
+                  createRoomSpecs={{
+                    type: 'private',
+                    activityType: 'analysis',
+                  }}
+                />
               )}
               {/* <LichessChallengeButton label="Lichess" size="small" type="secondary" /> */}
             </div>
@@ -100,19 +99,21 @@ export const LandingPage: React.FC<Props> = () => {
 const tabletBreakPoint = 600;
 const desktopBreakPoint = 769;
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles((theme) => ({
   indexBackground: {
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   pageContainer: {
     ...makeImportant({
-      ...(theme.name === 'lightDefault' ? {
-        backgroundColor: theme.colors.background
-      } : {
-        backgroundColor: '#27104e',
-        backgroundImage: 'linear-gradient(19deg, #27104e 0%, #161a2b 25%)',
-      })
-    })
+      ...(theme.name === 'lightDefault'
+        ? {
+            backgroundColor: theme.colors.background,
+          }
+        : {
+            backgroundColor: '#27104e',
+            backgroundImage: 'linear-gradient(19deg, #27104e 0%, #161a2b 25%)',
+          }),
+    }),
   },
   containerLanding: {
     display: 'flex',
@@ -211,7 +212,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   playButton: {
     ...makeImportant({
       background: theme.colors.primary,
-      color: 'white'
-    }) 
-  }
+      color: 'white',
+    }),
+  },
 }));

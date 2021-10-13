@@ -59,6 +59,7 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
           <IconButton
             disabled={input.length === 0}
             icon={Send}
+            iconType="grommet"
             type="primary"
             onSubmit={() => {
               if (input.trim() !== '') {
@@ -73,7 +74,7 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',

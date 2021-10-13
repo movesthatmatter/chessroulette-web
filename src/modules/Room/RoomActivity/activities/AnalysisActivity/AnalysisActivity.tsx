@@ -5,28 +5,67 @@ import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { RoomAnalysisActivity } from './types';
 import { ActivityCommonProps } from '../types';
 import { ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/GameHistory';
-import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
+import { chessHistoryToSimplePgn, otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { LayoutContainerDimensions } from 'src/modules/Room/Layouts';
-import { SimplePGN } from 'dstnd-io';
-import { AnalysisPanel } from './components/AnalysisPanel';
+import { AnalysisPanel, AnalysisPanelProps } from './components/AnalysisPanel';
+import { AnalysisRecord } from 'dstnd-io';
+import { toChessPlayersByColor } from 'src/modules/Games/Chess/lib';
+import { BoardSettingsWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/BoardSettingsWidgetRoomConsumer';
+import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
+import { spacers } from 'src/theme/spacers';
 
 export type AnalysisActivityProps = ActivityCommonProps & {
+  participants: RoomAnalysisActivity['participants'];
+  analysis: NonNullable<RoomAnalysisActivity['analysis']>;
   boardSize: number;
   leftSide: LayoutContainerDimensions;
-  analysis: NonNullable<RoomAnalysisActivity['analysis']>;
-
-  onPgnImported: (pgn: SimplePGN) => void;
+  onImportedPgn: AnalysisPanelProps['onImportedPgn'];
+  onImportedGame: AnalysisPanelProps['onImportedGame'];
 };
 
-export const AnalysisActivity: React.FC<AnalysisActivityProps>
- = ({
+const getParticipantsByColor = (analysis: AnalysisRecord) => {
+  if (!analysis.game) {
+    return undefined;
+  }
+
+  return toChessPlayersByColor(analysis.game.players);
+};
+
+// This always defaults to White
+const getHomeColor = (
+  analysis: AnalysisRecord,
+  participants: RoomAnalysisActivity['participants'],
+  orientationInverted: boolean = false
+) => {
+  const defaultHomeColor = 'white';
+
+  if (!analysis.game) {
+    return orientationInverted ? otherChessColor(defaultHomeColor) : defaultHomeColor;
+  }
+
+  const myParticipant = Object.values(participants).find((p) => p.participant.isMe);
+  const myParticipantAsPlayer = analysis.game?.players.find(
+    (p) => p.user.id === myParticipant?.userId
+  );
+
+  const homeColor = myParticipantAsPlayer?.color || defaultHomeColor;
+
+  return orientationInverted ? otherChessColor(homeColor) : homeColor;
+};
+
+export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
+  participants,
   analysis,
   boardSize,
   leftSide,
-  onPgnImported,
+  onImportedPgn,
+  onImportedGame,
 }) => {
   const cls = useStyles();
   const pgnFromHistory = analysis.history ? chessHistoryToSimplePgn(analysis.history) : '';
+  const roomConsumer = useRoomConsumer();
+  const participantsByColor = getParticipantsByColor(analysis);
+  const homeColor = getHomeColor(analysis, participants, roomConsumer?.boardOrientation === 'away');
 
   return (
     <ChessGameHistoryConsumer
@@ -39,18 +78,26 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps>
                   ? {
                       history,
                       displayedHistory,
+                      displayedIndex,
                     }
                   : undefined
               }
-              onPgnImported={onPgnImported}
+              onImportedPgn={onImportedPgn}
+              onImportedGame={onImportedGame}
+              homeColor={homeColor}
+              gameAndPlayers={
+                analysis.game && participantsByColor
+                  ? {
+                      players: participantsByColor,
+
+                      // TODO: This should be memoized or somewhere up the chain so it doesn't change too often
+                      game: analysis.game,
+                    }
+                  : undefined
+              }
             />
           </aside>
-          <div
-            className={cls.boardContainer}
-            style={{
-              height: boardSize,
-            }}
-          >
+          <div className={cls.boardContainer} style={{ height: boardSize }}>
             <ChessBoard
               size={boardSize}
               type="analysis"
@@ -58,7 +105,7 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps>
               playable
               canInteract
               pgn={displayedHistory ? chessHistoryToSimplePgn(displayedHistory) : pgnFromHistory}
-              homeColor="white"
+              playableColor={homeColor}
               onMove={(m) => {
                 onAddMove(
                   {
@@ -70,6 +117,7 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps>
               }}
               className={cls.board}
             />
+            <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
           </div>
         </div>
       )}
@@ -104,5 +152,10 @@ const useStyles = createUseStyles({
   },
   sideBottom: {
     height: '30%',
+  },
+  settingsBar: {
+    paddingTop: spacers.default,
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
 });

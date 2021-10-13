@@ -16,7 +16,7 @@ export const FloatingBox: React.FC<FloatingBoxProps> = ({ children, className, .
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     ...(theme.name === 'lightDefault' ? {
       backgroundColor: theme.colors.white,

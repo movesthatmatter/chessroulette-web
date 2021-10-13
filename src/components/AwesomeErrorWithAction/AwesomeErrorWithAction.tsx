@@ -39,7 +39,7 @@ export const AwesomeErrorWithAction: React.FC<Props> = ({ buttons, title, desc, 
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'flex',
     height: '100vh',

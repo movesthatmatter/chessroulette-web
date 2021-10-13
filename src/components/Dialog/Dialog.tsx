@@ -45,7 +45,7 @@ export const Dialog: React.FC<DialogProps> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     backgroundColor: theme.modal.background,
     ...softBorderRadius,

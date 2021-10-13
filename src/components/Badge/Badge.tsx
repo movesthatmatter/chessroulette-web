@@ -37,7 +37,7 @@ export const Badge: React.FC<BadgeProps> = ({ textSize = 'small2', ...props }) =
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'inline-block',
   },

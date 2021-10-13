@@ -16,16 +16,16 @@ export default {
 const gameMocker = new GameMocker();
 
 const playParticipantMoker = new RoomPlayActivityParticipantMocker();
-const homeParticipant = playParticipantMoker.withProps({ color: 'black' });
-const awayParticipant = playParticipantMoker.withProps({ color: 'white' });
+const blackParticipant = playParticipantMoker.withProps({ color: 'black' });
+const whiteParticipant = playParticipantMoker.withProps({ color: 'white' });
 
 export const defaultStory = () => {
   const game = gameMocker.withProps({
     state: 'pending',
     timeLimit: 'blitz5',
     players: [
-      roomPlayActivityParticipantToChessPlayer(homeParticipant),
-      roomPlayActivityParticipantToChessPlayer(awayParticipant),
+      roomPlayActivityParticipantToChessPlayer(blackParticipant),
+      roomPlayActivityParticipantToChessPlayer(whiteParticipant),
     ],
     timeLeft: {
       white: minutes(5),
@@ -50,10 +50,13 @@ export const defaultStory = () => {
       >
         <GameStateWidget
           game={game}
-          playParticipants={{
-            home: homeParticipant,
-            away: awayParticipant,
-          }}
+          homeColor="black"
+          playParticipants={
+            {
+              white: whiteParticipant,
+              black: blackParticipant,
+            } as const
+          }
           onTimerFinished={action('onTimerFinished')}
         />
       </div>
@@ -87,9 +90,10 @@ export const withTimeFinished = () => (
           }}
         >
           <GameStateWidget
+            homeColor="black"
             playParticipants={{
-              home: homeParticipant,
-              away: awayParticipant,
+              black: blackParticipant,
+              white: whiteParticipant,
             }}
             game={gameMocker.withProps({
               state: 'stopped',
@@ -97,11 +101,11 @@ export const withTimeFinished = () => (
               players: [
                 {
                   color: 'white',
-                  user: roomPlayActivityParticipantToChessPlayer(homeParticipant).user,
+                  user: roomPlayActivityParticipantToChessPlayer(whiteParticipant).user,
                 },
                 {
                   color: 'black',
-                  user: roomPlayActivityParticipantToChessPlayer(awayParticipant).user,
+                  user: roomPlayActivityParticipantToChessPlayer(blackParticipant).user,
                 },
               ],
               timeLeft: {
@@ -134,9 +138,10 @@ export const withGameStarted = () => (
       }}
     >
       <GameStateWidget
+        homeColor="black"
         playParticipants={{
-          home: homeParticipant,
-          away: awayParticipant,
+          black: blackParticipant,
+          white: whiteParticipant,
         }}
         game={gameMocker.withProps({
           state: 'started',
@@ -144,11 +149,11 @@ export const withGameStarted = () => (
           players: [
             {
               color: 'white',
-              user: roomPlayActivityParticipantToChessPlayer(homeParticipant).user,
+              user: roomPlayActivityParticipantToChessPlayer(whiteParticipant).user,
             },
             {
               color: 'black',
-              user: roomPlayActivityParticipantToChessPlayer(awayParticipant).user,
+              user: roomPlayActivityParticipantToChessPlayer(blackParticipant).user,
             },
           ],
           timeLeft: {

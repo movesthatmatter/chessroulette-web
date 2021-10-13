@@ -48,7 +48,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     marginBottom: '12px',
 

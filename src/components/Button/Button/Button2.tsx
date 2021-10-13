@@ -136,7 +136,7 @@ export const Button: React.FC<ButtonProps> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   ...buttonStyles(theme),
   button: {
     ...buttonStyles(theme).button,

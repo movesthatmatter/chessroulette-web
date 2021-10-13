@@ -151,7 +151,7 @@ export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
   }
 );
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {},
   row: {
     display: 'flex',

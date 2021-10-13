@@ -58,7 +58,7 @@ export const GamesArchive: React.FC<Props> = ({ userId, pageSize = 10 }) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',

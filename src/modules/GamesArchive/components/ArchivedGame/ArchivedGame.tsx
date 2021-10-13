@@ -180,7 +180,7 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'column',

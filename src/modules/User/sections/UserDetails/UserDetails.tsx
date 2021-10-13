@@ -166,7 +166,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                   withLoader
                   full
                   disabled={!p.canSubmit}
-                  type="positive"
+                  type="primary"
                   onClick={p.submit}
                 />
               </div>
@@ -178,7 +178,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>( theme => ({
+const useStyles = createUseStyles( theme => ({
   container: {
     height: '100%',
     // display: 'flex',

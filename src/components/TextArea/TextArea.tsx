@@ -61,7 +61,7 @@ export const TextArea: React.FC<Props> = ({ className, label, value, ...props })
 
 const padding = spacers.get(0.75);
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     marginBottom: '12px',
 

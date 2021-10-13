@@ -130,7 +130,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   containerMenu: {},
   mobileOverlay: {
     position: 'fixed',

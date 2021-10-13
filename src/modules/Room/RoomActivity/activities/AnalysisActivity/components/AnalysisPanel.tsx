@@ -1,27 +1,36 @@
-import { ChessHistory, SimplePGN } from 'dstnd-io';
+import { ChessGameColor, ChessHistory, ChessHistoryIndex, SimplePGN } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
+import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
-import { ChessGameHistoryProvided } from 'src/modules/Games/Chess/components/GameHistory';
 import { spacers } from 'src/theme/spacers';
 import { FenBox } from './FenBox';
 import { PgnBox } from './PgnBox';
-import cx from 'classnames';
 import { Button } from 'src/components/Button';
-import { Upload } from 'grommet-icons';
-import { ImportPanel } from './ImportPanel';
+import { ImportPanel, ImportPanelProps } from './ImportPanel';
 import { ConfirmButton } from 'src/components/Button/ConfirmButton';
-import { FloatingBox } from 'src/components/FloatingBox';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { AnalysisStateWidget, AnalysisStateWidgetProps } from './AnalysisStateWidget';
 
-type Props = {
-  onPgnImported: (pgn: SimplePGN) => void;
+export type AnalysisPanelProps = {
+  onImportedPgn: ImportPanelProps['onImportedPgn'];
+  onImportedGame: ImportPanelProps['onImportedGame'];
   analysisRecord?: {
     history: ChessHistory;
-    displayedHistory: ChessHistory;
+    displayedHistory:
+     ChessHistory;
+    displayedIndex: ChessHistoryIndex;
   };
+  homeColor: ChessGameColor;
+  gameAndPlayers?: AnalysisStateWidgetProps['gameAndPlayers'];
 };
 
-export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }) => {
+export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
+  homeColor,
+  onImportedPgn,
+  onImportedGame,
+  analysisRecord,
+  gameAndPlayers,
+}) => {
   const cls = useStyles();
   const [hasLoadedAnalysis, setHasLoadedAnalysis] = useState(!!analysisRecord);
   const [showImportPanel, setShowImportPanel] = useState(!hasLoadedAnalysis);
@@ -38,11 +47,14 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
     <>
       {analysisRecord && (
         <>
-          <div className={cx(cls.box, cls.historyContainer)}>
-            <FloatingBox className={cls.historyBoxContent}>
-              <ChessGameHistoryProvided />
-            </FloatingBox>
-          </div>
+          <AnalysisStateWidget
+            displayedIndex={analysisRecord.displayedIndex}
+            homeColor={homeColor}
+            gameAndPlayers={gameAndPlayers}
+            boxClassName={cls.containerWithHorizontalPadding}
+            boxContainerClassName={cls.historyContainer}
+            historyBoxContentClassName={cls.historyBoxContent}
+          />
           <FenBox
             historyOrPgn={analysisRecord.displayedHistory}
             containerClassName={cx(cls.box, cls.fenBox)}
@@ -70,7 +82,8 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
                 label: 'Yes',
               }}
               onConfirmed={() => {
-                onPgnImported('' as SimplePGN);
+                // Reset the Analysis
+                onImportedPgn('' as SimplePGN);
                 setHasLoadedAnalysis(true);
               }}
             />
@@ -100,7 +113,8 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
         }}
       >
         <ImportPanel
-          onImported={onPgnImported}
+          onImportedPgn={onImportedPgn}
+          onImportedGame={onImportedGame}
           hasBackButton={hasLoadedAnalysis}
           onBackButtonClicked={() => setShowImportPanel(false)}
         />
@@ -130,6 +144,10 @@ const useStyles = createUseStyles({
     height: '100%',
     marginLeft: `-${FLOATING_SHADOW_HORIZONTAL_OFFSET}`,
     marginBottom: `-${FLOATING_SHADOW_BOTTOM_OFFSET}`,
+  },
+  containerWithHorizontalPadding: {
+    paddingLeft: FLOATING_SHADOW_HORIZONTAL_OFFSET,
+    paddingRight: FLOATING_SHADOW_HORIZONTAL_OFFSET,
   },
   box: {
     paddingLeft: FLOATING_SHADOW_HORIZONTAL_OFFSET,

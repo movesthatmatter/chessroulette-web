@@ -21,13 +21,15 @@ export type RoomPlayActivityWithGameAndParticipating = Omit<RoomPlayActivityReco
   };
 };
 
+export type RoomPlayParticipantsByColor = {
+  black: RoomPlayActivityParticipant;
+  white: RoomPlayActivityParticipant;
+};
+
 export type RoomPlayActivityWithGameButNotParticipating = Omit<RoomPlayActivityRecord, 'gameId'> & {
   game: Game;
   iamParticipating: false;
-  participants: {
-    black: RoomPlayActivityParticipant;
-    white: RoomPlayActivityParticipant;
-  };
+  participants: RoomPlayParticipantsByColor;
 };
 
 export type RoomPlayActivityWithGame =

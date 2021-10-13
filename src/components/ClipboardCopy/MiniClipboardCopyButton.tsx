@@ -43,7 +43,7 @@ export const MiniClipboardCopyButton: React.FC<Props> = ({ value, onCopied = noo
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles((theme) => ({
   checkIcon: {
     color: theme.colors.positiveDarker,
   },

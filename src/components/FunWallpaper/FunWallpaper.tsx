@@ -70,7 +70,7 @@ export const FunWallpaper: React.FC<Props> = ({ className, children, ...contentD
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   body: {},
   container: {
     display: 'flex',

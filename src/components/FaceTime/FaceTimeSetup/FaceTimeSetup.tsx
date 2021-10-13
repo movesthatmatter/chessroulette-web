@@ -78,19 +78,13 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
               height: 3,
             }}
           >
-            <div
-                style={{
-                  textAlign: 'center',
-                  alignContent:'center',
-                  alignItems:'center',
-                  display:'flex',
-                  justifyContent:'center',
-                }}
-              >
+            <div className={cls.fallbackWrapper}>
               {permissionState === 'pending' && (
                 <>
                   <Loader type="line-scale-pulse-out" active innerClassName={cls.loader} />
-                  <Text size="small1">Waiting for Camera & Microphone Permissions...</Text>
+                  <Text size="small1" className={cls.pendingFallbackText}>
+                    Waiting for Camera & Microphone Permissions...
+                  </Text>
                 </>
               )}
               {permissionState === 'denied' && (
@@ -107,13 +101,13 @@ export const FaceTimeSetup: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     ...softBorderRadius,
     overflow: 'hidden',
   },
   noFacetime: {
-    background: theme.colors.neutral,
+    background: theme.name === 'lightDefault' ? theme.colors.neutral : theme.colors.neutralLight,
   },
   facetime: {
     ...softBorderRadius,
@@ -126,5 +120,19 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
         backgroundColor: theme.colors.primary,
       },
     } as CSSProperties),
+  },
+  fallbackWrapper: {
+    display: 'flex',
+    flex: 1,
+    height: '100%',
+    flexDirection: 'column',
+    textAlign: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    justifyItems: 'center',
+  },
+  pendingFallbackText: {
+    paddingBottom: '2em',
   },
 }));

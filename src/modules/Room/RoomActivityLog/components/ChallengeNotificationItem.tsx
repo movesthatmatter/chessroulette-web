@@ -147,12 +147,9 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
                     render={({ copied, copy }) => (
                       <IconButton
                         type="primary"
-                        icon={(p) => (
-                          <FontAwesomeIcon
-                            icon={copied ? faCheck : faCopy}
-                            className={p.className}
-                          />
-                        )}
+                        iconType="fontAwesome"
+                        icon={copied ? faCheck : faCopy}
+
                         className={cls.subtleButton}
                         clear
                         onSubmit={copy}
@@ -161,9 +158,9 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
                       />
                     )}
                   />
-
                   <IconButton
                     type="primary"
+                    iconType="grommet"
                     icon={Close}
                     className={cls.attentionButton}
                     clear
@@ -187,7 +184,7 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   container: {
     ...fonts.small1,
     marginBottom: spacers.default,

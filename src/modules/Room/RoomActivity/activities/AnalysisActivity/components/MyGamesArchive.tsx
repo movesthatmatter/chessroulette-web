@@ -77,7 +77,7 @@ export const MyGamesArchive: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   row: {
     marginBottom: spacers.small,
     position: 'relative',

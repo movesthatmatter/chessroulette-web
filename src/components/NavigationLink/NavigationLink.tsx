@@ -65,7 +65,7 @@ export const NavigationLink: React.FC<Props> = ({ title, withDropMenu, ...linkPr
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles(theme => ({
   linkWrapper: {
     position: 'relative',
     display: 'inline-block',
