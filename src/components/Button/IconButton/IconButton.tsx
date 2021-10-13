@@ -67,7 +67,6 @@ const getIcon = (
 ) => {
   if (props.iconType === 'iconly') {
     const { icon: Icon, iconPrimaryColor, ...restProps } = props;
-    console.log('iconPrimaryColor', iconPrimaryColor);
     return (
       <IconlyIcon
         Icon={props.icon}

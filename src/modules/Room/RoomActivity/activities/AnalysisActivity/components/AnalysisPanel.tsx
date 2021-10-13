@@ -16,8 +16,7 @@ export type AnalysisPanelProps = {
   onImportedGame: ImportPanelProps['onImportedGame'];
   analysisRecord?: {
     history: ChessHistory;
-    displayedHistory:
-     ChessHistory;
+    displayedHistory: ChessHistory;
     displayedIndex: ChessHistoryIndex;
   };
   homeColor: ChessGameColor;
@@ -34,7 +33,7 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
   const cls = useStyles();
   const [hasLoadedAnalysis, setHasLoadedAnalysis] = useState(!!analysisRecord);
   const [showImportPanel, setShowImportPanel] = useState(!hasLoadedAnalysis);
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
 
   useEffect(() => {
     const nextHasLoadedAnalysis = !!analysisRecord;
