@@ -1,43 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { authenticationService, AuthenticationRecord } from './authenticationService';
 import { selectAuthentication } from './selectors';
 import { RegisteredUserRecord } from 'dstnd-io';
+import { AuthenticationContext } from './AuthenticationContext';
 
-export const useAuthenticationService = () => {
-  const [state, setState] = useState<AuthenticationRecord>();
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    authenticationService.get()
-      .map((record) => {
-        setState(record);
-        setReady(true);
-      })
-      .mapErr(() => {
-        setReady(true);
-      })
-  }, []);
-
-  useEffect(() => {
-    authenticationService.onUpdated((nextRecord) => {
-      setState(nextRecord);
-    });
-  }, []);
-
-  if (!ready) {
-    return {
-      ready,
-      ...authenticationService,
-    } as const
-  }
-
-  return {
-    ready,
-    state,
-    ...authenticationService,
-  } as const;
-}
+export const useAuthenticationService = () => useContext(AuthenticationContext);
 
 export const useAuthentication = () => useSelector(selectAuthentication);
 
@@ -70,16 +37,18 @@ export const useUserAuthentication = () => {
 
 export type RegisteredUserRecordWithLichessConnection = RegisteredUserRecord & {
   externalAccounts: {
-    lichess: NonNullable<NonNullable<RegisteredUserRecord['externalAccounts']>['lichess']>
+    lichess: NonNullable<NonNullable<RegisteredUserRecord['externalAccounts']>['lichess']>;
   };
-}
+};
 
-export const useAuthenticatedUserWithLichessAccount = (): RegisteredUserRecordWithLichessConnection | undefined => {
+export const useAuthenticatedUserWithLichessAccount = ():
+  | RegisteredUserRecordWithLichessConnection
+  | undefined => {
   const user = useAnyUser();
 
-  if (!user?.isGuest && user?.externalAccounts?.lichess){
+  if (!user?.isGuest && user?.externalAccounts?.lichess) {
     return user as RegisteredUserRecordWithLichessConnection;
   }
 
   return undefined;
-}
+};

@@ -77,3 +77,5 @@ export const authenticationService = {
   remove,
   onUpdated,
 };
+
+export type AuthenticationService = typeof authenticationService;
