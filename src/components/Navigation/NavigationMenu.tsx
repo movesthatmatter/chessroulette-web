@@ -188,6 +188,8 @@ const useStyles = createUseStyles((theme) => ({
     position: 'absolute',
     top: '16px',
     left: '16px',
+    fill: `${theme.colors.neutral} !important`,
+    stroke: `${theme.colors.neutral} !important`,
   },
 
   drawerMenuContainer: {

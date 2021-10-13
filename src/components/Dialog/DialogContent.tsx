@@ -135,8 +135,8 @@ const useStyles = createUseStyles(theme => ({
     alignItems: 'center',
   },
   exitIcon: {
-    fill: `${theme.colors.neutralDark} !important`,
-    stroke: `${theme.colors.neutralDark} !important`,
+    fill: `${theme.colors.neutral} !important`,
+    stroke: `${theme.colors.neutral} !important`,
   },
   title: {
     ...fonts.subtitle1,

@@ -5,6 +5,7 @@ import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
 import { getLayoutSizes, Ratios, isMobile as getIsMobile } from './util';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
 import { GenericLayoutExtendedDimensions } from '../types';
+import { CustomTheme } from 'src/theme';
 
 type Props = {
   renderActivityComponent: (d: GenericLayoutExtendedDimensions) => ReactNode;
@@ -186,11 +187,11 @@ export const DesktopRoomLayout: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     width: '100%',
     height: '100%',
-
+    background: theme.colors.background,
     display: 'flex',
     flexDirection: 'column',
   },
@@ -214,4 +215,4 @@ const useStyles = createUseStyles({
     display: 'flex',
     justifyContent: 'flex-end',
   },
-});
+}));
