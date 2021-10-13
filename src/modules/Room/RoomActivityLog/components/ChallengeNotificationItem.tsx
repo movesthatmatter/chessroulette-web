@@ -146,7 +146,7 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
                     )}`}
                     render={({ copied, copy }) => (
                       <IconButton
-                        type="primary"
+                        type="positive"
                         iconType="fontAwesome"
                         icon={copied ? faCheck : faCopy}
 

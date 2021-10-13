@@ -5,13 +5,13 @@ import blueBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/boar
 import cx from 'classnames';
 import { ChessGameColor, ChessMove, PromotionalChessPieceType } from 'dstnd-io';
 import { Square } from 'chess.js';
-import { pieces } from '../pieces';
 import { noop } from 'src/lib/util';
 import 'react-chessground/dist/styles/chessground.css';
 import { CustomTheme, softOutline } from 'src/theme';
 import {light as lightPieces} from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
 import darkBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/board/blue_darkMode.svg';
 import {dark as darkPieces} from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 export type StyledChessBoardProps = Omit<
   ChessgroundProps,
@@ -57,6 +57,8 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
   const cls = useStyles();
   const [uniqueKey, setUniquKey] = useState(new Date().getTime());
   const chessgroundRef = useRef<ChessgroundApi>();
+  const {theme} = useColorTheme();
+  const pieces = theme.name === 'lightDefault' ? lightPieces : darkPieces;
 
   useEffect(() => {
     if (chessgroundRef.current) {
@@ -136,28 +138,28 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
             <div className={cls.promoPiecesContainer}>
               <span role="presentation" onClick={() => promote('q')}>
                 <img
-                  src={promotionalMove.color === 'white' ? pieces.whiteQueen : pieces.blackQueen}
+                  src={promotionalMove.color === 'white' ? pieces.wQ : pieces.bQ}
                   alt="Queen"
                   style={{ width: props.size / 8 }}
                 />
               </span>
               <span role="presentation" onClick={() => promote('r')}>
                 <img
-                  src={promotionalMove.color === 'white' ? pieces.whiteRook : pieces.blackRook}
+                  src={promotionalMove.color === 'white' ? pieces.wR : pieces.bR}
                   alt="Rook"
                   style={{ width: props.size / 8 }}
                 />
               </span>
               <span role="presentation" onClick={() => promote('b')}>
                 <img
-                  src={promotionalMove.color === 'white' ? pieces.whiteBishop : pieces.blackBishop}
+                  src={promotionalMove.color === 'white' ? pieces.wB : pieces.bB}
                   alt="Bishop"
                   style={{ width: props.size / 8 }}
                 />
               </span>
               <span role="presentation" onClick={() => promote('n')}>
                 <img
-                  src={promotionalMove.color === 'white' ? pieces.whiteKnight : pieces.blackKnight}
+                  src={promotionalMove.color === 'white' ? pieces.wN : pieces.bN}
                   alt="Knight"
                   style={{ width: props.size / 8 }}
                 />
@@ -187,8 +189,8 @@ const useStyles = createUseStyles( theme => {
   } : {
     image : darkBoard,
     pieces: darkPieces,
-    selectedSquare: '#55145380',
-    lastMove: '#2e0c2d80',
+    selectedSquare: '#4D164B',
+    lastMove: '#9C1F5B70',
     check: 'radial-gradient(64.15% 64.15% at 50.28% 50.31%, rgba(206, 24, 107, 0.81) 39.58%, rgba(206, 24, 107, 0) 100%)',
     arrows: {
       color1: '#FF9416',
@@ -364,7 +366,7 @@ const useStyles = createUseStyles( theme => {
     zIndex: 9,
   },
   promoDialogContainer: {
-    background: 'white',
+    background: theme.name === 'lightDefault' ? '#fff' : '#092330',
     position: 'absolute',
     top: 0,
   },

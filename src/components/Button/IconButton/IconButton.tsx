@@ -15,6 +15,7 @@ import { IconProps as IconlyIconProps } from 'react-iconly';
 import { FontAwesomeIcon, FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
 import { IconlyIcon } from './components/IconlyIcon';
 import { buttonEffects } from '../styles';
+import { colors } from 'src/theme/colors';
 
 const sizers = getSizers(1); // This is twice the regular size
 
@@ -72,6 +73,7 @@ const getIcon = (
         Icon={props.icon}
         primaryColor={iconPrimaryColor}
         sizeInPx={IconSizeInPxByName[size]}
+        
         {...restProps}
       />
     );
@@ -79,7 +81,7 @@ const getIcon = (
 
   if (props.iconType === 'grommet') {
     const { icon: Icon } = props;
-    return <Icon className={className} />;
+    return <Icon className={className}/>;
   }
 
   return <FontAwesomeIcon icon={props.icon} className={className} style={style} />;
@@ -220,9 +222,9 @@ const useStyles = createUseStyles((theme) => ({
     justifyContent: 'center',
   },
   icon: {
-    fill: `${theme.colors.white} !important`,
-    stroke: `${theme.colors.white} !important`,
-    color: `${theme.colors.white} !important`,
+    fill: `${colors.universal.white} !important`,
+    stroke: `${colors.universal.white} !important`,
+    color: `${colors.universal.white} !important`,
     width: '16px !important',
     height: '16px !important',
 
