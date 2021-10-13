@@ -3,6 +3,7 @@ import useEventListener from '@use-it/event-listener';
 import { ChessHistory, ChessHistoryIndex, ChessHistoryMove, analysis } from 'dstnd-io';
 import { keyInObject, noop } from 'src/lib/util';
 import { ChessGameHistoryContext, ChessGameHistoryContextProps } from './ChessGameHistoryContext';
+import { useDebouncedCallback } from 'use-debounce';
 
 type Props = {
   history: ChessHistory;
@@ -41,10 +42,17 @@ export const ChessGameHistoryProvider: React.FC<Props> = ({
 
       // TODO: This isn't the best here for now, since it doesn't actually check
       // that the refocus actually worked, meaning it got updated and it was not
-      onRefocused(nextIndex);
+      debouncedOnRefocused(nextIndex);
     },
     [history]
   );
+
+  // This needs to be debounced because if keys are pressed too rapidaly
+  // or in case of a longpress, the server shouldn't be hit that often!
+  const debouncedOnRefocused = useDebouncedCallback(onRefocused, 300, {
+    leading: true,
+    trailing: true,
+  });
 
   const onAddMove = useCallback(
     (move: ChessHistoryMove, atIndex: ChessHistoryIndex, withRefocus = true) => {
@@ -57,7 +65,6 @@ export const ChessGameHistoryProvider: React.FC<Props> = ({
         return {
           ...prev,
           history: nextHistory,
-
           ...(withRefocus && {
             displayedIndex: addedAtIndex,
             displayedHistory: analysis.actions.getChessHistoryAtIndex(nextHistory, addedAtIndex),
