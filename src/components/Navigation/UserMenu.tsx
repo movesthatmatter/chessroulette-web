@@ -93,6 +93,15 @@ export const UserMenu: React.FC<Props> = ({
                   My Games
                 </Link>
               </div>
+              <div className={cls.linkWrapper}>
+                <Link
+                  to="/user/connections"
+                  className={cls.link}
+                  {...(linksTarget === 'blank' && { target: '_blank' })}
+                >
+                  My Connections
+                </Link>
+              </div>
             </div>
           </div>
         )}
