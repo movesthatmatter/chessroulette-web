@@ -114,6 +114,10 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
 
     // If there are changes in the pgn and uncommited moves, commit them now!
     if (prevProps.pgn !== this.props.pgn) {
+      // Make sure the PromotionalMode is getting reset when the PGN changes
+      this.setState({ pendingPromotionalMove: undefined });
+
+      // Commit the changes
       this.commit();
     }
   }
