@@ -16,16 +16,12 @@ type Props = {
 export const MobileGameActionsWidget: React.FC<Props> = ({ activity }) => {
   const cls = useStyles();
   const [show, setShow] = useState(false);
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
   return (
     <>
-      <AppsRounded color='white' onClick={() => setShow(true)} className={cls.button} />
+      <AppsRounded color="white" onClick={() => setShow(true)} className={cls.button} />
       {show && (
-        <Modal
-         
-          className={cls.mobileGameActionMenuLayer}
-          onClose={() => setShow(false)}
-        >
+        <Modal className={cls.mobileGameActionMenuLayer} onClose={() => setShow(false)}>
           <Text size="subtitle1">What's your next move?</Text>
           <GameActions
             isMobile={true}
@@ -41,7 +37,7 @@ export const MobileGameActionsWidget: React.FC<Props> = ({ activity }) => {
   );
 };
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {},
   button: {
     ...floatingShadow,
@@ -55,10 +51,10 @@ const useStyles = createUseStyles(theme => ({
     backgroundColor: theme.colors.background,
     justifyContent: 'center',
     alignItems: 'center',
-    position:'absolute',
+    position: 'absolute',
     bottom: 0,
-    display:'flex',
-    flexDirection:'column',
+    display: 'flex',
+    flexDirection: 'column',
     padding: `${spacers.default} 0 ${spacers.small}`,
   },
   gameActionButtonsContainer: {

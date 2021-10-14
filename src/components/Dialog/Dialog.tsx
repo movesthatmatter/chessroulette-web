@@ -1,17 +1,12 @@
 import React from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import {
-  CustomTheme,
-  floatingShadow,
-  floatingShadowDarkMode,
-  onlyMobile,
-  softBorderRadius,
-} from 'src/theme';
+import { floatingShadow, floatingShadowDarkMode, onlyMobile, softBorderRadius } from 'src/theme';
 import { DialogContent, DialogContentProps } from './DialogContent';
 import cx from 'classnames';
 import { noop } from 'src/lib/util';
 import { Modal } from '../Modal/Modal';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { spacers } from 'src/theme/spacers';
 
 export type DialogProps = {
   visible: boolean;
@@ -32,30 +27,51 @@ export const Dialog: React.FC<DialogProps> = ({
 
   return (
     <Modal
-      className={cx(cls.container, className)}
+      className={cls.layer}
       {...(hasCloseButton && {
         onClickOutside: onClose,
         onEsc: onClose,
       })}
-      style={theme.name === 'lightDefault' ? floatingShadow : floatingShadowDarkMode}
-
     >
-      <DialogContent className={cls.background} hasCloseButton={hasCloseButton} onClose={onClose} {...props} />
+      <div
+        className={cx(cls.container, className)}
+        style={theme.name === 'lightDefault' ? floatingShadow : floatingShadowDarkMode}
+      >
+        <div className={cls.dialogContentWrapper}>
+          <DialogContent
+            className={cls.dialogContent}
+            hasCloseButton={hasCloseButton}
+            onClose={onClose}
+            {...props}
+          />
+        </div>
+      </div>
     </Modal>
   );
 };
 
 const useStyles = createUseStyles((theme) => ({
+  layer: {
+    minHeight: '100%',
+    height: '100%',
+    overflowY: 'scroll',
+  },
   container: {
-    backgroundColor: theme.modal.background,
-    ...softBorderRadius,
-    padding: 0,
-    position: 'relative',
+    minHeight: '100%',
+
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    justifyItems: 'center',
+  },
+  dialogContentWrapper: {
     ...makeImportant({
-      borderRadius: '8px',
+      ...softBorderRadius,
       minWidth: '200px',
       maxWidth: '360px',
       width: '50%',
+      margin: '0 auto',
     }),
 
     ...onlyMobile({
@@ -65,8 +81,14 @@ const useStyles = createUseStyles((theme) => ({
       }),
     }),
   },
-  background: {
-    borderRadius: '8px !important',
+  dialogContent: {
+    ...softBorderRadius,
     backgroundColor: theme.modal.background,
+    marginTop: spacers.large,
+    marginBottom: spacers.large,
+  },
+  verticalSpacer: {
+    width: '100%',
+    paddingBottom: '24px',
   },
 }));

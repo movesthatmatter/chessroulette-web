@@ -21,7 +21,7 @@ export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight })
   const [newMessageCounter, setNewMessageCounter] = useState(0);
   const [show, setShow] = useState(false);
   const [closedAt, setClosedAt] = useState(new Date());
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
 
   useEffect(() => {
     if (chatHistory && !show) {
@@ -46,7 +46,7 @@ export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight })
   return (
     <>
       <ChatIconWithBadge
-        color='white'
+        color="white"
         onClick={() => {
           markMessagesAsRead();
 
@@ -71,13 +71,13 @@ export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight })
   );
 };
 
-const useStyles = createUseStyles( theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {},
   chatContainer: {
     //width: `calc(100% - ${spacers.default})`,
     width: '100%',
-    position:'absolute',
-    bottom:'0',
+    position: 'absolute',
+    bottom: '0',
     background: theme.colors.white,
     padding: spacers.small,
     ...makeImportant({
