@@ -150,7 +150,11 @@ export const DesktopRoomLayout: React.FC<Props> = ({
             className={cls.mainArea}
             style={{
               width: `${extendedDimensions.main.width + extendedDimensions.main.horizontalPadding}px`,
-              height: `100%`,
+              // This is a hack to go above the bottom components
+              //  But ideally it could be done better!
+              // This one was introduced on Oct 14th when I added the Board Settings Bar
+              //  But it could also be given as a config from outside if needed!
+              height: `calc(100% + ${props.bottomHeight}px)`,
             }}
           >
             {props.renderActivityComponent({

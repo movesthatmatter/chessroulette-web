@@ -14,6 +14,7 @@ import { NavigationLink } from 'src/components/NavigationLink';
 import { SwitchActivityWidgetRoomConsumer } from './SwitchActivityWidgetRoomConsumer';
 import { RoomControlMenuConsumer } from './RoomControlMenuConsumer';
 import { DarkModeSwitch } from 'src/components/DarkModeSwitch/DarkModeSwitch';
+import { BoardSettingsWidgetRoomConsumer } from './BoardSettingsWidgetRoomConsumer';
 
 type Props = {
   renderActivity: (d: {
@@ -149,7 +150,6 @@ const useStyles = createUseStyles((theme) => ({
     paddingBottom: spacers.larger,
     paddingLeft: spacers.large,
     paddingRight: spacers.large,
-    // background: 'red',
   },
   userMenuWrapper: {
     display: 'flex',
@@ -199,7 +199,6 @@ const useStyles = createUseStyles((theme) => ({
     position: 'relative',
     zIndex: 1,
   },
-
   linksContainer: {
     display: 'flex',
     alignItems: 'center',
