@@ -206,7 +206,6 @@ const useStyles = createUseStyles((theme) => {
             color4: '#3BC0C8',
           },
         };
-
   return {
     container: {
       padding: 0,
@@ -271,13 +270,30 @@ const useStyles = createUseStyles((theme) => {
         '& .cg-wrap coords.ranks': {
           top: '-4.5%',
           left: '.5%',
+
           '& coord': {
             textTransform: 'none',
-            color: '#dee3e6',
-            fontSize: '11px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            color: theme.colors.black,
 
             '&:nth-child(even)': {
-              color: '#8ca2ad',
+              color: theme.colors.black,
+            },
+          },
+        },
+        '& .cg-wrap coords.files': {
+          bottom: '0%',
+          left: '5%',
+
+          '& coord': {
+            textTransform: 'none',
+            color: theme.colors.black,
+            fontSize: '12px',
+            fontWeight: 'bold',
+
+            '&:nth-child(even)': {
+              color: theme.colors.black,
             },
           },
         },
@@ -332,36 +348,6 @@ const useStyles = createUseStyles((theme) => {
         '& cg-board square.last-move': {
           backgroundColor: colors.lastMove,
         },
-        '& .cg-wrap coords.files': {
-          bottom: '0%',
-          left: '5%',
-          fontSize: '11px',
-
-          '& coord': {
-            textTransform: 'none',
-            color: '#dee3e6',
-
-            '&:nth-child(even)': {
-              color: '#8ca2ad',
-            },
-          },
-        },
-
-        // Reverse it for black orientation
-        '& .orientation-black coords.ranks coord': {
-          color: '#8ca2ad !important',
-
-          '&:nth-child(even)': {
-            color: '#dee3e6 !important',
-          },
-        },
-        '& .orientation-black coords.files coord': {
-          color: '#8ca2ad !important',
-
-          '&:nth-child(even)': {
-            color: '#dee3e6 !important',
-          },
-        },
       } as CSSProperties),
     },
     promoDialogLayer: {
@@ -378,6 +364,7 @@ const useStyles = createUseStyles((theme) => {
       position: 'absolute',
       top: 0,
     },
+
     promoDialogContainerFlipped: {
       ...makeImportant({
         top: 'auto',
