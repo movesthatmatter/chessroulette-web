@@ -2,14 +2,14 @@ import { RegisteredUserRecord } from 'dstnd-io';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Text } from 'src/components/Text';
-import { createUseStyles, makeImportant } from 'src/lib/jss';
+import { createUseStyles } from 'src/lib/jss';
 import { connectExternalAccountEffect } from 'src/services/Authentication';
-import { CustomTheme, effects } from 'src/theme';
+import { effects } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { LichessAuthButton } from 'src/vendors/lichess';
 import { TwitchAuthButton } from 'src/vendors/twitch/TwitchAuthButton/TwitchAuthButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   user: RegisteredUserRecord;
@@ -25,20 +25,24 @@ export const UserConnections: React.FC<Props> = ({ user }) => {
         <div className={cls.service} style={{ flex: 3 }}>
           <Text>Lichess</Text>
         </div>
-        <div className={cls.buttons} style={{flex: 1}}>
+        <div className={cls.buttons} style={{ flex: 1 }}>
           {user.externalAccounts?.lichess?.userId ? (
             <div className={cls.connectedContainer}>
               <Text size="body2" style={{ marginRight: spacers.small }}>
                 Connected
               </Text>
-              <FontAwesomeIcon icon={faCheckCircle} style={{ alignSelf: 'center' }} className={cls.icon}/>
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                style={{ alignSelf: 'center' }}
+                className={cls.icon}
+              />
             </div>
           ) : (
             <LichessAuthButton
               label="Connect Lichess"
               size="medium"
               type="primary"
-              style={{ marginBottom: 0 , width:'100%'}}
+              style={{ marginBottom: 0, width: '100%' }}
               onSuccess={async (accessToken) => {
                 dispatch(
                   connectExternalAccountEffect({
@@ -56,21 +60,24 @@ export const UserConnections: React.FC<Props> = ({ user }) => {
         <div style={{ flex: 3 }} className={cls.service}>
           <Text>Twitch</Text>
         </div>
-        <div className={cls.buttons} style={{flex: 1}}>
+        <div className={cls.buttons} style={{ flex: 1 }}>
           {user.externalAccounts?.twitch?.userId ? (
             <div className={cls.connectedContainer}>
               <Text size="body2" style={{ marginRight: spacers.small }}>
                 Connected
               </Text>
-              <FontAwesomeIcon icon={faCheckCircle} style={{ alignSelf: 'center' }} className={cls.icon}/>
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                style={{ alignSelf: 'center' }}
+                className={cls.icon}
+              />
             </div>
           ) : (
             <TwitchAuthButton
               size="medium"
               type="primary"
               label="Connect Twitch"
-              className={cls.twitch}
-              style={{ background: '#6441a5', marginBottom: 0, width:'100%' }}
+              style={{ marginBottom: 0, width: '100%' }}
               onSuccess={async (accessToken) => {
                 dispatch(
                   connectExternalAccountEffect({
@@ -124,20 +131,15 @@ const useStyles = createUseStyles((theme) => ({
   },
   service: {},
   buttons: {},
-  icon:{
-    color: theme.colors.primary
-  },
-  twitch: {
-    ...makeImportant({
-      background: '#6441a5'
-    })
+  icon: {
+    color: theme.colors.primary,
   },
   connectedContainer: {
     display: 'flex',
     flexDirection: 'row',
     border: '1px solid #52575c47',
     padding: '5px 15px',
-    justifyContent:'center',
+    justifyContent: 'center',
     ...effects.borderRadius,
   },
 }));

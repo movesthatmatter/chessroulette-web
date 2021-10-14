@@ -8,14 +8,10 @@ import { UserAccountInfo } from '../../types';
 import { Form, FormError, SubmissionErrors } from 'src/components/Form';
 import { validator } from 'src/lib/validator';
 import * as resources from '../../resources';
-import { CustomTheme } from 'src/theme';
-import { FacebookAuthButton } from 'src/vendors/facebook/FacebookAuthButton/FacebookAuthButton';
 import { CodeVerificationForm } from '../CodeVerificationForm';
 import { Emoji } from 'src/components/Emoji';
 import { TwitchAuthButton } from 'src/vendors/twitch/TwitchAuthButton/TwitchAuthButton';
 import { spacers } from 'src/theme/spacers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTwitch } from '@fortawesome/free-brands-svg-icons';
 import { AsyncResult } from 'ts-async-results';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
@@ -31,7 +27,7 @@ type Props = {
 export const VerificationForm: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [emailToBeVerified, setEmailToBeVerified] = useState<string>();
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
 
   return (
     <div>
@@ -99,7 +95,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
               <Button
                 label="Send Verification"
                 full
-                type={theme.name === 'lightDefault' ? "positive" : 'primary'}
+                type={theme.name === 'lightDefault' ? 'positive' : 'primary'}
                 withLoader
                 onClick={p.submit}
               />
@@ -133,9 +129,8 @@ export const VerificationForm: React.FC<Props> = (props) => {
               accessToken,
             });
           }}
-          className={cls.twitch}
-          style={{ background: '#6441a5 !important' }}
-          icon={() => <FontAwesomeIcon icon={faTwitch} color={theme.colors.white} size="lg" />}
+          // style={{ background: '#6441a5 !important' }}
+
           iconWrapperStyle={{
             backgroundColor: 'rgba(255, 255, 255, 0)',
             padding: '0px',
@@ -159,7 +154,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   buttonRows: {
     display: 'flex',
     flexDirection: 'column',
@@ -173,14 +168,11 @@ const useStyles = createUseStyles(theme => ({
   infoText: {
     color: theme.colors.neutralDarker,
   },
-  twitch: {
-    background: '#6441a5 !important' 
-  },
   lichess: {
     ...(theme.name === 'darkDefault' && {
       ...makeImportant({
         background: '#CF1484',
-      })
-    })
-  }
+      }),
+    }),
+  },
 }));
