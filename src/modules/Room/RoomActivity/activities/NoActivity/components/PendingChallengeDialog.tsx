@@ -69,7 +69,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
                   <div className={cls.centered}>
                     <Text size="body2">While waiting you can now also</Text>
                     <Button
-                      label="Analyse Games"
+                      label="Analyze Games"
                       clear
                       size="medium"
                       className={cls.analysisButton}

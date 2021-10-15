@@ -1,9 +1,6 @@
 import { minutes, hours, seconds, second } from 'src/lib/time';
 
-export const timeLeftToFormatMajor = (
-  timeClassMs: number,
-  timeLeftMs: number,
-) => {
+export const timeLeftToFormatMajor = (timeClassMs: number, timeLeftMs: number) => {
   if (timeLeftMs < hours(1)) {
     return 'MM';
   }
@@ -11,10 +8,7 @@ export const timeLeftToFormatMajor = (
   return 'H';
 };
 
-export const timeLeftToFormatMinor = (
-  timeClassMs: number,
-  timeLeftMs: number
-) => {
+export const timeLeftToFormatMinor = (timeClassMs: number, timeLeftMs: number) => {
   if (timeLeftMs < hours(1)) {
     return 'ss';
   }
@@ -24,11 +18,11 @@ export const timeLeftToFormatMinor = (
 
 export const timeLeftToInterval = (timeLeftMs: number) => {
   if (timeLeftMs < minutes(1)) {
-    return seconds(.05);
+    return seconds(0.5);
   }
 
   if (timeLeftMs < hours(1)) {
-    return seconds(0.1);
+    return seconds(1);
   }
   return minutes(1);
 };
