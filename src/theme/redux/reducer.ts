@@ -1,7 +1,7 @@
 import { createReducer } from "deox"
 import { persistReducer } from "redux-persist";
 import { GenericStateSlice } from "src/redux/types";
-import storageSession from 'redux-persist/lib/storage/session';
+import storage from 'redux-persist/lib/storage';
 import {switchThemeAction} from './actions';
 import { CustomTheme } from "..";
 
@@ -28,7 +28,7 @@ export const stateSliceByKeyWithoutPersist = {
 export const stateSliceByKey = {
   theme: persistReducer({
     key: 'theme',
-    storage: storageSession
+    storage
   }, reducer)
 }
 
