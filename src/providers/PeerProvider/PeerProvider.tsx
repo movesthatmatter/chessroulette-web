@@ -1,4 +1,4 @@
-import { IceServerRecord, RoomRecord, UserRecord } from 'dstnd-io';
+import { IceServerRecord, UserRecord } from 'dstnd-io';
 import React from 'react';
 import { PeerContext, PeerContextState } from './PeerContext';
 import { PeerConnectionsHandler, PeerConnectionsState } from './Handlers';
@@ -40,6 +40,11 @@ export class PeerProvider extends React.Component<Props, State> {
       peerConnectionsState: { status: 'init' },
       contextState: { status: 'init' },
     };
+
+    this.joinRoom = this.joinRoom.bind(this);
+    this.connectToRoom = this.connectToRoom.bind(this);
+    this.disconnectFromRoom = this.disconnectFromRoom.bind(this);
+    this.leaveRoom = this.leaveRoom.bind(this);
   }
 
   componentDidMount() {
@@ -121,9 +126,9 @@ export class PeerProvider extends React.Component<Props, State> {
         connectionAttempt:
           this.state.peerConnectionsState.status === 'ready' &&
           this.state.peerConnectionsState.connectionAttempted,
-        connectToRoom: this.connectToRoom.bind(this),
-        disconnectFromRoom: this.disconnectFromRoom.bind(this),
-        leaveRoom: this.leaveRoom.bind(this),
+        connectToRoom: this.connectToRoom,
+        disconnectFromRoom: this.disconnectFromRoom,
+        leaveRoom: this.leaveRoom,
       };
     }
 
@@ -132,7 +137,7 @@ export class PeerProvider extends React.Component<Props, State> {
       client: this.props.socketClient,
       me: this.props.roomAndMe.me,
       hasJoinedRoom: false,
-      joinRoom: this.joinRoom.bind(this),
+      joinRoom: this.joinRoom,
     };
   }
 
