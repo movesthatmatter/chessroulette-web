@@ -1,7 +1,7 @@
 import React from 'react';
+import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
-import cx from 'classnames';
 import { softBorderRadius } from 'src/theme';
 import { RoomDetailsConsumer } from './RoomDetailsConsumer';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
@@ -14,33 +14,34 @@ import { NavigationLink } from 'src/components/NavigationLink';
 import { SwitchActivityWidgetRoomConsumer } from './SwitchActivityWidgetRoomConsumer';
 import { RoomControlMenuConsumer } from './RoomControlMenuConsumer';
 import { DarkModeSwitch } from 'src/components/DarkModeSwitch/DarkModeSwitch';
-import { BoardSettingsWidgetRoomConsumer } from './BoardSettingsWidgetRoomConsumer';
 
 type Props = {
   renderActivity: (d: {
     isMobile: boolean;
     boardSize: number;
     leftSide: LayoutContainerDimensions;
-    // TODO: might need a bunch of other dimensinos like the marging size or the bottom to inform the activity
+    // TODO: might need a bunch of other dimensinos like the marging
+    //  size or the bottom to inform the activity
   }) => React.ReactNode;
 };
 
 const TOP_HEIGHT = 90;
 const BOTTOM_HEIGHT = 56;
 const MIN_SPACE_BETWEEN = spacers.largePx;
+const LAYOUT_RATIOS = {
+  leftSide: 1.2,
+  mainArea: 3,
+  rightSide: 2.1,
+};
 
 // TODO: This isn't provided for now and don't think it needs to be but for now it sits here
-export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
+export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((props) => {
   const cls = useStyles();
 
   return (
     <div className={cls.container}>
       <DesktopRoomLayout
-        ratios={{
-          leftSide: 1.2,
-          mainArea: 3,
-          rightSide: 2.1,
-        }}
+        ratios={LAYOUT_RATIOS}
         topHeight={TOP_HEIGHT}
         bottomHeight={BOTTOM_HEIGHT}
         minSpaceBetween={MIN_SPACE_BETWEEN}
@@ -126,7 +127,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+});
 
 const useStyles = createUseStyles((theme) => ({
   container: {
