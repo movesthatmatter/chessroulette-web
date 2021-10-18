@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Game } from '../../../types';
 import { ChessBoard, ChessBoardProps } from '../ChessBoard';
 import { useGameActions } from 'src/modules/Games/GameActions';
@@ -13,22 +13,33 @@ export type ChessGameProps = Omit<
   displayedPgn?: string;
 };
 
-export const ChessGame: React.FC<ChessGameProps> = ({ game, displayedPgn, ...chessGameProps }) => {
-  const actions = useGameActions();
+export const ChessGame: React.FC<ChessGameProps> = React.memo(
+  ({ game, displayedPgn, ...chessBoardProps }) => {
+    const actions = useGameActions();
 
-  useSoundEffects(game);
-
-  return (
-    <ChessBoard
-      type="play"
-      id={game.id}
-      pgn={displayedPgn === undefined ? game.pgn : displayedPgn}
-      onMove={({ move }) => {
+    const onMove = useCallback<ChessBoardProps['onMove']>(
+      ({ move }) => {
         // TODO: Add the history here as well
-        actions.onMove(move, [], chessGameProps.playableColor);
-      }}
-      overlayComponent={<GameStateDialogConsumer />}
-      {...chessGameProps}
-    />
-  );
-};
+        actions.onMove(move, [], chessBoardProps.playableColor);
+      },
+      [actions]
+    );
+
+    useSoundEffects(game);
+
+    // Performance Optimization
+    // See http://bit.ly/wdyr02 ":Children / React Elements" for more info
+    const memoizedOverlayComponent = useMemo(() => <GameStateDialogConsumer />, []);
+
+    return (
+      <ChessBoard
+        type="play"
+        id={game.id}
+        pgn={displayedPgn === undefined ? game.pgn : displayedPgn}
+        onMove={onMove}
+        overlayComponent={memoizedOverlayComponent}
+        {...chessBoardProps}
+      />
+    );
+  }
+);
