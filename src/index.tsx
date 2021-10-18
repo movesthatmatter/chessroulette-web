@@ -1,3 +1,6 @@
+/// <reference types="@welldone-software/why-did-you-render" />
+import './wdyr'; // needs to be the 1st import
+
 import React from 'react';
 import './index.css';
 import WebFont from 'webfontloader';
