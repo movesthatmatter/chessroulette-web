@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessGame } from 'src/modules/Games/Chess';
@@ -48,8 +48,11 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
   const gameActions = useGameActions();
   const feedbackActions = useFeedbackActions();
   const roomConsumer = useRoomConsumer();
-  const homeColor = getHomeColor(activity, roomConsumer?.boardOrientation === 'away');
-  const participantsByColor = getParticipantsByColor(activity);
+  const homeColor = useMemo(
+    () => getHomeColor(activity, roomConsumer?.boardOrientation === 'away'),
+    [activity, roomConsumer?.boardOrientation]
+  );
+  const participantsByColor = useMemo(() => getParticipantsByColor(activity), [activity]);
 
   const { game } = activity;
 

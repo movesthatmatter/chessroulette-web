@@ -34,6 +34,7 @@ const LAYOUT_RATIOS = {
   rightSide: 2.1,
 };
 
+
 // TODO: This isn't provided for now and don't think it needs to be but for now it sits here
 export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((props) => {
   const cls = useStyles();
