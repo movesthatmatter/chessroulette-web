@@ -123,7 +123,14 @@ export const IconButton: React.FC<Props> = ({
         {isLoading ? (
           <Loader type="ball-clip-rotate" active innerClassName={cls.loader} />
         ) : (
-          <IconContainer {...props} type={type} size={size} />
+          <IconContainer
+            {...props}
+            clear={clear}
+            withLoader={withLoader}
+            type={type}
+            size={size}
+            className={cls.icon}
+          />
         )}
       </div>
       {props.tooltip && (
