@@ -1,5 +1,5 @@
+import React, { useMemo, useCallback } from 'react';
 import { ChessGameColor } from 'dstnd-io';
-import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { fonts } from 'src/theme';
 import { PlayerBox } from '../PlayerBox/PlayerBox';
@@ -25,54 +25,63 @@ type Props = {
   floatingBoxClassName?: string;
 };
 
-export const GameStateWidget: React.FC<Props> = ({
-  game,
-  playParticipants,
-  homeColor,
-  onTimerFinished = noop,
-  ...props
-}) => {
-  const cls = useStyles();
+export const GameStateWidget: React.FC<Props> = React.memo(
+  ({ game, playParticipants, homeColor, onTimerFinished = noop, ...props }) => {
+    const cls = useStyles();
 
-  const awayColor = otherChessColor(homeColor);
-  const timeLeft = useGameTimesLeftByColor(game, [homeColor]);
-  const players = {
-    white: roomPlayActivityParticipantToChessPlayer(playParticipants.white),
-    black: roomPlayActivityParticipantToChessPlayer(playParticipants.black),
-  } as const;
+    const awayColor = useMemo(() => otherChessColor(homeColor), [homeColor]);
+    const timeLeft = useGameTimesLeftByColor(game, [homeColor]);
+    const players = useMemo(
+      () =>
+        ({
+          white: roomPlayActivityParticipantToChessPlayer(playParticipants.white),
+          black: roomPlayActivityParticipantToChessPlayer(playParticipants.black),
+        } as const),
+      [playParticipants.white, playParticipants.black]
+    );
 
-  return (
-    <div className={cx(cls.container, props.containerClassName)}>
-      <div className={cx(cls.player, cls.playerTop)}>
-        <PlayerBox
-          key={`pb-${players[awayColor].user.id}`}
-          player={players[awayColor]}
-          timeLeft={timeLeft[awayColor]}
-          active={game.state === 'started' && game.lastMoveBy === homeColor}
-          gameTimeLimit={game.timeLimit}
-          material={playParticipants[awayColor].materialScore}
-          onTimerFinished={() => onTimerFinished(awayColor)}
-        />
-        <div className={cls.spacer} />
+    const onTimerFinishedAway = useCallback(() => onTimerFinished(awayColor), [
+      awayColor,
+      onTimerFinished,
+    ]);
+    const onTimerFinishedHome = useCallback(() => onTimerFinished(homeColor), [
+      homeColor,
+      onTimerFinished,
+    ]);
+
+    return (
+      <div className={cx(cls.container, props.containerClassName)}>
+        <div className={cx(cls.player, cls.playerTop)}>
+          <PlayerBox
+            key={`pb-${players[awayColor].user.id}`}
+            player={players[awayColor]}
+            timeLeft={timeLeft[awayColor]}
+            active={game.state === 'started' && game.lastMoveBy === homeColor}
+            gameTimeLimit={game.timeLimit}
+            material={playParticipants[awayColor].materialScore}
+            onTimerFinished={onTimerFinishedAway}
+          />
+          <div className={cls.spacer} />
+        </div>
+        <FloatingBox className={cx(cls.gameStateContainer, props.floatingBoxClassName)}>
+          <ChessGameHistoryProvided emptyContent="White to move!" />
+        </FloatingBox>
+        <div className={cls.player}>
+          <div className={cls.spacer} />
+          <PlayerBox
+            key={`pb-${players[homeColor].user.id}`}
+            player={players[homeColor]}
+            timeLeft={timeLeft[homeColor]}
+            active={game.state === 'started' && game.lastMoveBy === awayColor}
+            gameTimeLimit={game.timeLimit}
+            material={playParticipants[homeColor].materialScore}
+            onTimerFinished={onTimerFinishedHome}
+          />
+        </div>
       </div>
-      <FloatingBox className={cx(cls.gameStateContainer, props.floatingBoxClassName)}>
-        <ChessGameHistoryProvided emptyContent="White to move!" />
-      </FloatingBox>
-      <div className={cls.player}>
-        <div className={cls.spacer} />
-        <PlayerBox
-          key={`pb-${players[homeColor].user.id}`}
-          player={players[homeColor]}
-          timeLeft={timeLeft[homeColor]}
-          active={game.state === 'started' && game.lastMoveBy === awayColor}
-          gameTimeLimit={game.timeLimit}
-          material={playParticipants[homeColor].materialScore}
-          onTimerFinished={() => onTimerFinished(homeColor)}
-        />
-      </div>
-    </div>
-  );
-};
+    );
+  }
+);
 
 const useStyles = createUseStyles({
   container: {

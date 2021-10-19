@@ -149,7 +149,6 @@ export const ChallengeNotificationItem: React.FC<Props> = ({
                         type="positive"
                         iconType="fontAwesome"
                         icon={copied ? faCheck : faCopy}
-
                         className={cls.subtleButton}
                         clear
                         onSubmit={copy}

@@ -5,15 +5,13 @@ import { AnalysisActivity } from '../RoomActivity/activities/AnalysisActivity';
 import { RoomProviderContext } from '../RoomProvider';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { useDispatch } from 'react-redux';
-import { updateCurrentAnalysisAction, updateJoinedGameAction } from '../RoomActivity/redux/actions';
-import { useGameActions } from 'src/modules/Games/GameActions';
+import { updateCurrentAnalysisAction } from '../RoomActivity/redux/actions';
 
 type Props = {};
 
-export const ActivityRoomConsumer: React.FC<Props> = () => {
+export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
   const context = useContext(RoomProviderContext);
   const peerState = usePeerState();
-  const gameActions = useGameActions();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -26,10 +24,6 @@ export const ActivityRoomConsumer: React.FC<Props> = () => {
           if (payload.kind === 'analysisUpdatedResponse') {
             dispatch(updateCurrentAnalysisAction(payload.content));
           }
-        }),
-        // Play Activity listener
-        gameActions.onGameUpdatedEventListener(({ next: nextGame }) => {
-          dispatch(updateJoinedGameAction(nextGame));
         }),
       ];
 
@@ -55,4 +49,4 @@ export const ActivityRoomConsumer: React.FC<Props> = () => {
   }
 
   return <NoActivity deviceSize={context.deviceSize} />;
-};
+});

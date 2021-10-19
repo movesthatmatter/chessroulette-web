@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { CustomTheme, fonts, onlyMobile } from 'src/theme';
+import { fonts, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Button } from '../Button';
 import { DialogContentProps } from '../Dialog/DialogContent';

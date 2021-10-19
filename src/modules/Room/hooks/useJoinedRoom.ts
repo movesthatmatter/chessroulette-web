@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import config from 'src/config';
-import { toDictIndexedBy } from 'src/lib/util';
+import { isDeepEqual, toDictIndexedBy } from 'src/lib/util';
 import { Room, selectRoom } from 'src/providers/PeerProvider';
 import { console } from 'window-or-global';
 import { selectCurrentRoomActivity } from '../RoomActivity/redux/selectors';
@@ -9,6 +9,9 @@ import { BaseRoomActivity } from '../RoomActivity/redux/types';
 import { toRoomActivity } from '../RoomActivity/util/util';
 import { JoinedRoom } from '../types';
 import { toRoomMember } from '../util';
+import { diff, detailedDiff } from 'deep-object-diff';
+import { useCustomCompareEffect } from 'src/lib/hooks/useCustomCompareEffect';
+import { hasRoomActivityChanged } from './util/joinedRoomComparators';
 
 // This doesn't check for data integrity other then all being present, simply merges them
 const mergeSlicesIntoJoinedRoom = (slices: {
@@ -39,7 +42,6 @@ const mergeSlicesIntoJoinedRoom = (slices: {
 export const useJoinedRoom = () => {
   const room = useSelector(selectRoom);
   const roomActivity = useSelector(selectCurrentRoomActivity);
-
   const [joinedRoom, setJoinedRoom] = useState(
     mergeSlicesIntoJoinedRoom({
       room,
@@ -47,23 +49,37 @@ export const useJoinedRoom = () => {
     })
   );
 
-  useEffect(() => {
-    const nextJoinedRoom = mergeSlicesIntoJoinedRoom({ room, currentRoomActivity: roomActivity });
-    setJoinedRoom(nextJoinedRoom);
+  useCustomCompareEffect(
+    () => {
+      // Ensure the updates are actual updates
+      const nextJoinedRoom = mergeSlicesIntoJoinedRoom({
+        room,
+        currentRoomActivity: roomActivity,
+      });
+      setJoinedRoom(nextJoinedRoom);
 
-    // Logging
-
-    if (config.DEBUG) {
-      console.group(
-        `%cJoinedRoom %cUpdated:`,
-        'color: grey;',
-        'color: #4CAF50; font-weight: bold;'
-      );
-      console.log('Prev:', joinedRoom);
-      console.log('Next:', nextJoinedRoom);
-      console.groupEnd();
-    }
-  }, [room, roomActivity]);
+      // Logging
+      if (config.DEBUG) {
+        console.group(
+          `%cJoinedRoom %cUpdated:`,
+          'color: grey;',
+          'color: #4CAF50; font-weight: bold;'
+        );
+        console.log('Prev:', joinedRoom);
+        console.log('Next:', nextJoinedRoom);
+        console.log('Diff:', diff(joinedRoom || {}, nextJoinedRoom || {}));
+        console.log('Detailed Diff:', detailedDiff(joinedRoom || {}, nextJoinedRoom || {}));
+        console.groupEnd();
+      }
+    },
+    [room, roomActivity],
+    ([currentRoom, currentRoomActivity], [prevRoom, prevRoomActivity]) =>
+      isDeepEqual(currentRoom, prevRoom) &&
+      !hasRoomActivityChanged(
+        currentRoomActivity as BaseRoomActivity,
+        prevRoomActivity as BaseRoomActivity
+      )
+  );
 
   return joinedRoom;
 };

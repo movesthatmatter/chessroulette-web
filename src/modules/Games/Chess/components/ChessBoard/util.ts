@@ -1,9 +1,14 @@
 import { Key } from 'chessground/types';
-import { ChessInstance, Piece, Square } from 'chess.js';
-import { ChessGameStateFen, ChessMove } from 'dstnd-io';
+import { ChessInstance, Piece } from 'chess.js';
+import { ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
 import { keyInObject } from 'src/lib/util';
+import { toChessColor } from '../../lib';
+import { ChessgroundProps } from 'react-chessground';
+import { ChessBoardConfig, ChessBoardGameState, ChessBoardType } from './types';
 
-export function toDests(chess: ChessInstance): Map<Key, Key[]> {
+export type ChessDests = Map<Key, Key[]>;
+
+export function toDests(chess: ChessInstance): ChessDests {
   const dests = new Map();
   chess.SQUARES.forEach((s) => {
     const ms = chess.moves({ square: s, verbose: true });
@@ -19,19 +24,6 @@ export function toDests(chess: ChessInstance): Map<Key, Key[]> {
 export const isInitialFen = (fen: ChessGameStateFen) => {
   return fen === '' || fen === 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
 };
-
-// export function playOtherSide(chess: ChessInstance) {
-//   return (orig, dest) => {
-//     chess.move({ from: orig, to: dest });
-//     cg.set({
-//       turnColor: toColor(chess),
-//       movable: {
-//         color: toColor(chess),
-//         dests: toDests(chess),
-//       },
-//     });
-//   };
-// }
 
 export const isPromotableMove = (piece: Piece, { to: toSquare }: ChessMove) => {
   if (piece.type !== 'p') {
@@ -68,4 +60,66 @@ export const isPromotableMove = (piece: Piece, { to: toSquare }: ChessMove) => {
         toSquare
       ))
   );
+};
+
+export const getCurrentChessBoardGameState = (
+  props: CalcMovaleProps,
+  chess: ChessInstance,
+  prev: ChessBoardGameState | undefined
+): ChessBoardGameState => {
+  // Offer a way to exit asap if nothing changed
+  if (chess.fen() === prev?.fen) {
+    return prev;
+  }
+
+  const history = chess.history({ verbose: true });
+  const lastMove = history[history.length - 1] as ChessMove;
+
+  return {
+    fen: chess.fen(),
+    pgn: chess.pgn(),
+    turn: toChessColor(chess.turn()),
+    inCheck: chess.in_check(),
+    lastMove,
+    lastMoveFromTo: lastMove ? [lastMove.from, lastMove.to] : undefined,
+    isPreMovable: history.length === 0 ? true : history[history.length - 1].color !== chess.turn(),
+    movable: calcMovable(props, toDests(chess)),
+  };
+};
+
+type CalcMovaleProps = {
+  type: ChessBoardType;
+  canInteract?: boolean;
+  playable?: boolean;
+  config?: ChessBoardConfig;
+  playableColor: ChessGameColor;
+};
+
+const calcMovable = (props: CalcMovaleProps, dests: ChessDests): ChessgroundProps['movable'] => {
+  const base = {
+    free: false,
+    // This is what determines wether someone can move a piece!
+    dests: props.canInteract && props.playable ? dests : undefined,
+    showDests: !!props.config?.showDests,
+  } as const;
+
+  if (props.type === 'analysis') {
+    return {
+      ...base,
+      color: 'both',
+    };
+  }
+
+  if (props.type === 'play') {
+    return {
+      ...base,
+      color: props.playableColor,
+    };
+  }
+
+  return {
+    ...base,
+    free: true,
+    color: 'both',
+  };
 };

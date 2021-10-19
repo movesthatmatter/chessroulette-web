@@ -43,8 +43,6 @@ export const AuthenticationProvider: React.FC = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log('auth context updated', { ...contextState });
-
     if (!contextState.ready) {
       return;
     }

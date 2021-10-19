@@ -1,29 +1,23 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import cx from 'classnames';
-import { createUseStyles, CSSProperties, makeImportant, NestedCSSElement } from 'src/lib/jss';
+import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
 import { Icon as GIcon } from 'grommet-icons';
 import { borderRadius, onlyMobile, softBorderRadius, softOutline } from 'src/theme';
 import { ButtonType } from '../type';
 import { buttonStyles } from '../styles/styles';
 import { AsyncResult } from 'ts-async-results';
-import Loader from 'react-loaders';
-import 'loaders.css';
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
 import { getSizers } from 'src/theme/sizers';
 import { IconProps as IconlyIconProps } from 'react-iconly';
-import { FontAwesomeIcon, FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
-import { IconlyIcon } from './components/IconlyIcon';
+import { FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
 import { buttonEffects } from '../styles';
 import { colors } from 'src/theme/colors';
+import { IconContainer } from './components/IconContainer';
+import Loader from 'react-loaders';
+import 'loaders.css';
 
 const sizers = getSizers(1); // This is twice the regular size
-
-const IconSizeInPxByName = {
-  small: sizers.get(0.75),
-  default: sizers.get(1.25),
-  large: sizers.get(1.5),
-} as const;
 
 const WrapperSizeInPxByName = {
   small: sizers.get(1.5),
@@ -33,7 +27,7 @@ const WrapperSizeInPxByName = {
 
 type Props = {
   onSubmit: (() => void) | (() => Promise<any>) | (() => AsyncResult<any, any>);
-  size?: keyof typeof IconSizeInPxByName;
+  size?: 'small' | 'default' | 'large';
   type?: ButtonType;
   clear?: boolean;
   disabled?: boolean;
@@ -59,34 +53,6 @@ type IconProps =
       icon: FontAwesomeIconProps['icon'];
     };
 
-const getIcon = (
-  {
-    size = 'default',
-    ...props
-  }: IconProps & Pick<Props, 'clear' | 'disabled' | 'type' | 'withLoader' | 'size'>,
-  { className, style }: { className?: string; style?: CSSProperties }
-) => {
-  if (props.iconType === 'iconly') {
-    const { icon: Icon, iconPrimaryColor, ...restProps } = props;
-    return (
-      <IconlyIcon
-        Icon={props.icon}
-        primaryColor={iconPrimaryColor}
-        sizeInPx={IconSizeInPxByName[size]}
-        
-        {...restProps}
-      />
-    );
-  }
-
-  if (props.iconType === 'grommet') {
-    const { icon: Icon } = props;
-    return <Icon className={className}/>;
-  }
-
-  return <FontAwesomeIcon icon={props.icon} className={className} style={style} />;
-};
-
 export const IconButton: React.FC<Props> = ({
   type = 'primary',
   clear = false,
@@ -96,8 +62,18 @@ export const IconButton: React.FC<Props> = ({
   ...props
 }) => {
   const cls = useStyles();
-  // const Icon = props.icon;
   const [isLoading, setIsLoading] = useState(false);
+
+  // These optimization are cool but they aren't actually the issue
+  // The parent rerenders badly
+  const style = useMemo(
+    () => ({
+      width: WrapperSizeInPxByName[size],
+      height: WrapperSizeInPxByName[size],
+      lineHeight: WrapperSizeInPxByName[size],
+    }),
+    [size]
+  );
 
   return (
     <button
@@ -111,11 +87,7 @@ export const IconButton: React.FC<Props> = ({
         isLoading && cls.hasLoader,
         props.className
       )}
-      style={{
-        width: WrapperSizeInPxByName[size],
-        height: WrapperSizeInPxByName[size],
-        lineHeight: WrapperSizeInPxByName[size],
-      }}
+      style={style}
       title={props.title}
       onClick={() => {
         if (isLoading) {
@@ -151,7 +123,14 @@ export const IconButton: React.FC<Props> = ({
         {isLoading ? (
           <Loader type="ball-clip-rotate" active innerClassName={cls.loader} />
         ) : (
-          getIcon({ ...props, clear, type, size }, { className: cls.icon })
+          <IconContainer
+            {...props}
+            clear={clear}
+            withLoader={withLoader}
+            type={type}
+            size={size}
+            className={cls.icon}
+          />
         )}
       </div>
       {props.tooltip && (

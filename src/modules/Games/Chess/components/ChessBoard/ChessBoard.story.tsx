@@ -45,8 +45,10 @@ export const playable = () =>
         id={game.id}
         pgn={game.pgn}
         size={600}
+        orientation={'white'}
         playableColor={turn}
         playable
+        canInteract
         onMove={(m) => {
           if (game.state === 'pending' || game.state === 'started') {
             setGame((prev) => ({

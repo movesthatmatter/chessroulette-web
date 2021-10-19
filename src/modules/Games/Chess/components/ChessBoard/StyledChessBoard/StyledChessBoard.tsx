@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
+import cx from 'classnames';
+import blueBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/board/blue.svg';
 import Chessground, { ChessgroundProps, ChessgroundApi } from 'react-chessground';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import blueBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/board/blue.svg';
-import cx from 'classnames';
 import { ChessGameColor, ChessMove, PromotionalChessPieceType } from 'dstnd-io';
 import { Square } from 'chess.js';
 import { noop } from 'src/lib/util';
 import 'react-chessground/dist/styles/chessground.css';
-import { light as lightPieces } from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
 import darkBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/board/blue_darkMode.svg';
+import { light as lightPieces } from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
 import { dark as darkPieces } from 'src/modules/Games/Chess/components/ChessBoard/assets/pieces/index';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { promotionalSquareToPercentage } from './util';
 
 export type StyledChessBoardProps = Omit<
   ChessgroundProps,
@@ -27,153 +28,139 @@ export type StyledChessBoardProps = Omit<
   overlayComponent?: React.ReactNode | ((p: { size?: number }) => React.ReactNode);
 };
 
-const promotionalSquareToPercentage = (move: ChessMove, orientation: ChessGameColor) => {
-  const files = {
-    a: 1,
-    b: 2,
-    c: 3,
-    d: 4,
-    e: 5,
-    f: 6,
-    g: 7,
-    h: 8,
-  };
-  const file = files[move.to[0] as keyof typeof files];
+// Note: This is a Pure Component since the botthleneck in moving pieces
+//  seems to be around the chessboard rerender
+export const StyledChessBoard: React.FC<StyledChessBoardProps> = React.memo(
+  ({
+    promotionalMove,
+    orientation = 'white',
+    onMove,
+    onPreMove = noop,
+    onPreMoveCanceled = noop,
+    ...props
+  }) => {
+    const cls = useStyles();
+    const [uniqueKey, setUniquKey] = useState(new Date().getTime());
+    const chessgroundRef = useRef<ChessgroundApi>();
+    const { theme } = useColorTheme();
+    const pieces = theme.name === 'lightDefault' ? lightPieces : darkPieces;
 
-  const multiplier = orientation === 'white' ? file - 1 : 8 - file;
+    useEffect(() => {
+      if (chessgroundRef.current) {
+        // Remove the Premove Highlights as soon as the FEN changes
+        chessgroundRef.current.cancelPremove();
+      }
+    }, [props.fen]);
 
-  return multiplier * 12.5;
-};
+    useEffect(() => {
+      setUniquKey(new Date().getTime());
+    }, [props.viewOnly]);
 
-export const StyledChessBoard: React.FC<StyledChessBoardProps> = ({
-  promotionalMove,
-  orientation = 'white',
-  onMove,
-  onPreMove = noop,
-  onPreMoveCanceled = noop,
-  ...props
-}) => {
-  const cls = useStyles();
-  const [uniqueKey, setUniquKey] = useState(new Date().getTime());
-  const chessgroundRef = useRef<ChessgroundApi>();
-  const { theme } = useColorTheme();
-  const pieces = theme.name === 'lightDefault' ? lightPieces : darkPieces;
+    const promote = (promotion: PromotionalChessPieceType) => {
+      if (!promotionalMove) {
+        return;
+      }
 
-  useEffect(() => {
-    if (chessgroundRef.current) {
-      // Remove the Premove Highlights as soon as the FEN changes
-      chessgroundRef.current.cancelPremove();
-    }
-  }, [props.fen]);
+      if (promotionalMove.isPreMove) {
+        onPreMove({
+          ...promotionalMove,
+          promotion,
+        });
+      } else {
+        onMove({
+          ...promotionalMove,
+          promotion,
+        });
+      }
+    };
 
-  useEffect(() => {
-    setUniquKey(new Date().getTime());
-  }, [props.viewOnly]);
-
-  const promote = (promotion: PromotionalChessPieceType) => {
-    if (!promotionalMove) {
-      return;
-    }
-
-    if (promotionalMove.isPreMove) {
-      onPreMove({
-        ...promotionalMove,
-        promotion,
-      });
-    } else {
-      onMove({
-        ...promotionalMove,
-        promotion,
-      });
-    }
-  };
-
-  return (
-    <div
-      className={cx(cls.container, props.className)}
-      style={{
-        ...(props.size && {
-          width: props.size,
-          height: props.size,
-        }),
-      }}
-    >
-      <Chessground
-        key={uniqueKey}
-        ref={(r) => {
-          if (r) {
-            // TODO: For some reason this becomes null & then not on every update
-            chessgroundRef.current = (r as any).cg;
-          }
+    return (
+      <div
+        className={cx(cls.container, props.className)}
+        style={{
+          ...(props.size && {
+            width: props.size,
+            height: props.size,
+          }),
         }}
-        premovable={{
-          enabled: props.preMoveEnabled,
-          castle: true,
-          events: {
-            set: (org, dest) => onPreMove({ to: dest as Square, from: org as Square }),
-            unset: onPreMoveCanceled,
-          },
-        }}
-        resizable={false}
-        draggable={{
-          enabled: true,
-        }}
-        {...(props.size && {
-          width: props.size,
-          height: props.size,
-        })}
-        onMove={(orig, dest) => onMove({ to: dest as Square, from: orig as Square })}
-        orientation={orientation}
-        {...props}
-      />
-      {promotionalMove && (
-        <div className={cls.promoDialogLayer}>
-          <div
-            className={cx(
-              cls.promoDialogContainer,
-              promotionalMove.color !== orientation && cls.promoDialogContainerFlipped
-            )}
-            style={{
-              left: `${promotionalSquareToPercentage(promotionalMove, orientation)}%`,
-            }}
-          >
-            <div className={cls.promoPiecesContainer}>
-              <span role="presentation" onClick={() => promote('q')}>
-                <img
-                  src={promotionalMove.color === 'white' ? pieces.wQ : pieces.bQ}
-                  alt="Queen"
-                  style={{ width: props.size / 8 }}
-                />
-              </span>
-              <span role="presentation" onClick={() => promote('r')}>
-                <img
-                  src={promotionalMove.color === 'white' ? pieces.wR : pieces.bR}
-                  alt="Rook"
-                  style={{ width: props.size / 8 }}
-                />
-              </span>
-              <span role="presentation" onClick={() => promote('b')}>
-                <img
-                  src={promotionalMove.color === 'white' ? pieces.wB : pieces.bB}
-                  alt="Bishop"
-                  style={{ width: props.size / 8 }}
-                />
-              </span>
-              <span role="presentation" onClick={() => promote('n')}>
-                <img
-                  src={promotionalMove.color === 'white' ? pieces.wN : pieces.bN}
-                  alt="Knight"
-                  style={{ width: props.size / 8 }}
-                />
-              </span>
+      >
+        <Chessground
+          key={uniqueKey}
+          ref={(r) => {
+            if (r) {
+              // TODO: For some reason this becomes null & then not on every update
+              chessgroundRef.current = (r as any).cg;
+            }
+          }}
+          premovable={{
+            enabled: props.preMoveEnabled,
+            castle: true,
+            events: {
+              set: (org, dest) => onPreMove({ to: dest as Square, from: org as Square }),
+              unset: onPreMoveCanceled,
+            },
+          }}
+          resizable={false}
+          draggable={{
+            enabled: true,
+          }}
+          {...(props.size && {
+            width: props.size,
+            height: props.size,
+          })}
+          onMove={(orig, dest) => onMove({ to: dest as Square, from: orig as Square })}
+          orientation={orientation}
+          {...props}
+        />
+        {promotionalMove && (
+          <div className={cls.promoDialogLayer}>
+            <div
+              className={cx(
+                cls.promoDialogContainer,
+                promotionalMove.color !== orientation && cls.promoDialogContainerFlipped
+              )}
+              style={{
+                left: `${promotionalSquareToPercentage(promotionalMove, orientation)}%`,
+              }}
+            >
+              <div className={cls.promoPiecesContainer}>
+                <span role="presentation" onClick={() => promote('q')}>
+                  <img
+                    src={promotionalMove.color === 'white' ? pieces.wQ : pieces.bQ}
+                    alt="Queen"
+                    style={{ width: props.size / 8 }}
+                  />
+                </span>
+                <span role="presentation" onClick={() => promote('r')}>
+                  <img
+                    src={promotionalMove.color === 'white' ? pieces.wR : pieces.bR}
+                    alt="Rook"
+                    style={{ width: props.size / 8 }}
+                  />
+                </span>
+                <span role="presentation" onClick={() => promote('b')}>
+                  <img
+                    src={promotionalMove.color === 'white' ? pieces.wB : pieces.bB}
+                    alt="Bishop"
+                    style={{ width: props.size / 8 }}
+                  />
+                </span>
+                <span role="presentation" onClick={() => promote('n')}>
+                  <img
+                    src={promotionalMove.color === 'white' ? pieces.wN : pieces.bN}
+                    alt="Knight"
+                    style={{ width: props.size / 8 }}
+                  />
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      {props.overlayComponent}
-    </div>
-  );
-};
+        )}
+        {props.overlayComponent}
+      </div>
+    );
+  }
+);
 
 const useStyles = createUseStyles((theme) => {
   const colors =
