@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { noop } from 'src/lib/util';
 import { CustomTheme, themes, onlyMobile } from 'src/theme';
@@ -23,7 +23,7 @@ export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, copyButtonLabe
   const cls = useStyles();
   const [copied, setCopied] = useState(false);
 
-  const copy = async () => {
+  const copy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(props.value);
 
@@ -35,11 +35,11 @@ export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, copyButtonLabe
 
       onCopied();
     } catch (e) {}
-  };
+  }, [setCopied, onCopied]);
 
   return (
     <div
-      style={{display:'flex', flexDirection:'row', height:'100%', width:'100%'}}
+      style={{ display: 'flex', flexDirection: 'row', height: '100%', width: '100%' }}
       className={cx(
         cls.container,
         copied && cls.containerCopied,
@@ -48,40 +48,23 @@ export const ClipboardCopy: React.FC<Props> = ({ onCopied = noop, copyButtonLabe
     >
       <TextInput
         defaultValue={props.value}
-        className={cls.textInput}
+        className={cls.textInputContainer}
+        inputClassName={cls.textInput}
         readOnly={props.readonly}
       />
-      <Button
-        {...(copyButtonLabel
-          ? {
-              label: copyButtonLabel,
-              icon: () => (
-                <FontAwesomeIcon
-                  icon={copied ? faCheck : faCopy}
-                  color={themes.lightDefault.colors.neutralDarkest}
-                  className={cls.copyIcon}
-                />
-              ),
-            }
-          : {
-              label:'',
-              icon:() => (
-                <FontAwesomeIcon
-                  icon={copied ? faCheck : faCopy}
-                  color={themes.lightDefault.colors.neutralDarkest}
-                  className={cls.copyIcon}
-                />
-              ),
-            })}
-        className={cx(cls.copyButton)}
-        size="small"
-        onClick={copy}
-      />
+      <button className={cx(cls.copyButton)} onClick={copy}>
+        {copyButtonLabel && <span className={cls.copytButtonLabel}>{copyButtonLabel}</span>}
+        <FontAwesomeIcon
+          icon={copied ? faCheck : faCopy}
+          color={themes.lightDefault.colors.neutralDarkest}
+          className={cls.copyIcon}
+        />
+      </button>
     </div>
   );
 };
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     border: `1px solid ${theme.colors.neutral}`,
     borderRadius: '40px',
@@ -94,7 +77,10 @@ const useStyles = createUseStyles(theme => ({
   readonlyContainer: {
     background: theme.colors.neutral,
   },
-  textInput: {
+  textInputContainer: {
+    flex: 1,
+    margin: 0,
+
     ...makeImportant({
       fontSize: '13px',
       fontWeight: 'normal',
@@ -114,9 +100,19 @@ const useStyles = createUseStyles(theme => ({
       }),
     }),
   },
+  textInput: {
+    ...makeImportant({
+      borderWidth: 0,
+      borderRadius: 0,
+    }),
+  },
   copyButton: {
+    border: 0,
     background: `${theme.colors.neutral} !important`,
     padding: '0 1em 0 .7em !important',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
 
     '&:active': {
       background: `${theme.colors.neutralDark} !important`,
@@ -129,6 +125,9 @@ const useStyles = createUseStyles(theme => ({
     '&:focus': {
       boxShadow: 'none !important',
     },
+  },
+  copytButtonLabel: {
+    paddingRight: '.4em',
   },
   copyButtonSuccess: {
     background: `${theme.colors.positive} !important`,

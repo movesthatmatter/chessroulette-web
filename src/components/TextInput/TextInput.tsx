@@ -1,13 +1,16 @@
 import React from 'react';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { CustomTheme, effects, onlyMobile } from 'src/theme';
+import { effects, onlyMobile } from 'src/theme';
 import { Text } from '../Text/Text';
 import cx from 'classnames';
 import { HTMLInputElement } from 'window-or-global';
 
-
-export type TextInputProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
+export type TextInputProps = React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+> & {
   className?: string;
+  inputClassName?: string;
   label?: string;
   validationError?: string;
   readOnly?: boolean;
@@ -15,6 +18,7 @@ export type TextInputProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLIn
 
 export const TextInput: React.FC<TextInputProps> = ({
   className,
+  inputClassName,
   label,
   ...props
 }) => {
@@ -30,12 +34,9 @@ export const TextInput: React.FC<TextInputProps> = ({
       <div className={cx(cls.inputWrapper)}>
         <input
           readOnly={props.readOnly}
-          type='text'
+          type="text"
           value={props.defaultValue}
-          className={cx(
-            cls.textInput,
-            props.validationError && cls.errorInput,
-          )}
+          className={cx(cls.textInput, props.validationError && cls.errorInput, inputClassName)}
           {...props}
         />
       </div>
@@ -48,7 +49,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   );
 };
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     marginBottom: '12px',
 
@@ -56,11 +57,11 @@ const useStyles = createUseStyles(theme => ({
       marginBottom: '2px',
     }),
 
-    ...{
+    ...({
       '&:first-child $labelWrapper': {
         marginTop: '0', // Remove the Negative Margin for the first element!
-      }
-    } as CSSProperties['nestedKey'],
+      },
+    } as CSSProperties['nestedKey']),
   },
   labelWrapper: {
     paddingBottom: '4px',
@@ -76,7 +77,7 @@ const useStyles = createUseStyles(theme => ({
     width: '100%',
     boxSizing: 'border-box',
     paddingLeft: '11px',
-    ...{
+    ...({
       '&:read-only': {
         ...makeImportant({
           background: theme.textInput.backgroundColor,
@@ -84,13 +85,13 @@ const useStyles = createUseStyles(theme => ({
         }),
         '&:focus': {
           boxShadow: 'none',
-        }
+        },
       },
       '&:focus': {
         ...effects.floatingShadow,
-        outline: 'none !important'
-      }
-    } as CSSProperties,
+        outline: 'none !important',
+      },
+    } as CSSProperties),
     ...makeImportant({
       borderRadius: '40px',
       border: theme.textInput.border,

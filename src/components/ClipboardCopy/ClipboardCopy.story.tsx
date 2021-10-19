@@ -9,32 +9,33 @@ export default {
 };
 
 export const defaultStory = () => (
-    <div>
-      <ClipboardCopy
-        value="Press on the button to copy me"
-        onCopied={action('copied')}
-      />
-    </div>
+  <div
+    style={{
+      width: '320px',
+    }}
+  >
+    <ClipboardCopy value="Press on the button to copy me" onCopied={action('copied')} />
+    <br/>
+    <ClipboardCopy value="Press on the button to copy me" copyButtonLabel="Label" onCopied={action('copied')} />
+  </div>
 );
 
 export const withAutoCopy = () => (
-    <div>
-      <ClipboardCopy
-        value="This should auto copy"
-        autoCopy
-        onCopied={action('copied')}
-      />
-    </div>
+  <div
+    style={{
+      width: '320px',
+    }}
+  >
+    <ClipboardCopy value="This should auto copy" autoCopy onCopied={action('copied')} />
+  </div>
 );
 
-
 export const readonly = () => (
-    <div>
-      <ClipboardCopy
-        value="This should auto copy"
-        autoCopy
-        onCopied={action('copied')}
-        readonly
-      />
-    </div>
+  <div
+    style={{
+      width: '320px',
+    }}
+  >
+    <ClipboardCopy value="This should auto copy" autoCopy onCopied={action('copied')} readonly />
+  </div>
 );
