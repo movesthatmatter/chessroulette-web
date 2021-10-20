@@ -70,36 +70,21 @@ export const GameActions: React.FC<Props> = ({
             className={cls.gameActionButton}
             {...dynamicProps}
           />
-          {offer?.type === 'draw' && offer?.content.byUser.id === participants.me.userId ? (
-            <Button
-              label="Cancel Draw Offer"
-              type="negative"
-              clear
-              className={cls.gameActionButton}
-              onClick={() => {
-                actions.onOfferCanceled();
-                onActionTaken('onOfferCanceled');
-              }}
-              style={{
-                marginTop: spacers.default,
-              }}
-            />
-          ) : (
-            <ActionButton
-              type="primary"
-              label="Offer Draw"
-              confirmation="Confirm"
-              actionType="attention"
-              iconComponent={<FontAwesomeIcon icon={faHandshake} color={colors.universal.white} />}
-              onSubmit={() => {
-                actions.onOfferDraw();
-                onActionTaken('onOfferDraw');
-              }}
-              disabled={offer?.type === 'draw'}
-              className={cls.gameActionButton}
-              {...dynamicProps}
-            />
-          )}
+          <ActionButton
+            type="primary"
+            label="Offer Draw"
+            confirmation="Confirm"
+            actionType="attention"
+            iconComponent={<FontAwesomeIcon icon={faHandshake} color={colors.universal.white} />}
+            onSubmit={() => {
+              actions.onOfferDraw();
+              onActionTaken('onOfferDraw');
+            }}
+            disabled={offer?.type === 'draw'}
+            // disabled={offer?.type === 'draw' && offer.content.byUser.id === participants.me.userId}
+            className={cls.gameActionButton}
+            {...dynamicProps}
+          />
           {takebackSatus.show && (
             <ActionButton
               type="primary"
