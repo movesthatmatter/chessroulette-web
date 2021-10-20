@@ -16,6 +16,7 @@ import { DialogNotificationTypes } from '../type';
 import { RoomPlayActivityWithGame } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
+import { AwesomeLoader } from 'src/components/AwesomeLoader';
 
 export type GameStateDialogContentProps = {
   activity: RoomPlayActivityWithGame;
@@ -93,10 +94,10 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
               <div
                 style={{
                   textAlign: 'center',
-                  alignContent:'center',
-                  alignItems:'center',
-                  display:'flex',
-                  justifyContent:'center'
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
                 {game.state === 'finished' && (
@@ -220,20 +221,23 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           title="Pending Offer"
           hasCloseButton={false}
           content={
-            <div
+            <div>
+              <AwesomeLoader minimal size="30%" />
+              <div
                 style={{
                   textAlign: 'center',
-                  alignContent:'center',
-                  alignItems:'center',
-                  display:'flex',
-                  justifyContent:'center'
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
-              <Text>
-                Waiting for <strong>{getUserDisplayName(activityLog.pending.toUser)}</strong>
-                {` `}
-                to make a decision...
-              </Text>
+                <Text>
+                  Waiting for <strong>{getUserDisplayName(activityLog.pending.toUser)}</strong>
+                  {` `}
+                  to make a decision...
+                </Text>
+              </div>
             </div>
           }
           onClose={() => () => gameActions.onOfferCanceled()}
@@ -255,19 +259,22 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           title="Challenge Offer"
           hasCloseButton={false}
           content={
-            <div
+            <div>
+              <AwesomeLoader minimal size="30%" />
+              <div
                 style={{
                   textAlign: 'center',
-                  alignContent:'center',
-                  alignItems:'center',
-                  display:'flex',
-                  justifyContent:'center'
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
-              <Text>
-                <strong>{getUserDisplayName(activityLog.pending.byUser)}</strong>
-                {` is challenging you to a New Game`}
-              </Text>
+                <Text>
+                  <strong>{getUserDisplayName(activityLog.pending.byUser)}</strong>
+                  {` is challenging you to a New Game`}
+                </Text>
+              </div>
             </div>
           }
           buttons={[
@@ -292,19 +299,22 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           title="Rematch Offer"
           hasCloseButton={false}
           content={
-            <div
+            <div>
+              <AwesomeLoader minimal size="30%" />
+              <div
                 style={{
                   textAlign: 'center',
-                  alignContent:'center',
-                  alignItems:'center',
-                  display:'flex',
-                  justifyContent:'center'
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
-              <Text>
-                <strong>{getUserDisplayName(activityLog.pending.byUser)}</strong>
-                {` is Offering a Rematch`}
-              </Text>
+                <Text>
+                  <strong>{getUserDisplayName(activityLog.pending.byUser)}</strong>
+                  {` is Offering a Rematch`}
+                </Text>
+              </div>
             </div>
           }
           buttons={[
@@ -329,19 +339,22 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
           title="Draw Offer"
           hasCloseButton={false}
           content={
-            <div
+            <div>
+              <AwesomeLoader minimal size="30%" />
+              <div
                 style={{
                   textAlign: 'center',
-                  alignContent:'center',
-                  alignItems:'center',
-                  display:'flex',
-                  justifyContent:'center'
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
-              <Text>
-                <strong>{getUserDisplayName(activityLog.pending.byUser)}</strong>
-                {` is offering a Draw`}
-              </Text>
+                <Text>
+                  <strong>{getUserDisplayName(activityLog.pending.byUser)}</strong>
+                  {` is offering a Draw`}
+                </Text>
+              </div>
             </div>
           }
           buttons={[
@@ -374,7 +387,7 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
   );
 };
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     position: 'absolute',
     top: 0,
@@ -389,11 +402,13 @@ const useStyles = createUseStyles(theme => ({
     alignItems: 'center',
   },
   dialog: {
-    ...(theme.name === 'lightDefault' ? {
-      ...theme.floatingShadow,
-    } : {
-      boxShadow:'0 12px 26px rgb(0 0 0 / 35%)'
-    }),
+    ...(theme.name === 'lightDefault'
+      ? {
+          ...theme.floatingShadow,
+        }
+      : {
+          boxShadow: '0 12px 26px rgb(0 0 0 / 35%)',
+        }),
     ...softBorderRadius,
     padding: 0,
     position: 'relative',
