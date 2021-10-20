@@ -1,10 +1,11 @@
 import { Key } from 'chessground/types';
-import { ChessInstance, Piece } from 'chess.js';
-import { ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
+import { ChessInstance, Move, Piece } from 'chess.js';
+import { ChessGameColor, ChessGameStateFen, ChessHistory, ChessMove, SimplePGN } from 'dstnd-io';
 import { keyInObject } from 'src/lib/util';
 import { toChessColor } from '../../lib';
 import { ChessgroundProps } from 'react-chessground';
 import { ChessBoardConfig, ChessBoardGameState, ChessBoardType } from './types';
+import { console } from 'window-or-global';
 
 export type ChessDests = Map<Key, Key[]>;
 
@@ -62,40 +63,80 @@ export const isPromotableMove = (piece: Piece, { to: toSquare }: ChessMove) => {
   );
 };
 
+type CalcMovableProps = {
+  type: ChessBoardType;
+  playableColor: ChessGameColor;
+  canInteract?: boolean;
+  playable?: boolean;
+  config?: ChessBoardConfig;
+  displayable?: {
+    fen: ChessGameStateFen;
+    pgn: SimplePGN;
+    history: ChessHistory;
+  };
+};
+
 export const getCurrentChessBoardGameState = (
-  props: CalcMovaleProps,
+  props: CalcMovableProps,
   chess: ChessInstance,
   prev: ChessBoardGameState | undefined
 ): ChessBoardGameState => {
+  const pgn = chess.pgn();
+
   // Offer a way to exit asap if nothing changed
-  if (chess.fen() === prev?.fen) {
+  if (pgn === prev?.pgn && props.displayable?.fen === prev.displayable?.fen) {
     return prev;
   }
 
   const history = chess.history({ verbose: true });
-  const lastMove = history[history.length - 1] as ChessMove;
+  const fen = chess.fen();
 
   return {
-    fen: chess.fen(),
-    pgn: chess.pgn(),
+    pgn,
+    fen,
+    history,
+    displayable: getDisplayableState(
+      {
+        history,
+        fen,
+      },
+      props.displayable
+    ),
     turn: toChessColor(chess.turn()),
     inCheck: chess.in_check(),
-    lastMove,
-    lastMoveFromTo: lastMove ? [lastMove.from, lastMove.to] : undefined,
     isPreMovable: history.length === 0 ? true : history[history.length - 1].color !== chess.turn(),
     movable: calcMovable(props, toDests(chess)),
   };
 };
 
-type CalcMovaleProps = {
-  type: ChessBoardType;
-  canInteract?: boolean;
-  playable?: boolean;
-  config?: ChessBoardConfig;
-  playableColor: ChessGameColor;
+const getDisplayableState = (
+  current: {
+    history: Move[];
+    fen: ChessGameStateFen;
+  },
+  displayable?: CalcMovableProps['displayable']
+): ChessBoardGameState['displayable'] => {
+  // If there are no displayable or they are exactly the same then just show the current
+  if (!displayable || current.fen === displayable.fen) {
+    const lastMove = current.history[current.history.length - 1] as ChessMove;
+
+    return {
+      fen: current.fen,
+      lastMoveFromTo: lastMove ? [lastMove.from, lastMove.to] : undefined,
+    };
+  }
+
+  const displayableLastMove = displayable.history[displayable.history.length - 1] as ChessMove;
+
+  return {
+    fen: displayable.fen,
+    lastMoveFromTo: displayableLastMove
+      ? [displayableLastMove.from, displayableLastMove.to]
+      : undefined,
+  };
 };
 
-const calcMovable = (props: CalcMovaleProps, dests: ChessDests): ChessgroundProps['movable'] => {
+const calcMovable = (props: CalcMovableProps, dests: ChessDests): ChessgroundProps['movable'] => {
   const base = {
     free: false,
     // This is what determines wether someone can move a piece!
