@@ -8,7 +8,7 @@ import { useStateWithCallback } from 'src/lib/hooks/useStateWithCallback';
 import { historyToFen, pgnToFen } from '../../../lib';
 import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 
-type Props = {
+export type ChessGameHistoryProviderProps = {
   history: ChessHistory;
   onMoved?: (move: ChessHistoryMove, atIndex: ChessHistoryIndex) => void;
   onRefocused?: (atIndex: ChessHistoryIndex) => void;
@@ -17,7 +17,7 @@ type Props = {
   resetOnUpdate?: boolean;
 };
 
-export const ChessGameHistoryProvider: React.FC<Props> = ({
+export const ChessGameHistoryProvider: React.FC<ChessGameHistoryProviderProps> = ({
   history,
   resetOnUpdate = true,
   onMoved = noop,

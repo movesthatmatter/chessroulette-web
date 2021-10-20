@@ -69,7 +69,7 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
 
   return (
     <ChessGameHistoryConsumer
-      render={({ history, displayedHistory, onAddMove, displayedIndex }) => (
+      render={({ history, displayed, onAddMove }) => (
         <div className={cls.container}>
           <aside className={cls.side} style={{ height: boardSize, width: leftSide.width }}>
             <AnalysisPanel
@@ -77,8 +77,8 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
                 history.length > 0
                   ? {
                       history,
-                      displayedHistory,
-                      displayedIndex,
+                      displayedHistory: displayed.history,
+                      displayedIndex: displayed.index,
                     }
                   : undefined
               }
@@ -104,16 +104,19 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
               id={analysis.id}
               playable
               canInteract
-              pgn={displayedHistory ? chessHistoryToSimplePgn(displayedHistory) : pgnFromHistory}
+              // TODO: This could be optimized for rerenders
+              pgn={displayed.history ? chessHistoryToSimplePgn(displayed.history) : pgnFromHistory}
               playableColor={homeColor}
+              // TODO: This could be optimized for rerenders
               onMove={(m) => {
-                onAddMove(
-                  {
+                onAddMove({
+                  move: {
                     ...m.move,
                     clock: 0, // the clock doesn't matter on analysis
                   },
-                  displayedIndex
-                );
+                  atIndex: displayed.index,
+                  withRefocus: true,
+                });
               }}
               className={cls.board}
             />

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessGame } from 'src/modules/Games/Chess';
@@ -11,9 +11,9 @@ import { RoomPlayActivityWithGame, RoomPlayParticipantsByColor } from '../types'
 import { PlayActivityMobile } from './PlayActivityMobile';
 import {
   ChessGameHistoryProvider,
+  ChessGameHistoryProviderProps,
   ChessGameHistoryConsumer,
 } from 'src/modules/Games/Chess/components/GameHistory';
-import { historyToPgn } from 'src/modules/Games/Chess/lib';
 import { floatingBoxContainerOffsets, floatingBoxOffsets } from '../../styles';
 import cx from 'classnames';
 import { useFeedbackActions } from 'src/providers/FeedbackProvider/useFeedback';
@@ -53,6 +53,7 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
     [activity, roomConsumer?.boardOrientation]
   );
   const participantsByColor = useMemo(() => getParticipantsByColor(activity), [activity]);
+  const playableColor = activity.iamParticipating ? activity.participants.me.color : homeColor;
 
   const { game } = activity;
 
@@ -62,6 +63,13 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
     }
   }, [activity.iamParticipating, game]);
 
+  const onMoved = useCallback<NonNullable<ChessGameHistoryProviderProps['onMoved']>>(
+    (m) => {
+      gameActions.onMove(m, game.history || [], playableColor);
+    },
+    [gameActions, game.history, playableColor]
+  );
+
   if (deviceSize.isMobile) {
     return (
       <PlayActivityMobile
@@ -69,6 +77,7 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
         deviceSize={deviceSize}
         homeColor={homeColor}
         onTimerFinished={gameActions.onTimerFinished}
+        onMoved={onMoved}
       />
     );
   }
@@ -76,7 +85,12 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
   return (
     <GenericLayoutDesktopRoomConsumer
       renderActivity={({ boardSize, leftSide }) => (
-        <ChessGameHistoryProvider history={game.history || []}>
+        <ChessGameHistoryProvider
+          key={game.id}
+          history={game.history || []}
+          // This could be moved up in a useCallback for optimization
+          onMoved={onMoved}
+        >
           <div className={cls.container}>
             <aside
               className={cls.side}
@@ -120,11 +134,9 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
                     orientation={homeColor}
                     canInteract={activity.iamParticipating}
                     playable={activity.iamParticipating && activity.participants.me.canPlay}
-                    playableColor={
-                      activity.iamParticipating ? activity.participants.me.color : homeColor
-                    }
-                    displayedPgn={historyToPgn(c.displayedHistory)}
-                    // autoCommitMove // TODO: Add this and try it outs
+                    playableColor={playableColor}
+                    displayable={c.displayed}
+                    onAddMove={c.onAddMove}
                     className={cls.board}
                   />
                   <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
