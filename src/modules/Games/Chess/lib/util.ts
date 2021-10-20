@@ -29,6 +29,7 @@ import {
 import { flatten } from 'src/lib/util';
 import { getRelativeMaterialScore } from '../components/GameStateWidget/util';
 import { Game, GameFromGameState } from '../../types';
+import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 
 export const getStartingPgn = () => getNewChessGame().pgn();
 export const getStartingFen = () => getNewChessGame().fen();
@@ -122,6 +123,7 @@ export const pairedToLinearIndex = (index: PairedIndex) => index[0] * 2 + index[
 export const reversedLinearIndex = (history: ChessHistory, index: number) =>
   history.length - index - 1;
 
+// @deprecated in favor of the safer chessHistoryToSimplePgn
 export const historyToPgn = (moves: ChessHistory): ChessGameStatePgn =>
   toPairedHistory(moves)
     .map(
@@ -139,7 +141,7 @@ export const pgnToFen = (pgn: ChessGameStatePgn) => getNewChessGame(pgn).fen();
 export const pgnToHistory = (pgn: ChessGameStatePgn) =>
   getNewChessGame(pgn).history({ verbose: true });
 
-export const historyToFen = (h: ChessHistory) => pgnToFen(historyToPgn(h));
+export const historyToFen = (h: ChessHistory) => pgnToFen(chessHistoryToSimplePgn(h));
 
 export const inCheckMate = (pgn: ChessGameStatePgn) => getNewChessGame(pgn).in_checkmate();
 export const inCheck = (pgn: ChessGameStatePgn) => getNewChessGame(pgn).in_check();
