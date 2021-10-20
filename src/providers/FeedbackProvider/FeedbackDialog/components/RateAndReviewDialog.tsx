@@ -137,9 +137,9 @@ export const RateAndReviewDialog: React.FC<Props> = (props) => {
                     value={window.location.origin}
                     onCopied={() => {
                       // Wait a bit till I show the Thank You
-                      setTimeout(() => {
-                        props.onDone(rating);
-                      }, seconds(2));
+                      // setTimeout(() => {
+                      //   props.onDone(rating);
+                      // }, seconds(2));
 
                       try {
                         share({
