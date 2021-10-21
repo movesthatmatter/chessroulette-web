@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { noop } from '../util';
 
+// Unshamefullly Stolen from https://stackoverflow.com/a/61842546/2093626
+// Also, check this other one with a better explnation https://stackoverflow.com/a/61725731/2093626
+//
+// This implements the this.setState(newState, cb) functionality
+// The only drawback is:
+//   - If the passed arrow function references a variable outer function,
+//     then it will capture current value not a value after the state is updated.
+//
+//   So keep this drawback in mind, bu tin practice it shouldn't be too hard to not have to do that!
 export function useStateWithCallback<S>(initialState: S) {
   const [state, setState] = useState(initialState);
   const cbRef = useRef<Function | null>(null); // init mutable ref container for callbacks
