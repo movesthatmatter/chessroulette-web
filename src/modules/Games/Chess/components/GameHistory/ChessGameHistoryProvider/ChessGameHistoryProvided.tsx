@@ -11,7 +11,7 @@ export const ChessGameHistoryProvided: React.FC<Props> = (props) => {
       render={(c) => (
         <GameHistory
           history={c.history}
-          focusedIndex={c.displayedIndex}
+          focusedIndex={c.displayed.index}
           onRefocus={c.onRefocus}
           {...props}
         />

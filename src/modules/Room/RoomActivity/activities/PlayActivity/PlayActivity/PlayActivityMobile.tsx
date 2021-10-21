@@ -3,7 +3,11 @@ import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { ChessGame } from 'src/modules/Games/Chess';
-import { ChessGameHistoryConsumer, ChessGameHistoryProvider } from 'src/modules/Games/Chess/components/GameHistory';
+import {
+  ChessGameHistoryConsumer,
+  ChessGameHistoryProvider,
+  ChessGameHistoryProviderProps,
+} from 'src/modules/Games/Chess/components/GameHistory';
 import { useGameTimesLeft } from 'src/modules/Games/Chess/components/GameStateWidget/useGameState';
 import { PlayerBox } from 'src/modules/Games/Chess/components/PlayerBox';
 import { historyToPgn } from 'src/modules/Games/Chess/lib';
@@ -19,6 +23,7 @@ import { roomPlayActivityParticipantToChessPlayer } from '../util';
 type Props = ActivityCommonProps & {
   activity: RoomPlayActivityWithGame;
   homeColor: ChessGameColor;
+  onMoved: ChessGameHistoryProviderProps['onMoved'];
   onTimerFinished: (color: ChessGameColor) => void;
   displayedPgn?: SimplePGN;
 };
@@ -26,8 +31,8 @@ type Props = ActivityCommonProps & {
 export const PlayActivityMobile: React.FC<Props> = ({
   activity,
   homeColor,
+  onMoved,
   onTimerFinished,
-  displayedPgn,
 }) => {
   const cls = useStyles();
   const { game } = activity;
@@ -63,7 +68,7 @@ export const PlayActivityMobile: React.FC<Props> = ({
         </div>
       )}
       renderActivity={({ boardSize }) => (
-        <ChessGameHistoryProvider history={game.history || []}>
+        <ChessGameHistoryProvider history={game.history || []} onMoved={onMoved}>
           <div className={cls.mobileMainContainer}>
             {activity.iamParticipating && (
               <div className={cls.mobilePlayerWrapper}>
@@ -91,11 +96,13 @@ export const PlayActivityMobile: React.FC<Props> = ({
                     game={game}
                     size={boardSize}
                     canInteract={activity.iamParticipating}
-                    playableColor={activity.iamParticipating ? activity.participants.me.color : homeColor}
+                    playableColor={
+                      activity.iamParticipating ? activity.participants.me.color : homeColor
+                    }
                     playable={activity.iamParticipating && activity.participants.me.canPlay}
-                    // displayedPgn={displayedPgn}
-                    displayedPgn={historyToPgn(c.displayedHistory)}
+                    displayable={c.displayed}
                     className={cls.board}
+                    onAddMove={c.onAddMove}
                   />
                 )}
               />

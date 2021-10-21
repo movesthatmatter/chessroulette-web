@@ -1,3 +1,4 @@
+import { Move } from 'chess.js';
 import { ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
 import { ChessgroundProps } from 'react-chessground';
 
@@ -8,12 +9,17 @@ export type ChessBoardConfig = {
 };
 
 export type ChessBoardGameState = {
-  fen: ChessGameStateFen;
   pgn: ChessGameStatePgn;
+  fen: ChessGameStateFen;
+  history: Move[];
+
   turn: ChessGameColor;
   inCheck: boolean;
-  lastMove: ChessMove | undefined;
-  lastMoveFromTo: [ChessMove['from'], ChessMove['to']] | undefined;
   isPreMovable: boolean;
   movable: ChessgroundProps['movable'];
+
+  displayable: {
+    fen: ChessGameStateFen;
+    lastMoveFromTo: [ChessMove['from'], ChessMove['to']] | undefined;
+  }
 };

@@ -37,6 +37,7 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = React.memo(
     onMove,
     onPreMove = noop,
     onPreMoveCanceled = noop,
+    lastMove = [], // This (not undefined) ensure it gets cleared as well!
     ...props
   }) => {
     const cls = useStyles();
@@ -110,6 +111,7 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = React.memo(
           })}
           onMove={(orig, dest) => onMove({ to: dest as Square, from: orig as Square })}
           orientation={orientation}
+          lastMove={lastMove}
           {...props}
         />
         {promotionalMove && (

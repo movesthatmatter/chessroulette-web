@@ -1,34 +1,20 @@
-import { ChessHistory, isSimplePGN, SimplePGN } from 'dstnd-io';
-import React, { useEffect, useState } from 'react';
+import { SimplePGN } from 'dstnd-io';
+import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
 import { Text } from 'src/components/Text';
 import { spacers } from 'src/theme/spacers';
 import { LabeledFloatingBox } from './LabeledFloatingBox';
 import { MiniClipboardCopyButton } from 'src/components/ClipboardCopy/MiniClipboardCopyButton';
 
 type Props = {
-  historyOrPgn: ChessHistory | SimplePGN;
+  pgn: SimplePGN;
   containerClassName?: string;
   contentClassName?: string;
 };
 
-const toPgn = (pgnOrHistory: ChessHistory | SimplePGN): SimplePGN => {
-  if (typeof pgnOrHistory === 'string') {
-    return pgnOrHistory;
-  }
-
-  return chessHistoryToSimplePgn(pgnOrHistory);
-};
-
-export const PgnBox: React.FC<Props> = (props) => {
+export const PgnBox: React.FC<Props> = ({ pgn, ...props }) => {
   const cls = useStyles();
-  const [pgn, setPgn] = useState(toPgn(props.historyOrPgn));
-
-  useEffect(() => {
-    setPgn(toPgn(props.historyOrPgn));
-  }, [props.historyOrPgn]);
 
   return (
     <LabeledFloatingBox

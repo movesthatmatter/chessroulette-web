@@ -1,4 +1,10 @@
-import { ChessGameColor, ChessHistory, ChessHistoryIndex, SimplePGN } from 'dstnd-io';
+import {
+  ChessGameColor,
+  ChessGameStateFen,
+  ChessHistory,
+  ChessHistoryIndex,
+  SimplePGN,
+} from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
@@ -18,6 +24,8 @@ export type AnalysisPanelProps = {
     history: ChessHistory;
     displayedHistory: ChessHistory;
     displayedIndex: ChessHistoryIndex;
+    displayedFen: ChessGameStateFen;
+    displayedPgn: SimplePGN;
   };
   homeColor: ChessGameColor;
   gameAndPlayers?: AnalysisStateWidgetProps['gameAndPlayers'];
@@ -54,12 +62,9 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
             boxContainerClassName={cls.historyContainer}
             historyBoxContentClassName={cls.historyBoxContent}
           />
-          <FenBox
-            historyOrPgn={analysisRecord.displayedHistory}
-            containerClassName={cx(cls.box, cls.fenBox)}
-          />
+          <FenBox fen={analysisRecord.displayedFen} containerClassName={cx(cls.box, cls.fenBox)} />
           <PgnBox
-            historyOrPgn={analysisRecord.history}
+            pgn={analysisRecord.displayedPgn}
             containerClassName={cx(cls.box, cls.pgnBoxContainer)}
             contentClassName={cls.pgnBox}
           />
