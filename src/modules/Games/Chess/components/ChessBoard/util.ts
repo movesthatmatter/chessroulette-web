@@ -76,6 +76,20 @@ type CalcMovableProps = {
   };
 };
 
+// I'm thinking this should be returned by the Chess library (both on the server and on client)
+//  after an action like move (or any other), with a checksum type of identifier (probably fen)
+//  to easily compare. It will be generated on the client upon move, saved and displayed right away
+//  and when it eventually comes back from the server there's no more need to update because the 
+//  fens will be the same! This can't be done by reference, which then means it either needs to be
+//  compared at the moment of receive on the client by checking the history, thus being expensive or,
+//  just reupdated, which triggers another render (thus being again expensive)
+//  There might be an even easier way to do it – based on some trust, that if a move was made then it
+//  must be right, but I don't know yet if that suffices.
+// 
+// I like the idea that if a gameUpdated is received, jsut checking one checksum (fen) aginst the client
+//  will be enough to decide wether the update is really needed or not!
+// 
+// TODO: scheduled for @deprecation for the above reasons
 export const getCurrentChessBoardGameState = (
   props: CalcMovableProps,
   chess: ChessInstance,
