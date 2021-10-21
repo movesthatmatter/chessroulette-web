@@ -18,8 +18,6 @@ export type ChessBoardGameState = {
   isPreMovable: boolean;
   movable: ChessgroundProps['movable'];
 
-  // The Fen is only used for displayable purposes
-  //  while the fen & pgn is used to calculate the game actions (move, premove, etc...)
   displayable: {
     fen: ChessGameStateFen;
     lastMoveFromTo: [ChessMove['from'], ChessMove['to']] | undefined;
