@@ -81,6 +81,8 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
                       history,
                       displayedHistory: displayed.history,
                       displayedIndex: displayed.index,
+                      displayedFen: displayed.fen,
+                      displayedPgn: displayed.pgn,
                     }
                   : undefined
               }
