@@ -37,7 +37,7 @@ export const StyledChessBoard: React.FC<StyledChessBoardProps> = React.memo(
     onMove,
     onPreMove = noop,
     onPreMoveCanceled = noop,
-    lastMove = [],
+    lastMove = [], // This (not undefined) ensure it gets cleared as well!
     ...props
   }) => {
     const cls = useStyles();
