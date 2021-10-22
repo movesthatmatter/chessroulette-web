@@ -3,7 +3,14 @@ import { Page } from 'src/components/Page';
 import chessBackground from './assets/chess_icons.png';
 import darkChessBackground from './assets/dark_splash.svg';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile, CustomTheme } from 'src/theme';
+import {
+  minMediaQuery,
+  maxMediaQuery,
+  onlyMobile,
+  onlySmallMobile,
+  CustomTheme,
+  floatingShadow,
+} from 'src/theme';
 import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
 import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
@@ -11,6 +18,7 @@ import { spacers } from 'src/theme/spacers';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
+import { Button } from 'src/components/Button';
 
 type Props = {};
 
@@ -50,7 +58,7 @@ export const LandingPage: React.FC<Props> = () => {
 
             <div className={cls.list}>
               <h3 className={cls.text}>Play with friends in a private room.</h3>
-              <h3 className={cls.text}>Start a quick game with someone across the world.</h3>
+              <h3 className={cls.text}>P2P game analysis in sync for everyone.</h3>
               <h3 className={cls.text}>
                 Face to Face. Live. Free. <Emoji symbol="😎" />
               </h3>
@@ -70,7 +78,7 @@ export const LandingPage: React.FC<Props> = () => {
                 }}
               />
 
-              {deviceSize.isDesktop && (
+              {deviceSize.isDesktop ? (
                 <CreateRoomButtonWidget
                   label="Analyze"
                   type="primary"
@@ -86,6 +94,18 @@ export const LandingPage: React.FC<Props> = () => {
                     activityType: 'analysis',
                   }}
                 />
+              ) : (
+                <>
+                  <Button
+                    clear
+                    label="Join Our Discord"
+                    size="medium"
+                    type={'primary'}
+                    onClick={() => {
+                      window.open('https://discord.gg/XT7rvgsH66');
+                    }}
+                  />
+                </>
               )}
               {/* <LichessChallengeButton label="Lichess" size="small" type="secondary" /> */}
             </div>
@@ -185,6 +205,12 @@ const useStyles = createUseStyles((theme) => ({
       marginTop: '48px',
       justifyContent: 'flex-start',
     }),
+
+    ...onlyMobile({
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    })
   },
   rightSide: {
     flex: 1,
@@ -214,5 +240,11 @@ const useStyles = createUseStyles((theme) => ({
       background: theme.colors.primary,
       color: 'white',
     }),
+
+    ...onlyMobile({
+      ...makeImportant({
+        marginRight: 0,
+      })
+    })
   },
 }));
