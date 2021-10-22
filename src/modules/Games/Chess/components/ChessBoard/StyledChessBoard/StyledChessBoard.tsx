@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import cx from 'classnames';
 import blueBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/board/blue.svg';
 import Chessground, { ChessgroundProps, ChessgroundApi } from 'react-chessground';
-import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
+import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
 import { ChessGameColor, ChessMove, PromotionalChessPieceType } from 'dstnd-io';
 import { Square } from 'chess.js';
 import { noop } from 'src/lib/util';
@@ -337,7 +337,7 @@ const useStyles = createUseStyles((theme) => {
         '& cg-board square.last-move': {
           backgroundColor: colors.lastMove,
         },
-      } as CSSProperties),
+      } as NestedCSSElement),
     },
     promoDialogLayer: {
       position: 'absolute',
@@ -360,9 +360,11 @@ const useStyles = createUseStyles((theme) => {
         bottom: 0,
       }),
 
-      '& $promoPiecesContainer': {
-        flexDirection: 'column-reverse',
-      },
+      ...{
+        '& $promoPiecesContainer': {
+          flexDirection: 'column-reverse',
+        },
+      } as NestedCSSElement,
     },
     promoPiecesContainer: {
       textAlign: 'center',
