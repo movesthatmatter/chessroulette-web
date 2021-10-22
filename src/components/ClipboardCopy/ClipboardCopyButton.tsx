@@ -6,7 +6,6 @@ import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import { seconds } from 'src/lib/time';
 import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
-import { CustomTheme} from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = Omit<ButtonProps, 'onClick'> & {

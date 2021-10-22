@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { createUseStyles, CSSProperties, makeImportant, NestedCSSElement } from 'src/lib/jss';
-import { CustomTheme, effects, onlyMobile } from 'src/theme';
+import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
+import { effects, onlyMobile } from 'src/theme';
 import { Text } from '../Text/Text';
 import cx from 'classnames';
-import { getBoxShadow } from 'src/theme/util';
-import hexToRgba from 'hex-to-rgba';
 import { HTMLTextAreaElement } from 'window-or-global';
 import { spacers } from 'src/theme/spacers';
 
@@ -35,7 +33,7 @@ export const TextArea: React.FC<Props> = ({ className, label, value, ...props })
           cls.inputWrapper,
           isFocused && cls.inputWrapperFocused,
           props.readOnly && cls.inputWrapperReadonly,
-          isInvalid &&  cls.inputWrapperError
+          isInvalid && cls.inputWrapperError
         )}
       >
         <div className={cls.topPadding} />
@@ -61,7 +59,7 @@ export const TextArea: React.FC<Props> = ({ className, label, value, ...props })
 
 const padding = spacers.get(0.75);
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     marginBottom: '12px',
 
@@ -73,7 +71,7 @@ const useStyles = createUseStyles(theme => ({
       '&:first-child $labelWrapper': {
         marginTop: '0', // Remove the Negative Margin for the first element!
       },
-    } as CSSProperties['nestedKey']),
+    } as NestedCSSElement),
   },
   labelWrapper: {
     paddingBottom: spacers.smaller,
@@ -117,7 +115,7 @@ const useStyles = createUseStyles(theme => ({
         overflow: 'hidden',
         ...effects.floatingShadow,
       },
-    } as CSSProperties),
+    } as NestedCSSElement),
   },
   inputWrapperFocused: {},
   inputWrapperError: {
@@ -132,9 +130,9 @@ const useStyles = createUseStyles(theme => ({
       },
       '& $textAreaWrapper': {
         borderColor: theme.colors.negative,
-        boxShadow: theme.textArea.boxShadow
+        boxShadow: theme.textArea.boxShadow,
       },
-    } as CSSProperties),
+    } as NestedCSSElement),
   },
   inputWrapperReadonly: {
     ...makeImportant({
@@ -150,7 +148,7 @@ const useStyles = createUseStyles(theme => ({
         background: theme.colors.neutralLighter,
         boxShadow: 'none',
       },
-    } as CSSProperties),
+    } as NestedCSSElement),
 
     ...({
       '&$inputWrapperFocused': {
@@ -190,7 +188,7 @@ const useStyles = createUseStyles(theme => ({
       '&:focus-visible': {
         outline: 'none',
       },
-    } as CSSProperties),
+    } as NestedCSSElement),
 
     ...makeImportant({
       border: 0,

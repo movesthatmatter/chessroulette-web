@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
-import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
+import React from 'react';
+import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
 import ReactCodeInput from 'react-verification-code-input';
-import { CustomTheme, onlyMobile } from 'src/theme';
+import { onlyMobile } from 'src/theme';
 import cx from 'classnames';
 
 type Props = Omit<
-  React.ComponentProps<typeof ReactCodeInput>, 'fieldWidth' | 'fieldHeight' | 'fields' | 'type'
+  React.ComponentProps<typeof ReactCodeInput>,
+  'fieldWidth' | 'fieldHeight' | 'fields' | 'type'
 > & {
   fieldsCount?: number;
   fieldSize?: number;
@@ -33,22 +34,24 @@ export const CodeInput: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     marginBottom: '16px',
   },
   codeInputErrorWrapper: {
-    '&$codeInput input': {
-      ...makeImportant({
-        border : `1px solid ${theme.colors.negative}`
-      }),
-    },
+    ...({
+      '&$codeInput input': {
+        ...makeImportant({
+          border: `1px solid ${theme.colors.negative}`,
+        }),
+      },
+    } as NestedCSSElement),
   },
   codeInput: {
     ...makeImportant({
       width: '100%',
     }),
-    ...{
+    ...({
       '& > div': {
         ...makeImportant({
           width: '100%',
@@ -56,14 +59,14 @@ const useStyles = createUseStyles(theme => ({
           justifyContent: 'space-between',
         }),
       },
-      
+
       '& input': {
         ...makeImportant({
           fontFamily: theme.text.family,
           backgroundColor: theme.textInput.backgroundColor,
-          color:theme.text.baseColor,
+          color: theme.text.baseColor,
           borderRadius: '8px',
-          border: theme.textInput.border
+          border: theme.textInput.border,
         }),
 
         ...onlyMobile({
@@ -79,8 +82,8 @@ const useStyles = createUseStyles(theme => ({
             borderWidth: '2px',
             caretColor: theme.colors.neutral,
           }),
-        }
+        },
       },
-    } as CSSProperties,
+    } as NestedCSSElement),
   },
 }));
