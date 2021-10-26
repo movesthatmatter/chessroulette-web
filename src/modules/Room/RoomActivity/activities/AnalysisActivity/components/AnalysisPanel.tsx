@@ -81,6 +81,9 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
                 content: 'Are you sure you want to clear the analysis?',
                 buttonsStacked: false,
               }}
+              cancelButtonProps={{
+                type: 'secondary',
+              }}
               confirmButtonProps={{
                 type: 'negative',
                 label: 'Yes',
