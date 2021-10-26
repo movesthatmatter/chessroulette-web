@@ -46,6 +46,7 @@ export const defaultThemeDark = {
       positive: 'linear-gradient(91.41deg, #1775CE 47.4%, #3BC0C8 97.79%)',
       attention: colors.dark.attention,
       secondary: 'linear-gradient(332deg, #ED65D4 6.21%, #1775CE 52.98%)',
+      // secondary: 'linear-gradient(0deg, #6FCEBF 50%, #3C79E9 50%)',
       negative: 'linear-gradient(90.67deg, #CE186B 36.29%, #FB3B80 99.64%)',
       neutral: '##DBDDE0',
     },

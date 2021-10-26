@@ -11,7 +11,7 @@ export type ContainerDimensions = {
  * Hook that alerts clicks outside of the passed ref
  */
 export function useContainerDimensions(targetRef: React.RefObject<HTMLElement>) {
-  const [dimensions, setDimensions] = useState<ContainerDimensions>({ 
+  const [dimensions, setDimensions] = useState<ContainerDimensions>({
     width: 0,
     height: 0,
     updated: false,
@@ -19,13 +19,24 @@ export function useContainerDimensions(targetRef: React.RefObject<HTMLElement>) 
 
   useEffect(() => {
     const onResizeHandler = () => {
-      if (targetRef.current) {
-        setDimensions({
+      setDimensions((prev) => {
+        if (!targetRef.current) {
+          return prev;
+        }
+
+        const next = {
           width: targetRef.current.offsetWidth,
           height: targetRef.current.offsetHeight,
           updated: true,
-        });
-      }
+        };
+
+        // If nothing changed return prev!
+        if (prev.height === next.height && prev.width === next.width && next.updated === true) {
+          return prev;
+        }
+
+        return next;
+      });
     };
 
     onResizeHandler();

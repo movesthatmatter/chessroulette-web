@@ -1,4 +1,5 @@
 import { Pubsy } from 'src/lib/Pubsy';
+import { console } from 'window-or-global';
 import { PeerMessageEnvelope } from '../records';
 
 export class Proxy {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
@@ -6,7 +6,11 @@ import { softBorderRadius } from 'src/theme';
 import { RoomDetailsConsumer } from './RoomDetailsConsumer';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
 import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
-import { DesktopRoomLayout, LayoutContainerDimensions } from '../Layouts';
+import {
+  DesktopRoomLayout,
+  GenericLayoutExtendedDimensions,
+  LayoutContainerDimensions,
+} from '../Layouts';
 import { Logo } from 'src/components/Logo';
 import { UserMenu } from 'src/components/Navigation';
 import { getBoxShadow } from 'src/theme/util';
@@ -34,10 +38,97 @@ const LAYOUT_RATIOS = {
   rightSide: 2.1,
 };
 
-
 // TODO: This isn't provided for now and don't think it needs to be but for now it sits here
 export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((props) => {
   const cls = useStyles();
+
+  const renderTopComponent = useCallback<(d: GenericLayoutExtendedDimensions) => ReactNode>(
+    ({ right, center }) => (
+      <div className={cls.top}>
+        <div className={cls.mainTop}>
+          <div className={cls.logoWrapper} style={{ flex: 1, marginRight: '10px' }}>
+            <Logo asLink withBeta />
+          </div>
+          <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
+            <div className={cls.linksContainer}>
+              <SwitchActivityWidgetRoomConsumer
+                render={({ onSwitch, room }) => (
+                  <NavigationLink
+                    title="Activities"
+                    withDropMenu={{
+                      items: [
+                        {
+                          title: 'Play',
+                          disabled: room.currentActivity.type === 'play',
+                          onClick: () => onSwitch({ activityType: 'play' }),
+                        },
+                        {
+                          title: 'Analyze',
+                          disabled:
+                            (room.currentActivity.type === 'play' &&
+                              room.currentActivity.game?.state === 'started') ||
+                            room.currentActivity.type === 'analysis',
+                          onClick: () => onSwitch({ activityType: 'analysis' }),
+                        },
+                      ],
+                    }}
+                  />
+                )}
+              />
+            </div>
+            <div style={{ width: '20px' }} />
+            <UserMenu reversed showPeerStatus />
+          </div>
+        </div>
+        <div style={{ width: right.width }} />
+      </div>
+    ),
+    []
+  );
+
+  const renderRightSideComponent = useCallback<(d: GenericLayoutExtendedDimensions) => ReactNode>(
+    ({ container }) => (
+      <div className={cx(cls.side, cls.rightSide)}>
+        <div className={cls.rightSideTop} style={{ height: `${TOP_HEIGHT}px` }}>
+          <div className={cls.roomInfoContainer}>
+            <RoomDetailsConsumer />
+            <div style={{ display: 'flex' }}>
+              <DarkModeSwitch />
+              <div style={{ width: spacers.large }} />
+              <RoomControlMenuConsumer />
+            </div>
+          </div>
+        </div>
+        <div className={cls.rightSideStretchedContainer}>
+          <div>
+            <StreamingBoxRoomConsumer containerClassName={cls.streamingBox} />
+          </div>
+          <RoomTabsWidgetRoomConsumer
+            bottomContainerHeight={BOTTOM_HEIGHT + container.verticalPadding - 1}
+          />
+        </div>
+      </div>
+    ),
+    []
+  );
+
+  const renderActivityComponent = useCallback<(d: GenericLayoutExtendedDimensions) => ReactNode>(
+    (extendedDimensions) => (
+      <div className={cls.activityContainer}>
+        {props.renderActivity({
+          isMobile: false,
+          boardSize: extendedDimensions.center.width,
+          leftSide: {
+            ...extendedDimensions.left,
+            width: extendedDimensions.left.width + extendedDimensions.main.horizontalPadding,
+          },
+        })}
+      </div>
+    ),
+    [props.renderActivity]
+  );
+
+  const renderBottomComponent = useCallback(() => null, []);
 
   return (
     <div className={cls.container}>
@@ -46,89 +137,18 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
         topHeight={TOP_HEIGHT}
         bottomHeight={BOTTOM_HEIGHT}
         minSpaceBetween={MIN_SPACE_BETWEEN}
-        renderTopComponent={({ left, right, center }) => (
-          <div className={cls.top}>
-            <div className={cls.mainTop}>
-              <div className={cls.logoWrapper} style={{ flex: 1, marginRight: '10px' }}>
-                <Logo asLink withBeta />
-              </div>
-              <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
-                <div className={cls.linksContainer}>
-                  <SwitchActivityWidgetRoomConsumer
-                    render={({ onSwitch, room }) => (
-                      <NavigationLink
-                        title="Activities"
-                        withDropMenu={{
-                          items: [
-                            {
-                              title: 'Play',
-                              disabled: room.currentActivity.type === 'play',
-                              onClick: () => onSwitch({ activityType: 'play' }),
-                            },
-                            {
-                              title: 'Analyze',
-                              disabled:
-                                (room.currentActivity.type === 'play' &&
-                                  room.currentActivity.game?.state === 'started') ||
-                                room.currentActivity.type === 'analysis',
-                              onClick: () => onSwitch({ activityType: 'analysis' }),
-                            },
-                          ],
-                        }}
-                      />
-                    )}
-                  />
-                </div>
-                <div style={{ width: '20px' }} />
-                <UserMenu reversed showPeerStatus />
-              </div>
-            </div>
-            <div style={{ width: right.width }} />
-          </div>
-        )}
-        renderRightSideComponent={({ container }) => (
-          <div className={cx(cls.side, cls.rightSide)}>
-            <div className={cls.rightSideTop} style={{ height: `${TOP_HEIGHT}px` }}>
-              <div className={cls.roomInfoContainer}>
-                <RoomDetailsConsumer />
-                <div
-                  style={{
-                    display: 'flex',
-                  }}
-                >
-                  <DarkModeSwitch />
-                  <div style={{ width: spacers.large }} />
-                  <RoomControlMenuConsumer />
-                </div>
-              </div>
-            </div>
-            <div className={cls.rightSideStretchedContainer}>
-              <div>
-                <StreamingBoxRoomConsumer containerClassName={cls.streamingBox} />
-              </div>
-              <RoomTabsWidgetRoomConsumer
-                bottomContainerHeight={BOTTOM_HEIGHT + container.verticalPadding - 1}
-              />
-            </div>
-          </div>
-        )}
-        renderBottomComponent={() => null}
-        renderActivityComponent={(extendedDimensions) => (
-          <div className={cls.activityContainer}>
-            {props.renderActivity({
-              isMobile: false,
-              boardSize: extendedDimensions.center.width,
-              leftSide: {
-                ...extendedDimensions.left,
-                width: extendedDimensions.left.width + extendedDimensions.main.horizontalPadding,
-              },
-            })}
-          </div>
-        )}
+        renderTopComponent={renderTopComponent}
+        renderRightSideComponent={renderRightSideComponent}
+        renderBottomComponent={renderBottomComponent}
+        renderActivityComponent={renderActivityComponent}
       />
     </div>
   );
 });
+
+GenericLayoutDesktopRoomConsumer.whyDidYouRender = {
+  customName: GenericLayoutDesktopRoomConsumer,
+} as any;
 
 const useStyles = createUseStyles((theme) => ({
   container: {

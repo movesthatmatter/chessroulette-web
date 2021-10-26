@@ -1,9 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { RoomAnalysisActivity } from './types';
 import { ActivityCommonProps } from '../types';
-import { ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/GameHistory';
+import {
+  ChessGameHistoryConsumer,
+  ChessGameHistoryContextProps,
+  useChessGameHistory,
+} from 'src/modules/Games/Chess/components/GameHistory';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { LayoutContainerDimensions } from 'src/modules/Room/Layouts';
 import { AnalysisPanel, AnalysisPanelProps } from './components/AnalysisPanel';
@@ -23,13 +27,8 @@ export type AnalysisActivityProps = ActivityCommonProps & {
   onImportedGame: AnalysisPanelProps['onImportedGame'];
 };
 
-const getParticipantsByColor = (analysis: AnalysisRecord) => {
-  if (!analysis.game) {
-    return undefined;
-  }
-
-  return toChessPlayersByColor(analysis.game.players);
-};
+const getParticipantsByColor = (game: NonNullable<AnalysisRecord['game']>) =>
+  toChessPlayersByColor(game.players);
 
 // This always defaults to White
 const getHomeColor = (
@@ -53,7 +52,7 @@ const getHomeColor = (
   return orientationInverted ? otherChessColor(homeColor) : homeColor;
 };
 
-export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
+export const AnalysisActivity: React.FC<AnalysisActivityProps> = React.memo(({
   participants,
   analysis,
   boardSize,
@@ -63,63 +62,52 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
 }) => {
   const cls = useStyles();
   const roomConsumer = useRoomConsumer();
-  const participantsByColor = getParticipantsByColor(analysis);
   const homeColor = useMemo(
     () => getHomeColor(analysis, participants, roomConsumer?.boardOrientation === 'away'),
     [roomConsumer?.boardOrientation, analysis, participants]
   );
+  const { history, displayed, onAddMove } = useChessGameHistory();
+
+  const gameAndPlayers = useMemo(() => {
+    if (!analysis.game) {
+      return undefined;
+    }
+
+    return {
+      players: getParticipantsByColor(analysis.game),
+      game: analysis.game,
+    };
+  }, [analysis.game]);
 
   return (
-    <ChessGameHistoryConsumer
-      render={({ history, displayed, onAddMove }) => (
-        <div className={cls.container}>
-          <aside className={cls.side} style={{ height: boardSize, width: leftSide.width }}>
-            <AnalysisPanel
-              analysisRecord={
-                history.length > 0
-                  ? {
-                      history,
-                      displayedHistory: displayed.history,
-                      displayedIndex: displayed.index,
-                      displayedFen: displayed.fen,
-                      displayedPgn: displayed.pgn,
-                    }
-                  : undefined
-              }
-              onImportedPgn={onImportedPgn}
-              onImportedGame={onImportedGame}
-              homeColor={homeColor}
-              gameAndPlayers={
-                analysis.game && participantsByColor
-                  ? {
-                      players: participantsByColor,
-
-                      // TODO: This should be memoized or somewhere up the chain so it doesn't change too often
-                      game: analysis.game,
-                    }
-                  : undefined
-              }
-            />
-          </aside>
-          <div className={cls.boardContainer} style={{ height: boardSize }}>
-            <AnalysisBoard
-              size={boardSize}
-              id={analysis.id}
-              playable
-              canInteract
-              history={displayed.history}
-              displayedIndex={displayed.index}
-              playableColor={homeColor}
-              onAddMove={onAddMove}
-              className={cls.board}
-            />
-            <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
-          </div>
-        </div>
-      )}
-    />
+    <div className={cls.container}>
+      <aside className={cls.side} style={{ height: boardSize, width: leftSide.width }}>
+        <AnalysisPanel
+          history={history}
+          displayed={displayed}
+          onImportedPgn={onImportedPgn}
+          onImportedGame={onImportedGame}
+          homeColor={homeColor}
+          gameAndPlayers={gameAndPlayers}
+        />
+      </aside>
+      <div className={cls.boardContainer} style={{ height: boardSize }}>
+        <AnalysisBoard
+          size={boardSize}
+          id={analysis.id}
+          playable
+          canInteract
+          pgn={displayed.pgn}
+          displayedIndex={displayed.index}
+          playableColor={homeColor}
+          onAddMove={onAddMove}
+          className={cls.board}
+        />
+        <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
+      </div>
+    </div>
   );
-};
+});
 
 const useStyles = createUseStyles({
   container: {

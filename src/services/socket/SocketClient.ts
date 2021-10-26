@@ -50,6 +50,7 @@ import {
   SwitchRoomActivityRequestPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
+import { logsy } from 'src/lib/logsy';
 
 type ReceivableMessagesMap = {
   peerJoinedRoom: PeerJoinedRoomPayload;
@@ -111,9 +112,8 @@ type SendableMessagesMap = {
   analysisMoveRequestPayload: AnalysisMoveRequestPayload;
   analysisRefocusRequestPayload: AnalysisRefocusRequestPayload;
   analysisDrawnShapesUpdatedRequestPayload: AnalysisDrawnShapesUpdatedRequestPayload;
-  analysisImportPgnRequestPayload: AnalysisImportPgnRequestPayload,
-  analysisImportGameRequestPayload: AnalysisImportGameRequestPayload,
-
+  analysisImportPgnRequestPayload: AnalysisImportPgnRequestPayload;
+  analysisImportGameRequestPayload: AnalysisImportGameRequestPayload;
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {
@@ -141,36 +141,40 @@ export class SocketClient {
     });
 
     this.connection.addEventListener('message', ({ data }) => {
-      io.toResult(socketPayload.decode(JSON.parse(data))).map((msg) => {
-        // I don't like this at all but there's no way to map
-        //  the types to the message in a clean way in typescript
-        //  as it doesn't (yet) support mapping by tagged union kinds
-        // See: https://github.com/microsoft/TypeScript/issues/30581
-        switch (msg.kind) {
-          case 'connectionOpened':
-            this.pubsy.publish('connectionOpened', msg);
-            break;
-          case 'peerJoinedRoom':
-            this.pubsy.publish('peerJoinedRoom', msg);
-            break;
-          case 'joinedRoomUpdated':
-            this.pubsy.publish('joinedRoomUpdated', msg);
-            break;
-          case 'myStats':
-            this.pubsy.publish('myStats', msg);
-            break;
-          case 'joinRoomSuccess':
-            this.pubsy.publish('joinRoomSuccess', msg);
-            break;
-          case 'joinRoomFailure':
-            this.pubsy.publish('joinRoomFailure', msg);
-            break;
-          default:
-            break;
-        }
+      io.toResult(socketPayload.decode(JSON.parse(data)))
+        .mapErr((e) => {
+          logsy.error('[SocketClient] Payload Decoding Error', e);
+        })
+        .map((msg) => {
+          // I don't like this at all but there's no way to map
+          //  the types to the message in a clean way in typescript
+          //  as it doesn't (yet) support mapping by tagged union kinds
+          // See: https://github.com/microsoft/TypeScript/issues/30581
+          switch (msg.kind) {
+            case 'connectionOpened':
+              this.pubsy.publish('connectionOpened', msg);
+              break;
+            case 'peerJoinedRoom':
+              this.pubsy.publish('peerJoinedRoom', msg);
+              break;
+            case 'joinedRoomUpdated':
+              this.pubsy.publish('joinedRoomUpdated', msg);
+              break;
+            case 'myStats':
+              this.pubsy.publish('myStats', msg);
+              break;
+            case 'joinRoomSuccess':
+              this.pubsy.publish('joinRoomSuccess', msg);
+              break;
+            case 'joinRoomFailure':
+              this.pubsy.publish('joinRoomFailure', msg);
+              break;
+            default:
+              break;
+          }
 
-        this.pubsy.publish('onMessage', msg);
-      });
+          this.pubsy.publish('onMessage', msg);
+        });
     });
   }
 
