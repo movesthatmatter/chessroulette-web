@@ -81,7 +81,7 @@ export const LandingPage: React.FC<Props> = () => {
               {deviceSize.isDesktop ? (
                 <CreateRoomButtonWidget
                   label="Analyze"
-                  type="secondary"
+                  type="primary"
                   withBadge={{
                     text: 'New',
                     color: theme.name === 'lightDefault' ? 'negative' : 'primaryDark',
@@ -97,10 +97,10 @@ export const LandingPage: React.FC<Props> = () => {
               ) : (
                 <>
                   <Button
+                    type={'primary'}
                     clear
                     label="Join Our Discord"
                     size="medium"
-                    type={'primary'}
                     onClick={() => {
                       window.open('https://discord.gg/XT7rvgsH66');
                     }}

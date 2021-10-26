@@ -13,8 +13,7 @@ import { useBodyClass } from 'src/lib/hooks/useBodyClass';
 import { Button } from '../Button';
 
 export type PageProps = {
-  // This name will be used on analytics
-  // name: string;
+  // This name will be used on analytics  // name: string;
 
   contentClassName?: string;
   footerClassName?: string;
