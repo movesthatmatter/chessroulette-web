@@ -59,7 +59,7 @@ const useStyles = createUseStyles((theme) => ({
     zIndex: 99,
   },
   layerContainer: {
-    position: 'absolute',
+    position: 'fixed',
     zIndex: 999,
     width: '100%',
     height: '100%',
