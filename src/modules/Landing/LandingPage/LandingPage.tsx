@@ -87,7 +87,7 @@ export const LandingPage: React.FC<Props> = () => {
                     color: theme.name === 'lightDefault' ? 'negative' : 'primaryDark',
                     side: 'right',
                   }}
-                  clear
+                  // clear
                   size="small"
                   createRoomSpecs={{
                     type: 'private',
@@ -97,10 +97,10 @@ export const LandingPage: React.FC<Props> = () => {
               ) : (
                 <>
                   <Button
+                    type={'primary'}
                     clear
                     label="Join Our Discord"
                     size="medium"
-                    type={'primary'}
                     onClick={() => {
                       window.open('https://discord.gg/XT7rvgsH66');
                     }}

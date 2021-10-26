@@ -39,9 +39,9 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
   gameAndPlayers,
 }) => {
   const cls = useStyles();
+  const { theme } = useColorTheme();
   const [hasLoadedAnalysis, setHasLoadedAnalysis] = useState(!!analysisRecord);
   const [showImportPanel, setShowImportPanel] = useState(!hasLoadedAnalysis);
-  const { theme } = useColorTheme();
 
   useEffect(() => {
     const nextHasLoadedAnalysis = !!analysisRecord;
@@ -72,14 +72,17 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
             <ConfirmButton
               buttonProps={{
                 label: 'Clear',
-                type: theme.name === 'lightDefault' ? 'secondary' : 'negative',
+                type: 'secondary',
                 full: true,
                 className: cls.button,
               }}
               dialogProps={{
                 title: 'Clear Analysis',
-                content: 'Are you sure you want to Clear All the Analysis?',
+                content: 'Are you sure you want to clear the analysis?',
                 buttonsStacked: false,
+              }}
+              cancelButtonProps={{
+                type: 'secondary',
               }}
               confirmButtonProps={{
                 type: 'negative',
@@ -98,7 +101,6 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
               full
               onClick={() => setShowImportPanel(true)}
               className={cls.button}
-              //icon={Upload}
             />
           </div>
         </>

@@ -42,5 +42,6 @@ export const BoardSettingsWidgetRoomConsumer: React.FC<Props> = React.memo((prop
 const useStyles = createUseStyles((theme) => ({
   button: {
     background: theme.colors.primaryLight,
+    marginBottom: 0,
   },
 }));

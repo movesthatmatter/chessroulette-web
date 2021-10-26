@@ -51,7 +51,7 @@ export const ExitRoomWidget: React.FC<Props> = (props) => {
         buttonsStacked
         buttons={[
           {
-            type: 'negative',
+            type: 'secondary',
             label: 'Yes. Let me go!',
             onClick: () => unblockRouteTransition(),
           },

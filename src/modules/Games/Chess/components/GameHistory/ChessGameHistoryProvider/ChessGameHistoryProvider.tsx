@@ -83,7 +83,7 @@ export const ChessGameHistoryProvider: React.FC<ChessGameHistoryProviderProps> =
     }) => {
       setContextState(
         (prev) => {
-          const addAtIndex = atIndex || prev.history.length;
+          const addAtIndex = atIndex !== undefined ? atIndex : prev.history.length;
           const [
             nextHistory,
             addedAtIndex,
