@@ -7,7 +7,6 @@ import { MyGamesArchive } from './MyGamesArchive';
 import { PgnInputBox } from './PgnInputBox';
 import { Button, IconButton } from 'src/components/Button';
 import { FormPrevious } from 'grommet-icons';
-import { CustomTheme } from 'src/theme';
 
 export type ImportPanelProps = {
   onImportedPgn: (pgn: SimplePGN) => void;
@@ -79,8 +78,8 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
             type="secondary"
             iconType="grommet"
             icon={FormPrevious}
-            onSubmit={() => props.onBackButtonClicked()}
-            className={cx(cls.button, cls.iconButton)}
+            onSubmit={props.onBackButtonClicked}
+            className={cls.button}
           />
         )}
         <Button
@@ -158,9 +157,6 @@ const useStyles = createUseStyles((theme) => ({
     scrollBehavior: 'smooth',
     width: '100%',
     height: '100%',
-  },
-  iconButton: {
-    background: theme.button.backgrounds.primary,
   },
   button: {
     marginBottom: 0,
