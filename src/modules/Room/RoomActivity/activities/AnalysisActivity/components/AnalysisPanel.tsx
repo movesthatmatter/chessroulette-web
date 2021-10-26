@@ -78,7 +78,7 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
               }}
               dialogProps={{
                 title: 'Clear Analysis',
-                content: 'Are you sure you want to Clear All the Analysis?',
+                content: 'Are you sure you want to clear the analysis?',
                 buttonsStacked: false,
               }}
               confirmButtonProps={{
