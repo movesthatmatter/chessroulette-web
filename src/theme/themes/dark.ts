@@ -43,7 +43,8 @@ export const defaultThemeDark = {
   button: {
     backgrounds: {
       primary: 'linear-gradient(89.89deg, #B515DE 1.74%, #D528A6 82.04%)',
-      positive: 'linear-gradient(91.41deg, #1775CE 47.4%, #3BC0C8 97.79%)',
+      // positive: 'linear-gradient(91.41deg, #1775CE 47.4%, #3BC0C8 97.79%)',
+      positive: '#24B6AD',
       attention: colors.dark.attention,
       negative: 'linear-gradient(90.67deg, #CE186B 36.29%, #FB3B80 99.64%)',
       // For now secondary takes the role of not important (neutral)
