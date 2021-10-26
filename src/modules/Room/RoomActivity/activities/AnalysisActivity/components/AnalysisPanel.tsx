@@ -5,7 +5,7 @@ import {
   ChessHistoryIndex,
   SimplePGN,
 } from 'dstnd-io';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
@@ -49,7 +49,6 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
   ...props
 }) => {
   const cls = useStyles();
-  const { theme } = useColorTheme();
   const [hasLoadedAnalysis, setHasLoadedAnalysis] = useState(getHasLoadedAnalysis(props));
   const [showImportPanel, setShowImportPanel] = useState(!hasLoadedAnalysis);
 

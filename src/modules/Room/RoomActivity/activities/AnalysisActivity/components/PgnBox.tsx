@@ -13,7 +13,10 @@ type Props = {
   contentClassName?: string;
 };
 
-export const PgnBox: React.FC<Props> = ({ pgn, ...props }) => {
+// Added a memo for now to optimize on the rerenders but this
+//  is just a temporary patch until this is implemented:
+// https://github.com/movesthatmatter/chessroulette-web/issues/149
+export const PgnBox: React.FC<Props> = React.memo(({ pgn, ...props }) => {
   const cls = useStyles();
 
   return (
@@ -30,7 +33,7 @@ export const PgnBox: React.FC<Props> = ({ pgn, ...props }) => {
       </div>
     </LabeledFloatingBox>
   );
-};
+});
 
 const useStyles = createUseStyles({
   container: {

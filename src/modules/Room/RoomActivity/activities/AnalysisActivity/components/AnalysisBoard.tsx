@@ -9,25 +9,25 @@ type Props = Omit<ChessBoardProps, 'onMove' | 'type' | 'pgn'> & {
   onAddMove: ChessGameHistoryContextProps['onAddMove'];
 };
 
-export const AnalysisBoard: React.FC<Props> = ({
-  pgn,
-  displayedIndex,
-  onAddMove,
-  ...boardProps
-}) => {
-  const onMove = useCallback<ChessBoardProps['onMove']>(
-    ({ move }) => {
-      onAddMove({
-        move: {
-          ...move,
-          clock: 0, // the clock doesn't matter on the analysis
-        },
-        atIndex: displayedIndex,
-        withRefocus: true,
-      });
-    },
-    [displayedIndex]
-  );
+// Added a memo for now to optimize on the rerenders but this
+//  is just a temporary patch until this is implemented:
+// https://github.com/movesthatmatter/chessroulette-web/issues/149
+export const AnalysisBoard: React.FC<Props> = React.memo(
+  ({ pgn, displayedIndex, onAddMove, ...boardProps }) => {
+    const onMove = useCallback<ChessBoardProps['onMove']>(
+      ({ move }) => {
+        onAddMove({
+          move: {
+            ...move,
+            clock: 0, // the clock doesn't matter on the analysis
+          },
+          atIndex: displayedIndex,
+          withRefocus: true,
+        });
+      },
+      [displayedIndex, onAddMove]
+    );
 
-  return <ChessBoard type="analysis" pgn={pgn} onMove={onMove} {...boardProps} />;
-};
+    return <ChessBoard type="analysis" pgn={pgn} onMove={onMove} {...boardProps} />;
+  }
+);
