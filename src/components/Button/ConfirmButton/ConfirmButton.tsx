@@ -27,7 +27,7 @@ export const ConfirmButton: React.FC<Props> = ({ dialogProps, visible = false, .
         onClose={() => setIsVisible(false)}
         buttons={[
           {
-            type: theme.name === 'lightDefault' ? 'primary' : 'positive',
+            type: theme.name === 'lightDefault' ? 'primary' : 'secondary',
             ...props.cancelButtonProps,
             label: props.cancelButtonProps?.label || 'Cancel',
             onClick: () => setIsVisible(false),

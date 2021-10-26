@@ -147,9 +147,13 @@ const primary = (theme: CustomTheme): CSSProperties => ({
 });
 
 const secondary = (theme: CustomTheme): CSSProperties => ({
-  background: theme.button.backgrounds.secondary,
+  background: 'transparent !important',
   ...buttonEffects(theme).secondaryButtonShadow,
   color:theme.button.color,
+  borderColor: theme.colors.primary,
+  borderWidth: '2px',
+  borderStyle: 'solid',
+  alignItems:'center',
   '&:active': {
     ...({
       '& $iconWrapper': {

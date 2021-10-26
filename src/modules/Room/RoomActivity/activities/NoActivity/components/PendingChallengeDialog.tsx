@@ -106,7 +106,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
               </div>
 
               <ClipboardCopyButton
-                type='primary'
+                type={theme.name === 'darkDefault' ? 'positive' : 'primary'}
                 label="Invite Friend"
                 copiedlLabel="Challenge Link Copied"
                 value={`${window.location.origin}/${toChallengeUrlPath(pendingChallenge)}`}

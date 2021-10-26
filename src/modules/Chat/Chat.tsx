@@ -7,6 +7,7 @@ import { CustomTheme, onlySmallMobile } from 'src/theme';
 import { IconButton } from 'src/components/Button';
 import { Send } from 'grommet-icons';
 import { CSSProperties } from 'src/lib/jss/types';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 export type ChatProps = {
   myId: string;
@@ -23,6 +24,7 @@ export type ChatProps = {
 export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) => {
   const cls = useStyles();
   const [input, setInput] = useState('');
+  const {theme} = useColorTheme();
 
   return (
     <div className={cx(cls.container, props.className)} style={props.style}>
@@ -60,7 +62,7 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
             disabled={input.length === 0}
             icon={Send}
             iconType="grommet"
-            type="primary"
+            type={theme.name === 'darkDefault' ? 'positive' : 'primary'}
             onSubmit={() => {
               if (input.trim() !== '') {
                 onSend(input);

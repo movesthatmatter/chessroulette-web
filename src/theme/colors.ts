@@ -6,16 +6,16 @@ const dark = {
   primaryDark: '#BB0D5C',
   primaryDarker: '#980548',
   primaryDarkest: '#73034D',
-  primaryHover: '#D427A8',
+  primaryHover: '#3BC0C8',
 
   attention: '#FF9416',
   attentionLight: '#F59C70',
   attentionDarker: '#E67811',
 
   negative: '#BD3030',
-  negativeLight: '#D05252',
-  negativeLighter: '#FB76A1',
-  negativeLightest: '#E485BF',
+  negativeLight: '#D61D1D',
+  negativeLighter: '#F05858',
+  negativeLightest: '#F47575',
   negativeDarker: '#A81919',
 
   positive: '#518EC7',
