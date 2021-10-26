@@ -39,9 +39,9 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
   gameAndPlayers,
 }) => {
   const cls = useStyles();
+  const { theme } = useColorTheme();
   const [hasLoadedAnalysis, setHasLoadedAnalysis] = useState(!!analysisRecord);
   const [showImportPanel, setShowImportPanel] = useState(!hasLoadedAnalysis);
-  const { theme } = useColorTheme();
 
   useEffect(() => {
     const nextHasLoadedAnalysis = !!analysisRecord;
@@ -98,7 +98,6 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
               full
               onClick={() => setShowImportPanel(true)}
               className={cls.button}
-              //icon={Upload}
             />
           </div>
         </>

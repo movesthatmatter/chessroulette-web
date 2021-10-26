@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import cx from 'classnames';
 import { GameRecord, SimplePGN } from 'dstnd-io';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
-import { MyGamesArchive } from './MyGamesArchive';
-import { PgnInputBox } from './PgnInputBox';
 import { Button, IconButton } from 'src/components/Button';
 import { FormPrevious } from 'grommet-icons';
+import { PgnInputBox } from './PgnInputBox';
+import { MyGamesArchive } from './MyGamesArchive';
+import { useDebouncedCallback } from 'use-debounce/lib';
+import { Err, Ok, Result } from 'ts-results';
+import { getNewChessGame } from 'src/modules/Games/Chess/lib';
+import { setTimeout } from 'window-or-global';
 
 export type ImportPanelProps = {
   onImportedPgn: (pgn: SimplePGN) => void;
@@ -22,53 +26,87 @@ export type ImportPanelProps = {
     }
 );
 
+export type ImportBoxState =
+  | {
+      selectedGame: GameRecord;
+      pgnFromInput?: undefined;
+    }
+  | {
+      selectedGame?: undefined;
+      pgnFromInput:
+        | {
+            status: 'valid';
+            input: SimplePGN;
+          }
+        | {
+            status: 'validating' | 'invalid';
+            input: string;
+          };
+    };
+
+const validatePGN = (s: string): Result<SimplePGN, 'PgnNotValidError'> => {
+  const instance = getNewChessGame();
+  const isValid = instance.load_pgn(s);
+
+  return isValid ? new Ok(s as SimplePGN) : new Err('PgnNotValidError');
+};
+
 export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
   const cls = useStyles();
-  const [pgn, setPgn] = useState<SimplePGN>();
-  const [selectedGame, setSelectedGame] = useState<GameRecord>();
-  const [isValidating, setIsValidating] = useState(false);
+  const [state, setState] = useState<ImportBoxState>();
 
-  useEffect(() => {
-    if (selectedGame?.pgn) {
-      setPgn(selectedGame.pgn as SimplePGN);
-    }
-  }, [selectedGame]);
+  const validateDebounced = useDebouncedCallback((input: string) => {
+    validatePGN(input)
+      .map((validPgn) => {
+        setState({
+          selectedGame: undefined,
+          pgnFromInput: {
+            status: 'valid',
+            input: validPgn,
+          },
+        });
+      })
+      .mapErr(() => {
+        setState({
+          selectedGame: undefined,
+          pgnFromInput: {
+            status: 'invalid',
+            input,
+          },
+        });
+      });
+  }, 250);
+
+  const onInputChanged = useCallback((input: string) => {
+    setState({
+      selectedGame: undefined,
+      pgnFromInput: {
+        status: 'validating',
+        input,
+      },
+    });
+
+    validateDebounced(input);
+  }, []);
 
   return (
     <>
-      <div style={{ overflowY: 'hidden' }}>
-        {/* <div className={cx(cls.boxHorizontalPadding, cls.importGameLabel)}>
-          <Text size="small2">Import a Previous Game</Text>
-        </div> */}
-        <div className={cls.scroller}>
-          <div
-            className={cx(cls.box)}
-            style={{
-              width: '100%',
+      <div className={cls.scroller}>
+        <div className={cls.box} style={{ width: '100%' }}>
+          <MyGamesArchive
+            onSelect={(game) => {
+              setState({
+                selectedGame: game,
+                pgnFromInput: undefined,
+              });
             }}
-          >
-            <MyGamesArchive onSelect={setSelectedGame} />
-          </div>
+          />
         </div>
       </div>
       <PgnInputBox
         // Here show either the pgn or if it's nothing the input
-        value={pgn}
-        onChange={(s) => {
-          setIsValidating(s.isLoading);
-
-          if (s.isLoading) {
-            return;
-          }
-
-          if (s.isValid) {
-            setPgn(s.pgn);
-            return;
-          }
-
-          setPgn(undefined);
-          setSelectedGame(undefined);
-        }}
+        value={state?.selectedGame ? state.selectedGame.pgn : state?.pgnFromInput.input}
+        onChange={onInputChanged}
         containerClassName={cx(cls.box, cls.pgnInputBox)}
         contentClassName={cls.pgnInputBox}
       />
@@ -83,24 +121,26 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
           />
         )}
         <Button
-          label={pgn ? 'Import' : 'PGN Invalid'}
+          label={state ? 'Import' : 'PGN Invalid'}
           type="primary"
-          disabled={!pgn}
+          disabled={!state || state.pgnFromInput?.status === 'invalid'}
           full
-          isLoading={isValidating}
+          isLoading={state?.pgnFromInput?.status === 'validating'}
           onClick={() => {
-            if (!pgn) {
+            if (!state) {
               return;
             }
 
-            if (selectedGame?.pgn === pgn) {
-              props.onImportedGame(selectedGame);
-            } else {
-              props.onImportedPgn(pgn);
+            if (state?.selectedGame) {
+              props.onImportedGame(state.selectedGame);
+            } else if (state.pgnFromInput.status === 'valid') {
+              props.onImportedPgn(state.pgnFromInput.input);
             }
 
-            setPgn(undefined);
-            setSelectedGame(undefined);
+            setTimeout(() => {
+              // Wait a little to clear the imported state!
+              setState(undefined);
+            }, 300);
           }}
           containerClassName={cls.button}
           className={cls.noMarging}
