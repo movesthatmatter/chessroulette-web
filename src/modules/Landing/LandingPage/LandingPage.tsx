@@ -81,13 +81,13 @@ export const LandingPage: React.FC<Props> = () => {
               {deviceSize.isDesktop ? (
                 <CreateRoomButtonWidget
                   label="Analyze"
-                  type="primary"
+                  type="secondary"
                   withBadge={{
                     text: 'New',
                     color: theme.name === 'lightDefault' ? 'negative' : 'primaryDark',
                     side: 'right',
                   }}
-                  clear
+                  // clear
                   size="small"
                   createRoomSpecs={{
                     type: 'private',

@@ -5,7 +5,10 @@ import { AnalysisActivity } from '../RoomActivity/activities/AnalysisActivity';
 import { RoomProviderContext } from '../RoomProvider';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { useDispatch } from 'react-redux';
-import { updateCurrentAnalysisAction } from '../RoomActivity/redux/actions';
+import {
+  updateCurrentAnalysisAction,
+  updateCurrentPartialAnalysisAction,
+} from '../RoomActivity/redux/actions';
 
 type Props = {};
 
@@ -23,6 +26,8 @@ export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
           // TODO: They could be unified into something like: roomActivityUpdated
           if (payload.kind === 'analysisUpdatedResponse') {
             dispatch(updateCurrentAnalysisAction(payload.content));
+          } else if (payload.kind === 'analysisPartiallyUpdatedResponse') {
+            dispatch(updateCurrentPartialAnalysisAction(payload.content));
           }
         }),
       ];

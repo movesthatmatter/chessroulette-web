@@ -1,5 +1,5 @@
 import { RoomRecord } from 'dstnd-io';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { FunWallpaper } from 'src/components/FunWallpaper';
 import { createUseStyles } from 'src/lib/jss';
@@ -12,6 +12,9 @@ import { useJoinedRoom } from './hooks/useJoinedRoom';
 import { JoinRoomWizard } from './wizards/JoinRoomWizard';
 import * as roomResources from './resources';
 import { AsyncOk } from 'ts-async-results';
+import usePrevious from 'use-previous';
+import { console } from 'window-or-global';
+import { diff } from 'deep-object-diff';
 
 type Props = {
   slug: RoomRecord['slug'];
@@ -30,6 +33,18 @@ export const JoinRoomBouncer: React.FC<Props> = (props) => {
   const joinedRoom = useJoinedRoom();
   const [roomInfo, setRoomInfo] = useState<RoomRecord>();
   const [session, setSession] = useSession<SessionState>('roomBouncer');
+
+  const prevJoinedRoom = useRef(joinedRoom);
+
+  useEffect(() => {
+    console.group('[JoinRoomBounced] joinedRoomUpdated');
+    console.log('prev', prevJoinedRoom.current);
+    console.log('current', joinedRoom);
+    console.log('diff', diff(prevJoinedRoom.current || {}, joinedRoom || {}));
+    console.groupEnd();
+
+    prevJoinedRoom.current = joinedRoom;
+  }, [joinedRoom])
 
   // Fetch the Room Info
   useEffect(() => {

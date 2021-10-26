@@ -1,5 +1,5 @@
 import { createAction } from 'deox';
-import { AnalysisRecord } from 'dstnd-io';
+import { AnalysisPartiallyUpdatedResponsePayload, AnalysisRecord } from 'dstnd-io';
 import { Game } from 'src/modules/Games';
 import { BaseRoomActivity } from './types';
 
@@ -13,12 +13,16 @@ export const updateRoomActivityAction = createAction(
   (resolve) => (p: BaseRoomActivity) => resolve(p)
 );
 
-export const updateJoinedGameAction = createAction(
-  'UpdateJoinedGame',
-  (resolve) => (p: Game) => resolve(p),
+export const updateJoinedGameAction = createAction('UpdateJoinedGame', (resolve) => (p: Game) =>
+  resolve(p)
 );
 
 export const updateCurrentAnalysisAction = createAction(
   'UpdateCurrentAnalysisAction',
-  (resolve) => (p: AnalysisRecord) => resolve(p),
+  (resolve) => (p: AnalysisRecord) => resolve(p)
+);
+
+export const updateCurrentPartialAnalysisAction = createAction(
+  'UpdateCurrentPartialAnalysisAction',
+  (resolve) => (p: AnalysisPartiallyUpdatedResponsePayload['content']) => resolve(p)
 );
