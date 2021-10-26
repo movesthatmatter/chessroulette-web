@@ -45,8 +45,13 @@ export const defaultThemeDark = {
       primary: 'linear-gradient(89.89deg, #B515DE 1.74%, #D528A6 82.04%)',
       positive: 'linear-gradient(91.41deg, #1775CE 47.4%, #3BC0C8 97.79%)',
       attention: colors.dark.attention,
-      secondary: 'linear-gradient(332deg, #ED65D4 6.21%, #1775CE 52.98%)',
       negative: 'linear-gradient(90.67deg, #CE186B 36.29%, #FB3B80 99.64%)',
+      // For now secondary takes the role of not important (neutral)
+      //  since it's currenlty in line with how the light theme works
+      //  but I think there's need in the future to make it more "pop-y", in the same
+      //  vein as the primary (just not as much), and introduce a "neutral" button
+      //  type to take the palce of the current secondary!
+      secondary: '#423868',
       neutral: '##DBDDE0',
     },
     icon: {

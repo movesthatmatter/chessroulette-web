@@ -72,7 +72,7 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
             <ConfirmButton
               buttonProps={{
                 label: 'Clear',
-                type: theme.name === 'lightDefault' ? 'secondary' : 'negative',
+                type: 'secondary',
                 full: true,
                 className: cls.button,
               }}
