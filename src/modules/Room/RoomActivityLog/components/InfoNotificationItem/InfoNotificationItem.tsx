@@ -30,6 +30,9 @@ export const InfoNotificationItem: React.FC<Props> = ({ notification, me, classN
           textAlign: 'right',
         }}
       >
+        <div style={{alignItems: 'center', justifyContent: 'center', display:"flex",marginRight: spacers.small,}}>
+        <div className={cls.icon}/>
+        </div>
         {isDangerouslySetHtml(notification.content) ? (
           <Text size="small1" dangerouslySetInnerHTML={notification.content} style = {{textAlign: 'left'}}/>
         ) : (
@@ -55,8 +58,8 @@ const useStyles = createUseStyles(theme => ({
   icon: {
     width:'12px',
     height: '12px',
-    background: theme.colors.negativeLightest,
+    background: theme.colors.primary,
     boxSizing: 'border-box',
-    borderRadius: '50%'
+    borderRadius: '50%',
   }
 }));

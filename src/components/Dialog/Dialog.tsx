@@ -35,7 +35,6 @@ export const Dialog: React.FC<DialogProps> = ({
     >
       <div
         className={cx(cls.container, className)}
-        style={theme.name === 'lightDefault' ? floatingShadow : floatingShadowDarkMode}
       >
         <div className={cls.dialogContentWrapper}>
           <DialogContent
@@ -83,7 +82,7 @@ const useStyles = createUseStyles((theme) => ({
   },
   dialogContent: {
     ...softBorderRadius,
-    backgroundColor: theme.modal.background,
+    ...theme.modal,
     marginTop: spacers.large,
     marginBottom: spacers.large,
   },

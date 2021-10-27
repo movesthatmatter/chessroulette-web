@@ -14,7 +14,8 @@ const light : Theme = {
     family: 'Lato, Open Sans, sans-serif',
   },
   modal: {
-    background: '#fff'
+    background: '#fff',
+    boxShadow: '0 12px 26px rgba(16, 30, 115, 0.08)',
   },
   textInput: {
     border: '1px solid #DFE5EF',

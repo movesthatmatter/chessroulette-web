@@ -45,6 +45,7 @@ export const LogoutButton: React.FC<Props> = ({ ...buttonProps }) => {
           {
             type: 'negative',
             label: 'Yes. Log me out!',
+            clear:true,
             onClick: () => {
               authenticationService.remove();
               Events.trackDeauthenticated();

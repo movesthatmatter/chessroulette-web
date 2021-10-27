@@ -82,9 +82,10 @@ export const LandingPage: React.FC<Props> = () => {
                 <CreateRoomButtonWidget
                   label="Analyze"
                   type="primary"
+                  clear
                   withBadge={{
                     text: 'New',
-                    color: theme.name === 'lightDefault' ? 'negative' : 'primaryDark',
+                    color: 'negative',
                     side: 'right',
                   }}
                   // clear

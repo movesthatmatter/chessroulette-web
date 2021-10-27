@@ -1,6 +1,7 @@
 import { colors } from '../colors';
 import { CustomTheme } from '..';
 import { CSSProperties } from 'src/lib/jss';
+import { effects } from '../effects';
 
 export const defaultThemeDark = {
   colors: colors.dark,
@@ -29,7 +30,8 @@ export const defaultThemeDark = {
     boxShadow: '',
   },
   modal: {
-    background: '#1C1C28',
+    background: '#161A2B',
+    boxShadow: '0 12px 26px rgba(0, 0, 0)'
   },
   selectInput: {
     borderColor: '#5B196D',
@@ -43,8 +45,7 @@ export const defaultThemeDark = {
   button: {
     backgrounds: {
       primary: 'linear-gradient(89.89deg, #B515DE 1.74%, #D528A6 82.04%)',
-      // positive: 'linear-gradient(91.41deg, #1775CE 47.4%, #3BC0C8 97.79%)',
-      positive: '#24B6AD',
+      positive: 'linear-gradient(94.11deg, #31BA99 23.11%, #15765F 101.1%)',
       attention: colors.dark.attention,
       negative: 'linear-gradient(90.67deg, #CE186B 36.29%, #FB3B80 99.64%)',
       // For now secondary takes the role of not important (neutral)
