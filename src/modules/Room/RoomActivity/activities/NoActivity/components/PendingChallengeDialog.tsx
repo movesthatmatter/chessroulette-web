@@ -106,7 +106,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
               </div>
 
               <ClipboardCopyButton
-                type='primary'
+                type={theme.name === 'darkDefault' ? 'positive' : 'primary'}
                 label="Invite Friend"
                 copiedlLabel="Challenge Link Copied"
                 value={`${window.location.origin}/${toChallengeUrlPath(pendingChallenge)}`}
@@ -161,7 +161,7 @@ const useStyles = createUseStyles((theme) => ({
     ...softBorderRadius,
     padding: 0,
     position: 'relative',
-    background: theme.modal.background,
+    ...theme.modal,
 
     ...makeImportant({
       borderRadius: '8px',

@@ -51,13 +51,14 @@ export const ExitRoomWidget: React.FC<Props> = (props) => {
         buttonsStacked
         buttons={[
           {
-            type: 'secondary',
+            type: 'negative',
+           // clear: true,
             label: 'Yes. Let me go!',
             onClick: () => unblockRouteTransition(),
           },
           {
             // type: theme.name === 'lightDefault' ? 'secondary' : 'positive',
-            type: 'primary',
+            type: 'positive',
             label: "I'm staying!",
             full: true,
             onClick: () => {
