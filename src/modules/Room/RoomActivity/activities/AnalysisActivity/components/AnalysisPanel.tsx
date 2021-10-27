@@ -20,51 +20,60 @@ import { AnalysisStateWidget, AnalysisStateWidgetProps } from './AnalysisStateWi
 export type AnalysisPanelProps = {
   onImportedPgn: ImportPanelProps['onImportedPgn'];
   onImportedGame: ImportPanelProps['onImportedGame'];
-  analysisRecord?: {
-    history: ChessHistory;
-    displayedHistory: ChessHistory;
-    displayedIndex: ChessHistoryIndex;
-    displayedFen: ChessGameStateFen;
-    displayedPgn: SimplePGN;
-  };
   homeColor: ChessGameColor;
   gameAndPlayers?: AnalysisStateWidgetProps['gameAndPlayers'];
-};
+} & (
+  | {
+      history?: undefined;
+      displayed?: undefined;
+    }
+  | {
+      history: ChessHistory;
+      displayed: {
+        history: ChessHistory;
+        index: ChessHistoryIndex;
+        fen: ChessGameStateFen;
+        pgn: SimplePGN;
+      };
+    }
+);
+
+const getHasLoadedAnalysis = (props: Pick<AnalysisPanelProps, 'history' | 'displayed'>) =>
+  !!props.history && !!props.displayed;
 
 export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
   homeColor,
   onImportedPgn,
   onImportedGame,
-  analysisRecord,
   gameAndPlayers,
+  ...props
 }) => {
   const cls = useStyles();
-  const { theme } = useColorTheme();
-  const [hasLoadedAnalysis, setHasLoadedAnalysis] = useState(!!analysisRecord);
+  const [hasLoadedAnalysis, setHasLoadedAnalysis] = useState(getHasLoadedAnalysis(props));
   const [showImportPanel, setShowImportPanel] = useState(!hasLoadedAnalysis);
 
   useEffect(() => {
-    const nextHasLoadedAnalysis = !!analysisRecord;
+    const nextHasLoadedAnalysis = getHasLoadedAnalysis(props);
 
     setHasLoadedAnalysis(nextHasLoadedAnalysis);
     setShowImportPanel(!nextHasLoadedAnalysis);
-  }, [analysisRecord]);
+  }, [props.history]);
 
   const historyPanel = (
     <>
-      {analysisRecord && (
+      {props.history && (
         <>
           <AnalysisStateWidget
-            displayedIndex={analysisRecord.displayedIndex}
+            displayedIndex={props.displayed.index}
             homeColor={homeColor}
             gameAndPlayers={gameAndPlayers}
             boxClassName={cls.containerWithHorizontalPadding}
             boxContainerClassName={cls.historyContainer}
             historyBoxContentClassName={cls.historyBoxContent}
           />
-          <FenBox fen={analysisRecord.displayedFen} containerClassName={cx(cls.box, cls.fenBox)} />
+          <FenBox fen={props.displayed.fen} containerClassName={cx(cls.box, cls.fenBox)} />
           <PgnBox
-            pgn={analysisRecord.displayedPgn}
+            pgn={props.displayed.pgn}
             containerClassName={cx(cls.box, cls.pgnBoxContainer)}
             contentClassName={cls.pgnBox}
           />

@@ -17,7 +17,8 @@ type Props = {
 export const ConfirmButton: React.FC<Props> = ({ dialogProps, visible = false, ...props }) => {
   const [isVisible, setIsVisible] = useState(visible);
   const { buttons, ...restDialogProps } = dialogProps;
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
+
   return (
     <>
       <Dialog
@@ -35,7 +36,10 @@ export const ConfirmButton: React.FC<Props> = ({ dialogProps, visible = false, .
           {
             ...props.confirmButtonProps,
             label: props.confirmButtonProps?.label || 'Confirm',
-            onClick: () => props.onConfirmed(),
+            onClick: () => {
+              props.onConfirmed();
+              setIsVisible(false);
+            },
           },
         ]}
       />

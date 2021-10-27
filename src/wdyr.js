@@ -1,4 +1,4 @@
-if (process.env.NODE_ENV === 'development') {
+if (false && process.env.NODE_ENV === 'development') {
   const whyDidYouRender = require('@welldone-software/why-did-you-render');
 
   const React = require('react');
@@ -21,6 +21,25 @@ if (process.env.NODE_ENV === 'development') {
   const {
     PlayActivityContainer,
   } = require('./modules/Room/RoomActivity/activities/PlayActivity/PlayActivityContainer');
+
+  const {
+    AnalysisActivity,
+  } = require('./modules/Room/RoomActivity/activities/AnalysisActivity/AnalysisActivity');
+  const {
+    AnalysisBoard,
+  } = require('./modules/Room/RoomActivity/activities/AnalysisActivity/components/AnalysisBoard');
+  const {
+    AnalysisPanel,
+  } = require('./modules/Room/RoomActivity/activities/AnalysisActivity/components/AnalysisPanel');
+  const {
+    AnalysisStateWidget,
+  } = require('./modules/Room/RoomActivity/activities/AnalysisActivity/components/AnalysisStateWidget');
+  const {
+    FenBox,
+  } = require('./modules/Room/RoomActivity/activities/AnalysisActivity/components/FenBox');
+  const {
+    PgnBox,
+  } = require('./modules/Room/RoomActivity/activities/AnalysisActivity/components/PgnBox');
 
   whyDidYouRender(React, {
     trackAllPureComponents: true,
@@ -56,6 +75,8 @@ if (process.env.NODE_ENV === 'development') {
     customName: 'JoinRoomBouncer',
   };
 
+  // Play
+
   NoActivity.whyDidYouRender = {
     customName: 'NoActivity',
   };
@@ -69,5 +90,30 @@ if (process.env.NODE_ENV === 'development') {
 
   PlayActivityContainer.whyDidYouRender = {
     customName: 'PlayActivityContainer',
+  };
+
+  // Analysis
+  AnalysisBoard.whyDidYouRender = {
+    customName: 'AnalysisBoard',
+  };
+
+  AnalysisActivity.whyDidYouRender = {
+    customName: 'AnalysisActivity',
+  };
+
+  AnalysisPanel.whyDidYouRender = {
+    customName: 'AnalysisPanel',
+  };
+
+  PgnBox.whyDidYouRender = {
+    customName: 'PgnBox',
+  };
+
+  FenBox.whyDidYouRender = {
+    customName: 'FenBox',
+  };
+
+  AnalysisStateWidget.whyDidYouRender = {
+    customName: 'AnalysisStateWidget',
   };
 }

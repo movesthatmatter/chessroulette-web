@@ -6,12 +6,14 @@ import { LabeledFloatingBox } from './LabeledFloatingBox';
 import { MiniClipboardCopyButton } from 'src/components/ClipboardCopy/MiniClipboardCopyButton';
 
 type Props = {
-
   fen: ChessGameStateFen;
   containerClassName?: string;
 };
 
-export const FenBox: React.FC<Props> = ({ fen, ...props }) => {
+// Added a memo for now to optimize on the rerenders but this
+//  is just a temporary patch until this is implemented:
+// https://github.com/movesthatmatter/chessroulette-web/issues/149
+export const FenBox: React.FC<Props> = React.memo(({ fen, ...props }) => {
   const cls = useStyles();
 
   return (
@@ -25,7 +27,7 @@ export const FenBox: React.FC<Props> = ({ fen, ...props }) => {
       </Text>
     </LabeledFloatingBox>
   );
-};
+});
 
 const useStyles = createUseStyles({
   container: {

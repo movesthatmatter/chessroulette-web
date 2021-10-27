@@ -95,57 +95,62 @@ const getPlayersGameInfo = (
   };
 };
 
-export const AnalysisStateWidget: React.FC<AnalysisStateWidgetProps> = ({
-  displayedIndex,
-  gameAndPlayers,
-  homeColor,
-  boxClassName,
-  boxContainerClassName,
-  historyBoxContentClassName,
-}) => {
-  const cls = useStyles();
-  const awayColor = otherChessColor(homeColor);
+// Added a memo for now to optimize on the rerenders but this
+//  is just a temporary patch until this is implemented:
+// https://github.com/movesthatmatter/chessroulette-web/issues/149
+export const AnalysisStateWidget: React.FC<AnalysisStateWidgetProps> = React.memo(
+  ({
+    displayedIndex,
+    gameAndPlayers,
+    homeColor,
+    boxClassName,
+    boxContainerClassName,
+    historyBoxContentClassName,
+  }) => {
+    const cls = useStyles();
+    const awayColor = otherChessColor(homeColor);
 
-  const [playersGameInfo, setPlayersGameInfo] = useState(
-    getPlayersGameInfo(displayedIndex, gameAndPlayers)
-  );
+    const [playersGameInfo, setPlayersGameInfo] = useState(
+      getPlayersGameInfo(displayedIndex, gameAndPlayers)
+    );
 
-  useEffect(() => {
-    setPlayersGameInfo(getPlayersGameInfo(displayedIndex, gameAndPlayers));
-  }, [displayedIndex, gameAndPlayers]);
+    useEffect(() => {
+      setPlayersGameInfo(getPlayersGameInfo(displayedIndex, gameAndPlayers));
+    }, [displayedIndex, gameAndPlayers]);
 
-  return (
-    <>
-      {playersGameInfo?.players[awayColor] && (
-        <div className={cx(boxClassName, cls.playerInfoTop)}>
-          <PlayerBox
-            player={playersGameInfo.players[awayColor]}
-            timeLeft={playersGameInfo.timeLeft[awayColor]}
-            active={false}
-            gameTimeLimit={playersGameInfo.game.timeLimit}
-            material={playersGameInfo.stats[awayColor].materialScore}
-          />
+    return (
+      <>
+        {playersGameInfo?.players[awayColor] && (
+          <div className={cx(boxClassName, cls.playerInfoTop)}>
+            <PlayerBox
+              player={playersGameInfo.players[awayColor]}
+              timeLeft={playersGameInfo.timeLeft[awayColor]}
+              active={false}
+              gameTimeLimit={playersGameInfo.game.timeLimit}
+              material={playersGameInfo.stats[awayColor].materialScore}
+            />
+          </div>
+        )}
+        <div className={cx(boxClassName, boxContainerClassName)}>
+          <FloatingBox className={historyBoxContentClassName}>
+            <ChessGameHistoryProvided />
+          </FloatingBox>
         </div>
-      )}
-      <div className={cx(boxClassName, boxContainerClassName)}>
-        <FloatingBox className={historyBoxContentClassName}>
-          <ChessGameHistoryProvided />
-        </FloatingBox>
-      </div>
-      {playersGameInfo?.players[homeColor] && (
-        <div className={cx(boxClassName, cls.playerInfoBottom)}>
-          <PlayerBox
-            player={playersGameInfo.players[homeColor]}
-            timeLeft={playersGameInfo.timeLeft[homeColor]}
-            active={false}
-            gameTimeLimit={playersGameInfo.game.timeLimit}
-            material={playersGameInfo.stats[homeColor].materialScore}
-          />
-        </div>
-      )}
-    </>
-  );
-};
+        {playersGameInfo?.players[homeColor] && (
+          <div className={cx(boxClassName, cls.playerInfoBottom)}>
+            <PlayerBox
+              player={playersGameInfo.players[homeColor]}
+              timeLeft={playersGameInfo.timeLeft[homeColor]}
+              active={false}
+              gameTimeLimit={playersGameInfo.game.timeLimit}
+              material={playersGameInfo.stats[homeColor].materialScore}
+            />
+          </div>
+        )}
+      </>
+    );
+  }
+);
 
 const useStyles = createUseStyles({
   playerInfoTop: {
