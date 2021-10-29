@@ -3,10 +3,11 @@ import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { ChatHistoryRecord } from 'dstnd-io';
 import { Message } from './components';
-import { colors, onlySmallMobile } from 'src/theme';
+import { CustomTheme, onlySmallMobile } from 'src/theme';
 import { IconButton } from 'src/components/Button';
 import { Send } from 'grommet-icons';
 import { CSSProperties } from 'src/lib/jss/types';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 export type ChatProps = {
   myId: string;
@@ -23,7 +24,7 @@ export type ChatProps = {
 export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) => {
   const cls = useStyles();
   const [input, setInput] = useState('');
-
+  const {theme} = useColorTheme();
   return (
     <div className={cx(cls.container, props.className)} style={props.style}>
       <div className={cls.messageHistory}>
@@ -59,7 +60,8 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
           <IconButton
             disabled={input.length === 0}
             icon={Send}
-            type="primary"
+            iconType="grommet"
+            type={theme.name === 'darkDefault' ? 'positive' : 'primary'}
             onSubmit={() => {
               if (input.trim() !== '') {
                 onSend(input);
@@ -73,7 +75,7 @@ export const Chat: React.FC<ChatProps> = ({ onSend, myId, history, ...props }) =
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -94,7 +96,7 @@ const useStyles = createUseStyles({
   },
   inputContainer: {
     borderTop: 'solid 1px',
-    borderColor: colors.neutral,
+    borderColor: theme.lines.color,
     paddingTop: '16px',
     display: 'flex',
     flex: 1,
@@ -108,6 +110,8 @@ const useStyles = createUseStyles({
     height: '100%',
   },
   inputBox: {
+    backgroundColor:theme.colors.white,
+    color: theme.text.baseColor,
     flex: 1,
     fontSize: '13px',
     fontFamily: 'Lato, Open Sans, sans-serif',
@@ -119,4 +123,4 @@ const useStyles = createUseStyles({
     width: '100%',
     height: '100%',
   },
-});
+}));

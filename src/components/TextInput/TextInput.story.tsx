@@ -1,9 +1,8 @@
-import { Grommet } from 'grommet';
+import { action } from '@storybook/addon-actions';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { defaultTheme } from 'src/theme';
+import { console } from 'window-or-global';
 import { TextInput } from './TextInput';
-
 
 export default {
   component: TextInput,
@@ -11,83 +10,73 @@ export default {
 };
 
 export const defaultStory = () => (
-  <Grommet theme={defaultTheme}>
-    <div style={{
+  <div
+    style={{
       width: '300px',
     }}
-    >
-      <TextInput />
-    </div>
-  </Grommet>
+  >
+    <TextInput />
+  </div>
 );
 
 export const withValue = () => (
-  <Grommet theme={defaultTheme}>
-    <div style={{
+  <div
+    style={{
       width: '300px',
     }}
-    >
-      <TextInput
-        label="With Value"
-        value="A bad value"
-      />
-    </div>
-  </Grommet>
+  >
+    <TextInput label="With Value" defaultValue="A bad value" onChange={(event) => {
+      action(event.currentTarget.value);
+    }}/>
+  </div>
 );
 
 export const withLabel = () => (
-  <Grommet theme={defaultTheme}>
-    <div style={{
+  <div
+    style={{
       width: '300px',
     }}
-    >
-      <TextInput
-        label="My Label"
-      />
-    </div>
-  </Grommet>
+  >
+    <TextInput label="My Label"  onChange={(event) => {
+      console.log(event.currentTarget.value)
+    }}/>
+  </div>
 );
 
 export const withPlaceholder = () => (
-  <Grommet theme={defaultTheme}>
-    <div style={{
+  <div
+    style={{
       width: '300px',
     }}
-    >
-      <TextInput
-        placeholder="My Placeholder"
-      />
-    </div>
-  </Grommet>
+  >
+    <TextInput placeholder="My Placeholder"  onChange={(event) => {
+      action(event.currentTarget.value);
+    }}/>
+  </div>
 );
 
 export const asReadonly = () => (
-  <Grommet theme={defaultTheme}>
-    <div style={{
+  <div
+    style={{
       width: '300px',
     }}
-    >
-      <TextInput
-        label="My Label"
-        value="My Readonly Value"
-        readOnly
-      />
-    </div>
-  </Grommet>
+  >
+    <TextInput label="My Label" defaultValue="My Readonly Value" onChange={(event) => {
+      action(event.currentTarget.value);
+    }}/>
+  </div>
 );
 
-
 export const withValidationError = () => (
-  <Grommet theme={defaultTheme}>
-    <div style={{
+  <div
+    style={{
       width: '300px',
     }}
-    >
-      <TextInput
-        label="With Error"
-        value="A bad value"
-        validationError="The value you enetered isn't valid"
-      />
-    </div>
-  </Grommet>
+  >
+    <TextInput
+      label="With Error"
+      defaultValue="A bad value"
+      validationError="The value you enetered isn't valid"
+    />
+  </div>
 );

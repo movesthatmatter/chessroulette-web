@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { createUseStyles, CSSProperties, makeImportant, NestedCSSElement } from 'src/lib/jss';
-import { colors, effects, onlyMobile } from 'src/theme';
+import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
+import { effects, onlyMobile } from 'src/theme';
 import { Text } from '../Text/Text';
 import cx from 'classnames';
-import { getBoxShadow } from 'src/theme/util';
-import hexToRgba from 'hex-to-rgba';
 import { HTMLTextAreaElement } from 'window-or-global';
 import { spacers } from 'src/theme/spacers';
 
@@ -61,7 +59,7 @@ export const TextArea: React.FC<Props> = ({ className, label, value, ...props })
 
 const padding = spacers.get(0.75);
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   container: {
     marginBottom: '12px',
 
@@ -73,7 +71,7 @@ const useStyles = createUseStyles({
       '&:first-child $labelWrapper': {
         marginTop: '0', // Remove the Negative Margin for the first element!
       },
-    } as CSSProperties['nestedKey']),
+    } as NestedCSSElement),
   },
   labelWrapper: {
     paddingBottom: spacers.smaller,
@@ -84,25 +82,21 @@ const useStyles = createUseStyles({
     }),
   },
   topPadding: {
-    background: 'white',
+    background: theme.textArea.backgroundColor,
     height: '16px',
     marginBottom: '-2px',
     borderTopLeftRadius: '40px',
     borderTopRightRadius: '40px',
-    borderStyle: 'solid',
-    borderColor: colors.neutral,
-    borderWidth: 0,
+    ...theme.textArea.border,
     borderTopWidth: `1px`,
     borderLeftWidth: `1px`,
     borderRightWidth: `1px`,
   },
   bottomPadding: {
-    background: 'white',
+    background: theme.textArea.backgroundColor,
     height: '16px',
     marginTop: '-2px',
-    borderStyle: 'solid',
-    borderColor: colors.neutral,
-    borderWidth: 0,
+    ...theme.textArea.border,
     borderBottomWidth: `1px`,
     borderLeftWidth: `1px`,
     borderRightWidth: `1px`,
@@ -121,40 +115,40 @@ const useStyles = createUseStyles({
         overflow: 'hidden',
         ...effects.floatingShadow,
       },
-    } as CSSProperties),
+    } as NestedCSSElement),
   },
   inputWrapperFocused: {},
   inputWrapperError: {
     ...makeImportant({
       '& $topPadding': {
-        borderColor: colors.negative,
-        boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(colors.negative, 0.08)),
+        borderColor: theme.colors.negative,
+        boxShadow: theme.textArea.boxShadow,
       },
       '& $bottomPadding': {
-        borderColor: colors.negative,
-        boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(colors.negative, 0.08)),
+        borderColor: theme.colors.negative,
+        boxShadow: theme.textArea.boxShadow,
       },
       '& $textAreaWrapper': {
-        borderColor: colors.negative,
-        boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(colors.negative, 0.08)),
+        borderColor: theme.colors.negative,
+        boxShadow: theme.textArea.boxShadow,
       },
-    } as CSSProperties),
+    } as NestedCSSElement),
   },
   inputWrapperReadonly: {
     ...makeImportant({
       '& $topPadding': {
-        background: colors.neutralLighter,
+        background: theme.colors.neutralLighter,
         boxShadow: 'none',
       },
       '& $bottomPadding': {
-        background: colors.neutralLighter,
+        background: theme.colors.neutralLighter,
         boxShadow: 'none',
       },
       '& $textAreaWrapper': {
-        background: colors.neutralLighter,
+        background: theme.colors.neutralLighter,
         boxShadow: 'none',
       },
-    } as CSSProperties),
+    } as NestedCSSElement),
 
     ...({
       '&$inputWrapperFocused': {
@@ -163,22 +157,20 @@ const useStyles = createUseStyles({
     } as NestedCSSElement),
   },
   textAreaWrapper: {
-    background: 'white',
+    background: theme.textArea.backgroundColor,
     display: 'flex',
     paddingLeft: padding,
     paddingRight: padding,
-    borderStyle: 'solid',
-    borderColor: colors.neutral,
-    borderWidth: 0,
+    ...theme.textArea.border,
     borderLeftWidth: `1px`,
     borderRightWidth: `1px`,
   },
   textArea: {
     width: '100%',
     lineHeight: '1.5em',
-
+    background: theme.textArea.backgroundColor,
     resize: 'vertical', // Limit the resizing only for vertical
-
+    color: theme.text.baseColor,
     ...makeImportant({
       padding: 0,
       margin: 0,
@@ -187,7 +179,7 @@ const useStyles = createUseStyles({
     ...({
       '&:read-only': {
         ...makeImportant({
-          background: colors.neutralLighter,
+          background: theme.colors.neutralLighter,
         }),
         '&:focus': {
           boxShadow: 'none',
@@ -196,7 +188,7 @@ const useStyles = createUseStyles({
       '&:focus-visible': {
         outline: 'none',
       },
-    } as CSSProperties),
+    } as NestedCSSElement),
 
     ...makeImportant({
       border: 0,
@@ -220,7 +212,7 @@ const useStyles = createUseStyles({
   },
   errorInput: {},
   errorMessageWrapper: {
-    color: colors.negativeLight,
+    color: theme.colors.negativeLight,
     paddingLeft: '12px',
   },
-});
+}));

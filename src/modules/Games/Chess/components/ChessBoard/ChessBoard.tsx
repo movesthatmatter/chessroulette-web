@@ -1,29 +1,33 @@
 import React from 'react';
-import { ChessInstance } from 'chess.js';
 import { getNewChessGame, toChessColor } from '../../lib';
-import { isPromotableMove, toDests } from './util';
+import { getCurrentChessBoardGameState, isPromotableMove } from './util';
 import {
   ChessGameColor,
   ChessGameStateFen,
   ChessGameStatePgn,
+  ChessHistory,
   ChessHistoryMove,
   ChessMove,
   GameRecord,
+  SimplePGN,
 } from 'dstnd-io';
 import { StyledChessBoard, StyledChessBoardProps } from './StyledChessBoard';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
-import { ChessgroundProps } from 'react-chessground';
+import { ChessBoardConfig, ChessBoardType, ChessBoardGameState } from './types';
 
 export type ChessBoardProps = Omit<StyledChessBoardProps, 'onMove' | 'fen'> & {
   id: GameRecord['id'];
   pgn: GameRecord['pgn'];
-  type: 'play' | 'analysis' | 'free';
-  config?: {
-    showDests?: boolean;
+  displayable?: {
+    fen: ChessGameStateFen;
+    pgn: SimplePGN;
+    history: ChessHistory;
   };
-  homeColor: ChessGameColor;
-  orientation?: ChessGameColor;
+  type: ChessBoardType;
+  config?: ChessBoardConfig;
+  playableColor: ChessGameColor;
   playable?: boolean;
+  orientation?: ChessGameColor;
   canInteract?: boolean;
 
   // This speeds up rendering as it doesn't wait for the
@@ -37,36 +41,14 @@ export type ChessBoardProps = Omit<StyledChessBoardProps, 'onMove' | 'fen'> & {
   onPreMove?: (m: ChessMove) => void;
 };
 
-type ChessState = {
-  fen: ChessGameStateFen;
-  pgn: ChessGameStatePgn;
-  turn: ChessGameColor;
-  inCheck: boolean;
-  lastMove: ChessMove | undefined;
-  isPreMovable: boolean;
-};
-
 type State = {
-  current: ChessState;
-  uncommited?: ChessState;
+  current: ChessBoardGameState;
+  uncommited?: ChessBoardGameState;
   preMove?: ChessMove | undefined;
   pendingPromotionalMove?: ChessBoardProps['promotionalMove'];
 };
 
-const getCurrentChessState = (chess: ChessInstance): ChessState => {
-  const history = chess.history({ verbose: true });
-
-  return {
-    fen: chess.fen(),
-    pgn: chess.pgn(),
-    turn: toChessColor(chess.turn()),
-    inCheck: chess.in_check(),
-    lastMove: history[history.length - 1] as ChessMove,
-    isPreMovable: history.length === 0 ? true : history[history.length - 1].color !== chess.turn(),
-  };
-};
-
-export class ChessBoard extends React.Component<ChessBoardProps, State> {
+export class ChessBoard extends React.PureComponent<ChessBoardProps, State> {
   private chess = getNewChessGame();
 
   constructor(props: ChessBoardProps) {
@@ -75,8 +57,12 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
     this.chess.load_pgn(this.props.pgn || '');
 
     this.state = {
-      current: getCurrentChessState(this.chess),
+      current: getCurrentChessBoardGameState(this.props, this.chess, undefined),
     };
+
+    this.onMove = this.onMove.bind(this);
+    this.onPreMove = this.onPreMove.bind(this);
+    this.onPreMoveCanceled = this.onPreMoveCanceled.bind(this);
   }
 
   // Keeps the Component State and the Chess Instance in sync
@@ -84,7 +70,11 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
     if (!this.props.pgn) {
       this.chess.reset();
 
-      const nextChessState = getCurrentChessState(this.chess);
+      const nextChessState = getCurrentChessBoardGameState(
+        this.props,
+        this.chess,
+        this.state.current
+      );
 
       this.setState({
         current: nextChessState,
@@ -94,7 +84,11 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
       const loaded = this.chess.load_pgn(this.props.pgn);
 
       if (loaded) {
-        const nextChessState = getCurrentChessState(this.chess);
+        const nextChessState = getCurrentChessBoardGameState(
+          this.props,
+          this.chess,
+          this.state.current
+        );
 
         this.setState({
           current: nextChessState,
@@ -105,46 +99,24 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
   }
 
   componentDidUpdate(prevProps: ChessBoardProps) {
-    const chessState = getCurrentChessState(this.chess);
-    const { homeColor } = this.props;
+    const chessState = getCurrentChessBoardGameState(this.props, this.chess, this.state.current);
+    const { playableColor } = this.props;
 
-    if (this.state.preMove && chessState.turn === homeColor) {
+    if (this.state.preMove && chessState.turn === playableColor) {
       this.applyPreMove(this.state.preMove);
     }
 
-    // If there are changes in the pgn and uncommited moves, commit them now!
-    if (prevProps.pgn !== this.props.pgn) {
+    // If there are changes in the pgn, uncommited moves or displayable commit them now!
+    if (
+      (prevProps.pgn !== this.props.pgn && this.state.current.pgn !== this.state.uncommited?.pgn) ||
+      prevProps.displayable?.fen !== this.props.displayable?.fen
+    ) {
+      // Make sure the PromotionalMode is getting reset when the PGN changes
+      this.setState({ pendingPromotionalMove: undefined });
+
+      // Commit the changes
       this.commit();
     }
-  }
-
-  private calcMovable(): ChessgroundProps['movable'] {
-    const base = {
-      free: false,
-      // This is what determines wether someone can move a piece!
-      dests: this.props.canInteract && this.props.playable ? toDests(this.chess) : undefined,
-      showDests: !!this.props.config?.showDests,
-    } as const;
-
-    if (this.props.type === 'analysis') {
-      return {
-        ...base,
-        color: 'both',
-      };
-    }
-
-    if (this.props.type === 'play') {
-      return {
-        ...base,
-        color: this.props.homeColor,
-      };
-    }
-
-    return {
-      ...base,
-      free: true,
-      color: 'both',
-    };
   }
 
   private applyPreMove(preMove: ChessMove) {
@@ -179,6 +151,10 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
       preMove: nextPreMove,
       pendingPromotionalMove: undefined,
     });
+  }
+
+  private onPreMoveCanceled() {
+    this.setState({ preMove: undefined });
   }
 
   private isPromotable(m: ChessMove) {
@@ -219,7 +195,7 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
           isPreMove: false,
         },
         uncommited: {
-          ...getCurrentChessState(uncommitableChess),
+          ...getCurrentChessBoardGameState(this.props, uncommitableChess, this.state.uncommited),
           // This is needed since, as a workaround not to revert the promoting move until
           //  the player makes a selection, the temporarily promoted piece is a Queen,
           //  and sometimes it can give a check - which of course is incorrect therefore
@@ -237,13 +213,19 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
       return;
     }
 
-    const nextChessState = getCurrentChessState(this.chess);
-    const history = this.chess.history({ verbose: true });
-    const nextHistoryMove = history[history.length - 1];
+    const { displayable, ...propsWithoutDisplayable } = this.props;
 
-    this.setState({
-      uncommited: nextChessState,
-    });
+    const uncommitedChessState = getCurrentChessBoardGameState(
+      // Here I took the displayable out so it doesn't interfere with creating the new
+      //  lastMove from scratch!
+      propsWithoutDisplayable,
+      this.chess,
+      this.state.current
+    );
+
+    const nextHistoryMove = uncommitedChessState.history[uncommitedChessState.history.length - 1];
+
+    this.setState({ uncommited: uncommitedChessState });
 
     this.props.onMove({
       move: {
@@ -251,21 +233,21 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         color: toChessColor(nextHistoryMove.color),
         san: nextHistoryMove.san,
       },
-      fen: nextChessState.fen,
-      pgn: nextChessState.pgn,
+      fen: uncommitedChessState.fen,
+      pgn: uncommitedChessState.pgn,
     });
   }
 
   render() {
     const {
-      pgn,
       id,
       playable,
       orientation,
-      homeColor,
+      playableColor,
       canInteract = false,
       ...boardProps
     } = this.props;
+
     const chessState = this.state.uncommited || this.state.current;
 
     return (
@@ -276,16 +258,16 @@ export class ChessBoard extends React.Component<ChessBoardProps, State> {
         disableContextMenu
         preMoveEnabled={this.props.canInteract && this.state.current.isPreMovable}
         viewOnly={false}
-        fen={chessState.fen}
+        fen={chessState.displayable.fen}
+        lastMove={chessState.displayable.lastMoveFromTo}
         turnColor={chessState.turn}
         check={chessState.inCheck}
         resizable
-        movable={this.calcMovable()}
-        lastMove={chessState.lastMove && [chessState.lastMove.from, chessState.lastMove.to]}
-        orientation={orientation || homeColor}
-        onPreMove={(preMove) => this.onPreMove(preMove)}
-        onPreMoveCanceled={() => this.setState({ preMove: undefined })}
-        onMove={(m) => this.onMove(m)}
+        movable={chessState.movable}
+        orientation={orientation || playableColor}
+        onPreMoveCanceled={this.onPreMoveCanceled}
+        onPreMove={this.onPreMove}
+        onMove={this.onMove}
         promotionalMove={this.state.pendingPromotionalMove}
       />
     );

@@ -1,9 +1,6 @@
-import { ChessGameStateFinished, GameRecordFromGameState } from 'dstnd-io';
-import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { GameMocker } from 'src/mocks/records';
-import { colors, defaultTheme } from 'src/theme';
 import { ArchivedGame } from './ArchivedGame';
 
 
@@ -19,9 +16,7 @@ export const defaultStory = () => (
     width: '760px',
     background: 'red',
   }}>
-  <Grommet theme={defaultTheme}>
     <ArchivedGame game={gameMocker.finished()} />
-  </Grommet>
   </div>
 );
 
@@ -30,11 +25,9 @@ export const multipleGamesStory = () => (
     width: '760px',
     background: 'red',
   }}>
-  <Grommet theme={defaultTheme}>
     <ArchivedGame game={gameMocker.finished()} />
     <ArchivedGame game={gameMocker.stopped()} />
     <ArchivedGame game={gameMocker.finished()} />
-  </Grommet>
   </div>
 );
 

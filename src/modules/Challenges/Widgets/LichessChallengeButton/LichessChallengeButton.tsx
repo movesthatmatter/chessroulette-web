@@ -1,4 +1,3 @@
-import { Box } from 'grommet';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, ButtonProps } from 'src/components/Button';
@@ -53,9 +52,17 @@ export const LichessChallengeButton: React.FC<Props> = (props) => {
           visible
           title="Waiting for Opponent"
           content={
-            <Box align="center">
+            <div
+                style={{
+                  textAlign: 'center',
+                  alignContent:'center',
+                  alignItems:'center',
+                  display:'flex',
+                  justifyContent:'center'
+                }}
+              >
               <Text>Waiting for an opponent to accept the challenge.</Text>
-            </Box>
+            </div>
           }
           hasCloseButton={false}
           buttons={[

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { selectMyPeer } from 'src/providers/PeerProvider';
-import { colors } from 'src/theme';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { InfoNotificationItem } from './components/InfoNotificationItem';
 import { OfferNotificationItem } from './components/OfferNotificationItem';
@@ -11,6 +10,7 @@ import { ChallengeNotificationItem } from './components/ChallengeNotificationIte
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
 import * as resources from '../resources';
+import { CustomTheme } from 'src/theme';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -130,7 +130,7 @@ export const ActivityLog: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -147,9 +147,9 @@ const useStyles = createUseStyles({
 
   bottomPart: {
     borderTop: 'solid 1px',
-    borderColor: colors.neutral,
+    borderColor: theme.lines.color,
   },
   fallbackText: {
     marginBottom: spacers.large,
   },
-});
+}));

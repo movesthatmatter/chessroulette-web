@@ -1,7 +1,7 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { colors, fonts } from 'src/theme';
+import { CustomTheme, fonts } from 'src/theme';
 import { Text } from 'src/components/Text';
 import { getUserDisplayName } from 'src/modules/User';
 import { spacers } from 'src/theme/spacers';
@@ -9,19 +9,19 @@ import { Avatar } from 'src/components/Avatar';
 import { UserInfoRecord } from 'dstnd-io';
 
 type Props = {
-  darkMode?: boolean;
+  darkBG?: boolean;
   reversed?: boolean;
   user: UserInfoRecord;
 };
 
-export const UserInfo: React.FC<Props> = ({ darkMode, reversed, user }) => {
+export const UserInfo: React.FC<Props> = ({ darkBG, reversed, user }) => {
   const cls = useStyles();
 
   return (
     <div
       className={cx(
         cls.container,
-        darkMode && cls.containerDarkMode,
+        darkBG && cls.containerDarkMode,
         reversed && cls.containerReversed
       )}
     >
@@ -34,7 +34,7 @@ export const UserInfo: React.FC<Props> = ({ darkMode, reversed, user }) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles(theme => ({
   container: {
     display: 'flex',
   },
@@ -42,10 +42,11 @@ const useStyles = createUseStyles({
     flexDirection: 'row-reverse',
   },
   containerDarkMode: {
-    color: colors.white,
+    color: theme.colors.white,
   },
   userNameText: {
     ...fonts.small2,
+    color:theme.text.baseColor,
   },
   spacer: {
     paddingLeft: spacers.small,
@@ -58,4 +59,4 @@ const useStyles = createUseStyles({
   textWrapperCentered: {
     justifyContent: 'center',
   },
-});
+}));

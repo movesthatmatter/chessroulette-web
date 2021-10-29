@@ -1,19 +1,33 @@
-import React, { useState } from 'react';
-import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { Icon as GIcon } from 'grommet-icons';
-import { borderRadius, colors, onlyMobile, softBorderRadius, softOutline } from 'src/theme';
+import React, { useMemo, useState } from 'react';
 import cx from 'classnames';
+import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
+import { Icon as GIcon } from 'grommet-icons';
+import { borderRadius, onlyMobile, softBorderRadius, softOutline } from 'src/theme';
 import { ButtonType } from '../type';
 import { buttonStyles } from '../styles/styles';
 import { AsyncResult } from 'ts-async-results';
-import Loader from 'react-loaders';
-import 'loaders.css';
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
+import { getSizers } from 'src/theme/sizers';
+import { IconProps as IconlyIconProps } from 'react-iconly';
+import { FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
+import { buttonEffects } from '../styles';
+import { colors } from 'src/theme/colors';
+import { IconContainer } from './components/IconContainer';
+import Loader from 'react-loaders';
+import 'loaders.css';
+
+const sizers = getSizers(1); // This is twice the regular size
+
+const WrapperSizeInPxByName = {
+  small: sizers.get(1.5),
+  default: sizers.get(2),
+  large: sizers.get(3),
+} as const;
 
 type Props = {
-  icon: GIcon;
   onSubmit: (() => void) | (() => Promise<any>) | (() => AsyncResult<any, any>);
+  size?: 'small' | 'default' | 'large';
   type?: ButtonType;
   clear?: boolean;
   disabled?: boolean;
@@ -21,17 +35,45 @@ type Props = {
   className?: string;
   title?: string;
   tooltip?: string;
-};
+  tooltipOnHover?: boolean;
+} & IconProps;
+
+type IconProps =
+  | {
+      iconType: 'grommet';
+      icon: GIcon;
+    }
+  | {
+      iconType: 'iconly';
+      icon: React.FC<IconlyIconProps>;
+      iconPrimaryColor?: string;
+    }
+  | {
+      iconType: 'fontAwesome';
+      icon: FontAwesomeIconProps['icon'];
+    };
 
 export const IconButton: React.FC<Props> = ({
   type = 'primary',
   clear = false,
   withLoader = false,
+  tooltipOnHover = true,
+  size = 'default',
   ...props
 }) => {
   const cls = useStyles();
-  const Icon = props.icon;
   const [isLoading, setIsLoading] = useState(false);
+
+  // These optimization are cool but they aren't actually the issue
+  // The parent rerenders badly
+  const style = useMemo(
+    () => ({
+      width: WrapperSizeInPxByName[size],
+      height: WrapperSizeInPxByName[size],
+      lineHeight: WrapperSizeInPxByName[size],
+    }),
+    [size]
+  );
 
   return (
     <button
@@ -45,6 +87,7 @@ export const IconButton: React.FC<Props> = ({
         isLoading && cls.hasLoader,
         props.className
       )}
+      style={style}
       title={props.title}
       onClick={() => {
         if (isLoading) {
@@ -70,16 +113,29 @@ export const IconButton: React.FC<Props> = ({
         }
       }}
     >
-      <div className={cls.iconWrapper}>
+      <div
+        className={cls.iconWrapper}
+        style={{
+          width: WrapperSizeInPxByName[size],
+          height: WrapperSizeInPxByName[size],
+        }}
+      >
         {isLoading ? (
           <Loader type="ball-clip-rotate" active innerClassName={cls.loader} />
         ) : (
-          <Icon className={cls.icon} />
+          <IconContainer
+            {...props}
+            clear={clear}
+            withLoader={withLoader}
+            type={type}
+            size={size}
+            className={cls.icon}
+          />
         )}
       </div>
       {props.tooltip && (
-        <div className={cls.tooltipContainer}>
-          <div className={cls.tooltipText}>
+        <div className={cx(cls.tooltipContainer)}>
+          <div className={cx(cls.tooltipText, tooltipOnHover && cls.tooltipOnHover)}>
             <Text size="small1">{props.tooltip}</Text>
           </div>
         </div>
@@ -88,32 +144,53 @@ export const IconButton: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
-  ...buttonStyles,
+const useStyles = createUseStyles((theme) => ({
+  ...buttonStyles(theme),
+  secondary: {
+    ...buttonStyles(theme).secondary,
+    ...({
+      '&$clear': {
+        borderColor: `${theme.colors.secondaryDark} !important`,
+        ...buttonEffects(theme).secondaryClearButtonShadow,
+      },
+    } as NestedCSSElement),
+  },
   button: {
-    ...buttonStyles.button,
+    ...buttonStyles(theme).button,
+    height: sizers.default,
+    width: sizers.default,
+    lineHeight: sizers.default,
     ...onlyMobile({
       ...makeImportant({
-        height: '28px',
-        width: '28px',
-        lineHeight: '28px',
+        height: `${sizers.smallPx - 4}px`,
+        width: `${sizers.smallPx - 4}px`,
+        lineHeight: `${sizers.smallPx - 4}px`,
         marginBottom: '13px',
       }),
     }),
 
     position: 'relative',
+
+    ...({
+      '&:hover $tooltipOnHover': {
+        ...makeImportant({
+          opacity: 1,
+          transitionDelay: '.75s',
+        }),
+      },
+    } as NestedCSSElement),
   },
   clear: {
-    ...buttonStyles.clear,
+    ...buttonStyles(theme).clear,
   },
   iconWrapper: {
-    width: '32px',
-    height: '32px',
+    width: sizers.default,
+    height: sizers.default,
 
     ...onlyMobile({
       ...makeImportant({
-        width: '28px',
-        height: '28px',
+        width: `${sizers.smallPx - 4}px`,
+        height: `${sizers.smallPx - 4}px`,
       }),
     }),
 
@@ -124,9 +201,9 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
   },
   icon: {
-    fill: `${colors.white} !important`,
-    stroke: `${colors.white} !important`,
-    color: `${colors.white} !important`,
+    fill: `${colors.universal.white} !important`,
+    stroke: `${colors.universal.white} !important`,
+    color: `${colors.universal.white} !important`,
     width: '16px !important',
     height: '16px !important',
 
@@ -152,19 +229,24 @@ const useStyles = createUseStyles({
   },
   tooltipContainer: {
     position: 'absolute',
-    transition: 'all 500ms linear',
+    transition: 'opacity 500ms linear',
+
     bottom: '-120%',
     transform: 'translateX(-25%)',
     marginTop: spacers.large,
     zIndex: 999,
   },
+  tooltipOnHover: {
+    opacity: 0,
+    transitionDelay: '0s',
+  },
   tooltipText: {
     marginLeft: spacers.small,
     padding: spacers.small,
     lineHeight: 0,
-    background: colors.white,
+    background: theme.colors.white,
     boxShadow: '0 6px 13px rgba(16, 30, 115, 0.08)',
     ...softOutline,
     ...softBorderRadius,
   },
-});
+}));

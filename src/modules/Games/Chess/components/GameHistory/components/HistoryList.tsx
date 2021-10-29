@@ -2,6 +2,7 @@ import { debounce } from 'debounce';
 import { ChessHistoryIndex, ChessRecursiveHistory } from 'dstnd-io';
 import { getChessHistoryMoveIndex } from 'dstnd-io/dist/analysis/analysisActions';
 import React, { useEffect, useRef, useState } from 'react';
+import useDebouncedEffect from 'use-debounced-effect';
 import {
   isPartialBlackMove,
   PairedHistory,
@@ -17,6 +18,7 @@ export type HistoryListProps = {
   rootPairedIndex?: number;
   className?: string;
   rowClassName?: string;
+  isNested?: boolean;
 };
 
 const scrollIntoView = debounce((elm: HTMLDivElement) => {
@@ -30,6 +32,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
   className,
   rootPairedIndex = 0,
   rowClassName,
+  isNested = false,
 }) => {
   const rowElementRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const containerElementRef = useRef<HTMLDivElement | null>();
@@ -39,21 +42,22 @@ export const HistoryList: React.FC<HistoryListProps> = ({
     setPairedHistory(toPairedHistory(history));
   }, [history]);
 
-  // TODO: This was taken out on Sep 6th as it's not working correctly
-  //  Keeps jumping weirdly - it's because the indexes don't work correctly
-  //  so until that is fixed we shouldn't use it!
-  // useEffect(() => {
-  //   if (pairedHistory.length === 0) {
-  //     return;
-  //   }
+  useDebouncedEffect(() => {
+    if (isNested) {
+      return;
+    }
 
-  //   const moveIndex = Math.floor(getChessHistoryMoveIndex(focusedIndex) / 2);
+    if (pairedHistory.length === 0) {
+      return;
+    }
 
-  //   const elm = rowElementRefs.current[moveIndex];
-  //   if (elm) {
-  //     scrollIntoView(elm);
-  //   }
-  // }, [pairedHistory, focusedIndex]);
+    const moveIndex = Math.floor(getChessHistoryMoveIndex(focusedIndex) / 2);
+    const elm = rowElementRefs.current[moveIndex];
+
+    if (elm) {
+      scrollIntoView(elm);
+    }
+  }, 100, [pairedHistory, focusedIndex, isNested]);
 
   useEffect(() => {
     if (containerElementRef.current) {
@@ -79,6 +83,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
           focusedIndex={focusedIndex}
           onFocus={onRefocus}
           containerClassName={rowClassName}
+          isNested={isNested}
         />
       ))}
     </div>

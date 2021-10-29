@@ -6,7 +6,7 @@ import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { AspectRatio } from '../AspectRatio';
 import { Text } from 'src/components/Text';
 import cx from 'classnames';
-import { colors, effects } from 'src/theme';
+import { CustomTheme, effects } from 'src/theme';
 import { seconds } from 'src/lib/time';
 
 type Props = {
@@ -34,7 +34,7 @@ const shuffleMids = () => shuffle(range(18, 0));
 
 const animationIntervalMs = seconds(3);
 
-export const AwesomeLoader: React.FC<Props> = ({ sayings = defaultSayings, size = 200, minimal, className }) => {
+export const AwesomeLoader: React.FC<Props> = ({ sayings = defaultSayings, size = 200, minimal, className, }) => {
   const cls = useStyles();
   const [shuffled, setShuffled] = useState(shuffleMids());
   const [index, setIndex] = useState(0);
@@ -64,7 +64,7 @@ export const AwesomeLoader: React.FC<Props> = ({ sayings = defaultSayings, size 
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles(theme => ({
   container: {
     width: '100%',
     textAlign: 'center',
@@ -72,7 +72,11 @@ const useStyles = createUseStyles({
   mask: {
     margin: '0 auto',
     overflow: 'hidden',
-    background: `linear-gradient(top, ${colors.primaryLight} 100%, #fff 0%)`,
+    ...(theme.name === 'lightDefault' ? {
+      background: `linear-gradient(top, ${theme.colors.primaryLight} 100%, #fff 0%)`
+    }: {
+      backgroundColor: '#7774CA'
+    }),
     position: 'relative',
     borderRadius: '50%',
     marginBottom: '16px',
@@ -116,4 +120,4 @@ const useStyles = createUseStyles({
   text: {
     fontSize: '14px',
   },
-});
+}));

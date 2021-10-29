@@ -1,35 +1,69 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setGuestUserAction, setUserAction } from './actions';
 import * as resources from './resources';
-import { useAuthenticationService } from './useAuthentication';
+import { AuthenticationContext, AuthenticationContextState } from './AuthenticationContext';
+import { authenticationService } from './authenticationService';
 
 export const AuthenticationProvider: React.FC = (props) => {
-  const authService = useAuthenticationService();
   const dispatch = useDispatch();
+  const [contextState, setContextState] = useState<AuthenticationContextState>({
+    ready: false,
+    ...authenticationService,
+  });
 
   useEffect(() => {
-    if (!authService.ready) {
+    authenticationService
+      .get()
+      .map((record) => {
+        setContextState((prev) => ({
+          ...prev,
+          ready: true,
+          state: record,
+        }));
+      })
+      .mapErr(() => {
+        setContextState((prev) => ({
+          ...prev,
+          ready: true,
+          state: undefined,
+        }));
+      });
+
+    const onUpdateUnsubscribe = authenticationService.onUpdated((nextRecord) => {
+      setContextState((prev) => ({
+        ...prev,
+        state: nextRecord,
+      }));
+    });
+
+    return () => {
+      onUpdateUnsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!contextState.ready) {
       return;
     }
 
-    if (!authService.state) {
+    if (!contextState.state) {
       resources
         .authenticateAsNewGuest()
         // Create the authentication with the new guest but don't
         //  publish a new auth update to not start an infinite loop
-        .flatMap(({ guest }) => authService.createSilently(guest))
+        .flatMap(({ guest }) => contextState.createSilently(guest))
         .map((guest) => dispatch(setGuestUserAction(guest)));
 
       return;
     }
 
-    if (authService.state.isGuest) {
+    if (contextState.state.isGuest) {
       resources
-        .authenticateAsExistentGuest({ guestUser: authService.state })
+        .authenticateAsExistentGuest({ guestUser: contextState.state })
         // Create the authentication with the new guest but don't
         //  publish a new auth update to not start an infinite loop
-        .flatMap(({ guest }) => authService.createSilently(guest))
+        .flatMap(({ guest }) => contextState.createSilently(guest))
         .map((guest) => {
           dispatch(setGuestUserAction(guest));
         });
@@ -37,15 +71,16 @@ export const AuthenticationProvider: React.FC = (props) => {
       return;
     }
 
-    const { accessToken } = authService.state;
+    const { accessToken } = contextState.state;
 
-    resources
-      .getUser()
-      .map((user) => {
-        dispatch(setUserAction({ user, accessToken }));
-      });
-  }, [authService]);
+    resources.getUser().map((user) => {
+      dispatch(setUserAction({ user, accessToken }));
+    });
+  }, [contextState]);
 
-  // TODO: There should probably be different logic based on the auth state
-  return <>{props.children}</>;
+  return (
+    <AuthenticationContext.Provider value={contextState}>
+      {props.children}
+    </AuthenticationContext.Provider>
+  );
 };

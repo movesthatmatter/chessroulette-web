@@ -1,8 +1,6 @@
 import { action } from '@storybook/addon-actions';
-import { Grommet } from 'grommet';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { defaultTheme } from 'src/theme';
 import { SelectInput } from './SelectInput';
 
 
@@ -19,7 +17,6 @@ const options = [
 
 export const defaultStory = () => (
   <div style={{ maxWidth: '300px' }}>
-    <Grommet theme={defaultTheme}>
       <SelectInput
         placeholder="Just my placeholder"
         // value="option 1"
@@ -27,6 +24,5 @@ export const defaultStory = () => (
         onChange={action('on change')}
         onSelect={action('on select')}
       />
-    </Grommet>
   </div>
 )

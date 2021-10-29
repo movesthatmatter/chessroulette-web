@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessGame } from 'src/modules/Games/Chess';
@@ -7,28 +7,54 @@ import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { GameActions, useGameActions } from 'src/modules/Games/GameActions';
 import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { ActivityCommonProps } from '../../types';
-import { RoomPlayActivityWithGame } from '../types';
+import { RoomPlayActivityWithGame, RoomPlayParticipantsByColor } from '../types';
 import { PlayActivityMobile } from './PlayActivityMobile';
 import {
   ChessGameHistoryProvider,
+  ChessGameHistoryProviderProps,
   ChessGameHistoryConsumer,
 } from 'src/modules/Games/Chess/components/GameHistory';
-import { historyToPgn } from 'src/modules/Games/Chess/lib';
 import { floatingBoxContainerOffsets, floatingBoxOffsets } from '../../styles';
 import cx from 'classnames';
 import { useFeedbackActions } from 'src/providers/FeedbackProvider/useFeedback';
+import { BoardSettingsWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/BoardSettingsWidgetRoomConsumer';
+import { spacers } from 'src/theme/spacers';
+import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 
 export type PlayActivityProps = ActivityCommonProps & {
   activity: RoomPlayActivityWithGame;
+};
+
+const getParticipantsByColor = (
+  activity: RoomPlayActivityWithGame
+): RoomPlayParticipantsByColor => {
+  return activity.iamParticipating
+    ? ({
+        [activity.participants.me.color]: activity.participants.me,
+        [activity.participants.opponent.color]: activity.participants.opponent,
+      } as RoomPlayParticipantsByColor)
+    : activity.participants;
+};
+
+// This always defaults to White
+const getHomeColor = (activity: RoomPlayActivityWithGame, orientationInverted: boolean = false) => {
+  const homeColor = activity.iamParticipating ? activity.participants.me.color : 'white';
+
+  return orientationInverted ? otherChessColor(homeColor) : homeColor;
 };
 
 export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize }) => {
   const cls = useStyles();
   const gameActions = useGameActions();
   const feedbackActions = useFeedbackActions();
+  const roomConsumer = useRoomConsumer();
+  const homeColor = useMemo(
+    () => getHomeColor(activity, roomConsumer?.boardOrientation === 'away'),
+    [activity, roomConsumer?.boardOrientation]
+  );
+  const participantsByColor = useMemo(() => getParticipantsByColor(activity), [activity]);
+  const playableColor = activity.iamParticipating ? activity.participants.me.color : homeColor;
 
-  // Default to White
-  const homeColor = activity.iamParticipating ? activity.participants.me.color : 'white';
   const { game } = activity;
 
   useEffect(() => {
@@ -37,6 +63,13 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
     }
   }, [activity.iamParticipating, game]);
 
+  const onMoved = useCallback<NonNullable<ChessGameHistoryProviderProps['onMoved']>>(
+    (m) => {
+      gameActions.onMove(m, game.history || [], playableColor);
+    },
+    [gameActions, game.history, playableColor]
+  );
+
   if (deviceSize.isMobile) {
     return (
       <PlayActivityMobile
@@ -44,6 +77,7 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
         deviceSize={deviceSize}
         homeColor={homeColor}
         onTimerFinished={gameActions.onTimerFinished}
+        onMoved={onMoved}
       />
     );
   }
@@ -51,7 +85,12 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
   return (
     <GenericLayoutDesktopRoomConsumer
       renderActivity={({ boardSize, leftSide }) => (
-        <ChessGameHistoryProvider history={game.history || []}>
+        <ChessGameHistoryProvider
+          key={game.id}
+          history={game.history || []}
+          // This could be moved up in a useCallback for optimization
+          onMoved={onMoved}
+        >
           <div className={cls.container}>
             <aside
               className={cls.side}
@@ -67,17 +106,8 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
                     // This is needed for the countdown to reset the interval !!
                     key={game.id}
                     game={game}
-                    playParticipants={
-                      activity.iamParticipating
-                        ? {
-                            home: activity.participants.me,
-                            away: activity.participants.opponent,
-                          }
-                        : {
-                            home: activity.participants[homeColor],
-                            away: activity.participants[otherChessColor(homeColor)],
-                          }
-                    }
+                    playParticipants={participantsByColor}
+                    homeColor={homeColor}
                     // TODO: This should probably be seperate from the GameStateWidget
                     //  something like a hook so it can be used without a view component
                     onTimerFinished={gameActions.onTimerFinished}
@@ -95,18 +125,22 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
             </aside>
             <ChessGameHistoryConsumer
               render={(c) => (
-                <ChessGame
-                  // Reset the State each time the game id changes
-                  key={game.id}
-                  game={game}
-                  size={boardSize}
-                  homeColor={homeColor}
-                  canInteract={activity.iamParticipating}
-                  playable={activity.iamParticipating && activity.participants.me.canPlay}
-                  displayedPgn={historyToPgn(c.displayedHistory)}
-                  // autoCommitMove // TODO: Add this and try it outs
-                  className={cls.board}
-                />
+                <div>
+                  <ChessGame
+                    // Reset the State each time the game id changes
+                    key={game.id}
+                    game={game}
+                    size={boardSize}
+                    orientation={homeColor}
+                    canInteract={activity.iamParticipating}
+                    playable={activity.iamParticipating && activity.participants.me.canPlay}
+                    playableColor={playableColor}
+                    displayable={c.displayed}
+                    onAddMove={c.onAddMove}
+                    className={cls.board}
+                  />
+                  <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
+                </div>
               )}
             />
           </div>
@@ -156,5 +190,10 @@ const useStyles = createUseStyles({
   floatingBoxOffsets: {
     ...floatingBoxOffsets,
     flex: 1,
+  },
+  settingsBar: {
+    paddingTop: spacers.default,
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
 });

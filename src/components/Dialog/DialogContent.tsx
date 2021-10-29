@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { colors, floatingShadow, fonts, onlyMobile, softBorderRadius } from 'src/theme';
+import { CustomTheme, floatingShadow, fonts, onlyMobile, softBorderRadius } from 'src/theme';
 import { Button, ButtonProps } from '../Button';
 import { Text } from 'src/components/Text';
 import { hasOwnProperty, noop } from 'src/lib/util';
@@ -93,7 +93,7 @@ export const DialogContent: React.FC<DialogContentProps> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles(theme => ({
   container: {
     ...floatingShadow,
     ...softBorderRadius,
@@ -135,11 +135,12 @@ const useStyles = createUseStyles({
     alignItems: 'center',
   },
   exitIcon: {
-    fill: `${colors.neutralDark} !important`,
-    stroke: `${colors.neutralDark} !important`,
+    fill: `${theme.colors.neutral} !important`,
+    stroke: `${theme.colors.neutral} !important`,
   },
   title: {
     ...fonts.subtitle1,
+    color:theme.text.baseColor,
     textAlign: 'center',
     paddingLeft: spacers.large,
     paddingRight: spacers.large,
@@ -160,7 +161,7 @@ const useStyles = createUseStyles({
     paddingLeft: spacers.large,
     paddingRight: spacers.large,
     paddingBottom: spacers.default,
-
+    color: theme.text.baseColor,
     ...onlyMobile({
       paddingLeft: '18px',
       paddingRight: '18px',
@@ -216,4 +217,4 @@ const useStyles = createUseStyles({
       marginBottom: 0,
     }),
   },
-});
+}));

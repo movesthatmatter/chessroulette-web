@@ -1,14 +1,15 @@
-import { Layer, LayerProps } from 'grommet';
 import React from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
+import { floatingShadow, floatingShadowDarkMode, onlyMobile, softBorderRadius } from 'src/theme';
 import { DialogContent, DialogContentProps } from './DialogContent';
 import cx from 'classnames';
 import { noop } from 'src/lib/util';
+import { Modal } from '../Modal/Modal';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { spacers } from 'src/theme/spacers';
 
 export type DialogProps = {
   visible: boolean;
-  target?: LayerProps['target'];
 } & DialogContentProps;
 
 export const Dialog: React.FC<DialogProps> = ({
@@ -18,43 +19,58 @@ export const Dialog: React.FC<DialogProps> = ({
   ...props
 }) => {
   const cls = useStyles();
+  const { theme } = useColorTheme();
 
   if (!props.visible) {
     return null;
   }
 
   return (
-    <Layer
-      className={cx(cls.container, className)}
-      position="center"
-      // Note: Took the animation out because during the transition it renders
-      //  the content weirdly!
-      animation={false}
-      target={props.target}
-      modal
-      responsive={false}
+    <Modal
+      className={cls.layer}
       {...(hasCloseButton && {
         onClickOutside: onClose,
         onEsc: onClose,
       })}
     >
-      <DialogContent hasCloseButton={hasCloseButton} onClose={onClose} {...props} />
-    </Layer>
+      <div
+        className={cx(cls.container, className)}
+      >
+        <div className={cls.dialogContentWrapper}>
+          <DialogContent
+            className={cls.dialogContent}
+            hasCloseButton={hasCloseButton}
+            onClose={onClose}
+            {...props}
+          />
+        </div>
+      </div>
+    </Modal>
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
+  layer: {
+    minHeight: '100%',
+    height: '100%',
+    overflowY: 'scroll',
+  },
   container: {
-    ...floatingShadow,
-    ...softBorderRadius,
-    padding: 0,
-    position: 'relative',
+    minHeight: '100%',
 
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    justifyItems: 'center',
+  },
+  dialogContentWrapper: {
     ...makeImportant({
-      borderRadius: '8px',
+      ...softBorderRadius,
       minWidth: '200px',
       maxWidth: '360px',
       width: '50%',
+      margin: '0 auto',
     }),
 
     ...onlyMobile({
@@ -64,4 +80,14 @@ const useStyles = createUseStyles({
       }),
     }),
   },
-});
+  dialogContent: {
+    ...softBorderRadius,
+    ...theme.modal,
+    marginTop: spacers.large,
+    marginBottom: spacers.large,
+  },
+  verticalSpacer: {
+    width: '100%',
+    paddingBottom: '24px',
+  },
+}));

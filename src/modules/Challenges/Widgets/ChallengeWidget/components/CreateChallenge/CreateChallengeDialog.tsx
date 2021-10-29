@@ -1,5 +1,4 @@
 import { ChallengeRecord, GameSpecsRecord, RoomRecord, UserRecord } from 'dstnd-io';
-import { CheckBox } from 'grommet';
 import React, { useState } from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
@@ -85,7 +84,7 @@ export const CreateChallengeDialog: React.FC<Props> = ({
       content={
         <div>
           <CreateChallenge gameSpecs={gameSpecs} onUpdated={setGameSpecs} />
-          <CheckBox />
+          <input type='checkbox' />
         </div>
       }
       buttons={[

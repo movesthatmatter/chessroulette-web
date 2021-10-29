@@ -1,23 +1,25 @@
 import React from 'react';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { colors, effects, onlyMobile, onlySmallMobile } from 'src/theme';
-import { TextInput as GTextInput } from 'grommet';
+import { effects, onlyMobile } from 'src/theme';
 import { Text } from '../Text/Text';
 import cx from 'classnames';
-import { getBoxShadow } from 'src/theme/util';
-import hexToRgba from 'hex-to-rgba';
+import { HTMLInputElement } from 'window-or-global';
 
-
-export type TextInputProps = Omit<React.ComponentProps<typeof GTextInput>, | 'plain' | 'size' | 'ref'> & {
+export type TextInputProps = React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+> & {
   className?: string;
+  inputClassName?: string;
   label?: string;
   validationError?: string;
+  readOnly?: boolean;
 };
 
 export const TextInput: React.FC<TextInputProps> = ({
   className,
+  inputClassName,
   label,
-  value,
   ...props
 }) => {
   const cls = useStyles();
@@ -30,14 +32,11 @@ export const TextInput: React.FC<TextInputProps> = ({
         </div>
       )}
       <div className={cx(cls.inputWrapper)}>
-        <GTextInput
-          value={value}
-          plain
-          size="small"
-          className={cx(
-            cls.textInput,
-            props.validationError && cls.errorInput,
-          )}
+        <input
+          readOnly={props.readOnly}
+          type="text"
+          value={props.defaultValue}
+          className={cx(cls.textInput, props.validationError && cls.errorInput, inputClassName)}
           {...props}
         />
       </div>
@@ -50,7 +49,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   container: {
     marginBottom: '12px',
 
@@ -58,11 +57,11 @@ const useStyles = createUseStyles({
       marginBottom: '2px',
     }),
 
-    ...{
+    ...({
       '&:first-child $labelWrapper': {
         marginTop: '0', // Remove the Negative Margin for the first element!
-      }
-    } as CSSProperties['nestedKey'],
+      },
+    } as CSSProperties['nestedKey']),
   },
   labelWrapper: {
     paddingBottom: '4px',
@@ -74,24 +73,29 @@ const useStyles = createUseStyles({
   },
   inputWrapper: {},
   textInput: {
-    ...{
+    color: theme.text.baseColor,
+    width: '100%',
+    boxSizing: 'border-box',
+    paddingLeft: '11px',
+    ...({
       '&:read-only': {
         ...makeImportant({
-          background: colors.neutralLighter,
+          background: theme.textInput.backgroundColor,
+          ...theme.textInput.readOnly,
         }),
         '&:focus': {
           boxShadow: 'none',
-        }
+        },
       },
       '&:focus': {
         ...effects.floatingShadow,
-      }
-    } as CSSProperties,
+        outline: 'none !important',
+      },
+    } as CSSProperties),
     ...makeImportant({
-      border: `1px solid ${colors.neutral}`,
       borderRadius: '40px',
-      backgroundColor: colors.white,
-
+      border: theme.textInput.border,
+      backgroundColor: theme.textInput.backgroundColor,
       fontSize: '13px',
       fontWeight: 'normal',
       height: '32px',
@@ -112,12 +116,12 @@ const useStyles = createUseStyles({
   },
   errorInput: {
     ...makeImportant({
-      borderColor: colors.negative,
-      boxShadow: getBoxShadow(0, 12, 26, 0, hexToRgba(colors.negative, 0.08)),
+      borderColor: theme.colors.negativeLight,
+      boxShadow: theme.textInput.boxShadow,
     }),
   },
   errorMessageWrapper: {
-    color: colors.negativeLight,
+    color: theme.colors.negativeLight,
     paddingLeft: '12px',
   },
-});
+}));

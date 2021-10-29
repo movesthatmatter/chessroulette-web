@@ -1,52 +1,79 @@
-import { ChessHistory, SimplePGN } from 'dstnd-io';
+import {
+  ChessGameColor,
+  ChessGameStateFen,
+  ChessHistory,
+  ChessHistoryIndex,
+  SimplePGN,
+} from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
+import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
-import { ChessGameHistoryProvided } from 'src/modules/Games/Chess/components/GameHistory';
 import { spacers } from 'src/theme/spacers';
 import { FenBox } from './FenBox';
 import { PgnBox } from './PgnBox';
-import cx from 'classnames';
 import { Button } from 'src/components/Button';
-import { Upload } from 'grommet-icons';
-import { ImportPanel } from './ImportPanel';
+import { ImportPanel, ImportPanelProps } from './ImportPanel';
 import { ConfirmButton } from 'src/components/Button/ConfirmButton';
-import { FloatingBox } from 'src/components/FloatingBox';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { AnalysisStateWidget, AnalysisStateWidgetProps } from './AnalysisStateWidget';
 
-type Props = {
-  onPgnImported: (pgn: SimplePGN) => void;
-  analysisRecord?: {
-    history: ChessHistory;
-    displayedHistory: ChessHistory;
-  };
-};
+export type AnalysisPanelProps = {
+  onImportedPgn: ImportPanelProps['onImportedPgn'];
+  onImportedGame: ImportPanelProps['onImportedGame'];
+  homeColor: ChessGameColor;
+  gameAndPlayers?: AnalysisStateWidgetProps['gameAndPlayers'];
+} & (
+  | {
+      history?: undefined;
+      displayed?: undefined;
+    }
+  | {
+      history: ChessHistory;
+      displayed: {
+        history: ChessHistory;
+        index: ChessHistoryIndex;
+        fen: ChessGameStateFen;
+        pgn: SimplePGN;
+      };
+    }
+);
 
-export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }) => {
+const getHasLoadedAnalysis = (props: Pick<AnalysisPanelProps, 'history' | 'displayed'>) =>
+  !!props.history && !!props.displayed;
+
+export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
+  homeColor,
+  onImportedPgn,
+  onImportedGame,
+  gameAndPlayers,
+  ...props
+}) => {
   const cls = useStyles();
-  const [hasLoadedAnalysis, setHasLoadedAnalysis] = useState(!!analysisRecord);
+  const [hasLoadedAnalysis, setHasLoadedAnalysis] = useState(getHasLoadedAnalysis(props));
   const [showImportPanel, setShowImportPanel] = useState(!hasLoadedAnalysis);
 
   useEffect(() => {
-    const nextHasLoadedAnalysis = !!analysisRecord;
+    const nextHasLoadedAnalysis = getHasLoadedAnalysis(props);
 
     setHasLoadedAnalysis(nextHasLoadedAnalysis);
     setShowImportPanel(!nextHasLoadedAnalysis);
-  }, [analysisRecord]);
+  }, [props.history]);
 
   const historyPanel = (
     <>
-      {analysisRecord && (
+      {props.history && (
         <>
-          <div className={cx(cls.box, cls.historyContainer)}>
-            <FloatingBox className={cls.historyBoxContent}>
-              <ChessGameHistoryProvided />
-            </FloatingBox>
-          </div>
-          <FenBox
-            historyOrPgn={analysisRecord.displayedHistory}
-            containerClassName={cx(cls.box, cls.fenBox)}
+          <AnalysisStateWidget
+            displayedIndex={props.displayed.index}
+            homeColor={homeColor}
+            gameAndPlayers={gameAndPlayers}
+            boxClassName={cls.containerWithHorizontalPadding}
+            boxContainerClassName={cls.historyContainer}
+            historyBoxContentClassName={cls.historyBoxContent}
           />
+          <FenBox fen={props.displayed.fen} containerClassName={cx(cls.box, cls.fenBox)} />
           <PgnBox
-            historyOrPgn={analysisRecord.history}
+            pgn={props.displayed.pgn}
             containerClassName={cx(cls.box, cls.pgnBoxContainer)}
             contentClassName={cls.pgnBox}
           />
@@ -60,15 +87,19 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
               }}
               dialogProps={{
                 title: 'Clear Analysis',
-                content: 'Are you sure you want to Clear All the Analysis?',
+                content: 'Are you sure you want to clear the analysis?',
                 buttonsStacked: false,
+              }}
+              cancelButtonProps={{
+                type: 'secondary',
               }}
               confirmButtonProps={{
                 type: 'negative',
                 label: 'Yes',
               }}
               onConfirmed={() => {
-                onPgnImported('' as SimplePGN);
+                // Reset the Analysis
+                onImportedPgn('' as SimplePGN);
                 setHasLoadedAnalysis(true);
               }}
             />
@@ -79,7 +110,6 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
               full
               onClick={() => setShowImportPanel(true)}
               className={cls.button}
-              icon={Upload}
             />
           </div>
         </>
@@ -98,7 +128,8 @@ export const AnalysisPanel: React.FC<Props> = ({ onPgnImported, analysisRecord }
         }}
       >
         <ImportPanel
-          onImported={onPgnImported}
+          onImportedPgn={onImportedPgn}
+          onImportedGame={onImportedGame}
           hasBackButton={hasLoadedAnalysis}
           onBackButtonClicked={() => setShowImportPanel(false)}
         />
@@ -128,6 +159,10 @@ const useStyles = createUseStyles({
     height: '100%',
     marginLeft: `-${FLOATING_SHADOW_HORIZONTAL_OFFSET}`,
     marginBottom: `-${FLOATING_SHADOW_BOTTOM_OFFSET}`,
+  },
+  containerWithHorizontalPadding: {
+    paddingLeft: FLOATING_SHADOW_HORIZONTAL_OFFSET,
+    paddingRight: FLOATING_SHADOW_HORIZONTAL_OFFSET,
   },
   box: {
     paddingLeft: FLOATING_SHADOW_HORIZONTAL_OFFSET,

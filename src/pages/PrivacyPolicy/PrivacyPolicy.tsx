@@ -1,7 +1,7 @@
 import React from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import { fonts, text } from 'src/theme';
+import { CustomTheme, fonts } from 'src/theme';
 import { html } from './policyHTML';
 
 type Props = {};
@@ -23,11 +23,11 @@ export const PrivacyPolicy: React.FC<Props> = () => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles( theme => ({
   container: {},
   article: {
     ...{
-      color: text.baseColor,
+      color: theme.text.baseColor,
 
       '& p': {
         ...fonts.body1,
@@ -65,4 +65,4 @@ const useStyles = createUseStyles({
       },
     } as CSSProperties['nestedKey'],
   },
-});
+}));

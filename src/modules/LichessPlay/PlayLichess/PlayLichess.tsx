@@ -88,7 +88,7 @@ export const PlayLichess: React.FC = ({}) => {
               // Reset the State each time the game id changes
               key={game.id}
               game={game}
-              homeColor={homeColor}
+              playableColor={homeColor}
               size={512}
               playable
               onMove={onMove}

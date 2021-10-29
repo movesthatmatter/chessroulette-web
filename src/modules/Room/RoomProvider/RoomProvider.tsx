@@ -6,6 +6,7 @@ import { JoinedRoom } from '../types';
 import { RoomActivityCreationRecord } from 'dstnd-io';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { Events } from 'src/services/Analytics';
+import { BoardOrientation } from 'src/modules/Games';
 
 type Props = {
   joinedRoom: JoinedRoom;
@@ -14,6 +15,9 @@ type Props = {
 export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
   const deviceSize = useDeviceSize();
   const peerState = usePeerState();
+
+  // TODO: Once we have Board Settings, this can be moved out of here
+  const [boardOrientation, setBoardOrientation] = useState<BoardOrientation>('home');
 
   const switchActivity = useCallback(
     (content: RoomActivityCreationRecord) => {
@@ -37,6 +41,8 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
     roomActions: {
       switchActivity,
     },
+    boardOrientation,
+    setBoardOrientation,
   });
 
   useRoomActivityListener(joinedRoom);
@@ -48,8 +54,10 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
       roomActions: {
         switchActivity,
       },
+      boardOrientation,
+      setBoardOrientation,
     });
-  }, [joinedRoom, deviceSize, switchActivity]);
+  }, [joinedRoom, deviceSize, switchActivity, boardOrientation, setBoardOrientation]);
 
   useEffect(() => {
     Events.trackRoomJoined(joinedRoom);

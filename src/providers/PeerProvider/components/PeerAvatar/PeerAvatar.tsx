@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { ConnectionStatusDot } from '../ConnectionStatusDot';
 import { Avatar } from 'src/components/Avatar';
-import { colors } from 'src/theme';
 import { Peer } from '../../types';
 import { useSelector } from 'react-redux';
 import { selectPeerProviderState } from '../../redux/selectors';
@@ -10,6 +9,8 @@ import { Text } from 'src/components/Text';
 import { spacers } from 'src/theme/spacers';
 import { getUserDisplayName } from 'src/modules/User';
 import cx from 'classnames';
+import { CustomTheme, onlyDesktop, onlyMobile } from 'src/theme';
+import { colors } from 'src/theme/colors';
 
 type Props = {
   size?: string;
@@ -69,11 +70,11 @@ export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, reverse
       >
         {peer?.isMe || (
           <ConnectionStatusDot
-          peer={peer}
-          containerClassName={cls.connectionDotContainer}
-          dotClassName={cls.connectionDot}
-          size="25%"
-        />
+            peer={peer}
+            containerClassName={cls.connectionDotContainer}
+            dotClassName={cls.connectionDot}
+            size="25%"
+          />
         )}
         <Avatar
           mutunachiId={peer ? Number(peer.user.avatarId) : Number(props.peerUserInfo?.avatarId)}
@@ -91,7 +92,7 @@ export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, reverse
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   container: {
     position: 'relative',
   },
@@ -102,7 +103,7 @@ const useStyles = createUseStyles({
     right: 'calc(10% - 2px)',
   },
   connectionDot: {
-    border: `2px solid ${colors.white}`,
+    border: `2px solid ${colors.universal.white}`,
   },
   infoContainer: {
     position: 'absolute',
@@ -110,7 +111,12 @@ const useStyles = createUseStyles({
     top: 0,
     bottom: 0,
     left: '100%',
-    zIndex: 0,
+    ...onlyDesktop({
+      zIndex: 0,
+    }),
+    ...onlyMobile({
+      zIndex: 10,
+    }),
   },
   infoContainerReversed: {
     right: '100%',
@@ -118,10 +124,10 @@ const useStyles = createUseStyles({
   },
   infoText: {
     marginLeft: spacers.small,
-    border: `1px solid ${colors.neutralDark}`,
+    border: `1px solid ${theme.colors.neutralDark}`,
     padding: spacers.small,
     paddingTop: 0,
     borderRadius: '8px',
-    background: colors.white,
+    background: theme.colors.white,
   },
-});
+}));

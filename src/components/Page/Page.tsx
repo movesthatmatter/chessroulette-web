@@ -1,22 +1,23 @@
 import React, { useEffect } from 'react';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { Logo } from 'src/components/Logo';
 import { Footer } from '../Footer';
 import { NavigationMenu } from '../Navigation/NavigationMenu';
-import { colors, fonts, text } from 'src/theme';
+import { fonts, onlyMobile } from 'src/theme';
 import { Events } from 'src/services/Analytics';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { Text } from '../Text';
 import { getBoxShadow } from 'src/theme/util';
+import { useBodyClass } from 'src/lib/hooks/useBodyClass';
+import { Button } from '../Button';
 
 export type PageProps = {
-  // This name will be used on analytics
-  // name: string;
+  // This name will be used on analytics  // name: string;
 
   contentClassName?: string;
   footerClassName?: string;
-
+  containerClassname?: string;
   logoAsLink?: boolean;
   title?: string;
 } & (
@@ -32,7 +33,7 @@ export type PageProps = {
 
 export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
   const cls = useStyles();
-
+  useBodyClass([cls.indexBackground]);
   useEffect(() => {
     if (props.name) {
       Events.trackPageView(props.name);
@@ -41,7 +42,7 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
 
   return (
     <div className={cls.root}>
-      <div className={cls.container}>
+      <div className={`${cls.container} ${props.containerClassname}`}>
         <div className={`${cls.content} ${props.contentClassName}`}>
           <div className={cls.top}>
             <div className={`${cls.topMain} ${cls.responsive}`}>
@@ -57,15 +58,23 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
           </main>
           <div className={cls.preFooter}>
             <div className={cx(cls.responsive, cls.centralizeContent)}>
-              <Text
-                size="body2"
-                className={cls.text}
-                style={{
-                  fontWeight: 300,
-                }}
-              >
-                Made with ❤️around the world!
-              </Text>
+              <div className={cls.preFooterSide} />
+              <div className={cls.centralContent}>
+                <Text size="body2" className={cls.text}>
+                  Made with ❤️around the world!
+                </Text>
+              </div>
+              <div className={cx(cls.preFooterSide, cls.discordButtonSide)}>
+                <Button
+                  className={cls.discordButton}
+                  clear
+                  label="Join Our Discord"
+                  type={'primary'}
+                  onClick={() => {
+                    window.open('https://discord.gg/XT7rvgsH66');
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -77,16 +86,20 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   root: {
     width: '100%',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
+  indexBackground: {
+    backgroundColor: theme.colors.background,
+  },
   container: {
     flex: '1 0',
-    background: colors.neutralLightest,
+    background: theme.colors.background,
+    color: theme.text.baseColor,
   },
   footer: {
     flexShrink: 0,
@@ -108,7 +121,7 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: '16px',
+    padding: spacers.default,
   },
   topRight: {
     justifySelf: 'flex-end',
@@ -124,18 +137,21 @@ const useStyles = createUseStyles({
     flex: 1,
   },
   title: {
-    color: text.baseColor,
+    color: theme.text.baseColor,
     ...fonts.title1,
   },
 
   preFooter: {
-    background: colors.neutralLightest,
+    // background: theme.colors.neutralLightest,
     paddingBottom: spacers.default,
     boxShadow: getBoxShadow(0, 12, 12, -12, 'rgba(16, 30, 115, 0.08)'),
     position: 'relative',
+    paddingLeft: spacers.default,
+    paddingRight: spacers.default,
   },
   text: {
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
+    fontWeight: 300,
   },
   responsive: {
     width: '100%',
@@ -144,6 +160,39 @@ const useStyles = createUseStyles({
   },
   centralizeContent: {
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
+    justifyItems: 'flex-end',
+    flex: 1,
+
+    ...onlyMobile({
+      ...makeImportant({
+        display: 'block',
+      })
+    })
   },
-});
+  centralContent: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    flex: 1,
+    textAlign: 'center',
+  },
+  preFooterSide: {
+    width: '25%',
+    minWidth: '150px',
+    ...onlyMobile({
+      display: 'none',
+    })
+  },
+  discordButtonSide: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+  },
+  discordButton: {
+    ...onlyMobile({
+      display: 'none',
+    }),
+    marginBottom: 0
+  },
+}));

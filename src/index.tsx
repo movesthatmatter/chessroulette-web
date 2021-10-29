@@ -1,3 +1,6 @@
+/// <reference types="@welldone-software/why-did-you-render" />
+import './wdyr'; // needs to be the 1st import
+
 import React from 'react';
 import './index.css';
 import WebFont from 'webfontloader';
@@ -5,6 +8,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { render } from 'react-snapshot';
+import { ReduxProvider } from './redux/Provider';
 
 WebFont.load({
   google: {
@@ -34,11 +38,13 @@ render(
   //  every now and then!
   // Also See https://stackoverflow.com/questions/49055172/react-component-mounting-twice
   // <React.StrictMode>
-    <BrowserRouter>
+  <BrowserRouter>
+    <ReduxProvider>
       <App />
-    </BrowserRouter>,
+    </ReduxProvider>
+  </BrowserRouter>,
   // </React.StrictMode>,
-  document.getElementById('root'),
+  document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change

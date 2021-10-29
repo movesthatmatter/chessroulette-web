@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-import { PlayParticipants } from '../../..';
-import { Game } from '../../../types';
-import { getPlayersTimeLeft } from './util';
+import { DependencyList, useEffect, useState } from 'react';
+import { Game, PlayParticipants } from '../../../types';
+import { getPlayersTimeLeft, getPlayersTimeLeftByColor } from './util';
 
 export const useGameTimesLeft = (game: Game, playParticipants: PlayParticipants) => {
   const [playersTimeLeft, setPlayersTimeLeft] = useState(
@@ -13,4 +12,14 @@ export const useGameTimesLeft = (game: Game, playParticipants: PlayParticipants)
   }, [game]);
 
   return playersTimeLeft;
+};
+
+export const useGameTimesLeftByColor = (game: Game, deps: DependencyList = []) => {
+  const [timeLeft, setTimeLeft] = useState(getPlayersTimeLeftByColor(game));
+
+  useEffect(() => {
+    setTimeLeft(getPlayersTimeLeftByColor(game));
+  }, [game, ...deps]);
+
+  return timeLeft;
 };

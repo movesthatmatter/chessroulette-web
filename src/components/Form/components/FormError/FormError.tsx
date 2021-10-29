@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { colors } from 'src/theme';
+import { CustomTheme } from 'src/theme';
 
 type Props = {
   message: string;
@@ -17,11 +17,11 @@ export const FormError: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles(theme => ({
   container: {
-    color: colors.negativeLight,
+    color: theme.colors.negativeLight,
     paddingLeft: '12px',
     paddingBottom: '16px',
     textAlign: 'center',
   },
-});
+}));

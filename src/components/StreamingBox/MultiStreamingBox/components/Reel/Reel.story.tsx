@@ -1,14 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Grommet } from 'grommet';
 import React, { useEffect, useReducer, useState } from 'react';
-import {
-  Streamer,
-  StreamersMap,
-} from 'src/components/StreamingBox/types';
+import { Streamer, StreamersMap } from 'src/components/StreamingBox/types';
 import { getRandomInt, range } from 'src/lib/util';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
-import { defaultTheme } from 'src/theme';
 import { Reel } from './Reel';
 import { reducer, initialState, initAction, focusAction, updateAction } from '../../reducer';
 import { Button } from 'src/components/Button';
@@ -60,7 +55,7 @@ const Component = (p: {
   }
 
   return (
-    <Grommet theme={defaultTheme}>
+    <>
       <div
         style={{
           display: 'flex',
@@ -88,7 +83,7 @@ const Component = (p: {
           }}
         />
       </div>
-    </Grommet>
+    </>
   );
 };
 
@@ -131,7 +126,7 @@ export const defaultStory = () => (
         } as const;
 
         return (
-          <Grommet theme={defaultTheme}>
+          <>
             <div
               style={{
                 display: 'flex',
@@ -144,7 +139,7 @@ export const defaultStory = () => (
               >
                 <Component
                   streamersMap={streamersMap}
-                  myStreamingConfig={myStreamingConfig} 
+                  myStreamingConfig={myStreamingConfig}
                   onRemove={(userId) => {
                     setStreamersMap((prev) => {
                       if (!userId) {
@@ -207,7 +202,7 @@ export const defaultStory = () => (
                 />
               </div>
             </div>
-          </Grommet>
+          </>
         );
       })
     }

@@ -6,7 +6,7 @@ import { DialogWizardStep } from 'src/components/DialogWizard/DialogWizardStep';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
-import { fonts, onlyMobile } from 'src/theme';
+import { CustomTheme, fonts, onlyMobile } from 'src/theme';
 import { getRoomPendingChallenge } from '../../util';
 import { getUserDisplayName } from 'src/modules/User';
 import { UnknownAsyncResult } from 'src/lib/types';
@@ -78,9 +78,10 @@ export const AcceptRoomStep: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles(theme => ({
   container: {
     textAlign: 'center',
+    color: theme.text.baseColor
   },
   title: {
     ...fonts.subtitle1,
@@ -95,4 +96,4 @@ const useStyles = createUseStyles({
       }),
     }),
   },
-});
+}));

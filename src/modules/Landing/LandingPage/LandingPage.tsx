@@ -1,13 +1,24 @@
 import React from 'react';
 import { Page } from 'src/components/Page';
 import chessBackground from './assets/chess_icons.png';
-import { createUseStyles } from 'src/lib/jss';
-import { colors, minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
+import darkChessBackground from './assets/dark_splash.svg';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
+import {
+  minMediaQuery,
+  maxMediaQuery,
+  onlyMobile,
+  onlySmallMobile,
+  CustomTheme,
+  floatingShadow,
+} from 'src/theme';
 import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
 import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
 import { spacers } from 'src/theme/spacers';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
+import { useBodyClass } from 'src/lib/hooks/useBodyClass';
+import { Button } from 'src/components/Button';
 
 type Props = {};
 
@@ -15,9 +26,13 @@ export const LandingPage: React.FC<Props> = () => {
   const cls = useStyles();
   const deviceSize = useDeviceSize();
 
+  const { theme } = useColorTheme();
+  useBodyClass([cls.indexBackground]);
+
+  useBodyClass([cls.indexBackground]);
   return (
-    <Page name="Home" contentClassName={cls.pageContent}>
-      <div className={cls.container}>
+    <Page name="Home" contentClassName={cls.pageContent} containerClassname={cls.pageContainer}>
+      <div className={cls.containerLanding}>
         <div className={cls.inner}>
           <div
             style={{
@@ -28,7 +43,7 @@ export const LandingPage: React.FC<Props> = () => {
             }}
           >
             <img
-              src={chessBackground}
+              src={theme.name === 'lightDefault' ? chessBackground : darkChessBackground}
               style={{
                 width: '95%',
                 margin: '0 auto',
@@ -43,7 +58,7 @@ export const LandingPage: React.FC<Props> = () => {
 
             <div className={cls.list}>
               <h3 className={cls.text}>Play with friends in a private room.</h3>
-              <h3 className={cls.text}>Start a quick game with someone across the world.</h3>
+              <h3 className={cls.text}>P2P game analysis in sync for everyone.</h3>
               <h3 className={cls.text}>
                 Face to Face. Live. Free. <Emoji symbol="😎" />
               </h3>
@@ -56,29 +71,42 @@ export const LandingPage: React.FC<Props> = () => {
                   type: 'private',
                   activityType: 'play',
                 }}
+                className={cls.playButton}
                 size={deviceSize.isDesktop ? 'small' : 'medium'}
                 style={{
                   marginRight: spacers.default,
                 }}
               />
-            
-              {deviceSize.isDesktop && (
-                <CreateRoomButtonWidget
-                label="Analyze"
-                type="primary"
-                withBadge={{
-                  text: 'New',
-                  color: 'negative',
-                  side: 'right',
 
-                }}
-                clear
-                size="small"
-                createRoomSpecs={{
-                  type: 'private',
-                  activityType: 'analysis',
-                }}
-              />
+              {deviceSize.isDesktop ? (
+                <CreateRoomButtonWidget
+                  label="Analyze"
+                  type="primary"
+                  clear
+                  withBadge={{
+                    text: 'New',
+                    color: 'negative',
+                    side: 'right',
+                  }}
+                  // clear
+                  size="small"
+                  createRoomSpecs={{
+                    type: 'private',
+                    activityType: 'analysis',
+                  }}
+                />
+              ) : (
+                <>
+                  <Button
+                    type={'primary'}
+                    clear
+                    label="Join Our Discord"
+                    size="medium"
+                    onClick={() => {
+                      window.open('https://discord.gg/XT7rvgsH66');
+                    }}
+                  />
+                </>
               )}
               {/* <LichessChallengeButton label="Lichess" size="small" type="secondary" /> */}
             </div>
@@ -92,13 +120,28 @@ export const LandingPage: React.FC<Props> = () => {
 const tabletBreakPoint = 600;
 const desktopBreakPoint = 769;
 
-const useStyles = createUseStyles({
-  container: {
+const useStyles = createUseStyles((theme) => ({
+  indexBackground: {
+    backgroundColor: theme.colors.background,
+  },
+  pageContainer: {
+    ...makeImportant({
+      ...(theme.name === 'lightDefault'
+        ? {
+            backgroundColor: theme.colors.background,
+          }
+        : {
+            backgroundColor: '#27104e',
+            backgroundImage: 'linear-gradient(19deg, #27104e 0%, #161a2b 25%)',
+          }),
+    }),
+  },
+  containerLanding: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     height: '100%',
-
+    color: theme.text.baseColor,
     fontSize: '32px',
 
     ...minMediaQuery(tabletBreakPoint, {
@@ -147,7 +190,7 @@ const useStyles = createUseStyles({
   text: {
     ...fonts.body1,
     lineHeight: '1em',
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
 
     ...onlySmallMobile({
       fontSize: '12px',
@@ -163,6 +206,12 @@ const useStyles = createUseStyles({
       marginTop: '48px',
       justifyContent: 'flex-start',
     }),
+
+    ...onlyMobile({
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    })
   },
   rightSide: {
     flex: 1,
@@ -187,4 +236,16 @@ const useStyles = createUseStyles({
       display: 'none',
     }),
   },
-});
+  playButton: {
+    ...makeImportant({
+      background: theme.colors.primary,
+      color: 'white',
+    }),
+
+    ...onlyMobile({
+      ...makeImportant({
+        marginRight: 0,
+      })
+    })
+  },
+}));

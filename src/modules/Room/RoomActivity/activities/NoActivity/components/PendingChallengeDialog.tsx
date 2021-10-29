@@ -15,7 +15,13 @@ import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGam
 import { resources } from 'src/modules/Room';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { Events } from 'src/services/Analytics';
-import { colors, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
+import {
+  CustomTheme,
+  floatingShadow,
+  onlyMobile,
+  softBorderRadius,
+} from 'src/theme';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { spacers } from 'src/theme/spacers';
 import { setTimeout } from 'window-or-global';
@@ -29,6 +35,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
   const roomConsumer = useRoomConsumer();
   const [canShowOtherActivities, setCanShowotherActivities] = useState(false);
   const deviceSize = useDeviceSize();
+  const { theme } = useColorTheme();
 
   useEffect(() => {
     setTimeout(() => {
@@ -62,14 +69,14 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
                   <div className={cls.centered}>
                     <Text size="body2">While waiting you can now also</Text>
                     <Button
-                      label="Analyse Games"
+                      label="Analyze Games"
                       clear
                       size="medium"
                       className={cls.analysisButton}
                       withBadge={{
                         text: 'New',
                         side: 'right',
-                        color: 'negativeLight',
+                        color: theme.name ==='lightDefault' ? 'negative' : 'primaryDark',
                       }}
                       onClick={() => {
                         if (!roomConsumer) {
@@ -90,12 +97,16 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
               <div className={cls.centered}>
                 {/* <Text size="small1">Share the Magic Link with a friend!</Text> */}
                 {/* <br/> */}
-                <Text size="small1" color={colors.negative}>
+                <Text
+                  size="small1"
+                  color={theme.colors.negative}
+                >
                   Share the Magic Link with a friend!
                 </Text>
               </div>
 
               <ClipboardCopyButton
+                type={theme.name === 'darkDefault' ? 'positive' : 'primary'}
                 label="Invite Friend"
                 copiedlLabel="Challenge Link Copied"
                 value={`${window.location.origin}/${toChallengeUrlPath(pendingChallenge)}`}
@@ -110,7 +121,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
           buttons={[
             {
               label: 'Cancel Challenge',
-              type: 'secondary',
+              type: theme.name === 'lightDefault' ? 'secondary' : 'negative',
               onClick: () => {
                 if (!roomConsumer) {
                   return;
@@ -131,7 +142,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   container: {
     position: 'absolute',
     top: 0,
@@ -150,7 +161,7 @@ const useStyles = createUseStyles({
     ...softBorderRadius,
     padding: 0,
     position: 'relative',
-    background: colors.white,
+    ...theme.modal,
 
     ...makeImportant({
       borderRadius: '8px',
@@ -210,4 +221,4 @@ const useStyles = createUseStyles({
       paddingBottom: spacers.smaller,
     }),
   },
-});
+}));

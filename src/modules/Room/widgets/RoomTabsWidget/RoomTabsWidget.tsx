@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { faComment, faBars, faDiceD6 } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComment, faDiceD6 } from '@fortawesome/free-solid-svg-icons';
 import { UserInfoRecord } from 'dstnd-io';
 import { useSelector } from 'react-redux';
 import { Tabs } from 'src/components/Tabs';
 import { ActivityLog } from 'src/modules/Room/RoomActivityLog';
 import { selectCurrentRoomActivityLog } from 'src/modules/Room/RoomActivityLog/redux/selectors';
 import { ChatContainer } from 'src/modules/Chat';
-import { colors } from 'src/theme';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 export type RoomTabsWidgetProps = {
   me: UserInfoRecord;
@@ -17,6 +16,7 @@ export type RoomTabsWidgetProps = {
 export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
   const activityLog = useSelector(selectCurrentRoomActivityLog);
   const [tab, setTab] = useState(0);
+  const { theme } = useColorTheme();
 
   useEffect(() => {
     if (
@@ -39,7 +39,8 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
           content: (
             <div
               style={{
-                borderColor: colors.neutral,
+                borderColor:
+                  theme.colors.neutral,
                 overflow: 'hidden',
                 flex: 1,
               }}
@@ -58,7 +59,8 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
           content: (
             <div
               style={{
-                borderColor: colors.neutral,
+                borderColor:
+                  theme.colors.neutral,
                 overflow: 'hidden',
                 flex: 1,
               }}

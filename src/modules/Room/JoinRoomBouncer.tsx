@@ -4,7 +4,7 @@ import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { FunWallpaper } from 'src/components/FunWallpaper';
 import { createUseStyles } from 'src/lib/jss';
 import { usePeerState } from 'src/providers/PeerProvider';
-import { colors, floatingShadow, softBorderRadius } from 'src/theme';
+import { floatingShadow, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { useSession } from 'src/services/Session';
 import { JoinedRoom } from './types';
@@ -108,7 +108,7 @@ export const JoinRoomBouncer: React.FC<Props> = (props) => {
   return <AwesomeLoaderPage />;
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
     flex: 1,
@@ -121,9 +121,9 @@ const useStyles = createUseStyles({
     maxWidth: '360px',
     width: '50%',
     display: 'flex',
-    background: colors.white,
+    background: theme.colors.white,
     ...floatingShadow,
     ...softBorderRadius,
     padding: spacers.large,
   },
-});
+}));

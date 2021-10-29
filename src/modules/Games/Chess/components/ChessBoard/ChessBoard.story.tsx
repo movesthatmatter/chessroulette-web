@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import { ChessBoard } from './ChessBoard';
 //import 'src/modules/Games/Chess/components/ChessBoard/node_modules/react-chessground/dist/styles/chessground.css';
 import { GameMocker } from 'src/mocks/records/GameMocker';
-import { Grommet } from 'grommet';
-import { defaultTheme } from 'src/theme';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { chessGameActions, ChessGameColor } from 'dstnd-io';
 import { toISODateTime } from 'io-ts-isodatetime';
@@ -29,7 +27,7 @@ export const fromStartingPosition = () =>
         type="play"
         id={game.id}
         pgn={game.pgn}
-        homeColor="black"
+        playableColor="black"
         onMove={({ fen }) => {}}
         size={400}
       />
@@ -47,8 +45,10 @@ export const playable = () =>
         id={game.id}
         pgn={game.pgn}
         size={600}
-        homeColor={turn}
+        orientation={'white'}
+        playableColor={turn}
         playable
+        canInteract
         onMove={(m) => {
           if (game.state === 'pending' || game.state === 'started') {
             setGame((prev) => ({
@@ -75,7 +75,7 @@ export const withGameStarted = () =>
         id={game.id}
         pgn={game.pgn}
         size={400}
-        homeColor="black"
+        playableColor="black"
         onMove={({ fen }) => {}}
       />
     );
@@ -87,13 +87,12 @@ export const withNotification = () =>
     const game = gameMocker.started();
 
     return (
-      <Grommet theme={defaultTheme}>
         <ChessBoard
           type="play"
           id={game.id}
           pgn={game.pgn}
           size={400}
-          homeColor="black"
+          playableColor="black"
           onMove={({ fen }) => {}}
           overlayComponent={(p) => (
             <DialogContent
@@ -109,6 +108,5 @@ export const withNotification = () =>
             />
           )}
         />
-      </Grommet>
     );
   });

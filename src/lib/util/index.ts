@@ -1,6 +1,7 @@
 import { differenceInMilliseconds } from 'date-fns';
 import humanizeDuration, { Humanizer } from 'humanize-duration';
 import { RoomRecord, ChallengeRecord } from 'dstnd-io';
+import { diff } from 'deep-object-diff';
 
 export const noop = () => {
   // do nothing
@@ -142,4 +143,9 @@ export const addSliceToDict = <
     ...slice,
   } as O & S);
 
-export const isObject = (m: unknown): m is object => (m !== null && typeof m === 'object');
+export const isObject = (m: unknown): m is object => m !== null && typeof m === 'object';
+
+export const isDeepEqual = <A extends object, B extends object>(a?: A, b?: B) => {
+  // This could change later on with a faster/different diff fn
+  return Object.keys(diff(a || {}, b || {})).length === 0;
+};

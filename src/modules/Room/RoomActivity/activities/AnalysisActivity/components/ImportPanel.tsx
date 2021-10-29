@@ -1,15 +1,20 @@
-import { SimplePGN } from 'dstnd-io';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import cx from 'classnames';
+import { GameRecord, SimplePGN } from 'dstnd-io';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
-import { MyGamesArchive } from './MyGamesArchive';
-import cx from 'classnames';
-import { PgnInputBox } from './PgnInputBox';
 import { Button, IconButton } from 'src/components/Button';
 import { FormPrevious } from 'grommet-icons';
+import { PgnInputBox } from './PgnInputBox';
+import { MyGamesArchive } from './MyGamesArchive';
+import { useDebouncedCallback } from 'use-debounce/lib';
+import { Err, Ok, Result } from 'ts-results';
+import { getNewChessGame } from 'src/modules/Games/Chess/lib';
+import { setTimeout } from 'window-or-global';
 
-type Props = {
-  onImported: (pgn: SimplePGN) => void;
+export type ImportPanelProps = {
+  onImportedPgn: (pgn: SimplePGN) => void;
+  onImportedGame: (game: GameRecord) => void;
 } & (
   | {
       hasBackButton?: false;
@@ -21,43 +26,87 @@ type Props = {
     }
 );
 
-export const ImportPanel: React.FC<Props> = (props) => {
+export type ImportBoxState =
+  | {
+      selectedGame: GameRecord;
+      pgnFromInput?: undefined;
+    }
+  | {
+      selectedGame?: undefined;
+      pgnFromInput:
+        | {
+            status: 'valid';
+            input: SimplePGN;
+          }
+        | {
+            status: 'validating' | 'invalid';
+            input: string;
+          };
+    };
+
+const validatePGN = (s: string): Result<SimplePGN, 'PgnNotValidError'> => {
+  const instance = getNewChessGame();
+  const isValid = instance.load_pgn(s);
+
+  return isValid ? new Ok(s as SimplePGN) : new Err('PgnNotValidError');
+};
+
+export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
   const cls = useStyles();
-  const [pgn, setPgn] = useState<SimplePGN>();
-  const [isValidating, setIsValidating] = useState(false);
+  const [state, setState] = useState<ImportBoxState>();
+
+  const validateDebounced = useDebouncedCallback((input: string) => {
+    validatePGN(input)
+      .map((validPgn) => {
+        setState({
+          selectedGame: undefined,
+          pgnFromInput: {
+            status: 'valid',
+            input: validPgn,
+          },
+        });
+      })
+      .mapErr(() => {
+        setState({
+          selectedGame: undefined,
+          pgnFromInput: {
+            status: 'invalid',
+            input,
+          },
+        });
+      });
+  }, 250);
+
+  const onInputChanged = useCallback((input: string) => {
+    setState({
+      selectedGame: undefined,
+      pgnFromInput: {
+        status: 'validating',
+        input,
+      },
+    });
+
+    validateDebounced(input);
+  }, []);
 
   return (
     <>
-      <div style={{ overflowY: 'hidden' }}>
-        {/* <div className={cx(cls.boxHorizontalPadding, cls.importGameLabel)}>
-          <Text size="small2">Import a Previous Game</Text>
-        </div> */}
-        <div className={cls.scroller}>
-          <div
-            className={cx(cls.box)}
-            style={{
-              width: '100%',
+      <div className={cls.scroller}>
+        <div className={cls.box} style={{ width: '100%' }}>
+          <MyGamesArchive
+            onSelect={(game) => {
+              setState({
+                selectedGame: game,
+                pgnFromInput: undefined,
+              });
             }}
-          >
-            <MyGamesArchive onSelect={(g) => setPgn(g.pgn as SimplePGN)} />
-          </div>
+          />
         </div>
       </div>
       <PgnInputBox
         // Here show either the pgn or if it's nothing the input
-        value={pgn}
-        onChange={(s) => {
-          setIsValidating(s.isLoading);
-          if (s.isLoading) {
-            return;
-          }
-
-          if (s.isValid) {
-            setPgn(s.pgn);
-            return;
-          }
-          setPgn(undefined);
-        }}
+        value={state?.selectedGame ? state.selectedGame.pgn : state?.pgnFromInput.input}
+        onChange={onInputChanged}
         containerClassName={cx(cls.box, cls.pgnInputBox)}
         contentClassName={cls.pgnInputBox}
       />
@@ -65,22 +114,33 @@ export const ImportPanel: React.FC<Props> = (props) => {
         {props.hasBackButton && (
           <IconButton
             type="secondary"
+            iconType="grommet"
             icon={FormPrevious}
-            onSubmit={() => props.onBackButtonClicked()}
+            onSubmit={props.onBackButtonClicked}
             className={cls.button}
           />
         )}
         <Button
-          label={pgn ? 'Import' : 'PGN Invalid'}
+          label={state ? 'Import' : 'PGN Invalid'}
           type="primary"
-          disabled={!pgn}
+          disabled={!state || state.pgnFromInput?.status === 'invalid'}
           full
-          isLoading={isValidating}
+          isLoading={state?.pgnFromInput?.status === 'validating'}
           onClick={() => {
-            if (pgn) {
-              props.onImported(pgn);
-              setPgn(undefined);
+            if (!state) {
+              return;
             }
+
+            if (state?.selectedGame) {
+              props.onImportedGame(state.selectedGame);
+            } else if (state.pgnFromInput.status === 'valid') {
+              props.onImportedPgn(state.pgnFromInput.input);
+            }
+
+            setTimeout(() => {
+              // Wait a little to clear the imported state!
+              setState(undefined);
+            }, 300);
           }}
           containerClassName={cls.button}
           className={cls.noMarging}
@@ -93,7 +153,7 @@ export const ImportPanel: React.FC<Props> = (props) => {
 const FLOATING_SHADOW_HORIZONTAL_OFFSET = spacers.large;
 const FLOATING_SHADOW_BOTTOM_OFFSET = `48px`;
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   // TODO: Have a centralized box class since it's used in other places
   box: {
     paddingLeft: FLOATING_SHADOW_HORIZONTAL_OFFSET,
@@ -152,4 +212,4 @@ const useStyles = createUseStyles({
   buttonWrapper: {
     display: 'flex',
   },
-});
+}));

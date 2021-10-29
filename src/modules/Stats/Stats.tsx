@@ -1,4 +1,3 @@
-import { Box } from 'grommet';
 import React, { ReactNode } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import dateformat from 'dateformat';
@@ -67,15 +66,14 @@ export const Stats: React.FC<Props> = (props) => {
   };
 
   return (
-    <Box direction="column">
-      <Box align="center">
+    <div style={{display:'flex', flexDirection:'column'}}>
+      <div style={{alignContent:'center', alignItems:'center'}}>
         <StatsTable caption="Rooms" data={props.rooms} columnsMap={roomColumnsMap} />
-      </Box>
-      <Box align="center">
+      </div>
+      <div style={{display: 'flex', justifyContent: 'center', alignContent:'center', alignItems:'center'}}>
         <StatsTable caption="Peers" data={props.peers} columnsMap={peerColumnsMap} />
-        
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 

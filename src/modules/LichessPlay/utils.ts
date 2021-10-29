@@ -149,7 +149,6 @@ export const lichessGameToChessRouletteGame = (
     ],
     createdAt: toISODateTime(new Date(game.createdAt)),
   } as GameRecord;
-  console.log('lichess game to chessroulette game ', gameRecord)
   return gameRecordToGame(gameRecord);
 };
 
@@ -173,7 +172,6 @@ export const updateGameWithNewStateFromLichess = (
     winner: lichessGameState.winner || undefined,
     history,
   } as GameRecord;
-  console.log('update to chessroulette game', gameRecord)
   return gameRecordToGame(gameRecord);
 };
 

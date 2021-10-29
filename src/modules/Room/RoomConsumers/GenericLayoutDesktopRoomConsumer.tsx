@@ -1,8 +1,8 @@
 import React from 'react';
+import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
-import cx from 'classnames';
-import { colors, softBorderRadius } from 'src/theme';
+import { softBorderRadius } from 'src/theme';
 import { RoomDetailsConsumer } from './RoomDetailsConsumer';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
 import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
@@ -13,39 +13,43 @@ import { getBoxShadow } from 'src/theme/util';
 import { NavigationLink } from 'src/components/NavigationLink';
 import { SwitchActivityWidgetRoomConsumer } from './SwitchActivityWidgetRoomConsumer';
 import { RoomControlMenuConsumer } from './RoomControlMenuConsumer';
+import { DarkModeSwitch } from 'src/components/DarkModeSwitch/DarkModeSwitch';
 
 type Props = {
   renderActivity: (d: {
     isMobile: boolean;
     boardSize: number;
     leftSide: LayoutContainerDimensions;
-    // TODO: might need a bunch of other dimensinos like the marging size or the bottom to inform the activity
+    // TODO: might need a bunch of other dimensinos like the marging
+    //  size or the bottom to inform the activity
   }) => React.ReactNode;
 };
 
-const TOP_HEIGHT = 70;
-const BOTTOM_HEIGHT = 66;
+const TOP_HEIGHT = 90;
+const BOTTOM_HEIGHT = 56;
 const MIN_SPACE_BETWEEN = spacers.largePx;
+const LAYOUT_RATIOS = {
+  leftSide: 1.2,
+  mainArea: 3,
+  rightSide: 2.1,
+};
+
 
 // TODO: This isn't provided for now and don't think it needs to be but for now it sits here
-export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
+export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((props) => {
   const cls = useStyles();
 
   return (
     <div className={cls.container}>
       <DesktopRoomLayout
-        ratios={{
-          leftSide: 1.2,
-          mainArea: 3,
-          rightSide: 2.1,
-        }}
+        ratios={LAYOUT_RATIOS}
         topHeight={TOP_HEIGHT}
         bottomHeight={BOTTOM_HEIGHT}
         minSpaceBetween={MIN_SPACE_BETWEEN}
         renderTopComponent={({ left, right, center }) => (
           <div className={cls.top}>
             <div className={cls.mainTop}>
-              <div className={cls.logoWrapper} style={{ flex: 1 }}>
+              <div className={cls.logoWrapper} style={{ flex: 1, marginRight: '10px' }}>
                 <Logo asLink withBeta />
               </div>
               <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
@@ -75,6 +79,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
                     )}
                   />
                 </div>
+                <div style={{ width: '20px' }} />
                 <UserMenu reversed showPeerStatus />
               </div>
             </div>
@@ -83,10 +88,18 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
         )}
         renderRightSideComponent={({ container }) => (
           <div className={cx(cls.side, cls.rightSide)}>
-            <div style={{ height: `${TOP_HEIGHT}px` }}>
+            <div className={cls.rightSideTop} style={{ height: `${TOP_HEIGHT}px` }}>
               <div className={cls.roomInfoContainer}>
                 <RoomDetailsConsumer />
-                <RoomControlMenuConsumer />
+                <div
+                  style={{
+                    display: 'flex',
+                  }}
+                >
+                  <DarkModeSwitch />
+                  <div style={{ width: spacers.large }} />
+                  <RoomControlMenuConsumer />
+                </div>
               </div>
             </div>
             <div className={cls.rightSideStretchedContainer}>
@@ -115,16 +128,16 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+});
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   container: {
     width: '100%',
     height: '100%',
-
+    color: theme.text.baseColor,
     display: 'flex',
     flexDirection: 'column',
-    background: colors.background,
+    background: theme.colors.background,
   },
   top: {
     display: 'flex',
@@ -135,6 +148,8 @@ const useStyles = createUseStyles({
     flex: 1,
     flexDirection: 'row',
     display: 'flex',
+    paddingTop: spacers.default,
+    paddingBottom: spacers.larger,
     paddingLeft: spacers.large,
     paddingRight: spacers.large,
   },
@@ -151,17 +166,21 @@ const useStyles = createUseStyles({
     flexDirection: 'column',
   },
   rightSide: {
-    background: colors.white,
+    background: theme.colors.white,
     boxShadow: getBoxShadow(0, 0, 26, 10, 'rgba(16, 30, 115, 0.08)'),
     paddingLeft: `${MIN_SPACE_BETWEEN}px`,
     paddingRight: `${MIN_SPACE_BETWEEN}px`,
+  },
+  rightSideTop: {
+    display: 'flex',
   },
   roomInfoContainer: {
     flex: 1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: spacers.default,
+    paddingTop: spacers.small,
+    paddingBottom: spacers.large,
   },
   rightSideStretchedContainer: {
     display: 'flex',
@@ -182,10 +201,9 @@ const useStyles = createUseStyles({
     position: 'relative',
     zIndex: 1,
   },
-
   linksContainer: {
     display: 'flex',
     alignItems: 'center',
-    flex: 1,
+    flex: 3,
   },
-});
+}));

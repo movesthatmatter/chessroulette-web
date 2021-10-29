@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, onlySmallMobile, softBorderRadius } from 'src/theme';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
@@ -14,21 +14,32 @@ import { Button } from 'src/components/Button';
 import { spacers } from 'src/theme/spacers';
 import { CreateChallengeButton } from '../components/CreateChallengeButton';
 import { SwitchActivityWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/SwitchActivityWidgetRoomConsumer';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { Room } from 'src/providers/PeerProvider';
+import { noop } from 'src/lib/util';
 
 type Props = ActivityCommonProps & {
   deviceSize: DeviceSize;
 };
 
-export const NoActivity: React.FC<Props> = (props) => {
+const findPendingChallenge = (r?: Room) =>
+  r?.pendingChallenges ? Object.values(r.pendingChallenges)[0] : undefined;
+
+export const NoActivity: React.FC<Props> = React.memo((props) => {
   const cls = useStyles();
+  const { theme } = useColorTheme();
   const roomConsumer = useRoomConsumer();
   const [acceptChallengeDialogDismissed, setAccepdChallengeDialogDismissed] = useState(false);
+  const [pendingChallenge, setPendingChallenge] = useState(
+    findPendingChallenge(roomConsumer?.room)
+  );
 
-  const pendingChallenge = roomConsumer?.room?.pendingChallenges
-    ? Object.values(roomConsumer.room.pendingChallenges)[0]
-    : undefined;
+  useEffect(() => {
+    setPendingChallenge(findPendingChallenge(roomConsumer?.room));
+  }, [roomConsumer?.room.pendingChallenges]);
 
-  const overlayComponent = (() => {
+  // Performance Optimization
+  const overlayComponent = useMemo(() => {
     if (pendingChallenge) {
       if (pendingChallenge.createdByUser.id === roomConsumer?.room.me.id) {
         return <PendingChallengeDialog pendingChallenge={pendingChallenge} />;
@@ -45,24 +56,24 @@ export const NoActivity: React.FC<Props> = (props) => {
     }
 
     return undefined;
-  })();
+  }, [pendingChallenge, acceptChallengeDialogDismissed]);
 
   if (props.deviceSize.isMobile) {
     return (
       <GenericLayoutMobileRoomConsumer
-        renderTopOverlayHeader={() => <NavigationHeader darkMode />}
+        renderTopOverlayHeader={() => <NavigationHeader darkBG />}
         renderActivity={(cd) => (
           <div className={cls.mobileBoardWrapper}>
-          <ChessBoard
-            type="free"
-            size={cd.boardSize}
-            id="empty-frozen-board" // TODO: This might need to change
-            pgn=""
-            homeColor="white"
-            onMove={() => {}}
-            className={cls.board}
-            overlayComponent={overlayComponent}
-          />
+            <ChessBoard
+              type="free"
+              size={cd.boardSize}
+              id="empty-frozen-board" // TODO: This might need to change
+              pgn=""
+              playableColor="white"
+              onMove={noop}
+              className={cls.board}
+              overlayComponent={overlayComponent}
+            />
           </div>
         )}
       />
@@ -92,7 +103,7 @@ export const NoActivity: React.FC<Props> = (props) => {
                     withBadge={{
                       text: 'New',
                       side: 'right',
-                      color: 'negativeLight',
+                      color: theme.name === 'lightDefault' ? 'negative' : 'primaryDark',
                     }}
                   />
                   {!pendingChallenge && <CreateChallengeButton label="Create Challenge" full />}
@@ -105,9 +116,9 @@ export const NoActivity: React.FC<Props> = (props) => {
             size={boardSize}
             id="empty-frozen-board" // TODO: This might need to change
             pgn=""
-            homeColor="white"
+            playableColor="white"
             canInteract
-            onMove={() => {}}
+            onMove={noop}
             className={cls.board}
             overlayComponent={overlayComponent}
           />
@@ -115,7 +126,7 @@ export const NoActivity: React.FC<Props> = (props) => {
       )}
     />
   );
-};
+});
 
 const useStyles = createUseStyles({
   container: {

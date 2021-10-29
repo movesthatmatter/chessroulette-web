@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { colors, text, hideOnDesktop, hideOnMobile, floatingShadow } from 'src/theme';
+import { hideOnDesktop, hideOnMobile, floatingShadow, CustomTheme } from 'src/theme';
 import { Menu } from 'grommet-icons';
 import cx from 'classnames';
 import { FormClose } from 'grommet-icons';
@@ -9,6 +9,7 @@ import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton } from 'src/services/Authentication/widgets';
 import { Link, useLocation } from 'react-router-dom';
 import { FeedbackDialogConsumer } from 'src/providers/FeedbackProvider/FeedbackConsumer';
+import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
 
 type Props = {
   className?: string;
@@ -76,9 +77,12 @@ export const NavigationMenu: React.FC<Props> = (props) => {
   );
 
   return (
-    <div className={cx(cls.container, props.className)}>
+    <div className={cx(cls.containerMenu, props.className)}>
       <div className={cls.desktopMenu}>
         <div className={cx(cls.linksContainer)}>{menuContent}</div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <DarkModeSwitch />
+        </div>
         {auth.authenticationType !== 'none' && (
           <div className={cls.authMenu}>
             {auth.authenticationType === 'user' ? (
@@ -90,6 +94,9 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         )}
       </div>
       <div className={cx(cls.onlyMobile)}>
+        <div style={{ marginRight: '20px', justifyContent:'center', display:'flex', alignContent:'center', alignItems:'center' }}>
+          <DarkModeSwitch />
+        </div>
         <div className={cls.menuWrapper} onClick={() => setOpen((prev) => !prev)}>
           {/* <Badge text="New" color="negative" className={cls.newBadge} /> */}
           <Menu className={cls.drawerOpenBtn} />
@@ -123,8 +130,8 @@ export const NavigationMenu: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
-  container: {},
+const useStyles = createUseStyles((theme) => ({
+  containerMenu: {},
   mobileOverlay: {
     position: 'fixed',
     top: 0,
@@ -181,10 +188,12 @@ const useStyles = createUseStyles({
     position: 'absolute',
     top: '16px',
     left: '16px',
+    fill: `${theme.colors.neutral} !important`,
+    stroke: `${theme.colors.neutral} !important`,
   },
 
   drawerMenuContainer: {
-    background: colors.white,
+    background: theme.colors.white,
     padding: '0 24px',
     height: '100%',
 
@@ -195,7 +204,7 @@ const useStyles = createUseStyles({
 
   drawerUserMenuWrapper: {
     padding: '32px 0',
-    borderBottom: `1px solid ${colors.neutralLighter}`,
+    borderBottom: `1px solid ${theme.name === 'lightDefault' ? theme.colors.neutralLighter : theme.colors.neutralDark}`,
   },
   drawerMenuContent: {
     display: 'flex',
@@ -240,19 +249,18 @@ const useStyles = createUseStyles({
   link: {
     textTransform: 'capitalize',
     textDecoration: 'none',
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
     fontFamily: 'Lato, Open Sans, sans serif',
     fontSize: '16px',
     textAlign: 'center',
 
     '&:hover': {
-      borderBottom: `3px solid ${text.primaryColor}`,
-      color: text.primaryColor,
+      ...theme.links.hover,
     },
   },
   activeLink: {
-    borderBottom: `3px solid ${text.primaryColor}`,
-    color: text.primaryColor,
+    borderBottom: `3px solid ${theme.text.primaryColor}`,
+    color: theme.text.primaryColor,
   },
 
   onlyMobile: {
@@ -279,10 +287,14 @@ const useStyles = createUseStyles({
 
   menuWrapper: {
     position: 'relative',
+    display:'flex',
+    justifyContent:'center',
+    alignContent:'center',
+    alignItems: 'center',
   },
   newBadge: {
     position: 'absolute',
     zIndex: 1,
     transform: 'scale(.9) translate(-20px, -5px)',
   },
-});
+}));

@@ -6,7 +6,7 @@ import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import { seconds } from 'src/lib/time';
 import { noop } from 'src/lib/util';
 import { createUseStyles } from 'src/lib/jss';
-import { colors } from 'src/theme';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   value: string;
@@ -22,6 +22,7 @@ export const ClipboardCopyButton: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
   const [copied, setCopied] = useState(false);
+  const { theme } = useColorTheme();
 
   const copy = async () => {
     try {
@@ -47,7 +48,8 @@ export const ClipboardCopyButton: React.FC<Props> = ({
           style={
             buttonProps.clear
               ? {
-                  color: colors.neutralDarkest,
+                  color:
+                    theme.colors.neutralDarkest,
                 }
               : undefined
           }
@@ -59,8 +61,8 @@ export const ClipboardCopyButton: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   icon: {
-    color: colors.white,
+    color: theme.button.icon.color,
   },
-});
+}));

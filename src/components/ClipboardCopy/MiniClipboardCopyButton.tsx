@@ -3,10 +3,10 @@ import { createUseStyles } from 'src/lib/jss';
 import { seconds } from 'src/lib/time';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
-import { colors, text } from 'src/theme';
 import { ClearIconButton } from 'src/components/Button/ClearIconButton';
 import { noop } from 'src/lib/util';
 import cx from 'classnames';
+import { CustomTheme } from 'src/theme';
 
 type Props = {
   value: string;
@@ -43,16 +43,16 @@ export const MiniClipboardCopyButton: React.FC<Props> = ({ value, onCopied = noo
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   checkIcon: {
-    color: colors.positiveDarker,
+    color: theme.colors.positiveDarker,
   },
   copyIcon: {
     cursor: 'pointer',
-    color: text.baseColor,
+    color: theme.text.baseColor,
 
     '&:hover': {
       opacity: 0.5,
     },
   },
-});
+}));

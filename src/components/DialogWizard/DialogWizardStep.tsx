@@ -52,11 +52,12 @@ export const DialogWizardStep: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles( theme => ({
   container: {
     flex: 1,
     paddingLeft: 0,
     paddingRight: 0,
+    color: theme.text.baseColor
   },
   title: {
     ...fonts.subtitle1,
@@ -115,4 +116,4 @@ const useStyles = createUseStyles({
       marginBottom: 0,
     }),
   },
-});
+}));

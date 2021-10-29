@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
-import { colors } from 'src/theme';
+import { themes } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Text } from '../Text';
 import { Logo } from './Logo';
@@ -47,30 +47,30 @@ export const defaultStory = () => (
           width: '320px',
         }}
       >
-        <Text size="small1" style={{ color: colors.white }}>
+        <Text size="small1" style={{ color: themes.lightDefault.colors.white }}>
           Dark Mode
         </Text>
         <div style={{ paddingBottom: spacers.large }} />
         <div style={{ paddingBottom: spacers.large }}>
-          <Text size="small1" style={{ color: colors.white }}>
+          <Text size="small1" style={{ color: themes.lightDefault.colors.white }}>
             Default
           </Text>
-          <Logo darkMode />
+          <Logo darkBG />
         </div>
         <div style={{ paddingBottom: spacers.large }}>
-          <Text size="small1" style={{ color: colors.white }}>
+          <Text size="small1" style={{ color: themes.lightDefault.colors.white }}>
             With Beta
           </Text>
-          <Logo darkMode withBeta />
+          <Logo darkBG withBeta />
         </div>
         <div style={{ paddingBottom: spacers.large }}>
-          <Text size="small1" style={{ color: colors.white }}>
+          <Text size="small1" style={{ color: themes.lightDefault.colors.white }}>
             Mini
           </Text>
-          <Logo darkMode mini />
+          <Logo darkBG mini />
         </div>
         <div style={{ paddingBottom: spacers.large }}>
-          <Text size="small1" style={{ color: colors.white }}>
+          <Text size="small1" style={{ color: themes.lightDefault.colors.white }}>
             With Outline
           </Text>
           <Logo mini withOutline />

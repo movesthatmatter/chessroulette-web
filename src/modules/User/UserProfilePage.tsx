@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { AuthenticatedPage } from 'src/components/Page';
-import { createUseStyles } from 'src/lib/jss';
-import { colors, hideOnMobile, onlyDesktop, text } from 'src/theme';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
+import { CustomTheme, hideOnMobile, onlyDesktop } from 'src/theme';
 import { GamesArchive } from '../GamesArchive';
 import { Menu } from './components/Menu';
 import { UserDetails } from './sections/UserDetails';
@@ -17,7 +17,7 @@ type Section = {
   route: string;
   display: string;
   title: string;
-}
+};
 
 const sectionsMap = {
   details: {
@@ -45,7 +45,7 @@ export const UserProfilePage: React.FC<Props> = (props) => {
 
   // If the given section isn't correct default to 1st
   const currentSection = keyInObject(sectionsMap, params.section)
-    ? sectionsMap[params.section] as Section
+    ? (sectionsMap[params.section] as Section)
     : sections[0];
 
   return (
@@ -76,7 +76,7 @@ export const UserProfilePage: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
@@ -90,7 +90,7 @@ const useStyles = createUseStyles({
     }),
   },
   menuContainer: {
-    borderRight: `1px solid ${colors.neutral}`,
+    borderRight: `1px solid ${theme.colors.neutralLight}`,
     flex: 0.25,
     display: 'flex',
     flexDirection: 'column',
@@ -107,18 +107,18 @@ const useStyles = createUseStyles({
     textDecoration: 'none',
     padding: '4px 20px 4px 0',
     marginBottom: '16px',
-    color: colors.neutralDarkest,
+    color: theme.colors.neutralDarkest,
 
     '&:hover': {
-      borderRight: `3px solid ${text.primaryColor}`,
-      color: text.primaryColor,
-      fontWeight: 'bold',
+      color: theme.colors.primary,
     },
   },
   activeMenuLink: {
-    borderRight: `3px solid ${text.primaryColor}`,
-    color: text.primaryColor,
-    fontWeight: 'bold',
+    ...makeImportant({
+      borderRight: `3px solid ${theme.colors.primary}`,
+      color: theme.colors.primary,
+      fontWeight: 'bold',
+    }),
   },
   onlyDesktop: {
     ...hideOnMobile,
@@ -129,4 +129,4 @@ const useStyles = createUseStyles({
     lineHeight: 0,
     paddingBottom: spacers.default,
   },
-});
+}));

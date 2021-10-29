@@ -2,8 +2,6 @@
 import React, { useState } from 'react';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
-import { Grommet } from 'grommet';
-import { defaultTheme } from 'src/theme';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { StreamingBox, StreamingBoxProps } from './StreamingBox';
 import { getRandomInt, range } from 'src/lib/util';
@@ -56,7 +54,6 @@ type Props = {
 } & StreamingBoxProps;
 const Component: React.FC<Props> = ({ room, focusOnPeerId, ...streamingBoxProps }) => {
   return (
-    <Grommet theme={defaultTheme} full>
       <div
         style={{
           padding: '30px',
@@ -73,7 +70,6 @@ const Component: React.FC<Props> = ({ room, focusOnPeerId, ...streamingBoxProps 
           {...streamingBoxProps}
         />
       </div>
-    </Grommet>
   );
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserRecord } from 'dstnd-io';
 import { createUseStyles } from 'src/lib/jss';
-import { fonts } from 'src/theme';
+import { CustomTheme, fonts } from 'src/theme';
 import cx from 'classnames';
 import { spacers } from 'src/theme/spacers';
 import { InfoNotification } from '../../types';
@@ -26,23 +26,40 @@ export const InfoNotificationItem: React.FC<Props> = ({ notification, me, classN
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'row',
           textAlign: 'right',
         }}
       >
+        <div style={{alignItems: 'center', justifyContent: 'center', display:"flex",marginRight: spacers.small,}}>
+        <div className={cls.icon}/>
+        </div>
         {isDangerouslySetHtml(notification.content) ? (
-          <Text size="small1" dangerouslySetInnerHTML={notification.content} />
+          <Text size="small1" dangerouslySetInnerHTML={notification.content} style = {{textAlign: 'left'}}/>
         ) : (
-          <Text size="small1">{notification.content}</Text>
+          <Text size="small1" style = {{textAlign: 'left'}}>{notification.content}</Text>
         )}
       </div>
     </div>
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles(theme => ({
   container: {
     ...fonts.small1,
     marginBottom: spacers.large,
   },
-});
+  iconContainer:{
+    display:'flex',
+    justifyContent:'center',
+    alignContent:'center',
+    alignItems:'center',
+    marginRight:'10px'
+  },
+  icon: {
+    width:'12px',
+    height: '12px',
+    background: theme.colors.primary,
+    boxSizing: 'border-box',
+    borderRadius: '50%',
+  }
+}));

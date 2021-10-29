@@ -68,7 +68,7 @@ export const ConfirmNewGameAction: React.FC<Props> = ({
   const cancelButton = (() => {
     if (!props.cancelButton) {
       return {
-        type: 'secondary',
+        type: 'negative',
         label: 'Cancel',
         onClick: () => setIsVisible(false),
       } as const;

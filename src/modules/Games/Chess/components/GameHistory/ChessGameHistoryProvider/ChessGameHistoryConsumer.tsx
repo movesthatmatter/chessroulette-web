@@ -13,7 +13,7 @@ export const ChessGameHistoryConsumer: React.FC<Props> = ({ render, onUpdated = 
 
   useEffect(() => {
     onUpdated(context);
-  }, [context.displayedIndex, context.displayedHistory]);
+  }, [context.displayed.fen, context.cachedHistoryFen]); // Optimized around the fen only not whole history object!
 
   return <ChessGameHistoryContext.Consumer children={render} />;
 };

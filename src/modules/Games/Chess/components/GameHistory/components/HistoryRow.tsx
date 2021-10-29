@@ -1,15 +1,15 @@
 import React from 'react';
+import cx from 'classnames';
+import hexToRgba from 'hex-to-rgba';
 import { Text } from 'src/components/Text';
-import { createUseStyles, CSSProperties } from 'src/lib/jss';
+import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import { isPartialBlackMove, PairedMove } from '../../../lib';
-import cx from 'classnames';
 import { HistoryList } from './HistoryList';
-import { colors, softBorderRadius } from 'src/theme';
+import { softBorderRadius } from 'src/theme';
 import { HTMLDivElement } from 'window-or-global';
 import { ChessHistoryIndex } from 'dstnd-io';
 import { isChessRecursiveHistoryIndex } from 'dstnd-io/dist/analysis/analysisActions';
-import hexToRgba from 'hex-to-rgba';
 
 type Props = {
   pairedMove: PairedMove;
@@ -19,6 +19,7 @@ type Props = {
   focusedIndex?: ChessHistoryIndex;
   className?: string;
   containerClassName?: string;
+  isNested?: boolean;
 };
 
 export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
@@ -31,6 +32,7 @@ export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
       className,
       focusedIndex,
       containerClassName,
+      isNested = false,
     },
     ref
   ) => {
@@ -74,6 +76,7 @@ export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
                     className={cls.nestedHistory}
                     rootPairedIndex={pairedIndex} // continue this move
                     focusedIndex={focusedIndexPerBranch}
+                    isNested={true}
                   />
                 );
               })}
@@ -109,6 +112,7 @@ export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
                 className={cls.nestedHistory}
                 rootPairedIndex={pairedIndex + 1} // start a new move
                 focusedIndex={focusedIndexPerBranch}
+                isNested={true}
               />
             );
           })}
@@ -117,7 +121,7 @@ export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
     };
 
     return (
-      <div className={cx(cls.container, containerClassName)} ref={ref}>
+      <div className={cx(cls.container, containerClassName)} ref={isNested ? undefined : ref}>
         <div className={cx(cls.row, className)}>
           <Text className={cx(cls.text, cls.rowIndex)}>{`${moveCount}.`}</Text>
           {whiteMove ? (
@@ -151,7 +155,7 @@ export const HistoryRow = React.forwardRef<HTMLDivElement | null, Props>(
   }
 );
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   container: {},
   row: {
     display: 'flex',
@@ -188,13 +192,19 @@ const useStyles = createUseStyles({
 
   nestedHistory: {
     marginTop: spacers.smaller,
-    background: hexToRgba(colors.primary, 0.075),
-    border: `1px solid ${colors.negativeLight}`,
-    borderColor: hexToRgba(colors.primary, 0.1),
+    ...(theme.name === 'lightDefault'
+      ? {
+          background: hexToRgba(theme.colors.primary, 0.07),
+        }
+      : {
+          background: hexToRgba(theme.colors.positiveDarker, 0.07),
+        }),
+    border: `1px solid ${theme.colors.negativeLight}`,
+    borderColor: hexToRgba(theme.colors.primary, 0.1),
     borderWidth: 0,
     borderLeftWidth: '1px',
     borderTopWidth: '1px',
-    borderLeftColor: hexToRgba(colors.primary, 0.4),
+    borderLeftColor: hexToRgba(theme.colors.primary, 0.4),
     borderBottomWidth: '1px',
     ...softBorderRadius,
 
@@ -203,4 +213,4 @@ const useStyles = createUseStyles({
   rowBelowNested: {
     // marginTop: spacers.small,
   },
-});
+}));

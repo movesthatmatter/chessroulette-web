@@ -1,3 +1,4 @@
+import { AnalysisRecord } from 'dstnd-io';
 import React from 'react';
 import { GameHistory, GameHistoryProps } from '../GameHistory';
 import { ChessGameHistoryConsumer } from './ChessGameHistoryConsumer';
@@ -10,7 +11,7 @@ export const ChessGameHistoryProvided: React.FC<Props> = (props) => {
       render={(c) => (
         <GameHistory
           history={c.history}
-          focusedIndex={c.displayedIndex}
+          focusedIndex={c.displayed.index}
           onRefocus={c.onRefocus}
           {...props}
         />
