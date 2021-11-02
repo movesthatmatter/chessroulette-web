@@ -101,6 +101,7 @@ const useStyles = createUseStyles((theme) => ({
       top: '-1px',
       left: '8px',
     }),
+    zIndex:10,
     borderRadius: '50%',
     backgroundColor: theme.colors.neutral,
     position: 'absolute',
@@ -163,6 +164,7 @@ const useStyles = createUseStyles((theme) => ({
     transform: 'translateX(160%)',
   },
   toggleButton: {
+    zIndex:20,
     position: 'relative',
     ...onlyDesktop({
       width: '30px',

@@ -10,7 +10,7 @@ export type ThemeState = {
 }
 
 const defaultState: ThemeState = {
-  theme: 'lightDefault'
+  theme: 'darkDefault'
 }
 
 export const reducer = createReducer(defaultState as ThemeState, (handleAction) => [

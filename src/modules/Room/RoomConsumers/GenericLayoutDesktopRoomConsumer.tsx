@@ -49,10 +49,10 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
         renderTopComponent={({ left, right, center }) => (
           <div className={cls.top}>
             <div className={cls.mainTop}>
-              <div className={cls.logoWrapper} style={{ flex: 1, marginRight: '10px' }}>
+              <div className={cls.logoWrapper} style={{ marginRight: '7%' }}>
                 <Logo asLink withBeta />
               </div>
-              <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
+              <div className={cls.userMenuWrapper}>
                 <div className={cls.linksContainer}>
                   <SwitchActivityWidgetRoomConsumer
                     render={({ onSwitch, room }) => (
@@ -155,6 +155,8 @@ const useStyles = createUseStyles((theme) => ({
   },
   userMenuWrapper: {
     display: 'flex',
+    flex: 1,
+    justifyContent:'flex-start'
   },
   logoWrapper: {
     display: 'flex',
