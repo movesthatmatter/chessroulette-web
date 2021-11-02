@@ -160,7 +160,7 @@ const useStyles = createUseStyles(theme => ({
     display: 'none',
     position: 'absolute',
     minWidth: '100%',
-    zIndex: 8,
+    zIndex: 29,
     background: theme.colors.white,
     ...floatingShadow,
     ...softBorderRadius,
