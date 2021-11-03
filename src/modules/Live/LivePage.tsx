@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
 import { AspectRatio } from 'src/components/AspectRatio';
@@ -14,6 +14,8 @@ import { CollaboratorAsStreamer } from './types';
 import { Text } from 'src/components/Text';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { TwitchChatWidget } from './TwitchChatWidget/TwitchChatWidget';
+import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
 
 type Props = {};
 
@@ -25,10 +27,17 @@ const toCollaboratorStreamer = (
   isLive,
 });
 
+const HeroRatios = {
+  video: 3,
+  chat: 1,
+};
+
 export const LivePage: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [streamers, setStreamers] = useState<CollaboratorAsStreamer[]>([]);
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
+  const mainContainerRef = useRef(null);
+  const containerDimensions = useContainerDimensions(mainContainerRef);
 
   useEffect(() => {
     getCollaboratorsByPlatform({
@@ -45,7 +54,7 @@ export const LivePage: React.FC<Props> = (props) => {
   return (
     <Page name="Live">
       {streamersCollection.featured && (
-        <div className={cls.container}>
+        <div className={cls.container} ref={mainContainerRef}>
           <div className={cls.main}>
             <AspectRatio aspectRatio={{ width: 16, height: 9 }}>
               <ReactTwitchEmbedVideo
@@ -102,66 +111,11 @@ export const LivePage: React.FC<Props> = (props) => {
               </div>
               <Hr />
             </div>
-            <div
-              style={{
-                height: spacers.large,
-              }}
-            />
-            <div className={cls.streamerCollectionListMask}>
-              <h3>Featured Collaborators</h3>
-              <div className={cls.streamerCollectionList}>
-                {streamersCollection.restInRankedOrder.map((s) => (
-                  <div
-                    className={cls.aspect}
-                    style={{
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                      }}
-                    >
-                      <div
-                        style={{
-                          paddingRight: spacers.default,
-                        }}
-                      >
-                        <AnchorLink href={`https://twitch.tv/${s.profileUrl}`} target="_blank">
-                          <Avatar imageUrl={s.profilePicUrl || ''} size="60px" />
-                        </AnchorLink>
-                      </div>
-                      <div>
-                        <AnchorLink href={`https://twitch.tv/${s.profileUrl}`} target="_blank">
-                          <Text asLink size="subtitle1">
-                            {s.profileUrl}
-                          </Text>
-                        </AnchorLink>
-                        <Text
-                          size="body2"
-                          asParagraph
-                          style={{
-                            marginTop: '.2em',
-                            color: theme.text.baseColor
-                          }}
-                        >
-                          {(s.about || '').length > 75 ? `${s.about?.slice(0, 75)}...` : s.about}
-                          <br />
-                          <AnchorLink
-                            href={`https://twitch.tv/${s.profileUrl}/about`}
-                            target="_blank"
-                          >
-                            Learn More
-                          </AnchorLink>
-                        </Text>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
+          <div style={{ marginLeft: spacers.default }}>
+            <TwitchChatWidget channel={streamersCollection.featured.profileUrl} />
+          </div>
+
           {/* // Chat will come later maybe */}
           {/* {deviceSize.isMobile || (
             <>
@@ -184,6 +138,62 @@ export const LivePage: React.FC<Props> = (props) => {
           )} */}
         </div>
       )}
+      <div
+        style={{
+          height: spacers.large,
+        }}
+      />
+      <div className={cls.streamerCollectionListMask}>
+        <h3>Featured Collaborators</h3>
+        <div className={cls.streamerCollectionList}>
+          {streamersCollection.restInRankedOrder.map((s) => (
+            <div
+              className={cls.aspect}
+              style={{
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                }}
+              >
+                <div
+                  style={{
+                    paddingRight: spacers.default,
+                  }}
+                >
+                  <AnchorLink href={`https://twitch.tv/${s.profileUrl}`} target="_blank">
+                    <Avatar imageUrl={s.profilePicUrl || ''} size="60px" />
+                  </AnchorLink>
+                </div>
+                <div>
+                  <AnchorLink href={`https://twitch.tv/${s.profileUrl}`} target="_blank">
+                    <Text asLink size="subtitle1">
+                      {s.profileUrl}
+                    </Text>
+                  </AnchorLink>
+                  <Text
+                    size="body2"
+                    asParagraph
+                    style={{
+                      marginTop: '.2em',
+                      color: theme.text.baseColor,
+                    }}
+                  >
+                    {(s.about || '').length > 75 ? `${s.about?.slice(0, 75)}...` : s.about}
+                    <br />
+                    <AnchorLink href={`https://twitch.tv/${s.profileUrl}/about`} target="_blank">
+                      Learn More
+                    </AnchorLink>
+                  </Text>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </Page>
   );
 };
@@ -195,8 +205,13 @@ const useStyles = createUseStyles({
   },
   main: {
     flex: 2.3,
+    // display:'flex',
   },
   side: {
+    flex: 1,
+  },
+  heroVideoAndChat: {
+    display: 'flex',
     flex: 1,
   },
   videoContainer: {
