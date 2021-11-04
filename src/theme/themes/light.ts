@@ -128,8 +128,10 @@ const light : Theme = {
   },
   links: {
     hover: {
-      borderBottom: `3px solid #001B36`,
-      color: '#001B36',
+      // borderBottom: `3px solid #001B36`,
+      // color: '#001B36',
+      borderBottom: 'none',
+      color: colors.light.primary,
     }
   }
 };

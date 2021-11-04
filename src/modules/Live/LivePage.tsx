@@ -10,7 +10,7 @@ import { CollaboratorRecord } from 'dstnd-io';
 import { toStreamerCollectionByRank } from './twitchSDK/useGetStreamerCollectionWithLiveStatus';
 import { Hr } from 'src/components/Hr';
 import { Avatar } from 'src/components/Avatar';
-import { CollaboratorAsStreamer } from './types';
+import { CollaboratorAsStreamer, StreamerCollection } from './types';
 import { Text } from 'src/components/Text';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
@@ -28,7 +28,8 @@ const toCollaboratorStreamer = (
 export const LivePage: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [streamers, setStreamers] = useState<CollaboratorAsStreamer[]>([]);
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
+
 
   useEffect(() => {
     getCollaboratorsByPlatform({
@@ -143,7 +144,7 @@ export const LivePage: React.FC<Props> = (props) => {
                           asParagraph
                           style={{
                             marginTop: '.2em',
-                            color: theme.text.baseColor
+                            color: theme.text.baseColor,
                           }}
                         >
                           {(s.about || '').length > 75 ? `${s.about?.slice(0, 75)}...` : s.about}

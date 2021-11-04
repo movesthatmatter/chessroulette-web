@@ -10,6 +10,10 @@ import { AuthenticationButton } from 'src/services/Authentication/widgets';
 import { Link, useLocation } from 'react-router-dom';
 import { FeedbackDialogConsumer } from 'src/providers/FeedbackProvider/FeedbackConsumer';
 import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
+import { IconlyIcon } from '../Button/IconButton/components/IconlyIcon';
+import { Home, Game, Video, People } from 'react-iconly';
+import { Text } from '../Text';
+import { spacers } from 'src/theme/spacers';
 
 type Props = {
   className?: string;
@@ -24,37 +28,40 @@ export const NavigationMenu: React.FC<Props> = (props) => {
   const menuContent = (
     <>
       <div className={cls.linkWrapper}>
+        <Link to={'/'} className={cx(cls.link, location.pathname === '/' && cls.activeLink)}>
+          <Home set="bold" />
+          <br />
+          <Text size="small1">Home</Text>
+        </Link>
+
+        {/* <a className={cls.link} href="/" className={cx(cls.link, location.pathname === '/live' && cls.activeLink)}> */}
+      </div>
+      <div className={cls.linkWrapper}>
+        <a className={cls.link} href="#">
+          {/* <IconlyIcon Icon={Game} /> */}
+          <Game set="bold" />
+          <br />
+          <Text size="small1">Play</Text>
+        </a>
+      </div>
+      <div className={cls.linkWrapper}>
         <Link
           to={'/live'}
           className={cx(cls.link, location.pathname === '/live' && cls.activeLink)}
         >
-          Live
+          <Video set="bold" />
+          <br />
+          <Text size="small1">Watch</Text>
         </Link>
-        {/* <Badge
-          color="negative"
-          text="New"
-          className={cls.linkBadge}
-          textClassName={cls.linkBadgeText}
-        /> */}
       </div>
       <div className={cls.linkWrapper}>
-        <a
-          className={cls.link}
-          href="https://gabrielctroia.medium.com/meet-chessroulette-org-a-quarantine-project-e4108f05db39"
-          target="_blank"
-        >
-          About
+        <a className={cls.link} href="https://partner.chessroulette.live" target="_blank">
+          <People set="bold" />
+          <br />
+          <Text size="small1">Collaborate</Text>
         </a>
       </div>
-      <div className={cls.linkWrapper}>
-        <a
-          className={cls.link}
-          href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage"
-        >
-          Get In Touch
-        </a>
-      </div>
-      <div className={cls.linkWrapper}>
+      {/* <div className={cls.linkWrapper}>
         <FeedbackDialogConsumer
           render={(feedbackActions) => (
             <a
@@ -72,7 +79,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
             </a>
           )}
         />
-      </div>
+      </div> */}
     </>
   );
 
@@ -94,7 +101,15 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         )}
       </div>
       <div className={cx(cls.onlyMobile)}>
-        <div style={{ marginRight: '20px', justifyContent:'center', display:'flex', alignContent:'center', alignItems:'center' }}>
+        <div
+          style={{
+            marginRight: '20px',
+            justifyContent: 'center',
+            display: 'flex',
+            alignContent: 'center',
+            alignItems: 'center',
+          }}
+        >
           <DarkModeSwitch />
         </div>
         <div className={cls.menuWrapper} onClick={() => setOpen((prev) => !prev)}>
@@ -204,7 +219,9 @@ const useStyles = createUseStyles((theme) => ({
 
   drawerUserMenuWrapper: {
     padding: '32px 0',
-    borderBottom: `1px solid ${theme.name === 'lightDefault' ? theme.colors.neutralLighter : theme.colors.neutralDark}`,
+    borderBottom: `1px solid ${
+      theme.name === 'lightDefault' ? theme.colors.neutralLighter : theme.colors.neutralDark
+    }`,
   },
   drawerMenuContent: {
     display: 'flex',
@@ -224,15 +241,18 @@ const useStyles = createUseStyles((theme) => ({
 
   linksContainer: {
     display: 'flex',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     flex: 1,
+    // background: 'red'
   },
   linkWrapper: {
     textAlign: 'center',
-    paddingLeft: '20px',
-    paddingRight: '20px',
+    paddingLeft: spacers.default,
+    paddingRight: spacers.default,
     alignSelf: 'center',
     position: 'relative',
+
+    width: '60px',
   },
   linkBadge: {
     position: 'absolute',
@@ -259,8 +279,9 @@ const useStyles = createUseStyles((theme) => ({
     },
   },
   activeLink: {
-    borderBottom: `3px solid ${theme.text.primaryColor}`,
-    color: theme.text.primaryColor,
+    // borderBottom: `3px solid ${theme.text.primaryColor}`,
+    // color: theme.text.primaryColor,
+    ...theme.links.hover,
   },
 
   onlyMobile: {
@@ -287,9 +308,9 @@ const useStyles = createUseStyles((theme) => ({
 
   menuWrapper: {
     position: 'relative',
-    display:'flex',
-    justifyContent:'center',
-    alignContent:'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignContent: 'center',
     alignItems: 'center',
   },
   newBadge: {
