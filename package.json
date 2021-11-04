@@ -62,7 +62,7 @@
     "deep-copy": "^1.4.2",
     "deep-object-diff": "^1.1.0",
     "deox": "^3.2.1",
-    "dstnd-io": "https://github.com/dstnd/dstnd-io.git#756953a",
+    "dstnd-io": "https://github.com/dstnd/dstnd-io.git#0a1caf5",
     "env-cmd": "^10.1.0",
     "eslint-plugin-prettier": "3.1.3",
     "fp-ts": "^2.8.2",

@@ -110,11 +110,11 @@ export const VerificationForm: React.FC<Props> = (props) => {
           label="Lichess"
           type="secondary"
           className={cls.lichess}
-          onSuccess={(accessToken) => {
+          onSuccess={(token) => {
             props.onSubmit({
               type: 'external',
               vendor: 'lichess',
-              accessToken,
+              token,
             });
           }}
         />
@@ -122,11 +122,11 @@ export const VerificationForm: React.FC<Props> = (props) => {
           full
           label="Twitch"
           type="primary"
-          onSuccess={(accessToken) => {
+          onSuccess={(token) => {
             props.onSubmit({
               type: 'external',
               vendor: 'twitch',
-              accessToken,
+              token,
             });
           }}
           // style={{ background: '#6441a5 !important' }}

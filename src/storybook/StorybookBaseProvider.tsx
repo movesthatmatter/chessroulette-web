@@ -5,6 +5,7 @@ import { StorybookReduxProvider } from './StorybookReduxProvider';
 import { UserRecordMocker } from 'src/mocks/records';
 import { RootState } from 'src/redux/rootReducer';
 import { ThemeProvider } from 'react-jss';
+import { JWTToken } from 'dstnd-io';
 
 type Props = {
   withAuthentication?: boolean;
@@ -48,7 +49,7 @@ export const StorybookBaseProvider: React.FunctionComponent<Props> = ({
             authentication: {
               authenticationType: 'user',
               user: userMocker.registered(),
-              accessToken: '1234-access-token',
+              authenticationToken: '1234-access-token' as JWTToken,
             },
           }),
         }}

@@ -1,4 +1,4 @@
-import { RegisteredUserRecord } from 'dstnd-io';
+import { AuthenticationToken, RegisteredUserRecord } from 'dstnd-io';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { UserRecordMocker } from 'src/mocks/records';
@@ -20,9 +20,9 @@ export const defaultStory = () => (
         authentication: {
           authenticationType: 'user',
           user: myUser,
-          accessToken: 'asda',
+          authenticationToken: 'asda' as AuthenticationToken,
         },
-        // TODO: the game will be added here
+        // TODO: the game will be added hereƒ
       }}
     >
       {React.createElement(() => {
