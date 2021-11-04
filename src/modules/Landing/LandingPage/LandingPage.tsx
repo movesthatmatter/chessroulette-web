@@ -10,3 +10,4 @@ export const LandingPage: React.FC<Props> = () => {
 
   return deviceSize.isMobile ? <MobileLandingPage /> : <DesktopLandingPage />;
 };
+
