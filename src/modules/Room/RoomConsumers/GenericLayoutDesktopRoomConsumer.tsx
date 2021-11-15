@@ -14,6 +14,7 @@ import { NavigationLink } from 'src/components/NavigationLink';
 import { SwitchActivityWidgetRoomConsumer } from './SwitchActivityWidgetRoomConsumer';
 import { RoomControlMenuConsumer } from './RoomControlMenuConsumer';
 import { DarkModeSwitch } from 'src/components/DarkModeSwitch/DarkModeSwitch';
+import { Button } from 'src/components/Button';
 
 type Props = {
   renderActivity: (d: {
@@ -33,7 +34,6 @@ const LAYOUT_RATIOS = {
   mainArea: 3,
   rightSide: 2.1,
 };
-
 
 // TODO: This isn't provided for now and don't think it needs to be but for now it sits here
 export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((props) => {
@@ -56,26 +56,35 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                 <div className={cls.linksContainer}>
                   <SwitchActivityWidgetRoomConsumer
                     render={({ onSwitch, room }) => (
-                      <NavigationLink
-                        title="Activities"
-                        withDropMenu={{
-                          items: [
-                            {
-                              title: 'Play',
-                              disabled: room.currentActivity.type === 'play',
-                              onClick: () => onSwitch({ activityType: 'play' }),
-                            },
-                            {
-                              title: 'Analyze',
-                              disabled:
-                                (room.currentActivity.type === 'play' &&
-                                  room.currentActivity.game?.state === 'started') ||
-                                room.currentActivity.type === 'analysis',
-                              onClick: () => onSwitch({ activityType: 'analysis' }),
-                            },
-                          ],
-                        }}
-                      />
+                      <>
+                        <NavigationLink
+                          title="Activities"
+                          withDropMenu={{
+                            items: [
+                              {
+                                title: 'Play',
+                                disabled: room.currentActivity.type === 'play',
+                                onClick: () => onSwitch({ activityType: 'play' }),
+                              },
+                              {
+                                title: 'Analyze',
+                                disabled:
+                                  (room.currentActivity.type === 'play' &&
+                                    room.currentActivity.game?.state === 'started') ||
+                                  room.currentActivity.type === 'analysis',
+                                onClick: () => onSwitch({ activityType: 'analysis' }),
+                              },
+                            ],
+                          }}
+                        />
+                        {room.currentActivity.type === 'play' && room.currentActivity.game && (
+                          <Button
+                            label="Go Live"
+                            type="primary"
+                            onClick={() => onSwitch({ activityType: 'relay'})}
+                          />
+                        )}
+                      </>
                     )}
                   />
                 </div>

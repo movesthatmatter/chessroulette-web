@@ -1,17 +1,16 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { ChessGame } from 'src/modules/Games/Chess';
-import { ChessGameHistoryConsumer, ChessGameHistoryProvider, ChessGameHistoryProviderProps } from 'src/modules/Games/Chess/components/GameHistory';
-import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
+import { ChessGameHistoryConsumer, ChessGameHistoryProvider } from 'src/modules/Games/Chess/components/GameHistory';
 import { BoardSettingsWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/BoardSettingsWidgetRoomConsumer';
 import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { DeviceSize } from 'src/theme/hooks/useDeviceSize';
-import { RoomRelayActivity } from '../types';
 import cx from 'classnames';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { floatingBoxContainerOffsets, floatingBoxOffsets } from '../../styles';
 import { spacers } from 'src/theme/spacers';
-import { useGameActions } from 'src/modules/Games/GameActions';
+import { RelayedChessGame } from 'src/modules/Games/Chess/components/RelayedChessGame/RelayedChessGame';
+import { RoomRelayActivity } from '../types';
+import { console } from 'window-or-global';
 
 type Props = {
   activity: RoomRelayActivity;
@@ -20,17 +19,16 @@ type Props = {
 
 export const RelayActivity: React.FC<Props> = ({activity, deviceSize}) => {
   const cls = useStyles();
-  const {game} = activity;
-  const gameActions = useGameActions();
+  
+  const  {game} = activity;
+
+  // useEffect(() => {
+  //   console.log("Activity inside the RelayActivity component changed", activity);
+  // },[activity])
 
   return (
     <GenericLayoutDesktopRoomConsumer
       renderActivity={({ boardSize, leftSide }) => (
-        <ChessGameHistoryProvider
-          key={game.id}
-          history={game.history || []}
-          // This could be moved up in a useCallback for optimization
-        >
           <div className={cls.container}>
             <aside
               className={cls.side}
@@ -46,25 +44,23 @@ export const RelayActivity: React.FC<Props> = ({activity, deviceSize}) => {
             <ChessGameHistoryConsumer
               render={(c) => (
                 <div>
-                  <ChessGame
+                  {game  && <RelayedChessGame
                     // Reset the State each time the game id changes
                     key={game.id}
                     game={game}
                     size={boardSize}
                     orientation={'white'}
-                    canInteract={activity.iamParticipating}
                     playable={false}
                     playableColor={'white'}
                     displayable={c.displayed}
-                    onAddMove={c.onAddMove}
                     className={cls.board}
-                  />
+                    canInteract
+                  />}
                   <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
                 </div>
               )}
             />
           </div>
-        </ChessGameHistoryProvider>
       )}
     />
   );

@@ -35,11 +35,23 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
     [joinedRoom]
   );
 
+  const goLive = useCallback(() => {
+    if (peerState.status !== 'open'){
+      return;
+    }
+
+    return peerState.client.send({
+      kind: 'switchToRelayAndGoLive',
+      content: undefined
+    })
+  },[joinedRoom])
+
   const [contextState, setContextState] = useState<RoomProviderContextState>({
     deviceSize,
     room: joinedRoom,
     roomActions: {
       switchActivity,
+      goLive
     },
     boardOrientation,
     setBoardOrientation,
@@ -53,6 +65,7 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
       deviceSize,
       roomActions: {
         switchActivity,
+        goLive
       },
       boardOrientation,
       setBoardOrientation,

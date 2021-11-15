@@ -9,6 +9,7 @@ import {
   switchRoomActivityAction,
   updateCurrentAnalysisAction,
   updateJoinedGameAction,
+  updateRelayGameAction,
   updateRoomActivityAction,
 } from './actions';
 import { BaseRoomActivity } from './types';
@@ -91,6 +92,17 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       analysis: nextAnalysis,
     };
   }),
+
+  handleAction(updateRelayGameAction, (prev, { payload: nextGame}) => {
+    if (prev.type !== 'relay') {
+      return prev;
+    }
+
+    return {
+      ...prev,
+      game: nextGame
+    }
+  })
 ]);
 
 export const stateSliceByKey = {
