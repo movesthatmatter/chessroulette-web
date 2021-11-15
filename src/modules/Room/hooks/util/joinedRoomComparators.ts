@@ -43,5 +43,21 @@ export const hasRoomActivityChanged = (current?: BaseRoomActivity, prev?: BaseRo
     return !isDeepEqual(prev.analysis || {}, current.analysis || {});
   }
 
+  // Relay
+  if (prev?.type === 'relay' && current?.type === 'relay'){
+    if (prev.gameId !== current.gameId){
+      return true;
+    }
+    if (prev.game !== current.game){
+      return true;
+    }
+    if (prev.game?.pgn !== current.game?.pgn){
+      return true;
+    }
+    if (prev.game?.lastActivityAt !== current.game?.lastActivityAt){
+      return true;
+    }
+  }
+
   return false;
 };

@@ -46,8 +46,10 @@ import {
   AnalysisRefocusRequestPayload,
   AnalysisDrawnShapesUpdatedRequestPayload,
   AnalysisImportPgnRequestPayload,
+  ImportRelayedGameRequestPayload,
   AnalysisImportGameRequestPayload,
-  SwitchRoomActivityRequestPayload,
+  SwitchRoomActivityRequestPayload, 
+  SwitchGameToRelayAndGoLivePayload
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
@@ -82,6 +84,7 @@ type SendableMessagesMap = {
   joinRoomRequest: JoinRoomRequestPayload;
   leaveRoomRequest: LeaveRoomRequestPayload;
   switchRoomActivityRequestPayload: SwitchRoomActivityRequestPayload;
+  switchToRelayAndGoLive : SwitchGameToRelayAndGoLivePayload;
 
   //Chat
   broadcastChatMessage: BroadcastChatMessagePayload;
@@ -102,7 +105,8 @@ type SendableMessagesMap = {
   gameAbortionRequestPayload: GameAbortionRequestPayload;
   gameOfferingCancelRequestPayload: GameOfferingCancelRequestPayload;
   gameStatusCheckRequestPayload: GameStatusCheckRequestPayload;
-
+  importRelayedGameRequestPayload: ImportRelayedGameRequestPayload;
+  
   gameChallengeOfferingRequestPayload: GameChallengeOfferingRequestPayload;
   gameChallengeAcceptRequestPayload: GameChallengeAcceptRequestPayload;
   gameChallengeDenyRequestPayload: GameChallengeDenyRequestPayload;

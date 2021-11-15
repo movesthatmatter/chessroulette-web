@@ -5,8 +5,9 @@ import { AnalysisActivity } from '../RoomActivity/activities/AnalysisActivity';
 import { RoomProviderContext } from '../RoomProvider';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { useDispatch } from 'react-redux';
-import { updateCurrentAnalysisAction } from '../RoomActivity/redux/actions';
-import { RelayActivityContainer } from '../RoomActivity/activities/RelayActivity/RelayActivityContainer/RelayActivityContainer';
+import { updateCurrentAnalysisAction, updateRelayGameAction } from '../RoomActivity/redux/actions';
+import { RelayActivity } from '../RoomActivity/activities/RelayActivity';
+import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 
 type Props = {};
 
@@ -24,6 +25,9 @@ export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
           // TODO: They could be unified into something like: roomActivityUpdated
           if (payload.kind === 'analysisUpdatedResponse') {
             dispatch(updateCurrentAnalysisAction(payload.content));
+          }
+          if (payload.kind === 'relayGameUpdateResponse') {
+            dispatch(updateRelayGameAction(gameRecordToGame(payload.content.game)))
           }
         }),
       ];
@@ -50,7 +54,7 @@ export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
   }
 
   if (currentActivity.type === 'relay') {
-    return <RelayActivityContainer activity={currentActivity} deviceSize={context.deviceSize}/>
+    return <RelayActivity activity={currentActivity} deviceSize={context.deviceSize}/>
   }
 
   return <NoActivity deviceSize={context.deviceSize} />;

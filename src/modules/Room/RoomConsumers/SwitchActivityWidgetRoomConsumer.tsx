@@ -19,6 +19,10 @@ type SwitchRoomNoActivityRequestPayload = Extract<
   { activityType: 'none' }
 >;
 
+type SwitchRoomRelayActivityRequestPayload = Extract<
+SwitchRoomActivityRequestPayload['content'], 
+{activityType : 'relay'}>
+
 type RelaxedSwitchRoomPlayActivityRequestPayload = Partial<
   Omit<SwitchRoomPlayActivityRequestPayload, 'activityType'>
 > &
@@ -34,10 +38,15 @@ type RelaxedSwitchRoomNoActivityRequestPayload = Partial<
 > &
   Pick<SwitchRoomNoActivityRequestPayload, 'activityType'>;
 
+type RelaxedSwitchRoomRelayActivityRequestPayload = Partial<
+Omit<SwitchRoomRelayActivityRequestPayload, 'activityType'>
+> & Pick<SwitchRoomRelayActivityRequestPayload, 'activityType'>;
+
 type State =
   | RelaxedSwitchRoomPlayActivityRequestPayload
   | RelaxedSwitchRoomAnalsysActivityRequestPayload
-  | RelaxedSwitchRoomNoActivityRequestPayload;
+  | RelaxedSwitchRoomNoActivityRequestPayload
+  | RelaxedSwitchRoomRelayActivityRequestPayload;
 
 type Props = {
   render: (
@@ -77,6 +86,8 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
             } else {
               setState(s);
             }
+          } else if (s.activityType === 'relay' && context.room.currentActivity.type === 'play' && context.room.currentActivity.game) {
+            context.roomActions.goLive();
           } else if (s.activityType === 'none') {
             context.roomActions.switchActivity({
               activityType: 'none',
