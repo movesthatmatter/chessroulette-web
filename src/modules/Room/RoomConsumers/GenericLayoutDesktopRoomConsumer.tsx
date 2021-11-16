@@ -2,7 +2,7 @@ import React from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
-import { softBorderRadius } from 'src/theme';
+import { effects, fonts, softBorderRadius } from 'src/theme';
 import { RoomDetailsConsumer } from './RoomDetailsConsumer';
 import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
 import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
@@ -77,18 +77,27 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                             ],
                           }}
                         />
-                        {room.currentActivity.type === 'play' && room.currentActivity.game && (
+                        {room.currentActivity.type === 'play' && room.currentActivity.game && !room.live && (
+                        <div style={{flex: 1, display: 'flex', alignItems: 'center', marginLeft: spacers.default}}>
                           <Button
                             label="Go Live"
                             type="primary"
+                            clear
                             onClick={() => onSwitch({ activityType: 'relay'})}
+                            style={{marginBottom: '0px'}}
                           />
+                        </div>
+                        )}
+                        {room.live && (
+                          <div className={cls.liveContainer}>
+                            <div className={cls.liveIcon}/>
+                            <div className={cls.liveText}>LIVE</div>
+                          </div>
                         )}
                       </>
                     )}
                   />
                 </div>
-                <div style={{ width: '20px' }} />
                 <UserMenu reversed showPeerStatus />
               </div>
             </div>
@@ -215,4 +224,24 @@ const useStyles = createUseStyles((theme) => ({
     alignItems: 'center',
     flex: 3,
   },
+  liveContainer:{
+    display:'flex', 
+    marginLeft: spacers.default,
+    backgroundColor: theme.depthBackground.backgroundColor,
+    padding:'5px',
+    ...effects.softBorderRadius,
+  },
+  liveIcon: {
+    width:'12px',
+    height: '12px',
+    background: '#ff32a1',
+    boxSizing: 'border-box',
+    borderRadius: '50%',
+    marginRight: spacers.small,
+    alignSelf:'center'
+  },
+  liveText:{
+    color: theme.text.baseColor,
+    ...fonts.small2,
+  }
 }));
