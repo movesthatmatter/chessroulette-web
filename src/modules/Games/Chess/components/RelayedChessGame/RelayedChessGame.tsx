@@ -8,7 +8,7 @@ import { noop } from 'src/lib/util';
 
 export type ChessGameProps = Omit<
   ChessBoardProps,
-  'onMove' | 'id' | 'pgn' | 'overlayComponent' | 'type' | 'config'
+  'onMove' | 'id' | 'pgn' | 'overlayComponent' | 'type' | 'config' | 'playableColor'
 > & {
   game: Game; // This for now always works only with chess
 };

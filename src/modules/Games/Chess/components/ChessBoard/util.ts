@@ -65,7 +65,7 @@ export const isPromotableMove = (piece: Piece, { to: toSquare }: ChessMove) => {
 
 type CalcMovableProps = {
   type: ChessBoardType;
-  playableColor: ChessGameColor;
+  playableColor?: ChessGameColor;
   canInteract?: boolean;
   playable?: boolean;
   config?: ChessBoardConfig;
@@ -170,6 +170,15 @@ const calcMovable = (props: CalcMovableProps, dests: ChessDests): ChessgroundPro
       ...base,
       color: props.playableColor,
     };
+  }
+
+  if (props.type === 'relay'){
+    return {
+      ...base,
+      dests : undefined,
+      showDests: false,
+      color: 'both'
+    } as const;
   }
 
   return {

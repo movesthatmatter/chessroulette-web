@@ -51,10 +51,14 @@ export const RelayActivity: React.FC<Props> = ({activity, deviceSize}) => {
                     size={boardSize}
                     orientation={'white'}
                     playable={false}
-                    playableColor={'white'}
+                    canInteract={false}
                     displayable={c.displayed}
                     className={cls.board}
-                    canInteract
+                    // viewOnly
+                    drawable={{
+                      visible: true,
+                      enabled:true,
+                    }}
                   />}
                   <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
                 </div>
