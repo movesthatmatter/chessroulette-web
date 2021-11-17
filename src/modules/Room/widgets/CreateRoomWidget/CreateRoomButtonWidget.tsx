@@ -2,7 +2,7 @@ import { CreateRoomRequest } from 'dstnd-io';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, ButtonProps } from 'src/components/Button';
-import { toRoomUrlPath } from 'src/lib/util';
+import { noop, toRoomUrlPath } from 'src/lib/util';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { CreatePlayRoomWizard } from '../../wizards/CreatePlayRoomWizard';
 import { CreateAnalysisRoomWizard } from '../../wizards/CreateAnalysisRoomWizard';
@@ -14,9 +14,14 @@ import { Events } from 'src/services/Analytics';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activityType'>;
+  onClick?: () => void;
 };
 
-export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...buttonProps }) => {
+export const CreateRoomButtonWidget: React.FC<Props> = ({
+  createRoomSpecs,
+  onClick = noop,
+  ...buttonProps
+}) => {
   const peerState = usePeerState();
   const history = useHistory();
   const [showWizard, setShowWizard] = useState(false);
@@ -26,7 +31,10 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
       <Button
         {...buttonProps}
         disabled={buttonProps.disabled || peerState.status !== 'open'}
-        onClick={() => setShowWizard(true)}
+        onClick={() => {
+          setShowWizard(true);
+          onClick();
+        }}
       />
 
       <Dialog
@@ -40,7 +48,7 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
                     return AsyncOk.EMPTY;
                   }
 
-                  return resources
+                  return (resources
                     .createRoom({
                       userId: peerState.me.id,
                       type: createRoomSpecs.type,
@@ -50,7 +58,7 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
                     .map((room) => {
                       Events.trackRoomCreated(room);
                       history.push(toRoomUrlPath(room));
-                    }) as unknown as UnknownAsyncResult;
+                    }) as unknown) as UnknownAsyncResult;
                 }}
               />
             )}
@@ -61,7 +69,7 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
                     return AsyncOk.EMPTY;
                   }
 
-                  return resources
+                  return (resources
                     .createRoom({
                       userId: peerState.me.id,
                       type: createRoomSpecs.type,
@@ -77,7 +85,7 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({ createRoomSpecs, ...bu
                     .map((room) => {
                       Events.trackRoomCreated(room);
                       history.push(toRoomUrlPath(room));
-                    }) as unknown as UnknownAsyncResult;
+                    }) as unknown) as UnknownAsyncResult;
                 }}
               />
             )}

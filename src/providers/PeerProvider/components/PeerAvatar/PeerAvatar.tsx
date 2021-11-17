@@ -13,7 +13,7 @@ import { CustomTheme, onlyDesktop, onlyMobile } from 'src/theme';
 import { colors } from 'src/theme/colors';
 
 type Props = {
-  size?: string;
+  size?: number;
   className?: string;
   hasUserInfo?: boolean;
   reversed?: boolean;
@@ -77,10 +77,12 @@ export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, reverse
               size="25%"
             />
           )}
-          <Avatar
-            mutunachiId={peer ? Number(peer.user.avatarId) : Number(props.peerUserInfo?.avatarId)}
-            size={size}
-          />
+          <div>
+            <Avatar
+              mutunachiId={peer ? Number(peer.user.avatarId) : Number(props.peerUserInfo?.avatarId)}
+              size={size}
+            />
+          </div>
           {hasUserInfo && showInfo && (
             <div className={cx(cls.infoContainer, reversed && cls.infoContainerReversed)}>
               <div className={cls.infoText}>

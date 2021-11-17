@@ -7,8 +7,8 @@ import { createUseStyles } from 'src/lib/jss';
 import { hardBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Math } from 'window-or-global';
-import cx from 'classnames';
 import { Show } from 'react-iconly';
+import { InfoCard } from 'src/components/InfoCard';
 
 type Props = {
   streamer: ResourceRecords.Watch.LiveStreamerRecord;
@@ -35,54 +35,54 @@ const TWITCH_SIZES = {
   w320: getAspectRatioFromWidth({ width: 16, height: 9 }, 320),
 };
 
+const shortenText = (text: string, length: number, suffix = '...') =>
+  text.length > length ? `${text.slice(0, length)}${suffix}` : text;
+
 export const LiveStreamCard: React.FC<Props> = ({ containerClassName, streamer }) => {
   const cls = useStyles();
   const thumbUrl = useMemo(() => parseUrl(streamer.stream.thumbnailUrl, TWITCH_SIZES.w320), []);
 
   return (
-    <div className={cx(cls.container, containerClassName)}>
-      <AspectRatio aspectRatio={{ width: 16, height: 10 }} className={cls.imgContainer}>
-        <div className={cls.header}>
-          <div className={cls.viewersCard}>
-            <div className={cls.viewersCardMain}>
-              <Show set="light" size="small" />
-              <div style={{ width: spacers.get(0.25) }} />
-              <Text size="small1">{streamer.stream.viewerCount} viewers</Text>
-            </div>
-            <div className={cls.blur} />
-          </div>
-        </div>
-        <img src={thumbUrl} className={cls.img} />
-        <div className={cls.tintOverlay} />
-        <div className={cls.footer}>
-          <div className={cls.streamInfo}>
-            <div className={cls.streamInfoLeftSide}>
-              <Avatar imageUrl={streamer.profileImageUrl || ''} size={54} className={cls.avatar} />
-            </div>
-            <div className={cls.streamInfoMain}>
-              <Text size="subtitle2">{streamer.displayName}</Text>
-              <div>
-                <Text size="small1">{streamer.stream.title.slice(0, 28)}...</Text>
+    <InfoCard
+      containerClassName={cls.container}
+      top={
+        <AspectRatio aspectRatio={{ width: 16, height: 9 }} className={cls.imgContainer}>
+          <div className={cls.header}>
+            <div className={cls.viewersCard}>
+              <div className={cls.viewersCardMain}>
+                <Show set="light" size="small" />
+                <div style={{ width: spacers.get(0.25) }} />
+                <Text size="small1">{streamer.stream.viewerCount} viewers</Text>
               </div>
+              <div className={cls.blur} />
             </div>
           </div>
-          <div className={cls.blur} />
-        </div>
-      </AspectRatio>
-    </div>
+          <img src={thumbUrl} className={cls.img} />
+          <div className={cls.tintOverlay} />
+        </AspectRatio>
+      }
+      bottomClassName={cls.infoContainer}
+      bottom={
+        <>
+          <div className={cls.infoTop}>
+            <div className={cls.infoUsername}>
+              <Text size="subtitle2">{streamer.displayName}</Text>
+            </div>
+            <Avatar imageUrl={streamer.profileImageUrl || ''} size={54} className={cls.avatar} />
+          </div>
+          <div className={cls.infoMain}>
+            <Text size="small1">{shortenText(streamer.stream.title, 120)}</Text>
+          </div>
+        </>
+      }
+    />
   );
 };
 
 const useStyles = createUseStyles((theme) => ({
   container: {
     position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    border: `1px solid rgba(255, 255, 255, .1)`,
-    background: theme.name === 'lightDefault' ? theme.colors.neutralDark : theme.colors.neutralDark,
-    ...hardBorderRadius,
-    overflow: 'hidden',
-    ...theme.floatingShadow,
+    flex: 1,
   },
 
   header: {
@@ -113,23 +113,19 @@ const useStyles = createUseStyles((theme) => ({
     filter: 'brightness(80%)',
   },
 
-  streamInfo: {
+  infoContainer: {
     display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
     zIndex: 99,
     position: 'relative',
-    paddingLeft: spacers.small,
-    paddingRight: spacers.small,
+    paddingTop: 0,
   },
-  streamInfoLeftSide: {
-    paddingRight: spacers.small,
-  },
+  streamInfoLeftSide: {},
 
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 99,
+  infoTop: {
+    display: 'flex',
+    justifyContent: 'space-between',
   },
 
   tintOverlay: {
@@ -138,15 +134,20 @@ const useStyles = createUseStyles((theme) => ({
     left: 0,
     right: 0,
     bottom: 0,
-    background: '#5A20FE',
+    background: theme.name === 'darkDefault' ? '#5A20FE' : '#fff',
     opacity: 0.3,
   },
 
-  streamInfoMain: {
-    paddingTop: spacers.get(0.25),
+  infoMain: {
+    marginTop: `-${spacers.small}`,
   },
+  infoUsername: {
+    paddingTop: spacers.small,
+    paddingRight: spacers.small,
+  },
+
   avatar: {
-    transform: 'translateY(-15%)',
+    transform: 'translateY(-50%)',
   },
 
   blur: {

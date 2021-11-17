@@ -1,201 +1,155 @@
 import React, { useEffect, useState } from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
-import { AspectRatio } from 'src/components/AspectRatio';
-import ReactTwitchEmbedVideo from 'react-twitch-embed-video';
 import { spacers } from 'src/theme/spacers';
 import { effects, onlyDesktop } from 'src/theme';
-import { getCollaboratorsByPlatform } from './resources';
-import { CollaboratorRecord } from 'dstnd-io';
-import { toStreamerCollectionByRank } from './twitchSDK/useGetStreamerCollectionWithLiveStatus';
-import { Hr } from 'src/components/Hr';
+import { getFeaturedStreamers } from './resources';
+import { ResourceRecords } from 'dstnd-io';
 import { Avatar } from 'src/components/Avatar';
-import { CollaboratorAsStreamer, StreamerCollection } from './types';
 import { Text } from 'src/components/Text';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { LiveHero } from './widgets/LiveHero';
+import { TwitchChatEmbed } from 'src/vendors/twitch/TwitchChatEmbed';
+import { LiveStreamCard } from './components/LiveStreamCard/LiveStreamCard';
 
 type Props = {};
 
-const toCollaboratorStreamer = (
-  c: CollaboratorRecord,
-  isLive: boolean
-): CollaboratorAsStreamer => ({
-  ...c,
-  isLive,
-});
-
-export const LivePage: React.FC<Props> = (props) => {
+export const LivePage: React.FC<Props> = () => {
   const cls = useStyles();
-  const [streamers, setStreamers] = useState<CollaboratorAsStreamer[]>([]);
+
   const { theme } = useColorTheme();
 
+  const [streamers, setStreamers] = useState<{
+    featured: ResourceRecords.Watch.LiveStreamerRecord;
+    toWatch: ResourceRecords.Watch.LiveStreamerRecord[];
+  }>();
 
   useEffect(() => {
-    getCollaboratorsByPlatform({
-      platform: 'Twitch',
-      pageSize: 10,
-      currentIndex: 0,
-    }).map((r) => {
-      setStreamers(r.items.map((c) => toCollaboratorStreamer(c, false)));
+    getFeaturedStreamers().map(({ items }) => {
+      if (items.length === 0) {
+        return;
+      }
+
+      setStreamers({
+        featured: items[0],
+        toWatch: items.slice(1),
+      });
     });
   }, []);
 
-  const streamersCollection = toStreamerCollectionByRank(streamers);
-
   return (
-    <Page name="Live">
-      {streamersCollection.featured && (
-        <div className={cls.container}>
-          <div className={cls.main}>
-            <AspectRatio aspectRatio={{ width: 16, height: 9 }}>
-              <ReactTwitchEmbedVideo
-                channel={streamersCollection.featured.profileUrl}
-                layout="video"
-                height="100%"
-                width="100%"
-                targetClass={cls.videoContainer}
-                targetId={streamersCollection.featured.profileUrl}
-              />
-            </AspectRatio>
-            <div
-              style={{
-                paddingTop: spacers.larger,
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  paddingBottom: spacers.large,
-                }}
-              >
-                <div
-                  style={{
-                    paddingRight: spacers.default,
-                  }}
-                >
-                  <Avatar imageUrl={streamersCollection.featured.profilePicUrl || ''} size="60px" />
-                </div>
-                <div>
-                  <AnchorLink
-                    href={`https://twitch.tv/${streamersCollection.featured.profileUrl}`}
-                    target="_blank"
-                  >
-                    <h3
-                      style={{
-                        marginTop: 0,
-                        marginBlockEnd: '.2em',
-                      }}
-                    >
-                      {streamersCollection.featured.profileUrl}
-                    </h3>
-                  </AnchorLink>
-                  <Text size="body2">{streamersCollection.featured.about}</Text>
-                  {` `}
-                  <AnchorLink
-                    href={`https://twitch.tv/${streamersCollection.featured.profileUrl}/about`}
-                    target="_blank"
-                  >
-                    Learn More
-                  </AnchorLink>
+    <Page name="Live" stretched>
+      <div className={cls.container}>
+        <main className={cls.main}>
+          {streamers?.featured && (
+            <>
+              <LiveHero featuredStreamer={streamers.featured} />
+              <div>
+                <div style={{ height: spacers.get(3) }} />
+                <Text size="title2" className={cls.title}>
+                  Watch Now
+                </Text>
+                <div style={{ height: spacers.default }} />
+                <div className={cls.streamerCollectionList}>
+                  {streamers?.toWatch &&
+                    streamers.toWatch.map((streamer, index) => (
+                      <>
+                        {index > 0 && <div style={{ width: spacers.large }} />}
+                        <LiveStreamCard streamer={streamer} containerClassName={cls.liveStream} />
+                      </>
+                    ))}
                 </div>
               </div>
-              <Hr />
-            </div>
-            <div
-              style={{
-                height: spacers.large,
-              }}
-            />
-            <div className={cls.streamerCollectionListMask}>
-              <h3>Featured Collaborators</h3>
-              <div className={cls.streamerCollectionList}>
-                {streamersCollection.restInRankedOrder.map((s) => (
-                  <div
-                    className={cls.aspect}
-                    style={{
-                      overflow: 'hidden',
-                    }}
-                  >
+              <div
+                style={{
+                  height: spacers.large,
+                }}
+              />
+              <div className={cls.streamerCollectionListMask}>
+                <h3>Featured Collaborators</h3>
+                <div className={cls.streamerCollectionList}>
+                  {streamers.toWatch.map((s) => (
                     <div
+                      className={cls.aspect}
                       style={{
-                        display: 'flex',
-                        flexDirection: 'row',
+                        overflow: 'hidden',
                       }}
                     >
                       <div
                         style={{
-                          paddingRight: spacers.default,
+                          display: 'flex',
+                          flexDirection: 'row',
                         }}
                       >
-                        <AnchorLink href={`https://twitch.tv/${s.profileUrl}`} target="_blank">
-                          <Avatar imageUrl={s.profilePicUrl || ''} size="60px" />
-                        </AnchorLink>
-                      </div>
-                      <div>
-                        <AnchorLink href={`https://twitch.tv/${s.profileUrl}`} target="_blank">
-                          <Text asLink size="subtitle1">
-                            {s.profileUrl}
-                          </Text>
-                        </AnchorLink>
-                        <Text
-                          size="body2"
-                          asParagraph
+                        <div
                           style={{
-                            marginTop: '.2em',
-                            color: theme.text.baseColor,
+                            paddingRight: spacers.default,
                           }}
                         >
-                          {(s.about || '').length > 75 ? `${s.about?.slice(0, 75)}...` : s.about}
-                          <br />
-                          <AnchorLink
-                            href={`https://twitch.tv/${s.profileUrl}/about`}
-                            target="_blank"
-                          >
-                            Learn More
+                          <AnchorLink href={`https://twitch.tv/${s.username}`} target="_blank">
+                            <Avatar imageUrl={s.profileImageUrl || ''} size={60} />
                           </AnchorLink>
-                        </Text>
+                        </div>
+                        <div>
+                          <AnchorLink href={`https://twitch.tv/${s.username}`} target="_blank">
+                            <Text asLink size="subtitle1">
+                              {s.displayName}
+                            </Text>
+                          </AnchorLink>
+                          <Text
+                            size="body2"
+                            asParagraph
+                            style={{
+                              marginTop: '.2em',
+                              color: theme.text.baseColor,
+                            }}
+                          >
+                            {s.description.length > 75
+                              ? `${s.description?.slice(0, 75)}...`
+                              : s.description}
+                            <br />
+                            <AnchorLink
+                              href={`https://twitch.tv/${s.username}/about`}
+                              target="_blank"
+                            >
+                              Learn More
+                            </AnchorLink>
+                          </Text>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          {/* // Chat will come later maybe */}
-          {/* {deviceSize.isMobile || (
-            <>
-              <div
-                style={{
-                  width: spacers.large,
-                }}
-              />
-              <div className={cls.side}>
-                {streamersCollection.featured.isLive && (
-                  <iframe
-                    src={`https://www.twitch.tv/embed/${streamersCollection.featured.profileUrl}/chat?parent=localhost`}
-                    height="65%"
-                    width="100%"
-                    className={cls.chatContainer}
-                  />
-                )}
+                  ))}
+                </div>
               </div>
             </>
-          )} */}
-        </div>
-      )}
+          )}
+        </main>
+        <aside className={cls.rightSide}>
+          {streamers?.featured && (
+            <TwitchChatEmbed
+              channel={streamers.featured.username}
+              targetId={streamers.featured.username}
+              height="100%"
+              width="100%"
+              targetClass={cls.chatContainer}
+              theme={theme.name === 'darkDefault' ? 'dark' : 'light'}
+            />
+          )}
+          <div className={cls.verticalSpacer} />
+        </aside>
+      </div>
     </Page>
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
   },
   main: {
-    flex: 2.3,
+    flex: 1,
   },
   side: {
     flex: 1,
@@ -236,6 +190,29 @@ const useStyles = createUseStyles({
     border: 0,
     borderRadius: '16px',
     overflow: 'hidden',
-    ...effects.floatingShadow,
+    ...(theme.name === 'darkDefault' ? effects.softFloatingShadowDarkMode : effects.floatingShadow),
   },
-});
+
+  rightSide: {
+    height: 'calc(100vh - 94px - 32px)', // the top height
+    paddingLeft: spacers.larger,
+    flex: 0.3,
+    minWidth: '320px',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  verticalSpacer: {
+    height: spacers.larger,
+  },
+
+  title: {
+    color: theme.colors.primary,
+  },
+  liveStream: {
+    flex: 1,
+    '&:first-child': {
+      marginLeft: 0,
+    },
+  },
+}));

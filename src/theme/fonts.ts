@@ -54,7 +54,18 @@ const body2: CSSProperties = {
 const title1: CSSProperties = {
   fontSize: '36px',
   fontWeight: 700,
-  lineHeight: '36px',
+  lineHeight: '1em',
+
+  ...onlyMobile({
+    fontSize: '18px',
+    lineHeight: '14px',
+  }),
+}
+
+const title2: CSSProperties = {
+  fontSize: '24px',
+  fontWeight: 700,
+  lineHeight: '1em',
 
   ...onlyMobile({
     fontSize: '18px',
@@ -105,6 +116,7 @@ export const fonts = {
   body2,
 
   title1,
+  title2,
 
   subtitle1,
   subtitle2,
