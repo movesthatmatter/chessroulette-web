@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
-import { CustomTheme, onlyMobile } from 'src/theme';
+import { onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Text } from '../Text';
 import { Link } from 'react-router-dom';
@@ -72,14 +72,6 @@ export const Footer: React.FC<Props> = () => {
                 </AnchorLink>
               </div>
               <div className={cls.linkContainerSpacer}>
-                {/* <AnchorLink
-                  href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage"
-                  className={cls.link}
-                >
-                  <Text size="body2" className={cls.text}>
-                    Get In Touch
-                  </Text>
-                </AnchorLink> */}
                 <FeedbackDialogConsumer
                   render={(feedbackActions) => (
                     <AnchorLink
@@ -95,17 +87,6 @@ export const Footer: React.FC<Props> = () => {
                         Leave Feedback
                       </Text>
                     </AnchorLink>
-                    // <a
-                    //   className={cls.link}
-                    //   href="#"
-                    //   onClick={(e) => {
-                    //     e.preventDefault();
-
-                    //     feedbackActions.forcefullyShow();
-                    //   }}
-                    // >
-                    //   Leave Feedback
-                    // </a>
                   )}
                 />
               </div>

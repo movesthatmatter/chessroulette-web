@@ -10,7 +10,6 @@ import { spacers } from 'src/theme/spacers';
 import { Text } from '../Text';
 import { getBoxShadow } from 'src/theme/util';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
-import { Button } from '../Button';
 
 export type PageProps = {
   // This name will be used on analytics
@@ -51,11 +50,7 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, stretched = false
         <div className={`${cls.content} ${props.contentClassName}`}>
           <div className={cls.top}>
             <div className={cx(cls.topMain, responsiveCls)}>
-              <div
-                style={{
-                  width: '300px',
-                }}
-              >
+              <div style={{ width: '300px' }}>
                 <Logo asLink={logoAsLink} withBeta />
               </div>
               <div className={cls.navigationMenu}>
@@ -69,22 +64,11 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, stretched = false
           </main>
           <div className={cls.preFooter}>
             <div className={cx(responsiveCls, cls.centralizeContent)}>
-              <div className={cls.preFooterSide} />
+              {/* <div className={cls.preFooterSide} /> */}
               <div className={cls.centralContent}>
                 <Text size="body2" className={cls.text}>
                   Made with ❤️around the world!
                 </Text>
-              </div>
-              <div className={cx(cls.preFooterSide, cls.discordButtonSide)}>
-                {/* <Button
-                  className={cls.discordButton}
-                  clear
-                  label="Join Our Discord"
-                  type={'primary'}
-                  onClick={() => {
-                    window.open('https://discord.gg/XT7rvgsH66');
-                  }}
-                /> */}
               </div>
             </div>
           </div>
@@ -132,14 +116,14 @@ const useStyles = createUseStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: spacers.default,
+    padding: `${spacers.large} ${spacers.larger}`,
   },
   topRight: {
     justifySelf: 'flex-end',
   },
   main: {
-    padding: spacers.default,
-    width: `calc(100% - ${spacers.get(2)}) !important`,
+    padding: spacers.larger,
+    width: `calc(100% - ${spacers.largerPx * 2}px) !important`,
     flex: 1,
   },
   navigationMenu: {
@@ -153,7 +137,7 @@ const useStyles = createUseStyles((theme) => ({
   },
 
   preFooter: {
-    // background: theme.colors.neutralLightest,
+    paddingTop: spacers.get(6),
     paddingBottom: spacers.default,
     boxShadow: getBoxShadow(0, 12, 12, -12, 'rgba(16, 30, 115, 0.08)'),
     position: 'relative',
@@ -165,7 +149,6 @@ const useStyles = createUseStyles((theme) => ({
     fontWeight: 300,
   },
   responsive: {
-    width: '100%',
     margin: '0 auto',
     maxWidth: '1140px',
   },

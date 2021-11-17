@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { hideOnDesktop, hideOnMobile, floatingShadow, CustomTheme } from 'src/theme';
-import { Menu } from 'grommet-icons';
 import cx from 'classnames';
+import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
+import { hideOnDesktop, hideOnMobile, floatingShadow } from 'src/theme';
+import { Menu } from 'grommet-icons';
 import { FormClose } from 'grommet-icons';
 import { UserMenu } from './UserMenu';
 import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton } from 'src/services/Authentication/widgets';
 import { Link, useLocation } from 'react-router-dom';
-import { FeedbackDialogConsumer } from 'src/providers/FeedbackProvider/FeedbackConsumer';
 import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
-import { IconlyIcon } from '../Button/IconButton/components/IconlyIcon';
-import { Home, Game, Video, People } from 'react-iconly';
+import { Home, Video, People } from 'react-iconly';
 import { Text } from '../Text';
 import { spacers } from 'src/theme/spacers';
 
@@ -33,21 +31,73 @@ export const NavigationMenu: React.FC<Props> = (props) => {
           <br />
           <Text size="small1">Home</Text>
         </Link>
+      </div>
+      {/* <div className={cls.linkWrapper}>
+        <WithDialog
+          hasCloseButton
+          buttons={
+            [
+              // () => (
+            ]
+          }
+          title="Let's Play"
+          contentContainerClass={cls.playDialogContent}
+          graphic={
+            <div className={cls.mutunachiContainer}>
+              <Mutunachi mid="10" />
+            </div>
+          }
+          content={(r) => (
+            <>
+              <CreateRoomButtonWidget
+                label="Play"
+                type="primary"
+                createRoomSpecs={{
+                  type: 'private',
+                  activityType: 'play',
+                }}
+                full
+                style={{
+                  marginBottom: spacers.default,
+                }}
+                // onClick={r.onClose}
+              />
+              <CreateRoomButtonWidget
+                label="Analyze"
+                type="secondary"
+                style={{
+                  marginBottom: 0,
+                }}
+                full
+                createRoomSpecs={{
+                  type: 'private',
+                  activityType: 'analysis',
+                }}
+                // onClick={r.onClose}
+              />
+            </>
+          )}
+          render={(r) => (
+            <a
+              className={cls.link}
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
 
-        {/* <a className={cls.link} href="/" className={cx(cls.link, location.pathname === '/live' && cls.activeLink)}> */}
-      </div>
-      <div className={cls.linkWrapper}>
-        <a className={cls.link} href="#">
-          {/* <IconlyIcon Icon={Game} /> */}
-          <Game set="bold" />
-          <br />
-          <Text size="small1">Play</Text>
-        </a>
-      </div>
+                r.onOpen();
+              }}
+            >
+              <Game set="bold" />
+              <br />
+              <Text size="small1">Play</Text>
+            </a>
+          )}
+        />
+      </div> */}
       <div className={cls.linkWrapper}>
         <Link
-          to={'/live'}
-          className={cx(cls.link, location.pathname === '/live' && cls.activeLink)}
+          to={'/watch'}
+          className={cx(cls.link, location.pathname === '/watch' && cls.activeLink)}
         >
           <Video set="bold" />
           <br />
@@ -61,25 +111,6 @@ export const NavigationMenu: React.FC<Props> = (props) => {
           <Text size="small1">Collaborate</Text>
         </a>
       </div>
-      {/* <div className={cls.linkWrapper}>
-        <FeedbackDialogConsumer
-          render={(feedbackActions) => (
-            <a
-              className={cls.link}
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-
-                setOpen(false);
-
-                feedbackActions.forcefullyShow();
-              }}
-            >
-              Leave Feedback
-            </a>
-          )}
-        />
-      </div> */}
     </>
   );
 
@@ -113,7 +144,6 @@ export const NavigationMenu: React.FC<Props> = (props) => {
           <DarkModeSwitch />
         </div>
         <div className={cls.menuWrapper} onClick={() => setOpen((prev) => !prev)}>
-          {/* <Badge text="New" color="negative" className={cls.newBadge} /> */}
           <Menu className={cls.drawerOpenBtn} />
         </div>
         <div className={cx(cls.mobileOverlay, open && cls.mobileOverlayOpened)}>
@@ -299,6 +329,7 @@ const useStyles = createUseStyles((theme) => ({
     minWidth: '180px',
     display: 'flex',
     justifyContent: 'flex-end',
+    alignItems: 'center',
   },
 
   mobileAuthenticationButton: {
@@ -317,5 +348,19 @@ const useStyles = createUseStyles((theme) => ({
     position: 'absolute',
     zIndex: 1,
     transform: 'scale(.9) translate(-20px, -5px)',
+  },
+
+  playDialogContent: {
+    paddingBottom: 0,
+  },
+
+  mutunachiContainer: {
+    width: '50%',
+    maxWidth: '300px',
+    margin: '0 auto',
+    marginBottom: spacers.large,
+  },
+  mutunachi: {
+    height: '100%',
   },
 }));

@@ -60,19 +60,17 @@ export const AwesomeCountdown: React.FC<Props> = ({ deadline, fontSizePx = 60 })
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  section: {
-  },
+  section: {},
   timeText: {
     fontSize: '1em',
     display: 'flex',
-    // lineHeight: '0',
-    // marginBottom: '.2em',
+    fontWeight: 'bold',
   },
   timeLabelText: {
     fontSize: '.25em',
@@ -80,4 +78,4 @@ const useStyles = createUseStyles({
     textAlign: 'center',
     textTransform: 'lowercase',
   },
-});
+}));
