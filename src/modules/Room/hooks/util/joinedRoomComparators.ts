@@ -44,17 +44,17 @@ export const hasRoomActivityChanged = (current?: BaseRoomActivity, prev?: BaseRo
   }
 
   // Relay
-  if (prev?.type === 'relay' && current?.type === 'relay'){
-    if (prev.gameId !== current.gameId){
+  if (prev?.type === 'relay' && current?.type === 'relay') {
+    if (prev.relayId !== current.relayId) {
       return true;
     }
-    if (prev.game !== current.game){
+    if (prev.game !== current.game) {
       return true;
     }
-    if (prev.game?.pgn !== current.game?.pgn){
+    if (prev.game?.pgn !== current.game?.pgn) {
       return true;
     }
-    if (prev.game?.lastActivityAt !== current.game?.lastActivityAt){
+    if (prev.game?.lastActivityAt !== current.game?.lastActivityAt) {
       return true;
     }
   }
