@@ -1,4 +1,4 @@
-import { RelayedGameRecord } from 'dstnd-io';
+import { RelayedGameInfoRecord } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Dialog } from 'src/components/Dialog';
@@ -21,10 +21,10 @@ type Props = {};
 
 export const BroadcastPage: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const [games, setGames] = useState<RelayedGameRecord[]>([]);
+  const [relayGames, setRelayGames] = useState<RelayedGameInfoRecord[]>([]);
   const peerState = usePeerState();
   const [showWizard, setShowWizard] = useState(false);
-  const [selectedGame, setSelectedGame] = useState<null | string>(null)
+  const [selectedRelayId, setSelectedRelayId] = useState<string>()
   const history = useHistory()
 
   useEffect(() => {
@@ -48,44 +48,43 @@ export const BroadcastPage: React.FC<Props> = (props) => {
   }, []);
 
   function fetchLiveGames() {
-    getCurrentlyStreamingRelayedGames().map((games) => {
-      console.log({ games });
-      setGames(games);
+    getCurrentlyStreamingRelayedGames().map((relayGames) => {
+      setRelayGames(relayGames);
     });
   }
 
   return (
     <Page title="Broadcasts" name="Broadcasts">
       <div className={cls.container}>
-        {games.length === 0 && (
+        {relayGames.length === 0 && (
           <div>
-            <Text>There are currently no live games.</Text>
+            <Text>There are currently no live Games.</Text>
           </div>
         )}
-        {games.map((game) => (
+        {relayGames.map((relayGame) => (
           <div className={cls.gameContainer} onClick={() => {
-              setSelectedGame(game.id);
+              setSelectedRelayId(relayGame.id);
               setShowWizard(true);
           }}>
-            <div className={cls.playerInfo}>{game.players[0].playerName}</div>
+            <div className={cls.playerInfo}>{relayGame.game.players[0].user.name}</div>
             <ChessBoard
               type="free"
               playable={false}
-              pgn={game.pgn}
+              pgn={relayGame.game.pgn}
               viewOnly
               playableColor={'white'}
               onMove={noop}
-              id={game.id}
+              id={relayGame.game.id}
               size={200}
             />
-            <div className={cls.playerInfo}>{game.players[1].playerName}</div>
+            <div className={cls.playerInfo}>{relayGame.game.players[1].user.name}</div>
           </div>
         ))}
       </div>
       <Dialog visible={showWizard}
         content={
           <>
-          {selectedGame && <CreateRelayRoomWizard
+          {selectedRelayId && <CreateRelayRoomWizard
             onFinished={() => {
               if (peerState.status !== 'open'){
                 return AsyncOk.EMPTY;
@@ -94,7 +93,7 @@ export const BroadcastPage: React.FC<Props> = (props) => {
                 userId: peerState.me.id,
                 type: 'private',
                 activityType: 'relay',
-                gameId: selectedGame
+                relayId: selectedRelayId
               })
               .map(room => {
                 setShowWizard(false);

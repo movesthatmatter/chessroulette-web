@@ -207,7 +207,7 @@ const useStyles = createUseStyles((theme) => ({
     overflow: 'hidden',
     alignItems: 'stretch',
     height: '100%',
-  },
+},
   streamingBox: {
     ...softBorderRadius,
     overflow: 'hidden',

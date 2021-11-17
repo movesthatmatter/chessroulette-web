@@ -32,11 +32,11 @@ export const RelayActivityContainer: React.FC<Props> = ({ activity, deviceSize }
       request({
         kind: 'importRelayedGameRequest',
         content: {
-          gameId: activity.gameId
+          relayId: activity.relayId
         }
       })
     }
-  },[activity.gameId])
+  },[activity.relayId])
 
   useEffect(() => {
     const unsubscribers: Function[] = [];
