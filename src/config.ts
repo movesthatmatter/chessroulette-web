@@ -14,6 +14,9 @@ const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN as string;
 const GOOGLE_ANALYTICS_TRACKING_ID = process.env.REACT_APP_GOOGLE_ANALYTICS_TRACKING_ID as string;
 const PRERENDERING = !!(window as any).reactSnapshotRender;
 
+const DISCORD_SERVER_ID = process.env.REACT_APP_DISCORD_SERVER_ID as string;
+const DISCORD_CHANNEL_ID = process.env.REACT_APP_DISCORD_CHANNEL_ID as string;
+
 const config = {
   // Env
   DEBUG,
@@ -29,6 +32,8 @@ const config = {
   // Vendors
   SENTRY_DSN,
   GOOGLE_ANALYTICS_TRACKING_ID,
+  DISCORD_SERVER_ID,
+  DISCORD_CHANNEL_ID,
 };
 
 if (config.DEBUG) {

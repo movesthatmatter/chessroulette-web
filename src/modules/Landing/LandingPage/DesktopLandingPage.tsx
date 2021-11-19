@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
-import { onlyDesktop, softBorderRadius, effects } from 'src/theme';
+import { onlyDesktop, softBorderRadius, effects, hardBorderRadius } from 'src/theme';
 import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
 import { spacers } from 'src/theme/spacers';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
@@ -27,6 +27,7 @@ import { FloatingBox } from 'src/components/FloatingBox';
 import { keyInObject, objectKeys, toDictIndexedBy } from 'src/lib/util';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { Avatar } from 'src/components/Avatar';
+import config from 'src/config';
 
 type Props = {};
 
@@ -351,12 +352,9 @@ export const DesktopLandingPage: React.FC<Props> = () => {
             }}
           >
             <DiscordReactEmbed
-              server="831348870218776686"
-              channel="868596131481931796"
-              style={{
-                height: '100%',
-                width: '100%',
-              }}
+              server={config.DISCORD_SERVER_ID}
+              channel={config.DISCORD_CHANNEL_ID}
+              className={cls.discordWidget}
             />
           </div>
           <div className={cls.verticalSpacer} />
@@ -457,4 +455,14 @@ const useStyles = createUseStyles((theme) => ({
       '-webkit-text-fill-color': 'transparent',
     } as NestedCSSElement),
   },
+
+  discordWidget: {
+    width: '100%',
+    height: '100%',
+    ...makeImportant({
+      background: theme.depthBackground.backgroundColor,
+      ...hardBorderRadius,
+      overflow: 'hidden',
+    })
+  }
 }));
