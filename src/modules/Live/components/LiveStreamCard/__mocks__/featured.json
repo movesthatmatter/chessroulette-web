@@ -1,0 +1,106 @@
+{
+  "ok": true,
+  "data": {
+    "itemsTotal": 3,
+    "currentIndex": 0,
+    "items": [
+      
+      {
+        "vendor": "twitch",
+        "isLive": true,
+        "stream": {
+          "id": "44382494733",
+          "userId": "439965716",
+          "userLogin": "art_vega1983",
+          "userName": "art_vega1983",
+          "gameId": "743",
+          "gameName": "Chess",
+          "type": "live",
+          "title": "Mustached Business - lichess.org",
+          "viewerCount": 24,
+          "startedAt": "2021-11-10T18:16:37Z",
+          "language": "en",
+          "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_art_vega1983-{width}x{height}.jpg",
+          "tagIds": ["6ea6bca4-4712-4ab9-a906-e3336a9d8039"],
+          "isMature": false
+        },
+        "id": "439965716",
+        "login": "art_vega1983",
+        "displayName": "art_vega1983",
+        "type": "",
+        "broadcasterType": "affiliate",
+        "description": "Hi, my name is Mafaaz and I live in Karachi, Pakistan. I have a passion for Chess and sharing what I have learned from it with others. Art Vega is an Italian - Spanish name that I came across a while ago. I like it because it just rolls off the tongue which is why I use it as an alias.",
+        "profileImageUrl": "https://static-cdn.jtvnw.net/jtv_user_pictures/b0071102-a664-41ab-9bb1-792a1eee8403-profile_image-300x300.png",
+        "offlineImageUrl": "",
+        "viewCount": 74537,
+        "createdAt": "2019-06-05T18:37:23Z",
+        "username": "art_vega1983"
+      },
+      {
+        "vendor": "twitch",
+        "isLive": true,
+        "stream": {
+          "id": "40203554299",
+          "userId": "466564815",
+          "userLogin": "gmminhle",
+          "userName": "gmminhle",
+          "gameId": "743",
+          "gameName": "Chess",
+          "type": "live",
+          "title": "Degen Arena Kings!",
+          "viewerCount": 250,
+          "startedAt": "2021-11-10T17:49:58Z",
+          "language": "en",
+          "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_gmminhle-{width}x{height}.jpg",
+          "tagIds": ["6ea6bca4-4712-4ab9-a906-e3336a9d8039"],
+          "isMature": false
+        },
+        "id": "466564815",
+        "login": "gmminhle",
+        "displayName": "gmminhle",
+        "type": "",
+        "broadcasterType": "partner",
+        "description": "An International Chess Master who has 2 GM norms and is trying his best to become GM one day. He also wants to create a chess community for everyone to have fun and enjoy chess. For business, please send me messages via my mail: wonderfultime2110@gmail.com ",
+        "profileImageUrl": "https://static-cdn.jtvnw.net/jtv_user_pictures/b93bfe7c-e917-45a5-9b22-d19e83e3caeb-profile_image-300x300.png",
+        "offlineImageUrl": "https://static-cdn.jtvnw.net/jtv_user_pictures/efcac74e-0c01-47bb-b373-f9fc28c90bf1-channel_offline_image-1920x1080.png",
+        "viewCount": 3291045,
+        "createdAt": "2019-10-12T09:28:20Z",
+        "username": "gmminhle"
+      },
+      {
+        "vendor": "twitch",
+        "isLive": true,
+        "stream": {
+          "id": "43767748796",
+          "userId": "400351202",
+          "userLogin": "mattguz",
+          "userName": "mattguz",
+          "gameId": "2114339342",
+          "gameName": "Super Auto Pets",
+          "type": "live",
+          "title": "playing with viewers",
+          "viewerCount": 17,
+          "startedAt": "2021-11-10T19:49:50Z",
+          "language": "en",
+          "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_mattguz-{width}x{height}.jpg",
+          "tagIds": [
+            "6ea6bca4-4712-4ab9-a906-e3336a9d8039",
+            "ac763b17-7bea-4632-9eb4-d106689ff409"
+          ],
+          "isMature": false
+        },
+        "id": "400351202",
+        "login": "mattguz",
+        "displayName": "mattguz",
+        "type": "",
+        "broadcasterType": "affiliate",
+        "description": "watch free",
+        "profileImageUrl": "https://static-cdn.jtvnw.net/jtv_user_pictures/54cf9217-7990-44c4-b2c5-48dbf0c82064-profile_image-300x300.png",
+        "offlineImageUrl": "",
+        "viewCount": 9187,
+        "createdAt": "2018-12-06T04:12:18Z",
+        "username": "mattguz"
+      }
+    ]
+  }
+}

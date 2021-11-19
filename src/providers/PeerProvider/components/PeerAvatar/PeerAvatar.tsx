@@ -13,7 +13,7 @@ import { CustomTheme, onlyDesktop, onlyMobile } from 'src/theme';
 import { colors } from 'src/theme/colors';
 
 type Props = {
-  size?: string;
+  size?: number;
   className?: string;
   hasUserInfo?: boolean;
   reversed?: boolean;
@@ -55,38 +55,42 @@ export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, reverse
   const [showInfo, setShowInfo] = useState(false);
 
   return (
-    <div>
-      <div
-        className={`${cls.container} ${props.className}`}
-        style={{
-          ...(size && {
-            width: size,
-          }),
-        }}
-        {...(hasUserInfo && {
-          onMouseOver: () => setShowInfo(true),
-          onMouseLeave: () => setShowInfo(false),
-        })}
-      >
-        {peer?.isMe || (
-          <ConnectionStatusDot
-            peer={peer}
-            containerClassName={cls.connectionDotContainer}
-            dotClassName={cls.connectionDot}
-            size="25%"
-          />
-        )}
-        <Avatar
-          mutunachiId={peer ? Number(peer.user.avatarId) : Number(props.peerUserInfo?.avatarId)}
-          size={size}
-        />
-        {hasUserInfo && showInfo && (
-          <div className={cx(cls.infoContainer, reversed && cls.infoContainerReversed)}>
-            <div className={cls.infoText}>
-              <Text size="small1">{getStatusInfo(peer)}</Text>
-            </div>
+    <div className={cls.container}>
+      <div className={cls.relative}>
+        <div
+          className={props.className}
+          style={{
+            ...(size && {
+              width: size,
+            }),
+          }}
+          {...(hasUserInfo && {
+            onMouseOver: () => setShowInfo(true),
+            onMouseLeave: () => setShowInfo(false),
+          })}
+        >
+          {peer?.isMe || (
+            <ConnectionStatusDot
+              peer={peer}
+              containerClassName={cls.connectionDotContainer}
+              dotClassName={cls.connectionDot}
+              size="25%"
+            />
+          )}
+          <div>
+            <Avatar
+              mutunachiId={peer ? Number(peer.user.avatarId) : Number(props.peerUserInfo?.avatarId)}
+              size={size}
+            />
           </div>
-        )}
+          {hasUserInfo && showInfo && (
+            <div className={cx(cls.infoContainer, reversed && cls.infoContainerReversed)}>
+              <div className={cls.infoText}>
+                <Text size="small1">{getStatusInfo(peer)}</Text>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -94,6 +98,9 @@ export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, reverse
 
 const useStyles = createUseStyles((theme) => ({
   container: {
+    display: 'flex',
+  },
+  relative: {
     position: 'relative',
   },
   connectionDotContainer: {

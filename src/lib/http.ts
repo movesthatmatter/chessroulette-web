@@ -73,15 +73,15 @@ export const getHttpInstance = (opts?: AxiosRequestConfig) => {
 
   // Add the Authentication Header
   instance.interceptors.request.use(async (request) => {
-    const accessTokenResult = await authenticationService.get().resolve();
+    const authenticationTokenResult = await authenticationService.get().resolve();
 
-    if (accessTokenResult.ok) {
+    if (authenticationTokenResult.ok) {
       request.headers = {
         ...request.headers,
         Authorization: `Bearer ${
-          accessTokenResult.val.isGuest
-            ? accessTokenResult.val.id
-            : accessTokenResult.val.accessToken
+          authenticationTokenResult.val.isGuest
+            ? authenticationTokenResult.val.id
+            : authenticationTokenResult.val.authenticationToken
         }`,
       };
     }

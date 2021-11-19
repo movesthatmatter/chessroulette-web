@@ -3,6 +3,7 @@ import React from 'react';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 import { UserRecordMocker } from 'src/mocks/records';
 import { LandingPage } from './LandingPage';
+import { AuthenticationToken } from 'dstnd-io';
 
 export default {
   component: LandingPage,
@@ -25,7 +26,7 @@ export const withUser = () => (
       authentication: {
         authenticationType: 'user',
         user: userA,
-        accessToken: 'my token',
+        authenticationToken: 'my token' as AuthenticationToken,
       },
     }}
   >

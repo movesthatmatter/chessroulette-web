@@ -32,7 +32,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
   return (
     <div className={cls.container}>
       <div className={cls.avatarWrapper}>
-        <Avatar mutunachiId={Number(user.avatarId)} className={cls.avatar} size="35%" />
+        <Avatar mutunachiId={Number(user.avatarId)} className={cls.avatar} size={128} />
       </div>
       <div className={cls.spacer} />
       <div className={cls.fieldsContainer}>

@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
+import cx from 'classnames';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { Logo } from 'src/components/Logo';
 import { Footer } from '../Footer';
@@ -6,20 +7,19 @@ import { NavigationMenu } from '../Navigation/NavigationMenu';
 import { fonts, onlyMobile } from 'src/theme';
 import { Events } from 'src/services/Analytics';
 import { spacers } from 'src/theme/spacers';
-import cx from 'classnames';
 import { Text } from '../Text';
 import { getBoxShadow } from 'src/theme/util';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
-import { Button } from '../Button';
 
 export type PageProps = {
-  // This name will be used on analytics  // name: string;
-
+  // This name will be used on analytics
+  // name: string;
+  title?: string;
   contentClassName?: string;
   footerClassName?: string;
   containerClassname?: string;
   logoAsLink?: boolean;
-  title?: string;
+  stretched?: boolean;
 } & (
   | {
       doNotTrack: true;
@@ -31,7 +31,7 @@ export type PageProps = {
     }
 );
 
-export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
+export const Page: React.FC<PageProps> = ({ logoAsLink = true, stretched = false, ...props }) => {
   const cls = useStyles();
   useBodyClass([cls.indexBackground]);
   useEffect(() => {
@@ -40,40 +40,35 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, ...props }) => {
     }
   }, [props.name]);
 
+  const responsiveCls = useMemo(() => (stretched ? cls.responsiveStretched : cls.responsive), [
+    stretched,
+  ]);
+
   return (
     <div className={cls.root}>
       <div className={`${cls.container} ${props.containerClassname}`}>
         <div className={`${cls.content} ${props.contentClassName}`}>
           <div className={cls.top}>
-            <div className={`${cls.topMain} ${cls.responsive}`}>
-              <Logo asLink={logoAsLink} withBeta />
+            <div className={cx(cls.topMain, responsiveCls)}>
+              <div style={{ width: '300px' }}>
+                <Logo asLink={logoAsLink} withBeta />
+              </div>
               <div className={cls.navigationMenu}>
                 <NavigationMenu />
               </div>
             </div>
           </div>
-          <main className={`${cls.main} ${cls.responsive}`}>
+          <main className={`${cls.main} ${responsiveCls}`}>
             {props.title && <h1 className={cls.title}>{props.title}</h1>}
             {props.children}
           </main>
           <div className={cls.preFooter}>
-            <div className={cx(cls.responsive, cls.centralizeContent)}>
-              <div className={cls.preFooterSide} />
+            <div className={cx(responsiveCls, cls.centralizeContent)}>
+              {/* <div className={cls.preFooterSide} /> */}
               <div className={cls.centralContent}>
                 <Text size="body2" className={cls.text}>
                   Made with ❤️around the world!
                 </Text>
-              </div>
-              <div className={cx(cls.preFooterSide, cls.discordButtonSide)}>
-                <Button
-                  className={cls.discordButton}
-                  clear
-                  label="Join Our Discord"
-                  type={'primary'}
-                  onClick={() => {
-                    window.open('https://discord.gg/XT7rvgsH66');
-                  }}
-                />
               </div>
             </div>
           </div>
@@ -121,14 +116,14 @@ const useStyles = createUseStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: spacers.default,
+    padding: `${spacers.large} ${spacers.larger}`,
   },
   topRight: {
     justifySelf: 'flex-end',
   },
   main: {
-    padding: spacers.default,
-    width: `calc(100% - ${spacers.get(2)}) !important`,
+    padding: spacers.larger,
+    width: `calc(100% - ${spacers.largerPx * 2}px) !important`,
     flex: 1,
   },
   navigationMenu: {
@@ -142,7 +137,7 @@ const useStyles = createUseStyles((theme) => ({
   },
 
   preFooter: {
-    // background: theme.colors.neutralLightest,
+    paddingTop: spacers.get(6),
     paddingBottom: spacers.default,
     boxShadow: getBoxShadow(0, 12, 12, -12, 'rgba(16, 30, 115, 0.08)'),
     position: 'relative',
@@ -154,9 +149,12 @@ const useStyles = createUseStyles((theme) => ({
     fontWeight: 300,
   },
   responsive: {
-    width: '100%',
-    maxWidth: '1140px',
     margin: '0 auto',
+    maxWidth: '1140px',
+  },
+  responsiveStretched: {
+    maxWidth: 'auto',
+    width: '100%',
   },
   centralizeContent: {
     display: 'flex',
@@ -167,8 +165,8 @@ const useStyles = createUseStyles((theme) => ({
     ...onlyMobile({
       ...makeImportant({
         display: 'block',
-      })
-    })
+      }),
+    }),
   },
   centralContent: {
     display: 'flex',
@@ -182,7 +180,7 @@ const useStyles = createUseStyles((theme) => ({
     minWidth: '150px',
     ...onlyMobile({
       display: 'none',
-    })
+    }),
   },
   discordButtonSide: {
     display: 'flex',
@@ -193,6 +191,6 @@ const useStyles = createUseStyles((theme) => ({
     ...onlyMobile({
       display: 'none',
     }),
-    marginBottom: 0
+    marginBottom: 0,
   },
 }));

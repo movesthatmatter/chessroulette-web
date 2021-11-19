@@ -5,10 +5,11 @@ import { createUseStyles } from 'src/lib/jss';
 import { OAuthButton, getRedirectUrl } from 'src/services/Oauth2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitch } from '@fortawesome/free-brands-svg-icons';
+import { JWTToken } from 'dstnd-io';
 
 type Props = Omit<ButtonProps, 'onClick' | 'label'> & {
   label?: ButtonProps['label'];
-  onSuccess: (token: string) => void;
+  onSuccess: (token: JWTToken) => void;
 };
 
 export const TwitchAuthButton: React.FC<Props> = ({

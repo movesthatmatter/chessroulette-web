@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Button, ButtonProps } from 'src/components/Button';
 import ReactPopout from 'react-popout';
 import { WindowWithOnTokenReceived } from '../../types';
-import { ExternalVendor } from 'dstnd-io';
+import { ExternalVendor, JWTToken } from 'dstnd-io';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
-  onSuccess: (token: string) => void;
+  onSuccess: (token: JWTToken) => void;
   getOauthUrl: () => Promise<string>;
   vendor: ExternalVendor;
 };
@@ -37,7 +37,7 @@ export const OAuthButton: React.FC<Props> = (props) => {
           setRedirectUri(undefined);
         }, 200);
 
-        props.onSuccess(token);
+        props.onSuccess(token as JWTToken);
       }
     };
 

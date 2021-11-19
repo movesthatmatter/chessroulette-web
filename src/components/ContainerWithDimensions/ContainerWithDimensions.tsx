@@ -20,7 +20,11 @@ export const ContainerWithDimensions: React.FC<Props> = ({ render, ...props }) =
       }
     };
 
-    onResizeHandler();
+    setTimeout(() => {
+      onResizeHandler();
+
+      // Wait a bit before setting it
+    }, 100);
 
     window.addEventListener('resize', debounce(onResizeHandler, 250));
 
