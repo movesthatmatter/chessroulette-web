@@ -1,6 +1,6 @@
-import { NDJsonReaderUniversal } from '../types';
+import { NDJsonReaderUniversal } from '../../types';
 
-export async function loopThroughNDJson<T extends {}>(reader: NDJsonReaderUniversal<T>) {
+export async function loopThroughNDJson<T extends {} | unknown>(reader: NDJsonReaderUniversal<T>) {
   try {
     const event = await reader.read();
     

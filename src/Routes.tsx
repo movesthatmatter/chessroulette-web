@@ -13,6 +13,7 @@ import { PlayLichess } from './modules/LichessPlay/PlayLichess/PlayLichess';
 import { RoomRoute } from './modules/Room';
 import { PeerProviderContainer } from './providers/PeerProvider/PeerProviderContainer';
 import { BroadcastPage } from './modules/BroadcastPage/BroadcastPage';
+import { BroadcastExternal } from './modules/BroadcastPage/BroadcastExternal';
 
 type Props = {};
 
@@ -48,6 +49,7 @@ export const Routes: React.FC<Props> = () => {
       <SocketProvider>
         <PeerProviderContainer>
           <Route path='/broadcasts' strict exact component={BroadcastPage}/>
+          <Route path='/broadcasts-external' strict exact component={BroadcastExternal}/>
           <Route exact strict path="/:slug" key={location.key} component={RoomRoute} />
           <Route exact path="/" component={LandingPage} />
         </PeerProviderContainer>
