@@ -13,7 +13,7 @@ import { getUserDisplayName } from 'src/modules/User';
 import DiscordReactEmbed from '@widgetbot/react-embed';
 import { getCollaboratorStreamers, getFeaturedStreamers } from 'src/modules/Live/resources';
 import { AwesomeCountdown } from 'src/components/AwesomeCountdown/AwesomeCountdown';
-import { toISODateTime } from 'io-ts-isodatetime';
+import { ISODateTime, toISODateTime } from 'io-ts-isodatetime';
 import { ResourceRecords } from 'dstnd-io';
 import { LiveStreamCard } from 'src/modules/Live/components/LiveStreamCard/LiveStreamCard';
 import { UserProfileShowcaseWidget } from 'src/modules/User/widgets/UserProfileShowcaseWidget';
@@ -28,10 +28,9 @@ import { keyInObject, objectKeys, toDictIndexedBy } from 'src/lib/util';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { Avatar } from 'src/components/Avatar';
 import config from 'src/config';
+import { HARDCODED_WCC_Schedule } from './schedule';
 
 type Props = {};
-
-const HARDCODED_WCC_DEADLINE = toISODateTime(new Date('24 November 2021 13:00:00'));
 
 export const DesktopLandingPage: React.FC<Props> = () => {
   const cls = useStyles();
@@ -108,6 +107,12 @@ export const DesktopLandingPage: React.FC<Props> = () => {
       setCollaboratorStreamers(s.items);
     });
   }, []);
+
+  const [nextScheduledEvent, setNextScheduledEvent] = useState<ISODateTime>();
+
+  useEffect(() => {
+
+  }, [])
 
   return (
     <Page
@@ -341,7 +346,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
             <FloatingBox className={cls.floatingBox}>
               <div className={cls.textGradient}>
                 <Text size="title2">WCC Countdown</Text>
-                <AwesomeCountdown deadline={HARDCODED_WCC_DEADLINE} fontSizePx={50} />
+                <AwesomeCountdown deadline={HARDCODED_WCC_Schedule[0].timestamp} fontSizePx={50} />
               </div>
             </FloatingBox>
             <div className={cls.verticalSpacer} />

@@ -36,3 +36,5 @@ declare module 'use-debounced-effect' {
 }
 
 declare module 'react-twitch-embed-video';
+
+declare module 'format-duration-time';

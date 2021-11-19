@@ -1,39 +1,85 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import dateFormat from 'dateformat';
 import { ISODateTime } from 'io-ts-isodatetime';
 import { useInterval } from 'src/lib/hooks';
 import { createUseStyles } from 'src/lib/jss';
-import { Date } from 'window-or-global';
-import { second } from 'src/lib/time';
+import { console, Date } from 'window-or-global';
+import {
+  second as secondMs,
+  days as daysMs,
+  hours as hoursMs,
+  minutes as minutesMs,
+} from 'src/lib/time';
+import { noop } from 'src/lib/util';
+import duration from 'format-duration-time';
 
 type Props = {
   deadline: ISODateTime;
   fontSizePx?: number;
+  onTimeEnded?: () => void;
 };
 
-const getTimeLeft = (deadline: ISODateTime) => new Date(deadline).getTime() - new Date().getTime();
-const interval = 1 * 1000;
+const getTimeLeftMs = (deadline: ISODateTime) =>
+  new Date(deadline).getTime() - new Date().getTime();
+const tickInterval = secondMs();
 
-export const AwesomeCountdown: React.FC<Props> = ({ deadline, fontSizePx = 60 }) => {
+export const AwesomeCountdown: React.FC<Props> = ({
+  deadline,
+  fontSizePx = 60,
+  onTimeEnded = noop,
+}) => {
   const cls = useStyles();
-  const [timeLeft, setTimeLeft] = useState(getTimeLeft(deadline));
+  const [timeLeftMs, setTimeLeftMs] = useState(getTimeLeftMs(deadline));
+  const [isActive, setIsActive] = useState(timeLeftMs > 0);
 
   const updateTimeLeft = useCallback(() => {
-    setTimeLeft(getTimeLeft(deadline));
+    const timeLeft = getTimeLeftMs(deadline);
+    console.log('timeleft', timeLeft);
+
+    if (timeLeft <= tickInterval) {
+      setIsActive(false);
+      onTimeEnded();
+    } else {
+      setIsActive(true);
+    }
+
+    setTimeLeftMs(timeLeft);
   }, [deadline]);
 
-  useInterval(updateTimeLeft, second());
+  useEffect(() => {
+    const nextTimeLeftMs = getTimeLeftMs(deadline);
+    setTimeLeftMs(nextTimeLeftMs);
+    setIsActive(nextTimeLeftMs > 0);
 
-  const { days, hours, minutes, seconds } = useMemo(
-    () =>
-      ({
-        days: dateFormat(timeLeft, 'dd'),
-        hours: dateFormat(timeLeft, 'HH'),
-        minutes: dateFormat(timeLeft, 'MM'),
-        seconds: dateFormat(timeLeft, 'ss'),
-      } as const),
-    [timeLeft]
-  );
+    console.log('daedline updated', deadline);
+  }, [deadline])
+
+  useInterval(updateTimeLeft, isActive ? tickInterval : undefined);
+
+  const { days, hours, minutes, seconds } = useMemo(() => {
+    // const daysLeft = Math.floor(timeLeftMs / daysMs(1));
+    // const hoursLeft = Math.floor(timeLeftMs / hoursMs(1));
+    // const minutesLeft = Math.floor(timeLeftMs / minutesMs(1));
+
+    const daysLeftMs = Math.floor(timeLeftMs / daysMs(1));
+    const hoursLeftMs = Math.floor((timeLeftMs - daysLeftMs) / hoursMs(1));
+    const minutesLeftMs = Math.floor((timeLeftMs - daysLeftMs - hoursLeftMs) / minutesMs(1));
+    const secondsLeftMs = Math.floor(
+      (timeLeftMs - daysLeftMs - hoursLeftMs - minutesLeftMs) / secondMs()
+    );
+
+    const days = duration(daysLeftMs).format('dd');
+    const hours = duration(hoursLeftMs).format('hh');
+    const minutes = duration(minutesLeftMs).format('mm');
+    const seconds = duration(secondsLeftMs).format('ss');
+
+    return {
+      days: dateFormat(timeLeftMs, 'dd'),
+      hours: dateFormat(timeLeftMs, 'HH'),
+      minutes: dateFormat(timeLeftMs, 'MM'),
+      seconds: dateFormat(timeLeftMs, 'ss'),
+    } as const;
+  }, [timeLeftMs]);
 
   return (
     <div className={cls.container} style={{ fontSize: fontSizePx }}>
