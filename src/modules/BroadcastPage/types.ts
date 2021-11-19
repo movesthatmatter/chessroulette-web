@@ -1,6 +1,6 @@
 export type ApiError = {
   type: 'BadRequest';
-  value: unknown;
+  value?: unknown;
 };
 
 export type NDJsonReaderUniversal<T> = {

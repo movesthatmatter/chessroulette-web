@@ -1804,6 +1804,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@mliebelt/pgn-parser@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@mliebelt/pgn-parser/-/pgn-parser-1.4.0.tgz#2300a01dafd4479cc7f7e8ca71cf418e9dd6b322"
+  integrity sha512-JULw1gXNnxg8hrGUVGjy/z+VtJFoCYV0rX7h1KNiWvT9OCJU2mLCi29oWZmwldh8fjVTw2ayPs2bIbGPrZQTsQ==
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"

@@ -8,6 +8,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
+    "@mliebelt/pgn-parser": "^1.4.0",
     "@react-hook/window-size": "^2.0.5",
     "@sentry/browser": "^5.15.5",
     "@testing-library/jest-dom": "^4.2.4",

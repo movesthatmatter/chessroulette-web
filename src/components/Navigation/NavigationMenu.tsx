@@ -47,6 +47,14 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         </Link>
       </div>
       <div className={cls.linkWrapper}>
+        <Link
+          to={'/broadcasts-external'}
+          className={cx(cls.link, location.pathname === '/broadcasts-external' && cls.activeLink)}
+        >
+          External Broadcasts
+        </Link>
+      </div>
+      <div className={cls.linkWrapper}>
         <a
           className={cls.link}
           href="https://gabrielctroia.medium.com/meet-chessroulette-org-a-quarantine-project-e4108f05db39"
