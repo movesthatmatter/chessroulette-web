@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
 import { onlyDesktop, softBorderRadius, effects } from 'src/theme';
@@ -11,7 +11,7 @@ import { Resources } from 'dstnd-io';
 import { PeerAvatar } from 'src/providers/PeerProvider';
 import { getUserDisplayName } from 'src/modules/User';
 import DiscordReactEmbed from '@widgetbot/react-embed';
-import { getFeaturedStreamers } from 'src/modules/Live/resources';
+import { getCollaboratorStreamers, getFeaturedStreamers } from 'src/modules/Live/resources';
 import { AwesomeCountdown } from 'src/components/AwesomeCountdown/AwesomeCountdown';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { ResourceRecords } from 'dstnd-io';
@@ -24,6 +24,9 @@ import { ChessGameDisplay } from 'src/modules/Games/widgets/ChessGameDisplay';
 import { getGameOfDay, getTopPlayersByGamesCount } from './resources';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { FloatingBox } from 'src/components/FloatingBox';
+import { keyInObject, objectKeys, toDictIndexedBy } from 'src/lib/util';
+import { AnchorLink } from 'src/components/AnchorLink';
+import { Avatar } from 'src/components/Avatar';
 
 type Props = {};
 
@@ -35,8 +38,12 @@ export const DesktopLandingPage: React.FC<Props> = () => {
   const user = useAnyUser();
 
   const [streamers, setStreamers] = useState<{
-    featured: ResourceRecords.Watch.LiveStreamerRecord;
-    toWatch: ResourceRecords.Watch.LiveStreamerRecord[];
+    itemsById: Record<
+      ResourceRecords.Watch.LiveStreamerRecord['id'],
+      ResourceRecords.Watch.LiveStreamerRecord
+    >;
+    inFocus: ResourceRecords.Watch.LiveStreamerRecord['id'];
+    toWatch: ResourceRecords.Watch.LiveStreamerRecord['id'][];
   }>();
 
   useEffect(() => {
@@ -45,21 +52,60 @@ export const DesktopLandingPage: React.FC<Props> = () => {
         return;
       }
 
+      const first4InOrder = items
+        .slice(0, 4)
+        .sort((a, b) => b.stream.viewerCount - a.stream.viewerCount);
+
       setStreamers({
-        featured: items[0],
-        toWatch: items.slice(1, 4),
+        itemsById: toDictIndexedBy(first4InOrder, ({ id }) => id),
+        inFocus: first4InOrder[0].id,
+        toWatch: first4InOrder.slice(1, 4).map(({ id }) => id),
       });
     });
   }, []);
 
-  const [topPlayers, setTopPlayers] = useState<Resources.AllRecords.Game.PlayerGamesCountStat[]>(
-    []
+  const refocusStreamers = useCallback(
+    (nextFocusId: ResourceRecords.Watch.LiveStreamerRecord['id']) => {
+      setStreamers((prev) => {
+        if (!prev) {
+          return undefined;
+        }
+
+        if (!prev.itemsById[nextFocusId]) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          inFocus: nextFocusId,
+          toWatch: Object.values(prev.itemsById)
+            .sort((a, b) => b.stream.viewerCount - a.stream.viewerCount)
+            .filter(({ id }) => id !== nextFocusId)
+            .map(({ id }) => id),
+        };
+      });
+    },
+    [setStreamers]
   );
+
+  const [topPlayers, setTopPlayers] = useState<Resources.AllRecords.Game.PlayerGamesCountStat[]>();
   const [gameOfDay, setGameOfDay] = useState<Game>();
 
   useEffect(() => {
     getGameOfDay().map(gameRecordToGame).map(setGameOfDay);
+
+    // TODO: Add it back once the server works
     getTopPlayersByGamesCount().map(setTopPlayers);
+  }, []);
+
+  const [collaboratorStreamers, setCollaboratorStreamers] = useState<
+    ResourceRecords.Watch.StreamerRecord[]
+  >();
+
+  useEffect(() => {
+    getCollaboratorStreamers().map((s) => {
+      setCollaboratorStreamers(s.items);
+    });
   }, []);
 
   return (
@@ -116,68 +162,144 @@ export const DesktopLandingPage: React.FC<Props> = () => {
             />
           )}
           <div style={{ height: spacers.large }} />
-          <div>
-            <Text size="subtitle2" className={cls.title}>
-              Top Players
-            </Text>
-            <div style={{ height: spacers.default }} />
-            {topPlayers.map((r) => (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  flex: 1,
-                  width: '100%',
-                  marginBottom: spacers.large,
-                  alignItems: 'center',
-                }}
-              >
+          {topPlayers && (
+            <div>
+              <Text size="subtitle2" className={cls.title}>
+                Top Players
+              </Text>
+              {topPlayers.map((r) => (
                 <div
                   style={{
                     display: 'flex',
+                    flexDirection: 'row',
                     flex: 1,
+                    width: '100%',
+                    marginBottom: spacers.large,
                     alignItems: 'center',
                   }}
                 >
-                  <PeerAvatar peerUserInfo={r.user} />
-                  <div style={{ width: spacers.small }} />
-                  <Text size="small1">{getUserDisplayName(r.user)}</Text>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flex: 1,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <PeerAvatar peerUserInfo={r.user} />
+                    <div style={{ width: spacers.small }} />
+                    <Text size="small1">{getUserDisplayName(r.user)}</Text>
+                  </div>
+                  <Text size="small1" className={cls.topPlayerStats}>
+                    {r.gamesCount} Games
+                  </Text>
                 </div>
-                <Text size="small1" className={cls.topPlayerStats}>
-                  {r.gamesCount} Games
-                </Text>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
           {gameOfDay && (
             <>
               <div style={{ height: spacers.large }} />
               <Text size="subtitle2" className={cls.title}>
                 Game of the Day
               </Text>
-              <div style={{ height: spacers.default }} />
               <ChessGameDisplay game={gameOfDay} className={cls.board} />
             </>
           )}
         </aside>
         <main className={cls.main}>
-          {streamers?.featured && <LiveHero featuredStreamer={streamers.featured} />}
+          {streamers?.inFocus && (
+            <LiveHero featuredStreamer={streamers.itemsById[streamers.inFocus]} />
+          )}
           <div>
             <div style={{ height: spacers.get(3) }} />
             <Text size="title2" className={cls.title}>
               Watch Now
             </Text>
-            <div style={{ height: spacers.default }} />
             <div className={cls.streamerCollectionList}>
               {streamers?.toWatch &&
-                streamers.toWatch.map((streamer, index) => (
+                streamers.toWatch.map((streamerId, index) => (
                   <>
                     {index > 0 && <div style={{ width: spacers.large }} />}
-                    <LiveStreamCard streamer={streamer} containerClassName={cls.liveStream} />
+                    <LiveStreamCard
+                      streamer={streamers.itemsById[streamerId]}
+                      containerClassName={cls.liveStream}
+                      onClick={() => refocusStreamers(streamerId)}
+                    />
                   </>
                 ))}
             </div>
           </div>
+          {collaboratorStreamers && (
+            <div>
+              <div className={cls.verticalSpacer} />
+              <Text size="title2" className={cls.title}>
+                Streamers to Follow
+              </Text>
+              <div className={cls.streamerCollectionList}>
+                {collaboratorStreamers.map((collaborator) => {
+                  // const s = streamers.itemsById[streamerId];
+
+                  return (
+                    <div
+                      className={cls.aspect}
+                      style={{
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                        }}
+                      >
+                        <div
+                          style={{
+                            paddingRight: spacers.default,
+                          }}
+                        >
+                          <AnchorLink
+                            href={`https://twitch.tv/${collaborator.username}`}
+                            target="_blank"
+                          >
+                            <Avatar imageUrl={collaborator.profileImageUrl || ''} size={60} />
+                          </AnchorLink>
+                        </div>
+                        {/* <div>
+                          <AnchorLink
+                            href={`https://twitch.tv/${collaborator.username}`}
+                            target="_blank"
+                          >
+                            <Text asLink size="subtitle1">
+                              {collaborator.displayName}
+                            </Text>
+                          </AnchorLink>
+                          <Text
+                            size="body2"
+                            asParagraph
+                            style={{
+                              marginTop: '.2em',
+                              // color: theme.text.baseColor,
+                            }}
+                          >
+                            {collaborator.description.length > 75
+                              ? `${collaborator.description?.slice(0, 75)}...`
+                              : collaborator.description}
+                            <br />
+                            <AnchorLink
+                              href={`https://twitch.tv/${collaborator.username}/about`}
+                              target="_blank"
+                            >
+                              Learn More
+                            </AnchorLink>
+                          </Text>
+                        </div> */}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </main>
         <aside
           className={cls.rightSide}
@@ -264,7 +386,6 @@ const useStyles = createUseStyles((theme) => ({
     display: 'flex',
     flex: 1,
     height: '100%',
-    // background: 'purple',
     color: theme.text.baseColor,
   },
   pageContent: {
@@ -279,9 +400,6 @@ const useStyles = createUseStyles((theme) => ({
   rightSide: {
     marginLeft: spacers.larger,
     flex: 0.36,
-    // height: '100vh',
-
-    // background: 'red',
   },
 
   main: {
@@ -301,26 +419,9 @@ const useStyles = createUseStyles((theme) => ({
 
   streamerCollectionList: {
     display: 'flex',
-    flexDirection: 'column',
-
-    ...onlyDesktop({
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-    }),
+    flexDirection: 'row',
   },
-  aspect: {
-    ...onlyDesktop({
-      width: `calc(${100 / 4}% - ${spacers.defaultPx * 2}px)`,
-      marginRight: spacers.get(1.5),
-      marginBottom: spacers.get(1.5),
-
-      ...({
-        '&:nth-child(3n)': {
-          marginRight: 0,
-        },
-      } as NestedCSSElement),
-    }),
-  },
+  aspect: {},
 
   topPlayerStats: {
     color: theme.text.subtle,
@@ -333,9 +434,8 @@ const useStyles = createUseStyles((theme) => ({
 
   liveStream: {
     flex: 1,
-    '&:first-child': {
-      marginLeft: 0,
-    },
+    display: 'flex',
+    // flexGrow: 0,
   },
 
   userProfileShowcase: {
@@ -344,6 +444,8 @@ const useStyles = createUseStyles((theme) => ({
 
   title: {
     color: theme.colors.primary,
+    marginBottom: '1em',
+    display: 'block',
   },
 
   textGradient: {
@@ -353,8 +455,6 @@ const useStyles = createUseStyles((theme) => ({
     ...({
       '-webkit-background-clip': 'text',
       '-webkit-text-fill-color': 'transparent',
-      // 'backgroundClip': 'text',
-      // textFillColor: 'transparent',
     } as NestedCSSElement),
   },
 }));

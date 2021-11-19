@@ -3,16 +3,20 @@ import React, { useMemo } from 'react';
 import { AspectRatio, AspectRatioExplicit } from 'src/components/AspectRatio';
 import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
-import { createUseStyles } from 'src/lib/jss';
+import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
 import { hardBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Math } from 'window-or-global';
 import { Show } from 'react-iconly';
 import { InfoCard } from 'src/components/InfoCard';
+import { noop } from 'src/lib/util';
+import { Button } from 'src/components/Button';
+import cx from 'classnames';
 
 type Props = {
   streamer: ResourceRecords.Watch.LiveStreamerRecord;
   containerClassName?: string;
+  onClick?: () => void;
 };
 
 const parseUrl = (url: string, { width, height }: { width: number; height: number }) => {
@@ -38,50 +42,74 @@ const TWITCH_SIZES = {
 const shortenText = (text: string, length: number, suffix = '...') =>
   text.length > length ? `${text.slice(0, length)}${suffix}` : text;
 
-export const LiveStreamCard: React.FC<Props> = ({ containerClassName, streamer }) => {
+export const LiveStreamCard: React.FC<Props> = ({
+  containerClassName,
+  streamer,
+  onClick = noop,
+}) => {
   const cls = useStyles();
   const thumbUrl = useMemo(() => parseUrl(streamer.stream.thumbnailUrl, TWITCH_SIZES.w320), []);
 
   return (
-    <InfoCard
-      containerClassName={cls.container}
-      top={
-        <AspectRatio aspectRatio={{ width: 16, height: 9 }} className={cls.imgContainer}>
-          <div className={cls.header}>
-            <div className={cls.viewersCard}>
-              <div className={cls.viewersCardMain}>
-                <Show set="light" size="small" />
-                <div style={{ width: spacers.get(0.25) }} />
-                <Text size="small1">{streamer.stream.viewerCount} viewers</Text>
+    <div className={cx(cls.container, containerClassName)}>
+      <InfoCard
+        containerClassName={cls.infoCardContainer}
+        top={
+          <AspectRatio aspectRatio={{ width: 16, height: 9 }} className={cls.imgContainer}>
+            <div className={cls.header}>
+              <div className={cls.viewersCard}>
+                <div className={cls.viewersCardMain}>
+                  <Show set="light" size="small" />
+                  <div style={{ width: spacers.get(0.25) }} />
+                  <Text size="small1">{streamer.stream.viewerCount} viewers</Text>
+                </div>
+                <div className={cls.blur} />
               </div>
-              <div className={cls.blur} />
             </div>
-          </div>
-          <img src={thumbUrl} className={cls.img} />
-          <div className={cls.tintOverlay} />
-        </AspectRatio>
-      }
-      bottomClassName={cls.infoContainer}
-      bottom={
-        <>
-          <div className={cls.infoTop}>
-            <div className={cls.infoUsername}>
-              <Text size="subtitle2">{streamer.displayName}</Text>
+            <img src={thumbUrl} className={cls.img} />
+            <div className={cls.tintOverlay} />
+          </AspectRatio>
+        }
+        bottomClassName={cls.infoContainer}
+        bottom={
+          <>
+            <div className={cls.infoTop}>
+              <div className={cls.infoUsername}>
+                <Text size="subtitle2">{streamer.displayName}</Text>
+              </div>
+              <Avatar imageUrl={streamer.profileImageUrl || ''} size={54} className={cls.avatar} />
             </div>
-            <Avatar imageUrl={streamer.profileImageUrl || ''} size={54} className={cls.avatar} />
-          </div>
-          <div className={cls.infoMain}>
-            <Text size="small1">{shortenText(streamer.stream.title, 120)}</Text>
-          </div>
-        </>
-      }
-    />
+            <div className={cls.infoMain}>
+              <Text size="small1">{shortenText(streamer.stream.title, 120)}</Text>
+            </div>
+            <br />
+          </>
+        }
+      />
+      <div className={cls.overlay}>
+        <div className={cls.overlayContent}>
+          <Button label="Watch" onClick={onClick} />
+        </div>
+        {/* <div className={cls.overlayBkg} /> */}
+      </div>
+    </div>
   );
 };
 
 const useStyles = createUseStyles((theme) => ({
   container: {
     position: 'relative',
+    flex: 1,
+    display: 'flex',
+
+    ...({
+      '&:hover $overlay': {
+        display: 'flex',
+      },
+    } as NestedCSSElement),
+  },
+
+  infoCardContainer: {
     flex: 1,
   },
 
@@ -160,5 +188,25 @@ const useStyles = createUseStyles((theme) => ({
     backgroundColor: 'rgba(255, 255, 255, .15)',
     borderTop: `1px solid rgba(255, 255, 255, .1)`,
     overflow: 'hidden',
+  },
+
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(255, 0, 0, .2)',
+    zIndex: 999,
+    display: 'none',
+
+    ...hardBorderRadius,
+    overflow: 'hidden',
+  },
+  overlayContent: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 }));

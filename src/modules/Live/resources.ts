@@ -13,12 +13,23 @@ export const getCollaboratorsByPlatform = (
   );
 };
 
-const { resource: getStreamersResource } = Resources.Collections.Watch.GetLiveStreamers;
+const { resource: getLiveStreamersResource } = Resources.Collections.Watch.GetLiveStreamers;
 
 // TODO: The resource for this needs to change to featured
 export const getFeaturedStreamers = (
-  req: Resources.Util.RequestOf<typeof getStreamersResource>
+  req: Resources.Util.RequestOf<typeof getLiveStreamersResource>
 ) => {
-  return getStreamersResource.request(req, (params) => http.get(`api/watch/featured`, { params }));
+  return getLiveStreamersResource.request(req, (params) =>
+    http.get(`api/watch/featured`, { params })
+  );
 };
 
+const { resource: getStreamersResource } = Resources.Collections.Watch.GetStreamers;
+
+export const getCollaboratorStreamers = (
+  req: Resources.Util.RequestOf<typeof getStreamersResource>
+) => {
+  return getStreamersResource.request(req, (params) =>
+    http.get('api/watch/collaborators', { params })
+  );
+};
