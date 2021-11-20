@@ -164,6 +164,8 @@ export class ChessBoard extends React.PureComponent<ChessBoardProps, State> {
   }
 
   private onMove(nextMove: ChessMove) {
+    console.log('on move', nextMove);
+
     if (!this.props.canInteract) {
       return;
     }
@@ -171,6 +173,8 @@ export class ChessBoard extends React.PureComponent<ChessBoardProps, State> {
     this.setState({
       pendingPromotionalMove: undefined,
     });
+    
+    console.log('on move can', nextMove);
 
     // If the move is a promotional move:
     //  - save a temporary chess state
