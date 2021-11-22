@@ -170,6 +170,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
               </Text>
               {topPlayers.map((r) => (
                 <div
+                  key={r.user.id}
                   style={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -219,14 +220,15 @@ export const DesktopLandingPage: React.FC<Props> = () => {
             <div className={cls.streamerCollectionList}>
               {streamers?.toWatch &&
                 streamers.toWatch.map((streamerId, index) => (
-                  <>
+                  <React.Fragment key={streamerId}>
                     {index > 0 && <div style={{ width: spacers.large }} />}
                     <LiveStreamCard
+                      key={streamerId}
                       streamer={streamers.itemsById[streamerId]}
                       containerClassName={cls.liveStream}
                       onClick={() => refocusStreamers(streamerId)}
                     />
-                  </>
+                  </React.Fragment>
                 ))}
             </div>
           </div>
@@ -242,6 +244,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
 
                   return (
                     <div
+                      key={collaborator.id}
                       className={cls.aspect}
                       style={{
                         overflow: 'hidden',

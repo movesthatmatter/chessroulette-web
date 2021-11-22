@@ -106,14 +106,14 @@ export const LivePage: React.FC<Props> = () => {
                 <div className={cls.streamerCollectionList}>
                   {streamers?.toWatch &&
                     streamers.toWatch.map((streamerId, index) => (
-                      <>
+                      <React.Fragment key={streamerId}>
                         {index > 0 && <div style={{ width: spacers.large }} />}
                         <LiveStreamCard
                           streamer={streamers.itemsById[streamerId]}
                           containerClassName={cls.liveStream}
                           onClick={() => refocusStreamers(streamerId)}
                         />
-                      </>
+                      </React.Fragment>
                     ))}
                 </div>
               </div>
@@ -133,6 +133,7 @@ export const LivePage: React.FC<Props> = () => {
 
                       return (
                         <div
+                          key={collaborator.id}
                           className={cls.aspect}
                           style={{
                             overflow: 'hidden',
