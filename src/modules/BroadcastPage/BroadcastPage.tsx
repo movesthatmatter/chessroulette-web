@@ -1,4 +1,4 @@
-import { RelayedGameInfoRecord } from 'dstnd-io';
+import { Resources } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Dialog } from 'src/components/Dialog';
@@ -21,7 +21,9 @@ type Props = {};
 
 export const BroadcastPage: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const [relayGames, setRelayGames] = useState<RelayedGameInfoRecord[]>([]);
+  const [relayGames, setRelayGames] = useState<Resources.AllRecords.Relay.RelayedGameInfoRecord[]>(
+    []
+  );
   const peerState = usePeerState();
   const [showWizard, setShowWizard] = useState(false);
   const [selectedRelayId, setSelectedRelayId] = useState<string>();
