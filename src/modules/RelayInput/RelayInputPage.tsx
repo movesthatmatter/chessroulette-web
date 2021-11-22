@@ -1,16 +1,18 @@
-import { ChessMove, RelayedGameInfoRecord } from 'dstnd-io';
+import { ChessMove, gameRecord, Resources } from 'dstnd-io';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from 'src/components/Button';
 import { createUseStyles } from 'src/lib/jss';
 import { noop } from 'src/lib/util';
-import { usePeerState, usePeerStateClient } from 'src/providers/PeerProvider';
+import { usePeerStateClient } from 'src/providers/PeerProvider';
 import { effects } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
-import { console } from 'window-or-global';
 import { getCurrentlyStreamingRelayedGames } from '../BroadcastPage/resources';
+import { Game } from '../Games';
+import { ChessGame } from '../Games/Chess';
 import { ChessBoard } from '../Games/Chess/components/ChessBoard';
+import { gameRecordToGame } from '../Games/Chess/lib';
 import { DesktopRoomLayout } from '../Room/Layouts';
-import { GenericLayoutDesktopRoomConsumer } from '../Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
+import { createRelay } from './resource';
 
 type Props = {};
 
@@ -23,7 +25,13 @@ const LAYOUT_RATIOS = {
 export const RelayInputPage: React.FC<Props> = (props) => {
   const cls = useStyles();
   const peerClient = usePeerStateClient();
-  const [relayGames, setRelayGames] = useState<RelayedGameInfoRecord[]>([]);
+  const [relayGames, setRelayGames] = useState<Resources.AllRecords.Relay.RelayedGameInfoRecord[]>(
+    []
+  );
+
+  const [currentRelay, setCurrentRelay] = useState<
+    Resources.AllRecords.Relay.RelayedGameRecord & { game: Game }
+  >();
 
   const [unsubmittedMove, setUnsubmittedMove] = useState<ChessMove>();
   const submitMove = useCallback(() => {
@@ -39,7 +47,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
 
   useEffect(() => {
     fetchLiveGames();
-  }, [])
+  }, []);
 
   useEffect(() => {
     const unsubscribe = peerClient.onMessage((msg) => {
@@ -77,18 +85,72 @@ export const RelayInputPage: React.FC<Props> = (props) => {
       bottomHeight={80}
       renderActivityComponent={(d) => (
         <div style={{}}>
-          <ChessBoard
-            size={d.main.width}
-            id="1"
-            pgn=""
-            type="free"
-            canInteract
-            onMove={(m) => {
-              setUnsubmittedMove(m.move);
-            }}
-            playableColor="black"
-          />
+          {currentRelay?.game && (
+            <ChessGame
+              size={d.main.width}
+              game={currentRelay.game}
+              onAddMove={() => {
+                console.log('moved');
+              }}
+              canInteract
+              turnColor={'white'}
+            />
+            // <ChessBoard
+            //   size={d.main.width}
+            //   id={currentRelay.game.id}
+            //   pgn=""
+            //   type="play"
+            //   canInteract
+            //   onMove={(m) => {
+            //     setUnsubmittedMove(m.move);
+            //   }}
+            //   playableColor="black"
+            // />
+          )}
+
           <Button label="Submit" onClick={submitMove} disabled={!unsubmittedMove} />
+          <Button
+            label="Create Relay"
+            onClick={() => {
+              createRelay({
+                relaySource: 'proxy',
+                type: 'newGame',
+                gameSpecs: {
+                  timeLimit: 'rapid30',
+                  preferredColor: 'white',
+                },
+                players: {
+                  white: {
+                    color: 'white',
+                    user: {
+                      id: 'Magnus',
+                      isGuest: true,
+                      firstName: 'Magnus',
+                      lastName: 'Carlsen',
+                      name: 'Magnus Carlsen',
+                      avatarId: '1',
+                    },
+                  },
+                  black: {
+                    color: 'black',
+                    user: {
+                      id: 'Nepo',
+                      isGuest: true,
+                      firstName: 'Nepo',
+                      lastName: 'Itch',
+                      name: 'Nepo itch',
+                      avatarId: '2',
+                    },
+                  },
+                },
+              }).map((r) => {
+                setCurrentRelay({
+                  ...r,
+                  game: gameRecordToGame(r.game),
+                });
+              });
+            }}
+          />
         </div>
       )}
       renderBottomComponent={() => null}
@@ -98,6 +160,16 @@ export const RelayInputPage: React.FC<Props> = (props) => {
             <div
               className={cls.gameContainer}
               onClick={() => {
+                createRelay({
+                  relaySource: 'proxy',
+                  type: 'existentGame',
+                  gameId: relayGame.game.id,
+                }).map((r) => {
+                  setCurrentRelay({
+                    ...r,
+                    game: gameRecordToGame(r.game),
+                  });
+                });
                 // setSelectedRelayId(relayGame.id);
                 // setShowWizard(true);
               }}
@@ -130,10 +202,10 @@ const useStyles = createUseStyles({
     flexDirection: 'column',
     padding: spacers.small,
     ...effects.softBorderRadius,
-    '&:hover' : {
+    '&:hover': {
       // backgroundColor: them.colors.primary,
-      cursor: 'pointer'
-    }
+      cursor: 'pointer',
+    },
   },
   playerInfo: {
     display: 'flex',
