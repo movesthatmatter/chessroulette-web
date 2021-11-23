@@ -112,7 +112,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
     });
   }, []);
 
-  const [scheduledEvent, setScheduledEvent] = useState<ScheduledEvent>();
+  const [scheduledEvent, setScheduledEvent] = useState<ScheduledEvent | 'init'>();
 
   useEffect(() => {
     getNextScheduledEvent(new Date()).then(setScheduledEvent);
@@ -323,48 +323,51 @@ export const DesktopLandingPage: React.FC<Props> = () => {
           }}
         >
           <div>
-            {scheduledEvent ? (
-              <FloatingBox className={cls.floatingBox}>
-                <div className={cls.textGradient}>
-                  <GradientText>
-                    <Text size="title2">{scheduledEvent.eventName}</Text>
-                    <AwesomeCountdown
-                      deadline={scheduledEvent.timestamp}
-                      fontSizePx={50}
-                      onTimeEnded={async (tickInterval) => {
-                        await getNextScheduledEvent(addSeconds(now(), tickInterval)).then(
-                          setScheduledEvent
-                        );
-                      }}
-                    />
-                  </GradientText>
-                </div>
-              </FloatingBox>
-            ) : (
-              <InfoCard
-                top={
-                  <AspectRatio
-                    aspectRatio={{ width: 16, height: 9 }}
-                    style={{
-                      overflow: 'hidden',
-                      position: 'relative',
-                    }}
-                  >
-                    <img
-                      src="https://partner.chessroulette.live/images/hero_b.png"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                      }}
-                    />
-                  </AspectRatio>
-                }
-                bottom={
-                  <AnchorLink href="https://partner.chessroulette.live" target="_blank">
-                    <Text size="subtitle1">Let's Collaborate</Text>
-                  </AnchorLink>
-                }
-              />
+            {scheduledEvent === 'init' ? null : (
+              <>
+                {scheduledEvent ? (
+                  <FloatingBox className={cls.floatingBox}>
+                    <div className={cls.textGradient}>
+                      <GradientText>
+                        <Text size="title2">{scheduledEvent.eventName}</Text>
+                        <AwesomeCountdown
+                          deadline={scheduledEvent.timestamp}
+                          fontSizePx={50}
+                          onTimeEnded={async (tickInterval) => {
+                            await getNextScheduledEvent(addSeconds(now(), tickInterval))
+                              .then(setScheduledEvent);
+                          }}
+                        />
+                      </GradientText>
+                    </div>
+                  </FloatingBox>
+                ) : (
+                  <InfoCard
+                    top={
+                      <AspectRatio
+                        aspectRatio={{ width: 16, height: 9 }}
+                        style={{
+                          overflow: 'hidden',
+                          position: 'relative',
+                        }}
+                      >
+                        <img
+                          src="https://partner.chessroulette.live/images/hero_b.png"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                          }}
+                        />
+                      </AspectRatio>
+                    }
+                    bottom={
+                      <AnchorLink href="https://partner.chessroulette.live" target="_blank">
+                        <Text size="subtitle1">Let's Collaborate</Text>
+                      </AnchorLink>
+                    }
+                  />
+                )}
+              </>
             )}
             <div className={cls.verticalSpacer} />
           </div>

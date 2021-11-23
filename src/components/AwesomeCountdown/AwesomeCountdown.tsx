@@ -83,7 +83,7 @@ export const AwesomeCountdown: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles((theme) => ({
+const useStyles = createUseStyles({
   container: {
     display: 'flex',
     flexDirection: 'row',
@@ -101,4 +101,4 @@ const useStyles = createUseStyles((theme) => ({
     textAlign: 'center',
     textTransform: 'lowercase',
   },
-}));
+});
