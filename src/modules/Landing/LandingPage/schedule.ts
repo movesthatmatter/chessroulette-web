@@ -10,10 +10,6 @@ export type ScheduledEvent = {
 // https://www.chess.com/events/2021-fide-world-chess-championship/schedule
 export const HARDCODED_WCC_Schedule_Sorted: ScheduledEvent[] = [
   {
-    eventName: 'WCC Start',
-    timestamp: toISODateTime(addSeconds(new Date(), 5)),
-  },
-  {
     eventName: 'WCC Opening Ceremony',
     timestamp: toISODateTime(new Date('24 November 2021 16:00:00.000+00:00')),
   },
@@ -84,15 +80,7 @@ export const HARDCODED_WCC_Schedule_Sorted: ScheduledEvent[] = [
 export const getNextScheduledEvent = async (
   fromDate: Date
 ): Promise<ScheduledEvent | undefined> => {
-  return HARDCODED_WCC_Schedule_Sorted.find(
-    (event) => {
-      const eDate = new Date(event.timestamp).getTime();
-      const fDate = fromDate.getTime();
-
-      console.log('HARDCODED_WCC_Schedule_Sorted', HARDCODED_WCC_Schedule_Sorted);
-      
-      console.log(event.timestamp, `${eDate}`, '?', 'from', toISODateTime(fromDate), `${(fDate)}`, eDate > fDate);
-      return eDate > fDate + 4000; 
-    }
-  );
+  return HARDCODED_WCC_Schedule_Sorted.find((event) => {
+    return new Date(event.timestamp).getTime() > fromDate.getTime();
+  });
 };

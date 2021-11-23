@@ -30,6 +30,8 @@ import config from 'src/config';
 import { getNextScheduledEvent, ScheduledEvent } from './schedule';
 import { now } from 'src/lib/date';
 import { addSeconds } from 'date-fns';
+import { AspectRatio } from 'src/components/AspectRatio';
+import { InfoCard } from 'src/components/InfoCard';
 
 type Props = {};
 
@@ -320,48 +322,48 @@ export const DesktopLandingPage: React.FC<Props> = () => {
           }}
         >
           <div>
-            {/* <InfoCard
-              top={
-                null
-                // <AspectRatio
-                //   aspectRatio={{ width: 16, height: 9 }}
-                //   style={{
-                //     overflow: 'hidden',
-                //     position: 'relative',
-                //   }}
-                // >
-                //   <img
-                //     src="https://partner.chessroulette.live/images/hero_b.png"
-                //     style={{
-                //       width: '100%',
-                //       height: '100%',
-                //     }}
-                //   />
-                // </AspectRatio>
-              }
-              bottom={
-                <>
-                  <Text size="title2">WCC Countdown</Text>
-                  <div className={cls.verticalSpacer} />
-                  <AwesomeCountdown deadline={HARDCODED_WCC_DEADLINE} fontSizePx={50} />
-                </>
-              }
-            /> */}
-            {scheduledEvent && (
+            {scheduledEvent ? (
               <FloatingBox className={cls.floatingBox}>
                 <div className={cls.textGradient}>
                   <Text size="title2">{scheduledEvent.eventName}</Text>
                   <AwesomeCountdown
                     deadline={scheduledEvent.timestamp}
                     fontSizePx={50}
-                    onTimeEnded={async () => {
-                      const next = await getNextScheduledEvent(now()).then(setScheduledEvent);
+                    onTimeEnded={async (tickInterval) => {
+                      const next = await getNextScheduledEvent(
+                        addSeconds(now(), tickInterval)
+                      ).then(setScheduledEvent);
 
                       console.log('gonan get next', next);
                     }}
                   />
                 </div>
               </FloatingBox>
+            ) : (
+              <InfoCard
+                top={
+                  <AspectRatio
+                    aspectRatio={{ width: 16, height: 9 }}
+                    style={{
+                      overflow: 'hidden',
+                      position: 'relative',
+                    }}
+                  >
+                    <img
+                      src="https://partner.chessroulette.live/images/hero_b.png"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                      }}
+                    />
+                  </AspectRatio>
+                }
+                bottom={
+                  <AnchorLink href="https://partner.chessroulette.live" target="_blank">
+                    <Text size="subtitle1">Let's Collaborate</Text>
+                  </AnchorLink>
+                }
+              />
             )}
             <div className={cls.verticalSpacer} />
           </div>

@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { ISODateTime } from 'io-ts-isodatetime';
 import { useInterval } from 'src/lib/hooks';
 import { createUseStyles } from 'src/lib/jss';
-import { console, Date } from 'window-or-global';
+import { Date } from 'window-or-global';
 import { second as secondMs } from 'src/lib/time';
 import { noop } from 'src/lib/util';
 import { lpad, timeLeftToTimeUnits } from './util';
@@ -10,7 +10,7 @@ import { lpad, timeLeftToTimeUnits } from './util';
 type Props = {
   deadline: ISODateTime;
   fontSizePx?: number;
-  onTimeEnded?: () => void;
+  onTimeEnded?: (interval: number) => void;
 };
 
 const getTimeLeftMs = (deadline: ISODateTime) =>
@@ -28,11 +28,10 @@ export const AwesomeCountdown: React.FC<Props> = ({
 
   const updateTimeLeft = useCallback(() => {
     const timeLeft = getTimeLeftMs(deadline);
-    console.log('timeleft', timeLeft);
 
     if (timeLeft <= tickInterval) {
       setIsActive(false);
-      onTimeEnded();
+      onTimeEnded(tickInterval);
     } else {
       setIsActive(true);
     }
