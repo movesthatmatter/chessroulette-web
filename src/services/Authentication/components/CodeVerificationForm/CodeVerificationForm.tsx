@@ -70,6 +70,7 @@ export const CodeVerificationForm: React.FC<Props> = (props) => {
             disabled={!p.canSubmit} // TODO: check if email!
             withLoader
             onClick={p.submit}
+            containerClassName={cls.button}
           />
         </>
       )}
@@ -88,5 +89,9 @@ const useStyles = createUseStyles(theme => ({
   },
   infoText: {
     color: theme.colors.neutralDarker,
+  },
+  button: {
+    // TODO: Not sure why this needs a flex
+    display: 'flex',
   },
 }));

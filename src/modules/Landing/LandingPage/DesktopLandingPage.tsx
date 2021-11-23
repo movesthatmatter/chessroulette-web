@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
-import { onlyDesktop, softBorderRadius, effects, hardBorderRadius } from 'src/theme';
+import { softBorderRadius, effects, hardBorderRadius } from 'src/theme';
 import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
 import { spacers } from 'src/theme/spacers';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
@@ -12,8 +12,6 @@ import { PeerAvatar } from 'src/providers/PeerProvider';
 import { getUserDisplayName } from 'src/modules/User';
 import DiscordReactEmbed from '@widgetbot/react-embed';
 import { getCollaboratorStreamers, getFeaturedStreamers } from 'src/modules/Live/resources';
-import { AwesomeCountdown } from 'src/components/AwesomeCountdown/AwesomeCountdown';
-import { toISODateTime } from 'io-ts-isodatetime';
 import { ResourceRecords } from 'dstnd-io';
 import { LiveStreamCard } from 'src/modules/Live/components/LiveStreamCard/LiveStreamCard';
 import { UserProfileShowcaseWidget } from 'src/modules/User/widgets/UserProfileShowcaseWidget';
@@ -24,14 +22,19 @@ import { ChessGameDisplay } from 'src/modules/Games/widgets/ChessGameDisplay';
 import { getGameOfDay, getTopPlayersByGamesCount } from './resources';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { FloatingBox } from 'src/components/FloatingBox';
-import { keyInObject, objectKeys, toDictIndexedBy } from 'src/lib/util';
+import { toDictIndexedBy } from 'src/lib/util';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { Avatar } from 'src/components/Avatar';
 import config from 'src/config';
+import { getNextScheduledEvent, ScheduledEvent } from './schedule';
+import { AspectRatio } from 'src/components/AspectRatio';
+import { InfoCard } from 'src/components/InfoCard';
+import { GradientText } from 'src/components/GradientText';
+import { AwesomeCountdown } from 'src/components/AwesomeCountdown/AwesomeCountdown';
+import addSeconds from 'date-fns/addSeconds';
+import { now } from 'src/lib/date';
 
 type Props = {};
-
-const HARDCODED_WCC_DEADLINE = toISODateTime(new Date('24 November 2021 13:00:00'));
 
 export const DesktopLandingPage: React.FC<Props> = () => {
   const cls = useStyles();
@@ -107,6 +110,12 @@ export const DesktopLandingPage: React.FC<Props> = () => {
     getCollaboratorStreamers().map((s) => {
       setCollaboratorStreamers(s.items);
     });
+  }, []);
+
+  const [scheduledEvent, setScheduledEvent] = useState<ScheduledEvent | 'init'>();
+
+  useEffect(() => {
+    getNextScheduledEvent(new Date()).then(setScheduledEvent);
   }, []);
 
   return (
@@ -314,39 +323,52 @@ export const DesktopLandingPage: React.FC<Props> = () => {
           }}
         >
           <div>
-            {/* <InfoCard
-              top={
-                null
-                // <AspectRatio
-                //   aspectRatio={{ width: 16, height: 9 }}
-                //   style={{
-                //     overflow: 'hidden',
-                //     position: 'relative',
-                //   }}
-                // >
-                //   <img
-                //     src="https://partner.chessroulette.live/images/hero_b.png"
-                //     style={{
-                //       width: '100%',
-                //       height: '100%',
-                //     }}
-                //   />
-                // </AspectRatio>
-              }
-              bottom={
-                <>
-                  <Text size="title2">WCC Countdown</Text>
-                  <div className={cls.verticalSpacer} />
-                  <AwesomeCountdown deadline={HARDCODED_WCC_DEADLINE} fontSizePx={50} />
-                </>
-              }
-            /> */}
-            <FloatingBox className={cls.floatingBox}>
-              <div className={cls.textGradient}>
-                <Text size="title2">WCC Countdown</Text>
-                <AwesomeCountdown deadline={HARDCODED_WCC_DEADLINE} fontSizePx={50} />
-              </div>
-            </FloatingBox>
+            {scheduledEvent === 'init' ? null : (
+              <>
+                {scheduledEvent ? (
+                  <FloatingBox className={cls.floatingBox}>
+                    <div className={cls.textGradient}>
+                      <GradientText>
+                        <Text size="title2">{scheduledEvent.eventName}</Text>
+                        <AwesomeCountdown
+                          deadline={scheduledEvent.timestamp}
+                          fontSizePx={50}
+                          onTimeEnded={async (tickInterval) => {
+                            await getNextScheduledEvent(addSeconds(now(), tickInterval))
+                              .then(setScheduledEvent);
+                          }}
+                        />
+                      </GradientText>
+                    </div>
+                  </FloatingBox>
+                ) : (
+                  <InfoCard
+                    top={
+                      <AspectRatio
+                        aspectRatio={{ width: 16, height: 9 }}
+                        style={{
+                          overflow: 'hidden',
+                          position: 'relative',
+                        }}
+                      >
+                        <img
+                          src="https://partner.chessroulette.live/images/hero_b.png"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                          }}
+                        />
+                      </AspectRatio>
+                    }
+                    bottom={
+                      <AnchorLink href="https://partner.chessroulette.live" target="_blank">
+                        <Text size="subtitle1">Let's Collaborate</Text>
+                      </AnchorLink>
+                    }
+                  />
+                )}
+              </>
+            )}
             <div className={cls.verticalSpacer} />
           </div>
           <div
@@ -450,13 +472,17 @@ const useStyles = createUseStyles((theme) => ({
   },
 
   textGradient: {
-    backgroundImage: `linear-gradient(45deg, ${
-      theme.name === 'darkDefault' ? theme.colors.positiveLight : theme.colors.primary
-    } 0, #fff 150%)`,
+    // backgroundImage: `linear-gradient(45deg, ${
+    //   theme.name === 'darkDefault' ? theme.colors.positiveLight : theme.colors.primary
+    // } 0, #fff 150%)`,
     ...({
-      '-webkit-background-clip': 'text',
-      '-webkit-text-fill-color': 'transparent',
+      // '-webkit-background-clip': 'text',
+      // '-webkit-text-fill-color': 'transparent',
     } as NestedCSSElement),
+
+    // '& span': {
+    //   display: 'block',
+    // }
   },
 
   discordWidget: {
@@ -466,6 +492,6 @@ const useStyles = createUseStyles((theme) => ({
       background: theme.depthBackground.backgroundColor,
       ...hardBorderRadius,
       overflow: 'hidden',
-    })
-  }
+    }),
+  },
 }));

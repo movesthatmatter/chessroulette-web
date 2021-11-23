@@ -157,7 +157,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
               <FormError message={p.errors.submissionGenericError} />
             )}
             <br />
-            <Button label="Create Account" full withLoader onClick={p.submit} />
+            <Button label="Create Account" full withLoader onClick={p.submit} containerClassName={cls.button}/>
           </>
         )}
       />
@@ -177,5 +177,8 @@ const useStyles = createUseStyles(theme => ({
   },
   infoText: {
     color: theme.colors.neutralDarker,
+  },
+  button: {
+    display: 'flex',
   },
 }));

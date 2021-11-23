@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { inCheck } from '../../lib';
 import objectEquals from 'object-equals';
 import { Howl, HowlOptions } from 'howler';
@@ -82,7 +82,9 @@ export const useSoundEffects = (game: Game) => {
     }
   });
 
-  return () => {
+  const returnCb = useCallback(() => {
     initiateSoundHandler.current();
-  };
+  }, []);
+
+  return returnCb;
 };
