@@ -12,7 +12,6 @@ import { PeerAvatar } from 'src/providers/PeerProvider';
 import { getUserDisplayName } from 'src/modules/User';
 import DiscordReactEmbed from '@widgetbot/react-embed';
 import { getCollaboratorStreamers, getFeaturedStreamers } from 'src/modules/Live/resources';
-import { AwesomeCountdown } from 'src/components/AwesomeCountdown/AwesomeCountdown';
 import { ResourceRecords } from 'dstnd-io';
 import { LiveStreamCard } from 'src/modules/Live/components/LiveStreamCard/LiveStreamCard';
 import { UserProfileShowcaseWidget } from 'src/modules/User/widgets/UserProfileShowcaseWidget';
@@ -28,10 +27,12 @@ import { AnchorLink } from 'src/components/AnchorLink';
 import { Avatar } from 'src/components/Avatar';
 import config from 'src/config';
 import { getNextScheduledEvent, ScheduledEvent } from './schedule';
-import { now } from 'src/lib/date';
-import { addSeconds } from 'date-fns';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { InfoCard } from 'src/components/InfoCard';
+import { GradientText } from 'src/components/GradientText';
+import { AwesomeCountdown } from 'src/components/AwesomeCountdown/AwesomeCountdown';
+import addSeconds from 'date-fns/addSeconds';
+import { now } from 'src/lib/date';
 
 type Props = {};
 
@@ -325,18 +326,18 @@ export const DesktopLandingPage: React.FC<Props> = () => {
             {scheduledEvent ? (
               <FloatingBox className={cls.floatingBox}>
                 <div className={cls.textGradient}>
-                  <Text size="title2">{scheduledEvent.eventName}</Text>
-                  <AwesomeCountdown
-                    deadline={scheduledEvent.timestamp}
-                    fontSizePx={50}
-                    onTimeEnded={async (tickInterval) => {
-                      const next = await getNextScheduledEvent(
-                        addSeconds(now(), tickInterval)
-                      ).then(setScheduledEvent);
-
-                      console.log('gonan get next', next);
-                    }}
-                  />
+                  <GradientText>
+                    <Text size="title2">{scheduledEvent.eventName}</Text>
+                    <AwesomeCountdown
+                      deadline={scheduledEvent.timestamp}
+                      fontSizePx={50}
+                      onTimeEnded={async (tickInterval) => {
+                        await getNextScheduledEvent(addSeconds(now(), tickInterval)).then(
+                          setScheduledEvent
+                        );
+                      }}
+                    />
+                  </GradientText>
                 </div>
               </FloatingBox>
             ) : (
@@ -468,13 +469,17 @@ const useStyles = createUseStyles((theme) => ({
   },
 
   textGradient: {
-    backgroundImage: `linear-gradient(45deg, ${
-      theme.name === 'darkDefault' ? theme.colors.positiveLight : theme.colors.primary
-    } 0, #fff 150%)`,
+    // backgroundImage: `linear-gradient(45deg, ${
+    //   theme.name === 'darkDefault' ? theme.colors.positiveLight : theme.colors.primary
+    // } 0, #fff 150%)`,
     ...({
-      '-webkit-background-clip': 'text',
-      '-webkit-text-fill-color': 'transparent',
+      // '-webkit-background-clip': 'text',
+      // '-webkit-text-fill-color': 'transparent',
     } as NestedCSSElement),
+
+    // '& span': {
+    //   display: 'block',
+    // }
   },
 
   discordWidget: {
