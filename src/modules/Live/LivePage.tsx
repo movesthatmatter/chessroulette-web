@@ -97,7 +97,7 @@ export const LivePage: React.FC<Props> = () => {
         <main className={cls.main}>
           {streamers?.inFocus && (
             <>
-              <LiveHero featuredStreamer={streamers.itemsById[streamers.inFocus]} />
+              <LiveHero featuredStreamer={streamers.itemsById[streamers.inFocus]} muted={false} />
               <div>
                 <div style={{ height: spacers.get(3) }} />
                 <Text size="title2" className={cls.title}>

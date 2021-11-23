@@ -14,11 +14,12 @@ import { Badge } from 'src/components/Badge';
 type Props = {
   featuredStreamer: ResourceRecords.Watch.LiveStreamerRecord;
   showChat?: boolean;
+  muted?: boolean;
 };
 
 const aspectRatio = { width: 16, height: 9 };
 
-export const LiveHero: React.FC<Props> = ({ featuredStreamer, showChat = false }) => {
+export const LiveHero: React.FC<Props> = ({ featuredStreamer, muted = true, showChat = false }) => {
   const cls = useStyles();
   const [isReady, setIsReady] = useState(false);
   const { theme } = useColorTheme();
@@ -37,7 +38,7 @@ export const LiveHero: React.FC<Props> = ({ featuredStreamer, showChat = false }
           targetClass={cx(cls.videoContainer, isReady || cls.hidden)}
           targetId={featuredStreamer.username}
           theme={theme.name === 'darkDefault' ? 'dark' : 'light'}
-          muted
+          muted={muted}
         />
       </AspectRatio>
       <div className={cls.bottomContainer}>
