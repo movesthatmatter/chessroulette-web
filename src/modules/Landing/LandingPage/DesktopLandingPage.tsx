@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
-import { onlyDesktop, softBorderRadius, effects, hardBorderRadius } from 'src/theme';
+import { softBorderRadius, effects, hardBorderRadius } from 'src/theme';
 import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
 import { spacers } from 'src/theme/spacers';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
@@ -13,7 +13,6 @@ import { getUserDisplayName } from 'src/modules/User';
 import DiscordReactEmbed from '@widgetbot/react-embed';
 import { getCollaboratorStreamers, getFeaturedStreamers } from 'src/modules/Live/resources';
 import { AwesomeCountdown } from 'src/components/AwesomeCountdown/AwesomeCountdown';
-import { toISODateTime } from 'io-ts-isodatetime';
 import { ResourceRecords } from 'dstnd-io';
 import { LiveStreamCard } from 'src/modules/Live/components/LiveStreamCard/LiveStreamCard';
 import { UserProfileShowcaseWidget } from 'src/modules/User/widgets/UserProfileShowcaseWidget';
@@ -24,14 +23,15 @@ import { ChessGameDisplay } from 'src/modules/Games/widgets/ChessGameDisplay';
 import { getGameOfDay, getTopPlayersByGamesCount } from './resources';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { FloatingBox } from 'src/components/FloatingBox';
-import { keyInObject, objectKeys, toDictIndexedBy } from 'src/lib/util';
+import { toDictIndexedBy } from 'src/lib/util';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { Avatar } from 'src/components/Avatar';
 import config from 'src/config';
+import { getNextScheduledEvent, ScheduledEvent } from './schedule';
+import { now } from 'src/lib/date';
+import { addSeconds } from 'date-fns';
 
 type Props = {};
-
-const HARDCODED_WCC_DEADLINE = toISODateTime(new Date('24 November 2021 13:00:00'));
 
 export const DesktopLandingPage: React.FC<Props> = () => {
   const cls = useStyles();
@@ -107,6 +107,12 @@ export const DesktopLandingPage: React.FC<Props> = () => {
     getCollaboratorStreamers().map((s) => {
       setCollaboratorStreamers(s.items);
     });
+  }, []);
+
+  const [scheduledEvent, setScheduledEvent] = useState<ScheduledEvent>();
+
+  useEffect(() => {
+    getNextScheduledEvent(new Date()).then(setScheduledEvent);
   }, []);
 
   return (
@@ -341,12 +347,22 @@ export const DesktopLandingPage: React.FC<Props> = () => {
                 </>
               }
             /> */}
-            <FloatingBox className={cls.floatingBox}>
-              <div className={cls.textGradient}>
-                <Text size="title2">WCC Countdown</Text>
-                <AwesomeCountdown deadline={HARDCODED_WCC_DEADLINE} fontSizePx={50} />
-              </div>
-            </FloatingBox>
+            {scheduledEvent && (
+              <FloatingBox className={cls.floatingBox}>
+                <div className={cls.textGradient}>
+                  <Text size="title2">{scheduledEvent.eventName}</Text>
+                  <AwesomeCountdown
+                    deadline={scheduledEvent.timestamp}
+                    fontSizePx={50}
+                    onTimeEnded={async () => {
+                      const next = await getNextScheduledEvent(now()).then(setScheduledEvent);
+
+                      console.log('gonan get next', next);
+                    }}
+                  />
+                </div>
+              </FloatingBox>
+            )}
             <div className={cls.verticalSpacer} />
           </div>
           <div
@@ -466,6 +482,6 @@ const useStyles = createUseStyles((theme) => ({
       background: theme.depthBackground.backgroundColor,
       ...hardBorderRadius,
       overflow: 'hidden',
-    })
-  }
+    }),
+  },
 }));
