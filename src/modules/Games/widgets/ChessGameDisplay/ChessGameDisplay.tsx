@@ -15,6 +15,7 @@ type Props = {
   game: Game;
   className?: string;
   boxClassName?: string;
+  thumbnail?: boolean;
 };
 
 type TimeLeftMove = Pick<ChessHistoryMove, 'clock' | 'color'> & { san?: ChessHistoryMove['san'] };
@@ -68,7 +69,7 @@ const getPlayersGameInfo = (game: Game) => {
   } as const;
 };
 
-export const ChessGameDisplay: React.FC<Props> = ({ game, className, boxClassName }) => {
+export const ChessGameDisplay: React.FC<Props> = ({ game, className, boxClassName, ...props }) => {
   const cls = useStyles();
 
   const [playersGameInfo, setPlayersGameInfo] = useState(getPlayersGameInfo(game));
@@ -89,6 +90,7 @@ export const ChessGameDisplay: React.FC<Props> = ({ game, className, boxClassNam
                 active={false}
                 gameTimeLimit={playersGameInfo.game.timeLimit}
                 material={playersGameInfo.stats.away.materialScore}
+                thumbnail={props.thumbnail}
               />
             </div>
             <ChessBoard
@@ -111,6 +113,7 @@ export const ChessGameDisplay: React.FC<Props> = ({ game, className, boxClassNam
                 active={false}
                 gameTimeLimit={playersGameInfo.game.timeLimit}
                 material={playersGameInfo.stats.home.materialScore}
+                thumbnail={props.thumbnail}
               />
             </div>
           </>

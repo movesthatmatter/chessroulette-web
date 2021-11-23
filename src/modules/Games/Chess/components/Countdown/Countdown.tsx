@@ -18,6 +18,7 @@ type Props = {
   active: boolean;
   onFinished?: () => void;
   className?: string;
+  thumbnail? :boolean;
 };
 
 export const Countdown: React.FC<Props> = ({
@@ -79,6 +80,7 @@ export const Countdown: React.FC<Props> = ({
         active={props.active}
         timeLeft={timeLeft}
         canShowMilliseconds={canShowMilliseconds}
+        thumbnail={props.thumbnail}
       />
     </div>
   );

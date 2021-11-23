@@ -55,9 +55,19 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
     ) {
       return payload.room.activity;
     }
+    
+    if (
+      //and the activity is "Relay"
+      payload.room.activity.type === 'relay' && 
+      prev.type === 'relay' && 
+      payload.room.activity.relayId !== prev.relayId
+    ) {
+      return payload.room.activity;
+    }
 
     // Otherwise no need to create updates!
     return prev;
+
   }),
 
   // TODO: This should probably not be here. Need to think of a way

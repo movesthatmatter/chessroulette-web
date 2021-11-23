@@ -14,6 +14,7 @@ type Props = {
   gameTimeLimit: ChessGameState['timeLimit'];
   material?: number;
   onTimerFinished?: () => void;
+  thumbnail? :boolean;
 };
 
 export const PlayerBox: React.FC<Props> = ({
@@ -47,6 +48,7 @@ export const PlayerBox: React.FC<Props> = ({
           active={active}
           onFinished={props.onTimerFinished}
           gameTimeClass={gameTimeLimit}
+          thumbnail={props.thumbnail}
         />
       )}
     </div>

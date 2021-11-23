@@ -60,7 +60,7 @@ const title1: CSSProperties = {
     fontSize: '18px',
     lineHeight: '14px',
   }),
-}
+};
 
 const title2: CSSProperties = {
   fontSize: '24px',
@@ -71,7 +71,7 @@ const title2: CSSProperties = {
     fontSize: '18px',
     lineHeight: '14px',
   }),
-}
+};
 
 const subtitle1: CSSProperties = {
   fontSize: '16px',
@@ -95,17 +95,28 @@ const subtitle2: CSSProperties = {
   }),
 };
 
-const largeNormal : CSSProperties = {
+const largeNormal: CSSProperties = {
   fontSize: '18px',
-  fontWeight:'normal',
-  lineHeight: '26px'
-}
+  fontWeight: 'normal',
+  lineHeight: '26px',
+};
 
-const largeBold : CSSProperties = {
+const largeBold: CSSProperties = {
   fontSize: '18px',
-  fontWeight:'bolder',
-  lineHeight:'26px',
-}
+  fontWeight: 'bolder',
+  lineHeight: '26px',
+};
+
+const hugeNormal: CSSProperties = {
+  fontSize: '32px',
+  lineHeight: '32px',
+};
+
+const hugeBold: CSSProperties = {
+  fontSize: '32px',
+  lineHeight: '32px',
+  fontWeight: 'bold',
+};
 
 export const fonts = {
   small1,
@@ -122,5 +133,8 @@ export const fonts = {
   subtitle2,
 
   largeBold,
-  largeNormal
+  largeNormal,
+
+  hugeBold,
+  hugeNormal,
 };

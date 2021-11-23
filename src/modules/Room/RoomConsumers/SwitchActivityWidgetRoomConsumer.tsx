@@ -39,7 +39,7 @@ type RelaxedSwitchRoomNoActivityRequestPayload = Partial<
   Pick<SwitchRoomNoActivityRequestPayload, 'activityType'>;
 
 type RelaxedSwitchRoomRelayActivityRequestPayload = Partial<
-Omit<SwitchRoomRelayActivityRequestPayload, 'activityType'>
+Omit<SwitchRoomRelayActivityRequestPayload, 'activityType' | 'relayId'>
 > & Pick<SwitchRoomRelayActivityRequestPayload, 'activityType'>;
 
 type State =
@@ -50,7 +50,7 @@ type State =
 
 type Props = {
   render: (
-    p: { onSwitch: (s: State) => void } & NonNullable<RoomProviderContextState>
+    p: { onSwitch: (s: State) => void, goLive: () => void } & NonNullable<RoomProviderContextState>
   ) => React.ReactNode;
 };
 
@@ -86,14 +86,19 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
             } else {
               setState(s);
             }
-          } else if (s.activityType === 'relay' && context.room.currentActivity.type === 'play' && context.room.currentActivity.game) {
-            context.roomActions.goLive();
+          } else if (s.activityType === 'relay') {
+            context.roomActions.switchActivity({
+              activityType: 'relay',
+            })
           } else if (s.activityType === 'none') {
             context.roomActions.switchActivity({
               activityType: 'none',
             });
           }
         },
+        goLive : () => {
+          context.roomActions.goLive();
+        }
       })}
       {state?.activityType === 'play' && (
         <CreateChallengeDialog
