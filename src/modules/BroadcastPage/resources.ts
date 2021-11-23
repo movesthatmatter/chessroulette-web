@@ -1,4 +1,3 @@
-import ndjsonStream from 'can-ndjson-stream'
 import { Resources } from 'dstnd-io'
 import { http } from 'src/lib/http'
 

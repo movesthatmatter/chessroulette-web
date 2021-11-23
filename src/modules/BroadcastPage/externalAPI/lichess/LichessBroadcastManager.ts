@@ -2,7 +2,6 @@ import { Pubsy } from 'src/lib/Pubsy';
 import { Game } from 'src/modules/Games';
 import { console } from 'window-or-global';
 import { NDJsonReaderUniversal } from '../../types';
-import { parsePGNGamesFromExternalAPI } from '../pgnParser/pgnParser';
 import { getLichessBroadcastGames, getOngoingBroadcastAsPGNStream } from './resources';
 import { OfficialLichessBroadcastType } from './types';
 
@@ -31,7 +30,7 @@ export class LichessBroadcastManager {
     getOngoingBroadcastAsPGNStream({}, roundId)
     .map(reader => this.streamReader(reader, (chunk) => {
       if (!chunk.done) {
-        parsePGNGamesFromExternalAPI(String(chunk.value));
+       //parse PGN
        // onUpdates(chunk.value)
       }
       // TODO: Somehow call onUpdates when done as well

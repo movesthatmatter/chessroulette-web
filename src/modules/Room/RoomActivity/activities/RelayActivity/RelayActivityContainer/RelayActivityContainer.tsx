@@ -28,37 +28,35 @@ export const RelayActivityContainer: React.FC<Props> = ({ activity, deviceSize }
   );
 
   useEffect(() => {
-    if (!activity.game) {
-      request({
-        kind: 'importRelayedGameRequest',
-        content: {
-          relayId: activity.relayId
-        }
-      })
+    if (!activity.game && activity.relayId) {
+      onSelectRelay(activity.relayId);
     }
   },[activity.relayId])
 
-  useEffect(() => {
-    const unsubscribers: Function[] = [];
+  // useEffect(() => {
+  //   const unsubscribers: Function[] = [];
 
-    if (peerState.status === 'open') {
-      const usubscribe = peerState.client.onMessage((payload) => {
-        if (payload.kind === 'joinedGameUpdated') {
-          console.log('GAME UPDATED');
-          //onGameUpdated(gameRecordToGame(payload.content));
-        } else if (payload.kind === 'joinedRoomAndGameUpdated') {
-          console.log('GAME AND ROOM UPDATED')
-          //onGameUpdated(gameRecordToGame(payload.content.game));
-        }
-      });
+  //   if (peerState.status === 'open') {
+  //     const usubscribe = peerState.client.onMessage((payload) => {
+       
+  //     });
 
-      unsubscribers.push(usubscribe);
-    }
+  //     unsubscribers.push(usubscribe);
+  //   }
 
-    return () => {
-      unsubscribers.forEach((unsubscribe) => unsubscribe());
-    };
-  }, [peerState.status]);
+  //   return () => {
+  //     unsubscribers.forEach((unsubscribe) => unsubscribe());
+  //   };
+  // }, [peerState.status]);
+
+  const onSelectRelay = (id:string) => {
+    request({
+      kind: 'importRelayedGameRequest',
+      content: {
+        relayId: id
+      }
+    })
+  }
 
   return (
     <>
@@ -66,7 +64,7 @@ export const RelayActivityContainer: React.FC<Props> = ({ activity, deviceSize }
         key={activity.game?.id || new Date().getTime().toString()}
         history={activity.game?.history || []}
       >
-          <RelayActivity activity={activity} deviceSize={deviceSize} />
+          <RelayActivity activity={activity} deviceSize={deviceSize} onSelectedRelay={onSelectRelay}/>
       </ChessGameHistoryProvider>
       </>
   );
