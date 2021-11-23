@@ -55,7 +55,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
               <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
                 <div className={cls.linksContainer}>
                   <SwitchActivityWidgetRoomConsumer
-                    render={({ onSwitch, room }) => (
+                    render={({ onSwitch, goLive,  room }) => (
                       <>
                         <NavigationLink
                           title="Activities"
@@ -74,6 +74,11 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                                   room.currentActivity.type === 'analysis',
                                 onClick: () => onSwitch({ activityType: 'analysis' }),
                               },
+                              {
+                                title: 'Relay',
+                                disabled: room.currentActivity.type === 'relay',
+                                onClick: () => onSwitch({activityType: 'relay'})
+                              }
                             ],
                           }}
                         />
@@ -83,7 +88,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                             label="Go Live"
                             type="primary"
                             clear
-                            onClick={() => onSwitch({ activityType: 'relay'})}
+                            onClick={() => goLive()}
                             style={{marginBottom: '0px'}}
                           />
                         </div>

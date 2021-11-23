@@ -1804,11 +1804,6 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@mliebelt/pgn-parser@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@mliebelt/pgn-parser/-/pgn-parser-1.4.0.tgz#2300a01dafd4479cc7f7e8ca71cf418e9dd6b322"
-  integrity sha512-JULw1gXNnxg8hrGUVGjy/z+VtJFoCYV0rX7h1KNiWvT9OCJU2mLCi29oWZmwldh8fjVTw2ayPs2bIbGPrZQTsQ==
-
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -6818,9 +6813,9 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#room-relay-activity":
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#room-relay-activity-output":
   version "0.2.1"
-  resolved "https://github.com/dstnd/dstnd-io.git#bfcf60d08c73232fb32f9e228db521c5ee48adf8"
+  resolved "https://github.com/dstnd/dstnd-io.git#9e271a01d2ed797d7aabff5090948da4946f1809"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"

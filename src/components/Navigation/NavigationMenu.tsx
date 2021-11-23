@@ -9,7 +9,7 @@ import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton } from 'src/services/Authentication/widgets';
 import { Link, useLocation } from 'react-router-dom';
 import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
-import { Home, Video, People } from 'react-iconly';
+import { Home, Video, People, Play } from 'react-iconly';
 import { Text } from '../Text';
 import { spacers } from 'src/theme/spacers';
 
@@ -43,18 +43,20 @@ export const NavigationMenu: React.FC<Props> = (props) => {
           to={'/broadcasts'}
           className={cx(cls.link, location.pathname === '/broadcasts' && cls.activeLink)}
         >
-          Broadcasts
+        <Play set='bold' />
+         <br/>
+         <Text size='small1'>Broadcasts</Text>
         </Link>
       </div>
-      <div className={cls.linkWrapper}>
+      {/* <div className={cls.linkWrapper}>
         <Link
           to={'/broadcasts-external'}
           className={cx(cls.link, location.pathname === '/broadcasts-external' && cls.activeLink)}
         >
           External Broadcasts
         </Link>
-      </div>
-      <div className={cls.linkWrapper}>
+      </div> */}
+      {/* <div className={cls.linkWrapper}>
         <a
           className={cls.link}
           href="https://gabrielctroia.medium.com/meet-chessroulette-org-a-quarantine-project-e4108f05db39"
@@ -70,7 +72,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         >
           Get In Touch
         </a>
-      </div>
+      </div> */}
       {/* <div className={cls.linkWrapper}>
         <WithDialog
           hasCloseButton

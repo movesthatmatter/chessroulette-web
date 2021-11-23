@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
-import { maxMediaQuery, onlyMobile } from 'src/theme';
+import { fonts, maxMediaQuery, onlyMobile } from 'src/theme';
 import cx from 'classnames';
 
 type Props = {
@@ -10,6 +10,7 @@ type Props = {
   active: boolean;
   major: string;
   minor: string;
+  thumbnail?: boolean;
 };
 
 export const CountdownDisplay: React.FC<Props> = ({
@@ -18,6 +19,7 @@ export const CountdownDisplay: React.FC<Props> = ({
   canShowMilliseconds,
   major,
   minor,
+  ...props
 }) => {
   const cls = useStyles();
 
@@ -31,6 +33,7 @@ export const CountdownDisplay: React.FC<Props> = ({
             active && cls.textActive,
             canShowMilliseconds && cls.countdownMilliseconds
           )}
+          style={{... (props.thumbnail ? {...fonts.largeNormal} : {...fonts.hugeNormal})}}
         >
           {major}
         </Text>
@@ -41,6 +44,7 @@ export const CountdownDisplay: React.FC<Props> = ({
             active && (cls.textActive, cls.blink),
             canShowMilliseconds && cls.countdownMilliseconds
           )}
+          style={{... (props.thumbnail ? {...fonts.largeNormal} : {...fonts.hugeNormal})}}
         >
           :
         </Text>
@@ -51,6 +55,7 @@ export const CountdownDisplay: React.FC<Props> = ({
             active && cls.textActive,
             canShowMilliseconds && cls.countdownMilliseconds
           )}
+          style={{... (props.thumbnail ? {...fonts.largeNormal} : {...fonts.hugeNormal})}}
         >
           {minor}
         </Text>
@@ -59,17 +64,15 @@ export const CountdownDisplay: React.FC<Props> = ({
   }
 
   return (
-    <Text className={cx(cls.text, cls.countdownMilliseconds)}>
-      <Text className={cx(cls.text, cls.major, cls.countdownMilliseconds)}>00:</Text>
-      <Text className={cx(cls.text, cls.minor, cls.countdownMilliseconds)}>00</Text>
+    <Text className={cx(cls.text, cls.countdownMilliseconds)} style={{... (props.thumbnail ? {...fonts.largeNormal} : {...fonts.hugeNormal})}}>
+      <Text className={cx(cls.text, cls.major, cls.countdownMilliseconds)} style={{... (props.thumbnail ? {...fonts.largeNormal} : {...fonts.hugeNormal})}}>00:</Text>
+      <Text className={cx(cls.text, cls.minor, cls.countdownMilliseconds)} style={{... (props.thumbnail ? {...fonts.largeNormal} : {...fonts.hugeNormal})}}>00</Text>
     </Text>
   );
 };
 
 const useStyles = createUseStyles((theme) => ({
   text: {
-    fontSize: '32px',
-    lineHeight: '32px',
     color: theme.text.subtle,
     ...maxMediaQuery(1300, {
       fontSize: '24px',
