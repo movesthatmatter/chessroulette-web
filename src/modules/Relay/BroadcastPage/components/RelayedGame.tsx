@@ -1,4 +1,4 @@
-import { RelayedGameInfoRecord } from 'dstnd-io';
+import { Resources } from 'dstnd-io';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { noop } from 'src/lib/util';
@@ -7,7 +7,7 @@ import { CustomTheme, effects } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 
 type Props = {
-  relayGame: RelayedGameInfoRecord;
+  relayGame: Resources.AllRecords.Relay.RelayedGameRecord;
   showWizzard: () => void;
   selectRelayId : (relayId: string) => void
 };

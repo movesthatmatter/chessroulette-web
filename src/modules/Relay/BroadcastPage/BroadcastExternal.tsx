@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
-import { Game } from '../Games';
+import { Game } from '../../Games';
 import { LichessBroadcastManager } from './externalAPI/lichess/LichessBroadcastManager';
 import { OfficialLichessBroadcastType } from './externalAPI/lichess/types';
 

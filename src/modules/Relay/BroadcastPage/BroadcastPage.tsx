@@ -10,8 +10,8 @@ import { Events } from 'src/services/Analytics';
 import { CustomTheme, effects } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { AsyncOk } from 'ts-async-results';
-import { resources } from '../Room';
-import { CreateRelayRoomWizard } from '../Room/wizards/CreateRelayRoomWizard';
+import { resources } from '../../Room';
+import { CreateRelayRoomWizard } from '../../Room/wizards/CreateRelayRoomWizard';
 import { NextBroadcasts } from './components/NextBroadcasts';
 import { NoGames } from './components/NoGames';
 import { RelayedGame } from './components/RelayedGame';
@@ -21,7 +21,7 @@ type Props = {};
 
 export const BroadcastPage: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const [relayGames, setRelayGames] = useState<Resources.AllRecords.Relay.RelayedGameInfoRecord[]>(
+  const [relayGames, setRelayGames] = useState<Resources.AllRecords.Relay.RelayedGameRecord[]>(
     []
   );
   const peerState = usePeerState();

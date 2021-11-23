@@ -12,9 +12,9 @@ import { LivePage } from './modules/Live';
 import { PlayLichess } from './modules/LichessPlay/PlayLichess/PlayLichess';
 import { RoomRoute } from './modules/Room';
 import { PeerProviderContainer } from './providers/PeerProvider/PeerProviderContainer';
-import { BroadcastPage } from './modules/BroadcastPage/BroadcastPage';
-import { BroadcastExternal } from './modules/BroadcastPage/BroadcastExternal';
-import { RelayInputRoute } from './modules/RelayInput';
+import { BroadcastPage } from './modules/Relay/BroadcastPage/BroadcastPage';
+import { BroadcastExternal } from './modules/Relay/BroadcastPage/BroadcastExternal';
+import { RelayInputRoute } from './modules/Relay/RelayInput';
 
 type Props = {};
 

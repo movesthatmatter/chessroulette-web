@@ -7,11 +7,11 @@ import { usePeerStateClient } from 'src/providers/PeerProvider';
 import { effects } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { getCurrentlyStreamingRelayedGames } from '../BroadcastPage/resources';
-import { Game } from '../Games';
-import { ChessGame } from '../Games/Chess';
-import { ChessBoard } from '../Games/Chess/components/ChessBoard';
-import { gameRecordToGame } from '../Games/Chess/lib';
-import { DesktopRoomLayout } from '../Room/Layouts';
+import { Game } from '../../Games';
+import { ChessGame } from '../../Games/Chess';
+import { ChessBoard } from '../../Games/Chess/components/ChessBoard';
+import { gameRecordToGame } from '../../Games/Chess/lib';
+import { DesktopRoomLayout } from '../../Room/Layouts';
 import { createRelay } from './resource';
 
 type Props = {};
@@ -25,7 +25,7 @@ const LAYOUT_RATIOS = {
 export const RelayInputPage: React.FC<Props> = (props) => {
   const cls = useStyles();
   const peerClient = usePeerStateClient();
-  const [relayGames, setRelayGames] = useState<Resources.AllRecords.Relay.RelayedGameInfoRecord[]>(
+  const [relayGames, setRelayGames] = useState<Resources.AllRecords.Relay.RelayedGameRecord[]>(
     []
   );
 

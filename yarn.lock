@@ -6818,9 +6818,9 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#room-relay-activity-output":
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#room-relay-activity":
   version "0.2.1"
-  resolved "https://github.com/dstnd/dstnd-io.git#9e271a01d2ed797d7aabff5090948da4946f1809"
+  resolved "https://github.com/dstnd/dstnd-io.git#2643562d795e1cb90eeed4767611e67d889ecf02"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"

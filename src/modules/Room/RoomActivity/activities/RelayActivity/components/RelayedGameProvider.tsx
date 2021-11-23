@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getCurrentlyStreamingRelayedGames } from 'src/modules/BroadcastPage/resources';
+import { getCurrentlyStreamingRelayedGames } from 'src/modules/Relay/BroadcastPage/resources';
 import { Game } from 'src/modules/Games';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 
