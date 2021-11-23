@@ -1,17 +1,11 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import dateFormat from 'dateformat';
 import { ISODateTime } from 'io-ts-isodatetime';
 import { useInterval } from 'src/lib/hooks';
 import { createUseStyles } from 'src/lib/jss';
 import { console, Date } from 'window-or-global';
-import {
-  second as secondMs,
-  days as daysMs,
-  hours as hoursMs,
-  minutes as minutesMs,
-} from 'src/lib/time';
+import { second as secondMs } from 'src/lib/time';
 import { noop } from 'src/lib/util';
-import duration from 'format-duration-time';
+import { lpad, timeLeftToTimeUnits } from './util';
 
 type Props = {
   deadline: ISODateTime;
@@ -50,34 +44,18 @@ export const AwesomeCountdown: React.FC<Props> = ({
     const nextTimeLeftMs = getTimeLeftMs(deadline);
     setTimeLeftMs(nextTimeLeftMs);
     setIsActive(nextTimeLeftMs > 0);
-
-    console.log('daedline updated', deadline);
-  }, [deadline])
+  }, [deadline]);
 
   useInterval(updateTimeLeft, isActive ? tickInterval : undefined);
 
   const { days, hours, minutes, seconds } = useMemo(() => {
-    // const daysLeft = Math.floor(timeLeftMs / daysMs(1));
-    // const hoursLeft = Math.floor(timeLeftMs / hoursMs(1));
-    // const minutesLeft = Math.floor(timeLeftMs / minutesMs(1));
-
-    const daysLeftMs = Math.floor(timeLeftMs / daysMs(1));
-    const hoursLeftMs = Math.floor((timeLeftMs - daysLeftMs) / hoursMs(1));
-    const minutesLeftMs = Math.floor((timeLeftMs - daysLeftMs - hoursLeftMs) / minutesMs(1));
-    const secondsLeftMs = Math.floor(
-      (timeLeftMs - daysLeftMs - hoursLeftMs - minutesLeftMs) / secondMs()
-    );
-
-    const days = duration(daysLeftMs).format('dd');
-    const hours = duration(hoursLeftMs).format('hh');
-    const minutes = duration(minutesLeftMs).format('mm');
-    const seconds = duration(secondsLeftMs).format('ss');
+    const times = timeLeftToTimeUnits(timeLeftMs);
 
     return {
-      days: dateFormat(timeLeftMs, 'dd'),
-      hours: dateFormat(timeLeftMs, 'HH'),
-      minutes: dateFormat(timeLeftMs, 'MM'),
-      seconds: dateFormat(timeLeftMs, 'ss'),
+      days: lpad(times.days),
+      hours: lpad(times.hours),
+      minutes: lpad(times.minutes),
+      seconds: lpad(times.seconds),
     } as const;
   }, [timeLeftMs]);
 
