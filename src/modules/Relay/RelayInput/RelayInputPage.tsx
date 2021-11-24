@@ -1,18 +1,17 @@
-import { ChessMove, gameRecord, Resources } from 'dstnd-io';
+import { ChessGameColor, ChessMove, gameRecord, Resources } from 'dstnd-io';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button } from 'src/components/Button';
 import { createUseStyles } from 'src/lib/jss';
-import { noop } from 'src/lib/util';
+import { noop, toDictIndexedBy } from 'src/lib/util';
 import { usePeerStateClient } from 'src/providers/PeerProvider';
-import { effects } from 'src/theme';
-import { spacers } from 'src/theme/spacers';
 import { getCurrentlyStreamingRelayedGames } from '../BroadcastPage/resources';
-import { Game } from '../../Games';
-import { ChessGame } from '../../Games/Chess';
-import { ChessBoard } from '../../Games/Chess/components/ChessBoard';
-import { gameRecordToGame } from '../../Games/Chess/lib';
 import { DesktopRoomLayout } from '../../Room/Layouts';
 import { createRelay } from './resource';
+import { useGameActions } from 'src/modules/Games/GameActions';
+import { console, Object } from 'window-or-global';
+import { SocketClient } from 'src/services/socket/SocketClient';
+import { ControlPanel } from './components/ControlPanel';
+import { RelayInputGamesList } from './components/RelayInputGamesList';
+import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
 
 type Props = {};
 
@@ -22,37 +21,101 @@ const LAYOUT_RATIOS = {
   rightSide: 2.1,
 };
 
+type RelayedGames = {
+  [k: string] : RelayedGameRecord
+}
+
 export const RelayInputPage: React.FC<Props> = (props) => {
   const cls = useStyles();
   const peerClient = usePeerStateClient();
-  const [relayGames, setRelayGames] = useState<Resources.AllRecords.Relay.RelayedGameRecord[]>(
-    []
+  const gameActions = useGameActions();
+  const [relayGames, setRelayGames] = useState<RelayedGames>({});
+  const [selectedRelayId, setSelectedRelayId] = useState<string>();
+  const [unsubmittedMove, setUnsubmittedMove] = useState<ChessMove>();
+
+  const request = useCallback<SocketClient['send']>(
+    (payload) => {
+      peerClient.send(payload)
+    },
+    [peerClient]
   );
 
-  const [currentRelay, setCurrentRelay] = useState<
-    Resources.AllRecords.Relay.RelayedGameRecord & { game: Game }
-  >();
-
-  const [unsubmittedMove, setUnsubmittedMove] = useState<ChessMove>();
+  useEffect(() => {
+    
+  },[request])
+ 
   const submitMove = useCallback(() => {
-    // send it to server
+   if (unsubmittedMove && selectedRelayId) {
+    gameActions.onMoveRelayInput(unsubmittedMove, relayGames[selectedRelayId].game.id,  selectedRelayId);
+  }
     setUnsubmittedMove(undefined);
   }, [unsubmittedMove]);
 
   function fetchLiveGames() {
     getCurrentlyStreamingRelayedGames().map((relayGames) => {
-      setRelayGames(relayGames);
-    });
+      setRelayGames(toDictIndexedBy(relayGames, relayGames => relayGames.id));
+    })
   }
 
   useEffect(() => {
     fetchLiveGames();
   }, []);
 
+  const addRelay = () => {
+    console.log('add relay')
+    createRelay({
+      relaySource: 'proxy',
+      type: 'newGame',
+      gameSpecs: {
+        timeLimit: 'rapid30',
+        preferredColor: 'white',
+      },
+      players: {
+        white: {
+          color: 'white',
+          user: {
+            id: 'Magnus',
+            isGuest: true,
+            firstName: 'Magnus',
+            lastName: 'Carlsen',
+            name: 'Magnus Carlsen',
+            avatarId: '1',
+          },
+        },
+        black: {
+          color: 'black',
+          user: {
+            id: 'Nepo',
+            isGuest: true,
+            firstName: 'Nepo',
+            lastName: 'Itch',
+            name: 'Nepo itch',
+            avatarId: '2',
+          },
+        },
+      },
+    }).map((r) => {
+      setRelayGames(prev => ({
+        ...prev,
+        [r.id]: r
+      }))
+      setSelectedRelayId(r.id);
+    });
+  }
+  
+
   useEffect(() => {
     const unsubscribe = peerClient.onMessage((msg) => {
       if (msg.kind === 'relayGameUpdateList') {
         fetchLiveGames();
+      }
+      if (msg.kind === 'relayGameInputUpdateResponse') {
+        setRelayGames(prev => {
+          return {
+            ...prev,
+            [msg.content.relayId] : {...prev[msg.content.relayId], game: msg.content.game}
+          }
+        })
       }
     });
 
@@ -84,111 +147,18 @@ export const RelayInputPage: React.FC<Props> = (props) => {
       topHeight={80}
       bottomHeight={80}
       renderActivityComponent={(d) => (
-        <div style={{}}>
-          {currentRelay?.game && (
-            <ChessGame
-              size={d.main.width}
-              game={currentRelay.game}
-              onAddMove={() => {
-                console.log('moved');
-              }}
-              canInteract
-              turnColor={'white'}
-            />
-            // <ChessBoard
-            //   size={d.main.width}
-            //   id={currentRelay.game.id}
-            //   pgn=""
-            //   type="play"
-            //   canInteract
-            //   onMove={(m) => {
-            //     setUnsubmittedMove(m.move);
-            //   }}
-            //   playableColor="black"
-            // />
-          )}
-
-          <Button label="Submit" onClick={submitMove} disabled={!unsubmittedMove} />
-          <Button
-            label="Create Relay"
-            onClick={() => {
-              createRelay({
-                relaySource: 'proxy',
-                type: 'newGame',
-                gameSpecs: {
-                  timeLimit: 'rapid30',
-                  preferredColor: 'white',
-                },
-                players: {
-                  white: {
-                    color: 'white',
-                    user: {
-                      id: 'Magnus',
-                      isGuest: true,
-                      firstName: 'Magnus',
-                      lastName: 'Carlsen',
-                      name: 'Magnus Carlsen',
-                      avatarId: '1',
-                    },
-                  },
-                  black: {
-                    color: 'black',
-                    user: {
-                      id: 'Nepo',
-                      isGuest: true,
-                      firstName: 'Nepo',
-                      lastName: 'Itch',
-                      name: 'Nepo itch',
-                      avatarId: '2',
-                    },
-                  },
-                },
-              }).map((r) => {
-                setCurrentRelay({
-                  ...r,
-                  game: gameRecordToGame(r.game),
-                });
-              });
-            }}
-          />
-        </div>
+        <ControlPanel 
+          relay={selectedRelayId ? relayGames[selectedRelayId] : undefined} 
+          containerWidth={d.main.width} 
+          onAddMove={(m) => setUnsubmittedMove(m)}
+          onSubmit ={submitMove}
+          onAddRelay={addRelay}
+          submitDisabled={!unsubmittedMove}
+        />
       )}
       renderBottomComponent={() => null}
       renderRightSideComponent={() => (
-        <div>
-          {relayGames.map((relayGame) => (
-            <div
-              className={cls.gameContainer}
-              onClick={() => {
-                createRelay({
-                  relaySource: 'proxy',
-                  type: 'existentGame',
-                  gameId: relayGame.game.id,
-                }).map((r) => {
-                  setCurrentRelay({
-                    ...r,
-                    game: gameRecordToGame(r.game),
-                  });
-                });
-                // setSelectedRelayId(relayGame.id);
-                // setShowWizard(true);
-              }}
-            >
-              <div className={cls.playerInfo}>{relayGame.game.players[0].user.name}</div>
-              <ChessBoard
-                type="free"
-                playable={false}
-                pgn={relayGame.game.pgn}
-                viewOnly
-                playableColor={'white'}
-                onMove={noop}
-                id={relayGame.game.id}
-                size={200}
-              />
-              <div className={cls.playerInfo}>{relayGame.game.players[1].user.name}</div>
-            </div>
-          ))}
-        </div>
+        <RelayInputGamesList games={Object.values(relayGames)} onSelectRelay={(relay) => setSelectedRelayId(relay.id)}/>
       )}
       renderTopComponent={() => null}
     />
@@ -197,21 +167,4 @@ export const RelayInputPage: React.FC<Props> = (props) => {
 
 const useStyles = createUseStyles({
   container: {},
-  gameContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: spacers.small,
-    ...effects.softBorderRadius,
-    '&:hover': {
-      // backgroundColor: them.colors.primary,
-      cursor: 'pointer',
-    },
-  },
-  playerInfo: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignContent: 'left',
-    marginTop: '5px',
-    marginBottom: '5px',
-  },
 });

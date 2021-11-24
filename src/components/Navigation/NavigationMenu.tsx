@@ -38,7 +38,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
           textClassName={cls.linkBadgeText}
         /> */}
       </div>
-      <div className={cls.linkWrapper}>
+      {/* <div className={cls.linkWrapper}>
         <Link
           to={'/broadcasts'}
           className={cx(cls.link, location.pathname === '/broadcasts' && cls.activeLink)}
@@ -47,7 +47,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
          <br/>
          <Text size='small1'>Broadcasts</Text>
         </Link>
-      </div>
+      </div> */}
       {/* <div className={cls.linkWrapper}>
         <Link
           to={'/broadcasts-external'}

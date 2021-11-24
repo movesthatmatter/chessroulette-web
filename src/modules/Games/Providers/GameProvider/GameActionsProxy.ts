@@ -19,6 +19,9 @@ export const getGameActions = (request: SocketClient['send']) => ({
     }
   },
 
+  onMoveRelayInput : (nextMove: ChessMove, gameId: string, relayId: string) => {
+    request(gameActionPayloads.moveRelayInput(nextMove, gameId, relayId));
+  },
   onOfferChallenge: (p: Parameters<typeof gameActionPayloads.offerChallenge>[0]) => {
     request(gameActionPayloads.offerChallenge(p));
   },

@@ -24,6 +24,7 @@ import {
   // Game Logic
   GameResignationRequestPayload,
   GameMoveRequestPayload,
+  GameMoveRelayInputRequestPayload,
   GameJoinRequestPayload,
   GameDrawOfferingRequestPayload,
   GameDrawAcceptRequestPayload,
@@ -92,6 +93,7 @@ type SendableMessagesMap = {
   // Game
   gameResignationRequestPayload: GameResignationRequestPayload;
   gameMoveRequestPayload: GameMoveRequestPayload;
+  gameMoveRelayInputPayload: GameMoveRelayInputRequestPayload,
   gameJoinRequestPayload: GameJoinRequestPayload;
   gameDrawOfferingRequestPayload: GameDrawOfferingRequestPayload;
   gameDrawAcceptRequestPayload: GameDrawAcceptRequestPayload;
