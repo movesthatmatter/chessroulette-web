@@ -3,10 +3,6 @@ import * as Sentry from '@sentry/browser';
 import config from 'src/config';
 import { ILogHandler } from 'js-logger/src/types';
 
-if (config.ENV === 'production') {
-  Sentry.init({ dsn: config.SENTRY_DSN });
-}
-
 Logger.useDefaults();
 
 export const logsy = Logger;
