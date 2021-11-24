@@ -71,10 +71,10 @@ export const AuthenticationProvider: React.FC = (props) => {
       return;
     }
 
-    const { accessToken } = contextState.state;
+    const { authenticationToken } = contextState.state;
 
     resources.getUser().map((user) => {
-      dispatch(setUserAction({ user, accessToken }));
+      dispatch(setUserAction({ user, authenticationToken }));
     });
   }, [contextState]);
 

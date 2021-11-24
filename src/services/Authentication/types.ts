@@ -1,3 +1,4 @@
+import { AccessToken, JWTToken } from 'dstnd-io';
 
 // TODO: This is actually exactly UserCheckResponsePayload
 export type UserAccountInfo = {
@@ -7,5 +8,5 @@ export type UserAccountInfo = {
 } | {
   type: 'external';
   vendor: 'lichess' | 'facebook' | 'twitch';
-  accessToken: string;
+  token: JWTToken;
 };

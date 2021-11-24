@@ -31,7 +31,7 @@ export const CompactArchivedGame: React.FC<Props> = ({
   hasClipboardCopyButton = true,
 }) => {
   const cls = useStyles();
-  const avatarSize = '28px';
+  const avatarSize = 28;
   const {theme} = useColorTheme();
   const colors = theme.colors;
 

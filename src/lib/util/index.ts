@@ -1,6 +1,6 @@
 import { differenceInMilliseconds } from 'date-fns';
 import humanizeDuration, { Humanizer } from 'humanize-duration';
-import { RoomRecord, ChallengeRecord } from 'dstnd-io';
+import { RoomRecord } from 'dstnd-io';
 import { diff } from 'deep-object-diff';
 
 export const noop = () => {

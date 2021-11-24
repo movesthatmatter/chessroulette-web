@@ -8,7 +8,7 @@ import { TextInput } from 'src/components/TextInput';
 import { createUseStyles } from 'src/lib/jss';
 import { validator } from 'src/lib/validator';
 import { GetCountries } from 'src/services/Location';
-import { CustomTheme, onlyMobile } from 'src/theme';
+import { onlyMobile } from 'src/theme';
 import { AsyncResult } from 'ts-async-results';
 
 export type RegistrationUserInfo =
@@ -157,7 +157,7 @@ export const RegistrationForm: React.FC<Props> = (props) => {
               <FormError message={p.errors.submissionGenericError} />
             )}
             <br />
-            <Button label="Create Account" full withLoader onClick={p.submit} />
+            <Button label="Create Account" full withLoader onClick={p.submit} containerClassName={cls.button}/>
           </>
         )}
       />
@@ -177,5 +177,8 @@ const useStyles = createUseStyles(theme => ({
   },
   infoText: {
     color: theme.colors.neutralDarker,
+  },
+  button: {
+    display: 'flex',
   },
 }));

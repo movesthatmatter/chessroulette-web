@@ -28,7 +28,7 @@ export class UserInfoMocker {
         flagEmojiU: '',
         phone: '',
       },
-      username: `${chance.animal}.${chance.city}`,
+      username: `${chance.animal()}.${chance.city()}`,
       isGuest: false,
       profilePicUrl: '',
     };

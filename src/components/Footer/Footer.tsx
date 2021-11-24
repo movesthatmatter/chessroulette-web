@@ -1,18 +1,19 @@
 import React from 'react';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
-import { CustomTheme, onlyMobile } from 'src/theme';
+import { onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Text } from '../Text';
 import { Link } from 'react-router-dom';
 import { AnchorLink } from '../AnchorLink';
 import { Instagram as InstagramIcon, Facebook as FacebookIcon } from 'grommet-icons';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { FeedbackDialogConsumer } from 'src/providers/FeedbackProvider/FeedbackConsumer';
 
 type Props = {};
 
 export const Footer: React.FC<Props> = () => {
   const cls = useStyles();
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
   const text = theme.text;
   return (
     <>
@@ -30,8 +31,10 @@ export const Footer: React.FC<Props> = () => {
                   target="_blank"
                   baseColor={text.baseColor}
                 >
-                  <InstagramIcon size="16px" className={cls.socialIcon} color={theme.text.subtle}/>
-                  <Text size="body2" className={cls.text}>Instagram</Text>
+                  <InstagramIcon size="16px" className={cls.socialIcon} color={theme.text.subtle} />
+                  <Text size="body2" className={cls.text}>
+                    Instagram
+                  </Text>
                 </AnchorLink>
                 <AnchorLink
                   className={cls.socialLink}
@@ -39,46 +42,67 @@ export const Footer: React.FC<Props> = () => {
                   href="https://www.facebook.com/chessroulette/"
                   target="_blank"
                 >
-                  <FacebookIcon size="16px" className={cls.socialIcon} color={theme.text.subtle}/>
-                  <Text size="body2" className={cls.text}>Facebook</Text>
+                  <FacebookIcon size="16px" className={cls.socialIcon} color={theme.text.subtle} />
+                  <Text size="body2" className={cls.text}>
+                    Facebook
+                  </Text>
                 </AnchorLink>
               </div>
             </div>
-            <div style={{display: 'flex', flexDirection: 'row'}}>
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
               <div className={cls.linkContainerSpacer}>
-              <AnchorLink
-                href="https://gabrielctroia.medium.com/meet-chessroulette-org-a-quarantine-project-e4108f05db39"
-                className={cls.link}
-                target='blank'
-              >
-                <Text size="body2" className={cls.text}>
-                  About
-                </Text>
-              </AnchorLink>
+                <AnchorLink
+                  href="https://gabrielctroia.medium.com/meet-chessroulette-org-a-quarantine-project-e4108f05db39"
+                  className={cls.link}
+                  target="blank"
+                >
+                  <Text size="body2" className={cls.text}>
+                    About
+                  </Text>
+                </AnchorLink>
               </div>
               <div className={cls.linkContainerSpacer}>
-              <AnchorLink
-                href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage"
-                className={cls.link}
-              >
-                <Text size="body2" className={cls.text}>
-                  Get In Touch
-                </Text>
-              </AnchorLink>
+                <AnchorLink
+                  href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage"
+                  className={cls.link}
+                >
+                  <Text size="body2" className={cls.text}>
+                    Get In Touch
+                  </Text>
+                </AnchorLink>
               </div>
               <div className={cls.linkContainerSpacer}>
-              <Link to="/privacy-policy" className={cls.link}>
-                <Text size="body2" className={cls.text}>
-                  Privacy Policy
-                </Text>
-              </Link>
+                <FeedbackDialogConsumer
+                  render={(feedbackActions) => (
+                    <AnchorLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+
+                        feedbackActions.forcefullyShow();
+                      }}
+                      className={cls.link}
+                    >
+                      <Text size="body2" className={cls.text}>
+                        Leave Feedback
+                      </Text>
+                    </AnchorLink>
+                  )}
+                />
               </div>
               <div className={cls.linkContainerSpacer}>
-              <Link to="/tos" className={cls.link}>
-                <Text size="body2" className={cls.text}>
-                  Terms of Service
-                </Text>
-              </Link>
+                <Link to="/privacy-policy" className={cls.link}>
+                  <Text size="body2" className={cls.text}>
+                    Privacy Policy
+                  </Text>
+                </Link>
+              </div>
+              <div className={cls.linkContainerSpacer}>
+                <Link to="/tos" className={cls.link}>
+                  <Text size="body2" className={cls.text}>
+                    Terms of Service
+                  </Text>
+                </Link>
               </div>
             </div>
           </div>
@@ -88,7 +112,7 @@ export const Footer: React.FC<Props> = () => {
   );
 };
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   topContainer: {
     background: theme.colors.neutralLightest,
     paddingBottom: '8px',
@@ -132,7 +156,7 @@ const useStyles = createUseStyles(theme => ({
     textDecoration: 'none',
 
     '&:hover': {
-      borderBottom: `2px solid ${theme.colors.neutralDarkest}`
+      borderBottom: `2px solid ${theme.colors.neutralDarkest}`,
     },
   },
   text: {

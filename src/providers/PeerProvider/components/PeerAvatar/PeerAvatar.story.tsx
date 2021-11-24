@@ -13,6 +13,6 @@ const peerMocker = new PeerMocker();
 
 export const defaultStory = () => (
   <StorybookReduxProvider>
-      <PeerAvatar peer={peerMocker.record()} size="120px" />
+      <PeerAvatar peer={peerMocker.record()} size={120} />
   </StorybookReduxProvider>
 );

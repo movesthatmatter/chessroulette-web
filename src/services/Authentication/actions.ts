@@ -1,11 +1,11 @@
 import { createAction } from 'deox';
-import { GuestUserRecord, RegisteredUserRecord } from 'dstnd-io';
+import { GuestUserRecord, JWTToken, RegisteredUserRecord } from 'dstnd-io';
 
 export const setUserAction = createAction(
   'setUserAction',
   (resolve) => (p: {
     user: RegisteredUserRecord;
-    accessToken: string;
+    authenticationToken: JWTToken;
   }) => resolve(p),
 );
 

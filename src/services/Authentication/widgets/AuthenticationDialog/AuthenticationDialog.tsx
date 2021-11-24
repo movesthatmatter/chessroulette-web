@@ -6,10 +6,16 @@ import { RegistrationForm, RegistrationUserInfo } from '../../components/Registr
 import { VerificationForm } from '../../components/VerificationForm';
 import * as resources from '../../resources';
 import { keyInObject } from 'src/lib/util';
-import { CreateUserAccountRequestPayload, RegisteredUserRecord } from 'dstnd-io';
+import {
+  AccessToken,
+  CreateUserAccountRequestPayload,
+  JWTToken,
+  Oauth2AccessToken,
+  RegisteredUserRecord,
+} from 'dstnd-io';
 import { CodeVerificationForm } from '../../components/CodeVerificationForm';
 import { UserAccountInfo } from '../../types';
-import { CustomTheme, onlyMobile } from 'src/theme';
+import { onlyMobile } from 'src/theme';
 import { Emoji } from 'src/components/Emoji';
 import capitalize from 'capitalize';
 import { useAuthenticationService } from '../../useAuthentication';
@@ -30,7 +36,7 @@ type RegistrationStep = {
   name: 'RegistrationStep';
   state: {
     registrationUserInfo: RegistrationUserInfo;
-    verificationToken: string;
+    verificationToken: JWTToken;
     verifiedExternalVendorInfo?: CreateUserAccountRequestPayload['data']['external'];
   };
 };
@@ -40,7 +46,7 @@ type ExternalConnectionStep = {
   state: {
     vendor: NonNullable<CreateUserAccountRequestPayload['data']['external']>['vendor'];
     email: RegisteredUserRecord['email'];
-    accessToken: string;
+    accessToken: Oauth2AccessToken;
   };
 };
 
@@ -80,7 +86,7 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
           authenticationService
             .create({
               isGuest: false,
-              accessToken: r.accessToken,
+              authenticationToken: r.authenticationToken,
             })
             .map(() => {
               const via = input.type === 'external' ? input.vendor : 'email';
@@ -109,13 +115,13 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
                   ...(keyInObject(r.external.user, 'lastName') && {
                     firstName: r.external.user.lastName,
                   }),
-                 ...(r.external.vendor === 'lichess' && {
-                   username: r.external.user.username
-                 })
+                  ...(r.external.vendor === 'lichess' && {
+                    username: r.external.user.username,
+                  }),
                 },
                 verifiedExternalVendorInfo: {
                   vendor: input.vendor,
-                  accessToken: input.accessToken,
+                  accessToken: (input.token as unknown) as AccessToken,
                 },
                 verificationToken: r.verificationToken,
               },
@@ -130,7 +136,7 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
             state: {
               vendor: r.vendor,
               email: r.email,
-              accessToken: input.accessToken,
+              accessToken: input.token as Oauth2AccessToken,
             },
           });
         }
@@ -175,9 +181,12 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
                 authenticationService
                   .create({
                     isGuest: false,
-                    accessToken: r.accessToken,
-                  }).map(() => {
-                    const via = s.verifiedExternalVendorInfo ? s.verifiedExternalVendorInfo.vendor : 'email';
+                    authenticationToken: r.authenticationToken,
+                  })
+                  .map(() => {
+                    const via = s.verifiedExternalVendorInfo
+                      ? s.verifiedExternalVendorInfo.vendor
+                      : 'email';
 
                     Events.trackAuthenticated('registration', via);
                   });
@@ -252,7 +261,7 @@ export const AuthenticationDialog: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {},
   contentContainer: {
     paddingTop: '16px',
@@ -275,6 +284,6 @@ const useStyles = createUseStyles(theme => ({
     }),
   },
   infoText: {
-    color: theme.colors.neutralDarker
+    color: theme.colors.neutralDarker,
   },
 }));

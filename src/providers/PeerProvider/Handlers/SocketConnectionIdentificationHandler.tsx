@@ -1,4 +1,4 @@
-import { GuestUserRecord } from 'dstnd-io';
+import { AccessToken, GuestUserRecord, JWTToken } from 'dstnd-io';
 import React from 'react';
 import { Component } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
@@ -16,7 +16,7 @@ type Props = {
     }
   | {
       isGuest: false;
-      accessToken: string;
+      authenticationToken: JWTToken;
     }
 );
 
@@ -38,7 +38,7 @@ export class SocketConnectionIdentificationHandler extends Component<Props> {
       // If the Access Token has changed
       (!prevProps.isGuest &&
         !this.props.isGuest &&
-        prevProps.accessToken !== this.props.accessToken)
+        prevProps.authenticationToken !== this.props.authenticationToken)
     ) {
       this.identify(this.socketRef);
     }
@@ -55,7 +55,7 @@ export class SocketConnectionIdentificationHandler extends Component<Props> {
             }
           : {
               isGuest: false,
-              acessToken: this.props.accessToken,
+              authenticationToken: this.props.authenticationToken,
             }),
       },
     });

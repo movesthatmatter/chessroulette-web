@@ -37,7 +37,7 @@ export const ArchivedGame: React.FC<Props> = ({ game, myUserId }) => {
   const colors = theme.colors;
 
   const result = getResult(game);
-  const avatarSize = windowWidth < MOBILE_BREAKPOINT ? '32px' : '72px';
+  const avatarSize = windowWidth < MOBILE_BREAKPOINT ? 32 : 72;
 
   const myUserResult = myUserId ? getMyResult(game, myUserId) : undefined;
   const borderLeftColor = myUserResult

@@ -1,5 +1,5 @@
 import * as io from 'io-ts';
-import { guestUserRecord, toResult } from 'dstnd-io';
+import { guestUserRecord, jwtToken, toResult } from 'dstnd-io';
 import { Pubsy } from 'src/lib/Pubsy';
 import { AsyncResult, AsyncResultWrapper } from 'ts-async-results';
 import { Err, Ok } from 'ts-results';
@@ -11,7 +11,7 @@ import { Err, Ok } from 'ts-results';
 const authenticationRecord = io.union([
   io.type({
     isGuest: io.literal(false),
-    accessToken: io.string,
+    authenticationToken: jwtToken,
   }),
   guestUserRecord,
 ]);

@@ -4,7 +4,7 @@ import { fonts } from 'src/theme';
 import cx from 'classnames';
 
 export type TextProps = (JSX.IntrinsicElements['span'] & JSX.IntrinsicElements['p']) & {
-  size?: 'small1' | 'small2' | 'body1' | 'body2' | 'subtitle1' | 'subtitle2';
+  size?: 'small1' | 'small2' | 'body1' | 'body2' | 'subtitle1' | 'subtitle2' | 'title1' | 'title2';
   style?: CSSProperties;
   className?: string;
   asParagraph?: boolean;

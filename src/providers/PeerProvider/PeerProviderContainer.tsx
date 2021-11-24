@@ -43,7 +43,7 @@ export const PeerProviderContainer: React.FC<Props> = (props) => {
           }
         : {
             isGuest: false,
-            accessToken: auth.accessToken,
+            authenticationToken: auth.authenticationToken,
           })}
       render={(p) => {
         if (p.status === 'disconnected') {
