@@ -6813,9 +6813,9 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#add-watch-resource":
-  version "0.2.1"
-  resolved "https://github.com/dstnd/dstnd-io.git#d6e300a8877e81e7cfe95b5f868b5bcef4134899"
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.2.2":
+  version "0.2.2"
+  resolved "https://github.com/dstnd/dstnd-io.git#d43ca1f4caa0a234aab42901a0a6487b4cf8b508"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"
