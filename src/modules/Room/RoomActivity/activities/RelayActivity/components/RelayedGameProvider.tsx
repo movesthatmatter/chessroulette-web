@@ -3,7 +3,7 @@ import { getCurrentlyStreamingRelayedGames } from 'src/modules/Relay/BroadcastPa
 import { Game } from 'src/modules/Games';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 
-type GameAndRelayId = {game: Game, relayId: string}
+type GameAndRelayId = {game: Game, relayId: string, label?: string}
 
 type Props = {
   pageSize: number;
@@ -11,6 +11,7 @@ type Props = {
   render: (p: {
     games: GameAndRelayId[];
     isLoading: boolean;
+    label? :string;
     isEmpty: boolean;
     isReady: boolean;
   }) => React.ReactNode;
@@ -24,7 +25,11 @@ export const RelayedGameProvider: React.FC<Props> = (props) => {
   useEffect(() => {
     getCurrentlyStreamingRelayedGames()
     .map(relayedGames => {
-      setItems(relayedGames.map(g => ({game: gameRecordToGame(g.game), relayId: g.id})))
+      setItems(relayedGames.map(g => ({
+        game: gameRecordToGame(g.game), 
+        relayId: g.id,
+        ...(g.label && {label: g.label})
+      })))
       setIsLoading(false);
     })
   },[])

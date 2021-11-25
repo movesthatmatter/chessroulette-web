@@ -1,5 +1,6 @@
 import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
 import React from 'react';
+import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { noop } from 'src/lib/util';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
@@ -16,6 +17,7 @@ export const RelayInputGamesList: React.FC<Props> = ({ games, onSelectRelay }) =
 
   return (
     <div>
+      <Text>Available Relays : </Text>
       {games.map((relayGame) => (
         <div
           className={cls.gameContainer}

@@ -6820,7 +6820,7 @@ dotenv@^6.2.0:
 
 "dstnd-io@https://github.com/dstnd/dstnd-io.git#room-relay-activity":
   version "0.2.1"
-  resolved "https://github.com/dstnd/dstnd-io.git#f8d692c32473abc68331349c13be02a3dcf77eed"
+  resolved "https://github.com/dstnd/dstnd-io.git#6b84a13c7ba780871c1a2aed22edd00eb1382e0f"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"

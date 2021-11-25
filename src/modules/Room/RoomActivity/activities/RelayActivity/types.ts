@@ -9,22 +9,11 @@ export type RoomRelayActivityParticipant = RoomActivitySpecifcParticipant<
   }
 >;
 
-// export type RoomRelayActivityWithGame = Omit<RoomRelayActivityRecord, 'gameId'> & {
-//   game: Game;
-// };
-
-// export type RoomRelayActivityWithoutGame = Omit<RoomRelayActivityRecord, 'gameId'> & {
-//   game?: undefined;
-// };
-
-// export type RoomActivityRecordWithOrWithoutGame =
-//   | RoomRelayActivityWithGame
-//   | RoomRelayActivityWithoutGame;
-
 export type RoomRelayActivity = RoomRecordToRoomActivity<
   'relay',
   RoomRelayActivityRecord & {
     game?: Game
+    label? :string
   },
   RoomRelayActivityParticipant
 >

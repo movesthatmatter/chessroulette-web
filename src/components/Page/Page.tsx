@@ -20,6 +20,7 @@ export type PageProps = {
   containerClassname?: string;
   logoAsLink?: boolean;
   stretched?: boolean;
+  hideNav?: boolean;
 } & (
   | {
       doNotTrack: true;
@@ -48,7 +49,7 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, stretched = false
     <div className={cls.root}>
       <div className={`${cls.container} ${props.containerClassname}`}>
         <div className={`${cls.content} ${props.contentClassName}`}>
-          <div className={cls.top}>
+          {!props.hideNav && <div className={cls.top}>
             <div className={cx(cls.topMain, responsiveCls)}>
               <div style={{ width: '300px' }}>
                 <Logo asLink={logoAsLink} withBeta />
@@ -57,7 +58,7 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, stretched = false
                 <NavigationMenu />
               </div>
             </div>
-          </div>
+          </div>}
           <main className={`${cls.main} ${responsiveCls}`}>
             {props.title && <h1 className={cls.title}>{props.title}</h1>}
             {props.children}

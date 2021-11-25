@@ -20,6 +20,7 @@ import { noop } from 'src/lib/util';
 import { RelayLiveGameList } from '../components/RelayLiveGameList';
 import { Game } from 'src/modules/Games';
 import { FloatingBox } from 'src/components/FloatingBox';
+import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 
 type Props = {
   activity: RoomRelayActivity;
@@ -46,7 +47,17 @@ export const RelayActivity: React.FC<Props> = ({ activity, deviceSize, onSelecte
                 <div
                   style={{ height: '40%' }}
                   className={cx(cls.floatingBoxContainerOffsets, cls.gameStateWidgetContainer)}
-                ></div>
+                >
+                  <div className={cls.floatingBoxOffsets}>
+                  <GameStateWidget
+                    // This is needed for the countdown to reset the interval !!
+                    key={game.id}
+                    game={game}
+                    homeColor={'white'}
+                    onTimerFinished={noop}
+                  />
+                </div>
+                </div>
               </>
             ) : (
               <div className={cls.box} style={{height: leftSide.height}}>

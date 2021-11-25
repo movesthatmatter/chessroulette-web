@@ -14,6 +14,7 @@ export type TextInputProps = React.DetailedHTMLProps<
   label?: string;
   validationError?: string;
   readOnly?: boolean;
+  type?: 'text' | 'number'
 };
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -34,7 +35,7 @@ export const TextInput: React.FC<TextInputProps> = ({
       <div className={cx(cls.inputWrapper)}>
         <input
           readOnly={props.readOnly}
-          type="text"
+          type={props.type || 'text'}
           value={props.defaultValue}
           className={cx(cls.textInput, props.validationError && cls.errorInput, inputClassName)}
           {...props}

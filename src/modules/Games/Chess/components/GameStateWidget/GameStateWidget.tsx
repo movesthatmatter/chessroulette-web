@@ -15,12 +15,14 @@ import { ChessGameHistoryProvided } from '../GameHistory/ChessGameHistoryProvide
 import { FloatingBox } from 'src/components/FloatingBox';
 import { spacers } from 'src/theme/spacers';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { getPlayerByColor } from '../../lib';
+import { getRelativeMaterialScore } from './util';
 
 type Props = {
   game: Game;
   onTimerFinished?: (color: ChessGameColor) => void;
   homeColor: ChessGameColor;
-  playParticipants: RoomPlayParticipantsByColor;
+  playParticipants?: RoomPlayParticipantsByColor;
   containerClassName?: string;
   floatingBoxClassName?: string;
 };
@@ -34,10 +36,10 @@ export const GameStateWidget: React.FC<Props> = React.memo(
     const players = useMemo(
       () =>
         ({
-          white: roomPlayActivityParticipantToChessPlayer(playParticipants.white),
-          black: roomPlayActivityParticipantToChessPlayer(playParticipants.black),
+          white: playParticipants ? roomPlayActivityParticipantToChessPlayer(playParticipants.white) : getPlayerByColor(homeColor, game.players),
+          black: playParticipants ? roomPlayActivityParticipantToChessPlayer(playParticipants.black) : getPlayerByColor(otherChessColor(homeColor), game.players),
         } as const),
-      [playParticipants.white, playParticipants.black]
+      [playParticipants]
     );
 
     const onTimerFinishedAway = useCallback(() => onTimerFinished(awayColor), [
@@ -58,7 +60,7 @@ export const GameStateWidget: React.FC<Props> = React.memo(
             timeLeft={timeLeft[awayColor]}
             active={game.state === 'started' && game.lastMoveBy === homeColor}
             gameTimeLimit={game.timeLimit}
-            material={playParticipants[awayColor].materialScore}
+            material={playParticipants ? playParticipants.black.materialScore : getRelativeMaterialScore(game).black}
             onTimerFinished={onTimerFinishedAway}
           />
           <div className={cls.spacer} />
@@ -74,7 +76,7 @@ export const GameStateWidget: React.FC<Props> = React.memo(
             timeLeft={timeLeft[homeColor]}
             active={game.state === 'started' && game.lastMoveBy === awayColor}
             gameTimeLimit={game.timeLimit}
-            material={playParticipants[homeColor].materialScore}
+            material={playParticipants ? playParticipants.black.materialScore : getRelativeMaterialScore(game).white}
             onTimerFinished={onTimerFinishedHome}
           />
         </div>
