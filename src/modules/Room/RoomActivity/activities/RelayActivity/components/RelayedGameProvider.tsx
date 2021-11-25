@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getCurrentlyStreamingRelayedGames } from 'src/modules/Relay/BroadcastPage/resources';
 import { Game } from 'src/modules/Games';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
+import { usePeerState } from 'src/providers/PeerProvider';
 
 type GameAndRelayId = {game: Game, relayId: string, label?: string}
 
@@ -21,8 +22,29 @@ export const RelayedGameProvider: React.FC<Props> = (props) => {
 
   const [games, setItems] = useState<GameAndRelayId[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const peerState = usePeerState();
 
   useEffect(() => {
+    if (peerState.status === 'open') {
+      const unsubscribers = [
+        peerState.client.onMessage((payload) => {
+          if (payload.kind === 'relayGameUpdateList') {
+            fetchLiveGames();
+          }
+        }),
+      ];
+
+      return () => {
+        unsubscribers.forEach((unsubscribe) => unsubscribe());
+      };
+    }
+  }, [peerState.status]);
+
+  useEffect(() => {
+    fetchLiveGames();
+  },[])
+
+  function fetchLiveGames() {
     getCurrentlyStreamingRelayedGames()
     .map(relayedGames => {
       setItems(relayedGames.map(g => ({
@@ -32,7 +54,7 @@ export const RelayedGameProvider: React.FC<Props> = (props) => {
       })))
       setIsLoading(false);
     })
-  },[])
+  }
 
   return (
       <>

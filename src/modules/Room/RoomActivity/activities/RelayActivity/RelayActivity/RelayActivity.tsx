@@ -2,7 +2,6 @@ import React, { useCallback, useEffect } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import {
   ChessGameHistoryConsumer,
-  ChessGameHistoryProvider,
 } from 'src/modules/Games/Chess/components/GameHistory';
 import { BoardSettingsWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/BoardSettingsWidgetRoomConsumer';
 import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
@@ -11,16 +10,15 @@ import cx from 'classnames';
 import { CustomTheme, floatingShadow, softBorderRadius } from 'src/theme';
 import { floatingBoxContainerOffsets, floatingBoxOffsets } from '../../styles';
 import { spacers } from 'src/theme/spacers';
-import {effects} from 'src/theme/effects';
+import { effects } from 'src/theme/effects';
 import { RelayedChessGame } from 'src/modules/Games/Chess/components/RelayedChessGame/RelayedChessGame';
 import { RoomRelayActivity } from '../types';
-import { console } from 'window-or-global';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { noop } from 'src/lib/util';
 import { RelayLiveGameList } from '../components/RelayLiveGameList';
-import { Game } from 'src/modules/Games';
-import { FloatingBox } from 'src/components/FloatingBox';
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
+import { PgnBox } from '../../AnalysisActivity/components/PgnBox';
+import { SimplePGN } from 'dstnd-io';
 
 type Props = {
   activity: RoomRelayActivity;
@@ -37,33 +35,37 @@ export const RelayActivity: React.FC<Props> = ({ activity, deviceSize, onSelecte
     <GenericLayoutDesktopRoomConsumer
       renderActivity={({ boardSize, leftSide }) => (
         <div className={cls.container}>
-          <aside
-            className={cls.side}
-            style={{ height: boardSize, width: leftSide.width}}
-          >
+          <aside className={cls.side} style={{ height: boardSize, width: leftSide.width }}>
             {game ? (
               <>
                 <div className={cls.sideTop} />
                 <div
-                  style={{ height: '40%' }}
+                  style={{ height: '60%' }}
                   className={cx(cls.floatingBoxContainerOffsets, cls.gameStateWidgetContainer)}
                 >
                   <div className={cls.floatingBoxOffsets}>
-                  <GameStateWidget
-                    // This is needed for the countdown to reset the interval !!
-                    key={game.id}
-                    game={game}
-                    homeColor={'white'}
-                    onTimerFinished={noop}
-                  />
+                    <GameStateWidget
+                      // This is needed for the countdown to reset the interval !!
+                      key={game.id}
+                      game={game}
+                      homeColor={'white'}
+                      onTimerFinished={noop}
+                    />
+                  </div>
                 </div>
+                <div className={cls.sideBottom}>
+                  {game.pgn && (
+                    <PgnBox
+                      pgn={game.pgn as SimplePGN}
+                      containerClassName={cls.pgnBoxContainer}
+                      contentClassName={cls.pgnBox}
+                    />
+                  )}
                 </div>
               </>
             ) : (
-              <div className={cls.box} style={{height: leftSide.height}}>
-                <RelayLiveGameList
-                  onSelect={onSelectedRelay}
-                />
+              <div className={cls.box} style={{ height: leftSide.height }}>
+                <RelayLiveGameList onSelect={onSelectedRelay} />
               </div>
             )}
           </aside>
@@ -110,7 +112,10 @@ export const RelayActivity: React.FC<Props> = ({ activity, deviceSize, onSelecte
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const FLOATING_SHADOW_HORIZONTAL_OFFSET = spacers.large;
+const FLOATING_SHADOW_BOTTOM_OFFSET = `48px`;
+
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   container: {
     display: 'flex',
     flex: 1,
@@ -127,13 +132,14 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     flex: 1,
   },
   sideTop: {
-    height: '30%',
+    height: '20%',
   },
   sideBottom: {
-    height: '30%',
+    height: '20%',
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
+    marginTop: spacers.default,
   },
   box: {
     marginLeft: `${-spacers.defaultPx}px`,
@@ -168,5 +174,24 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     paddingTop: spacers.default,
     display: 'flex',
     justifyContent: 'flex-end',
+  },
+  pgnBoxContainer: {
+    overflowY: 'scroll',
+    scrollBehavior: 'smooth',
+    paddingRight: FLOATING_SHADOW_HORIZONTAL_OFFSET,
+    marginBottom: `-${FLOATING_SHADOW_BOTTOM_OFFSET}`,
+
+    paddingTop: spacers.default,
+
+    '&:first-child': {
+      paddingTop: 0,
+    },
+
+    '&:last-child': {
+      marginBottom: 0,
+    },
+  },
+  pgnBox: {
+    overflowY: 'hidden',
   },
 }));

@@ -46,17 +46,13 @@ export const RelayLiveGameList: React.FC<Props> = ({ onSelect }) => {
                 [
                   isLoading,
                   () => (
-                    <FloatingBox>
                       <Loader type="ball-pulse" active innerClassName={cls.loader} />
-                    </FloatingBox>
                   ),
                 ],
                 [
                   isEmpty,
                   () => (
-                    <FloatingBox>
                       <Text size="small1">Wow So Empty</Text>
-                    </FloatingBox>
                   ),
                 ]
               )

@@ -1,5 +1,5 @@
 import { ChessGameColor, ChessMove, gameRecord, Resources } from 'dstnd-io';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { noop, toDictIndexedBy } from 'src/lib/util';
 import { usePeerStateClient } from 'src/providers/PeerProvider';
@@ -8,12 +8,14 @@ import { DesktopRoomLayout } from '../../Room/Layouts';
 import { createRelay } from './resource';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { console, Object } from 'window-or-global';
-import { SocketClient } from 'src/services/socket/SocketClient';
 import { ControlPanel, FormModel } from './components/ControlPanel';
 import { RelayInputGamesList } from './components/RelayInputGamesList';
 import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
 import { Page } from 'src/components/Page';
 import { spacers } from 'src/theme/spacers';
+import { Dialog } from 'src/components/Dialog';
+import { TextInput } from 'src/components/TextInput';
+import { Button } from 'src/components/Button';
 
 type Props = {};
 
@@ -28,26 +30,19 @@ export const RelayInputPage: React.FC<Props> = (props) => {
   const [relayGames, setRelayGames] = useState<RelayedGames>({});
   const [selectedRelayId, setSelectedRelayId] = useState<string>();
   const [unsubmittedMove, setUnsubmittedMove] = useState<ChessMove>();
+  const [showSubmitWindow, setShowSubmitWindow] = useState(false);
+  const [timerInput, setTimerInput] = useState<string>();
 
-  const request = useCallback<SocketClient['send']>(
-    (payload) => {
-      peerClient.send(payload);
-    },
-    [peerClient]
-  );
-
-  useEffect(() => {}, [request]);
-
-  const submitMove = useCallback(() => {
-    if (unsubmittedMove && selectedRelayId) {
+  const submitMove = () => {
+    if (unsubmittedMove && selectedRelayId && timerInput) {
       gameActions.onMoveRelayInput(
         unsubmittedMove,
         relayGames[selectedRelayId].game.id,
-        selectedRelayId
+        selectedRelayId,
+        Number(timerInput)
       );
     }
-    setUnsubmittedMove(undefined);
-  }, [unsubmittedMove]);
+  }
 
   function fetchLiveGames() {
     getCurrentlyStreamingRelayedGames().map((relayGames) => {
@@ -145,9 +140,31 @@ export const RelayInputPage: React.FC<Props> = (props) => {
             relay={selectedRelayId ? relayGames[selectedRelayId] : undefined}
             containerWidth={500}
             onAddMove={(m) => setUnsubmittedMove(m)}
-            onSubmit={submitMove}
+            onSubmit={() => setShowSubmitWindow(true)}
             onAddRelay={addRelay}
             submitDisabled={!unsubmittedMove}
+          />
+          <Dialog
+            visible={showSubmitWindow}
+            onClose={() => setShowSubmitWindow(false)}
+            content={
+              <div className={cls.dialog}>
+                <TextInput
+                  label="Time Left"
+                  type="number"
+                  onChange={(e) => {
+                    setTimerInput(e.currentTarget.value)
+                  }}
+                />
+                <Button
+                  type="positive"
+                  label="Submit"
+                  onClick={() => {
+                    submitMove();
+                  }}
+                />
+              </div>
+            }
           />
         </div>
         <RelayInputGamesList
@@ -167,5 +184,9 @@ const useStyles = createUseStyles({
   main: {
     width: '70%',
     marginRight: spacers.default,
+  },
+  dialog: {
+    display: 'flex',
+    flexDirection: 'column',
   },
 });

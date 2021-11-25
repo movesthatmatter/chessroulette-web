@@ -63,7 +63,8 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                             items: [
                               {
                                 title: 'Play',
-                                disabled: room.currentActivity.type === 'play',
+                                disabled: room.currentActivity.type === 'play' || 
+                                (room.live),
                                 onClick: () => onSwitch({ activityType: 'play' }),
                               },
                               {
@@ -71,12 +72,14 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                                 disabled:
                                   (room.currentActivity.type === 'play' &&
                                     room.currentActivity.game?.state === 'started') ||
-                                  room.currentActivity.type === 'analysis',
+                                  room.currentActivity.type === 'analysis' || 
+                                  (room.live),
                                 onClick: () => onSwitch({ activityType: 'analysis' }),
                               },
                               {
                                 title: 'Relay',
-                                disabled: room.currentActivity.type === 'relay',
+                                disabled: (room.currentActivity.type === 'relay') || 
+                                (room.live),
                                 onClick: () => onSwitch({activityType: 'relay'})
                               }
                             ],

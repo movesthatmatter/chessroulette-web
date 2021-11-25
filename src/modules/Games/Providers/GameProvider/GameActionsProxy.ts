@@ -1,4 +1,5 @@
 import { ChessGameColor, ChessHistory, ChessMove } from 'dstnd-io';
+import { ISODateTime } from 'src/lib/date/ISODateTime';
 import { Events } from 'src/services/Analytics';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { gameActionPayloads } from '../../GameActions/hooks/useGameActions/payloads';
@@ -19,8 +20,8 @@ export const getGameActions = (request: SocketClient['send']) => ({
     }
   },
 
-  onMoveRelayInput : (nextMove: ChessMove, gameId: string, relayId: string) => {
-    request(gameActionPayloads.moveRelayInput(nextMove, gameId, relayId));
+  onMoveRelayInput : (nextMove: ChessMove, gameId: string, relayId: string, timeLeftMS: number) => {
+    request(gameActionPayloads.moveRelayInput(nextMove, gameId, relayId, timeLeftMS));
   },
   onOfferChallenge: (p: Parameters<typeof gameActionPayloads.offerChallenge>[0]) => {
     request(gameActionPayloads.offerChallenge(p));
