@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { updateCurrentAnalysisAction, updateRelayGameAction } from '../RoomActivity/redux/actions';
 import { RelayActivity } from '../RoomActivity/activities/RelayActivity';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
+import { console } from 'window-or-global';
 
 type Props = {};
 
@@ -17,13 +18,17 @@ export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log('ActivityRoomConsumer', peerState.status)
+
     if (peerState.status === 'open') {
       const unsubscribers = [
         // Analysis Activity Listener
         peerState.client.onMessage((payload) => {
+          console.log('ActivityRoomConsumer on message', payload)
           // These are the room activity messages
           // TODO: They could be unified into something like: roomActivityUpdated
           if (payload.kind === 'analysisUpdatedResponse') {
+            console.log('on analysis update response', payload);
             dispatch(updateCurrentAnalysisAction(payload.content));
           }
           if (payload.kind === 'relayGameUpdateResponse') {
@@ -44,6 +49,8 @@ export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
   }
 
   const { currentActivity } = context.room;
+
+  console.log('ActvityRoomConsumer', currentActivity);
 
   if (currentActivity.type === 'play') {
     return <PlayActivity activity={currentActivity} deviceSize={context.deviceSize} />;

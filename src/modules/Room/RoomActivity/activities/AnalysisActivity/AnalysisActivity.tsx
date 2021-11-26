@@ -20,7 +20,8 @@ export type AnalysisActivityProps = ActivityCommonProps & {
   boardSize: number;
   leftSide: LayoutContainerDimensions;
   onImportedPgn: AnalysisPanelProps['onImportedPgn'];
-  onImportedGame: AnalysisPanelProps['onImportedGame'];
+  onImportedArchivedGame: AnalysisPanelProps['onImportedArchivedGame'];
+  onImportedRelayedGame: AnalysisPanelProps['onImportedRelayedGame'];
 };
 
 const getParticipantsByColor = (game: NonNullable<AnalysisRecord['game']>) =>
@@ -54,7 +55,8 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
   boardSize,
   leftSide,
   onImportedPgn,
-  onImportedGame,
+  onImportedArchivedGame,
+  onImportedRelayedGame,
 }) => {
   const cls = useStyles();
   const roomConsumer = useRoomConsumer();
@@ -80,12 +82,17 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
         <div className={cls.container}>
           <aside className={cls.side} style={{ height: boardSize, width: leftSide.width }}>
             <AnalysisPanel
+              analysisId={analysis.id}
               history={history}
               displayed={displayed}
               onImportedPgn={onImportedPgn}
-              onImportedGame={onImportedGame}
+              onImportedArchivedGame={onImportedArchivedGame}
+              onImportedRelayedGame={onImportedRelayedGame}
               homeColor={homeColor}
               gameAndPlayers={gameAndPlayers}
+
+              // TODO: Take out for regular analysis!
+              useEngine={true}
             />
           </aside>
           <div className={cls.boardContainer} style={{ height: boardSize }}>

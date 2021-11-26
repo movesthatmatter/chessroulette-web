@@ -12,7 +12,6 @@ import { useJoinedRoom } from './hooks/useJoinedRoom';
 import { JoinRoomWizard } from './wizards/JoinRoomWizard';
 import * as roomResources from './resources';
 import { AsyncOk } from 'ts-async-results';
-import { console } from 'window-or-global';
 
 type Props = {
   slug: RoomRecord['slug'];

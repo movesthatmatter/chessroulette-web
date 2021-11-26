@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
 import { CustomTheme, fonts } from 'src/theme';
@@ -7,6 +7,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { spacers } from 'src/theme/spacers';
 import { noop } from 'src/lib/util';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import cx from 'classnames';
 
 type TabProps = {
   title: string;
@@ -19,6 +20,9 @@ type TabsProps = {
   currentTabIndex: number;
   onTabChanged: (nextIndex: number) => void;
   renderTabRightEndComponent?: (p: { tabIndex: number }) => React.ReactNode;
+  containerClassName?: string;
+  headerClassName?: string;
+  tabButtonClassName?: string;
 };
 
 export const Tabs: React.FC<TabsProps> = ({
@@ -26,17 +30,21 @@ export const Tabs: React.FC<TabsProps> = ({
   onTabChanged = noop,
   currentTabIndex = 0,
   renderTabRightEndComponent,
+  containerClassName,
+  headerClassName,
+  tabButtonClassName,
 }) => {
   const cls = useStyles();
-  const {theme} = useColorTheme();
-  const colors = theme.colors
+  const { theme } = useColorTheme();
+  const colors = theme.colors;
+
   return (
     <>
-      <div className={cls.tabBar}>
+      <div className={cx(cls.tabBar, headerClassName)}>
         {tabs.map((tab, index) => (
           <div
             key={tab.title}
-            className={cls.tabButton}
+            className={cx(cls.tabButton, tabButtonClassName)}
             onClick={() => {
               onTabChanged(index);
             }}
@@ -73,7 +81,7 @@ export const Tabs: React.FC<TabsProps> = ({
   );
 };
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   tabBar: {
     display: 'flex',
     flexDirection: 'row',

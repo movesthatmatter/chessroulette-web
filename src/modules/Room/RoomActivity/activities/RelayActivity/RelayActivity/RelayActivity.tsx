@@ -1,8 +1,6 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import {
-  ChessGameHistoryConsumer,
-} from 'src/modules/Games/Chess/components/GameHistory';
+import { ChessGameHistoryConsumer } from 'src/modules/Games/Chess/components/GameHistory';
 import { BoardSettingsWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/BoardSettingsWidgetRoomConsumer';
 import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { DeviceSize } from 'src/theme/hooks/useDeviceSize';
@@ -19,6 +17,13 @@ import { RelayLiveGameList } from '../components/RelayLiveGameList';
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
 import { PgnBox } from '../../AnalysisActivity/components/PgnBox';
 import { SimplePGN } from 'dstnd-io';
+import { useEngineAnalysis } from 'src/modules/Games/Chess/components/EngineAnalysis';
+import { DrawShape } from 'chessground/draw';
+import { EngineLines } from 'src/modules/Games/Chess/components/EngineAnalysis/EngineLines';
+import {
+  EngineAnalysisRecord,
+  EngineDepthLine,
+} from 'src/modules/Games/Chess/components/EngineAnalysis/types';
 
 type Props = {
   activity: RoomRelayActivity;
@@ -30,6 +35,59 @@ export const RelayActivity: React.FC<Props> = ({ activity, deviceSize, onSelecte
   const cls = useStyles();
 
   const { game } = activity;
+
+  const engineEvaluation = useEngineAnalysis(game);
+
+  const [drawingShapes, setDrawingShapes] = useState<DrawShape[]>();
+
+  useEffect(() => {
+    if (!engineEvaluation) {
+      setDrawingShapes(undefined);
+      return;
+    }
+
+    const { bestMove } = engineEvaluation.evaluation || {};
+
+    setDrawingShapes([
+      ...(bestMove
+        ? [
+            {
+              orig: bestMove.from,
+              dest: bestMove.to,
+              brush: 'green',
+            },
+          ]
+        : []),
+      // ...(r.ponderMove
+      //   ? [
+      //       {
+      //         orig: r.ponderMove.from,
+      //         dest: r.ponderMove.to,
+      //         brush: 'yellow',
+      //       },
+      //     ]
+      //   : []),
+    ]);
+  }, [engineEvaluation]);
+
+  const [engineLines, setEngineLines] = useState<EngineAnalysisRecord['info']>([]);
+
+  // useEffect(() => {
+  //   console.log('engineEvaluation updated', engineEvaluation?.info);
+
+  //   setEngineLines(
+  //     engineEvaluation
+  //       ? engineEvaluation.info
+  //           .slice(-3)
+  //           .filter((l) => l.type === 'depthLine')
+  //           .sort(
+  //             (a, b) =>
+  //               Math.abs((b as EngineDepthLine).score.value) -
+  //               Math.abs((a as EngineDepthLine).score.value)
+  //           )
+  //       : []
+  //   );
+  // }, [engineEvaluation]);
 
   return (
     <GenericLayoutDesktopRoomConsumer
@@ -54,18 +112,21 @@ export const RelayActivity: React.FC<Props> = ({ activity, deviceSize, onSelecte
                   </div>
                 </div>
                 <div className={cls.sideBottom}>
-                  {game.pgn && (
+                  {<EngineLines lines={engineLines} />}
+                  {/* <pre>{JSON.stringify(engineEvaluation, null, 2)}</pre> */}
+                  {/* )} /> */}
+                  {/* {game.pgn && (
                     <PgnBox
                       pgn={game.pgn as SimplePGN}
                       containerClassName={cls.pgnBoxContainer}
                       contentClassName={cls.pgnBox}
                     />
-                  )}
+                  )} */}
                 </div>
               </>
             ) : (
               <div className={cls.box} style={{ height: leftSide.height }}>
-                <RelayLiveGameList onSelect={onSelectedRelay} />
+                <RelayLiveGameList onSelect={(g) => onSelectedRelay(g.id)} />
               </div>
             )}
           </aside>
@@ -88,6 +149,8 @@ export const RelayActivity: React.FC<Props> = ({ activity, deviceSize, onSelecte
                       drawable={{
                         visible: true,
                         enabled: true,
+                        eraseOnClick: false,
+                        autoShapes: drawingShapes || [],
                       }}
                     />
                     <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
@@ -135,7 +198,7 @@ const useStyles = createUseStyles<CustomTheme>((theme) => ({
     height: '20%',
   },
   sideBottom: {
-    height: '20%',
+    height: '30%',
     display: 'flex',
     flexDirection: 'column',
     flex: 1,

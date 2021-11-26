@@ -48,7 +48,8 @@ import {
   AnalysisDrawnShapesUpdatedRequestPayload,
   AnalysisImportPgnRequestPayload,
   ImportRelayedGameRequestPayload,
-  AnalysisImportGameRequestPayload,
+  AnalysisImportArchivedGameRequestPayload,
+  AnalysisImportRelayedGameRequestPayload,
   SwitchRoomActivityRequestPayload, 
   SwitchGameToRelayAndGoLivePayload
 } from 'dstnd-io';
@@ -118,8 +119,8 @@ type SendableMessagesMap = {
   analysisRefocusRequestPayload: AnalysisRefocusRequestPayload;
   analysisDrawnShapesUpdatedRequestPayload: AnalysisDrawnShapesUpdatedRequestPayload;
   analysisImportPgnRequestPayload: AnalysisImportPgnRequestPayload,
-  analysisImportGameRequestPayload: AnalysisImportGameRequestPayload,
-
+  analysisImportArchivedGameRequestPayload: AnalysisImportArchivedGameRequestPayload,
+  analysisImportRelayedGameRequestPayload: AnalysisImportRelayedGameRequestPayload,
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {

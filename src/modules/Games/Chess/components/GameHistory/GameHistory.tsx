@@ -37,13 +37,15 @@ export const GameHistory: React.FC<GameHistoryProps> = ({
         {/* <div className={cls.spacer} /> */}
         {history.length === 0 ? (
           typeof emptyContent === 'string' ? (
-            <div style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              display: 'flex',
-            }}>
-            <Text size="small1">{emptyContent}</Text>
+            <div
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                display: 'flex',
+              }}
+            >
+              <Text size="small1">{emptyContent}</Text>
             </div>
           ) : (
             emptyContent

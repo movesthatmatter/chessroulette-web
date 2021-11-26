@@ -1,26 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { getCurrentlyStreamingRelayedGames } from 'src/modules/Relay/BroadcastPage/resources';
-import { Game } from 'src/modules/Games';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { usePeerState } from 'src/providers/PeerProvider';
-
-type GameAndRelayId = {game: Game, relayId: string, label?: string}
+import { RelayedGame } from '../types';
 
 type Props = {
   pageSize: number;
-  rowClassName? :string;
+  rowClassName?: string;
   render: (p: {
-    games: GameAndRelayId[];
+    relayedGames: RelayedGame[];
     isLoading: boolean;
-    label? :string;
+    label?: string;
     isEmpty: boolean;
     isReady: boolean;
   }) => React.ReactNode;
 };
 
 export const RelayedGameProvider: React.FC<Props> = (props) => {
-
-  const [games, setItems] = useState<GameAndRelayId[]>([]);
+  const [relayedGames, setRelayedGames] = useState<RelayedGame[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const peerState = usePeerState();
 
@@ -42,28 +39,28 @@ export const RelayedGameProvider: React.FC<Props> = (props) => {
 
   useEffect(() => {
     fetchLiveGames();
-  },[])
+  }, []);
 
   function fetchLiveGames() {
-    getCurrentlyStreamingRelayedGames()
-    .map(relayedGames => {
-      setItems(relayedGames.map(g => ({
-        game: gameRecordToGame(g.game), 
-        relayId: g.id,
-        ...(g.label && {label: g.label})
-      })))
+    getCurrentlyStreamingRelayedGames().map((relayedGames) => {
+      setRelayedGames(
+        relayedGames.map((relayedGame) => ({
+          ...relayedGame,
+          game: gameRecordToGame(relayedGame.game),
+        }))
+      );
       setIsLoading(false);
-    })
+    });
   }
 
   return (
-      <>
+    <>
       {props.render({
-        games,
+        relayedGames,
         isLoading,
-        isEmpty : games.length === 0,
-        isReady : isLoading === false
+        isEmpty: relayedGames.length === 0,
+        isReady: isLoading === false,
       })}
-      </>
+    </>
   );
 };

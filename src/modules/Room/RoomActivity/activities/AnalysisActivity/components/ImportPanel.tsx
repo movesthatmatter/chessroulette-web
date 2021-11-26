@@ -11,10 +11,15 @@ import { useDebouncedCallback } from 'use-debounce/lib';
 import { Err, Ok, Result } from 'ts-results';
 import { getNewChessGame } from 'src/modules/Games/Chess/lib';
 import { setTimeout } from 'window-or-global';
+import { RelayLiveGameList } from '../../RelayActivity/components/RelayLiveGameList';
+import { Tabs } from 'src/components/Tabs';
+import { faFolderOpen, faWifi } from '@fortawesome/free-solid-svg-icons';
+import { RelayedGame, RelayedGameRecord } from '../../RelayActivity/types';
 
 export type ImportPanelProps = {
   onImportedPgn: (pgn: SimplePGN) => void;
-  onImportedGame: (game: GameRecord) => void;
+  onImportedArchivedGame: (game: GameRecord) => void;
+  onImportedRelayedGame: (game: RelayedGameRecord) => void;
 } & (
   | {
       hasBackButton?: false;
@@ -28,11 +33,15 @@ export type ImportPanelProps = {
 
 export type ImportBoxState =
   | {
-      selectedGame: GameRecord;
-      pgnFromInput?: undefined;
+      type: 'selectedArchivedGame';
+      game: GameRecord;
     }
   | {
-      selectedGame?: undefined;
+      type: 'selectedRelayedGame';
+      relayedGame: RelayedGame;
+    }
+  | {
+      type: 'selectedPgn';
       pgnFromInput:
         | {
             status: 'valid';
@@ -48,7 +57,7 @@ const validatePGN = (s: string): Result<SimplePGN, 'PgnNotValidError'> => {
   const instance = getNewChessGame();
   const isValid = instance.load_pgn(s);
 
-  return isValid ? new Ok(s as SimplePGN) : new Err('PgnNotValidError');
+  return isValid ? new Ok(s as SimplePGN) : new Err('PgnNotValidError' as const);
 };
 
 export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
@@ -59,7 +68,7 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
     validatePGN(input)
       .map((validPgn) => {
         setState({
-          selectedGame: undefined,
+          type: 'selectedPgn',
           pgnFromInput: {
             status: 'valid',
             input: validPgn,
@@ -68,7 +77,7 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
       })
       .mapErr(() => {
         setState({
-          selectedGame: undefined,
+          type: 'selectedPgn',
           pgnFromInput: {
             status: 'invalid',
             input,
@@ -79,7 +88,7 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
 
   const onInputChanged = useCallback((input: string) => {
     setState({
-      selectedGame: undefined,
+      type: 'selectedPgn',
       pgnFromInput: {
         status: 'validating',
         input,
@@ -89,23 +98,65 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
     validateDebounced(input);
   }, []);
 
+  const [tabIndex, setTabIndex] = useState(0);
+
   return (
     <>
-      <div className={cls.scroller}>
-        <div className={cls.box} style={{ width: '100%' }}>
-          <MyGamesArchive
-            onSelect={(game) => {
-              setState({
-                selectedGame: game,
-                pgnFromInput: undefined,
-              });
-            }}
-          />
-        </div>
-      </div>
+      <Tabs
+        headerClassName={cx(cls.tabHeader, cls.boxHorizontalPadding)}
+        tabButtonClassName={cls.tabButton}
+        currentTabIndex={tabIndex}
+        onTabChanged={setTabIndex}
+        tabs={[
+          {
+            title: 'My Archive',
+            icon: faFolderOpen,
+            content: (
+              <div className={cls.scroller}>
+                <div className={cls.box} style={{ width: '100%' }}>
+                  <MyGamesArchive
+                    onSelect={(game) => {
+                      setState({
+                        type: 'selectedArchivedGame',
+                        game: game,
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+            ),
+          },
+          {
+            title: 'Live Games',
+            icon: faWifi,
+            content: (
+              <div className={cls.scroller}>
+                <div className={cls.box} style={{ width: '100%' }}>
+                  <RelayLiveGameList
+                    onSelect={(relayedGame) => {
+                      setState({
+                        type: 'selectedRelayedGame',
+                        relayedGame: relayedGame,
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+            ),
+          },
+        ]}
+      />
       <PgnInputBox
         // Here show either the pgn or if it's nothing the input
-        value={state?.selectedGame ? state.selectedGame.pgn : state?.pgnFromInput.input}
+        value={
+          state?.type === 'selectedArchivedGame'
+            ? state.game.pgn
+            : state?.type === 'selectedRelayedGame'
+            ? state.relayedGame.game.pgn
+            : state?.type === 'selectedPgn'
+            ? state?.pgnFromInput.input
+            : ''
+        }
         onChange={onInputChanged}
         containerClassName={cx(cls.box, cls.pgnInputBox)}
         contentClassName={cls.pgnInputBox}
@@ -123,16 +174,20 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
         <Button
           label={state ? 'Import' : 'PGN Invalid'}
           type="primary"
-          disabled={!state || state.pgnFromInput?.status === 'invalid'}
+          disabled={
+            !state || (state.type === 'selectedPgn' && state.pgnFromInput.status === 'invalid')
+          }
           full
-          isLoading={state?.pgnFromInput?.status === 'validating'}
+          isLoading={state?.type === 'selectedPgn' && state.pgnFromInput.status === 'validating'}
           onClick={() => {
             if (!state) {
               return;
             }
 
-            if (state?.selectedGame) {
-              props.onImportedGame(state.selectedGame);
+            if (state?.type === 'selectedArchivedGame') {
+              props.onImportedArchivedGame(state.game);
+            } else if (state.type === 'selectedRelayedGame') {
+              props.onImportedRelayedGame(state.relayedGame);
             } else if (state.pgnFromInput.status === 'valid') {
               props.onImportedPgn(state.pgnFromInput.input);
             }
@@ -153,7 +208,14 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
 const FLOATING_SHADOW_HORIZONTAL_OFFSET = spacers.large;
 const FLOATING_SHADOW_BOTTOM_OFFSET = `48px`;
 
-const useStyles = createUseStyles((theme) => ({
+const useStyles = createUseStyles({
+  tabHeader: {
+    borderBottom: 0,
+  },
+  tabButton: {
+    paddingTop: 0,
+  },
+
   // TODO: Have a centralized box class since it's used in other places
   box: {
     paddingLeft: FLOATING_SHADOW_HORIZONTAL_OFFSET,
@@ -212,4 +274,4 @@ const useStyles = createUseStyles((theme) => ({
   buttonWrapper: {
     display: 'flex',
   },
-}));
+});
