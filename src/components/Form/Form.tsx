@@ -34,6 +34,7 @@ type Props<Model extends BaseModel, ValidationModel extends Model = Model> = {
   };
   initialModel?: Partial<Model>;
   validateOnChange: boolean;
+  disableValidators?: boolean;
   render: (p: {
     model: Model;
     validate: () => void;
@@ -111,7 +112,7 @@ export class Form<
 
             return prev;
           }, {} as NonNullable<ValidationErrors<ValidationModel>>)
-        : {} as NonNullable<ValidationErrors<ValidationModel>>;
+        : ({} as NonNullable<ValidationErrors<ValidationModel>>);
 
       this.setState((prev) => {
         const nextState = {
@@ -215,8 +216,8 @@ export class Form<
 
       return {
         ...nextState,
-        hasErrors: this.calculateHasErrors(nextState),
-        canSubmit: this.calculateCanSubmit(nextState),
+        hasErrors: this.props.disableValidators ? true : this.calculateHasErrors(nextState),
+        canSubmit: this.props.disableValidators ? true : this.calculateCanSubmit(nextState),
       };
     });
 
@@ -228,7 +229,7 @@ export class Form<
         },
       }),
       () => {
-        if (this.props.validateOnChange) {
+        if (this.props.validateOnChange || !this.props.disableValidators) {
           this.validateField(field);
         }
       }
@@ -236,61 +237,68 @@ export class Form<
   }
 
   private submit() {
+    if (this.props.disableValidators) {
+      return this.submitFunction();
+    }
     return this.validate().then(() => {
       if (this.state.canSubmit) {
-        return this.props
-          .onSubmit(this.state.model)
-          .map(
-            AsyncResult.passThrough(() => {
-              // Not sure if this is even needed here!
-              this.setState({
-                errors: {},
-                hasErrors: false,
-              });
-            })
-          )
-          .mapErr(
-            AsyncResult.passThrough((e) => {
-              if (e.type === 'SubmissionValidationErrors') {
-                this.setState((prev) => {
-                  const nextState = {
-                    ...prev,
-                    errors: {
-                      ...prev.errors,
-                      submissionValidationErrors: e.content.fields,
-                    },
-                  };
-
-                  return {
-                    ...nextState,
-                    canSubmit: this.calculateCanSubmit(nextState),
-                    hasChanges: this.calculateHasChanges(nextState),
-                    hasErrors: this.calculateHasErrors(nextState),
-                  };
-                });
-              } else if (e.type === 'SubmissionGenericError') {
-                this.setState((prev) => {
-                  const nextState = {
-                    ...prev,
-                    errors: {
-                      ...prev.errors,
-                      submissionGenericError: e.content || 'Something Went Wrong',
-                    },
-                  };
-
-                  return {
-                    ...nextState,
-                    canSubmit: this.calculateCanSubmit(nextState),
-                    hasChanges: this.calculateHasChanges(nextState),
-                    hasErrors: this.calculateHasErrors(nextState),
-                  };
-                });
-              }
-            })
-          )
-          .resolve();
+        return this.submitFunction();
       }
     });
+  }
+
+  private submitFunction() {
+    this.props
+      .onSubmit(this.state.model)
+      .map(
+        AsyncResult.passThrough(() => {
+          // Not sure if this is even needed here!
+          this.setState({
+            errors: {},
+            hasErrors: false,
+          });
+        })
+      )
+      .mapErr(
+        AsyncResult.passThrough((e) => {
+          if (e.type === 'SubmissionValidationErrors') {
+            this.setState((prev) => {
+              const nextState = {
+                ...prev,
+                errors: {
+                  ...prev.errors,
+                  submissionValidationErrors: e.content.fields,
+                },
+              };
+
+              return {
+                ...nextState,
+                canSubmit: this.calculateCanSubmit(nextState),
+                hasChanges: this.calculateHasChanges(nextState),
+                hasErrors: this.calculateHasErrors(nextState),
+              };
+            });
+          } else if (e.type === 'SubmissionGenericError') {
+            this.setState((prev) => {
+              const nextState = {
+                ...prev,
+                errors: {
+                  ...prev.errors,
+                  submissionGenericError: e.content || 'Something Went Wrong',
+                },
+              };
+
+              return {
+                ...nextState,
+                canSubmit: this.calculateCanSubmit(nextState),
+                hasChanges: this.calculateHasChanges(nextState),
+                hasErrors: this.calculateHasErrors(nextState),
+              };
+            });
+          }
+        })
+      )
+      .resolve();
   }
 
   componentDidUpdate(prevProps: Props<ValidationModel>, prevState: State<ValidationModel>) {

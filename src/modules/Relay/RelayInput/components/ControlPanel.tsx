@@ -1,5 +1,14 @@
-import { ChessGameColor, ChessMove, metadata, Resources } from 'dstnd-io';
+import capitalize from 'capitalize';
+import {
+  ChessGameColor,
+  ChessGameTimeLimit,
+  ChessMove,
+  GameSpecsRecord,
+  metadata,
+  Resources,
+} from 'dstnd-io';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import React, { useState } from 'react';
 import { Swap } from 'react-iconly';
 import { Button, IconButton } from 'src/components/Button';
@@ -13,11 +22,12 @@ import { delay } from 'src/lib/time';
 import { Game } from 'src/modules/Games';
 import { ChessGame } from 'src/modules/Games/Chess';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
+import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGame/util';
 import { CustomTheme } from 'src/theme';
 import { colors } from 'src/theme/colors';
 import { spacers } from 'src/theme/spacers';
 import { AsyncResult } from 'ts-async-results';
-import { Object } from 'window-or-global';
+import { console, Object } from 'window-or-global';
 
 type Props = {
   relay: Resources.AllRecords.Relay.RelayedGameRecord | undefined;
@@ -32,9 +42,18 @@ export type FormModel = {
   whitePlayer: string;
   blackPlayer: string;
   // specs: Game['timeLimit'];
-  specs: string;
+  specs: ChessGameTimeLimit;
   label: string;
 };
+
+const formInitialValues: FormModel = {
+  whitePlayer: 'Ian Nepomniachtchi',
+  blackPlayer: 'Magnus Carlsen',
+  specs: 'rapid120',
+  label: 'WCC 2021 - Game 1',
+};
+
+const defaultTimeLimit: GameSpecsRecord['timeLimit'] = 'rapid120';
 
 export const ControlPanel: React.FC<Props> = ({
   relay,
@@ -47,13 +66,6 @@ export const ControlPanel: React.FC<Props> = ({
   const cls = useStyles();
   const [showNewRelayDialog, setShowNewRelayDialog] = useState(false);
   const [orientation, setOrientation] = useState<ChessGameColor>('white');
-
-  const formInitialValues: FormModel = {
-    whitePlayer: '',
-    blackPlayer: '',
-    specs: '3',
-    label: '',
-  };
 
   return (
     <>
@@ -111,6 +123,8 @@ export const ControlPanel: React.FC<Props> = ({
           <Form<FormModel>
             initialModel={formInitialValues}
             onSubmit={onAddRelay}
+            validateOnChange={false}
+            disableValidators
             render={(p) => (
               <>
                 <TextInput
@@ -131,12 +145,32 @@ export const ControlPanel: React.FC<Props> = ({
                   defaultValue={p.model.blackPlayer}
                   onChange={(e) => p.onChange('blackPlayer', e.currentTarget.value)}
                 />
-                <TextInput
+                <SelectInput
                   label="Time Limit"
-                  placeholder={p.model.specs}
-                  defaultValue={p.model.specs}
-                  onChange={(e) => p.onChange('specs', e.currentTarget.value)}
-                  type="number"
+                  options={Object.keys(metadata.game.chessGameTimeLimitMsMap).map((k) => {
+                    const timeLimit = (chessGameTimeLimitMsMap as any)[k];
+
+                    if (k === 'untimed') {
+                      return {
+                        value: k,
+                        label: capitalize(k),
+                      };
+                    }
+
+                    return {
+                      value: k,
+                      label: `${capitalize(k)} (${formatTimeLimit(timeLimit)})`,
+                    };
+                  })}
+                  value={{
+                    label: `${capitalize(p.model.specs)} (${formatTimeLimit(
+                      metadata.game.chessGameTimeLimitMsMap[p.model.specs]
+                    )})`,
+                    value: p.model.specs,
+                  }}
+                  onSelect={({ value }) => {
+                    p.onChange('specs', value as ChessGameTimeLimit);
+                  }}
                 />
                 <br />
                 <Button
@@ -174,5 +208,9 @@ const useStyles = createUseStyles<CustomTheme>((theme) => ({
   button: {
     background: theme.colors.primaryLight,
     marginBottom: 0,
+  },
+  dialog: {
+    display: 'flex',
+    flexDirection: 'column',
   },
 }));

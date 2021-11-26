@@ -4,7 +4,6 @@ import { createUseStyles } from 'src/lib/jss';
 import { noop, toDictIndexedBy } from 'src/lib/util';
 import { usePeerStateClient } from 'src/providers/PeerProvider';
 import { getCurrentlyStreamingRelayedGames } from '../BroadcastPage/resources';
-import { DesktopRoomLayout } from '../../Room/Layouts';
 import { createRelay } from './resource';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { console, Object } from 'window-or-global';
@@ -16,6 +15,11 @@ import { spacers } from 'src/theme/spacers';
 import { Dialog } from 'src/components/Dialog';
 import { TextInput } from 'src/components/TextInput';
 import { Button } from 'src/components/Button';
+import { Text } from 'src/components/Text';
+import { getTimeInMinutesAndSeconds } from './utils';
+import { TimerAdjustmentDialog } from './components/TimerAdjustmentDialog';
+import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
+import { SocketClient } from 'src/services/socket/SocketClient';
 
 type Props = {};
 
@@ -31,18 +35,21 @@ export const RelayInputPage: React.FC<Props> = (props) => {
   const [selectedRelayId, setSelectedRelayId] = useState<string>();
   const [unsubmittedMove, setUnsubmittedMove] = useState<ChessMove>();
   const [showSubmitWindow, setShowSubmitWindow] = useState(false);
-  const [timerInput, setTimerInput] = useState<string>();
+  const [timerInputMinutes, setTimerInputMinutes] = useState<string>();
+  const [timerInputSeconds, setTimerInputSeconds] = useState<string>();
+  const [timersDialogVisible, setTimersDialogVisible] = useState(false);
 
   const submitMove = () => {
-    if (unsubmittedMove && selectedRelayId && timerInput) {
+    if (unsubmittedMove && selectedRelayId && timerInputMinutes && timerInputSeconds) {
       gameActions.onMoveRelayInput(
         unsubmittedMove,
         relayGames[selectedRelayId].game.id,
         selectedRelayId,
-        Number(timerInput)
+        Number(+timerInputMinutes * 60 + +timerInputSeconds) * 1000
       );
+      setShowSubmitWindow(false);
     }
-  }
+  };
 
   function fetchLiveGames() {
     getCurrentlyStreamingRelayedGames().map((relayGames) => {
@@ -59,7 +66,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
       relaySource: 'proxy',
       type: 'newGame',
       gameSpecs: {
-        timeLimit: 'rapid30',
+        timeLimit: m.specs,
         preferredColor: 'white',
       },
       label: m.label,
@@ -96,6 +103,13 @@ export const RelayInputPage: React.FC<Props> = (props) => {
     });
   };
 
+  const request = useCallback<SocketClient['send']>(
+    (payload) => {
+      peerClient.send(payload);
+    },
+    [peerClient]
+  );
+
   useEffect(() => {
     const unsubscribe = peerClient.onMessage((msg) => {
       if (msg.kind === 'relayGameUpdateList') {
@@ -115,6 +129,19 @@ export const RelayInputPage: React.FC<Props> = (props) => {
       unsubscribe();
     };
   }, [peerClient]);
+
+  const submitNewTimers = ({ white, black }: { white: number; black: number }) => {
+    if (selectedRelayId) {
+      request({
+        kind: 'relayAdjustGameTimersRequest',
+        content: {
+          gameId: relayGames[selectedRelayId].game.id,
+          relayId: selectedRelayId,
+          timers: { white, black },
+        },
+      });
+    }
+  };
 
   // useEffect(() => {
   //   if (peerState.status === 'open') {
@@ -144,18 +171,45 @@ export const RelayInputPage: React.FC<Props> = (props) => {
             onAddRelay={addRelay}
             submitDisabled={!unsubmittedMove}
           />
+          <Button
+            label="Adjust Timers"
+            onClick={() => {
+              if (selectedRelayId) {
+                setTimersDialogVisible(true);
+              }
+            }}
+            type="secondary"
+          />
+          {selectedRelayId && timersDialogVisible &&  (
+            <TimerAdjustmentDialog
+              visible={timersDialogVisible}
+              game={gameRecordToGame(relayGames[selectedRelayId].game)}
+              onClose={() => setTimersDialogVisible(false)}
+              onSubmit={submitNewTimers}
+            />
+          )}
           <Dialog
             visible={showSubmitWindow}
             onClose={() => setShowSubmitWindow(false)}
             content={
               <div className={cls.dialog}>
-                <TextInput
-                  label="Time Left"
-                  type="number"
-                  onChange={(e) => {
-                    setTimerInput(e.currentTarget.value)
-                  }}
-                />
+                <Text>Time Left</Text>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <TextInput
+                    label="Minutes"
+                    type="number"
+                    onChange={(e) => {
+                      setTimerInputMinutes(e.currentTarget.value);
+                    }}
+                  />
+                  <TextInput
+                    label="seconds"
+                    type="number"
+                    onChange={(e) => {
+                      setTimerInputSeconds(e.currentTarget.value);
+                    }}
+                  />
+                </div>
                 <Button
                   type="positive"
                   label="Submit"

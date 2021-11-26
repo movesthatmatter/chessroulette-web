@@ -5,6 +5,7 @@ import { lpad, timeLeftToInterval, timeLeftToTimeUnits } from './util';
 import { GameRecord } from 'dstnd-io';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { CountdownDisplay } from './CountdownDisplay';
+import { console } from 'window-or-global';
 
 type Props = {
   // TODO: this needs a refactoring
@@ -42,6 +43,7 @@ export const Countdown: React.FC<Props> = ({
   );
 
   useEffect(() => {
+    console.log('time left' , timeLeft)
     setTimeLeft(props.timeLeft);
   }, [props.timeLeft]);
 
