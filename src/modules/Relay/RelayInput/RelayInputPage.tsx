@@ -6,14 +6,11 @@ import { usePeerStateClient } from 'src/providers/PeerProvider';
 import { getCurrentlyStreamingRelayedGames } from '../BroadcastPage/resources';
 import { createRelay } from './resource';
 import { useGameActions } from 'src/modules/Games/GameActions';
-import { console, Number, Object } from 'window-or-global';
 import { ControlPanel } from './components/ControlPanel';
 import { RelayInputGamesList } from './components/RelayInputGamesList';
 import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
 import { Page } from 'src/components/Page';
 import { spacers } from 'src/theme/spacers';
-import { Dialog } from 'src/components/Dialog';
-import { TextInput } from 'src/components/TextInput';
 import { Button } from 'src/components/Button';
 import { Text } from 'src/components/Text';
 import { TimerAdjustmentDialog } from './components/TimerAdjustmentDialog';
@@ -23,10 +20,13 @@ import { AsyncOk } from 'ts-async-results';
 import { FormModel, NewRelayDialog } from './components/NewRelayDialog';
 import { Countdown } from 'src/modules/Games/Chess/components/Countdown';
 import { getUserDisplayName } from 'src/modules/User';
-import { timeLeftToInterval, timeLeftToTimeUnits } from 'src/modules/Games/Chess/components/Countdown/util';
+import {
+  timeLeftToInterval,
+} from 'src/modules/Games/Chess/components/Countdown/util';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { useInterval } from 'src/lib/hooks';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { MoveTimesDialog } from './components/MoveTimesDialog';
+import { CustomTheme, softBorderRadius } from 'src/theme';
 
 type Props = {};
 
@@ -42,26 +42,25 @@ export const RelayInputPage: React.FC<Props> = (props) => {
   const [selectedRelayId, setSelectedRelayId] = useState<string>();
   const [unsubmittedMove, setUnsubmittedMove] = useState<ChessMove>();
   const [showSubmitWindow, setShowSubmitWindow] = useState(false);
-  const [timerInputMinutes, setTimerInputMinutes] = useState<string>();
-  const [timerInputSeconds, setTimerInputSeconds] = useState<string>();
   const [timersDialogVisible, setTimersDialogVisible] = useState(false);
   const [showNewRelayDialog, setShowNewRelayDialog] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<number>(0)  
-  const [interval, setInterval] = useState<number>(0)
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [interval, setInterval] = useState<number>(0);
   const [finished, setFinished] = useState(false);
   const [turn, setTurn] = useState<ChessGameColor>('white');
-  
-  const submitMove = () => {
-    if (unsubmittedMove && selectedRelayId && timerInputMinutes && timerInputSeconds) {
+
+  const submitMove = ({ minutes, seconds }: { minutes: string; seconds: string }) => {
+    if (unsubmittedMove && selectedRelayId && minutes && seconds) {
       gameActions.onMoveRelayInput(
         unsubmittedMove,
         relayGames[selectedRelayId].game.id,
         selectedRelayId,
-        Number(+timerInputMinutes * 60 + +timerInputSeconds) * 1000
+        Number(+minutes * 60 + +seconds) * 1000
       );
       setShowSubmitWindow(false);
-      setTurn(otherChessColor(relayGames[selectedRelayId].game.lastMoveBy || 'white'))
+      setTurn(otherChessColor(relayGames[selectedRelayId].game.lastMoveBy || 'white'));
     }
+    return AsyncOk.EMPTY;
   };
 
   function fetchLiveGames() {
@@ -71,10 +70,10 @@ export const RelayInputPage: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    if (selectedRelayId){
-      setTimeLeft( relayGames[selectedRelayId].game.timeLeft[turn])
+    if (selectedRelayId) {
+      setTimeLeft(relayGames[selectedRelayId].game.timeLeft[turn]);
     }
-  },[turn])
+  }, [turn]);
 
   useInterval(
     () => {
@@ -84,12 +83,12 @@ export const RelayInputPage: React.FC<Props> = (props) => {
   );
 
   useEffect(() => {
-    setInterval(timeLeftToInterval(timeLeft))
+    setInterval(timeLeftToInterval(timeLeft));
 
     if (timeLeft <= 0) {
       setFinished(true);
     }
-  },[timeLeft])
+  }, [timeLeft]);
 
   useEffect(() => {
     fetchLiveGames();
@@ -192,40 +191,10 @@ export const RelayInputPage: React.FC<Props> = (props) => {
     return AsyncOk.EMPTY;
   };
 
-  function getMinutesAndSecondsFromTimeLeft(timeMS: number): {minutes:number, seconds: number} {
-    const times = timeLeftToTimeUnits(timeMS);
-    if (times.hours > 0) {
-      return  {
-        minutes: times.hours * 60 + times.minutes,
-        seconds: times.seconds
-      }
-    }
-
-    return {
-      minutes : times.minutes,
-      seconds: times.seconds
-    }
-  }
-
-  // useEffect(() => {
-  //   if (peerState.status === 'open') {
-  //     const unsubscribers = [
-  //       peerState.client.onMessage((payload) => {
-  //         if (payload.kind === 'relayGameUpdateList') {
-  //           fetchLiveGames();
-  //         }
-  //       }),
-  //     ];
-
-  //     return () => {
-  //       unsubscribers.forEach((unsubscribe) => unsubscribe());
-  //     };
-  //   }
-  // }, [peerState.status]);
-
   return (
     <Page stretched name="Relay Input" hideNav>
       <div className={cls.container}>
+        <div className={cls.hero}>
         <div className={cls.main}>
           {selectedRelayId && (
             <div style={{ marginBottom: spacers.default, display: 'flex' }}>
@@ -235,8 +204,8 @@ export const RelayInputPage: React.FC<Props> = (props) => {
                 onFinished={noop}
                 gameTimeClass={relayGames[selectedRelayId].game.timeLimit}
               />
-              <div style={{width: spacers.largest}}/>
-              <Text size='subtitle1'>
+              <div style={{ width: spacers.largest }} />
+              <Text size="subtitle1">
                 {getUserDisplayName(
                   getPlayerByColor('black', relayGames[selectedRelayId].game.players).user
                 )}
@@ -248,10 +217,10 @@ export const RelayInputPage: React.FC<Props> = (props) => {
             containerWidth={500}
             onAddMove={(m) => setUnsubmittedMove(m)}
             onSubmit={() => {
-              if (selectedRelayId && !relayGames[selectedRelayId].game.lastMoveBy){
-                setTimeLeft(relayGames[selectedRelayId].game.timeLeft.white)
+              if (selectedRelayId && !relayGames[selectedRelayId].game.lastMoveBy) {
+                setTimeLeft(relayGames[selectedRelayId].game.timeLeft.white);
               }
-              setShowSubmitWindow(true)
+              setShowSubmitWindow(true);
             }}
             submitDisabled={!unsubmittedMove}
           />
@@ -263,16 +232,16 @@ export const RelayInputPage: React.FC<Props> = (props) => {
                 onFinished={noop}
                 gameTimeClass={relayGames[selectedRelayId].game.timeLimit}
               />
-              <div style={{width: spacers.largest}}/>
-              <Text size='subtitle1'>
+              <div style={{ width: spacers.largest }} />
+              <Text size="subtitle1">
                 {getUserDisplayName(
                   getPlayerByColor('white', relayGames[selectedRelayId].game.players).user
                 )}
               </Text>
             </div>
           )}
-          <br />
-          <br />
+          </div>
+          <div className={cls.bottom}>
           <Button
             label="Adjust Timers"
             onClick={() => {
@@ -283,7 +252,19 @@ export const RelayInputPage: React.FC<Props> = (props) => {
             disabled={!selectedRelayId}
             type="secondary"
           />
-          {selectedRelayId && timersDialogVisible && (
+          <Button
+            label="Create Another Relay"
+            onClick={() => setShowNewRelayDialog(true)}
+            type="positive"
+          />
+        </div>
+        </div>
+        <RelayInputGamesList
+          games={Object.values(relayGames)}
+          onSelectRelay={(relay) => setSelectedRelayId(relay.id)}
+        />
+      </div>
+      {selectedRelayId && timersDialogVisible && (
             <TimerAdjustmentDialog
               visible={timersDialogVisible}
               game={gameRecordToGame(relayGames[selectedRelayId].game)}
@@ -291,11 +272,6 @@ export const RelayInputPage: React.FC<Props> = (props) => {
               onSubmit={submitNewTimers}
             />
           )}
-          <Button
-            label="Create Another Relay"
-            onClick={() => setShowNewRelayDialog(true)}
-            type="positive"
-          />
           {showNewRelayDialog && (
             <NewRelayDialog
               visible={showNewRelayDialog}
@@ -303,52 +279,19 @@ export const RelayInputPage: React.FC<Props> = (props) => {
               onClose={() => setShowNewRelayDialog(false)}
             />
           )}
-          <Dialog
-            visible={showSubmitWindow}
-            onClose={() => setShowSubmitWindow(false)}
-            content={
-              <div className={cls.dialog}>
-                <Text>Time Left</Text>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <TextInput
-                    label="Minutes"
-                    type="number"
-                    defaultValue={getMinutesAndSecondsFromTimeLeft(timeLeft).minutes}
-                    onChange={(e) => {
-                      setTimerInputMinutes(e.currentTarget.value);
-                    }}
-                  />
-                  <div style={{height:spacers.default}}/>
-                  <TextInput
-                    label="seconds"
-                    type="number"
-                    defaultValue={getMinutesAndSecondsFromTimeLeft(timeLeft).seconds}
-                    onChange={(e) => {
-                      setTimerInputSeconds(e.currentTarget.value);
-                    }}
-                  />
-                </div>
-                <Button
-                  type="positive"
-                  label="Submit"
-                  onClick={() => {
-                    submitMove();
-                  }}
-                />
-              </div>
-            }
-          />
-        </div>
-        <RelayInputGamesList
-          games={Object.values(relayGames)}
-          onSelectRelay={(relay) => setSelectedRelayId(relay.id)}
-        />
-      </div>
+          {showSubmitWindow && (
+            <MoveTimesDialog
+              timeLeft={timeLeft}
+              visible={showSubmitWindow}
+              onClose={() => setShowSubmitWindow(false)}
+              onSubmit={submitMove}
+            />
+          )}
     </Page>
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
@@ -368,4 +311,19 @@ const useStyles = createUseStyles({
     flex: 1,
     marginRight: spacers.largest,
   },
-});
+  hero: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  bottom:{
+    backgroundColor: theme.depthBackground.backgroundColor,
+    width: '70%',
+    ...softBorderRadius,
+    display: 'flex',
+    flexDirection: 'column',
+    paddingTop: '16px',
+    paddingLeft: spacers.default,
+    borderLeft: `2px solid ${theme.colors.primary}`,
+    marginTop: spacers.large
+  }
+}));

@@ -5,9 +5,9 @@ import { Form } from 'src/components/Form';
 import { Text } from 'src/components/Text';
 import { TextInput } from 'src/components/TextInput';
 import { createUseStyles } from 'src/lib/jss';
+import { delay } from 'src/lib/time';
 import { Game } from 'src/modules/Games';
 import { AsyncResult } from 'ts-async-results';
-import { console } from 'window-or-global';
 import { getTimeInMinutesAndSeconds } from '../utils';
 
 type FormModel = {
@@ -88,6 +88,10 @@ export const TimerAdjustmentDialog: React.FC<Props> = ({ game, onClose, onSubmit
                 label="Submit"
                 onClick={() => {
                   p.submit();
+                  (async () => {
+                    await delay(500);
+                    onClose();
+                  })();
                 }}
               />
             </div>
