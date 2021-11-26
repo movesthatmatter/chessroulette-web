@@ -1,9 +1,8 @@
 import React from 'react';
 import { createUseStyles, CSSProperties, NestedCSSElement } from 'src/lib/jss';
 import { GamesArchiveProvider } from 'src/modules/GamesArchive';
-import { CompactArchivedGame } from 'src/modules/GamesArchive/components/ArchivedGame/CompactArchivedGame';
 import { spacers } from 'src/theme/spacers';
-import { CustomTheme, floatingShadow, textShadowDarkMode, softBorderRadius } from 'src/theme';
+import { floatingShadow, softBorderRadius } from 'src/theme';
 import { GameRecord } from 'dstnd-io';
 import { Text } from 'src/components/Text';
 import { renderMatch } from 'src/lib/renderMatch';
@@ -12,6 +11,7 @@ import { FloatingBox } from 'src/components/FloatingBox';
 import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton } from 'src/services/Authentication/widgets';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { CompactGameList } from 'src/modules/Games/Chess/components/GamesList/components/CompactGameList';
 
 type Props = {
   onSelect: (g: GameRecord) => void;
@@ -39,27 +39,14 @@ export const MyGamesArchive: React.FC<Props> = (props) => {
       pageSize={25}
       render={({ isLoading, games, isEmpty }) =>
         renderMatch(
-          () =>
-            games.map((game) => (
-              <div key={game.id} className={cls.row}>
-                <CompactArchivedGame
-                  game={game}
-                  myUserId={auth.user.id}
-                  hasClipboardCopyButton={false}
-                />
-                <div className={cls.hovered}>
-                  <div className={cls.hoveredBkg} />
-                  <div className={cls.hoveredContent} onClick={() => props.onSelect(game)}>
-                    <Text
-                      size="subtitle1"
-                      style={theme.name === 'darkDefault' ? { ...textShadowDarkMode } : {}}
-                    >
-                      Analyze
-                    </Text>
-                  </div>
-                </div>
-              </div>
-            )),
+          () => (
+            <CompactGameList
+              games={games}
+              myUserId={auth.user.id}
+              onSelect={props.onSelect}
+              selectText="Analyze"
+            />
+          ),
           [
             isLoading,
             () => (

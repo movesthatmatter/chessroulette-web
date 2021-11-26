@@ -5,6 +5,7 @@ import {
   ChessMove,
   GameResignationRequestPayload,
   GameDrawOfferingRequestPayload,
+  GameMoveRelayInputRequestPayload,
   GameDrawAcceptRequestPayload,
   GameDrawDenyRequestPayload,
   GameRematchOfferingRequestPayload,
@@ -50,6 +51,15 @@ export const gameActionPayloads = {
     kind: 'gameMoveRequest',
     content: move,
   }),
+  moveRelayInput: (move:ChessMove, gameId: string, relayId: string, timeLeftMS: number): GameMoveRelayInputRequestPayload => ({
+    kind: 'gameMoveRelayInputRequest',
+    content: {
+      move,
+      gameId,
+      relayId,
+      timeLeftMS
+    }
+  }), 
   offerDraw: (): GameDrawOfferingRequestPayload => ({
     kind: 'gameDrawOfferingRequest',
     content: undefined,

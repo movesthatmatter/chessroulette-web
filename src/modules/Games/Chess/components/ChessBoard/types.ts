@@ -2,7 +2,7 @@ import { Move } from 'chess.js';
 import { ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
 import { ChessgroundProps } from 'react-chessground';
 
-export type ChessBoardType = 'free' | 'play' | 'analysis';
+export type ChessBoardType = 'free' | 'play' | 'analysis' | 'relay';
 
 export type ChessBoardConfig = {
   showDests?: boolean;

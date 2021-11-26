@@ -1,4 +1,6 @@
+import { ChessGameStateFen } from 'dstnd-io';
 import React, { useCallback, useMemo } from 'react';
+import { http } from 'src/lib/http';
 import {
   ChessGameHistoryProvider,
   ChessGameHistoryProviderProps,
@@ -28,15 +30,26 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
       }
     };
 
-    const onImportGame: AnalysisActivityProps['onImportedGame'] = (game) => {
+    const onImportArchivedGame: AnalysisActivityProps['onImportedArchivedGame'] = (game) => {
       request({
-        kind: 'analysisImportGameRequest',
+        kind: 'analysisImportArchivedGameRequest',
         content: {
           id: props.activity.analysisId,
           gameId: game.id,
         },
       });
     };
+
+    const onImportRelayedGame: AnalysisActivityProps['onImportedRelayedGame'] = (relayedGame) => {
+      request({
+        kind: 'analysisImportRelayedGameRequest',
+        content: {
+          id: props.activity.analysisId,
+          relayedGameId: relayedGame.id,
+        },
+      });
+    };
+
 
     const onImportPgn: AnalysisActivityProps['onImportedPgn'] = (pgn) => {
       request({
@@ -70,7 +83,8 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
     };
 
     return {
-      onImportGame,
+      onImportRelayedGame,
+      onImportArchivedGame,
       onImportPgn,
       onRefocused,
       onMoved,
@@ -94,7 +108,8 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
             participants={props.activity.participants}
             analysis={props.activity.analysis}
             onImportedPgn={actions.onImportPgn}
-            onImportedGame={actions.onImportGame}
+            onImportedArchivedGame={actions.onImportArchivedGame}
+            onImportedRelayedGame={actions.onImportRelayedGame}
           />
         )}
       </ChessGameHistoryProvider>

@@ -92,7 +92,7 @@ export const createRoom = (req: CreateRoomRequest) =>
   new AsyncResultWrapper<CreateRoomResponse, ApiError>(async () => {
     try {
       const { data } = await http.post('api/rooms', req);
-
+      
       return io.toResult(createRoomResponse.decode(data)).mapErr(() => 'BadResponse' as const);
     } catch (e) {
       return new Err('BadRequest');

@@ -9,6 +9,7 @@ export type RoomProviderContextState = undefined | {
   room: JoinedRoom;
   roomActions: {
     switchActivity: (p: RoomActivityCreationRecord) => void;
+    goLive: () => void;
   },
 
   // This could be part of a BoardSettings when we have more than one configurable setting
