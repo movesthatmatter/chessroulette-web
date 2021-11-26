@@ -10,6 +10,8 @@
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@react-hook/window-size": "^2.0.5",
     "@sentry/browser": "^5.15.5",
+    "@sentry/react": "^6.15.0",
+    "@sentry/tracing": "^6.15.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/react-hooks": "^5.1.2",
