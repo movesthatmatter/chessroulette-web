@@ -58,7 +58,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
 
       const first4InOrder = items
         .slice(0, 4)
-        .sort((a, b) => b.stream.viewerCount - a.stream.viewerCount);
+        // .sort((a, b) => b.stream.viewerCount - a.stream.viewerCount);
 
       setStreamers({
         itemsById: toDictIndexedBy(first4InOrder, ({ id }) => id),

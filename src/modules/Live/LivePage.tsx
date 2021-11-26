@@ -40,10 +40,6 @@ export const LivePage: React.FC<Props> = () => {
   >();
 
   useEffect(() => {
-    console.log('streamers', streamers);
-  }, [streamers]);
-
-  useEffect(() => {
     getCollaboratorStreamers().map((s) => {
       setCollaboratorStreamers(s.items);
     });
@@ -57,7 +53,7 @@ export const LivePage: React.FC<Props> = () => {
 
       const first4InOrder = items
         .slice(0, 5)
-        .sort((a, b) => b.stream.viewerCount - a.stream.viewerCount);
+        // .sort((a, b) => b.stream.viewerCount - a.stream.viewerCount);
 
       setStreamers({
         itemsById: toDictIndexedBy(first4InOrder, ({ id }) => id),
