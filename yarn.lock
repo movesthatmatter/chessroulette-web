@@ -6820,7 +6820,7 @@ dotenv@^6.2.0:
 
 "dstnd-io@https://github.com/dstnd/dstnd-io.git#integrate-relay-analysis-engine":
   version "0.2.1"
-  resolved "https://github.com/dstnd/dstnd-io.git#3492b208e342af10b560b83c3b83343a4f818a64"
+  resolved "https://github.com/dstnd/dstnd-io.git#57fbc64d435023f3be53cad679a83430e79eab4e"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"

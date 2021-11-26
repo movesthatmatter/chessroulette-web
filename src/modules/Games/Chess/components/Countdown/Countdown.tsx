@@ -61,11 +61,10 @@ export const Countdown: React.FC<Props> = ({
 
   const { major, minor, canShowMilliseconds } = useMemo(() => {
     const times = timeLeftToTimeUnits(timeLeft);
-
     if (times.hours > 0) {
       return {
         major: `${times.hours}h`,
-        minor: `${lpad(times.hours)}`,
+        minor: `${lpad(times.minutes)}`,
         canShowMilliseconds: false,
       };
     }

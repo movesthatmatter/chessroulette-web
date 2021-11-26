@@ -6,7 +6,6 @@ const { resource: createRelayResource } = Resources.Collections.Relay.CreateRela
 
 export const createRelay = (req: RequestOf<typeof createRelayResource>) => {
   return createRelayResource.request(req, (body) => {
-    console.log('body', body);
     return http.post('api/relays', body)
   });
 };

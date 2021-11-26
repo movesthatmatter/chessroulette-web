@@ -51,7 +51,8 @@ import {
   AnalysisImportArchivedGameRequestPayload,
   AnalysisImportRelayedGameRequestPayload,
   SwitchRoomActivityRequestPayload, 
-  SwitchGameToRelayAndGoLivePayload
+  SwitchGameToRelayAndGoLivePayload,
+  RelayAdjustGameTimersRequestPayload
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
@@ -109,6 +110,7 @@ type SendableMessagesMap = {
   gameOfferingCancelRequestPayload: GameOfferingCancelRequestPayload;
   gameStatusCheckRequestPayload: GameStatusCheckRequestPayload;
   importRelayedGameRequestPayload: ImportRelayedGameRequestPayload;
+  relayAdjustTimersRequestPayload: RelayAdjustGameTimersRequestPayload;
   
   gameChallengeOfferingRequestPayload: GameChallengeOfferingRequestPayload;
   gameChallengeAcceptRequestPayload: GameChallengeAcceptRequestPayload;

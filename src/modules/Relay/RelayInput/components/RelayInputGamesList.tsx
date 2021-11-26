@@ -4,7 +4,9 @@ import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { noop } from 'src/lib/util';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
-import { effects } from 'src/theme';
+import { getPlayerByColor } from 'src/modules/Games/Chess/lib';
+import { getUserDisplayName } from 'src/modules/User';
+import { CustomTheme, effects, fonts, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 
 type Props = {
@@ -16,15 +18,15 @@ export const RelayInputGamesList: React.FC<Props> = ({ games, onSelectRelay }) =
   const cls = useStyles();
 
   return (
-    <div>
-      <Text>Available Relays : </Text>
+    <div className={cls.container}>
+      <Text size="subtitle1">Available Relays : </Text>
       {games.map((relayGame) => (
-        <div
-          className={cls.gameContainer}
-          onClick={() => onSelectRelay(relayGame)}
-        >
-          <div className={cls.playerInfo}>{relayGame.game.players[0].user.name}</div>
+        <div className={cls.gameContainer} onClick={() => onSelectRelay(relayGame)}>
+          <div className={cls.playerInfo}>
+            {getUserDisplayName(getPlayerByColor('black', relayGame.game.players).user)}
+          </div>
           <ChessBoard
+            coordinates={false}
             type="free"
             playable={false}
             pgn={relayGame.game.pgn}
@@ -32,24 +34,30 @@ export const RelayInputGamesList: React.FC<Props> = ({ games, onSelectRelay }) =
             playableColor={'white'}
             onMove={noop}
             id={relayGame.game.id}
-            size={200}
+            size={100}
           />
-          <div className={cls.playerInfo}>{relayGame.game.players[1].user.name}</div>
+          <div className={cls.playerInfo}>
+            {getUserDisplayName(getPlayerByColor('white', relayGame.game.players).user)}
+          </div>
         </div>
       ))}
     </div>
   );
 };
 
-const useStyles = createUseStyles({
-  container: {},
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
+  container: {
+    backgroundColor: theme.depthBackground.backgroundColor,
+    padding: '5px',
+    ...softBorderRadius,
+  },
   gameContainer: {
     display: 'flex',
     flexDirection: 'column',
     padding: spacers.small,
     ...effects.softBorderRadius,
     '&:hover': {
-      // backgroundColor: them.colors.primary,
+      backgroundColor: theme.colors.secondaryLight,
       cursor: 'pointer',
     },
   },
@@ -59,5 +67,6 @@ const useStyles = createUseStyles({
     alignContent: 'left',
     marginTop: '5px',
     marginBottom: '5px',
+    ...fonts.small1
   },
-});
+}));

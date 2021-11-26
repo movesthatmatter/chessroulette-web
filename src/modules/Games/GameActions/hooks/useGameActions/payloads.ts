@@ -52,7 +52,7 @@ export const gameActionPayloads = {
     content: move,
   }),
   moveRelayInput: (move:ChessMove, gameId: string, relayId: string, timeLeftMS: number): GameMoveRelayInputRequestPayload => ({
-    kind: 'gameModeRelayInputRequest',
+    kind: 'gameMoveRelayInputRequest',
     content: {
       move,
       gameId,

@@ -15,8 +15,6 @@ import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { noop } from 'src/lib/util';
 import { RelayLiveGameList } from '../components/RelayLiveGameList';
 import { GameStateWidget } from 'src/modules/Games/Chess/components/GameStateWidget/GameStateWidget';
-import { PgnBox } from '../../AnalysisActivity/components/PgnBox';
-import { SimplePGN } from 'dstnd-io';
 import { useEngineAnalysis } from 'src/modules/Games/Chess/components/EngineAnalysis';
 import { DrawShape } from 'chessground/draw';
 import { EngineLines } from 'src/modules/Games/Chess/components/EngineAnalysis/EngineLines';
@@ -24,6 +22,10 @@ import {
   EngineAnalysisRecord,
   EngineDepthLine,
 } from 'src/modules/Games/Chess/components/EngineAnalysis/types';
+import { ChessGameColor, SimplePGN } from 'dstnd-io';
+import { IconButton } from 'src/components/Button';
+import { colors } from 'src/theme/colors';
+import { Swap } from 'react-iconly';
 
 type Props = {
   activity: RoomRelayActivity;
@@ -33,7 +35,7 @@ type Props = {
 
 export const RelayActivity: React.FC<Props> = ({ activity, deviceSize, onSelectedRelay }) => {
   const cls = useStyles();
-
+  const [orientation, setOrientation] = useState<ChessGameColor>('white');
   const { game } = activity;
 
   const engineEvaluation = useEngineAnalysis(game);
@@ -106,7 +108,7 @@ export const RelayActivity: React.FC<Props> = ({ activity, deviceSize, onSelecte
                       // This is needed for the countdown to reset the interval !!
                       key={game.id}
                       game={game}
-                      homeColor={'white'}
+                      homeColor={orientation}
                       onTimerFinished={noop}
                     />
                   </div>
@@ -140,7 +142,7 @@ export const RelayActivity: React.FC<Props> = ({ activity, deviceSize, onSelecte
                       key={game.id}
                       game={game}
                       size={boardSize}
-                      orientation={'white'}
+                      orientation={orientation}
                       playable={false}
                       canInteract={false}
                       displayable={c.displayed}
@@ -153,7 +155,20 @@ export const RelayActivity: React.FC<Props> = ({ activity, deviceSize, onSelecte
                         autoShapes: drawingShapes || [],
                       }}
                     />
-                    <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' , marginTop: spacers.small}}>
+                      <IconButton
+                        type="primary"
+                        size="default"
+                        title="Flip Board"
+                        iconPrimaryColor={colors.universal.white}
+                        className={cls.button}
+                        iconType="iconly"
+                        icon={Swap}
+                        onSubmit={() =>
+                          setOrientation((prev) => (prev === 'white' ? 'black' : 'white'))
+                        }
+                      />
+                    </div>
                   </>
                 ) : (
                   <ChessBoard
@@ -256,5 +271,9 @@ const useStyles = createUseStyles<CustomTheme>((theme) => ({
   },
   pgnBox: {
     overflowY: 'hidden',
+  },
+  button: {
+    background: theme.colors.primaryLight,
+    marginBottom: 0,
   },
 }));
