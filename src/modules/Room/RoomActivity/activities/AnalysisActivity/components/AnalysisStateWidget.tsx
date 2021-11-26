@@ -18,6 +18,8 @@ import { gameRecordToGame, getPlayerStats } from 'src/modules/Games/Chess/lib';
 import { chessHistoryToSimplePgn, otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
+import { Text } from 'src/components/Text';
+import { MiniClipboardCopyButton } from 'src/components/ClipboardCopy';
 
 export type AnalysisStateWidgetProps = {
   displayedIndex: ChessHistoryIndex;
@@ -132,8 +134,23 @@ export const AnalysisStateWidget: React.FC<AnalysisStateWidgetProps> = React.mem
           </div>
         )}
         <div className={cx(boxClassName, boxContainerClassName)}>
-          <FloatingBox className={historyBoxContentClassName}>
-            <ChessGameHistoryProvided />
+          <FloatingBox className={cx(historyBoxContentClassName, cls.historyFloatingBox)}>
+            <div className={cls.extra}>
+              <ChessGameHistoryProvided />
+            </div>
+
+            <div style={{ display: 'flex', padding: spacers.small, flex: 1, height: '16px' }}>
+              <div style={{ flex: 1 }} />
+              <div style={{ display: 'flex' }}>
+                <Text size="small2">PGN</Text>
+                <MiniClipboardCopyButton value={'pgn'} className={cls.icon} />
+              </div>
+              <div style={{ width: spacers.small }} />
+              <div style={{ display: 'flex' }}>
+                <Text size="small2">FEN</Text>
+                <MiniClipboardCopyButton value={'fen'} className={cls.icon} />
+              </div>
+            </div>
           </FloatingBox>
         </div>
         {playersGameInfo?.players[homeColor] && (
@@ -153,10 +170,20 @@ export const AnalysisStateWidget: React.FC<AnalysisStateWidgetProps> = React.mem
 );
 
 const useStyles = createUseStyles({
+  extra: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: 'calc(100% - 16px)',
+  },
+
   playerInfoTop: {
     marginBottom: spacers.small,
   },
   playerInfoBottom: {
     marginTop: spacers.small,
   },
+  icon: {
+    marginLeft: spacers.get(0.25),
+  },
+  historyFloatingBox: {},
 });

@@ -3,6 +3,7 @@ import { RoomMember } from '../types';
 import { RoomAnalysisActivity } from './activities/AnalysisActivity/types';
 import { RoomNoActivity } from './activities/NoActivity/types';
 import { RoomPlayActivity } from './activities/PlayActivity';
+import { RoomRelayActivity } from './activities/RelayActivity/types';
 
 type RoomActivityBasicParticipantInfo = {
   userId: RoomMember['userId'];
@@ -26,4 +27,4 @@ export type RoomActivityParticipants = {
   [userId: string]: RoomActivityParticipant;
 };
 
-export type RoomActivity = RoomNoActivity | RoomPlayActivity | RoomAnalysisActivity;
+export type RoomActivity = RoomNoActivity | RoomPlayActivity | RoomAnalysisActivity | RoomRelayActivity;

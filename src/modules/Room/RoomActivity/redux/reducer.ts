@@ -9,6 +9,7 @@ import {
   switchRoomActivityAction,
   updateCurrentAnalysisAction,
   updateJoinedGameAction,
+  updateRelayGameAction,
   updateRoomActivityAction,
 } from './actions';
 import { BaseRoomActivity } from './types';
@@ -54,9 +55,19 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
     ) {
       return payload.room.activity;
     }
+    
+    if (
+      //and the activity is "Relay"
+      payload.room.activity.type === 'relay' && 
+      prev.type === 'relay' && 
+      payload.room.activity.relayId !== prev.relayId
+    ) {
+      return payload.room.activity;
+    }
 
     // Otherwise no need to create updates!
     return prev;
+
   }),
 
   // TODO: This should probably not be here. Need to think of a way
@@ -91,6 +102,17 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       analysis: nextAnalysis,
     };
   }),
+
+  handleAction(updateRelayGameAction, (prev, { payload: nextGame}) => {
+    if (prev.type !== 'relay') {
+      return prev;
+    }
+
+    return {
+      ...prev,
+      game: nextGame
+    }
+  })
 ]);
 
 export const stateSliceByKey = {

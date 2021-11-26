@@ -1,4 +1,5 @@
 import {
+  AnalysisRecord,
   ChessGameColor,
   ChessGameStateFen,
   ChessHistory,
@@ -6,22 +7,20 @@ import {
   SimplePGN,
 } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
-import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
-import { FenBox } from './FenBox';
-import { PgnBox } from './PgnBox';
-import { Button } from 'src/components/Button';
 import { ImportPanel, ImportPanelProps } from './ImportPanel';
-import { ConfirmButton } from 'src/components/Button/ConfirmButton';
-import { useColorTheme } from 'src/theme/hooks/useColorTheme';
-import { AnalysisStateWidget, AnalysisStateWidgetProps } from './AnalysisStateWidget';
+import { AnalysisStateWidgetProps } from './AnalysisStateWidget';
+import { HistoryPanel } from './HistoryPanel';
 
 export type AnalysisPanelProps = {
+  analysisId: AnalysisRecord['id'];
   onImportedPgn: ImportPanelProps['onImportedPgn'];
-  onImportedGame: ImportPanelProps['onImportedGame'];
+  onImportedArchivedGame: ImportPanelProps['onImportedArchivedGame'];
+  onImportedRelayedGame: ImportPanelProps['onImportedRelayedGame'];
   homeColor: ChessGameColor;
   gameAndPlayers?: AnalysisStateWidgetProps['gameAndPlayers'];
+  useEngine?: boolean;
 } & (
   | {
       history?: undefined;
@@ -44,7 +43,8 @@ const getHasLoadedAnalysis = (props: Pick<AnalysisPanelProps, 'history' | 'displ
 export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
   homeColor,
   onImportedPgn,
-  onImportedGame,
+  onImportedArchivedGame,
+  onImportedRelayedGame,
   gameAndPlayers,
   ...props
 }) => {
@@ -59,64 +59,6 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
     setShowImportPanel(!nextHasLoadedAnalysis);
   }, [props.history]);
 
-  const historyPanel = (
-    <>
-      {props.history && (
-        <>
-          <AnalysisStateWidget
-            displayedIndex={props.displayed.index}
-            homeColor={homeColor}
-            gameAndPlayers={gameAndPlayers}
-            boxClassName={cls.containerWithHorizontalPadding}
-            boxContainerClassName={cls.historyContainer}
-            historyBoxContentClassName={cls.historyBoxContent}
-          />
-          <FenBox fen={props.displayed.fen} containerClassName={cx(cls.box, cls.fenBox)} />
-          <PgnBox
-            pgn={props.displayed.pgn}
-            containerClassName={cx(cls.box, cls.pgnBoxContainer)}
-            contentClassName={cls.pgnBox}
-          />
-          <div className={cls.box}>
-            <ConfirmButton
-              buttonProps={{
-                label: 'Clear',
-                type: 'secondary',
-                full: true,
-                className: cls.button,
-              }}
-              dialogProps={{
-                title: 'Clear Analysis',
-                content: 'Are you sure you want to clear the analysis?',
-                buttonsStacked: false,
-              }}
-              cancelButtonProps={{
-                type: 'secondary',
-              }}
-              confirmButtonProps={{
-                type: 'negative',
-                label: 'Yes',
-              }}
-              onConfirmed={() => {
-                // Reset the Analysis
-                onImportedPgn('' as SimplePGN);
-                setHasLoadedAnalysis(true);
-              }}
-            />
-            <div style={{ marginBottom: spacers.small }} />
-            <Button
-              label="Import"
-              type="primary"
-              full
-              onClick={() => setShowImportPanel(true)}
-              className={cls.button}
-            />
-          </div>
-        </>
-      )}
-    </>
-  );
-
   return (
     <div className={cls.container}>
       <div
@@ -129,7 +71,8 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
       >
         <ImportPanel
           onImportedPgn={onImportedPgn}
-          onImportedGame={onImportedGame}
+          onImportedArchivedGame={onImportedArchivedGame}
+          onImportedRelayedGame={onImportedRelayedGame}
           hasBackButton={hasLoadedAnalysis}
           onBackButtonClicked={() => setShowImportPanel(false)}
         />
@@ -142,7 +85,23 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
           height: '100%',
         }}
       >
-        {historyPanel}
+        {props.history && (
+          <HistoryPanel
+            analysisId={props.analysisId}
+            homeColor={homeColor}
+            displayed={props.displayed}
+            gameAndPlayers={gameAndPlayers}
+            useEngine={props.useEngine}
+            onClearButtonPress={() => {
+              // Reset the Analysis
+              onImportedPgn('' as SimplePGN);
+              setHasLoadedAnalysis(true);
+            }}
+            onImportButtonPress={() => {
+              setShowImportPanel(true);
+            }}
+          />
+        )}
       </div>
     </div>
   );
@@ -159,67 +118,5 @@ const useStyles = createUseStyles({
     height: '100%',
     marginLeft: `-${FLOATING_SHADOW_HORIZONTAL_OFFSET}`,
     marginBottom: `-${FLOATING_SHADOW_BOTTOM_OFFSET}`,
-  },
-  containerWithHorizontalPadding: {
-    paddingLeft: FLOATING_SHADOW_HORIZONTAL_OFFSET,
-    paddingRight: FLOATING_SHADOW_HORIZONTAL_OFFSET,
-  },
-  box: {
-    paddingLeft: FLOATING_SHADOW_HORIZONTAL_OFFSET,
-    paddingRight: FLOATING_SHADOW_HORIZONTAL_OFFSET,
-    paddingBottom: FLOATING_SHADOW_BOTTOM_OFFSET,
-    marginBottom: `-${FLOATING_SHADOW_BOTTOM_OFFSET}`,
-
-    paddingTop: spacers.default,
-
-    '&:first-child': {
-      paddingTop: 0,
-    },
-
-    '&:last-child': {
-      marginBottom: 0,
-    },
-  },
-  historyContainer: {
-    overflowY: 'hidden',
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  historyBoxContent: {
-    overflowY: 'hidden',
-    flex: 1,
-  },
-  gamesArchiveContainer: {
-    overflowY: 'hidden',
-  },
-  gamesArchive: {
-    overflowY: 'hidden',
-  },
-  fenBox: {
-    flex: 0,
-  },
-  pgnBoxContainer: {
-    maxHeight: '20%',
-    overflowY: 'hidden',
-  },
-  pgnBox: {
-    overflowY: 'hidden',
-  },
-  pgnInputBox: {
-    flex: 1,
-  },
-  scroller: {
-    display: 'flex',
-    flex: 1,
-    overflowY: 'scroll',
-    scrollBehavior: 'smooth',
-    width: '100%',
-    height: '100%',
-  },
-  button: {
-    '&:last-child': {
-      marginBottom: 0,
-    },
   },
 });
