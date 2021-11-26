@@ -25,7 +25,7 @@ export type ChessBoardProps = Omit<StyledChessBoardProps, 'onMove' | 'fen'> & {
   };
   type: ChessBoardType;
   config?: ChessBoardConfig;
-  playableColor: ChessGameColor;
+  playableColor?: ChessGameColor;
   playable?: boolean;
   orientation?: ChessGameColor;
   canInteract?: boolean;
@@ -164,6 +164,8 @@ export class ChessBoard extends React.PureComponent<ChessBoardProps, State> {
   }
 
   private onMove(nextMove: ChessMove) {
+    console.log('on move', nextMove);
+
     if (!this.props.canInteract) {
       return;
     }
@@ -171,6 +173,8 @@ export class ChessBoard extends React.PureComponent<ChessBoardProps, State> {
     this.setState({
       pendingPromotionalMove: undefined,
     });
+    
+    console.log('on move can', nextMove);
 
     // If the move is a promotional move:
     //  - save a temporary chess state
@@ -245,6 +249,7 @@ export class ChessBoard extends React.PureComponent<ChessBoardProps, State> {
       orientation,
       playableColor,
       canInteract = false,
+      viewOnly,
       ...boardProps
     } = this.props;
 
@@ -257,7 +262,7 @@ export class ChessBoard extends React.PureComponent<ChessBoardProps, State> {
         {...boardProps}
         disableContextMenu
         preMoveEnabled={this.props.canInteract && this.state.current.isPreMovable}
-        viewOnly={false}
+        viewOnly={viewOnly}
         fen={chessState.displayable.fen}
         lastMove={chessState.displayable.lastMoveFromTo}
         turnColor={chessState.turn}

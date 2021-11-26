@@ -5201,6 +5201,11 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30000989, can
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001204.tgz"
   integrity sha512-JUdjWpcxfJ9IPamy2f5JaRDCaqJOxDzOSKtbdx4rH9VivMd1vIzoPumsJa9LoMIi4Fx2BV2KZOxWhNkBjaYivQ==
 
+caniuse-lite@^1.0.30001282:
+  version "1.0.30001282"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001282.tgz#38c781ee0a90ccfe1fe7fefd00e43f5ffdcb96fd"
+  integrity sha512-YhF/hG6nqBEllymSIjLtR2iWDDnChvhnVJqp+vloyt2tEHFG1yBR+ac2B/rOw0qOK0m0lEXU2dv4E/sMk5P9Kg==
+
 capitalize@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/capitalize/-/capitalize-2.0.3.tgz#ccfeb1046d2a054eb30f34af907a70c3e90f3b73"
@@ -6888,9 +6893,9 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#v0.2.2":
-  version "0.2.2"
-  resolved "https://github.com/dstnd/dstnd-io.git#d43ca1f4caa0a234aab42901a0a6487b4cf8b508"
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#room-relay-activity":
+  version "0.2.1"
+  resolved "https://github.com/dstnd/dstnd-io.git#726f5a7b5792fc0f28adacc2039156c13201393b"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"

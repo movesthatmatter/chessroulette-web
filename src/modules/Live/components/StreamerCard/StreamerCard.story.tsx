@@ -9,14 +9,14 @@ export default {
   title: 'modules/live/components/StreamerCard',
 };
 
-const featuredStreamers = require('./__mocks__/featured.json')
-  .data as Resources.Collections.Watch.GetLiveStreamers.OkResponse;
+// const featuredStreamers = require('./__mocks__/featured.json')
+  // .data as Resources.Collections.Watch.GetLiveStreamers.OkResponse;
 
 // console.log('mocksJSON', mocksJSON);
 
 // const featuredStreamers =
 
-export const defaultStory = () => <StreamerCard streamer={featuredStreamers.items[0]} />;
+// export const defaultStory = () => <StreamerCard streamer={featuredStreamers.items[0]} />;
 
-export const reel = () =>
-  featuredStreamers.items.map((streamer) => <StreamerCard streamer={streamer} />);
+// export const reel = () =>
+//   featuredStreamers.items.map((streamer) => <StreamerCard streamer={streamer} />);

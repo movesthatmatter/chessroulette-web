@@ -2,7 +2,7 @@ import ndjsonStream from 'can-ndjson-stream';
 import { AsyncResultWrapper } from 'ts-async-results';
 import { Err, Ok } from 'ts-results';
 import { NDJsonReader } from './types';
-import api from './api';
+import api from 'src/resources/lichessAPI';
 
 type ApiError = {
   type: 'BadRequest';

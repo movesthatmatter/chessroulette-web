@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { noop } from 'src/lib/util';
-import cx from 'classnames';
-import dateFormat from 'dateformat';
 import { useInterval } from 'src/lib/hooks';
-import { timeLeftToFormatMajor, timeLeftToFormatMinor, timeLeftToInterval } from './util';
-import { minutes } from 'src/lib/time';
+import { lpad, timeLeftToInterval, timeLeftToTimeUnits } from './util';
 import { GameRecord } from 'dstnd-io';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { CountdownDisplay } from './CountdownDisplay';
@@ -18,6 +15,7 @@ type Props = {
   active: boolean;
   onFinished?: () => void;
   className?: string;
+  thumbnail?: boolean;
 };
 
 export const Countdown: React.FC<Props> = ({
@@ -61,24 +59,32 @@ export const Countdown: React.FC<Props> = ({
     }
   }, [finished]);
 
-  const { major, minor, canShowMilliseconds } = useMemo(
-    () =>
-      ({
-        major: dateFormat(timeLeft, timeLeftToFormatMajor(gameTimeClassInMs, timeLeft)),
-        minor: dateFormat(timeLeft, timeLeftToFormatMinor(gameTimeClassInMs, timeLeft)),
-        canShowMilliseconds: gameTimeClassInMs > minutes(1) && timeLeft < minutes(1),
-      } as const),
-    [timeLeft, gameTimeClassInMs]
-  );
+  const { major, minor, canShowMilliseconds } = useMemo(() => {
+    const times = timeLeftToTimeUnits(timeLeft);
+    if (times.hours > 0) {
+      return {
+        major: `${times.hours}h`,
+        minor: `${lpad(times.minutes)}`,
+        canShowMilliseconds: false,
+      };
+    }
+
+    return {
+      major: lpad(times.minutes),
+      minor: lpad(times.seconds),
+      canShowMilliseconds: false,
+    };
+  }, [timeLeft, gameTimeClassInMs]);
 
   return (
     <div className={props.className}>
       <CountdownDisplay
-        minor={minor}
         major={major}
+        minor={minor}
         active={props.active}
         timeLeft={timeLeft}
         canShowMilliseconds={canShowMilliseconds}
+        thumbnail={props.thumbnail}
       />
     </div>
   );

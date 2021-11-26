@@ -9,7 +9,7 @@ import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton } from 'src/services/Authentication/widgets';
 import { Link, useLocation } from 'react-router-dom';
 import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
-import { Home, Video, People } from 'react-iconly';
+import { Home, Video, People, Play } from 'react-iconly';
 import { Text } from '../Text';
 import { spacers } from 'src/theme/spacers';
 
@@ -31,7 +31,48 @@ export const NavigationMenu: React.FC<Props> = (props) => {
           <br />
           <Text size="small1">Home</Text>
         </Link>
+        {/* <Badge
+          color="negative"
+          text="New"
+          className={cls.linkBadge}
+          textClassName={cls.linkBadgeText}
+        /> */}
       </div>
+      {/* <div className={cls.linkWrapper}>
+        <Link
+          to={'/broadcasts'}
+          className={cx(cls.link, location.pathname === '/broadcasts' && cls.activeLink)}
+        >
+        <Play set='bold' />
+         <br/>
+         <Text size='small1'>Broadcasts</Text>
+        </Link>
+      </div> */}
+      {/* <div className={cls.linkWrapper}>
+        <Link
+          to={'/broadcasts-external'}
+          className={cx(cls.link, location.pathname === '/broadcasts-external' && cls.activeLink)}
+        >
+          External Broadcasts
+        </Link>
+      </div> */}
+      {/* <div className={cls.linkWrapper}>
+        <a
+          className={cls.link}
+          href="https://gabrielctroia.medium.com/meet-chessroulette-org-a-quarantine-project-e4108f05db39"
+          target="_blank"
+        >
+          About
+        </a>
+      </div>
+      <div className={cls.linkWrapper}>
+        <a
+          className={cls.link}
+          href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage"
+        >
+          Get In Touch
+        </a>
+      </div> */}
       {/* <div className={cls.linkWrapper}>
         <WithDialog
           hasCloseButton
@@ -312,6 +353,8 @@ const useStyles = createUseStyles((theme) => ({
     // borderBottom: `3px solid ${theme.text.primaryColor}`,
     // color: theme.text.primaryColor,
     ...theme.links.hover,
+    //borderBottom: `3px solid ${theme.text.primaryColor}`,
+    color: theme.colors.primary,
   },
 
   onlyMobile: {

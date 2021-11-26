@@ -1,9 +1,11 @@
-export const timeLeftToTimeUnits = (duration: number) => {
-  // const milliseconds = Math.floor((duration % 1000) / 100);
-  const seconds = Math.floor((duration / 1000) % 60);
-  const minutes = Math.floor((duration / (1000 * 60)) % 60);
-  const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-  const days = Math.floor(duration / (1000 * 60 * 60 * 24));
+export const timeLeftToTimeUnits = (durationMs: number) => {
+  console.log('durationMs', durationMs);
+
+  // const milliseconds = Math.floor((durationMs % 1000));
+  const seconds = Math.floor((durationMs / 1000) % 60);
+  const minutes = Math.floor((durationMs / (1000 * 60)) % 60);
+  const hours = Math.floor((durationMs / (1000 * 60 * 60)) % 24);
+  const days = Math.floor(durationMs / (1000 * 60 * 60 * 24));
 
   return {
     days,

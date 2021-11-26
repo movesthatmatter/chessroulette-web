@@ -11,6 +11,7 @@ import * as resources from '../../resources';
 import { AsyncOk } from 'ts-async-results';
 import { UnknownAsyncResult } from 'src/lib/types';
 import { Events } from 'src/services/Analytics';
+import { CreateRelayRoomWizard } from '../../wizards/CreateRelayRoomWizard';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activityType'>;
@@ -62,7 +63,7 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({
                 }}
               />
             )}
-            {createRoomSpecs.activityType !== 'play' && (
+            {createRoomSpecs.activityType === 'analysis' && (
               <CreateAnalysisRoomWizard
                 onFinished={() => {
                   if (peerState.status !== 'open') {

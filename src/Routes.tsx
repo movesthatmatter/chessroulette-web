@@ -12,6 +12,9 @@ import { LivePage } from './modules/Live';
 import { PlayLichess } from './modules/LichessPlay/PlayLichess/PlayLichess';
 import { RoomRoute } from './modules/Room';
 import { PeerProviderContainer } from './providers/PeerProvider/PeerProviderContainer';
+import { BroadcastPage } from './modules/Relay/BroadcastPage/BroadcastPage';
+import { BroadcastExternal } from './modules/Relay/BroadcastPage/BroadcastExternal';
+import { RelayInputRoute } from './modules/Relay/RelayInput';
 
 type Props = {};
 
@@ -41,12 +44,16 @@ export const Routes: React.FC<Props> = () => {
       <Route path="/privacy-policy" key={location.key} exact component={PrivacyPolicy} />
       <Route path="/tos" key={location.key} exact component={TOS} />
       <Route path="/user/:section" key={location.key} exact component={UserProfilePage} />
-      <Route exact strict path="/lichess" key={location.key} component={PlayLichess} />
+      {/* <Route exact strict path="/lichess" key={location.key} component={PlayLichess} /> */}
       <Route path="/watch" key={location.key} strict exact component={LivePage} />
 
       <SocketProvider>
         <PeerProviderContainer>
-          <Route exact strict path="/:slug" key={location.key} component={RoomRoute} />
+          <Route path="/relay-input" strict exact component={RelayInputRoute} />
+          {/* <Route path="/broadcasts" strict exact component={BroadcastPage} />
+          <Route path="/broadcasts-external" strict exact component={BroadcastExternal} /> */}
+
+          <Route exact strict path="/r/:slug" key={location.key} component={RoomRoute} />
           <Route exact path="/" component={LandingPage} />
         </PeerProviderContainer>
       </SocketProvider>

@@ -24,6 +24,7 @@ import {
   // Game Logic
   GameResignationRequestPayload,
   GameMoveRequestPayload,
+  GameMoveRelayInputRequestPayload,
   GameJoinRequestPayload,
   GameDrawOfferingRequestPayload,
   GameDrawAcceptRequestPayload,
@@ -46,8 +47,12 @@ import {
   AnalysisRefocusRequestPayload,
   AnalysisDrawnShapesUpdatedRequestPayload,
   AnalysisImportPgnRequestPayload,
-  AnalysisImportGameRequestPayload,
-  SwitchRoomActivityRequestPayload,
+  ImportRelayedGameRequestPayload,
+  AnalysisImportArchivedGameRequestPayload,
+  AnalysisImportRelayedGameRequestPayload,
+  SwitchRoomActivityRequestPayload, 
+  SwitchGameToRelayAndGoLivePayload,
+  RelayAdjustGameTimersRequestPayload
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
@@ -82,6 +87,7 @@ type SendableMessagesMap = {
   joinRoomRequest: JoinRoomRequestPayload;
   leaveRoomRequest: LeaveRoomRequestPayload;
   switchRoomActivityRequestPayload: SwitchRoomActivityRequestPayload;
+  switchToRelayAndGoLive : SwitchGameToRelayAndGoLivePayload;
 
   //Chat
   broadcastChatMessage: BroadcastChatMessagePayload;
@@ -89,6 +95,7 @@ type SendableMessagesMap = {
   // Game
   gameResignationRequestPayload: GameResignationRequestPayload;
   gameMoveRequestPayload: GameMoveRequestPayload;
+  gameMoveRelayInputPayload: GameMoveRelayInputRequestPayload,
   gameJoinRequestPayload: GameJoinRequestPayload;
   gameDrawOfferingRequestPayload: GameDrawOfferingRequestPayload;
   gameDrawAcceptRequestPayload: GameDrawAcceptRequestPayload;
@@ -102,7 +109,9 @@ type SendableMessagesMap = {
   gameAbortionRequestPayload: GameAbortionRequestPayload;
   gameOfferingCancelRequestPayload: GameOfferingCancelRequestPayload;
   gameStatusCheckRequestPayload: GameStatusCheckRequestPayload;
-
+  importRelayedGameRequestPayload: ImportRelayedGameRequestPayload;
+  relayAdjustTimersRequestPayload: RelayAdjustGameTimersRequestPayload;
+  
   gameChallengeOfferingRequestPayload: GameChallengeOfferingRequestPayload;
   gameChallengeAcceptRequestPayload: GameChallengeAcceptRequestPayload;
   gameChallengeDenyRequestPayload: GameChallengeDenyRequestPayload;
@@ -112,8 +121,8 @@ type SendableMessagesMap = {
   analysisRefocusRequestPayload: AnalysisRefocusRequestPayload;
   analysisDrawnShapesUpdatedRequestPayload: AnalysisDrawnShapesUpdatedRequestPayload;
   analysisImportPgnRequestPayload: AnalysisImportPgnRequestPayload,
-  analysisImportGameRequestPayload: AnalysisImportGameRequestPayload,
-
+  analysisImportArchivedGameRequestPayload: AnalysisImportArchivedGameRequestPayload,
+  analysisImportRelayedGameRequestPayload: AnalysisImportRelayedGameRequestPayload,
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {
