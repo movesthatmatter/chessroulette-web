@@ -4,7 +4,7 @@ import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { noop } from 'src/lib/util';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
-import { effects } from 'src/theme';
+import { CustomTheme, effects } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 
 type Props = {
@@ -19,12 +19,10 @@ export const RelayInputGamesList: React.FC<Props> = ({ games, onSelectRelay }) =
     <div>
       <Text>Available Relays : </Text>
       {games.map((relayGame) => (
-        <div
-          className={cls.gameContainer}
-          onClick={() => onSelectRelay(relayGame)}
-        >
+        <div className={cls.gameContainer} onClick={() => onSelectRelay(relayGame)}>
           <div className={cls.playerInfo}>{relayGame.game.players[0].user.name}</div>
           <ChessBoard
+            coordinates={false}
             type="free"
             playable={false}
             pgn={relayGame.game.pgn}
@@ -32,7 +30,7 @@ export const RelayInputGamesList: React.FC<Props> = ({ games, onSelectRelay }) =
             playableColor={'white'}
             onMove={noop}
             id={relayGame.game.id}
-            size={200}
+            size={100}
           />
           <div className={cls.playerInfo}>{relayGame.game.players[1].user.name}</div>
         </div>
@@ -41,7 +39,7 @@ export const RelayInputGamesList: React.FC<Props> = ({ games, onSelectRelay }) =
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles<CustomTheme>(theme => ({
   container: {},
   gameContainer: {
     display: 'flex',
@@ -49,7 +47,7 @@ const useStyles = createUseStyles({
     padding: spacers.small,
     ...effects.softBorderRadius,
     '&:hover': {
-      // backgroundColor: them.colors.primary,
+      backgroundColor: theme.colors.primary,
       cursor: 'pointer',
     },
   },
@@ -60,4 +58,4 @@ const useStyles = createUseStyles({
     marginTop: '5px',
     marginBottom: '5px',
   },
-});
+}));
