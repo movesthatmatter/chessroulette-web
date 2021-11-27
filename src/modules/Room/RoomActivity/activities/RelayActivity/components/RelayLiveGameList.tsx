@@ -1,6 +1,7 @@
 import React from 'react';
 import Loader from 'react-loaders';
 import { Text } from 'src/components/Text';
+import { ISODateTimeToTimestamp } from 'src/lib/date';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { renderMatch } from 'src/lib/renderMatch';
 import { CompactGameList } from 'src/modules/Games/Chess/components/GamesList/components/CompactGameList';
@@ -21,7 +22,12 @@ export const RelayLiveGameList: React.FC<Props> = ({ onSelect }) => {
         renderMatch(
           () => (
             <CompactGameList
-              games={relayedGames.map(({ game }) => game)}
+              games={relayedGames
+                .map(({ game }) => game)
+                .sort(
+                  (g1, g2) =>
+                    ISODateTimeToTimestamp(g1.createdAt) - ISODateTimeToTimestamp(g2.createdAt)
+                ).reverse()}
               onSelect={(_, index) => onSelect(relayedGames[index])}
               selectText="Analyze Live"
               hasClipboardCopy={false}
