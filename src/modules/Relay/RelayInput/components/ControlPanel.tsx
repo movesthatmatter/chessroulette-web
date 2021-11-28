@@ -1,30 +1,15 @@
-import capitalize from 'capitalize';
 import {
   ChessGameColor,
-  ChessGameTimeLimit,
   ChessMove,
-  GameSpecsRecord,
-  metadata,
   Resources,
 } from 'dstnd-io';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import React, { useState } from 'react';
-import { Swap } from 'react-iconly';
 import { Button, IconButton } from 'src/components/Button';
-import { Dialog } from 'src/components/Dialog';
-import { Form, SubmissionErrors } from 'src/components/Form';
-import { SelectInput } from 'src/components/Input/SelectInput';
-import { Text } from 'src/components/Text';
-import { TextInput } from 'src/components/TextInput';
 import { createUseStyles } from 'src/lib/jss';
-import { delay } from 'src/lib/time';
-import { Game } from 'src/modules/Games';
 import { ChessGame } from 'src/modules/Games/Chess';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
-import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGame/util';
 import { CustomTheme } from 'src/theme';
-import { colors } from 'src/theme/colors';
 import { spacers } from 'src/theme/spacers';
 
 type Props = {
@@ -32,6 +17,7 @@ type Props = {
   containerWidth: number;
   onAddMove: (m: ChessMove) => void;
   onSubmit: () => void;
+  onUndo: () => void;
   submitDisabled: boolean;
 };
 
@@ -40,6 +26,7 @@ export const ControlPanel: React.FC<Props> = ({
   containerWidth,
   onAddMove,
   onSubmit,
+  onUndo,
   submitDisabled,
 }) => {
   const cls = useStyles();
@@ -87,7 +74,9 @@ export const ControlPanel: React.FC<Props> = ({
             />
           )} */}
           <br />
-          <Button label="Submit Move" onClick={onSubmit} disabled={submitDisabled} />
+          <Button label="Submit Move" onClick={onSubmit} disabled={submitDisabled} type='primary'/>
+          <br />
+          <Button label='Undo' onClick={onUndo} type='negative'/>
         </div>
       </div>
     </>
