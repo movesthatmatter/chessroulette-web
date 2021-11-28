@@ -29,7 +29,7 @@ export const UserProfileShowcase: React.FC<Props> = ({
         <div className={cls.avatarContainer}>
           <Avatar mutunachiId={Number(props.user.avatarId)} size={64} />
         </div>
-        <Text size="subtitle1">{props.isGuest ? `Guest (${username})` : username}</Text>
+        <Text size="subtitle1">{props.isGuest ? `Guest` : username}</Text>
 
         <div className={cls.statsContainer}>
           <div className={cls.statContainer}>
