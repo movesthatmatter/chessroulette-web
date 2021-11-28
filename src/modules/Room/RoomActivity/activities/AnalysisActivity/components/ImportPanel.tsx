@@ -187,6 +187,7 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
             if (state?.type === 'selectedArchivedGame') {
               props.onImportedArchivedGame(state.game);
             } else if (state.type === 'selectedRelayedGame') {
+              console.log('import relay!!', state.relayedGame)
               props.onImportedRelayedGame(state.relayedGame);
             } else if (state.pgnFromInput.status === 'valid') {
               props.onImportedPgn(state.pgnFromInput.input);

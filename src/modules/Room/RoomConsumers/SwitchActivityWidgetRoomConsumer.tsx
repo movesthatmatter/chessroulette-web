@@ -86,10 +86,6 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
             } else {
               setState(s);
             }
-          } else if (s.activityType === 'relay') {
-            context.roomActions.switchActivity({
-              activityType: 'relay',
-            })
           } else if (s.activityType === 'none') {
             context.roomActions.switchActivity({
               activityType: 'none',

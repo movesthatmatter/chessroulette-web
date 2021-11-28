@@ -76,12 +76,6 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                                   (room.live),
                                 onClick: () => onSwitch({ activityType: 'analysis' }),
                               },
-                              {
-                                title: 'Relay',
-                                disabled: (room.currentActivity.type === 'relay') || 
-                                (room.live),
-                                onClick: () => onSwitch({activityType: 'relay'})
-                              }
                             ],
                           }}
                         />
