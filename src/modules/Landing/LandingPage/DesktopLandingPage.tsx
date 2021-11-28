@@ -21,7 +21,6 @@ import { Game } from 'src/modules/Games';
 import { ChessGameDisplay } from 'src/modules/Games/widgets/ChessGameDisplay';
 import { getGameOfDay, getTopPlayersByGamesCount } from './resources';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
-import { FloatingBox } from 'src/components/FloatingBox';
 import { toDictIndexedBy } from 'src/lib/util';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { Avatar } from 'src/components/Avatar';
@@ -29,10 +28,9 @@ import config from 'src/config';
 import { getNextScheduledEvent, ScheduledEvent } from './schedule';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { InfoCard } from 'src/components/InfoCard';
-import { GradientText } from 'src/components/GradientText';
-import { AwesomeCountdown } from 'src/components/AwesomeCountdown/AwesomeCountdown';
 import addSeconds from 'date-fns/addSeconds';
 import { now } from 'src/lib/date';
+import { EventPromo } from './components/EventPromo/EventPromo';
 
 type Props = {};
 
@@ -56,9 +54,8 @@ export const DesktopLandingPage: React.FC<Props> = () => {
         return;
       }
 
-      const first4InOrder = items
-        .slice(0, 4)
-        // .sort((a, b) => b.stream.viewerCount - a.stream.viewerCount);
+      const first4InOrder = items.slice(0, 4);
+      // .sort((a, b) => b.stream.viewerCount - a.stream.viewerCount);
 
       setStreamers({
         itemsById: toDictIndexedBy(first4InOrder, ({ id }) => id),
@@ -326,21 +323,18 @@ export const DesktopLandingPage: React.FC<Props> = () => {
             {scheduledEvent === 'init' ? null : (
               <>
                 {scheduledEvent ? (
-                  <FloatingBox className={cls.floatingBox}>
-                    <div className={cls.textGradient}>
-                      <GradientText>
-                        <Text size="title2">{scheduledEvent.eventName}</Text>
-                        <AwesomeCountdown
-                          deadline={scheduledEvent.timestamp}
-                          fontSizePx={50}
-                          onTimeEnded={async (tickInterval) => {
-                            await getNextScheduledEvent(addSeconds(now(), tickInterval))
-                              .then(setScheduledEvent);
-                          }}
-                        />
-                      </GradientText>
-                    </div>
-                  </FloatingBox>
+                  <EventPromo
+                    event={{
+                      name: scheduledEvent.eventName,
+                      startDate: scheduledEvent.timestamp,
+                    }}
+                    classname={cls.floatingBox}
+                    onCountdownTimeEnded={async (tickInterval) => {
+                      await getNextScheduledEvent(addSeconds(now(), tickInterval)).then(
+                        setScheduledEvent
+                      );
+                    }}
+                  />
                 ) : (
                   <InfoCard
                     top={
@@ -380,7 +374,6 @@ export const DesktopLandingPage: React.FC<Props> = () => {
               server={config.DISCORD_SERVER_ID}
               channel={config.DISCORD_CHANNEL_ID}
               className={cls.discordWidget}
-              style={{background: 'red'}}
             />
           </div>
           <div className={cls.verticalSpacer} />
