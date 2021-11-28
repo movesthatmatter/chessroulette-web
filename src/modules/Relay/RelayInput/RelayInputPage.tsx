@@ -56,6 +56,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
         Number(+minutes * 60 + +seconds) * 1000
       );
       setShowSubmitWindow(false);
+      setUnsubmittedMove(undefined)
       setTurn(otherChessColor(relayGames[selectedRelayId].game.lastMoveBy || 'white'));
     }
     return AsyncOk.EMPTY;

@@ -1,11 +1,8 @@
-import {
-  ChessGameColor,
-  ChessMove,
-  Resources,
-} from 'dstnd-io';
+import { ChessGameColor, ChessMove, Resources } from 'dstnd-io';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import React, { useState } from 'react';
 import { Button, IconButton } from 'src/components/Button';
+import { ConfirmButton } from 'src/components/Button/ConfirmButton';
 import { createUseStyles } from 'src/lib/jss';
 import { ChessGame } from 'src/modules/Games/Chess';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
@@ -36,21 +33,21 @@ export const ControlPanel: React.FC<Props> = ({
   return (
     <>
       <div style={{ display: 'flex' }}>
-        <div style={{minWidth: containerWidth, minHeight: containerWidth}}>
-        {relay?.game && (
-          <ChessGame
-            size={containerWidth}
-            game={gameRecordToGame(relay.game)}
-            onAddMove={({ move }) => {
-              onAddMove(move);
-            }}
-            canInteract
-            playable
-            playableColor={otherChessColor(relay.game.lastMoveBy || 'black')}
-            turnColor={otherChessColor(relay.game.lastMoveBy || 'black')}
-            orientation={orientation}
-          />
-        )}
+        <div style={{ minWidth: containerWidth, minHeight: containerWidth }}>
+          {relay?.game && (
+            <ChessGame
+              size={containerWidth}
+              game={gameRecordToGame(relay.game)}
+              onAddMove={({ move }) => {
+                onAddMove(move);
+              }}
+              canInteract
+              playable
+              playableColor={otherChessColor(relay.game.lastMoveBy || 'black')}
+              turnColor={otherChessColor(relay.game.lastMoveBy || 'black')}
+              orientation={orientation}
+            />
+          )}
         </div>
         <div
           style={{
@@ -74,9 +71,28 @@ export const ControlPanel: React.FC<Props> = ({
             />
           )} */}
           <br />
-          <Button label="Submit Move" onClick={onSubmit} disabled={submitDisabled} type='primary'/>
+          <Button label="Submit Move" onClick={onSubmit} disabled={submitDisabled} type='positive'/>
           <br />
-          <Button label='Undo' onClick={onUndo} type='negative'/>
+          <ConfirmButton
+            buttonProps={{
+              label: 'Undo Move',
+              type: 'negative',
+              full: true,
+            }}
+            dialogProps={{
+              title: 'Undo last move?',
+              content: 'Are you sure you want to undo the last move?',
+              buttonsStacked: false,
+            }}
+            cancelButtonProps={{
+              type: 'secondary',
+            }}
+            confirmButtonProps={{
+              type: 'negative',
+              label: 'Yes',
+            }}
+            onConfirmed={onUndo}
+          />
         </div>
       </div>
     </>
