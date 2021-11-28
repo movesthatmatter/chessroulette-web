@@ -6,11 +6,13 @@ import { Date } from 'window-or-global';
 import { second as secondMs } from 'src/lib/time';
 import { noop } from 'src/lib/util';
 import { lpad, timeLeftToTimeUnits } from './util';
+import cx from 'classnames';
 
 type Props = {
   deadline: ISODateTime;
   fontSizePx?: number;
-  onTimeEnded?: (interval: number) => void;
+  className?: string;
+  onTimeEnded?: (intervalMs: number) => void;
 };
 
 const getTimeLeftMs = (deadline: ISODateTime) =>
@@ -21,6 +23,7 @@ export const AwesomeCountdown: React.FC<Props> = ({
   deadline,
   fontSizePx = 60,
   onTimeEnded = noop,
+  className,
 }) => {
   const cls = useStyles();
   const [timeLeftMs, setTimeLeftMs] = useState(getTimeLeftMs(deadline));
@@ -59,7 +62,7 @@ export const AwesomeCountdown: React.FC<Props> = ({
   }, [timeLeftMs]);
 
   return (
-    <div className={cls.container} style={{ fontSize: fontSizePx }}>
+    <div className={cx(cls.container, className)} style={{ fontSize: fontSizePx }}>
       <div className={cls.section}>
         <div className={cls.timeText}>{days}</div>
         <div className={cls.timeLabelText}>Days</div>
