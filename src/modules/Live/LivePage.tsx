@@ -1,14 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
-import { effects, maxMediaQuery, onlyDesktop } from 'src/theme';
-import {
-  getCollaboratorsByPlatform,
-  getCollaboratorStreamers,
-  getFeaturedStreamers,
-} from './resources';
-import { CollaboratorRecord, ResourceRecords } from 'dstnd-io';
+import { effects, onlyDesktop } from 'src/theme';
+import { getCollaboratorStreamers, getFeaturedStreamers } from './resources';
+import { ResourceRecords } from 'dstnd-io';
 import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
 import { AnchorLink } from 'src/components/AnchorLink';
@@ -17,31 +13,48 @@ import { LiveHero } from './widgets/LiveHero';
 import { TwitchChatEmbed } from 'src/vendors/twitch/TwitchChatEmbed';
 import { LiveStreamCard } from './components/LiveStreamCard/LiveStreamCard';
 import { toDictIndexedBy } from 'src/lib/util';
-import { console } from 'window-or-global';
+import { useHistory } from 'react-router-dom';
 
-type Props = {};
+type Props = {
+  heroStreamer?: string;
+};
 
-export const LivePage: React.FC<Props> = () => {
+type LiveStreamer = ResourceRecords.Watch.LiveStreamerRecord;
+
+type LiveStreamerState = {
+  allByUsername: Record<LiveStreamer['username'], LiveStreamer>;
+  hero: LiveStreamer['username'];
+  toWatch: LiveStreamer['username'][];
+};
+
+const toStreamersState = (
+  streamers: LiveStreamer[],
+  heroUsername?: string
+): LiveStreamerState | undefined => {
+  if (streamers.length === 0) {
+    return undefined;
+  }
+
+  const streamersByUsername = toDictIndexedBy(streamers, (p) => p.username);
+
+  const _heroUsername = streamersByUsername[heroUsername || '']?.username || streamers[0].username;
+
+  const { [_heroUsername]: hero, ...rest } = streamersByUsername;
+
+  return {
+    allByUsername: streamersByUsername,
+    hero: hero.username,
+    toWatch: Object.values(rest).map((u) => u.username),
+  };
+};
+
+export const LivePage: React.FC<Props> = (props) => {
   const cls = useStyles();
-
   const { theme } = useColorTheme();
-
-  const [streamers, setStreamers] = useState<{
-    itemsById: Record<
-      ResourceRecords.Watch.LiveStreamerRecord['id'],
-      ResourceRecords.Watch.LiveStreamerRecord
-    >;
-    inFocus: ResourceRecords.Watch.LiveStreamerRecord['id'];
-    toWatch: ResourceRecords.Watch.LiveStreamerRecord['id'][];
-  }>();
-
+  const [streamersState, setStreamersState] = useState<LiveStreamerState>();
   const [collaboratorStreamers, setCollaboratorStreamers] = useState<
     ResourceRecords.Watch.StreamerRecord[]
   >();
-
-  useEffect(() => {
-    console.log('streamers', streamers);
-  }, [streamers]);
 
   useEffect(() => {
     getCollaboratorStreamers().map((s) => {
@@ -49,69 +62,53 @@ export const LivePage: React.FC<Props> = () => {
     });
   }, []);
 
+  const history = useHistory();
+
   useEffect(() => {
     getFeaturedStreamers().map(({ items }) => {
       if (items.length === 0) {
         return;
       }
 
-      const first4InOrder = items
-        .slice(0, 5)
-        .sort((a, b) => b.stream.viewerCount - a.stream.viewerCount);
+      const nextStremersState = toStreamersState(items, props.heroStreamer);
 
-      setStreamers({
-        itemsById: toDictIndexedBy(first4InOrder, ({ id }) => id),
-        inFocus: first4InOrder[0].id,
-        toWatch: first4InOrder.slice(1, 5).map(({ id }) => id),
-      });
+      if (props.heroStreamer && props.heroStreamer !== nextStremersState?.hero) {
+        history.replace('/watch');
+      }
+
+      setStreamersState(nextStremersState);
     });
-  }, []);
-
-  const refocusStreamers = useCallback(
-    (nextFocusId: ResourceRecords.Watch.LiveStreamerRecord['id']) => {
-      setStreamers((prev) => {
-        if (!prev) {
-          return undefined;
-        }
-
-        if (!prev.itemsById[nextFocusId]) {
-          return prev;
-        }
-
-        return {
-          ...prev,
-          inFocus: nextFocusId,
-          toWatch: Object.values(prev.itemsById)
-            .sort((a, b) => b.stream.viewerCount - a.stream.viewerCount)
-            .filter(({ id }) => id !== nextFocusId)
-            .map(({ id }) => id),
-        };
-      });
-    },
-    [setStreamers]
-  );
+  }, [props.heroStreamer, history]);
 
   return (
     <Page name="Live" stretched>
       <div className={cls.container}>
         <main className={cls.main}>
-          {streamers?.inFocus && (
+          {streamersState?.hero && (
             <>
-              <LiveHero featuredStreamer={streamers.itemsById[streamers.inFocus]} muted={false} />
+              <LiveHero
+                featuredStreamer={streamersState.allByUsername[streamersState.hero]}
+                muted={false}
+              />
               <div>
                 <div style={{ height: spacers.get(3) }} />
                 <Text size="title2" className={cls.title}>
                   Watch Now
                 </Text>
                 <div className={cls.streamerCollectionList}>
-                  {streamers?.toWatch &&
-                    streamers.toWatch.map((streamerId, index) => (
+                  {streamersState?.toWatch &&
+                    streamersState.toWatch.map((streamerId, index) => (
                       <React.Fragment key={streamerId}>
                         {index > 0 && <div style={{ width: spacers.large }} />}
                         <LiveStreamCard
-                          streamer={streamers.itemsById[streamerId]}
+                          streamer={streamersState.allByUsername[streamerId]}
                           containerClassName={cls.liveStream}
-                          onClick={() => refocusStreamers(streamerId)}
+                          onClick={() => {
+                            // refocusStreamers(streamerId)
+                            history.replace(
+                              `/watch/${streamersState.allByUsername[streamerId].username}`
+                            );
+                          }}
                         />
                       </React.Fragment>
                     ))}
@@ -197,10 +194,10 @@ export const LivePage: React.FC<Props> = () => {
           )}
         </main>
         <aside className={cls.rightSide}>
-          {streamers?.inFocus && (
+          {streamersState?.hero && (
             <TwitchChatEmbed
-              channel={streamers.itemsById[streamers.inFocus].username}
-              targetId={streamers.itemsById[streamers.inFocus].username}
+              channel={streamersState.allByUsername[streamersState.hero].username}
+              targetId={streamersState.allByUsername[streamersState.hero].username}
               height="100%"
               width="100%"
               targetClass={cls.chatContainer}

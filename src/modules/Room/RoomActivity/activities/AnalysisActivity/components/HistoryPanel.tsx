@@ -83,12 +83,11 @@ export const HistoryPanel: React.FC<Props> = ({
 
       {/* <FenBox fen={props.displayed.fen} containerClassName={cx(cls.box, cls.fenBox)} /> */}
 
-      <div className={cls.box}>
+      <div className={cx(cls.box, cls.buttonWrapper)}>
         <ConfirmButton
           buttonProps={{
             label: 'Clear',
             type: 'secondary',
-            full: true,
             className: cls.button,
           }}
           dialogProps={{
@@ -111,7 +110,7 @@ export const HistoryPanel: React.FC<Props> = ({
           //   // setHasLoadedAnalysis(true);
           // }}
         />
-        <div style={{ marginBottom: spacers.small }} />
+        <div style={{ marginRight: spacers.small }} />
         <Button
           label="Import"
           type="primary"
@@ -174,5 +173,8 @@ const useStyles = createUseStyles({
     '&:last-child': {
       marginBottom: 0,
     },
+  },
+  buttonWrapper: {
+    display: 'flex',
   },
 });

@@ -29,10 +29,10 @@ export type FormModel = {
 const defaultTimeLimit: GameSpecsRecord['timeLimit'] = 'rapid120';
 
 const formInitialValues: FormModel = {
-  blackPlayer: 'Ian Nepomniachtchi',
-  whitePlayer: 'Magnus Carlsen',
+  whitePlayer: 'Ian Nepomniachtchi',
+  blackPlayer: 'Magnus Carlsen',
   specs: 'rapid120',
-  label: 'WCC 2021 - Game 2',
+  label: 'WCC 2021 - Game 3',
 };
 
 export const NewRelayDialog: React.FC<Props> = ({
