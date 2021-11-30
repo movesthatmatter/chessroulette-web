@@ -42,7 +42,7 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, stretched = false
   }, [props.name]);
 
   const responsiveCls = useMemo(() => (stretched ? cls.responsiveStretched : cls.responsive), [
-    stretched,
+    stretched, cls
   ]);
 
   return (

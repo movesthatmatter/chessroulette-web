@@ -80,7 +80,7 @@ export const CompactGameListItem: React.FC<Props> = ({
       (game.state === 'finished' || game.state === 'stopped') && hasWonByColor(game, player.color);
 
     return (
-      <div className={cx(cls.side, cls.leftSide)}>
+      <div className={cls.sidePart}>
         <div className={cls.filler} />
         <div className={cx(cls.playerInfo, cls.playerInfoLeftSide)}>
           <Text
@@ -100,7 +100,7 @@ export const CompactGameListItem: React.FC<Props> = ({
         </div>
       </div>
     );
-  }, [game]);
+  }, [game, cls]);
 
   const renderRightPlayer = useMemo(() => {
     const player = game.players[1];
@@ -108,7 +108,7 @@ export const CompactGameListItem: React.FC<Props> = ({
       (game.state === 'finished' || game.state === 'stopped') && hasWonByColor(game, player.color);
 
     return (
-      <div className={cx(cls.side, cls.rightSide)}>
+      <div className={cls.sidePart}>
         {(() => {
           const player = game.players[1];
 
@@ -136,7 +136,7 @@ export const CompactGameListItem: React.FC<Props> = ({
         })()}
       </div>
     );
-  }, [game]);
+  }, [game, cls]);
 
   return (
     <div
@@ -156,7 +156,7 @@ export const CompactGameListItem: React.FC<Props> = ({
       <div className={cls.sideWrapper}>
         {renderLeftPlayer}
         <div className={cls.middleSide}>
-          {theme.name === 'lightDefault' && <Emoji symbol="⚡" className={cls.vsEmoji} />}
+          {theme.name === 'lightDefault' && <FontAwesomeIcon icon={faBolt} color="black" size="sm" />}
           {theme.name === 'darkDefault' && (
             <FontAwesomeIcon icon={faBolt} color="white" size="sm" />
           )}
@@ -175,20 +175,18 @@ const useStyles = createUseStyles((theme) => ({
     background: theme.colors.white,
     padding: spacers.small,
     borderLeft: `4px solid ${theme.colors.neutral}`,
-    ...theme.borders,
+   // ...theme.borders,
     ...softBorderRadius,
     ...theme.floatingShadow,
   },
   sideWrapper: {
     display: 'flex',
   },
-  side: {
+  sidePart: {
     display: 'flex',
     flexDirection: 'row',
     flex: 1,
   },
-  leftSide: {},
-  rightSide: {},
   middleSide: {
     width: spacers.larger,
     display: 'flex',
