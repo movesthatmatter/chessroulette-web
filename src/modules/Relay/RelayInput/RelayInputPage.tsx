@@ -1,4 +1,4 @@
-import { ChessGameColor, ChessMove, gameRecord, Resources } from 'dstnd-io';
+import { ChessGameColor, ChessGameStateFinished, ChessMove, gameRecord, Resources } from 'dstnd-io';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { noop, toDictIndexedBy } from 'src/lib/util';
@@ -56,7 +56,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
         Number(+minutes * 60 + +seconds) * 1000
       );
       setShowSubmitWindow(false);
-      setUnsubmittedMove(undefined)
+      setUnsubmittedMove(undefined);
       setTurn(otherChessColor(relayGames[selectedRelayId].game.lastMoveBy || 'white'));
     }
     return AsyncOk.EMPTY;
@@ -204,6 +204,19 @@ export const RelayInputPage: React.FC<Props> = (props) => {
     }
   };
 
+  const setWinner = (winner: ChessGameStateFinished['winner']) => {
+    if (selectedRelayId) {
+      request({
+        kind: 'relayEndGameRequest',
+        content: {
+          gameId: relayGames[selectedRelayId].game.id,
+          relayId: selectedRelayId,
+          winner,
+        },
+      });
+    }
+  };
+
   return (
     <Page stretched name="Relay Input" hideNav>
       <div className={cls.container}>
@@ -236,6 +249,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
                 }
                 setShowSubmitWindow(true);
               }}
+              onSetWinner={setWinner}
               submitDisabled={!unsubmittedMove}
             />
             {selectedRelayId && (

@@ -54,6 +54,7 @@ import {
   SwitchGameToRelayAndGoLivePayload,
   RelayAdjustGameTimersRequestPayload,
   RelayGameUndoMoveRequestPayload,
+  RelayEndGameRequestPayload
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
@@ -113,6 +114,7 @@ type SendableMessagesMap = {
   importRelayedGameRequestPayload: ImportRelayedGameRequestPayload;
   relayAdjustTimersRequestPayload: RelayAdjustGameTimersRequestPayload;
   relayUndoMoveRequestPayload: RelayGameUndoMoveRequestPayload;
+  relayEndGameRequestPayload: RelayEndGameRequestPayload;
   
   gameChallengeOfferingRequestPayload: GameChallengeOfferingRequestPayload;
   gameChallengeAcceptRequestPayload: GameChallengeAcceptRequestPayload;
