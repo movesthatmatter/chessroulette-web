@@ -1,4 +1,4 @@
-import { ChessGameColor, ChessGameStateFinished, ChessMove, gameRecord, Resources } from 'dstnd-io';
+import { ChessGameStateFinished, ChessMove } from 'dstnd-io';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { noop, toDictIndexedBy } from 'src/lib/util';
@@ -42,10 +42,9 @@ export const RelayInputPage: React.FC<Props> = (props) => {
   const [showSubmitWindow, setShowSubmitWindow] = useState(false);
   const [timersDialogVisible, setTimersDialogVisible] = useState(false);
   const [showNewRelayDialog, setShowNewRelayDialog] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [interval, setInterval] = useState<number>(0);
+  const [timeLeft, setTimeLeft] = useState<number | undefined>(undefined);
+  const [interval, setInterval] = useState<number>(1000);
   const [finished, setFinished] = useState(false);
-  const [turn, setTurn] = useState<ChessGameColor>('white');
 
   const submitMove = ({ minutes, seconds }: { minutes: string; seconds: string }) => {
     if (unsubmittedMove && selectedRelayId && minutes && seconds) {
@@ -57,7 +56,6 @@ export const RelayInputPage: React.FC<Props> = (props) => {
       );
       setShowSubmitWindow(false);
       setUnsubmittedMove(undefined);
-      setTurn(otherChessColor(relayGames[selectedRelayId].game.lastMoveBy || 'white'));
     }
     return AsyncOk.EMPTY;
   };
@@ -68,23 +66,24 @@ export const RelayInputPage: React.FC<Props> = (props) => {
     });
   }
 
-  useEffect(() => {
-    if (selectedRelayId) {
-      setTimeLeft(relayGames[selectedRelayId].game.timeLeft[turn]);
-    }
-  }, [turn]);
-
   useInterval(
     () => {
-      setTimeLeft((prev) => prev - interval);
+      setTimeLeft((prev) => {
+        return Number(prev) - interval;
+      });
     },
-    finished || !selectedRelayId ? undefined : interval
+    finished || !selectedRelayId || !timeLeft || relayGames[selectedRelayId].game.state !== 'started' ? undefined : interval
   );
 
   useEffect(() => {
-    setInterval(timeLeftToInterval(timeLeft));
-
-    if (timeLeft <= 0) {
+    if (selectedRelayId && timeLeft) {
+      setInterval(timeLeftToInterval(timeLeft));
+    }
+    if (
+      selectedRelayId &&
+      (relayGames[selectedRelayId].game.state === 'finished' ||
+        relayGames[selectedRelayId].game.state === 'stopped')
+    ) {
       setFinished(true);
     }
   }, [timeLeft]);
@@ -94,6 +93,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
   }, []);
 
   const addRelay = (m: FormModel) => {
+    setUnsubmittedMove(undefined);
     return createRelay({
       relaySource: 'proxy',
       type: 'newGame',
@@ -132,6 +132,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
         [r.id]: r,
       }));
       setSelectedRelayId(r.id);
+      setTimeLeft(r.game.timeLeft[otherChessColor(r.game.lastMoveBy || 'white')])
     });
   };
 
@@ -161,6 +162,16 @@ export const RelayInputPage: React.FC<Props> = (props) => {
       unsubscribe();
     };
   }, [peerClient]);
+
+  useEffect(() => {
+    if (selectedRelayId && relayGames[selectedRelayId].game.state === 'started'){
+      setTimeLeft(
+        relayGames[selectedRelayId].game.timeLeft[
+          otherChessColor(relayGames[selectedRelayId].game.lastMoveBy || 'white')
+        ]
+      );
+    }
+  },[relayGames, selectedRelayId])
 
   const submitNewTimers = ({
     blackMinutes,
@@ -200,7 +211,6 @@ export const RelayInputPage: React.FC<Props> = (props) => {
         },
       });
       setUnsubmittedMove(undefined);
-      setTurn(otherChessColor(turn));
     }
   };
 
@@ -226,7 +236,13 @@ export const RelayInputPage: React.FC<Props> = (props) => {
               <div style={{ marginBottom: spacers.default, display: 'flex' }}>
                 <Countdown
                   timeLeft={relayGames[selectedRelayId].game.timeLeft.black}
-                  active
+                  active={
+                    selectedRelayId &&
+                    relayGames[selectedRelayId].game.state !== 'pending' &&
+                    relayGames[selectedRelayId].game.lastMoveBy !== 'black'
+                      ? true
+                      : false
+                  }
                   onFinished={noop}
                   gameTimeClass={relayGames[selectedRelayId].game.timeLimit}
                 />
@@ -256,7 +272,13 @@ export const RelayInputPage: React.FC<Props> = (props) => {
               <div style={{ marginTop: spacers.default, display: 'flex' }}>
                 <Countdown
                   timeLeft={relayGames[selectedRelayId].game.timeLeft.white}
-                  active
+                  active={
+                    selectedRelayId &&
+                    relayGames[selectedRelayId].game.state !== 'pending' &&
+                    relayGames[selectedRelayId].game.lastMoveBy !== 'white'
+                      ? true
+                      : false
+                  }
                   onFinished={noop}
                   gameTimeClass={relayGames[selectedRelayId].game.timeLimit}
                 />
@@ -309,7 +331,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
       )}
       {showSubmitWindow && (
         <MoveTimesDialog
-          timeLeft={timeLeft}
+          timeLeft={timeLeft || 0}
           visible={showSubmitWindow}
           onClose={() => setShowSubmitWindow(false)}
           onSubmit={submitMove}
