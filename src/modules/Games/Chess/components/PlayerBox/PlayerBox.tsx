@@ -9,22 +9,22 @@ import { getUserDisplayName } from 'src/modules/User';
 
 type Props = {
   player: ChessPlayer;
-  timeLeft: ChessGameState['timeLeft']['black'] | ChessGameState['timeLeft']['white'];
   active: boolean;
-  gameTimeLimit: ChessGameState['timeLimit'];
   material?: number;
   onTimerFinished?: () => void;
-  thumbnail? :boolean;
-};
+  thumbnail?: boolean;
+} & (
+  | {
+      gameTimeLimitClass: Exclude<ChessGameState['timeLimit'], 'untimed'>;
+      timeLeft: ChessGameState['timeLeft']['black'] | ChessGameState['timeLeft']['white'];
+    }
+  | {
+      gameTimeLimitClass: Extract<ChessGameState['timeLimit'], 'untimed'>;
+      timeLeft?: number;
+    }
+);
 
-export const PlayerBox: React.FC<Props> = ({
-  player,
-  timeLeft,
-  active,
-  gameTimeLimit,
-  material = 0,
-  ...props
-}) => {
+export const PlayerBox: React.FC<Props> = ({ player, active, material = 0, ...props }) => {
   const cls = useStyles();
   return (
     <div className={cls.container} style={{ display: 'flex', flexDirection: 'row' }}>
@@ -42,12 +42,12 @@ export const PlayerBox: React.FC<Props> = ({
           </div>
         </div>
       </div>
-      {gameTimeLimit !== 'untimed' && (
+      {props.gameTimeLimitClass !== 'untimed' && (
         <Countdown
-          timeLeft={timeLeft}
           active={active}
           onFinished={props.onTimerFinished}
-          gameTimeClass={gameTimeLimit}
+          timeLeft={props.timeLeft}
+          gameTimeClass={props.gameTimeLimitClass}
           thumbnail={props.thumbnail}
         />
       )}

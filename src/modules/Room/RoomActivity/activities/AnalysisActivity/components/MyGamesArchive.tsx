@@ -15,6 +15,7 @@ import { CompactGameList } from 'src/modules/Games/Chess/components/GamesList/co
 
 type Props = {
   onSelect: (g: GameRecord) => void;
+  hasClipboardCopy?: boolean;
 };
 
 export const MyGamesArchive: React.FC<Props> = (props) => {
@@ -45,6 +46,7 @@ export const MyGamesArchive: React.FC<Props> = (props) => {
               myUserId={auth.user.id}
               onSelect={props.onSelect}
               selectText="Analyze"
+              hasClipboardCopy={props.hasClipboardCopy}
             />
           ),
           [

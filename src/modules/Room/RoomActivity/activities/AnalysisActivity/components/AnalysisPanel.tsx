@@ -37,15 +37,15 @@ export type AnalysisPanelProps = {
     }
 );
 
-const getHasLoadedAnalysis = (props: Pick<AnalysisPanelProps, 'history' | 'displayed'>) =>
-  !!props.history && !!props.displayed;
+const getHasLoadedAnalysis = (
+  props: Pick<AnalysisPanelProps, 'history' | 'displayed' | 'gameAndPlayers'>
+) => (!!props.history && !!props.displayed) || !!props.gameAndPlayers?.game;
 
 export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
   homeColor,
   onImportedPgn,
   onImportedArchivedGame,
   onImportedRelayedGame,
-  gameAndPlayers,
   ...props
 }) => {
   const cls = useStyles();
@@ -57,7 +57,7 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
 
     setHasLoadedAnalysis(nextHasLoadedAnalysis);
     setShowImportPanel(!nextHasLoadedAnalysis);
-  }, [props.history]);
+  }, [props.history, props.gameAndPlayers]);
 
   return (
     <div className={cls.container}>
@@ -90,7 +90,7 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
             analysisId={props.analysisId}
             homeColor={homeColor}
             displayed={props.displayed}
-            gameAndPlayers={gameAndPlayers}
+            gameAndPlayers={props.gameAndPlayers}
             useEngine={props.useEngine}
             onClearButtonPress={() => {
               // Reset the Analysis

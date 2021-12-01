@@ -59,7 +59,7 @@ export const GameStateWidget: React.FC<Props> = React.memo(
             player={players[awayColor]}
             timeLeft={timeLeft[awayColor]}
             active={game.state === 'started' && game.lastMoveBy === homeColor}
-            gameTimeLimit={game.timeLimit}
+            gameTimeLimitClass={game.timeLimit}
             material={playParticipants ? playParticipants.black.materialScore : getRelativeMaterialScore(game).black}
             onTimerFinished={onTimerFinishedAway}
           />
@@ -75,7 +75,7 @@ export const GameStateWidget: React.FC<Props> = React.memo(
             player={players[homeColor]}
             timeLeft={timeLeft[homeColor]}
             active={game.state === 'started' && game.lastMoveBy === awayColor}
-            gameTimeLimit={game.timeLimit}
+            gameTimeLimitClass={game.timeLimit}
             material={playParticipants ? playParticipants.black.materialScore : getRelativeMaterialScore(game).white}
             onTimerFinished={onTimerFinishedHome}
           />

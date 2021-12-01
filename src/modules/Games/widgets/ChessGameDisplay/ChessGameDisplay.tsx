@@ -88,7 +88,7 @@ export const ChessGameDisplay: React.FC<Props> = ({ game, className, boxClassNam
                 player={playersGameInfo.players.away}
                 timeLeft={playersGameInfo.timeLeft.away}
                 active={false}
-                gameTimeLimit={playersGameInfo.game.timeLimit}
+                gameTimeLimitClass={playersGameInfo.game.timeLimit}
                 material={playersGameInfo.stats.away.materialScore}
                 thumbnail={props.thumbnail}
               />
@@ -111,7 +111,7 @@ export const ChessGameDisplay: React.FC<Props> = ({ game, className, boxClassNam
                 player={playersGameInfo.players.home}
                 timeLeft={playersGameInfo.timeLeft.home}
                 active={false}
-                gameTimeLimit={playersGameInfo.game.timeLimit}
+                gameTimeLimitClass={playersGameInfo.game.timeLimit}
                 material={playersGameInfo.stats.home.materialScore}
                 thumbnail={props.thumbnail}
               />

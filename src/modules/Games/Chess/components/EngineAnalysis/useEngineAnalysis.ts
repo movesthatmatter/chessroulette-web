@@ -3,10 +3,12 @@ import { http } from 'src/lib/http';
 import { AsyncResult, AsyncResultWrapper } from 'ts-async-results';
 import * as io from 'io-ts';
 import { useEffect, useState } from 'react';
-import { pgnToFen } from '../../lib';
+import { getNewChessGame, pgnToFen } from '../../lib';
 import { keyInObject } from 'src/lib/util';
-import { EngineAnalysisRecord } from './types';
+import { EngineAnalysisRecord, EngineDepthLine, EngineLine } from './types';
 import { processEngineLines } from './util';
+import { Game } from 'src/modules/Games/types';
+import { console } from 'window-or-global';
 
 const engineAnalysisPayload = io.type({
   bestmove: io.string,
@@ -64,6 +66,26 @@ export type EngineAnalysisState = {
   isLoading: boolean;
 };
 
+function convertLinesToSanFormat(
+  lines: EngineLine[],
+  game: Pick<GameRecord, 'id' | 'pgn'>
+): EngineDepthLine[] {
+  const onlyDepthLines = lines.filter((l) => l.type === 'depthLine') as EngineDepthLine[];
+  return onlyDepthLines.map((l) => {
+    const chess = getNewChessGame(game.pgn);
+    const pvWithSan = l.pv
+      .split(' ')
+      .map((entry) => {
+        return chess.move(entry, { sloppy: true })?.san;
+      })
+      .join(' ');
+    return {
+      ...l,
+      pv: pvWithSan,
+    };
+  });
+}
+
 export const useEngineAnalysis = (game?: Pick<GameRecord, 'id' | 'pgn'>) => {
   const [state, setState] = useState<EngineAnalysisState>({
     evaluation: undefined,
@@ -88,7 +110,10 @@ export const useEngineAnalysis = (game?: Pick<GameRecord, 'id' | 'pgn'>) => {
       .map(
         AsyncResult.passThrough((evaluation) => {
           setState({
-            evaluation,
+            evaluation: {
+              ...evaluation,
+              info: convertLinesToSanFormat(evaluation.info, game),
+            } as EngineAnalysisRecord,
             isLoading: false,
           });
         })

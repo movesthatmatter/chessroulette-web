@@ -20,6 +20,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
 import { MiniClipboardCopyButton } from 'src/components/ClipboardCopy';
+import { useGameTimesLeftByColorWithOptionalGame } from './hooks';
 
 export type AnalysisStateWidgetProps = {
   displayedIndex: ChessHistoryIndex;
@@ -120,16 +121,29 @@ export const AnalysisStateWidget: React.FC<AnalysisStateWidgetProps> = React.mem
       setPlayersGameInfo(getPlayersGameInfo(displayedIndex, gameAndPlayers));
     }, [displayedIndex, gameAndPlayers]);
 
+    const timesLeft = useGameTimesLeftByColorWithOptionalGame(playersGameInfo?.game, [homeColor]);
+
     return (
       <>
         {playersGameInfo?.players[awayColor] && (
           <div className={cx(boxClassName, cls.playerInfoTop)}>
             <PlayerBox
               player={playersGameInfo.players[awayColor]}
-              timeLeft={playersGameInfo.timeLeft[awayColor]}
-              active={false}
-              gameTimeLimit={playersGameInfo.game.timeLimit}
+              active={
+                gameAndPlayers?.game.state === 'started' &&
+                gameAndPlayers.game.lastMoveBy !== awayColor
+              }
               material={playersGameInfo.stats[awayColor].materialScore}
+              // TODO: This is 1Day Patch for relay
+              gameTimeLimitClass="untimed"
+              // {...(timesLeft && playersGameInfo.game.timeLimit !== 'untimed'
+              //   ? {
+              //       gameTimeLimitClass: playersGameInfo.game.timeLimit,
+              //       timeLeft: timesLeft[awayColor],
+              //     }
+              //   : {
+              //       gameTimeLimitClass: 'untimed',
+              //     })}
             />
           </div>
         )}
@@ -157,10 +171,21 @@ export const AnalysisStateWidget: React.FC<AnalysisStateWidgetProps> = React.mem
           <div className={cx(boxClassName, cls.playerInfoBottom)}>
             <PlayerBox
               player={playersGameInfo.players[homeColor]}
-              timeLeft={playersGameInfo.timeLeft[homeColor]}
-              active={false}
-              gameTimeLimit={playersGameInfo.game.timeLimit}
+              active={
+                gameAndPlayers?.game.state === 'started' &&
+                gameAndPlayers.game.lastMoveBy !== homeColor
+              }
               material={playersGameInfo.stats[homeColor].materialScore}
+              // TODO: This is 1Day Patch for relay
+              gameTimeLimitClass="untimed"
+              // {...(timesLeft && playersGameInfo.game.timeLimit !== 'untimed'
+              //   ? {
+              //       gameTimeLimitClass: playersGameInfo.game.timeLimit,
+              //       timeLeft: timesLeft[homeColor],
+              //     }
+              //   : {
+              //       gameTimeLimitClass: 'untimed',
+              //     })}
             />
           </div>
         )}
