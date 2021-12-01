@@ -9,11 +9,11 @@ import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { second } from 'src/lib/time';
 import { AnalysisRecordMocker } from 'src/mocks/records/AnalysisRecordMocker';
 import { addMoveToChessHistory } from 'dstnd-io/dist/analysis/analysisActions';
-import { AnalysisActivityContainer } from './AnalysisActivityContainer';
+import { AnalysisActivityWithLayout } from './AnalysisActivityWithLayout';
 
 export default {
-  component: AnalysisActivityContainer,
-  title: 'modules/Room/Activities/AnlaysisActivityContainer',
+  component: AnalysisActivityWithLayout,
+  title: 'modules/Room/Activities/AnalysisActivityWithLayout',
 };
 
 const participantMocker = new RoomActivityParticipantMocker();
@@ -48,9 +48,7 @@ const room = roomMocker.record(
 const analysisMocker = new AnalysisRecordMocker();
 
 export const defaultStory = () => {
-  const analysis = analysisMocker.record(
-    '1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4'
-  );
+  const analysis = analysisMocker.record('1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4');
 
   return (
     <StorybookBaseProvider
@@ -75,7 +73,7 @@ export const defaultStory = () => {
           members: {},
         }}
       >
-        <AnalysisActivityContainer
+        <AnalysisActivityWithLayout
           activity={{
             type: 'analysis',
             analysisId: '1',
@@ -113,7 +111,7 @@ export const withoutRoomProvider = () => {
         }),
       }}
     >
-      <AnalysisActivityContainer
+      <AnalysisActivityWithLayout
         activity={{
           type: 'analysis',
           analysisId: analysis.id,
@@ -150,7 +148,7 @@ export const withShortPgn = () => {
         }),
       }}
     >
-      <AnalysisActivityContainer
+      <AnalysisActivityWithLayout
         activity={{
           type: 'analysis',
           analysisId: analysis.id,
@@ -187,7 +185,7 @@ export const withLongPgn = () => {
         }),
       }}
     >
-      <AnalysisActivityContainer
+      <AnalysisActivityWithLayout
         activity={{
           type: 'analysis',
           analysisId: analysis.id,
@@ -316,7 +314,7 @@ export const withNestedBranches = () => {
         }),
       }}
     >
-      <AnalysisActivityContainer
+      <AnalysisActivityWithLayout
         activity={{
           type: 'analysis',
           analysisId: analysis.id,
@@ -370,7 +368,7 @@ export const withParallelBranches = () => {
         }),
       }}
     >
-      <AnalysisActivityContainer
+      <AnalysisActivityWithLayout
         activity={{
           type: 'analysis',
           analysisId: analysis.id,
@@ -409,7 +407,7 @@ export const withoutHistory = () => {
         }),
       }}
     >
-      <AnalysisActivityContainer
+      <AnalysisActivityWithLayout
         activity={{
           type: 'analysis',
           analysisId: analysis.id,

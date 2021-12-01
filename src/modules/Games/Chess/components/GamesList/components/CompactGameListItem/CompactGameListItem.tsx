@@ -6,7 +6,6 @@ import cx from 'classnames';
 import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
 import { GameRecord, RegisteredUserRecord } from 'dstnd-io';
-import { Emoji } from 'src/components/Emoji';
 import dateformat from 'dateformat';
 import capitalize from 'capitalize';
 import { MiniClipboardCopyButton } from 'src/components/ClipboardCopy';
@@ -139,12 +138,7 @@ export const CompactGameListItem: React.FC<Props> = ({
   }, [game, cls]);
 
   return (
-    <div
-      className={cx(cls.container, containerClassName)}
-      style={{
-        borderLeftColor,
-      }}
-    >
+    <div className={cx(cls.container, containerClassName)} style={{ borderLeftColor }}>
       <div className={cls.top}>
         {renderTitle}
         {hasClipboardCopyButton && game.pgn && (

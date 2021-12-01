@@ -3,18 +3,13 @@ import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import { effects, fonts, softBorderRadius } from 'src/theme';
-import { RoomDetailsConsumer } from './RoomDetailsConsumer';
-import { StreamingBoxRoomConsumer } from './StreamingBoxRoomConsumer';
-import { RoomTabsWidgetRoomConsumer } from './RoomTabsWidgetRoomConsumer';
-import { DesktopRoomLayout, LayoutContainerDimensions } from '../Layouts';
 import { Logo } from 'src/components/Logo';
 import { UserMenu } from 'src/components/Navigation';
 import { getBoxShadow } from 'src/theme/util';
 import { NavigationLink } from 'src/components/NavigationLink';
-import { SwitchActivityWidgetRoomConsumer } from './SwitchActivityWidgetRoomConsumer';
-import { RoomControlMenuConsumer } from './RoomControlMenuConsumer';
 import { DarkModeSwitch } from 'src/components/DarkModeSwitch/DarkModeSwitch';
 import { Button } from 'src/components/Button';
+import { DesktopRoomLayout, LayoutContainerDimensions } from '../Room/Layouts';
 
 type Props = {
   renderActivity: (d: {
@@ -36,7 +31,7 @@ const LAYOUT_RATIOS = {
 };
 
 // TODO: This isn't provided for now and don't think it needs to be but for now it sits here
-export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((props) => {
+export const ActivityGenericLayout: React.FC<Props> = React.memo((props) => {
   const cls = useStyles();
 
   return (
@@ -54,7 +49,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
               </div>
               <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
                 <div className={cls.linksContainer}>
-                  <SwitchActivityWidgetRoomConsumer
+                  {/* <SwitchActivityWidgetRoomConsumer
                     render={({ onSwitch, goLive,  room }) => (
                       <>
                         <NavigationLink
@@ -98,39 +93,41 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                         )}
                       </>
                     )}
-                  />
+                  /> */}
                 </div>
+                <DarkModeSwitch />
                 <UserMenu reversed showPeerStatus />
               </div>
             </div>
-            <div style={{ width: right.width }} />
+            {/* <div style={{ width: right.width }} /> */}
           </div>
         )}
         renderRightSideComponent={({ container }) => (
-          <div className={cx(cls.side, cls.rightSide)}>
-            <div className={cls.rightSideTop} style={{ height: `${TOP_HEIGHT}px` }}>
-              <div className={cls.roomInfoContainer}>
-                <RoomDetailsConsumer />
-                <div
-                  style={{
-                    display: 'flex',
-                  }}
-                >
-                  <DarkModeSwitch />
-                  <div style={{ width: spacers.large }} />
-                  <RoomControlMenuConsumer />
-                </div>
-              </div>
-            </div>
-            <div className={cls.rightSideStretchedContainer}>
-              {/* <div>
-                <StreamingBoxRoomConsumer containerClassName={cls.streamingBox} />
-              </div> */}
-              <RoomTabsWidgetRoomConsumer
-                bottomContainerHeight={BOTTOM_HEIGHT + container.verticalPadding - 1}
-              />
-            </div>
-          </div>
+          <div style={{ width: container.width, background: 'red' }} />
+          // <div className={cx(cls.side, cls.rightSide)}>
+          //   <div className={cls.rightSideTop} style={{ height: `${TOP_HEIGHT}px` }}>
+          //     <div className={cls.roomInfoContainer}>
+          //       <RoomDetailsConsumer />
+          //       <div
+          //         style={{
+          //           display: 'flex',
+          //         }}
+          //       >
+                  
+          //         <div style={{ width: spacers.large }} />
+          //         <RoomControlMenuConsumer />
+          //       </div>
+          //     </div>
+          //   </div>
+          //   <div className={cls.rightSideStretchedContainer}>
+          //     <div>
+          //       <StreamingBoxRoomConsumer containerClassName={cls.streamingBox} />
+          //     </div>
+          //     <RoomTabsWidgetRoomConsumer
+          //       bottomContainerHeight={BOTTOM_HEIGHT + container.verticalPadding - 1}
+          //     />
+          //   </div>
+          // </div>
         )}
         renderBottomComponent={() => null}
         renderActivityComponent={(extendedDimensions) => (

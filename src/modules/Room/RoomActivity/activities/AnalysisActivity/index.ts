@@ -1,1 +1,1 @@
-export { AnalysisActivityContainer as AnalysisActivity } from './AnalysisActivityContainer';
+export { AnalysisActivityWithLayout as AnalysisActivity } from './AnalysisActivityWithLayout';

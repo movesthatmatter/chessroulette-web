@@ -31,6 +31,8 @@ import { InfoCard } from 'src/components/InfoCard';
 import addSeconds from 'date-fns/addSeconds';
 import { now } from 'src/lib/date';
 import { EventPromo } from './components/EventPromo/EventPromo';
+import { createAnalysis } from 'src/modules/Activity/resources';
+import { useHistory } from 'react-router-dom';
 
 type Props = {};
 
@@ -38,6 +40,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
   const cls = useStyles();
   useBodyClass([cls.indexBackground]);
   const user = useAnyUser();
+  const history = useHistory();
 
   const [streamers, setStreamers] = useState<{
     itemsById: Record<
@@ -210,7 +213,15 @@ export const DesktopLandingPage: React.FC<Props> = () => {
               <Text size="subtitle2" className={cls.title}>
                 Game of the Day
               </Text>
-              <ChessGameDisplay game={gameOfDay} className={cls.board} />
+              <ChessGameDisplay game={gameOfDay} className={cls.board} onClick={() => {
+                createAnalysis({
+                  source: 'archivedGame',
+                  gameId: gameOfDay.id,
+                })
+                .map((analysis) => {
+                  history.push(`/analyses/${analysis.id}`);
+                })
+              }} />
             </>
           )}
         </aside>
@@ -334,6 +345,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
                         setScheduledEvent
                       );
                     }}
+                    game={gameOfDay}
                   />
                 ) : (
                   <InfoCard

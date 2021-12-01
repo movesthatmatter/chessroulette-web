@@ -8,14 +8,11 @@ import { UserProfilePage } from './modules/User';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TOS } from './pages/TOS';
 import { TwitchCallbackPage } from './vendors/twitch/TwitchCallbackPage/TwitchCallBackPage';
-import { LivePage } from './modules/Live';
-import { PlayLichess } from './modules/LichessPlay/PlayLichess/PlayLichess';
 import { RoomRoute } from './modules/Room';
 import { PeerProviderContainer } from './providers/PeerProvider/PeerProviderContainer';
-import { BroadcastPage } from './modules/Relay/BroadcastPage/BroadcastPage';
-import { BroadcastExternal } from './modules/Relay/BroadcastPage/BroadcastExternal';
 import { RelayInputRoute } from './modules/Relay/RelayInput';
 import { LiveRoute } from './modules/Live/LiveRoute';
+import { ActivityRoute } from './modules/Activity/ActivityRoute';
 
 type Props = {};
 
@@ -53,6 +50,7 @@ export const Routes: React.FC<Props> = () => {
         <PeerProviderContainer>
           <Route path="/relay-input" strict exact component={RelayInputRoute} />
           <Route exact strict path="/r/:slug" key={location.key} component={RoomRoute} />
+          <Route exact strict path="/analyses/:id" key={location.key} component={ActivityRoute} />
           <Route exact path="/" component={LandingPage} />
         </PeerProviderContainer>
       </SocketProvider>

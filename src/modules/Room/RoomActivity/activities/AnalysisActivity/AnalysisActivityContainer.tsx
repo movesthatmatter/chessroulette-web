@@ -1,21 +1,22 @@
-import { ChessGameStateFen } from 'dstnd-io';
-import React, { useCallback, useMemo } from 'react';
-import { http } from 'src/lib/http';
+import React, { useMemo } from 'react';
 import {
   ChessGameHistoryProvider,
   ChessGameHistoryProviderProps,
 } from 'src/modules/Games/Chess/components/GameHistory';
-import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { AnalysisActivity, AnalysisActivityProps } from './AnalysisActivity';
 import { RoomAnalysisActivity } from './types';
 
-type Props = Pick<AnalysisActivityProps, 'deviceSize'> & {
+export type AnalysisActivityContainerProps = Pick<
+  AnalysisActivityProps,
+  'deviceSize' | 'leftSide'
+> & {
   activity: RoomAnalysisActivity;
+  boardSize: number;
 };
 
-export const AnalysisActivityContainer: React.FC<Props> = (props) => {
+export const AnalysisActivityContainer: React.FC<AnalysisActivityContainerProps> = (props) => {
   const peerState = usePeerState();
 
   // These are the analysis actions!
@@ -49,7 +50,6 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
         },
       });
     };
-
 
     const onImportPgn: AnalysisActivityProps['onImportedPgn'] = (pgn) => {
       request({
@@ -91,31 +91,26 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
     };
   }, [props.activity.analysisId, peerState.status]);
 
-  const renderActivity = useCallback(
-    ({ boardSize, leftSide }) => (
-      <ChessGameHistoryProvider
-        key={props.activity.analysisId}
-        onMoved={actions.onMoved}
-        onRefocused={actions.onRefocused}
-        history={props.activity.analysis?.history || []}
-        displayedIndex={props.activity.analysis?.focusIndex}
-      >
-        {props.activity.analysis && (
-          <AnalysisActivity
-            boardSize={boardSize}
-            leftSide={leftSide}
-            deviceSize={props.deviceSize}
-            participants={props.activity.participants}
-            analysis={props.activity.analysis}
-            onImportedPgn={actions.onImportPgn}
-            onImportedArchivedGame={actions.onImportArchivedGame}
-            onImportedRelayedGame={actions.onImportRelayedGame}
-          />
-        )}
-      </ChessGameHistoryProvider>
-    ),
-    [props.activity, actions]
+  return (
+    <ChessGameHistoryProvider
+      key={props.activity.analysisId}
+      onMoved={actions.onMoved}
+      onRefocused={actions.onRefocused}
+      history={props.activity.analysis?.history || []}
+      displayedIndex={props.activity.analysis?.focusIndex}
+    >
+      {props.activity.analysis && (
+        <AnalysisActivity
+          boardSize={props.boardSize}
+          leftSide={props.leftSide}
+          deviceSize={props.deviceSize}
+          participants={props.activity.participants}
+          analysis={props.activity.analysis}
+          onImportedPgn={actions.onImportPgn}
+          onImportedArchivedGame={actions.onImportArchivedGame}
+          onImportedRelayedGame={actions.onImportRelayedGame}
+        />
+      )}
+    </ChessGameHistoryProvider>
   );
-
-  return <GenericLayoutDesktopRoomConsumer renderActivity={renderActivity} />;
 };

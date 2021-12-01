@@ -10,12 +10,15 @@ import { gameRecordToGame, getPlayerStats } from '../../Chess/lib';
 import { Game } from '../../types';
 import cx from 'classnames';
 import { spacers } from 'src/theme/spacers';
+import { Hoverable } from 'src/components/Hoverable';
 
 type Props = {
   game: Game;
   className?: string;
   boxClassName?: string;
   thumbnail?: boolean;
+  hoveredText?: string;
+  onClick?: () => void;
 };
 
 type TimeLeftMove = Pick<ChessHistoryMove, 'clock' | 'color'> & { san?: ChessHistoryMove['san'] };
@@ -69,7 +72,14 @@ const getPlayersGameInfo = (game: Game) => {
   } as const;
 };
 
-export const ChessGameDisplay: React.FC<Props> = ({ game, className, boxClassName, ...props }) => {
+export const ChessGameDisplay: React.FC<Props> = ({
+  game,
+  className,
+  boxClassName,
+  onClick = noop,
+  hoveredText = 'Analyze',
+  ...props
+}) => {
   const cls = useStyles();
 
   const [playersGameInfo, setPlayersGameInfo] = useState(getPlayersGameInfo(game));
@@ -79,20 +89,26 @@ export const ChessGameDisplay: React.FC<Props> = ({ game, className, boxClassNam
   }, [game]);
 
   return (
-    <div className={cls.container}>
-      <ContainerWithDimensions
-        render={(d) => (
-          <>
-            <div className={cx(boxClassName, cls.playerInfoTop)}>
-              <PlayerBox
-                player={playersGameInfo.players.away}
-                timeLeft={playersGameInfo.timeLeft.away}
-                active={false}
-                gameTimeLimitClass={playersGameInfo.game.timeLimit}
-                material={playersGameInfo.stats.away.materialScore}
-                thumbnail={props.thumbnail}
-              />
-            </div>
+    <ContainerWithDimensions
+      render={(d) => (
+        <div className={cls.container}>
+          <div className={cx(boxClassName, cls.playerInfoTop)}>
+            <PlayerBox
+              player={playersGameInfo.players.away}
+              timeLeft={playersGameInfo.timeLeft.away}
+              active={false}
+              gameTimeLimitClass={playersGameInfo.game.timeLimit}
+              material={playersGameInfo.stats.away.materialScore}
+              thumbnail={props.thumbnail}
+            />
+          </div>
+          <Hoverable
+            containerClassName={className}
+            overlayButtonProps={{
+              label: hoveredText,
+              onClick,
+            }}
+          >
             <ChessBoard
               size={d.width}
               id={game.id}
@@ -106,29 +122,32 @@ export const ChessGameDisplay: React.FC<Props> = ({ game, className, boxClassNam
               className={className}
               viewOnly
             />
-            <div className={cx(boxClassName, cls.playerInfoBottom)}>
-              <PlayerBox
-                player={playersGameInfo.players.home}
-                timeLeft={playersGameInfo.timeLeft.home}
-                active={false}
-                gameTimeLimitClass={playersGameInfo.game.timeLimit}
-                material={playersGameInfo.stats.home.materialScore}
-                thumbnail={props.thumbnail}
-              />
-            </div>
-          </>
-        )}
-      />
-    </div>
+          </Hoverable>
+          <div className={cx(boxClassName, cls.playerInfoBottom)}>
+            <PlayerBox
+              player={playersGameInfo.players.home}
+              timeLeft={playersGameInfo.timeLeft.home}
+              active={false}
+              gameTimeLimitClass={playersGameInfo.game.timeLimit}
+              material={playersGameInfo.stats.home.materialScore}
+              thumbnail={props.thumbnail}
+            />
+          </div>
+        </div>
+      )}
+    />
   );
 };
 
-const useStyles = createUseStyles({
-  container: {},
+const useStyles = createUseStyles((theme) => ({
+  container: {
+    position: 'relative',
+    flex: 1,
+  },
   playerInfoTop: {
     marginBottom: spacers.small,
   },
   playerInfoBottom: {
     marginTop: spacers.small,
   },
-});
+}));
