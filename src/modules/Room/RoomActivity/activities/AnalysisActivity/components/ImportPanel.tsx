@@ -115,6 +115,7 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
               <div className={cls.scroller}>
                 <div className={cls.box} style={{ width: '100%' }}>
                   <MyGamesArchive
+                    hasClipboardCopy={false}
                     onSelect={(game) => {
                       setState({
                         type: 'selectedArchivedGame',
