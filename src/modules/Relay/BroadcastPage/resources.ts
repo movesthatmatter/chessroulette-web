@@ -1,9 +1,14 @@
-import { Resources } from 'dstnd-io'
-import { http } from 'src/lib/http'
+import { Resources } from 'dstnd-io';
+import { http } from 'src/lib/http';
 
-const {resource : getRelayedGames} = Resources.Collections.Relay.GetRelayedGames
+const { resource: getRelayedGamesResource } = Resources.Collections.Relay.GetRelayedGames;
 
 export const getCurrentlyStreamingRelayedGames = () => {
-  return getRelayedGames.request(undefined, (params) => http.get('api/relays', {params}))
-}
+  return getRelayedGames({
+    gameStates: ['started', 'pending'],
+  });
+};
 
+export const getRelayedGames = (req?: Resources.Util.RequestOf<typeof getRelayedGamesResource>) => {
+  return getRelayedGamesResource.request(req || {}, (params) => http.get('api/relays', { params }));
+};
