@@ -127,7 +127,7 @@ export const AnalysisStateWidget: React.FC<AnalysisStateWidgetProps> = React.mem
             <PlayerBox
               player={playersGameInfo.players[awayColor]}
               timeLeft={playersGameInfo.timeLeft[awayColor]}
-              active={false}
+              active={gameAndPlayers?.game.state === 'started' && gameAndPlayers.game.lastMoveBy !== awayColor}
               gameTimeLimit={playersGameInfo.game.timeLimit}
               material={playersGameInfo.stats[awayColor].materialScore}
             />
@@ -158,7 +158,7 @@ export const AnalysisStateWidget: React.FC<AnalysisStateWidgetProps> = React.mem
             <PlayerBox
               player={playersGameInfo.players[homeColor]}
               timeLeft={playersGameInfo.timeLeft[homeColor]}
-              active={false}
+              active={gameAndPlayers?.game.state === 'started' && gameAndPlayers.game.lastMoveBy !== homeColor}
               gameTimeLimit={playersGameInfo.game.timeLimit}
               material={playersGameInfo.stats[homeColor].materialScore}
             />
