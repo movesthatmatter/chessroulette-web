@@ -14,8 +14,6 @@ import { spacers } from 'src/theme/spacers';
 import { AnalysisStateWidget, AnalysisStateWidgetProps } from './AnalysisStateWidget';
 import cx from 'classnames';
 import { PgnBox } from './PgnBox';
-import { EngineAnalysisBox } from './EngineAnalysisBox';
-import { useEngineAnalysis } from 'src/modules/Games/Chess/components/EngineAnalysis';
 import { EngineAnalysisBoxWidget } from './EngineAnalysisBoxWidget';
 
 type Props = {

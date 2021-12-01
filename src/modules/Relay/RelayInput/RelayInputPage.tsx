@@ -1,5 +1,5 @@
 import { ChessGameStateFinished, ChessMove } from 'dstnd-io';
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { noop, toDictIndexedBy } from 'src/lib/util';
 import { usePeerStateClient } from 'src/providers/PeerProvider';
@@ -72,7 +72,14 @@ export const RelayInputPage: React.FC<Props> = (props) => {
         return Number(prev) - interval;
       });
     },
-    finished || !selectedRelayId || !timeLeft || relayGames[selectedRelayId].game.state !== 'started' ? undefined : interval
+    timersDialogVisible ||
+      showSubmitWindow ||
+      finished ||
+      !selectedRelayId ||
+      !timeLeft ||
+      relayGames[selectedRelayId].game.state !== 'started'
+      ? undefined
+      : interval
   );
 
   useEffect(() => {
@@ -132,7 +139,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
         [r.id]: r,
       }));
       setSelectedRelayId(r.id);
-      setTimeLeft(r.game.timeLeft[otherChessColor(r.game.lastMoveBy || 'white')])
+      setTimeLeft(r.game.timeLeft[otherChessColor(r.game.lastMoveBy || 'white')]);
     });
   };
 
@@ -164,14 +171,14 @@ export const RelayInputPage: React.FC<Props> = (props) => {
   }, [peerClient]);
 
   useEffect(() => {
-    if (selectedRelayId && relayGames[selectedRelayId].game.state === 'started'){
+    if (selectedRelayId && relayGames[selectedRelayId].game.state === 'started') {
       setTimeLeft(
         relayGames[selectedRelayId].game.timeLeft[
           otherChessColor(relayGames[selectedRelayId].game.lastMoveBy || 'white')
         ]
       );
     }
-  },[relayGames, selectedRelayId])
+  }, [relayGames, selectedRelayId]);
 
   const submitNewTimers = ({
     blackMinutes,

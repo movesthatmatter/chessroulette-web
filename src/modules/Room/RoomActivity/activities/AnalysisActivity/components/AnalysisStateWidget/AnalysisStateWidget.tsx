@@ -134,14 +134,16 @@ export const AnalysisStateWidget: React.FC<AnalysisStateWidgetProps> = React.mem
                 gameAndPlayers.game.lastMoveBy !== awayColor
               }
               material={playersGameInfo.stats[awayColor].materialScore}
-              {...(timesLeft && playersGameInfo.game.timeLimit !== 'untimed'
-                ? {
-                    gameTimeLimitClass: playersGameInfo.game.timeLimit,
-                    timeLeft: timesLeft[awayColor],
-                  }
-                : {
-                    gameTimeLimitClass: 'untimed',
-                  })}
+              // TODO: This is 1Day Patch for relay
+              gameTimeLimitClass="untimed"
+              // {...(timesLeft && playersGameInfo.game.timeLimit !== 'untimed'
+              //   ? {
+              //       gameTimeLimitClass: playersGameInfo.game.timeLimit,
+              //       timeLeft: timesLeft[awayColor],
+              //     }
+              //   : {
+              //       gameTimeLimitClass: 'untimed',
+              //     })}
             />
           </div>
         )}
@@ -174,14 +176,16 @@ export const AnalysisStateWidget: React.FC<AnalysisStateWidgetProps> = React.mem
                 gameAndPlayers.game.lastMoveBy !== homeColor
               }
               material={playersGameInfo.stats[homeColor].materialScore}
-              {...(timesLeft && playersGameInfo.game.timeLimit !== 'untimed'
-                ? {
-                    gameTimeLimitClass: playersGameInfo.game.timeLimit,
-                    timeLeft: timesLeft[homeColor],
-                  }
-                : {
-                    gameTimeLimitClass: 'untimed',
-                  })}
+              // TODO: This is 1Day Patch for relay
+              gameTimeLimitClass="untimed"
+              // {...(timesLeft && playersGameInfo.game.timeLimit !== 'untimed'
+              //   ? {
+              //       gameTimeLimitClass: playersGameInfo.game.timeLimit,
+              //       timeLeft: timesLeft[homeColor],
+              //     }
+              //   : {
+              //       gameTimeLimitClass: 'untimed',
+              //     })}
             />
           </div>
         )}
