@@ -81,7 +81,7 @@ export const PlayActivityMobile: React.FC<Props> = ({
                     game.state === 'started' &&
                     game.lastMoveBy !== activity.participants.opponent.color
                   }
-                  gameTimeLimit={game.timeLimit}
+                  gameTimeLimitClass={game.timeLimit}
                   material={activity.participants.opponent.materialScore}
                   onTimerFinished={() => onTimerFinished(activity.participants.opponent.color)}
                 />
@@ -117,7 +117,7 @@ export const PlayActivityMobile: React.FC<Props> = ({
                   active={
                     game.state === 'started' && game.lastMoveBy !== activity.participants.me.color
                   }
-                  gameTimeLimit={game.timeLimit}
+                  gameTimeLimitClass={game.timeLimit}
                   material={activity.participants.me.materialScore}
                   onTimerFinished={() => onTimerFinished(activity.participants.opponent.color)}
                 />

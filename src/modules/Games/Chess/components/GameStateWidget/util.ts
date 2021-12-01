@@ -1,8 +1,7 @@
-import { ActivePiecesRecord } from 'dstnd-io';
+import { ActivePiecesRecord, GameRecord } from 'dstnd-io';
 import { objectKeys } from 'src/lib/util';
 import { PlayParticipants } from 'src/modules/Games';
 import { Game } from 'src/modules/Games/types';
-import { RoomPlayParticipantsByColor } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 
 const pointsByMaterial = {
   p: 1,
@@ -44,7 +43,7 @@ export const getRelativeMaterialScore = (game: Game): RelativeMaterialScore => {
   };
 };
 
-export const getPlayersTimeLeft = (game: Game, participants: PlayParticipants) => {
+export const getPlayersTimeLeft = (game: GameRecord, participants: PlayParticipants) => {
   const now = new Date().getTime();
 
   const home =
@@ -60,7 +59,7 @@ export const getPlayersTimeLeft = (game: Game, participants: PlayParticipants) =
   return { home, away } as const;
 };
 
-export const getPlayersTimeLeftByColor = (game: Game) => {
+export const getPlayersTimeLeftByColor = (game: GameRecord) => {
   const now = new Date().getTime();
 
   return {
