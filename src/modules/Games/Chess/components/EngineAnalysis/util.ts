@@ -21,8 +21,8 @@ const sortDepthLineWithMateScore = (a: EngineDepthLine, b: EngineDepthLine) => {
   return Math.abs(b.score.value) - Math.abs(a.score.value);
 }
 
-export const processEngineLines = (lines: EngineLine[], maxLines = 3) => {
+export const processEngineLines = (lines: EngineLine[], maxLines = 1) => {
   const onlyDepthLines = lines.filter((l) => l.type === 'depthLine') as EngineDepthLine[];
 
-  return onlyDepthLines.sort(sortDepthLineWithMateScore).slice(-maxLines);
+  return onlyDepthLines.sort(sortDepthLineWithMateScore).slice(-maxLines)
 }
