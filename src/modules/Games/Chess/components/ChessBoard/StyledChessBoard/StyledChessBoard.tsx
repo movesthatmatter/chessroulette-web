@@ -184,7 +184,7 @@ const useStyles = createUseStyles((theme) => {
       : {
           image: darkBoard,
           pieces: darkPieces,
-          selectedSquare: '#4D164B',
+          selectedSquare: '#8B239C70',
           lastMove: '#9C1F5B70',
           check:
             'radial-gradient(64.15% 64.15% at 50.28% 50.31%, rgba(206, 24, 107, 0.81) 39.58%, rgba(206, 24, 107, 0) 100%)',
