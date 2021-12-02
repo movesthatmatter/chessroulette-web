@@ -87,16 +87,8 @@ export const CreateChallenge: React.FC<CreateChallengeProps> = ({ gameSpecs, onU
 };
 
 const useStyles = createUseStyles({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
+  container: {},
   top: {
-    // marginBottom: spacers.small,
-    maxHeight:'80px'
-  },
-  label: {
-    // marginBottom: spacers.small,
-    maxHeight:'80px'
+    marginBottom: spacers.default,
   },
 });

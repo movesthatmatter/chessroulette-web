@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { getCurrentlyStreamingRelayedGames } from 'src/modules/Relay/BroadcastPage/resources';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { RelayedGame } from '../types';
-import { useCallback } from '@storybook/addons';
 
 type Props = {
   pageSize: number;

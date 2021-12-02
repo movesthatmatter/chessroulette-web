@@ -15,6 +15,7 @@ import { SwitchActivityWidgetRoomConsumer } from './SwitchActivityWidgetRoomCons
 import { RoomControlMenuConsumer } from './RoomControlMenuConsumer';
 import { DarkModeSwitch } from 'src/components/DarkModeSwitch/DarkModeSwitch';
 import { Button } from 'src/components/Button';
+import { useRoomConsumer } from './useRoomConsumer';
 
 type Props = {
   renderActivity: (d: {
@@ -38,6 +39,7 @@ const LAYOUT_RATIOS = {
 // TODO: This isn't provided for now and don't think it needs to be but for now it sits here
 export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((props) => {
   const cls = useStyles();
+  const roomConsumer = useRoomConsumer();
 
   return (
     <div className={cls.container}>
@@ -55,7 +57,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
               <div className={cls.userMenuWrapper} style={{ minWidth: center.width }}>
                 <div className={cls.linksContainer}>
                   <SwitchActivityWidgetRoomConsumer
-                    render={({ onSwitch, goLive,  room }) => (
+                    render={({ onSwitch, goLive, room }) => (
                       <>
                         <NavigationLink
                           title="Activities"
@@ -63,8 +65,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                             items: [
                               {
                                 title: 'Play',
-                                disabled: room.currentActivity.type === 'play' || 
-                                (room.live),
+                                disabled: room.currentActivity.type === 'play' || room.live,
                                 onClick: () => onSwitch({ activityType: 'play' }),
                               },
                               {
@@ -72,33 +73,42 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                                 disabled:
                                   (room.currentActivity.type === 'play' &&
                                     room.currentActivity.game?.state === 'started') ||
-                                  room.currentActivity.type === 'analysis' || 
-                                  (room.live),
+                                  room.currentActivity.type === 'analysis' ||
+                                  room.live,
                                 onClick: () => onSwitch({ activityType: 'analysis' }),
                               },
                             ],
                           }}
                         />
-                        {room.currentActivity.type === 'play' && room.currentActivity.game && !room.live && (
-                        <div style={{flex: 1, display: 'flex', alignItems: 'center', marginLeft: spacers.default}}>
-                          <Button
-                            label="Go Live"
-                            type="primary"
-                            clear
-                            onClick={() => goLive()}
-                            style={{marginBottom: '0px'}}
-                          />
-                        </div>
-                        )}
-                        {room.live && (
-                          <div className={cls.liveContainer}>
-                            <div className={cls.liveIcon}/>
-                            <div className={cls.liveText}>LIVE</div>
-                          </div>
-                        )}
+                        {room.currentActivity.type === 'play' &&
+                          room.currentActivity.game &&
+                          !room.live && (
+                            <div
+                              style={{
+                                flex: 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                marginLeft: spacers.default,
+                              }}
+                            >
+                              <Button
+                                label="Go Live"
+                                type="primary"
+                                clear
+                                onClick={() => goLive()}
+                                style={{ marginBottom: '0px' }}
+                              />
+                            </div>
+                          )}
                       </>
                     )}
                   />
+                  {roomConsumer?.room.live && (
+                    <div className={cls.liveContainer}>
+                      <div className={cls.liveIcon} />
+                      <div className={cls.liveText}>LIVE</div>
+                    </div>
+                  )}
                 </div>
                 <UserMenu reversed showPeerStatus />
               </div>
@@ -209,7 +219,7 @@ const useStyles = createUseStyles((theme) => ({
     overflow: 'hidden',
     alignItems: 'stretch',
     height: '100%',
-},
+  },
   streamingBox: {
     ...softBorderRadius,
     overflow: 'hidden',
@@ -226,24 +236,24 @@ const useStyles = createUseStyles((theme) => ({
     alignItems: 'center',
     flex: 3,
   },
-  liveContainer:{
-    display:'flex', 
+  liveContainer: {
+    display: 'flex',
     marginLeft: spacers.default,
     backgroundColor: theme.depthBackground.backgroundColor,
-    padding:'5px',
+    padding: '5px',
     ...effects.softBorderRadius,
   },
   liveIcon: {
-    width:'12px',
+    width: '12px',
     height: '12px',
     background: '#ff32a1',
     boxSizing: 'border-box',
     borderRadius: '50%',
     marginRight: spacers.small,
-    alignSelf:'center'
+    alignSelf: 'center',
   },
-  liveText:{
+  liveText: {
     color: theme.text.baseColor,
     ...fonts.small2,
-  }
+  },
 }));
