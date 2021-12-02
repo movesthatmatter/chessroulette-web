@@ -15,8 +15,8 @@ type Props = Omit<StreamingBoxProps, 'room'> & {
 export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
   const cls = useStyles();
   const roomContext = useContext(RoomProviderContext);
-  
-  if (!roomContext) {
+
+  if (!(roomContext && roomContext.room.p2pCommunicationType !== 'none')) {
     // Show Loader
     return null;
   }
@@ -28,12 +28,14 @@ export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
       headerOverlay={({ inFocus }) => (
         <div className={cls.header}>
           <Logo withBeta={false} asLink={false} mini withOutline className={cls.logoStreamingBox} />
-          <div style={{flex: 1, ...hideOnDesktop}}/>
+          <div style={{ flex: 1, ...hideOnDesktop }} />
           <div className={cls.peerInfoWrapper}>
             <PeerInfo darkBG reversed peerUserInfo={inFocus} />
-            {props.isMobile && <div style={{marginTop: '10px', alignSelf:'flex-end'}}>
-              <DarkModeSwitch/>
-            </div>}
+            {props.isMobile && (
+              <div style={{ marginTop: '10px', alignSelf: 'flex-end' }}>
+                <DarkModeSwitch />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -43,7 +45,7 @@ export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
 
 const useStyles = createUseStyles({
   logoStreamingBox: {
-    padding: spacers.get(.7),
+    padding: spacers.get(0.7),
     marginTop: '-5px',
     width: '48px',
   },
@@ -54,13 +56,13 @@ const useStyles = createUseStyles({
   },
   peerInfoWrapper: {
     ...onlyMobile({
-      flexDirection:'column',
-      justifyContent:'flex-end'
+      flexDirection: 'column',
+      justifyContent: 'flex-end',
     }),
     flex: 1,
     display: 'flex',
     alignContent: 'flex-end',
     justifyContent: 'flex-end',
-    padding: spacers.get(.7),
+    padding: spacers.get(0.7),
   },
 });

@@ -164,6 +164,19 @@ export const DesktopLandingPage: React.FC<Props> = () => {
                       activityType: 'analysis',
                     }}
                   />
+                  <CreateRoomButtonWidget
+                    label="Analyze w/o Camera"
+                    type="secondary"
+                    style={{
+                      marginBottom: 0,
+                    }}
+                    full
+                    createRoomSpecs={{
+                      type: 'private',
+                      activityType: 'analysis',
+                      p2pCommunicationType: 'none',
+                    }}
+                  />
                 </div>
               )}
             />
@@ -216,7 +229,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
         </aside>
         <main className={cls.main}>
           {streamers?.inFocus && (
-            <LiveHero featuredStreamer={streamers.itemsById[streamers.inFocus]} />
+            <LiveHero featuredStreamer={streamers.itemsById[streamers.inFocus]} autoplay={false} />
           )}
           <div>
             <div style={{ height: spacers.get(3) }} />

@@ -175,7 +175,7 @@ export class PeerProvider extends React.Component<Props, State> {
   render() {
     return (
       <>
-        {this.props.roomAndMe.room && (
+        {this.props.roomAndMe.room && this.props.roomAndMe.room.p2pCommunicationType !== 'none' && (
           <PeerConnectionsHandler
             // Reset this once the room changes
             key={this.props.roomAndMe.room.id}

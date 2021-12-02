@@ -57,6 +57,7 @@ export class RoomMocker {
         messages: [],
       },
       pendingChallenges: {},
+      p2pCommunicationType: 'none',
     };
   }
 

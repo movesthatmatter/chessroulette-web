@@ -3,6 +3,7 @@ import { getCurrentlyStreamingRelayedGames } from 'src/modules/Relay/BroadcastPa
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { RelayedGame } from '../types';
+import { useCallback } from '@storybook/addons';
 
 type Props = {
   pageSize: number;
@@ -41,7 +42,7 @@ export const RelayedGameProvider: React.FC<Props> = (props) => {
     fetchLiveGames();
   }, []);
 
-  function fetchLiveGames() {
+  const fetchLiveGames = useCallback(() => {
     getCurrentlyStreamingRelayedGames().map((relayedGames) => {
       setRelayedGames(
         relayedGames.map((relayedGame) => ({
@@ -51,7 +52,7 @@ export const RelayedGameProvider: React.FC<Props> = (props) => {
       );
       setIsLoading(false);
     });
-  }
+  }, []);
 
   return (
     <>

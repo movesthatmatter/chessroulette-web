@@ -1,20 +1,13 @@
-import { CreateRoomRequest } from 'dstnd-io';
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { CreateRoomRequest } from 'dstnd-io';
 import { Button, ButtonProps } from 'src/components/Button';
-import { noop, toRoomUrlPath } from 'src/lib/util';
+import { noop } from 'src/lib/util';
 import { usePeerState } from 'src/providers/PeerProvider';
-import { CreatePlayRoomWizard } from '../../wizards/CreatePlayRoomWizard';
-import { CreateAnalysisRoomWizard } from '../../wizards/CreateAnalysisRoomWizard';
 import { Dialog } from 'src/components/Dialog';
-import * as resources from '../../resources';
-import { AsyncOk } from 'ts-async-results';
-import { UnknownAsyncResult } from 'src/lib/types';
-import { Events } from 'src/services/Analytics';
-import { CreateRelayRoomWizard } from '../../wizards/CreateRelayRoomWizard';
+import { CreateRoomWizard } from '../../wizards/CreateRoomWizard/CreateRoomWizard';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
-  createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activityType'>;
+  createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activityType' | 'p2pCommunicationType'>;
   onClick?: () => void;
 };
 
@@ -24,7 +17,6 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({
   ...buttonProps
 }) => {
   const peerState = usePeerState();
-  const history = useHistory();
   const [showWizard, setShowWizard] = useState(false);
 
   return (
@@ -41,56 +33,12 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({
       <Dialog
         visible={showWizard}
         content={
-          <>
-            {createRoomSpecs.activityType === 'play' && (
-              <CreatePlayRoomWizard
-                onFinished={({ gameSpecs }) => {
-                  if (peerState.status !== 'open') {
-                    return AsyncOk.EMPTY;
-                  }
-
-                  return (resources
-                    .createRoom({
-                      userId: peerState.me.id,
-                      type: createRoomSpecs.type,
-                      activityType: 'play',
-                      gameSpecs,
-                    })
-                    .map((room) => {
-                      Events.trackRoomCreated(room);
-                      history.push(toRoomUrlPath(room));
-                    }) as unknown) as UnknownAsyncResult;
-                }}
-              />
-            )}
-            {createRoomSpecs.activityType === 'analysis' && (
-              <CreateAnalysisRoomWizard
-                onFinished={() => {
-                  if (peerState.status !== 'open') {
-                    return AsyncOk.EMPTY;
-                  }
-
-                  return (resources
-                    .createRoom({
-                      userId: peerState.me.id,
-                      type: createRoomSpecs.type,
-                      ...(createRoomSpecs.activityType === 'analysis'
-                        ? {
-                            activityType: 'analysis',
-                            history: [],
-                          }
-                        : {
-                            activityType: 'none',
-                          }),
-                    })
-                    .map((room) => {
-                      Events.trackRoomCreated(room);
-                      history.push(toRoomUrlPath(room));
-                    }) as unknown) as UnknownAsyncResult;
-                }}
-              />
-            )}
-          </>
+          <CreateRoomWizard
+            createRoomSpecs={{
+              p2pCommunicationType: 'audioVideo', // Default to audio video
+              ...createRoomSpecs,
+            }}
+          />
         }
         onClose={() => setShowWizard(false)}
       />
