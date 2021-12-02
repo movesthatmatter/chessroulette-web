@@ -6895,7 +6895,7 @@ dotenv@^6.2.0:
 
 "dstnd-io@https://github.com/dstnd/dstnd-io.git#room-without-rtc":
   version "0.2.2"
-  resolved "https://github.com/dstnd/dstnd-io.git#94d2c0b5bf1f2c0cb604c5a1fb868190beec2230"
+  resolved "https://github.com/dstnd/dstnd-io.git#b50405232ca77096e38403518ba82c22ae95baa6"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"

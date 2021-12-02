@@ -1,26 +1,24 @@
 import { CreateRoomRequest, RoomActivityCreationRecord } from 'dstnd-io';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Wizard } from 'react-use-wizard';
-import { useAnyUser } from 'src/services/Authentication';
 import { CreatePlayChallengeStep } from '../steps/CreatePlayChallengeStep';
-import { Events } from 'src/services/Analytics';
-import { useHistory } from 'react-router-dom';
-import { toRoomUrlPath } from 'src/lib/util';
-import { AsyncErr } from 'ts-async-results';
 import { RoomDefaultPartialWizard } from '../RoomDefaultPartialWizard';
-import * as resources from '../../resources';
+import { useCreateRoom } from '../../widgets/CreateRoomWidget';
 
-type Props = {
-  createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activityType' | 'p2pCommunicationType'>;
+export type CreateRoomWizardProps = {
+  createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'p2pCommunicationType'> &
+    Pick<CreateRoomRequest['activity'], 'activityType'>;
 };
 
 type WizardState = RoomActivityCreationRecord;
 
-const getDefaultWizardState = ({ activityType }: Props['createRoomSpecs']): WizardState => {
+const getDefaultWizardState = ({
+  activityType,
+}: CreateRoomWizardProps['createRoomSpecs']): WizardState => {
   if (activityType === 'analysis') {
     return {
       activityType: 'analysis',
-      history: [],
+      source: 'empty',
     };
   }
 
@@ -39,42 +37,24 @@ const getDefaultWizardState = ({ activityType }: Props['createRoomSpecs']): Wiza
   };
 };
 
-export const CreateRoomWizard: React.FC<Props> = ({ createRoomSpecs }) => {
+export const CreateRoomWizard: React.FC<CreateRoomWizardProps> = ({ createRoomSpecs }) => {
   const [wizardState, setWizardState] = useState<WizardState>(
     getDefaultWizardState(createRoomSpecs)
   );
-  const user = useAnyUser();
-  const history = useHistory();
+  const roomSpecs = useMemo(
+    () => ({
+      type: createRoomSpecs.type,
+      p2pCommunicationType: createRoomSpecs.p2pCommunicationType,
+      activity: wizardState,
+    }),
+    [wizardState]
+  );
 
-  const onFinish = useCallback(() => {
-    if (!user) {
-      return AsyncErr.EMPTY;
-    }
-
-    if (!wizardState) {
-      return AsyncErr.EMPTY;
-    }
-
-    return resources
-      .createRoom({
-        userId: user.id,
-        type: createRoomSpecs.type,
-        p2pCommunicationType: createRoomSpecs.p2pCommunicationType,
-        ...wizardState,
-      })
-      .map((room) => {
-        Events.trackRoomCreated(room);
-        history.push(toRoomUrlPath(room));
-      });
-  }, [wizardState, user?.id, createRoomSpecs]);
+  const createRoomState = useCreateRoom(roomSpecs);
 
   useEffect(() => {
     setWizardState(getDefaultWizardState(createRoomSpecs));
   }, [createRoomSpecs]);
-
-  if (!user) {
-    return null;
-  }
 
   return (
     <Wizard>
@@ -88,7 +68,10 @@ export const CreateRoomWizard: React.FC<Props> = ({ createRoomSpecs }) => {
           }
         />
       )}
-      <RoomDefaultPartialWizard onFinished={onFinish} roomSpecs={createRoomSpecs} />
+      <RoomDefaultPartialWizard
+        onFinished={createRoomState.createRoom}
+        roomSpecs={createRoomSpecs}
+      />
     </Wizard>
   );
 };

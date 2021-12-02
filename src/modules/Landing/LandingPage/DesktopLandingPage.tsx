@@ -2,7 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
 import { softBorderRadius, effects, hardBorderRadius } from 'src/theme';
-import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
+import {
+  CreateRoomButtonWidgetWithWizard,
+  CreateRoomButtonWidgetFromSpecs,
+} from 'src/modules/Room/widgets/CreateRoomWidget';
 import { spacers } from 'src/theme/spacers';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
 import { LiveHero } from 'src/modules/Live/widgets/LiveHero';
@@ -139,7 +142,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
                 >
                   <Hr text="Or Start making Progress" />
                   <br />
-                  <CreateRoomButtonWidget
+                  <CreateRoomButtonWidgetWithWizard
                     label="Play Now"
                     type="primary"
                     createRoomSpecs={{
@@ -152,7 +155,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
                     }}
                   />
                   <div style={{ width: spacers.default }} />
-                  <CreateRoomButtonWidget
+                  <CreateRoomButtonWidgetWithWizard
                     label="Analyze"
                     type="secondary"
                     style={{
@@ -162,19 +165,6 @@ export const DesktopLandingPage: React.FC<Props> = () => {
                     createRoomSpecs={{
                       type: 'private',
                       activityType: 'analysis',
-                    }}
-                  />
-                  <CreateRoomButtonWidget
-                    label="Analyze w/o Camera"
-                    type="secondary"
-                    style={{
-                      marginBottom: 0,
-                    }}
-                    full
-                    createRoomSpecs={{
-                      type: 'private',
-                      activityType: 'analysis',
-                      p2pCommunicationType: 'none',
                     }}
                   />
                 </div>
@@ -223,13 +213,40 @@ export const DesktopLandingPage: React.FC<Props> = () => {
               <Text size="subtitle2" className={cls.title}>
                 Game of the Day
               </Text>
-              <ChessGameDisplay game={gameOfDay} className={cls.board} />
+              <ChessGameDisplay
+                game={gameOfDay}
+                className={cls.board}
+                hoveredComponent={
+                  <div
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 99,
+                    }}
+                  >
+                    <CreateRoomButtonWidgetFromSpecs
+                      label="Analyze"
+                      type="primary"
+                      createRoomSpecs={{
+                        activity: {
+                          activityType: 'analysis',
+                          source: 'archivedGame',
+                          gameId: gameOfDay.id,
+                        },
+                        type: 'private',
+                      }}
+                    />
+                  </div>
+                }
+              />
             </>
           )}
         </aside>
         <main className={cls.main}>
           {streamers?.inFocus && (
-            <LiveHero featuredStreamer={streamers.itemsById[streamers.inFocus]} autoplay={false} />
+            <LiveHero featuredStreamer={streamers.itemsById[streamers.inFocus]} autoplay={!config.DEBUG} />
           )}
           <div>
             <div style={{ height: spacers.get(3) }} />
