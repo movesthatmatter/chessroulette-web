@@ -15,7 +15,9 @@ export type AspectRatioProps = React.HTMLProps<HTMLDivElement> & {
 } | {
   height?: number;
   width?: never;
-});
+}) & {
+  contentClassname?: string
+};
 
 export const AspectRatio: React.FC<AspectRatioProps> = ({
   aspectRatio = {
@@ -41,7 +43,7 @@ export const AspectRatio: React.FC<AspectRatioProps> = ({
         className={cx(cls.inner)}
         style={{ paddingBottom: `${100 / ratio}%` }}
       >
-        <div className={cls.content}>
+        <div className={cx(cls.content, props.contentClassname)}>
           {props.children}
         </div>
       </div>

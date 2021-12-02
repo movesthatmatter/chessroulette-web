@@ -36,6 +36,17 @@ import { addDays, addMinutes, subDays } from 'date-fns';
 import { Date } from 'window-or-global';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { useHistory } from 'react-router-dom';
+// import config from 'src/config';
+// import { getNextScheduledEvent, ScheduledEvent } from './schedule';
+// import { AspectRatio } from 'src/components/AspectRatio';
+// import { InfoCard } from 'src/components/InfoCard';
+import addSeconds from 'date-fns/addSeconds';
+import { now } from 'src/lib/date';
+import { EventPromo } from './components/EventPromo/EventPromo';
+import { LoaderPlaceholder } from 'src/components/LoaderPlaceholder/LoaderPlaceholder';
+import { StreamersCollection } from './components/StreamersCollection';
+import { TopPlayers } from './components/TopPlayers';
+import { LiveStreamCard } from 'src/modules/Live/components/LiveStreamCard/LiveStreamCard';
 
 type Props = {};
 
@@ -207,94 +218,63 @@ export const DesktopLandingPage: React.FC<Props> = () => {
             />
           )}
           <div style={{ height: spacers.large }} />
-          {topPlayers && (
-            <div>
-              <Text size="subtitle2" className={cls.title}>
-                Top Players
-              </Text>
-              {topPlayers.map((r) => (
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    flex: 1,
-                    width: '100%',
-                    marginBottom: spacers.large,
-                    alignItems: 'center',
-                  }}
-                >
-                  <UserDisplay user={r.user} />
-                  <Text size="small1" className={cls.topPlayerStats}>
-                    {r.gamesCount} Games
-                  </Text>
-                </div>
-              ))}
-            </div>
-          )}
-          {gameOfDay && (
-            <>
-              <div style={{ height: spacers.large }} />
-              <Text size="subtitle2" className={cls.title}>
-                Game of the Day
-              </Text>
-              <ChessGameDisplay
-                game={gameOfDay}
-                className={cls.board}
-                hoveredComponent={
-                  <div
-                    style={{
-                      flex: 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      zIndex: 99,
-                    }}
-                  >
-                    <CreateRoomButtonWidgetFromSpecs
-                      label="Analyze"
-                      type="primary"
-                      createRoomSpecs={{
-                        activity: {
-                          activityType: 'analysis',
-                          source: 'archivedGame',
-                          gameId: gameOfDay.id,
-                        },
-                        isPrivate: true,
-                      }}
-                    />
-                  </div>
-                }
-              />
-            </>
+          <div>
+            <Text size="subtitle2" className={cls.title}>
+              Top Players
+            </Text>
+            {topPlayers ? (
+              <TopPlayers players={topPlayers} />
+            ) : (
+              <LoaderPlaceholder aspectRatio={2} />
+            )}
+          </div>
+          <div style={{ height: spacers.large }} />
+          <Text size="subtitle2" className={cls.title}>
+            Game of the Day
+          </Text>
+          {gameOfDay ? (
+            <ChessGameDisplay game={gameOfDay} className={cls.board} />
+          ) : (
+            <LoaderPlaceholder aspectRatio={0.7} />
           )}
         </aside>
         <main className={cls.main}>
-          {streamers?.inFocus && (
-            <LiveHero
-              featuredStreamer={streamers.itemsById[streamers.inFocus]}
-              autoplay={!config.DEBUG}
-            />
+          {streamers?.inFocus ? (
+            <LiveHero featuredStreamer={streamers.itemsById[streamers.inFocus]} />
+          ) : (
+            <LoaderPlaceholder aspectRatio={{ width: 16, height: 9 }} />
           )}
-          {streamers && (
-            <div>
-              <div style={{ height: spacers.get(3) }} />
-              <Text size="title2" className={cls.title}>
-                Watch Now
-              </Text>
-              <StreamsReel
-                streamers={streamers.toWatch.map((id) => streamers.itemsById[id])}
-                itemClassName={cls.liveStream}
-              />
+          <div>
+            <div style={{ height: spacers.get(3) }} />
+            <Text size="title2" className={cls.title}>
+              Watch Now
+            </Text>
+            <div className={cls.streamerCollectionList}>
+              {streamers?.toWatch ? (
+                streamers.toWatch.map((streamerId, index) => (
+                  <React.Fragment key={streamerId}>
+                    {index > 0 && <div style={{ width: spacers.large }} />}
+                    <LiveStreamCard
+                      key={streamerId}
+                      streamer={streamers.itemsById[streamerId]}
+                      containerClassName={cls.liveStream}
+                      onClick={() => refocusStreamers(streamerId)}
+                    />
+                  </React.Fragment>
+                ))
+              ) : (
+                <LoaderPlaceholder aspectRatio={2.5} />
+              )}
             </div>
-          )}
-          {collaboratorStreamers && (
-            <div>
-              <div className={cls.verticalSpacer} />
-              <Text size="title2" className={cls.title}>
-                Streamers to Follow
-              </Text>
-              <StreamerGallery streamers={collaboratorStreamers} compact itemsPerRow={6} />
-            </div>
+          </div>
+          <div className={cls.verticalSpacer} />
+          <Text size="title2" className={cls.title}>
+            Streamers to Follow
+          </Text>
+          {collaboratorStreamers ? (
+            <StreamersCollection streamers={collaboratorStreamers} />
+          ) : (
+            <LoaderPlaceholder aspectRatio={8} />
           )}
         </main>
         <aside
@@ -375,17 +355,19 @@ const useStyles = createUseStyles((theme) => ({
   pageContent: {
     minHeight: '100vh',
   },
-
   leftSide: {
     marginRight: spacers.larger,
     flex: 0.3,
+    display: 'flex',
+    flexDirection: 'column',
     height: '100%',
   },
   rightSide: {
     marginLeft: spacers.larger,
     flex: 0.36,
+    display: 'flex',
+    flexDirection: 'column',
   },
-
   main: {
     // height: '100%',
     flex: 1,
@@ -399,16 +381,6 @@ const useStyles = createUseStyles((theme) => ({
 
   floatingBox: {
     ...effects.hardBorderRadius,
-  },
-
-  streamerCollectionList: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  aspect: {},
-
-  topPlayerStats: {
-    color: theme.text.subtle,
   },
 
   board: {
@@ -428,6 +400,11 @@ const useStyles = createUseStyles((theme) => ({
     color: theme.colors.primary,
     marginBottom: '1em',
     display: 'block',
+  },
+
+  streamerCollectionList: {
+    display: 'flex',
+    flexDirection: 'row',
   },
 
   textGradient: {
