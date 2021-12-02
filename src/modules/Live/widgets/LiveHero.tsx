@@ -15,11 +15,12 @@ type Props = {
   featuredStreamer: ResourceRecords.Watch.LiveStreamerRecord;
   showChat?: boolean;
   muted?: boolean;
+  autoplay?: boolean;
 };
 
 const aspectRatio = { width: 16, height: 9 };
 
-export const LiveHero: React.FC<Props> = ({ featuredStreamer, muted = true, showChat = false }) => {
+export const LiveHero: React.FC<Props> = ({ featuredStreamer, muted = true, showChat = false, autoplay = true }) => {
   const cls = useStyles();
   const [isReady, setIsReady] = useState(false);
   const { theme } = useColorTheme();
@@ -39,6 +40,7 @@ export const LiveHero: React.FC<Props> = ({ featuredStreamer, muted = true, show
           targetId={featuredStreamer.username}
           theme={theme.name === 'darkDefault' ? 'dark' : 'light'}
           muted={muted}
+          autoplay={autoplay}
         />
       </AspectRatio>
       <div className={cls.bottomContainer}>
