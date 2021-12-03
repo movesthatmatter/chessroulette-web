@@ -45,7 +45,7 @@ export const RelayInputGamesList: React.FC<Props> = ({ games, onSelectRelay }) =
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     backgroundColor: theme.depthBackground.backgroundColor,
     padding: '5px',

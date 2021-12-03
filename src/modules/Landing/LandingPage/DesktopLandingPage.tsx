@@ -277,7 +277,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
               <div className={cls.streamerCollectionList}>
                 {collaboratorStreamers.map((collaborator) => {
                   // const s = streamers.itemsById[streamerId];
-
+                  
                   return (
                     <div
                       key={collaborator.id}

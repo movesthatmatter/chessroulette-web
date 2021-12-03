@@ -10,6 +10,7 @@ import { TOS } from './pages/TOS';
 import { TwitchCallbackPage } from './vendors/twitch/TwitchCallbackPage/TwitchCallBackPage';
 import { RoomRoute } from './modules/Room';
 import { PeerProviderContainer } from './providers/PeerProvider/PeerProviderContainer';
+import { BroadcastPage } from './modules/Relay/BroadcastPage/BroadcastPage';
 import { RelayInputRoute } from './modules/Relay/RelayInput';
 import { LiveRoute } from './modules/Live/LiveRoute';
 import { CuratedEventsConsoleRoute } from './modules/CuratedEvents/console/CuratedEventsConsoleRoute';
@@ -49,6 +50,7 @@ export const Routes: React.FC<Props> = () => {
       <SocketProvider>
         <PeerProviderContainer>
           <Route path="/relay-input" strict exact component={RelayInputRoute} />
+          <Route path="/wcc" exact strict key={location.key} component={BroadcastPage} />
           <Route exact strict path="/r/:slug" key={location.key} component={RoomRoute} />
           <Route exact path="/" component={LandingPage} />
 
