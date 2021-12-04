@@ -14,6 +14,7 @@ import { TwitchAuthButton } from 'src/vendors/twitch/TwitchAuthButton/TwitchAuth
 import { spacers } from 'src/theme/spacers';
 import { AsyncResult } from 'ts-async-results';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { Array, Math } from 'window-or-global';
 
 type Model = {
   code: string;
@@ -69,7 +70,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
 
                 return {
                   type: 'SubmissionGenericError',
-                  content: e.content,
+                  content: Array.isArray(e.content) ? e.content[0] : e.content,
                 };
               });
           }}

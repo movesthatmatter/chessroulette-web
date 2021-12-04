@@ -6893,9 +6893,9 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#room-without-rtc":
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#add-event-records":
   version "0.2.2"
-  resolved "https://github.com/dstnd/dstnd-io.git#b50405232ca77096e38403518ba82c22ae95baa6"
+  resolved "https://github.com/dstnd/dstnd-io.git#0e05e56f1049e03e041538def64eca934b56d2e0"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"
@@ -6903,6 +6903,7 @@ dotenv@^6.2.0:
     fp-ts "^2.8.2"
     io-ts "2.2.10"
     io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.3"
+    io-ts-reporters "^2.0.0"
     io-ts-types "^0.5.16"
     jest "^26.4.2"
     ts-async-results "0.2.0-0"
@@ -9518,6 +9519,11 @@ invert-kv@^2.0.0:
     fp-ts "^2.8.2"
     io-ts "^2.2.10"
     io-ts-types "0.5.10"
+
+io-ts-reporters@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/io-ts-reporters/-/io-ts-reporters-2.0.0.tgz#a7ae071b69a170c4d475d15bb93bfc964da6b04b"
+  integrity sha512-lcCD/Q77jcWjq7jBQb8nLfCU4DM/9hiQakYHNT1FLCA6kwMuHe0QEcugh27vrT3S5FoQDiWXq3ofaYR7GWAcOg==
 
 io-ts-types@0.5.10:
   version "0.5.10"

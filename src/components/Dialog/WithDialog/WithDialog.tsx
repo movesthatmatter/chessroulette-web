@@ -9,7 +9,7 @@ type RenderProps = {
 type DialogButtonProps = NonNullable<DialogProps['buttons']>[0];
 
 export type WithDialogProps = Omit<DialogProps, 'visible' | 'buttons' | 'content'> & {
-  buttons: (DialogButtonProps | ((p: RenderProps) => DialogButtonProps))[];
+  buttons?: (DialogButtonProps | ((p: RenderProps) => DialogButtonProps))[];
   render: (p: RenderProps) => React.ReactNode;
   content: DialogProps['content'] | ((p: RenderProps) => React.ReactNode);
 };
@@ -37,7 +37,7 @@ export const WithDialog: React.FC<WithDialogProps> = ({
       <Dialog
         visible={isOpen}
         hasCloseButton={hasCloseButton}
-        buttons={buttons.map((getButton) =>
+        buttons={buttons?.map((getButton) =>
           typeof getButton === 'function' ? getButton(renderProps) : getButton
         )}
         onClose={renderProps.onClose}
