@@ -148,8 +148,8 @@ export const GameStateDialog: React.FC<GameStateDialogContentProps> = ({
                         if (roomConsumer) {
                           roomConsumer.roomActions.switchActivity({
                             activityType: 'analysis',
-                            history: game.history,
-                            game: game,
+                            source: 'archivedGame',
+                            gameId: game.id,
                           });
                         }
                       },

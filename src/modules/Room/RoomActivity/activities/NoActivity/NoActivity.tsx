@@ -94,7 +94,7 @@ export const NoActivity: React.FC<Props> = React.memo((props) => {
                     onClick={() => {
                       roomActions.switchActivity({
                         activityType: 'analysis',
-                        history: [],
+                        source: 'empty',
                       });
                     }}
                     className={cls.roomButton}

@@ -5,8 +5,12 @@ import { Text } from '../Text/Text';
 import cx from 'classnames';
 import { HTMLInputElement } from 'window-or-global';
 
+// export type TextInputProps = React.DetailedHTMLProps<
+//   React.HTMLAttributes<HTMLInputElement>,
+//   HTMLInputElement
+// > & {
 export type TextInputProps = React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLInputElement>,
+  React.InputHTMLAttributes<HTMLInputElement>,
   HTMLInputElement
 > & {
   className?: string;
@@ -14,7 +18,7 @@ export type TextInputProps = React.DetailedHTMLProps<
   label?: string;
   validationError?: string;
   readOnly?: boolean;
-  type?: 'text' | 'number'
+  type?: 'text' | 'number' | 'datetime-local';
 };
 
 export const TextInput: React.FC<TextInputProps> = ({

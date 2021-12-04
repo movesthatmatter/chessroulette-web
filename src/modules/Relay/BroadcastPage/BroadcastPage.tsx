@@ -11,7 +11,7 @@ import { CustomTheme, effects } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { AsyncOk } from 'ts-async-results';
 import { resources } from '../../Room';
-import { CreateRelayRoomWizard } from '../../Room/wizards/CreateRelayRoomWizard';
+// import { CreateRelayRoomWizard } from '../../Room/wizards/CreateRelayRoomWizard';
 import { NextBroadcasts } from './components/NextBroadcasts';
 import { NoGames } from './components/NoGames';
 import { RelayedGame } from './components/RelayedGame';
@@ -74,25 +74,27 @@ export const BroadcastPage: React.FC<Props> = (props) => {
         content={
           <>
             {selectedRelayId && (
-              <CreateRelayRoomWizard
-                onFinished={() => {
-                  if (peerState.status !== 'open') {
-                    return AsyncOk.EMPTY;
-                  }
-                  return resources
-                    .createRoom({
-                      userId: peerState.me.id,
-                      type: 'private',
-                      activityType: 'relay',
-                      relayId: selectedRelayId,
-                    })
-                    .map((room) => {
-                      setShowWizard(false);
-                      Events.trackRoomCreated(room);
-                      history.push(toRoomUrlPath(room));
-                    });
-                }}
-              />
+              null
+              // Took this out on Dec 1st 2021
+              // <CreateRelayRoomWizard
+              //   onFinished={() => {
+              //     if (peerState.status !== 'open') {
+              //       return AsyncOk.EMPTY;
+              //     }
+              //     return resources
+              //       .createRoom({
+              //         userId: peerState.me.id,
+              //         type: 'private',
+              //         activityType: 'relay',
+              //         relayId: selectedRelayId,
+              //       })
+              //       .map((room) => {
+              //         setShowWizard(false);
+              //         Events.trackRoomCreated(room);
+              //         history.push(toRoomUrlPath(room));
+              //       });
+              //   }}
+              // />
             )}
           </>
         }

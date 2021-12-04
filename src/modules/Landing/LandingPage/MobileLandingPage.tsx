@@ -6,7 +6,7 @@ import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
 import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
-import { CreateRoomButtonWidget } from 'src/modules/Room/widgets/CreateRoomWidget/CreateRoomButtonWidget';
+import { CreateRoomButtonWidgetWithWizard } from 'src/modules/Room/widgets/CreateRoomWidget';
 import { spacers } from 'src/theme/spacers';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { Button } from 'src/components/Button';
@@ -55,7 +55,7 @@ export const MobileLandingPage: React.FC<Props> = (props) => {
             </h3>
           </div>
           <div className={cls.buttonWrapper}>
-            <CreateRoomButtonWidget
+            <CreateRoomButtonWidgetWithWizard
               label="Play"
               type="primary"
               createRoomSpecs={{

@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import { logsy } from 'src/lib/logsy';
 import { setTimeout } from 'window-or-global';
 
 type VideoAttributes = React.DetailedHTMLProps<
@@ -21,10 +20,8 @@ export const VideoElement: React.FunctionComponent<VideoBoxProps> = ({
   useEffect(() => {
     const fn = () => {
       if (videoRef.current) {
-        logsy.log('Video Element: Video ref present!');
         onMounted(videoRef.current);
       } else {
-        logsy.log('Video Element: Video ref not present yet. Going to retry in 250ms!');
         setTimeout(fn, 250);
       }
     };

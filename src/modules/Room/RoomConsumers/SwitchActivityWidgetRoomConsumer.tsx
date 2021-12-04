@@ -75,8 +75,12 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
         onSwitch: (s) => {
           if (s.activityType === 'analysis') {
             context.roomActions.switchActivity({
-              ...s,
-              history: s.history || [],
+              activityType: 'analysis',
+              source: 'empty',
+
+              // TODO: This were taken out but not sure if the "...s" is needed!
+              // ...s,
+              // history: s.history || [],
             });
           } else if (s.activityType === 'play') {
             if (getRoomPendingChallenge(context.room)) {

@@ -120,7 +120,6 @@ export const withMultipleFieldsAndSubmissionValidationErrors = () => (
       lastName: string;
     }>
       onSubmit={() => {
-        console.log('submitting');
         // Wait a bit
         return new AsyncResultWrapper(async () => {
           await delay(1 * 1000);

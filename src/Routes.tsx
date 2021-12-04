@@ -8,14 +8,11 @@ import { UserProfilePage } from './modules/User';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TOS } from './pages/TOS';
 import { TwitchCallbackPage } from './vendors/twitch/TwitchCallbackPage/TwitchCallBackPage';
-import { LivePage } from './modules/Live';
-import { PlayLichess } from './modules/LichessPlay/PlayLichess/PlayLichess';
 import { RoomRoute } from './modules/Room';
 import { PeerProviderContainer } from './providers/PeerProvider/PeerProviderContainer';
-import { BroadcastPage } from './modules/Relay/BroadcastPage/BroadcastPage';
-import { BroadcastExternal } from './modules/Relay/BroadcastPage/BroadcastExternal';
 import { RelayInputRoute } from './modules/Relay/RelayInput';
 import { LiveRoute } from './modules/Live/LiveRoute';
+import { CuratedEventsConsoleRoute } from './modules/CuratedEvents/console/CuratedEventsConsoleRoute';
 
 type Props = {};
 
@@ -54,6 +51,15 @@ export const Routes: React.FC<Props> = () => {
           <Route path="/relay-input" strict exact component={RelayInputRoute} />
           <Route exact strict path="/r/:slug" key={location.key} component={RoomRoute} />
           <Route exact path="/" component={LandingPage} />
+
+          {/* console/admin routes */}
+          <Route path="/e4e5f4Be7/console/relay-input" strict exact component={RelayInputRoute} />
+          <Route
+            path="/e4e5f4Be7/console/curated-events"
+            strict
+            exact
+            component={CuratedEventsConsoleRoute}
+          />
         </PeerProviderContainer>
       </SocketProvider>
     </Switch>

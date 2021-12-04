@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { getCurrentlyStreamingRelayedGames } from 'src/modules/Relay/BroadcastPage/resources';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { usePeerState } from 'src/providers/PeerProvider';
@@ -41,7 +41,7 @@ export const RelayedGameProvider: React.FC<Props> = (props) => {
     fetchLiveGames();
   }, []);
 
-  function fetchLiveGames() {
+  const fetchLiveGames = useCallback(() => {
     getCurrentlyStreamingRelayedGames().map((relayedGames) => {
       setRelayedGames(
         relayedGames.map((relayedGame) => ({
@@ -51,7 +51,7 @@ export const RelayedGameProvider: React.FC<Props> = (props) => {
       );
       setIsLoading(false);
     });
-  }
+  }, []);
 
   return (
     <>

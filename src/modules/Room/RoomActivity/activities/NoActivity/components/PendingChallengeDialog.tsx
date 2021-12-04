@@ -15,12 +15,7 @@ import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGam
 import { resources } from 'src/modules/Room';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { Events } from 'src/services/Analytics';
-import {
-  CustomTheme,
-  floatingShadow,
-  onlyMobile,
-  softBorderRadius,
-} from 'src/theme';
+import { CustomTheme, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { spacers } from 'src/theme/spacers';
@@ -76,7 +71,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
                       withBadge={{
                         text: 'New',
                         side: 'right',
-                        color: theme.name ==='lightDefault' ? 'negative' : 'primaryDark',
+                        color: theme.name === 'lightDefault' ? 'negative' : 'primaryDark',
                       }}
                       onClick={() => {
                         if (!roomConsumer) {
@@ -85,7 +80,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
 
                         roomConsumer.roomActions.switchActivity({
                           activityType: 'analysis',
-                          history: [],
+                          source: 'empty',
                         });
                       }}
                     />
@@ -97,10 +92,7 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
               <div className={cls.centered}>
                 {/* <Text size="small1">Share the Magic Link with a friend!</Text> */}
                 {/* <br/> */}
-                <Text
-                  size="small1"
-                  color={theme.colors.negative}
-                >
+                <Text size="small1" color={theme.colors.negative}>
                   Share the Magic Link with a friend!
                 </Text>
               </div>
@@ -127,12 +119,14 @@ export const PendingChallengeDialog: React.FC<Props> = ({ pendingChallenge }) =>
                   return;
                 }
 
-                resources.deleteRoomChallenge({
-                  challengeId: pendingChallenge.id,
-                  roomId: pendingChallenge.roomId,
-                }).map(() => {
-                  Events.trackRoomChallengeCanceled(pendingChallenge);
-                });
+                resources
+                  .deleteRoomChallenge({
+                    challengeId: pendingChallenge.id,
+                    roomId: pendingChallenge.roomId,
+                  })
+                  .map(() => {
+                    Events.trackRoomChallengeCanceled(pendingChallenge);
+                  });
               },
             },
           ]}
