@@ -12,6 +12,8 @@ import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
 import { Home, Video, People, Category } from 'react-iconly';
 import { Text } from '../Text';
 import { spacers } from 'src/theme/spacers';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTrophy} from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   className?: string;
@@ -43,7 +45,8 @@ export const NavigationMenu: React.FC<Props> = (props) => {
           to={'/wcc'}
           className={cx(cls.link, location.pathname === '/wcc' && cls.activeLink)}
         >
-        <Category set='bold' />
+        {/* <Category set='bold' /> */}
+        <FontAwesomeIcon icon={faTrophy} size='lg' style={{marginBottom: '5px', marginTop:'2px'}}/>
          <br/>
          <Text size='small1'>WCC</Text>
         </Link>

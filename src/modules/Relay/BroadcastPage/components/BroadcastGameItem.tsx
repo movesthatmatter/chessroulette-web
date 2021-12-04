@@ -115,6 +115,7 @@ export const BroadcastGameItem: React.FC<Props> = ({
             <div className={cls.top}>
               <Text size="tiny1">
                 <strong>
+                  {(round.relay.game.state === 'finished' || round.relay.game.state === 'stopped') && `${getScore(round.relay.game)} -`}
                   {capitalize(round.relay.game.timeLimit)} (
                   {formatTimeLimit(chessGameTimeLimitMsMap[round.relay.game.timeLimit])})
                 </strong>{' '}

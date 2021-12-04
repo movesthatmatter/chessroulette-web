@@ -1,12 +1,13 @@
 import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
 import React, { useEffect, useState } from 'react';
 import { Text } from 'src/components/Text';
+import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { createUseStyles } from 'src/lib/jss';
 import { TournamentRoundMocker } from 'src/mocks/records/TournamentRoundMocker';
 import { usePeerStateClient } from 'src/providers/PeerProvider';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { spacers } from 'src/theme/spacers';
-import { console } from 'window-or-global';
+import { console, Date } from 'window-or-global';
 import { TournamentRound } from '../types';
 import { BroadcastGameItem } from './BroadcastGameItem';
 
@@ -25,7 +26,7 @@ export const WccCalendar: React.FC<Props> = (props) => {
           `WCC - Game ${index + 1}`
         )
       )
-      .reverse()
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .sort((a, b) => {
         if (a.relay.gameState === 'started') {
           if (b.relay.gameState === 'started') {
