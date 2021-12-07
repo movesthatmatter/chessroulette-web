@@ -6895,7 +6895,7 @@ dotenv@^6.2.0:
 
 "dstnd-io@https://github.com/dstnd/dstnd-io.git#add-event-records":
   version "0.2.2"
-  resolved "https://github.com/dstnd/dstnd-io.git#0e05e56f1049e03e041538def64eca934b56d2e0"
+  resolved "https://github.com/dstnd/dstnd-io.git#98287e98cf76055276a057446aebf3c65e171acf"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"

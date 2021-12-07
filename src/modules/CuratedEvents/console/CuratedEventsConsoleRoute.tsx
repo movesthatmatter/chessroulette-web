@@ -7,7 +7,7 @@ import { noop } from 'src/lib/util';
 import { spacers } from 'src/theme/spacers';
 import { AsyncResult } from 'ts-async-results';
 import { console } from 'window-or-global';
-import { createCuratedEvent, getAllCuratedEvents, createCuratedEventRound } from '../resources';
+import { createCuratedEvent, getAllCuratedEvents, createCuratedEventRound, getCollaboratorStreamers } from '../resources';
 import { CuratedEvent } from '../types';
 import { CreateCuratedEventForm } from './components/CreateCuratedEventForm';
 import { CreateCuratedEventRoundForm } from './components/CreateCuratedEventRoundForm';
@@ -18,14 +18,20 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
   const cls = useStyles();
 
   const [curatedEvents, setCuratedEvents] = useState<CuratedEvent[]>([]);
+  const [commentators, setCommentators] = useState<string[]>([]);
 
   useEffect(() => {
     getAllCuratedEventsAndPopulateThem();
+    getAllStreamers();
   }, []);
 
   const getAllCuratedEventsAndPopulateThem = useCallback(() => {
     getAllCuratedEvents().map(setCuratedEvents);
   }, []);
+
+  const getAllStreamers = useCallback(() => {
+    getCollaboratorStreamers().map(s => setCommentators(s.map(i => i.profileUrl)))
+  },[]);
 
   const deleteEvent = () => {
     //TODO - add delete event resource and api call
@@ -60,6 +66,7 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
               hasCloseButton
               content={(d) => (
                 <CreateCuratedEventRoundForm
+                  commentators={commentators}
                   onSubmit={(r) => {
                     return createCuratedEventRound({
                       curatedEventId: ce.id,
