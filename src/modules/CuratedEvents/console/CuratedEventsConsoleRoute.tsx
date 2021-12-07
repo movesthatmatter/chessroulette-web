@@ -3,6 +3,8 @@ import { Button } from 'src/components/Button';
 import { WithDialog } from 'src/components/Dialog';
 import { Page } from 'src/components/Page';
 import { createUseStyles } from 'src/lib/jss';
+import { noop } from 'src/lib/util';
+import { spacers } from 'src/theme/spacers';
 import { AsyncResult } from 'ts-async-results';
 import { console } from 'window-or-global';
 import { createCuratedEvent, getAllCuratedEvents, createCuratedEventRound } from '../resources';
@@ -24,6 +26,10 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
   const getAllCuratedEventsAndPopulateThem = useCallback(() => {
     getAllCuratedEvents().map(setCuratedEvents);
   }, []);
+
+  const deleteEvent = () => {
+    //TODO - add delete event resource and api call
+  }
 
   return (
     <Page name="Console | Curated Events" stretched>
@@ -73,7 +79,13 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
                   }}
                 />
               )}
-              render={(p) => <Button label="Edit" type="positive" onClick={p.onOpen} />}
+              render={(p) => (
+                <div style={{ display: 'flex' }}>
+                  <Button label="Add Round" type="positive" onClick={p.onOpen} />
+                  <div style={{ width: spacers.default }} />
+                  <Button label="Delete Event" type="negative" onClick={noop} disabled />
+                </div>
+              )}
             />
           </div>
         ))}

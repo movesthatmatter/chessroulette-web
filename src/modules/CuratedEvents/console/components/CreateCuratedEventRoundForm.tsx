@@ -59,7 +59,7 @@ export const CreateCuratedEventRoundForm: React.FC<Props> = ({ onSubmit }) => {
         initialModel={formInitialValues}
         onSubmit={onSubmitWithGames}
         validator={{
-          label: [validator.rules.name(), validator.messages.name],
+          label: [validator.rules.string(), validator.messages.name],
           startingAt: [validator.rules.notEmpty(), validator.messages.notEmpty],
         }}
         render={(p) => (
@@ -123,13 +123,13 @@ export const CreateCuratedEventRoundForm: React.FC<Props> = ({ onSubmit }) => {
                 return AsyncOk.EMPTY;
               }}
               submitButtonProps={{
-                label: 'Add Game',
+                label: 'Save Game',
                 type: 'secondary',
                 full: false,
               }}
             />
             <br />
-            <Button type="primary" label="Add Round" full withLoader onClick={p.submit} />
+            <Button type="primary" label="Save Round" full disabled={games.length === 0} withLoader onClick={p.submit} />
           </>
         )}
       />

@@ -80,6 +80,7 @@ export const CreateGameForm: React.FC<Props> = ({ onSubmit, submitButtonProps })
             }}
           />
           <br />
+          <div style={{display: 'flex', justifyContent:'center'}}>
           <Button
             type="positive"
             label="Create"
@@ -88,6 +89,7 @@ export const CreateGameForm: React.FC<Props> = ({ onSubmit, submitButtonProps })
             onClick={p.submit}
             {...submitButtonProps}
           />
+          </div>
         </>
       )}
     />
