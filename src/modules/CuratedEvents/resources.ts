@@ -33,13 +33,13 @@ export const createCuratedEventRound = (
   );
 };
 
-const { resource: getStreamersResource } = Resources.Collections.CuratedEvents.GetStreamersForEvent;
+const { resource: getStreamersResource } = Resources.Collections.Collaborator.GetCollaboratorsByPlatform;
 
 export const getCollaboratorStreamers = (
   req: Resources.Util.RequestOf<typeof getStreamersResource>
 ) => {
   return getStreamersResource.request(req, (params) =>
-    http.get('api/watch/collaborators-for-events', { params })
+    http.get('api/collaborators', { params })
   );
 };
 
