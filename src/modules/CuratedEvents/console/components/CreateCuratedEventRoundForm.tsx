@@ -1,28 +1,29 @@
 import capitalize from 'capitalize';
 import { ChessGameTimeLimit, metadata, Resources } from 'dstnd-io';
 import { toISODateTime } from 'io-ts-isodatetime';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'src/components/Button';
 import { Form } from 'src/components/Form';
 import { Hr } from 'src/components/Hr';
 import { DateTimeInput } from 'src/components/Input/DateTimeInput';
-import { SelectInput } from 'src/components/Input/SelectInput';
+import { SelectInput, SelectInputOption } from 'src/components/Input/SelectInput';
 import { Text } from 'src/components/Text';
 import { TextInput } from 'src/components/TextInput';
 import { AnyOkAsyncResult } from 'src/lib/types';
 import { validator } from 'src/lib/validator';
 import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGame/util';
 import { CreateGameForm } from 'src/modules/Relay/RelayInput/components/CreateGameForm';
+import { spacers } from 'src/theme/spacers';
 import { AsyncOk } from 'ts-async-results';
 
 type Props = {
-  commentators: string[];
+  collaborators: string[];
   onSubmit: (
     f: Omit<
       Resources.Collections.CuratedEvents.CreateCuratedEventRound.Request,
       'curatedEventId'
     > & {
-      commentators?: string[];
+      commentators?: Record<string, undefined>;
     }
   ) => AnyOkAsyncResult<Resources.Errors.CommonResponseErrors>;
 };
@@ -30,7 +31,9 @@ type Props = {
 export type FormModel = Pick<
   Resources.Collections.CuratedEvents.CreateCuratedEventRound.Request,
   'label' | 'startingAt'
->;
+> & {
+  commentator: string;
+};
 
 const formInitialValues: Partial<FormModel> = {};
 
@@ -40,17 +43,24 @@ const renderTimeLimitLabel = (l: ChessGameTimeLimit) => {
     : `${capitalize(l)} (${formatTimeLimit(metadata.game.chessGameTimeLimitMsMap[l])}`;
 };
 
-export const CreateCuratedEventRoundForm: React.FC<Props> = ({ onSubmit, commentators }) => {
+export const CreateCuratedEventRoundForm: React.FC<Props> = ({ onSubmit, collaborators }) => {
   const [games, setGames] = useState<
     Resources.Collections.CuratedEvents.CreateCuratedEventRound.Request['prepareGamePropsList']
   >([]);
-  const [selectedCommentators, setSelectedCommentators] = useState<string[]>([]);
+  const [selectedCommentators, setSelectedCommentators] = useState<Record<string, undefined>>({});
 
   const onSubmitWithGamesAndStreamers = (model: FormModel) => {
+    const commentatorsList: Record<string, undefined> = model.commentator
+      ? model.commentator.split(' ').length > 0
+        ? { ...selectedCommentators, [model.commentator]: undefined }
+        : { ...selectedCommentators }
+      : { ...selectedCommentators };
+
     return onSubmit({
-      ...model,
+      label: model.label,
+      startingAt: model.startingAt,
       prepareGamePropsList: games,
-      ...(selectedCommentators.length > 0 ? { commentators: selectedCommentators } : {}),
+      commentators: { ...commentatorsList },
     }).mapErr(() => {
       return {
         type: 'SubmissionGenericError',
@@ -70,29 +80,32 @@ export const CreateCuratedEventRoundForm: React.FC<Props> = ({ onSubmit, comment
         }}
         render={(p) => (
           <>
-            <TextInput
-              label="Round Name"
-              placeholder={p.model.label}
-              defaultValue={p.model.label}
-              onChange={(e) => p.onChange('label', e.currentTarget.value)}
-              validationError={p.errors.validationErrors?.label}
-            />
-            <DateTimeInput
-              label="Starting At"
-              onChange={(e) =>
-                p.onChange('startingAt', toISODateTime(new Date(e.currentTarget.value)))
-              }
-              validationError={p.errors.validationErrors?.startingAt}
-            />
+            <div style={{ display: 'flex' }}>
+              <TextInput
+                label="Round Name"
+                placeholder={p.model.label}
+                defaultValue={p.model.label}
+                onChange={(e) => p.onChange('label', e.currentTarget.value)}
+                validationError={p.errors.validationErrors?.label}
+              />
+              <div style={{ width: spacers.small }} />
+              <DateTimeInput
+                label="Starting At"
+                onChange={(e) =>
+                  p.onChange('startingAt', toISODateTime(new Date(e.currentTarget.value)))
+                }
+                validationError={p.errors.validationErrors?.startingAt}
+              />
+            </div>
             {games.map((g, index) => (
               <div>
-                <Text size="subtitle2">Game {index + 1}</Text>
+                <Text size="small1">Game {index + 1}</Text>
                 <br />
-                <Text>{g.timeLimit}</Text>
+                <Text size="small1">{g.timeLimit}</Text>
                 <br />
-                <Text>{g.playersUserInfo[0].id}</Text>
+                <Text size="small1">{g.playersUserInfo[0].id}</Text>
                 {` vs `}
-                <Text>{g.playersUserInfo[1].id}</Text>
+                <Text size="small1">{g.playersUserInfo[1].id}</Text>
               </div>
             ))}
             <br />
@@ -141,15 +154,25 @@ export const CreateCuratedEventRoundForm: React.FC<Props> = ({ onSubmit, comment
               }}
             />
             <SelectInput
-              label="Streamers"
-              options={commentators.map((k) => ({
+              label="Commentators - Collaborators"
+              options={collaborators.map((k) => ({
                 value: k,
                 label: k,
               }))}
-              onSelect={({ value }) => {
-                setSelectedCommentators((prev) => [...prev, value]);
+              onSelect={(item) => {
+                const i = (item as unknown) as SelectInputOption[];
+                setSelectedCommentators((prev) => ({
+                  ...prev,
+                  [i[i.length - 1].value]: undefined,
+                }));
               }}
               isMulti
+            />
+            <TextInput
+              label="Other commentators"
+              defaultValue={p.model.commentator}
+              placeholder={p.model.commentator}
+              onChange={(e) => p.onChange('commentator', e.currentTarget.value)}
             />
             <br />
             <Button

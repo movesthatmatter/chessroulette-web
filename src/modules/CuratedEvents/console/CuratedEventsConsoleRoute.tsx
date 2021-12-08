@@ -6,6 +6,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { noop } from 'src/lib/util';
 import { spacers } from 'src/theme/spacers';
 import { AsyncResult } from 'ts-async-results';
+import { console } from 'window-or-global';
 import {
   createCuratedEvent,
   getAllCuratedEvents,
@@ -22,7 +23,7 @@ type Props = {};
 export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
 
   const [curatedEvents, setCuratedEvents] = useState<CuratedEvent[]>([]);
-  const [commentators, setCommentators] = useState<string[]>([]);
+  const [collaborators, setCollaborators] = useState<string[]>([]);
 
   useEffect(() => {
     getAllCuratedEventsAndPopulateThem();
@@ -38,7 +39,7 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
       platform: 'Twitch',
       pageSize: 50,
       currentIndex: 0,
-    }).map(({ items }) => setCommentators(items.map((i) => i.profileUrl)));
+    }).map(({ items }) => setCollaborators(items.map((i) => i.profileUrl)));
   }, []);
 
   const deleteEvent = () => {
@@ -74,7 +75,7 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
               hasCloseButton
               content={(d) => (
                 <CreateCuratedEventRoundForm
-                  commentators={commentators}
+                  collaborators={collaborators}
                   onSubmit={(r) => {
                     return createCuratedEventRound({
                       curatedEventId: ce.id,

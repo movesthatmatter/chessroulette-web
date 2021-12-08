@@ -29,7 +29,7 @@ export const createCuratedEventRound = (
   req: Resources.Util.RequestOf<typeof createCuratedEventRoundResource>
 ) => {
   return createCuratedEventRoundResource.request(req, (data) =>
-    http.put(`api/curated-events/${req.curatedEventId}`, data)
+    http.put(`api/curated-events/rounds/${req.curatedEventId}`, data)
   );
 };
 
