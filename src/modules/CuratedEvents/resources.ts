@@ -33,13 +33,20 @@ export const createCuratedEventRound = (
   );
 };
 
-const { resource: getStreamersResource } = Resources.Collections.Collaborator.GetCollaboratorsByPlatform;
+const {
+  resource: getStreamersResource,
+} = Resources.Collections.Collaborator.GetCollaboratorsByPlatform;
 
 export const getCollaboratorStreamers = (
   req: Resources.Util.RequestOf<typeof getStreamersResource>
 ) => {
-  return getStreamersResource.request(req, (params) =>
-    http.get('api/collaborators', { params })
-  );
+  return getStreamersResource.request(req, (params) => http.get('api/collaborators', { params }));
 };
 
+const { resource: deleteEventResource } = Resources.Collections.CuratedEvents.DeleteCuratedEvent;
+
+export const deleteCuratedEvent = (req: Resources.Util.RequestOf<typeof deleteEventResource>) => {
+  return deleteEventResource.request(req, (params) =>
+    http.post(`api/curated-events/delete/${req.id}`, params)
+  );
+};

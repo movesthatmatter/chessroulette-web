@@ -72,7 +72,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
   }
 
   function fetchAllGames() {
-    getAllCuratedEvents().map(setAllEvents);
+    getAllCuratedEvents({}).map(setAllEvents);
   }
 
   useInterval(
