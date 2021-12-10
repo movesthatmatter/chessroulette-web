@@ -13,7 +13,6 @@ type Props = {
 
 export const EventViewer: React.FC<Props> = ({ event }) => {
   const cls = useStyles();
-
   return (
     <div className={cls.container}>
       <Text>Name: {event.name}</Text>
@@ -39,10 +38,9 @@ export const EventViewer: React.FC<Props> = ({ event }) => {
             <Text>Date starting: {dateformat(round.startingAt, 'dd-mm-yyyy')}</Text>
             <Text>Commentators: </Text>
             <Text>
-              {round.commentators &&
-                Object.values(round.commentators).map((c) => (
+              {round.commentators.map((c) => (
                   <span style={{ marginRight: spacers.small }}>
-                    {c.username}
+                    {c.profileUrl}
                     {', '}
                   </span>
                 ))}

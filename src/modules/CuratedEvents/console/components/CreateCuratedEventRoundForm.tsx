@@ -23,7 +23,7 @@ type Props = {
       Resources.Collections.CuratedEvents.CreateCuratedEventRound.Request,
       'curatedEventId'
     > & {
-      commentators?: Record<string, undefined>;
+      commentators?: string[];
     }
   ) => AnyOkAsyncResult<Resources.Errors.CommonResponseErrors>;
 };
@@ -47,20 +47,20 @@ export const CreateCuratedEventRoundForm: React.FC<Props> = ({ onSubmit, collabo
   const [games, setGames] = useState<
     Resources.Collections.CuratedEvents.CreateCuratedEventRound.Request['prepareGamePropsList']
   >([]);
-  const [selectedCommentators, setSelectedCommentators] = useState<Record<string, undefined>>({});
+  const [selectedCommentators, setSelectedCommentators] = useState<string[]>([]);
 
   const onSubmitWithGamesAndStreamers = (model: FormModel) => {
-    const commentatorsList: Record<string, undefined> = model.commentator
+    const commentatorsList: string[] = model.commentator
       ? model.commentator.split(' ').length > 0
-        ? { ...selectedCommentators, [model.commentator]: undefined }
-        : { ...selectedCommentators }
-      : { ...selectedCommentators };
+        ? [...selectedCommentators, model.commentator]
+        : [...selectedCommentators]
+      : [...selectedCommentators];
 
     return onSubmit({
       label: model.label,
       startingAt: model.startingAt,
       prepareGamePropsList: games,
-      commentators: { ...commentatorsList },
+      commentators: [...commentatorsList],
     }).mapErr(() => {
       return {
         type: 'SubmissionGenericError',
@@ -161,10 +161,7 @@ export const CreateCuratedEventRoundForm: React.FC<Props> = ({ onSubmit, collabo
               }))}
               onSelect={(item) => {
                 const i = (item as unknown) as SelectInputOption[];
-                setSelectedCommentators((prev) => ({
-                  ...prev,
-                  [i[i.length - 1].value]: undefined,
-                }));
+                setSelectedCommentators((prev) => [...prev, i[i.length - 1].value]);
               }}
               isMulti
             />

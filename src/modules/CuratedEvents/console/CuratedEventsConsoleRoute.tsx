@@ -31,7 +31,7 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
   }, []);
 
   const getAllCuratedEventsAndPopulateThem = useCallback(() => {
-    getAllCuratedEvents().map(setCuratedEvents);
+    getAllCuratedEvents().map(setCuratedEvents)
   }, []);
 
   const getAllStreamers = useCallback(() => {
@@ -67,9 +67,13 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
       />
       <br />
 
-      <div>
+      <div style={{
+        display:'flex',
+        width: '100vw',
+        overflowX: 'scroll'
+      }}>
         {curatedEvents.map((ce) => (
-          <div key={ce.id} style={{marginBottom: spacers.large, paddingLeft: spacers.default,  borderLeft: '2px solid #CE186B'}}>
+          <div key={ce.id} style={{marginBottom: spacers.large, paddingLeft: spacers.default,  borderLeft: '2px solid #CE186B', marginRight: spacers.large}}>
             <EventViewer event={ce}/>
             <WithDialog
               hasCloseButton
