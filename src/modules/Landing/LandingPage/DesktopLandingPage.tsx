@@ -273,49 +273,30 @@ export const DesktopLandingPage: React.FC<Props> = () => {
           }}
         >
           <div>
-            {scheduledEvent === 'init' ? null : (
-              <>
-                {scheduledEvent ? (
-                  <EventPromo
-                    event={{
-                      name: scheduledEvent.eventName,
-                      startDate: scheduledEvent.timestamp,
-                    }}
-                    classname={cls.floatingBox}
-                    onCountdownTimeEnded={async (tickInterval) => {
-                      await getNextScheduledEvent(addSeconds(now(), tickInterval)).then(
-                        setScheduledEvent
-                      );
-                    }}
+            <InfoCard
+              top={
+                <AspectRatio
+                  aspectRatio={{ width: 16, height: 9 }}
+                  style={{
+                    overflow: 'hidden',
+                    position: 'relative',
+                  }}
+                >
+                  <img
+                    src="https://innatepi.sirv.com/Images/ch/partner/hero_b.png?w=500&format=webp&webp.fallback=png"
+                    width="100%"
+                    height="100%"
+                    srcSet="https://innatepi.sirv.com/Images/ch/partner/hero_b.png?w=500&format=webp&webp.fallback=png 1x, https://innatepi.sirv.com/Images/ch/partner/hero_b.png?w=1000&format=webp&webp.fallback=png 2x"
+                    alt="Partner hero Image"
                   />
-                ) : (
-                  <InfoCard
-                    top={
-                      <AspectRatio
-                        aspectRatio={{ width: 16, height: 9 }}
-                        style={{
-                          overflow: 'hidden',
-                          position: 'relative',
-                        }}
-                      >
-                        <img
-                          src="https://partner.chessroulette.live/images/hero_b.png"
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                          }}
-                        />
-                      </AspectRatio>
-                    }
-                    bottom={
-                      <AnchorLink href="https://partner.chessroulette.live" target="_blank">
-                        <Text size="subtitle1">Let's Collaborate</Text>
-                      </AnchorLink>
-                    }
-                  />
-                )}
-              </>
-            )}
+                </AspectRatio>
+              }
+              bottom={
+                <AnchorLink href="https://partner.chessroulette.live" target="_blank">
+                  <Text size="subtitle1">Let's Collaborate</Text>
+                </AnchorLink>
+              }
+            />
             <div className={cls.verticalSpacer} />
           </div>
           <div

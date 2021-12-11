@@ -60,19 +60,19 @@ export const HARDCODED_WCC_Schedule_Sorted: ScheduledEvent[] = [
     eventName: 'WCC Game 11',
     timestamp: toISODateTime(new Date('2021-12-10T12:30:00.000+00:00')),
   },
-  {
-    eventName: 'WCC Game 12',
-    timestamp: toISODateTime(new Date('2021-12-11T12:30:00.000+00:00')),
-  },
-  {
-    eventName: 'WCC Game 13',
-    timestamp: toISODateTime(new Date('2021-12-12T12:30:00.000+00:00')),
-  },
-  // Free Day
-  {
-    eventName: 'WCC Game 14',
-    timestamp: toISODateTime(new Date('2021-12-14T12:30:00.000+00:00')),
-  },
+  // {
+  //   eventName: 'WCC Game 12',
+  //   timestamp: toISODateTime(new Date('2021-12-11T12:30:00.000+00:00')),
+  // },
+  // {
+  //   eventName: 'WCC Game 13',
+  //   timestamp: toISODateTime(new Date('2021-12-12T12:30:00.000+00:00')),
+  // },
+  // // Free Day
+  // {
+  //   eventName: 'WCC Game 14',
+  //   timestamp: toISODateTime(new Date('2021-12-14T12:30:00.000+00:00')),
+  // },
 ].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
 export const getNextScheduledEvent = async (
