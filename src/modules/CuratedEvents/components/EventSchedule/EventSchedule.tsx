@@ -4,7 +4,6 @@ import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { ChessGameDisplay } from 'src/modules/Games/widgets/ChessGameDisplay';
-import { StreamerGallery } from 'src/modules/Live/components/StreamerGallery/StreamerGallery';
 import { CreateRoomButtonWidgetFromSpecs } from 'src/modules/Room/widgets/CreateRoomWidget';
 import { spacers } from 'src/theme/spacers';
 import { EventStatsWidget } from '../../EventStatsWidget/EventStatsWidget';
@@ -12,12 +11,15 @@ import { CuratedEvent, CuratedEventRound } from '../../types';
 import { EventRound } from './EventRound';
 import { getInitialFocusedRound } from './util';
 import { ScrollableList } from 'src/components/ScrollableList';
+import { Streamer } from 'src/modules/Live/types';
+import { StreamerGallery } from 'src/modules/Live/components/StreamerGallery/StreamerGallery';
 
 type Props = {
   event: CuratedEvent;
+  streamersByUsername: Record<Streamer['username'], Streamer>;
 };
 
-export const EventSchedule: React.FC<Props> = ({ event }) => {
+export const EventSchedule: React.FC<Props> = ({ event, streamersByUsername }) => {
   const cls = useStyles();
   const [selectedRound, setSelectedRound] = useState<CuratedEventRound | undefined>(
     getInitialFocusedRound(event)
@@ -42,7 +44,9 @@ export const EventSchedule: React.FC<Props> = ({ event }) => {
       return undefined;
     }
 
-    return Object.values(selectedRound.commentators);
+    return selectedRound.commentators
+      .map((c) => streamersByUsername[c.profileUrl])
+      .filter((s) => !!s); // trim
   }, [selectedRound]);
 
   const onLoadGame = (r: RelayedGameRecord) => {};

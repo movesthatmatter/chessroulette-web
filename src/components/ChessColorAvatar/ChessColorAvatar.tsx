@@ -1,12 +1,9 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { AspectRatio } from '../AspectRatio';
-import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { getBoxShadow } from 'src/theme/util';
 import hexToRgba from 'hex-to-rgba';
 import cx from 'classnames';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
-import { themes } from 'src/theme';
 import { ChessGameColor } from 'dstnd-io';
 import { ColorPalette } from 'src/theme/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -33,19 +30,19 @@ export const ChessColorAvatar: React.FC<AvatarProps> = ({
   const bkgColor = theme.colors[props.color];
 
   return (
-      <div
-        className={cx(cls.container, className)}
-        style={{
-          width: size,
-          height: size,
-          background: bkgColor,
-          ...(theme.name === 'lightDefault' && {
-            boxShadow: getBoxShadow(0, 2, 16, 0, hexToRgba(bkgColor, 0.3)),
-          }),
-        }}
-      >
-          <FontAwesomeIcon icon={faChessKnight} color={props.pieceColor} />
-      </div>
+    <div
+      className={cx(cls.container, className)}
+      style={{
+        width: size,
+        height: size,
+        background: bkgColor,
+        ...(theme.name === 'lightDefault' && {
+          boxShadow: getBoxShadow(0, 2, 16, 0, hexToRgba(bkgColor, 0.3)),
+        }),
+      }}
+    >
+      <FontAwesomeIcon icon={faChessKnight} color={props.pieceColor} />
+    </div>
   );
 };
 
@@ -57,9 +54,9 @@ const useStyles = createUseStyles((theme) => ({
     zIndex: 1,
     boxSizing: 'border-box',
     width: '100%',
-    display:'flex',
-    justifyContent:'center',
-    alignItems:'center',
-    alignContent:'center'
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
   },
 }));

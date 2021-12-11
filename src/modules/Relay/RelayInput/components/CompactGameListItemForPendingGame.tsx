@@ -1,13 +1,12 @@
 import React, { useMemo } from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { hideOnMobile, onlyDesktop, softBorderRadius, textShadowDarkMode } from 'src/theme';
+import { hideOnMobile, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
-import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
 import { GameRecord } from 'dstnd-io';
 import dateformat from 'dateformat';
-import { getUserDisplayName, getUserDisplayNameClean } from 'src/modules/User';
+import { getUserDisplayNameClean } from 'src/modules/User';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBolt } from '@fortawesome/free-solid-svg-icons';

@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { AwesomeLoader, AwesomeLoaderPage } from 'src/components/AwesomeLoader';
+import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { Page } from 'src/components/Page';
-import { createUseStyles } from 'src/lib/jss';
+import { dedupeArray, toDictIndexedBy } from 'src/lib/util';
+import { AsyncOk, AsyncResult } from 'ts-async-results';
+import { getSpecifiedStreamers } from '../Live/resources';
+import { Streamer } from '../Live/types';
 import { EventSchedule } from './components/EventSchedule/EventSchedule';
 import { getCuratedEventBySlug } from './resources';
 import { CuratedEvent } from './types';
@@ -10,46 +13,41 @@ import { CuratedEvent } from './types';
 type Props = {};
 
 export const CuratedEventRoute: React.FC<Props> = (props) => {
-  const cls = useStyles();
   const params = useParams<{ slug: string }>();
-  const [event, setEvent] = useState<CuratedEvent>();
+  const [state, setState] = useState<{
+    event: CuratedEvent;
+    streamersByUsername: Record<Streamer['username'], Streamer>;
+  }>();
 
   useEffect(() => {
-    getCuratedEventBySlug(params.slug).map((curatedEvent) => {
-      setEvent(curatedEvent);
-    });
+    getCuratedEventBySlug(params.slug)
+      .flatMap((curatedEvent) => {
+        const streamerUserNames = dedupeArray(
+          curatedEvent.rounds.reduce(
+            (prev, nextRound) => [...prev, ...nextRound.commentators.map((c) => c.profileUrl)],
+            [] as string[]
+          )
+        );
+
+        return AsyncResult.all(new AsyncOk(curatedEvent), getSpecifiedStreamers(streamerUserNames));
+      })
+      .map(([event, streamers]) => {
+        setState({
+          event,
+          streamersByUsername: toDictIndexedBy(streamers.items, (s) => s.username),
+        });
+      });
   }, [params.slug]);
 
-  if (!event) {
+  if (!state) {
     return <AwesomeLoaderPage />;
   }
 
   return (
-    <Page name={`Events | ${event?.name}`} stretched>
-      {event && <EventSchedule event={event} />}
+    <Page name={`Events | ${state.event?.name}`} stretched>
+      {state.event && (
+        <EventSchedule event={state.event} streamersByUsername={state.streamersByUsername} />
+      )}
     </Page>
   );
 };
-
-const useStyles = createUseStyles((theme) => ({
-  container: {
-    // display: 'flex',
-    // justifyContent: 'center',
-    // margin: '0 auto',
-  },
-  // verticalSpacer: {
-  //   height: spacers.large,
-  // },
-  // pageContainer: {
-  //   ...makeImportant({
-  //     ...(theme.name === 'lightDefault'
-  //       ? {
-  //           backgroundColor: theme.colors.background,
-  //         }
-  //       : {
-  //           backgroundColor: '#27104e',
-  //           backgroundImage: 'linear-gradient(19deg, #27104e 0%, #161a2b 25%)',
-  //         }),
-  //   }),
-  // },
-}));

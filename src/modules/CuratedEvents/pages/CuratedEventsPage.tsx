@@ -12,7 +12,7 @@ export const CuratedEventsPage: React.FC<Props> = (props) => {
   const [allCuratedEvents, setAllCuratedEvents] = useState<CuratedEvent[]>([]);
 
   useEffect(() => {
-    getAllCuratedEvents().map(setAllCuratedEvents);
+    getAllCuratedEvents({}).map(setAllCuratedEvents);
   }, []);
 
   return (

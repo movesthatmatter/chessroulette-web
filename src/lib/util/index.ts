@@ -149,3 +149,9 @@ export const isDeepEqual = <A extends object, B extends object>(a?: A, b?: B) =>
   // This could change later on with a faster/different diff fn
   return Object.keys(diff(a || {}, b || {})).length === 0;
 };
+
+export const dedupeArray = <T extends string | number>(arr: T[]) => {
+  return Object.keys(
+    arr.reduce((prev, next) => ({ ...prev, [next]: undefined }), {} as Record<T, undefined>)
+  );
+};

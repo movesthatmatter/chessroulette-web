@@ -18,7 +18,6 @@ export const getRoundStatus = (round: CuratedEventRound): RoundStatus => {
   return 'pending';
 };
 
-
 export const getInitialFocusedRound = (event: CuratedEvent) => {
-  return event.rounds.find((r) => getRoundStatus(r) === 'started');
-}
+  return event.rounds.find((r) => getRoundStatus(r) === 'started') || event.rounds[0];
+};
