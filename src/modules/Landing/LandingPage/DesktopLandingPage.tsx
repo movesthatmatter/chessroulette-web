@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import config from 'src/config';
+import addSeconds from 'date-fns/addSeconds';
 import { Page } from 'src/components/Page';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
 import { softBorderRadius, effects, hardBorderRadius } from 'src/theme';
@@ -16,7 +18,6 @@ import { getUserDisplayName } from 'src/modules/User';
 import DiscordReactEmbed from '@widgetbot/react-embed';
 import { getCollaboratorStreamers, getFeaturedStreamers } from 'src/modules/Live/resources';
 import { ResourceRecords } from 'dstnd-io';
-import { LiveStreamCard } from 'src/modules/Live/components/LiveStreamCard/LiveStreamCard';
 import { UserProfileShowcaseWidget } from 'src/modules/User/widgets/UserProfileShowcaseWidget';
 import { useAnyUser } from 'src/services/Authentication';
 import { Hr } from 'src/components/Hr';
@@ -27,13 +28,14 @@ import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { toDictIndexedBy } from 'src/lib/util';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { Avatar } from 'src/components/Avatar';
-import config from 'src/config';
 import { getNextScheduledEvent, ScheduledEvent } from './schedule';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { InfoCard } from 'src/components/InfoCard';
-import addSeconds from 'date-fns/addSeconds';
 import { now } from 'src/lib/date';
 import { EventPromo } from './components/EventPromo/EventPromo';
+import { StreamsReel } from 'src/modules/Live/components/StreamsReel';
+import { StreamerGallery } from 'src/modules/Live/components/StreamerGallery/StreamerGallery';
+import { UserDisplay } from 'src/components/UserDisplay';
 
 type Props = {};
 
@@ -179,7 +181,6 @@ export const DesktopLandingPage: React.FC<Props> = () => {
               </Text>
               {topPlayers.map((r) => (
                 <div
-                  key={r.user.id}
                   style={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -189,17 +190,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
                     alignItems: 'center',
                   }}
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      flex: 1,
-                      alignItems: 'center',
-                    }}
-                  >
-                    <PeerAvatar peerUserInfo={r.user} />
-                    <div style={{ width: spacers.small }} />
-                    <Text size="small1">{getUserDisplayName(r.user)}</Text>
-                  </div>
+                  <UserDisplay user={r.user} />
                   <Text size="small1" className={cls.topPlayerStats}>
                     {r.gamesCount} Games
                   </Text>
@@ -246,98 +237,30 @@ export const DesktopLandingPage: React.FC<Props> = () => {
         </aside>
         <main className={cls.main}>
           {streamers?.inFocus && (
-            <LiveHero featuredStreamer={streamers.itemsById[streamers.inFocus]} autoplay={!config.DEBUG} />
+            <LiveHero
+              featuredStreamer={streamers.itemsById[streamers.inFocus]}
+              autoplay={!config.DEBUG}
+            />
           )}
-          <div>
-            <div style={{ height: spacers.get(3) }} />
-            <Text size="title2" className={cls.title}>
-              Watch Now
-            </Text>
-            <div className={cls.streamerCollectionList}>
-              {streamers?.toWatch &&
-                streamers.toWatch.map((streamerId, index) => (
-                  <React.Fragment key={streamerId}>
-                    {index > 0 && <div style={{ width: spacers.large }} />}
-                    <LiveStreamCard
-                      key={streamerId}
-                      streamer={streamers.itemsById[streamerId]}
-                      containerClassName={cls.liveStream}
-                      onClick={() => refocusStreamers(streamerId)}
-                    />
-                  </React.Fragment>
-                ))}
+          {streamers && (
+            <div>
+              <div style={{ height: spacers.get(3) }} />
+              <Text size="title2" className={cls.title}>
+                Watch Now
+              </Text>
+              <StreamsReel
+                streamers={streamers.toWatch.map((id) => streamers.itemsById[id])}
+                itemClassName={cls.liveStream}
+              />
             </div>
-          </div>
+          )}
           {collaboratorStreamers && (
             <div>
               <div className={cls.verticalSpacer} />
               <Text size="title2" className={cls.title}>
                 Streamers to Follow
               </Text>
-              <div className={cls.streamerCollectionList}>
-                {collaboratorStreamers.map((collaborator) => {
-                  // const s = streamers.itemsById[streamerId];
-                  
-                  return (
-                    <div
-                      key={collaborator.id}
-                      className={cls.aspect}
-                      style={{
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                        }}
-                      >
-                        <div
-                          style={{
-                            paddingRight: spacers.default,
-                          }}
-                        >
-                          <AnchorLink
-                            href={`https://twitch.tv/${collaborator.username}`}
-                            target="_blank"
-                          >
-                            <Avatar imageUrl={collaborator.profileImageUrl || ''} size={60} />
-                          </AnchorLink>
-                        </div>
-                        {/* <div>
-                          <AnchorLink
-                            href={`https://twitch.tv/${collaborator.username}`}
-                            target="_blank"
-                          >
-                            <Text asLink size="subtitle1">
-                              {collaborator.displayName}
-                            </Text>
-                          </AnchorLink>
-                          <Text
-                            size="body2"
-                            asParagraph
-                            style={{
-                              marginTop: '.2em',
-                              // color: theme.text.baseColor,
-                            }}
-                          >
-                            {collaborator.description.length > 75
-                              ? `${collaborator.description?.slice(0, 75)}...`
-                              : collaborator.description}
-                            <br />
-                            <AnchorLink
-                              href={`https://twitch.tv/${collaborator.username}/about`}
-                              target="_blank"
-                            >
-                              Learn More
-                            </AnchorLink>
-                          </Text>
-                        </div> */}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              <StreamerGallery streamers={collaboratorStreamers} compact itemsPerRow={6} />
             </div>
           )}
         </main>
@@ -480,9 +403,7 @@ const useStyles = createUseStyles((theme) => ({
   },
 
   liveStream: {
-    flex: 1,
-    display: 'flex',
-    // flexGrow: 0,
+    maxWidth: '33%',
   },
 
   userProfileShowcase: {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
@@ -11,9 +11,11 @@ import { AnchorLink } from 'src/components/AnchorLink';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { LiveHero } from './widgets/LiveHero';
 import { TwitchChatEmbed } from 'src/vendors/twitch/TwitchChatEmbed';
-import { LiveStreamCard } from './components/LiveStreamCard/LiveStreamCard';
 import { toDictIndexedBy } from 'src/lib/util';
 import { useHistory } from 'react-router-dom';
+import { StreamsReel } from './components/StreamsReel';
+import { StreamerGallery } from './components/StreamerGallery/StreamerGallery';
+import { Streamer } from './types';
 
 type Props = {
   heroStreamer?: string;
@@ -52,9 +54,15 @@ export const LivePage: React.FC<Props> = (props) => {
   const cls = useStyles();
   const { theme } = useColorTheme();
   const [streamersState, setStreamersState] = useState<LiveStreamerState>();
-  const [collaboratorStreamers, setCollaboratorStreamers] = useState<
-    ResourceRecords.Watch.StreamerRecord[]
-  >();
+  const [collaboratorStreamers, setCollaboratorStreamers] = useState<Streamer[]>();
+
+  const streamersToWatch = useMemo(() => {
+    if (!streamersState) {
+      return [];
+    }
+
+    return streamersState.toWatch.map((id) => streamersState.allByUsername[id]);
+  }, [streamersState]);
 
   useEffect(() => {
     getCollaboratorStreamers().map((s) => {
@@ -81,7 +89,7 @@ export const LivePage: React.FC<Props> = (props) => {
   }, [props.heroStreamer, history]);
 
   return (
-    <Page name="Live" stretched>
+    <Page name="Watch" stretched>
       <div className={cls.container}>
         <main className={cls.main}>
           {streamersState?.hero && (
@@ -90,105 +98,31 @@ export const LivePage: React.FC<Props> = (props) => {
                 featuredStreamer={streamersState.allByUsername[streamersState.hero]}
                 muted={false}
               />
-              <div>
-                <div style={{ height: spacers.get(3) }} />
-                <Text size="title2" className={cls.title}>
-                  Watch Now
-                </Text>
-                <div className={cls.streamerCollectionList}>
-                  {streamersState?.toWatch &&
-                    streamersState.toWatch.map((streamerId, index) => (
-                      <React.Fragment key={streamerId}>
-                        {index > 0 && <div style={{ width: spacers.large }} />}
-                        <LiveStreamCard
-                          streamer={streamersState.allByUsername[streamerId]}
-                          containerClassName={cls.liveStream}
-                          onClick={() => {
-                            // refocusStreamers(streamerId)
-                            history.replace(
-                              `/watch/${streamersState.allByUsername[streamerId].username}`
-                            );
-                          }}
-                        />
-                      </React.Fragment>
-                    ))}
+              {streamersToWatch && (
+                <div>
+                  <div style={{ height: spacers.get(3) }} />
+                  <Text size="title2" className={cls.title}>
+                    Watch Now
+                  </Text>
+                  <StreamsReel
+                    streamers={streamersToWatch}
+                    itemClassName={cls.liveStream}
+                    onItemClick={(s) => history.replace(`/watch/${s.username}`)}
+                  />
                 </div>
-              </div>
+              )}
               <div
                 style={{
                   height: spacers.large,
                 }}
               />
               {collaboratorStreamers && (
-                <div className={cls.streamerCollectionListMask}>
+                <>
                   <Text size="title2" className={cls.title}>
                     Streamers to Follow
                   </Text>
-                  <div className={cls.streamerCollectionList}>
-                    {collaboratorStreamers.map((collaborator) => {
-                      // const s = streamers.itemsById[streamerId];
-
-                      return (
-                        <div
-                          key={collaborator.id}
-                          className={cls.aspect}
-                          style={{
-                            overflow: 'hidden',
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                            }}
-                          >
-                            <div
-                              style={{
-                                paddingRight: spacers.default,
-                              }}
-                            >
-                              <AnchorLink
-                                href={`https://twitch.tv/${collaborator.username}`}
-                                target="_blank"
-                              >
-                                <Avatar imageUrl={collaborator.profileImageUrl || ''} size={60} />
-                              </AnchorLink>
-                            </div>
-                            <div>
-                              <AnchorLink
-                                href={`https://twitch.tv/${collaborator.username}`}
-                                target="_blank"
-                              >
-                                <Text asLink size="subtitle1">
-                                  {collaborator.displayName}
-                                </Text>
-                              </AnchorLink>
-                              <Text
-                                size="body2"
-                                asParagraph
-                                style={{
-                                  marginTop: '.2em',
-                                  color: theme.text.baseColor,
-                                }}
-                              >
-                                {collaborator.description.length > 75
-                                  ? `${collaborator.description?.slice(0, 75)}...`
-                                  : collaborator.description}
-                                <br />
-                                <AnchorLink
-                                  href={`https://twitch.tv/${collaborator.username}/about`}
-                                  target="_blank"
-                                >
-                                  Learn More
-                                </AnchorLink>
-                              </Text>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                  <StreamerGallery streamers={collaboratorStreamers} itemsPerRow={4} />
+                </>
               )}
             </>
           )}
@@ -231,19 +165,6 @@ const useStyles = createUseStyles((theme) => ({
     width: '100%',
     height: '100%',
   },
-  aspect: {
-    ...onlyDesktop({
-      width: `calc(${100 / 4}% - ${spacers.defaultPx * 2}px)`,
-      marginRight: spacers.get(1.5),
-      marginBottom: spacers.get(1.5),
-
-      ...({
-        '&:nth-child(3n)': {
-          marginRight: 0,
-        },
-      } as NestedCSSElement),
-    }),
-  },
   chatContainer: {
     border: 0,
     borderRadius: '16px',
@@ -268,13 +189,6 @@ const useStyles = createUseStyles((theme) => ({
     color: theme.colors.primary,
     display: 'block',
     marginBottom: '1em',
-  },
-
-  streamerCollectionListMask: {},
-  streamerCollectionList: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
   },
   liveStream: {
     flex: 1,

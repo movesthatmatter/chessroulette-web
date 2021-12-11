@@ -10,6 +10,8 @@ import { spacers } from 'src/theme/spacers';
 import { Text } from '../Text';
 import { getBoxShadow } from 'src/theme/util';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
+import DocumentTitle from 'react-document-title';
+import config from 'src/config';
 
 export type PageProps = {
   // This name will be used on analytics
@@ -42,43 +44,50 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, stretched = false
   }, [props.name]);
 
   const responsiveCls = useMemo(() => (stretched ? cls.responsiveStretched : cls.responsive), [
-    stretched, cls
+    stretched,
+    cls,
   ]);
 
+  const title = useMemo(() => `${props.title || props.name} | ${config.TITLE_SUFFIX}`, [props.title, props.name]);
+
   return (
-    <div className={cls.root}>
-      <div className={`${cls.container} ${props.containerClassname}`}>
-        <div className={`${cls.content} ${props.contentClassName}`}>
-          {!props.hideNav && <div className={cls.top}>
-            <div className={cx(cls.topMain, responsiveCls)}>
-              <div style={{ width: '300px' }}>
-                <Logo asLink={logoAsLink} withBeta />
+    <DocumentTitle title={title}>
+      <div className={cls.root}>
+        <div className={`${cls.container} ${props.containerClassname}`}>
+          <div className={`${cls.content} ${props.contentClassName}`}>
+            {!props.hideNav && (
+              <div className={cls.top}>
+                <div className={cx(cls.topMain, responsiveCls)}>
+                  <div style={{ width: '300px' }}>
+                    <Logo asLink={logoAsLink} withBeta />
+                  </div>
+                  <div className={cls.navigationMenu}>
+                    <NavigationMenu />
+                  </div>
+                </div>
               </div>
-              <div className={cls.navigationMenu}>
-                <NavigationMenu />
-              </div>
-            </div>
-          </div>}
-          <main className={`${cls.main} ${responsiveCls}`}>
-            {props.title && <h1 className={cls.title}>{props.title}</h1>}
-            {props.children}
-          </main>
-          <div className={cls.preFooter}>
-            <div className={cx(responsiveCls, cls.centralizeContent)}>
-              {/* <div className={cls.preFooterSide} /> */}
-              <div className={cls.centralContent}>
-                <Text size="body2" className={cls.text}>
-                  Made with ❤️around the world!
-                </Text>
+            )}
+            <main className={`${cls.main} ${responsiveCls}`}>
+              {props.title && <h1 className={cls.title}>{props.title}</h1>}
+              {props.children}
+            </main>
+            <div className={cls.preFooter}>
+              <div className={cx(responsiveCls, cls.centralizeContent)}>
+                {/* <div className={cls.preFooterSide} /> */}
+                <div className={cls.centralContent}>
+                  <Text size="body2" className={cls.text}>
+                    Made with ❤️around the world!
+                  </Text>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div className={`${cls.footer} ${props.footerClassName}`}>
+          <Footer />
+        </div>
       </div>
-      <div className={`${cls.footer} ${props.footerClassName}`}>
-        <Footer />
-      </div>
-    </div>
+    </DocumentTitle>
   );
 };
 

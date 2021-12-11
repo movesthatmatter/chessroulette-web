@@ -18,21 +18,27 @@ declare module 'react-snapshot';
 declare module 'object-equals';
 
 declare module 'can-ndjson-stream' {
-  export default function ndjsonStream(data : unknown): {
-    getReader : () => {
-      read : () => Promise<{
-        done : boolean;
+  export default function ndjsonStream(
+    data: unknown
+  ): {
+    getReader: () => {
+      read: () => Promise<{
+        done: boolean;
         value: any;
       }>;
     };
-    cancel : () => void;
-  }
+    cancel: () => void;
+  };
 }
 
 declare module 'use-debounced-effect' {
   import { DependencyList, EffectCallback } from 'react';
 
-  export default function useDebouncedEffect(effect: EffectCallback, delay: number, deps: DependencyList): void;
+  export default function useDebouncedEffect(
+    effect: EffectCallback,
+    delay: number,
+    deps: DependencyList
+  ): void;
 }
 
 declare module 'react-twitch-embed-video';

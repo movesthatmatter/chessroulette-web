@@ -1,5 +1,6 @@
 import { Resources } from 'dstnd-io';
 import { http } from 'src/lib/http';
+import { keyInObject } from 'src/lib/util';
 
 const {
   resource: createCuratedEventsResource,
@@ -9,6 +10,12 @@ export const createCuratedEvent = (
   req: Resources.Util.RequestOf<typeof createCuratedEventsResource>
 ) => {
   return createCuratedEventsResource.request(req, (data) => http.post('api/curated-events', data));
+};
+
+const { resource: getCuratedEventResource } = Resources.Collections.CuratedEvents.GetCuratedEvent;
+
+export const getCuratedEventBySlug = (slug: string) => {
+  return getCuratedEventResource.request({ slug }, () => http.get(`api/curated-events/${slug}`));
 };
 
 const {

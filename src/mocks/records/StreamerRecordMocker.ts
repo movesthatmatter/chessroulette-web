@@ -25,9 +25,9 @@ export class StreamerRecordMocker {
         vendor: 'twitch',
         username: chance.name(),
         displayName: chance.name(),
-        profileImageUrl: profileImageDummy[getRandomInt(0,5)],
+        profileImageUrl: 'https://i.picsum.photos/id/58/200/200.jpg?hmac=aol3E3KC2fpsVXlPhgxLR9-CLoUQa-kbswhZx-gYzCE',
         createdAt: toISODateTime(new Date()),
-        description: chance.string(),
+        description: 'I am the best chess player and twitch streamer in the metaverse',
         isLive: false
       };
     }
@@ -36,9 +36,9 @@ export class StreamerRecordMocker {
         vendor: 'twitch',
         username: chance.name(),
         displayName: chance.name(),
-        profileImageUrl: profileImageDummy[getRandomInt(0,5)],
+        profileImageUrl: 'https://i.picsum.photos/id/58/200/200.jpg?hmac=aol3E3KC2fpsVXlPhgxLR9-CLoUQa-kbswhZx-gYzCE',
         createdAt: toISODateTime(new Date()),
-        description: chance.string(),
+        description: 'I am the best chess player and twitch streamer in the metaverse',
         isLive: true,
         stream: {
           id: chance.guid(),
