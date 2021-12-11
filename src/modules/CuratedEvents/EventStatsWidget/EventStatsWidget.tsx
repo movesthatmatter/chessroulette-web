@@ -42,7 +42,7 @@ export const EventStatsWidget: React.FC<Props> = ({ event, className }) => {
                 <Text className={cls.pos}>{index + 1}</Text>
               </div>
               <UserDisplay user={stats.players[playerAndScore.playerId]} />
-              <Text>{playerAndScore.score} pts</Text>
+              <Text className={cls.subtle}>{playerAndScore.score} pts</Text>
             </div>
           ),
         }))}
@@ -51,7 +51,7 @@ export const EventStatsWidget: React.FC<Props> = ({ event, className }) => {
   );
 };
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles((theme) => ({
   container: {},
   pos: {
     width: spacers.larger,
@@ -59,4 +59,7 @@ const useStyles = createUseStyles({
   list: {
     height: '100%',
   },
-});
+  subtle: {
+    color: theme.text.subtle,
+  },
+}));

@@ -3,7 +3,6 @@ import { Page } from 'src/components/Page';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { getAllCuratedEvents } from '../resources';
 import { CuratedEvent } from '../types';
-import ViewportList from 'react-viewport-list';
 import { AnchorLink } from 'src/components/AnchorLink';
 
 type Props = {};
