@@ -12,9 +12,10 @@ import { InfoCard } from 'src/components/InfoCard';
 import { noop } from 'src/lib/util';
 import { Button } from 'src/components/Button';
 import cx from 'classnames';
+import { LiveStreamer } from '../../types';
 
 type Props = {
-  streamer: ResourceRecords.Watch.LiveStreamerRecord;
+  streamer: LiveStreamer;
   containerClassName?: string;
   onClick?: () => void;
 };

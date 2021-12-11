@@ -41,13 +41,10 @@ export const WccCalendar: React.FC<Props> = (props) => {
   const peerState = usePeerStateClient();
 
   const request: SocketClient['send'] = (payload) => {
-    peerState.send(payload)
+    peerState.send(payload);
   };
 
-
-  const onLoadGame = (r: RelayedGameRecord) => {
-
-  }
+  const onLoadGame = (r: RelayedGameRecord) => {};
 
   const onWatchGame = (r: RelayedGameRecord) => {
     // request({
@@ -57,7 +54,7 @@ export const WccCalendar: React.FC<Props> = (props) => {
     //     relayedGameId: r.id,
     //   },
     // });
-  }
+  };
 
   useEffect(() => {
     console.log('rounds', rounds);

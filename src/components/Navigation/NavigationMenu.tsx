@@ -12,8 +12,8 @@ import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
 import { Home, Video, People, Category } from 'react-iconly';
 import { Text } from '../Text';
 import { spacers } from 'src/theme/spacers';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faTrophy} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrophy } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   className?: string;
@@ -42,16 +42,20 @@ export const NavigationMenu: React.FC<Props> = (props) => {
       </div>
       <div className={cls.linkWrapper}>
         <Link
-          to={'/wcc'}
-          className={cx(cls.link, location.pathname === '/wcc' && cls.activeLink)}
+          to={'/events/wcc-2021'}
+          className={cx(cls.link, location.pathname.indexOf('/events') > -1 && cls.activeLink)}
         >
-        {/* <Category set='bold' /> */}
-        <FontAwesomeIcon icon={faTrophy} size='lg' style={{marginBottom: '5px', marginTop:'2px'}}/>
-         <br/>
-         <Text size='small1'>WCC</Text>
+          {/* <Category set='bold' /> */}
+          <FontAwesomeIcon
+            icon={faTrophy}
+            size="lg"
+            style={{ marginBottom: '5px', marginTop: '2px' }}
+          />
+          <br />
+          <Text size="small1">Events</Text>
         </Link>
       </div>
-    
+
       {/* <div className={cls.linkWrapper}>
         <a
           className={cls.link}
