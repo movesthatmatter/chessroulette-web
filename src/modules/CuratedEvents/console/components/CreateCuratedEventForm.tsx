@@ -18,7 +18,6 @@ const formInitialValues: Partial<FormModel> = {
 };
 
 export const CreateCuratedEventForm: React.FC<Props> = ({ onSubmit }) => {
-  const cls = useStyles();
 
   return (
     <Form<FormModel>
@@ -45,6 +44,3 @@ export const CreateCuratedEventForm: React.FC<Props> = ({ onSubmit }) => {
   );
 };
 
-const useStyles = createUseStyles({
-  container: {},
-});

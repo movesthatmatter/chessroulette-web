@@ -21,8 +21,8 @@ export type FormModel = {
 };
 
 const formInitialValues: FormModel = {
-  blackPlayer: 'Magnus Carlsen',
-  whitePlayer: 'Ian Nepomniachtchi',
+  blackPlayer: '61aebb9c0452012700f88617',
+  whitePlayer: '61aebc930452012700f88619',
   timeLimit: 'rapid120',
 };
 
@@ -41,13 +41,13 @@ export const CreateGameForm: React.FC<Props> = ({ onSubmit, submitButtonProps })
       render={(p) => (
         <>
           <TextInput
-            label="White player"
+            label="White player ID"
             placeholder={p.model.whitePlayer}
             defaultValue={p.model.whitePlayer}
             onChange={(e) => p.onChange('whitePlayer', e.currentTarget.value)}
           />
           <TextInput
-            label="Black player"
+            label="Black player ID"
             placeholder={p.model.blackPlayer}
             defaultValue={p.model.blackPlayer}
             onChange={(e) => p.onChange('blackPlayer', e.currentTarget.value)}
@@ -80,6 +80,7 @@ export const CreateGameForm: React.FC<Props> = ({ onSubmit, submitButtonProps })
             }}
           />
           <br />
+          <div style={{display: 'flex', justifyContent:'center'}}>
           <Button
             type="positive"
             label="Create"
@@ -88,6 +89,7 @@ export const CreateGameForm: React.FC<Props> = ({ onSubmit, submitButtonProps })
             onClick={p.submit}
             {...submitButtonProps}
           />
+          </div>
         </>
       )}
     />

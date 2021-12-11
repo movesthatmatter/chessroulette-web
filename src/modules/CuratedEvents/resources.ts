@@ -39,3 +39,14 @@ export const createCuratedEventRound = (
     http.put(`api/curated-events/${req.curatedEventId}`, data)
   );
 };
+
+const { resource: getStreamersResource } = Resources.Collections.Collaborator.GetCollaboratorsByPlatform;
+
+export const getCollaboratorStreamers = (
+  req: Resources.Util.RequestOf<typeof getStreamersResource>
+) => {
+  return getStreamersResource.request(req, (params) =>
+    http.get('api/collaborators', { params })
+  );
+};
+
