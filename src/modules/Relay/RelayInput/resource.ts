@@ -9,3 +9,11 @@ export const createRelay = (req: RequestOf<typeof createRelayResource>) => {
     return http.post('api/relays', body)
   });
 };
+
+const {resource: verifyUsernameResource} = Resources.Collections.CuratedEvents.VerifyUsernameForPlayer;
+
+export const verifyUsernames = (req: RequestOf<typeof verifyUsernameResource>) => {
+  return verifyUsernameResource.request(req, (body) => {
+    return http.post('api/users/verify-username', body);
+  })
+}

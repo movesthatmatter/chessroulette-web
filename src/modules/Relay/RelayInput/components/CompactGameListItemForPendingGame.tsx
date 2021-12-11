@@ -7,7 +7,7 @@ import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
 import { GameRecord } from 'dstnd-io';
 import dateformat from 'dateformat';
-import { getUserDisplayName } from 'src/modules/User';
+import { getUserDisplayName, getUserDisplayNameClean } from 'src/modules/User';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBolt } from '@fortawesome/free-solid-svg-icons';
@@ -43,7 +43,7 @@ export const CompactGameListItemForPendingGame: React.FC<Props> = ({
     return (
       <div className={cls.playerInfo}>
         <Text className={cls.playerName} size="small2">
-          {getUserDisplayName(player.user)}
+          {getUserDisplayNameClean(player.user)}
         </Text>
         <ChessColorAvatar pieceColor={player.color} color="positiveLight" size={pieceSize} />
       </div>
@@ -56,7 +56,7 @@ export const CompactGameListItemForPendingGame: React.FC<Props> = ({
       <>
         <div className={cls.playerInfo}>
           <Text className={cls.playerName} size="small2">
-            {getUserDisplayName(player.user)}
+            {getUserDisplayNameClean(player.user)}
           </Text>
           <ChessColorAvatar pieceColor={player.color} color="positiveLight" size={pieceSize} />
         </div>

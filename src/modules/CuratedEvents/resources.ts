@@ -36,17 +36,32 @@ export const createCuratedEventRound = (
   req: Resources.Util.RequestOf<typeof createCuratedEventRoundResource>
 ) => {
   return createCuratedEventRoundResource.request(req, (data) =>
-    http.put(`api/curated-events/${req.curatedEventId}`, data)
+    http.put(`api/curated-events/rounds/${req.curatedEventId}`, data)
   );
 };
 
-const { resource: getStreamersResource } = Resources.Collections.Collaborator.GetCollaboratorsByPlatform;
+const {
+  resource: getStreamersResource,
+} = Resources.Collections.Collaborator.GetCollaboratorsByPlatform;
 
 export const getCollaboratorStreamers = (
   req: Resources.Util.RequestOf<typeof getStreamersResource>
 ) => {
-  return getStreamersResource.request(req, (params) =>
-    http.get('api/collaborators', { params })
+  return getStreamersResource.request(req, (params) => http.get('api/collaborators', { params }));
+};
+
+const { resource: deleteEventResource } = Resources.Collections.CuratedEvents.DeleteCuratedEvent;
+
+export const deleteCuratedEvent = (req: Resources.Util.RequestOf<typeof deleteEventResource>) => {
+  return deleteEventResource.request(req, (params) =>
+    http.post(`api/curated-events/delete/${req.id}`, params)
   );
 };
 
+const {resource: deleteRoundResource} = Resources.Collections.CuratedEvents.DeleteCuratedEventRound;
+
+export const deleteCuratedEventRound = (req: Resources.Util.RequestOf<typeof deleteRoundResource>) => {
+  return deleteRoundResource.request(req, (params) =>
+    http.post(`api/curated-events/rounds/delete/${req.roundId}`, params)
+  );
+};
