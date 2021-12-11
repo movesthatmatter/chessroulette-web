@@ -50,3 +50,11 @@ export const deleteCuratedEvent = (req: Resources.Util.RequestOf<typeof deleteEv
     http.post(`api/curated-events/delete/${req.id}`, params)
   );
 };
+
+const {resource: deleteRoundResource} = Resources.Collections.CuratedEvents.DeleteCuratedEventRound;
+
+export const deleteCuratedEventRound = (req: Resources.Util.RequestOf<typeof deleteRoundResource>) => {
+  return deleteRoundResource.request(req, (params) =>
+    http.post(`api/curated-events/rounds/delete/${req.roundId}`, params)
+  );
+};

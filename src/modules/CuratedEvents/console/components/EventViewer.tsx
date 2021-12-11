@@ -3,15 +3,16 @@ import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { CompactGameListItemForPendingGame } from 'src/modules/Relay/RelayInput/components/CompactGameListItemForPendingGame';
 import { spacers } from 'src/theme/spacers';
-import { Object } from 'window-or-global';
 import { CuratedEvent } from '../../types';
 import dateformat from 'dateformat';
+import { ConfirmButton } from 'src/components/Button/ConfirmButton';
 
 type Props = {
   event: CuratedEvent;
+  onDeleteRound: (id: string) => void;
 };
 
-export const EventViewer: React.FC<Props> = ({ event }) => {
+export const EventViewer: React.FC<Props> = ({ event, onDeleteRound }) => {
   const cls = useStyles();
   return (
     <div className={cls.container}>
@@ -21,11 +22,14 @@ export const EventViewer: React.FC<Props> = ({ event }) => {
       <Text>Rounds: </Text>
       <div className={cls.rounds}>
         {event.rounds.map((round) => (
-          <div style={{
-            maxWidth: '400px',
-            display:'flex', flexDirection:'column', 
-            marginBottom: spacers.large,
-            }}>
+          <div
+            style={{
+              maxWidth: '400px',
+              display: 'flex',
+              flexDirection: 'column',
+              marginBottom: spacers.large,
+            }}
+          >
             <Text>Label: {round.label}</Text>
             <Text>Games: </Text>
             <div className={cls.games}>
@@ -39,12 +43,32 @@ export const EventViewer: React.FC<Props> = ({ event }) => {
             <Text>Commentators: </Text>
             <Text>
               {round.commentators.map((c) => (
-                  <span style={{ marginRight: spacers.small }}>
-                    {c.profileUrl}
-                    {', '}
-                  </span>
-                ))}
+                <span style={{ marginRight: spacers.small }}>
+                  {c.profileUrl}
+                  {', '}
+                </span>
+              ))}
             </Text>
+            <ConfirmButton
+              onConfirmed={() => onDeleteRound(round.id)}
+              buttonProps={{
+                label: 'Delete Round',
+                type: 'negative',
+              }}
+              dialogProps={{
+                title: 'Delete Round?',
+                content: 'Are you sure you want to delete this round and all its games?',
+                buttonsStacked: false,
+              }}
+              cancelButtonProps={{
+                label: 'Cancel',
+                type: 'secondary',
+              }}
+              confirmButtonProps={{
+                label: 'Yes',
+                type: 'negative',
+              }}
+            />
           </div>
         ))}
       </div>
@@ -52,7 +76,7 @@ export const EventViewer: React.FC<Props> = ({ event }) => {
   );
 };
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -68,6 +92,6 @@ const useStyles = createUseStyles(theme => ({
     marginLeft: spacers.largest,
   },
   game: {
-    backgroundColor: theme.colors.neutralLight
-  }
+    backgroundColor: theme.colors.neutralLight,
+  },
 }));

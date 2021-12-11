@@ -12,6 +12,7 @@ import {
   createCuratedEventRound,
   getCollaboratorStreamers,
   deleteCuratedEvent,
+  deleteCuratedEventRound,
 } from '../resources';
 import { CuratedEvent } from '../types';
 import { CreateCuratedEventForm } from './components/CreateCuratedEventForm';
@@ -45,10 +46,18 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
     deleteCuratedEvent({ id }).map((res) => {
       if (res.success) {
         getAllCuratedEventsAndPopulateThem();
+        return;
       }
       //TODO - add some UI feedback, maybe a Dialog to inform of the failure
       console.log('COULD NOT DELETE event!');
     });
+  };
+
+  const deleteRound = (eventId: string, roundId: string) => {
+    deleteCuratedEventRound({ curatedEventId: eventId, roundId })
+      .map((res) => getAllCuratedEventsAndPopulateThem())
+      //TODO - add some UI feedback, maybe a Dialog to inform of the failure
+      .mapErr(() => console.log('COULD NOT DELETE ROUND!!'));
   };
 
   return (
@@ -89,7 +98,7 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
               marginRight: spacers.large,
             }}
           >
-            <EventViewer event={ce} />
+            <EventViewer event={ce} onDeleteRound={(roundId) => deleteRound(ce.id, roundId)} />
             <WithDialog
               hasCloseButton
               content={(d) => (
