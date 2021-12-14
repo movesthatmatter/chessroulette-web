@@ -14,9 +14,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChessKnight } from '@fortawesome/free-solid-svg-icons';
 import { delay } from 'src/lib/time';
 import { HTMLDivElement } from 'window-or-global';
+import { Game } from 'src/modules/Games';
 
 type Props = {
-  relay: Resources.AllRecords.Relay.RelayedGameRecord | undefined;
+  game: Game | undefined;
   containerWidth: number;
   onAddMove: (m: ChessMove) => void;
   onSubmit: () => void;
@@ -26,7 +27,7 @@ type Props = {
 };
 
 export const ControlPanel: React.FC<Props> = ({
-  relay,
+  game,
   containerWidth,
   onAddMove,
   onSubmit,
@@ -49,17 +50,17 @@ export const ControlPanel: React.FC<Props> = ({
     <div className={cls.container}>
       <div style={{ display: 'flex' }} ref={containerRef}>
         <div style={{ minWidth: containerWidth, minHeight: containerWidth }}>
-          {relay?.game && (
+          {game && (
             <ChessGame
               size={containerWidth}
-              game={gameRecordToGame(relay.game)}
+              game={gameRecordToGame(game)}
               onAddMove={({ move }) => {
                 onAddMove(move);
               }}
               canInteract
               playable
-              playableColor={otherChessColor(relay.game.lastMoveBy || 'black')}
-              turnColor={otherChessColor(relay.game.lastMoveBy || 'black')}
+              playableColor={otherChessColor(game.lastMoveBy || 'black')}
+              turnColor={otherChessColor(game.lastMoveBy || 'black')}
               orientation={orientation}
             />
           )}
@@ -118,7 +119,7 @@ export const ControlPanel: React.FC<Props> = ({
             label="End Game"
             onClick={() => setShowEndPopup(true)}
             type="secondary"
-            disabled={!relay?.game || relay.game.state !== 'started'}
+            disabled={!game || game.state !== 'started'}
           />
         </div>
       </div>
@@ -187,7 +188,7 @@ export const ControlPanel: React.FC<Props> = ({
           </div>
         }
       />
-      {relay && relay.game.winner && (
+      {game && game.winner && (
         <div className={cls.winnerContainer}>
           <div className={cls.dialog}>
             <DialogContent
@@ -196,9 +197,9 @@ export const ControlPanel: React.FC<Props> = ({
               content={
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <Text>
-                    {relay.game.winner === '1/2'
+                    {game.winner === '1/2'
                       ? 'Game ended in a draw.'
-                      : `${getPlayerByColor(relay.game.winner, relay.game.players).user.name} won!`}
+                      : `${getPlayerByColor(game.winner, game.players).user.name} won!`}
                   </Text>
                 </div>
               }
@@ -210,7 +211,7 @@ export const ControlPanel: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     position: 'relative',
   },

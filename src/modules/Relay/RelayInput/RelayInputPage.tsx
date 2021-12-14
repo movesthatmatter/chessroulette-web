@@ -7,7 +7,8 @@ import { getCurrentlyStreamingRelayedGames } from '../BroadcastPage/resources';
 import { createRelay } from './resource';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { ControlPanel } from './components/ControlPanel';
-import { RelayInputGamesList } from './components/RelayInputGamesList';
+import { CompactGamesList } from './components/CompactGamesList';
+import { CompactStartedGamesList } from './components/CompactStartedGamesList';
 import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
 import { Page } from 'src/components/Page';
 import { spacers } from 'src/theme/spacers';
@@ -25,6 +26,9 @@ import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { useInterval } from 'src/lib/hooks';
 import { MoveTimesDialog } from './components/MoveTimesDialog';
 import { CustomTheme, softBorderRadius } from 'src/theme';
+import { CuratedEvent } from 'src/modules/CuratedEvents/types';
+import { getAllCuratedEvents } from 'src/modules/CuratedEvents/resources';
+import { Game } from 'src/modules/Games';
 
 type Props = {};
 
@@ -37,6 +41,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
   const peerClient = usePeerStateClient();
   const gameActions = useGameActions();
   const [relayGames, setRelayGames] = useState<RelayedGames>({});
+  const [allEvents, setAllEvents] = useState<CuratedEvent[]>([]);
   const [selectedRelayId, setSelectedRelayId] = useState<string>();
   const [unsubmittedMove, setUnsubmittedMove] = useState<ChessMove>();
   const [showSubmitWindow, setShowSubmitWindow] = useState(false);
@@ -64,6 +69,10 @@ export const RelayInputPage: React.FC<Props> = (props) => {
     getCurrentlyStreamingRelayedGames().map((relayGames) => {
       setRelayGames(toDictIndexedBy(relayGames, (relayGames) => relayGames.id));
     });
+  }
+
+  function fetchAllGames() {
+    getAllCuratedEvents({}).map(setAllEvents);
   }
 
   useInterval(
@@ -97,6 +106,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
 
   useEffect(() => {
     fetchLiveGames();
+    fetchAllGames();
   }, []);
 
   const addRelay = (m: FormModel) => {
@@ -152,6 +162,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
 
   useEffect(() => {
     const unsubscribe = peerClient.onMessage((msg) => {
+      //TODO - need to update this as this will only apply to peers inside a room!!
       if (msg.kind === 'relayGameUpdateList') {
         fetchLiveGames();
       }
@@ -162,6 +173,9 @@ export const RelayInputPage: React.FC<Props> = (props) => {
             [msg.content.relayId]: { ...prev[msg.content.relayId], game: msg.content.game },
           };
         });
+        if (msg.content.game.state === 'finished' || msg.content.game.state === 'stopped') {
+          fetchAllGames();
+        }
       }
     });
 
@@ -262,7 +276,9 @@ export const RelayInputPage: React.FC<Props> = (props) => {
               </div>
             )}
             <ControlPanel
-              relay={selectedRelayId ? relayGames[selectedRelayId] : undefined}
+              game={
+                selectedRelayId ? gameRecordToGame(relayGames[selectedRelayId].game) : undefined
+              }
               containerWidth={500}
               onAddMove={(m) => setUnsubmittedMove(m)}
               onUndo={undoMove}
@@ -302,7 +318,11 @@ export const RelayInputPage: React.FC<Props> = (props) => {
             <Button
               label="Adjust Timers"
               onClick={() => {
-                if (selectedRelayId) {
+                if (
+                  selectedRelayId &&
+                  (relayGames[selectedRelayId].game.state !== 'finished' ||
+                    relayGames[selectedRelayId].game.state !== 'stopped')
+                ) {
                   setTimersDialogVisible(true);
                 }
               }}
@@ -316,9 +336,25 @@ export const RelayInputPage: React.FC<Props> = (props) => {
             />
           </div>
         </div>
-        <RelayInputGamesList
+        <CompactStartedGamesList
+          title="Started Games"
           games={Object.values(relayGames)}
           onSelectRelay={(relay) => setSelectedRelayId(relay.id)}
+        />
+        <div style={{ width: spacers.default }} />
+        <CompactGamesList
+          title="All Games"
+          events={allEvents}
+          onSelectedGame={(game) => {
+            return createRelay({
+              relaySource: 'proxy',
+              label: 'broadcast-event',
+              type: 'existentGame',
+              gameId: game.id,
+            }).map(() => {
+              fetchLiveGames();
+            });
+          }}
         />
       </div>
       {selectedRelayId && timersDialogVisible && (
@@ -348,7 +384,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'row',

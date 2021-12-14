@@ -11,15 +11,16 @@ import { spacers } from 'src/theme/spacers';
 
 type Props = {
   games: RelayedGameRecord[];
+  title: string;
   onSelectRelay: (r: RelayedGameRecord) => void;
 };
 
-export const RelayInputGamesList: React.FC<Props> = ({ games, onSelectRelay }) => {
+export const CompactStartedGamesList: React.FC<Props> = ({ games, onSelectRelay, title }) => {
   const cls = useStyles();
 
   return (
     <div className={cls.container}>
-      <Text size="subtitle1">Available Relays : </Text>
+      <Text size="subtitle1">{title}</Text>
       {games.map((relayGame) => (
         <div className={cls.gameContainer} onClick={() => onSelectRelay(relayGame)}>
           <div className={cls.playerInfo}>
@@ -45,9 +46,10 @@ export const RelayInputGamesList: React.FC<Props> = ({ games, onSelectRelay }) =
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     backgroundColor: theme.depthBackground.backgroundColor,
+    width: '150px',
     padding: '5px',
     ...softBorderRadius,
   },

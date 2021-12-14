@@ -9,9 +9,11 @@ import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton } from 'src/services/Authentication/widgets';
 import { Link, useLocation } from 'react-router-dom';
 import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
-import { Home, Video, People, Play } from 'react-iconly';
+import { Home, Video, People, Category } from 'react-iconly';
 import { Text } from '../Text';
 import { spacers } from 'src/theme/spacers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrophy } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   className?: string;
@@ -38,24 +40,22 @@ export const NavigationMenu: React.FC<Props> = (props) => {
           textClassName={cls.linkBadgeText}
         /> */}
       </div>
-      {/* <div className={cls.linkWrapper}>
+      <div className={cls.linkWrapper}>
         <Link
-          to={'/broadcasts'}
-          className={cx(cls.link, location.pathname === '/broadcasts' && cls.activeLink)}
+          to={'/events/wcc-2021'}
+          className={cx(cls.link, location.pathname.indexOf('/events') > -1 && cls.activeLink)}
         >
-        <Play set='bold' />
-         <br/>
-         <Text size='small1'>Broadcasts</Text>
+          {/* <Category set='bold' /> */}
+          <FontAwesomeIcon
+            icon={faTrophy}
+            size="lg"
+            style={{ marginBottom: '5px', marginTop: '2px' }}
+          />
+          <br />
+          <Text size="small1">Events</Text>
         </Link>
-      </div> */}
-      {/* <div className={cls.linkWrapper}>
-        <Link
-          to={'/broadcasts-external'}
-          className={cx(cls.link, location.pathname === '/broadcasts-external' && cls.activeLink)}
-        >
-          External Broadcasts
-        </Link>
-      </div> */}
+      </div>
+
       {/* <div className={cls.linkWrapper}>
         <a
           className={cls.link}

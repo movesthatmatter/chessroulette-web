@@ -1,6 +1,18 @@
 import { CSSProperties } from 'src/lib/jss/types';
 import { onlyMobile } from './mediaQueries';
 
+const tiny1: CSSProperties = {
+  fontSize: '10px',
+  fontWeight: 'normal',
+  lineHeight:'10px',
+}
+
+const tiny2: CSSProperties = {
+  fontSize: '10px',
+  fontWeight: 'bold',
+  lineHeight: '10px'
+}
+
 const small1: CSSProperties = {
   fontSize: '13px',
   fontWeight: 'normal',
@@ -119,6 +131,9 @@ const hugeBold: CSSProperties = {
 };
 
 export const fonts = {
+  tiny1,
+  tiny2,
+
   small1,
   small2,
   small3,

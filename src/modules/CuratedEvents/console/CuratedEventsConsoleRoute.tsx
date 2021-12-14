@@ -1,29 +1,64 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from 'src/components/Button';
+import { ConfirmButton } from 'src/components/Button/ConfirmButton';
 import { WithDialog } from 'src/components/Dialog';
 import { Page } from 'src/components/Page';
-import { createUseStyles } from 'src/lib/jss';
+import { spacers } from 'src/theme/spacers';
 import { AsyncResult } from 'ts-async-results';
 import { console } from 'window-or-global';
-import { createCuratedEvent, getAllCuratedEvents, createCuratedEventRound } from '../resources';
+import {
+  createCuratedEvent,
+  getAllCuratedEvents,
+  createCuratedEventRound,
+  getCollaboratorStreamers,
+  deleteCuratedEvent,
+  deleteCuratedEventRound,
+} from '../resources';
 import { CuratedEvent } from '../types';
 import { CreateCuratedEventForm } from './components/CreateCuratedEventForm';
 import { CreateCuratedEventRoundForm } from './components/CreateCuratedEventRoundForm';
+import { EventViewer } from './components/EventViewer';
 
 type Props = {};
 
 export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
-  const cls = useStyles();
-
   const [curatedEvents, setCuratedEvents] = useState<CuratedEvent[]>([]);
+  const [collaborators, setCollaborators] = useState<string[]>([]);
 
   useEffect(() => {
     getAllCuratedEventsAndPopulateThem();
+    getAllStreamers();
   }, []);
 
   const getAllCuratedEventsAndPopulateThem = useCallback(() => {
-    getAllCuratedEvents().map(setCuratedEvents);
+    getAllCuratedEvents({ byProp: 'type', value: 'externalTournament' }).map(setCuratedEvents);
   }, []);
+
+  const getAllStreamers = useCallback(() => {
+    getCollaboratorStreamers({
+      platform: 'Twitch',
+      pageSize: 50,
+      currentIndex: 0,
+    }).map(({ items }) => setCollaborators(items.map((i) => i.profileUrl)));
+  }, []);
+
+  const deleteEvent = (id: string) => {
+    deleteCuratedEvent({ id }).map((res) => {
+      if (res.success) {
+        getAllCuratedEventsAndPopulateThem();
+        return;
+      }
+      //TODO - add some UI feedback, maybe a Dialog to inform of the failure
+      console.log('COULD NOT DELETE event!');
+    });
+  };
+
+  const deleteRound = (eventId: string, roundId: string) => {
+    deleteCuratedEventRound({ curatedEventId: eventId, roundId })
+      .map((res) => getAllCuratedEventsAndPopulateThem())
+      //TODO - add some UI feedback, maybe a Dialog to inform of the failure
+      .mapErr(() => console.log('COULD NOT DELETE ROUND!!'));
+  };
 
   return (
     <Page name="Console | Curated Events" stretched>
@@ -46,14 +81,29 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
       />
       <br />
 
-      <div>
+      <div
+        style={{
+          display: 'flex',
+          width: '100vw',
+          overflowX: 'scroll',
+        }}
+      >
         {curatedEvents.map((ce) => (
-          <div key={ce.id}>
-            <pre>{JSON.stringify(ce, null, 2)}</pre>
+          <div
+            key={ce.id}
+            style={{
+              marginBottom: spacers.large,
+              paddingLeft: spacers.default,
+              borderLeft: '2px solid #CE186B',
+              marginRight: spacers.large,
+            }}
+          >
+            <EventViewer event={ce} onDeleteRound={(roundId) => deleteRound(ce.id, roundId)} />
             <WithDialog
               hasCloseButton
               content={(d) => (
                 <CreateCuratedEventRoundForm
+                  collaborators={collaborators}
                   onSubmit={(r) => {
                     return createCuratedEventRound({
                       curatedEventId: ce.id,
@@ -64,16 +114,35 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
                       })
                       .map(AsyncResult.passThrough(d.onClose))
                       .mapErr(AsyncResult.passThrough(d.onClose));
-                    // .map((res) => {
-                    //   console.log('res', res);
-                    //   // getAllCuratedEventsAndPopulateThem();
-                    // })
-                    // .map(d.onClose)
-                    // .mapErr(d.onClose);
                   }}
                 />
               )}
-              render={(p) => <Button label="Edit" type="positive" onClick={p.onOpen} />}
+              render={(p) => (
+                <div style={{ display: 'flex' }}>
+                  <Button label="Add Round" type="positive" onClick={p.onOpen} />
+                  <div style={{ width: spacers.default }} />
+                  <ConfirmButton
+                    onConfirmed={() => deleteEvent(ce.id)}
+                    buttonProps={{
+                      label: 'Delete Event',
+                      type: 'negative',
+                    }}
+                    dialogProps={{
+                      title: 'Delete Event?',
+                      content: 'Are you sure you want to delete this event and all its rounds?',
+                      buttonsStacked: false,
+                    }}
+                    cancelButtonProps={{
+                      label: 'Cancel',
+                      type: 'secondary',
+                    }}
+                    confirmButtonProps={{
+                      label: 'Yes',
+                      type: 'negative',
+                    }}
+                  />
+                </div>
+              )}
             />
           </div>
         ))}
@@ -81,7 +150,3 @@ export const CuratedEventsConsoleRoute: React.FC<Props> = (props) => {
     </Page>
   );
 };
-
-const useStyles = createUseStyles({
-  container: {},
-});

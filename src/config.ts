@@ -24,6 +24,8 @@ const config = {
 
   PRERENDERING,
 
+  TITLE_SUFFIX: 'Chessroulette',
+
   // Servers
   WSS_ENDPOINT,
   HTTP_ENDPOINT,

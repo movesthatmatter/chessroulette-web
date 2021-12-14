@@ -10,9 +10,11 @@ import { TOS } from './pages/TOS';
 import { TwitchCallbackPage } from './vendors/twitch/TwitchCallbackPage/TwitchCallBackPage';
 import { RoomRoute } from './modules/Room';
 import { PeerProviderContainer } from './providers/PeerProvider/PeerProviderContainer';
+import { BroadcastPage } from './modules/Relay/BroadcastPage/BroadcastPage';
 import { RelayInputRoute } from './modules/Relay/RelayInput';
 import { LiveRoute } from './modules/Live/LiveRoute';
 import { CuratedEventsConsoleRoute } from './modules/CuratedEvents/console/CuratedEventsConsoleRoute';
+import { CuratedEventsRoute, CuratedEventRoute } from './modules/CuratedEvents';
 
 type Props = {};
 
@@ -50,8 +52,16 @@ export const Routes: React.FC<Props> = () => {
         <PeerProviderContainer>
           <Route path="/relay-input" strict exact component={RelayInputRoute} />
           <Route exact strict path="/r/:slug" key={location.key} component={RoomRoute} />
-          <Route exact path="/" component={LandingPage} />
 
+          {/* <Route path="/wcc" exact strict key={location.key} component={BroadcastPage} /> */}
+          <Route
+            path="/events/:slug"
+            exact
+            strict
+            key={location.key}
+            component={CuratedEventRoute}
+          />
+          {/* <Route path="/events" exact strict key={location.key} component={CuratedEventsRoute} /> */}
           {/* console/admin routes */}
           <Route path="/e4e5f4Be7/console/relay-input" strict exact component={RelayInputRoute} />
           <Route
@@ -60,6 +70,8 @@ export const Routes: React.FC<Props> = () => {
             exact
             component={CuratedEventsConsoleRoute}
           />
+
+          <Route exact strict path="/" component={LandingPage} />
         </PeerProviderContainer>
       </SocketProvider>
     </Switch>
