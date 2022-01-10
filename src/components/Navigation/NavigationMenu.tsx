@@ -42,7 +42,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
       </div>
       <div className={cls.linkWrapper}>
         <Link
-          to={'/events/wcc-2021'}
+          to={'/events'}
           className={cx(cls.link, location.pathname.indexOf('/events') > -1 && cls.activeLink)}
         >
           {/* <Category set='bold' /> */}

@@ -53,7 +53,7 @@ export const Routes: React.FC<Props> = () => {
           <Route path="/relay-input" strict exact component={RelayInputRoute} />
           <Route exact strict path="/r/:slug" key={location.key} component={RoomRoute} />
 
-          {/* <Route path="/wcc" exact strict key={location.key} component={BroadcastPage} /> */}
+          <Route path="/events" exact strict key={location.key} component={CuratedEventsRoute} />
           <Route
             path="/events/:slug"
             exact

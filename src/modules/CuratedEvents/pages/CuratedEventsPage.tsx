@@ -4,6 +4,8 @@ import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { getAllCuratedEvents } from '../resources';
 import { CuratedEvent } from '../types';
 import { AnchorLink } from 'src/components/AnchorLink';
+import eventsSplash from './assets/events_splash.svg';
+import { EventItem } from './components/EventItem';
 
 type Props = {};
 
@@ -16,17 +18,39 @@ export const CuratedEventsPage: React.FC<Props> = (props) => {
   }, []);
 
   return (
-    <Page name="Events" stretched containerClassname={cls.container}>
-      {allCuratedEvents.map((event) => (
-        <AnchorLink href={`/events/${event.slug}`}>{event.name}</AnchorLink>
-      ))}
-      {/* <ViewportList viewportRef={ref} items={items} itemMinSize={40} margin={8}>
-        {(item) => (
-          <div key={item.id} className="item">
-            {item.title}
-          </div>
-        )}
-      </ViewportList> */}
+    <Page
+      name="Events"
+      title="Events"
+      stretched
+      contentClassName={cls.content}
+      containerClassname={cls.container}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          width: '100%',
+          flexDirection: 'column',
+          zIndex: 9,
+          position:'relative'
+        }}
+      >
+        {allCuratedEvents.map((event) => (
+          <EventItem event={event} />
+        ))}
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          position: 'absolute',
+          bottom: '3em',
+          width: '100vw',
+          justifyContent: 'center',
+          zIndex: 1,
+        }}
+      >
+        <img src={eventsSplash} />
+      </div>
     </Page>
   );
 };
@@ -43,5 +67,9 @@ const useStyles = createUseStyles((theme) => ({
             backgroundImage: 'linear-gradient(19deg, #27104e 0%, #161a2b 25%)',
           }),
     }),
+    position: 'relative',
+  },
+  content: {
+    display: 'flex',
   },
 }));
