@@ -4,31 +4,22 @@ import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import { EventSchedule } from './components/EventSchedule/EventSchedule';
 import { CuratedEventsPage } from './pages/CuratedEventsPage';
-import { getAllCuratedEvents, getCuratedEventBySlug } from './resources';
+import { getAllCuratedEvents } from './resources';
 import { CuratedEvent } from './types';
 
 type Props = {};
 
 export const CuratedEventsRoute: React.FC<Props> = (props) => {
-  const cls = useStyles();
-  const [event, setEvent] = useState<CuratedEvent>();
+  // const cls = useStyles();
+  // const [event, setEvent] = useState<CuratedEvent[]>();
 
-  useEffect(() => {
-    getCuratedEventBySlug('wcc-2021').map((curatedEvent) => {
-      setEvent(curatedEvent);
-    });
-  }, []);
+  // useEffect(() => {
+  //   getAllCuratedEvents({}).map((curatedEvent) => {
+  //     setEvent(curatedEvent);
+  //   });
+  // }, []);
 
   return <CuratedEventsPage />
-
-  // return (
-  //   <Page name="Events" stretched containerClassname={cls.pageContainer}>
-  //     {/* <div className={cls.container}> */}
-  //       {/* <WccCalendar /> */}
-  //       {/* {event && <EventSchedule event={event} />} */}
-  //     {/* </div> */}
-  //   </Page>
-  // );
 };
 
 const useStyles = createUseStyles((theme) => ({
