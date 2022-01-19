@@ -50,11 +50,19 @@ import {
   ImportRelayedGameRequestPayload,
   AnalysisImportArchivedGameRequestPayload,
   AnalysisImportRelayedGameRequestPayload,
-  SwitchRoomActivityRequestPayload, 
+  SwitchRoomActivityRequestPayload,
   SwitchGameToRelayAndGoLivePayload,
   RelayAdjustGameTimersRequestPayload,
   RelayGameUndoMoveRequestPayload,
-  RelayEndGameRequestPayload
+  RelayEndGameRequestPayload,
+  WarGameActionRequestPayload,
+  WarGameChallengeAcceptRequestPayload,
+  WarGameJoinRequestPayload,
+  WarGameChallengeDenyRequestPayload,
+  WarGameMoveRequestPayload,
+  WarGameChallengeOfferingRequestPayload,
+  JoinedWarGameUpdatedPayload,
+  JoinedRoomAndWarGameUpdatedPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
@@ -89,7 +97,7 @@ type SendableMessagesMap = {
   joinRoomRequest: JoinRoomRequestPayload;
   leaveRoomRequest: LeaveRoomRequestPayload;
   switchRoomActivityRequestPayload: SwitchRoomActivityRequestPayload;
-  switchToRelayAndGoLive : SwitchGameToRelayAndGoLivePayload;
+  switchToRelayAndGoLive: SwitchGameToRelayAndGoLivePayload;
 
   //Chat
   broadcastChatMessage: BroadcastChatMessagePayload;
@@ -97,7 +105,7 @@ type SendableMessagesMap = {
   // Game
   gameResignationRequestPayload: GameResignationRequestPayload;
   gameMoveRequestPayload: GameMoveRequestPayload;
-  gameMoveRelayInputPayload: GameMoveRelayInputRequestPayload,
+  gameMoveRelayInputPayload: GameMoveRelayInputRequestPayload;
   gameJoinRequestPayload: GameJoinRequestPayload;
   gameDrawOfferingRequestPayload: GameDrawOfferingRequestPayload;
   gameDrawAcceptRequestPayload: GameDrawAcceptRequestPayload;
@@ -115,18 +123,28 @@ type SendableMessagesMap = {
   relayAdjustTimersRequestPayload: RelayAdjustGameTimersRequestPayload;
   relayUndoMoveRequestPayload: RelayGameUndoMoveRequestPayload;
   relayEndGameRequestPayload: RelayEndGameRequestPayload;
-  
+
   gameChallengeOfferingRequestPayload: GameChallengeOfferingRequestPayload;
   gameChallengeAcceptRequestPayload: GameChallengeAcceptRequestPayload;
   gameChallengeDenyRequestPayload: GameChallengeDenyRequestPayload;
+
+  //WarGame
+  warGameActionRequestPayload: WarGameActionRequestPayload;
+  warGameChallengeAcceptRequestPayload: WarGameChallengeAcceptRequestPayload;
+  warGameJoinRequestPayload: WarGameJoinRequestPayload;
+  warGameChallengeDenyRequestPayload: WarGameChallengeDenyRequestPayload;
+  warGameMoveRequestPayload: WarGameMoveRequestPayload;
+  warGameChallengeRequestPayload: WarGameChallengeOfferingRequestPayload;
+  warGameUpdatePayload: JoinedWarGameUpdatedPayload;
+  joinedRoomAndWarGameUpdatePayload: JoinedRoomAndWarGameUpdatedPayload;
 
   // Analysis
   analysisMoveRequestPayload: AnalysisMoveRequestPayload;
   analysisRefocusRequestPayload: AnalysisRefocusRequestPayload;
   analysisDrawnShapesUpdatedRequestPayload: AnalysisDrawnShapesUpdatedRequestPayload;
-  analysisImportPgnRequestPayload: AnalysisImportPgnRequestPayload,
-  analysisImportArchivedGameRequestPayload: AnalysisImportArchivedGameRequestPayload,
-  analysisImportRelayedGameRequestPayload: AnalysisImportRelayedGameRequestPayload,
+  analysisImportPgnRequestPayload: AnalysisImportPgnRequestPayload;
+  analysisImportArchivedGameRequestPayload: AnalysisImportArchivedGameRequestPayload;
+  analysisImportRelayedGameRequestPayload: AnalysisImportRelayedGameRequestPayload;
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {

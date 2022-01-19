@@ -18711,7 +18711,7 @@ walker@^1.0.7, walker@~1.0.5:
 
 "wargame-board@https://github.com/andreitopli/wargame-board.git":
   version "0.1.0"
-  resolved "https://github.com/andreitopli/wargame-board.git#cc54883a57e8d559789a5d7973566e1fc8872d89"
+  resolved "https://github.com/andreitopli/wargame-board.git#34698ee57e476f203531b308c9d53bbd214da6a6"
   dependencies:
     chessground-wargame "https://github.com/andreitopli/chessground-wargame.git"
     classnames "^2.3.1"
