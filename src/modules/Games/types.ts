@@ -2,6 +2,7 @@ import {
   ActivePiecesRecord,
   ChessGameState,
   GameRecord,
+  WarGameRecord,
   GameRecordFromGameState,
 } from 'dstnd-io';
 import { RoomPlayActivityParticipant } from '../Room/RoomActivity/activities/PlayActivity';
@@ -9,6 +10,10 @@ import { RoomPlayActivityParticipant } from '../Room/RoomActivity/activities/Pla
 export type Game = GameRecord & {
   activePieces: ActivePiecesRecord;
 };
+
+export type WarGame = WarGameRecord & {
+  // activePieces: ActivePiecesRecord;
+}
 
 export type GameFromGameState<
   TGameState extends ChessGameState

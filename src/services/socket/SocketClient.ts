@@ -56,6 +56,14 @@ import {
   RelayGameUndoMoveRequestPayload,
   RelayEndGameRequestPayload,
   ToggleRoomInMeetupRequestPayload,
+  WarGameActionRequestPayload,
+  WarGameChallengeAcceptRequestPayload,
+  WarGameJoinRequestPayload,
+  WarGameChallengeDenyRequestPayload,
+  WarGameMoveRequestPayload,
+  WarGameChallengeOfferingRequestPayload,
+  JoinedWarGameUpdatedPayload,
+  JoinedRoomAndWarGameUpdatedPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
@@ -121,6 +129,16 @@ type SendableMessagesMap = {
   gameChallengeOfferingRequestPayload: GameChallengeOfferingRequestPayload;
   gameChallengeAcceptRequestPayload: GameChallengeAcceptRequestPayload;
   gameChallengeDenyRequestPayload: GameChallengeDenyRequestPayload;
+
+  //WarGame
+  warGameActionRequestPayload: WarGameActionRequestPayload;
+  warGameChallengeAcceptRequestPayload: WarGameChallengeAcceptRequestPayload;
+  warGameJoinRequestPayload: WarGameJoinRequestPayload;
+  warGameChallengeDenyRequestPayload: WarGameChallengeDenyRequestPayload;
+  warGameMoveRequestPayload: WarGameMoveRequestPayload;
+  warGameChallengeRequestPayload: WarGameChallengeOfferingRequestPayload;
+  warGameUpdatePayload: JoinedWarGameUpdatedPayload;
+  joinedRoomAndWarGameUpdatePayload: JoinedRoomAndWarGameUpdatedPayload;
 
   // Analysis
   analysisMoveRequestPayload: AnalysisMoveRequestPayload;
