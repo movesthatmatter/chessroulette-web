@@ -105,9 +105,8 @@ export const DesktopLandingPage: React.FC<Props> = () => {
     getTopPlayersByGamesCount().map(setTopPlayers);
   }, []);
 
-  const [collaboratorStreamers, setCollaboratorStreamers] = useState<
-    ResourceRecords.Watch.StreamerRecord[]
-  >();
+  const [collaboratorStreamers, setCollaboratorStreamers] =
+    useState<ResourceRecords.Watch.StreamerRecord[]>();
 
   useEffect(() => {
     getCollaboratorStreamers().map((s) => {
@@ -158,6 +157,24 @@ export const DesktopLandingPage: React.FC<Props> = () => {
                     }}
                   />
                   <div style={{ width: spacers.default }} />
+                  {/* <CreateRoomButtonWidget
+                    label="War Game"
+                    type="primary"
+                    withBadge={{
+                      side: 'right',
+                      text: 'BETA',
+                      color: 'negative',
+                    }}
+                    style={{
+                      marginBottom: spacers.small,
+                    }}
+                    full
+                    createRoomSpecs={{
+                      type: 'private',
+                      activityType: 'warGame',
+                    }}
+                  /> */}
+                  {/* <div style={{ width: spacers.default }} /> */}
                   <CreateRoomButtonWidgetWithWizard
                     label="Analyze"
                     type="secondary"
