@@ -7454,7 +7454,7 @@ dotenv@^6.2.0:
 
 "dstnd-io@https://github.com/dstnd/dstnd-io.git#wargame-addon":
   version "0.2.2"
-  resolved "https://github.com/dstnd/dstnd-io.git#a95252dbcd046855ada5863f35ad4f2dad5a5949"
+  resolved "https://github.com/dstnd/dstnd-io.git#d433a9e866587d36d0c473e7e9d0638fd36f70fb"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"
@@ -18711,7 +18711,7 @@ walker@^1.0.7, walker@~1.0.5:
 
 "wargame-board@https://github.com/andreitopli/wargame-board.git":
   version "0.1.0"
-  resolved "https://github.com/andreitopli/wargame-board.git#34698ee57e476f203531b308c9d53bbd214da6a6"
+  resolved "https://github.com/andreitopli/wargame-board.git#e743f9fd262838f416ec95474e8b0b58618674a2"
   dependencies:
     chessground-wargame "https://github.com/andreitopli/chessground-wargame.git"
     classnames "^2.3.1"

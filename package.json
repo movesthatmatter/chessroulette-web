@@ -74,7 +74,7 @@
     "hex-to-rgba": "^2.0.1",
     "howler": "^2.2.1",
     "humanize-duration": "^3.22.0",
-    "io-ts": "^2.2.10",
+    "io-ts": "2.2.10",
     "io-ts-isodatetime": "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.3",
     "io-ts-types": "^0.5.10",
     "is-ua-webview": "^1.0.5",

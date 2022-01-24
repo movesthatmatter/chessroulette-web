@@ -54,7 +54,28 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({
                       userId: peerState.me.id,
                       type: createRoomSpecs.type,
                       activityType: 'play',
-                      gameSpecs,
+                      gameSpecs: {...gameSpecs, gameType: 'chess'},
+                    })
+                    .map((room) => {
+                      Events.trackRoomCreated(room);
+                      history.push(toRoomUrlPath(room));
+                    }) as unknown) as UnknownAsyncResult;
+                }}
+              />
+            )}
+             {createRoomSpecs.activityType === 'warGame' && (
+              <CreatePlayRoomWizard
+                onFinished={({ gameSpecs }) => {
+                  if (peerState.status !== 'open') {
+                    return AsyncOk.EMPTY;
+                  }
+
+                  return (resources
+                    .createRoom({
+                      userId: peerState.me.id,
+                      type: createRoomSpecs.type,
+                      activityType: 'warGame',
+                      gameSpecs: {...gameSpecs, gameType: 'warGame'},
                     })
                     .map((room) => {
                       Events.trackRoomCreated(room);
