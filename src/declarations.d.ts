@@ -36,3 +36,35 @@ declare module 'use-debounced-effect' {
 }
 
 declare module 'react-twitch-embed-video';
+
+declare module 'react-chessground-wargame' {
+  import * as React from 'react'
+  import {MoveType} from 'dstnd-io'
+  import {Key, Piece} from 'chessground-wargame/types'
+  import {Chessground as NativeChessground} from 'chessground-wargame'
+
+  type Config = NonNullable<Parameters<typeof NativeChessground>[1]>
+
+  export type ChessgroundApi = ReturnType<typeof NativeChessground>
+
+  export interface ChessgroundProps extends Config {
+    width?: number | string
+    height?: number | string
+    style?: React.CSSProperties
+    className?: string
+
+    onChange?: () => void
+    onMove?: (
+      orig: Key,
+      dest: Key,
+      type: MoveType,
+      capturedPiece?: Piece,
+    ) => void
+    onDrop?: () => void
+    onDrag?: (orig: Key) => void
+    onDropNewPiece?: (piece: Piece, key: Key) => void
+    onSelect?: (key: Key) => void
+  }
+
+  export default class Chessground extends React.Component<ChessgroundProps> {}
+}

@@ -3229,6 +3229,14 @@
     jest-diff "^25.2.1"
     pretty-format "^25.2.1"
 
+"@types/jest@^27.4.0":
+  version "27.4.0"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-27.4.0.tgz#037ab8b872067cae842a320841693080f9cb84ed"
+  integrity sha512-gHl8XuC1RZ8H2j5sHv/JqsaxXkDDM9iDOgu0Wp8sjs4u/snb2PVehyWXJPr+ORA0RPpgw231mnutWI1+0hgjIQ==
+  dependencies:
+    jest-diff "^27.0.0"
+    pretty-format "^27.0.0"
+
 "@types/json-schema@^7.0.3", "@types/json-schema@^7.0.5":
   version "7.0.6"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.6.tgz#f4c7ec43e81b319a9815115031709f26987891f0"
@@ -5834,7 +5842,7 @@ chess.js@^0.11.0:
   version "8.1.7"
   resolved "https://github.com/andreitopli/chessground-wargame.git#da91ff53a1aba3a2e7c76b204eb0ad68aa192a19"
 
-chessground@^7.6.12, chessground@^7.9.3:
+chessground@7.9.3, chessground@^7.6.12, chessground@^7.9.3:
   version "7.9.3"
   resolved "https://registry.yarnpkg.com/chessground/-/chessground-7.9.3.tgz#dec20a45afe439fe9ed961836a7e5a9157087141"
   integrity sha512-6vU1q3u/69aHt/Y/UwNk9h9BxPhOuJl+xTQH/taicVZcVY7VcUEUpt+yvVGgglooPgOzM/uj2Rzv5Pcaj/R2/A==
@@ -7239,6 +7247,11 @@ diff-sequences@^27.4.0:
   resolved "https://registry.yarnpkg.com/diff-sequences/-/diff-sequences-27.4.0.tgz#d783920ad8d06ec718a060d00196dfef25b132a5"
   integrity sha512-YqiQzkrsmHMH5uuh8OdQFU9/ZpADnwzml8z0O5HvRNda+5UZsaX/xN+AAxfR2hWq1Y7HZnAzO9J5lJXOuDz2Ww==
 
+diff-sequences@^27.5.1:
+  version "27.5.1"
+  resolved "https://registry.yarnpkg.com/diff-sequences/-/diff-sequences-27.5.1.tgz#eaecc0d327fd68c8d9672a1e64ab8dccb2ef5327"
+  integrity sha512-k1gCAXAsNgLwEL+Y8Wvl+M6oEFj5bgazfZULpS5CneoPPXRaCCW7dm+q21Ky2VEE5X+VeRDBVg1Pcvvsr4TtNQ==
+
 diffie-hellman@^5.0.0:
   version "5.0.3"
   resolved "https://registry.yarnpkg.com/diffie-hellman/-/diffie-hellman-5.0.3.tgz#40e8ee98f55a2149607146921c63e1ae5f3d2875"
@@ -7451,6 +7464,24 @@ dotenv@^6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
+
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#36caa48":
+  version "0.2.2"
+  resolved "https://github.com/dstnd/dstnd-io.git#36caa4873376fd46962df487d6c6e141bc4ee8d1"
+  dependencies:
+    "@types/chess.js" "^0.10.1"
+    "@types/jest" "^26.0.13"
+    chess.js "^0.11.0"
+    fp-ts "^2.8.2"
+    io-ts "2.2.10"
+    io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.3"
+    io-ts-types "^0.5.16"
+    jest "^26.4.2"
+    ts-async-results "0.2.0-0"
+    ts-results "^3.0.0"
+    tslib "2.3.1"
+    typescript "4.0.2"
+    wargame-engine "https://github.com/andreitopli/wargame-engine.git#47486ac"
 
 "dstnd-io@https://github.com/dstnd/dstnd-io.git#wargame-addon":
   version "0.2.2"
@@ -11066,6 +11097,16 @@ jest-diff@^26.4.2:
     jest-get-type "^26.3.0"
     pretty-format "^26.4.2"
 
+jest-diff@^27.0.0:
+  version "27.5.1"
+  resolved "https://registry.yarnpkg.com/jest-diff/-/jest-diff-27.5.1.tgz#a07f5011ac9e6643cf8a95a462b7b1ecf6680def"
+  integrity sha512-m0NvkX55LDt9T4mctTEgnZk3fmEg3NRYutvMPWM/0iPnkFj2wIeF45O1718cMSOFO1vINkqmxqD8vE37uTEbqw==
+  dependencies:
+    chalk "^4.0.0"
+    diff-sequences "^27.5.1"
+    jest-get-type "^27.5.1"
+    pretty-format "^27.5.1"
+
 jest-diff@^27.4.6:
   version "27.4.6"
   resolved "https://registry.yarnpkg.com/jest-diff/-/jest-diff-27.4.6.tgz#93815774d2012a2cbb6cf23f84d48c7a2618f98d"
@@ -11234,6 +11275,11 @@ jest-get-type@^27.4.0:
   version "27.4.0"
   resolved "https://registry.yarnpkg.com/jest-get-type/-/jest-get-type-27.4.0.tgz#7503d2663fffa431638337b3998d39c5e928e9b5"
   integrity sha512-tk9o+ld5TWq41DkK14L4wox4s2D9MtTpKaAVzXfr5CUKm5ZK2ExcaFE0qls2W71zE/6R2TxxrK9w2r6svAFDBQ==
+
+jest-get-type@^27.5.1:
+  version "27.5.1"
+  resolved "https://registry.yarnpkg.com/jest-get-type/-/jest-get-type-27.5.1.tgz#3cd613c507b0f7ace013df407a1c1cd578bcb4f1"
+  integrity sha512-2KY95ksYSaK7DMBWQn6dQz3kqAf3BB64y2udeG+hv4KfSOb9qwcYQstTJc1KCbsix+wLZWZYN8t7nwX3GOBLRw==
 
 jest-haste-map@^24.9.0:
   version "24.9.0"
@@ -15159,6 +15205,15 @@ pretty-format@^26.4.2:
     ansi-styles "^4.0.0"
     react-is "^16.12.0"
 
+pretty-format@^27.0.0, pretty-format@^27.5.1:
+  version "27.5.1"
+  resolved "https://registry.yarnpkg.com/pretty-format/-/pretty-format-27.5.1.tgz#2181879fdea51a7a5851fb39d920faa63f01d88e"
+  integrity sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==
+  dependencies:
+    ansi-regex "^5.0.1"
+    ansi-styles "^5.0.0"
+    react-is "^17.0.1"
+
 pretty-format@^27.4.6:
   version "27.4.6"
   resolved "https://registry.yarnpkg.com/pretty-format/-/pretty-format-27.4.6.tgz#1b784d2f53c68db31797b2348fa39b49e31846b7"
@@ -15507,11 +15562,13 @@ react-app-polyfill@^1.0.6:
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
 
-"react-chessground-wargame@https://github.com/andreitopli/react-chessground-wargame.git":
+"react-chessground-wargame@https://github.com/andreitopli/react-chessground-wargame.git#47cbedc":
   version "1.5.0"
-  resolved "https://github.com/andreitopli/react-chessground-wargame.git#a6e79d773b881cc94575bdd352e2c71d4e1a28af"
+  resolved "https://github.com/andreitopli/react-chessground-wargame.git#47cbedcc13505353cb52a73eed3e31f5223a97a2"
   dependencies:
+    chessground "7.9.3"
     chessground-wargame "https://github.com/andreitopli/chessground-wargame.git"
+    react-scripts "^3.3.0"
 
 react-chessground@^1.5.0:
   version "1.5.0"
@@ -18711,19 +18768,29 @@ walker@^1.0.7, walker@~1.0.5:
 
 "wargame-board@https://github.com/andreitopli/wargame-board.git":
   version "0.1.0"
-  resolved "https://github.com/andreitopli/wargame-board.git#e743f9fd262838f416ec95474e8b0b58618674a2"
+  resolved "https://github.com/andreitopli/wargame-board.git#ee78013ba0410a0f95ee52468bce197578ef8dc2"
   dependencies:
     chessground-wargame "https://github.com/andreitopli/chessground-wargame.git"
     classnames "^2.3.1"
     dstnd-io "https://github.com/dstnd/dstnd-io.git#wargame-addon"
-    react-chessground-wargame "https://github.com/andreitopli/react-chessground-wargame.git"
+    react-chessground-wargame "https://github.com/andreitopli/react-chessground-wargame.git#47cbedc"
     react-icons "^4.3.1"
-    wargame-engine "https://github.com/andreitopli/wargame-engine.git"
+    wargame-engine "https://github.com/andreitopli/wargame-engine.git#47486ac"
 
 "wargame-engine@https://github.com/andreitopli/wargame-engine.git":
   version "0.1.1"
   resolved "https://github.com/andreitopli/wargame-engine.git#3d110798e42f33c6def689e292ea9819276ff003"
   dependencies:
+    chess.js "https://github.com/andreitopli/chess.js.git"
+    jest "27.1"
+    tslib "^2.3.1"
+    typescript "4.0.2"
+
+"wargame-engine@https://github.com/andreitopli/wargame-engine.git#47486ac":
+  version "0.1.1"
+  resolved "https://github.com/andreitopli/wargame-engine.git#47486acc708e004ced9c674d89c02b8d478af695"
+  dependencies:
+    "@types/jest" "^27.4.0"
     chess.js "https://github.com/andreitopli/chess.js.git"
     jest "27.1"
     tslib "^2.3.1"
