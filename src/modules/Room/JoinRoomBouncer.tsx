@@ -42,7 +42,7 @@ export const JoinRoomBouncer: React.FC<Props> = (props) => {
       return;
     }
 
-    roomResources.getRoomBySlug(props.slug).map((roomInfo) => {
+    roomResources.getRoom({ slug: props.slug }).map((roomInfo) => {
       setRoomInfo(roomInfo);
       setSession((prev) => ({
         [roomInfo.slug]: {

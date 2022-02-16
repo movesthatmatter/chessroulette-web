@@ -2,10 +2,9 @@ import React, { useMemo } from 'react';
 import { CreateRoomRequest } from 'dstnd-io';
 import { Button, ButtonProps } from 'src/components/Button';
 import { useCreateRoom } from './useCreateRoom';
-import { useState } from '@storybook/addons';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
-  createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activity'>;
+  createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activity' | 'isPrivate'>;
 };
 
 export const CreateRoomButtonWidgetFromSpecs: React.FC<Props> = ({

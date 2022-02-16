@@ -1,5 +1,5 @@
 import { Resources } from 'dstnd-io';
-import { RequestOf } from 'dstnd-io/dist/sdk/resource';
+import { RequestOf } from 'resources-io';
 import { http } from 'src/lib/http';
 
 const { resource: createRelayResource } = Resources.Collections.Relay.CreateRelay;

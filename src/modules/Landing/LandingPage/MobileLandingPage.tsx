@@ -59,7 +59,7 @@ export const MobileLandingPage: React.FC<Props> = (props) => {
               label="Play"
               type="primary"
               createRoomSpecs={{
-                type: 'private',
+                isPrivate: true,
                 activityType: 'play',
               }}
               className={cls.playButton}

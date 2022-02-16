@@ -7,17 +7,27 @@ type Props = {
   room: Room;
 };
 
-export const RoomDetails: React.FC<Props> = ({ room }) => (
-  <div>
-    <div
-      style={{
-        lineHeight: 0,
-      }}
-    >
+export const RoomDetails: React.FC<Props> = React.memo(({ room }) => {
+  if (room.type === 'classroom') {
+    const studentIds = Object.keys(room.peersIncludingMe).filter(
+      (peerUserId) => peerUserId !== room.createdBy
+    );
+
+    return (
+      <div>
+        <Text size="subtitle2">{room.createdByUser.firstName}'s Classroom</Text>
+        <br />
+        <Text size="small1">{` ${studentIds.length}`} Students Present</Text>
+      </div>
+    );
+  }
+
+  return (
+    <div>
       <Text size="small2">{getUserDisplayName(room.createdByUser)}'s Room</Text>
       <br />
-      <Text size="small2">Active Members:</Text>
-      <Text size="small1">{` ${Object.keys(room.peersIncludingMe).length}`}</Text>
+      <Text size="small1">{`${Object.keys(room.peersIncludingMe).length} `}</Text>
+      <Text size="small2">Active Members</Text>
     </div>
-  </div>
-);
+  );
+});

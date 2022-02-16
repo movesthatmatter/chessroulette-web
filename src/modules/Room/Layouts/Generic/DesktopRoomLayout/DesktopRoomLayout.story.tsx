@@ -169,7 +169,7 @@ export const withChessGame = () => (
             [opponent.id]: opponent,
           },
           name: 'Valencia',
-          type: 'public',
+          isPrivate: false,
         });
 
         publicRoom;

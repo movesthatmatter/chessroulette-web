@@ -6,7 +6,7 @@ import { RoomDefaultPartialWizard } from '../RoomDefaultPartialWizard';
 import { useCreateRoom } from '../../widgets/CreateRoomWidget';
 
 export type CreateRoomWizardProps = {
-  createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'p2pCommunicationType'> &
+  createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'p2pCommunicationType' | 'isPrivate'> &
     Pick<CreateRoomRequest['activity'], 'activityType'>;
 };
 

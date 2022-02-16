@@ -30,7 +30,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
       setResourceState('loading');
 
       roomResources
-        .getRoomBySlug(params.slug)
+        .getRoom({ slug: params.slug })
         .map((room) => setRoomInfo(room))
         .flatMapErr(() => resources.getChallengeBySlug(params.slug).map(setChallenge))
         .map(
@@ -51,7 +51,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
 
   if (roomInfo) {
     // return <Room roomInfo={roomInfo} key={roomInfo.slug} />
-    return <RoomRoute key={roomInfo.slug} />
+    return <RoomRoute key={roomInfo.slug} />;
   }
 
   const goBackOrHome = () => {

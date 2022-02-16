@@ -38,7 +38,7 @@ const getRoom = (me: Peer, peers: Peer[]) =>
       {}
     ),
     name: 'Valencia',
-    type: 'public',
+    isPrivate: false,
   });
 
 const getRoomWithPeers = (stream: MediaStream, count: number) => {

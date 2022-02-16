@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import config from 'src/config';
-import addSeconds from 'date-fns/addSeconds';
 import { Page } from 'src/components/Page';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
 import { softBorderRadius, effects, hardBorderRadius } from 'src/theme';
@@ -13,8 +12,6 @@ import { useBodyClass } from 'src/lib/hooks/useBodyClass';
 import { LiveHero } from 'src/modules/Live/widgets/LiveHero';
 import { Text } from 'src/components/Text';
 import { Resources } from 'dstnd-io';
-import { PeerAvatar } from 'src/providers/PeerProvider';
-import { getUserDisplayName } from 'src/modules/User';
 import DiscordReactEmbed from '@widgetbot/react-embed';
 import { getCollaboratorStreamers, getFeaturedStreamers } from 'src/modules/Live/resources';
 import { ResourceRecords } from 'dstnd-io';
@@ -25,17 +22,20 @@ import { Game } from 'src/modules/Games';
 import { ChessGameDisplay } from 'src/modules/Games/widgets/ChessGameDisplay';
 import { getGameOfDay, getTopPlayersByGamesCount } from './resources';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
-import { toDictIndexedBy } from 'src/lib/util';
+import { toDictIndexedBy, toRoomUrlPath } from 'src/lib/util';
 import { AnchorLink } from 'src/components/AnchorLink';
-import { Avatar } from 'src/components/Avatar';
 import { getNextScheduledEvent, ScheduledEvent } from './schedule';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { InfoCard } from 'src/components/InfoCard';
-import { now } from 'src/lib/date';
-import { EventPromo } from './components/EventPromo/EventPromo';
 import { StreamsReel } from 'src/modules/Live/components/StreamsReel';
 import { StreamerGallery } from 'src/modules/Live/components/StreamerGallery/StreamerGallery';
 import { UserDisplay } from 'src/components/UserDisplay';
+import { Button } from 'src/components/Button';
+import { scheduleRoom } from 'src/modules/Room/resources';
+import { addDays, addMinutes, subDays } from 'date-fns';
+import { Date } from 'window-or-global';
+import { toISODateTime } from 'src/lib/date/ISODateTime';
+import { useHistory } from 'react-router-dom';
 
 type Props = {};
 
@@ -43,6 +43,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
   const cls = useStyles();
   useBodyClass([cls.indexBackground]);
   const user = useAnyUser();
+  const history = useHistory();
 
   const [streamers, setStreamers] = useState<{
     itemsById: Record<
@@ -148,7 +149,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
                     label="Play Now"
                     type="primary"
                     createRoomSpecs={{
-                      type: 'private',
+                      isPrivate: true,
                       activityType: 'play',
                     }}
                     full
@@ -165,8 +166,23 @@ export const DesktopLandingPage: React.FC<Props> = () => {
                     }}
                     full
                     createRoomSpecs={{
-                      type: 'private',
+                      isPrivate: true,
                       activityType: 'analysis',
+                    }}
+                  />
+                  <Button
+                    label="Schedule Classroom"
+                    onClick={() => {
+                      scheduleRoom({
+                        hostUserId: user.id,
+
+                        activity: { activityType: 'analysis', source: 'empty' },
+                        scheduleAt: toISODateTime(addMinutes(new Date(), 1)),
+                        type: 'classroom',
+                        isPrivate: true,
+                      }).map((scheduledRoom) => {
+                        history.push(toRoomUrlPath(scheduledRoom));
+                      });
                     }}
                   />
                 </div>
@@ -226,7 +242,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
                           source: 'archivedGame',
                           gameId: gameOfDay.id,
                         },
-                        type: 'private',
+                        isPrivate: true,
                       }}
                     />
                   </div>
