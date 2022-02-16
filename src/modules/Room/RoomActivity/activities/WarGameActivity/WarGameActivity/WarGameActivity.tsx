@@ -13,6 +13,7 @@ import { spacers } from 'src/theme/spacers';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { WarGameMove } from 'dstnd-io';
 import { WarGameBoard } from 'wargame-board';
+import { console } from 'window-or-global';
 
 export type WarGameActivityProps = ActivityCommonProps & {
   activity: RoomWarGameActivityWithGame;
@@ -79,13 +80,14 @@ export const WarGameActivity: React.FC<WarGameActivityProps> = ({ activity, devi
               <div className={cls.sideBottom}></div>
             </aside>
             <WarGameBoard
+              key={game.id}
               game={game}
-              orientation="white"
-              homeColor={homeColor}
               size={boardSize}
-              playable={activity.iamParticipating && activity.participants.me.canPlay}
+              orientation={homeColor}
+              turnColor={otherChessColor(game.lastMoveBy ? game.lastMoveBy : 'black')}
               canInteract={activity.iamParticipating}
-              disableContextMenu
+              playable={activity.iamParticipating && activity.participants.me.canPlay}
+              playableColor={otherChessColor(game.lastMoveBy ? game.lastMoveBy : 'black')}
               className={cls.board}
               onMove={(move, type) => onMoved({ move, type })}
             />

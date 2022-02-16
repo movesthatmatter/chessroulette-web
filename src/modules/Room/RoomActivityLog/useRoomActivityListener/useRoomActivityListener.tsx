@@ -15,24 +15,42 @@ export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
   const dispatch = useDispatch();
 
   const game = room?.currentActivity.type === 'play' ? room?.currentActivity.game : undefined;
+  const warGame = room?.currentActivity.type === 'warGame' ? room.currentActivity.game : undefined;
   const offer = room?.currentActivity.type === 'play' ? room?.currentActivity.offer : undefined;
-  const pendingRoomChallenge = room?.pendingChallenges
+  const warOffer = room?.currentActivity.type === 'warGame' ? room.currentActivity.offer : undefined;
+  const pendingPlayRoomChallenge = (room?.activity.type === 'play' &&  room?.pendingChallenges)
     ? Object.values(room.pendingChallenges)[0]
     : undefined;
-  const [stateWithPrev, setStateWithPrev] = useStateWithPrev({ game, offer, pendingRoomChallenge });
+
+    const pendingWarRoomChallenge = (room?.activity.type === 'warGame' &&  room?.pendingChallenges)
+    ? Object.values(room.pendingChallenges)[0]
+    : undefined;
+
+  const [playStateWithPrev, setPlayStateWithPrev] = useStateWithPrev({ game, offer, pendingPlayRoomChallenge });
+  const [warStateWithPrev, setWarStateWithPrev] = useStateWithPrev({ warGame, warOffer, pendingWarRoomChallenge });
 
   useDebouncedEffect(
     () => {
       // if (game) {
-      setStateWithPrev({ game, offer, pendingRoomChallenge });
+      setPlayStateWithPrev({ game, offer, pendingPlayRoomChallenge });
       // }
     },
     150, // This should be enough time for the game & offer to reconcile
-    [game, offer, pendingRoomChallenge]
+    [game, offer, pendingPlayRoomChallenge]
+  );
+
+  useDebouncedEffect(
+    () => {
+      // if (game) {
+      setWarStateWithPrev({ warGame, warOffer, pendingWarRoomChallenge });
+      // }
+    },
+    150, // This should be enough time for the game & offer to reconcile
+    [warGame, warOffer, pendingWarRoomChallenge]
   );
 
   useEffect(() => {
-    const nextNotification = notificationFactory(stateWithPrev);
+    const nextNotification = notificationFactory(playStateWithPrev);
 
     if (!nextNotification) {
       return;
@@ -48,7 +66,9 @@ export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
         })
       );
     }
-  }, [stateWithPrev]);
+  }, [playStateWithPrev]);
+
+  //TODO - add warGame notification too
 
   useEffect(() => {
     return () => {

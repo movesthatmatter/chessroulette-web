@@ -19,7 +19,7 @@ export const toRoomWarGameActivity = (
   members: RoomMember[]
 ): RoomWarGameActivity => {
   const { game } = baseWarGameActivity;
-
+  
   if (!game) {
     return {
       ...baseWarGameActivity,

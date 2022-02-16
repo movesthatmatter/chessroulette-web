@@ -1,5 +1,4 @@
-import React, { useCallback } from 'react';
-import { GameStateDialogProvider } from 'src/modules/Games/components/GameStateDialog';
+import React, { useCallback, useEffect } from 'react';
 import { RoomWarGameActivity } from '../types';
 import { useDispatch } from 'react-redux';
 import { updateJoinedWarGameAction } from '../../../redux/actions';
@@ -13,18 +12,13 @@ type Props = Omit<WarGameActivityProps, 'activity'> & {
 
 export const WarGameActivityContainer: React.FC<Props> = ({ activity, ...props }) => {
   const dispatch = useDispatch();
-  const onGameUpdated = useCallback(
-    (nextGame: WarGame) => {
-      dispatch(updateJoinedWarGameAction(nextGame));
-    },
-    [dispatch]
-  );
+  const onGameUpdated = (nextGame: WarGame) => {
+    dispatch(updateJoinedWarGameAction(nextGame));
+  };
 
   return (
     <WarGameProvider onGameUpdated={onGameUpdated}>
-      {activity.game ? (
-          <WarGameActivity activity={activity} {...props} />
-      ) : null}
+      {activity.game ? <WarGameActivity activity={activity} {...props} /> : null}
     </WarGameProvider>
   );
 };

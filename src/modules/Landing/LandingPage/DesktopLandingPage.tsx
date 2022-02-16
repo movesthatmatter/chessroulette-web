@@ -337,11 +337,11 @@ export const DesktopLandingPage: React.FC<Props> = () => {
               flex: 1,
             }}
           >
-            <DiscordReactEmbed
+            {/* <DiscordReactEmbed
               server={config.DISCORD_SERVER_ID}
               channel={config.DISCORD_CHANNEL_ID}
               className={cls.discordWidget}
-            />
+            /> */}
           </div>
           <div className={cls.verticalSpacer} />
         </aside>

@@ -58,7 +58,7 @@ declare module 'react-chessground-wargame' {
     height?: number | string
     style?: React.CSSProperties
     className?: string
-
+    playable?:boolean;
     onChange?: () => void
     onMove?: (
       orig: Key,

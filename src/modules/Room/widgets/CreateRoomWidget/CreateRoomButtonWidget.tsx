@@ -12,6 +12,7 @@ import { AsyncOk } from 'ts-async-results';
 import { UnknownAsyncResult } from 'src/lib/types';
 import { Events } from 'src/services/Analytics';
 import { CreateRelayRoomWizard } from '../../wizards/CreateRelayRoomWizard';
+import { CreateWarGameRoomWizard } from '../../wizards/CreateWarGameRoomWizzard';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'activityType'>;
@@ -64,7 +65,7 @@ export const CreateRoomButtonWidget: React.FC<Props> = ({
               />
             )}
              {createRoomSpecs.activityType === 'warGame' && (
-              <CreatePlayRoomWizard
+              <CreateWarGameRoomWizard
                 onFinished={({ gameSpecs }) => {
                   if (peerState.status !== 'open') {
                     return AsyncOk.EMPTY;
