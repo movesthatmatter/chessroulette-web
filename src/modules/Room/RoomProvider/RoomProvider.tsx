@@ -76,7 +76,7 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
     Events.trackRoomJoined(joinedRoom);
   }, []);
 
-  console.log('RoomProvider', joinedRoom);
+  // console.log('RoomProvider', joinedRoom);
 
   return (
     <RoomProviderContext.Provider value={contextState}>

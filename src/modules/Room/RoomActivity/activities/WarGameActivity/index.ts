@@ -1,0 +1,1 @@
+export {WarGameActivityContainer as WarGameActivity} from './WarGameActivityContainer/WarGameActivityContainer'

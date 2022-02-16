@@ -13,12 +13,12 @@ type WizardState = {
   gameSpecs: GameSpecsRecord;
 };
 
-export const CreatePlayRoomWizard: React.FC<Props> = (props) => {
+export const CreateWarGameRoomWizard: React.FC<Props> = (props) => {
   const [wizardState, setWizardState] = useState<WizardState>({
     gameSpecs: {
       timeLimit: 'rapid10',
       preferredColor: 'random',
-      gameType:'chess'
+      gameType: 'warGame'
     },
   });
 

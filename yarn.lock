@@ -7465,9 +7465,9 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#36caa48":
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#d04b65a":
   version "0.2.2"
-  resolved "https://github.com/dstnd/dstnd-io.git#36caa4873376fd46962df487d6c6e141bc4ee8d1"
+  resolved "https://github.com/dstnd/dstnd-io.git#d04b65a14f458aeb01099917a6aae1415248a145"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"
@@ -7481,7 +7481,7 @@ dotenv@^6.2.0:
     ts-results "^3.0.0"
     tslib "2.3.1"
     typescript "4.0.2"
-    wargame-engine "https://github.com/andreitopli/wargame-engine.git#47486ac"
+    wargame-engine "https://github.com/andreitopli/wargame-engine.git#3c39aee"
 
 "dstnd-io@https://github.com/dstnd/dstnd-io.git#wargame-addon":
   version "0.2.2"
@@ -18768,14 +18768,14 @@ walker@^1.0.7, walker@~1.0.5:
 
 "wargame-board@https://github.com/andreitopli/wargame-board.git":
   version "0.1.0"
-  resolved "https://github.com/andreitopli/wargame-board.git#ee78013ba0410a0f95ee52468bce197578ef8dc2"
+  resolved "https://github.com/andreitopli/wargame-board.git#ee009d25eecc82cc2d28e1f9b4d3442b1b51bd30"
   dependencies:
     chessground-wargame "https://github.com/andreitopli/chessground-wargame.git"
     classnames "^2.3.1"
     dstnd-io "https://github.com/dstnd/dstnd-io.git#wargame-addon"
     react-chessground-wargame "https://github.com/andreitopli/react-chessground-wargame.git#47cbedc"
     react-icons "^4.3.1"
-    wargame-engine "https://github.com/andreitopli/wargame-engine.git#47486ac"
+    wargame-engine "https://github.com/andreitopli/wargame-engine.git#3c39aee"
 
 "wargame-engine@https://github.com/andreitopli/wargame-engine.git":
   version "0.1.1"
@@ -18786,9 +18786,9 @@ walker@^1.0.7, walker@~1.0.5:
     tslib "^2.3.1"
     typescript "4.0.2"
 
-"wargame-engine@https://github.com/andreitopli/wargame-engine.git#47486ac":
+"wargame-engine@https://github.com/andreitopli/wargame-engine.git#3c39aee":
   version "0.1.1"
-  resolved "https://github.com/andreitopli/wargame-engine.git#47486acc708e004ced9c674d89c02b8d478af695"
+  resolved "https://github.com/andreitopli/wargame-engine.git#3c39aee5dac1fa964ddeb062faa12b20cdc40a62"
   dependencies:
     "@types/jest" "^27.4.0"
     chess.js "https://github.com/andreitopli/chess.js.git"

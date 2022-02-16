@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { noop } from 'src/lib/util';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { SocketClient } from 'src/services/socket/SocketClient';
+import { console } from 'window-or-global';
 import { WarGame } from '../../types';
 import { getWarGameActions } from './WarGameActionsProxy';
 import { WarGameProviderContext } from './WarGameProviderContext';
@@ -41,7 +42,6 @@ export const WarGameProvider: React.FC<Props> = ({ onGameUpdated = noop, childre
   // Subscribe to Game Updates
   useEffect(() => {
     const unsubscribers: Function[] = [];
-
     if (peerState.status === 'open') {
       const usubscribe = peerState.client.onMessage((payload) => {
         if (payload.kind === 'joinedWarGameUpdated') {

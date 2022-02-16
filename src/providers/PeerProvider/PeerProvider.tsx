@@ -87,6 +87,8 @@ export class PeerProvider extends React.Component<Props, State> {
       this.props.dispatch(updateRoomAction({ room: msg.content }));
     } else if (msg.kind === 'joinedRoomAndGameUpdated') {
       this.props.dispatch(updateRoomAction({ room: msg.content.room }));
+    } else if (msg.kind === 'joinedRoomAndWarGameUpdated') {
+      this.props.dispatch(updateRoomAction({ room: msg.content.room}))
     } else if (msg.kind === 'joinRoomSuccess') {
       this.props.dispatch(
         createRoomAction({

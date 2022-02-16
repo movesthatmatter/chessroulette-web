@@ -34,6 +34,34 @@ export const hasRoomActivityChanged = (current?: BaseRoomActivity, prev?: BaseRo
     }
   }
 
+  // WarGame
+  if (prev?.type === 'warGame' && current?.type === 'warGame') {
+    if (prev.game?.lastActivityAt !== current.game?.lastActivityAt) {
+      return true;
+    }
+
+    if (prev.game?.state !== current.game?.state) {
+      return true;
+    }
+
+    if (prev.game?.fen !== current.game?.fen) {
+      return true;
+    }
+
+    if (prev.game?.pieces.positions !== current.game?.pieces.positions) {
+      return true;
+    }
+
+    if (prev.game?.pieces.healths !== current.game?.pieces.healths) {
+      return true;
+    }
+
+    // Offer
+    if (current.offer?.id !== prev?.offer?.id) {
+      return true;
+    }
+  }
+
   // Analysis
   if (prev?.type === 'analysis' && current?.type === 'analysis') {
     if (prev.analysisId !== current.analysisId) {
