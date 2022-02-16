@@ -23,7 +23,7 @@ import { Game } from 'src/modules/Games';
 import { ChessGameDisplay } from 'src/modules/Games/widgets/ChessGameDisplay';
 import { getGameOfDay, getTopPlayersByGamesCount } from './resources';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
-import { toDictIndexedBy } from 'src/lib/util';
+import { toDictIndexedBy, toRoomUrlPath } from 'src/lib/util';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { InfoCard } from 'src/components/InfoCard';
@@ -161,6 +161,21 @@ export const DesktopLandingPage: React.FC<Props> = ({ pageClassName }) => {
                     createRoomSpecs={{
                       isPrivate: true,
                       activityType: 'analysis',
+                    }}
+                  />
+                  <Button
+                    label="Schedule Classroom"
+                    onClick={() => {
+                      scheduleRoom({
+                        hostUserId: user.id,
+
+                        activity: { activityType: 'analysis', source: 'empty' },
+                        scheduleAt: toISODateTime(addMinutes(new Date(), 1)),
+                        type: 'classroom',
+                        isPrivate: true,
+                      }).map((scheduledRoom) => {
+                        history.push(toRoomUrlPath(scheduledRoom));
+                      });
                     }}
                   />
                 </div>
