@@ -1,17 +1,19 @@
-import React, { useEffect, useReducer } from 'react';
+import React from 'react';
 import { FaceTime, FaceTimeProps } from 'src/components/FaceTime';
 import { createUseStyles } from 'src/lib/jss';
 import { getUserDisplayName } from 'src/modules/User';
 import { fonts, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
-import { Streamer, StreamersMap } from '../types';
+import { Streamer, StreamersMap } from '../hooks/useStreamingReel/types';
 import { Reel } from './components/Reel/Reel';
-import { reducer, initialState, initAction, focusAction, updateAction } from './reducer';
+import { useStreamingReel } from '../hooks/useStreamingReel';
+import { Room } from 'src/providers/PeerProvider';
 
 type OverlayedNodeRender = (p: { inFocus: Streamer['user'] }) => React.ReactNode;
 
 export type MultiStreamingBoxProps = {
-  streamersMap: StreamersMap;
+  // streamersMap: StreamersMap;
+  peers: Room['peers'];
   focusedUserId?: Streamer['user']['id'];
   headerOverlay?: OverlayedNodeRender;
   footerOverlay?: OverlayedNodeRender;
@@ -19,7 +21,8 @@ export type MultiStreamingBoxProps = {
 } & Omit<FaceTimeProps, 'streamConfig' | 'footer' | 'header'>;
 
 export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
-  streamersMap,
+  // streamersMap,
+  peers,
   focusedUserId,
   headerOverlay,
   mainOverlay,
@@ -27,35 +30,8 @@ export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
   ...faceTimeProps
 }) => {
   const cls = useStyles();
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  useEffect(() => {
-    dispatch(
-      initAction({
-        streamersMap: streamersMap,
-        focusedUserId: focusedUserId,
-      })
-    );
-  }, []);
-
-  useEffect(() => {
-    if (focusedUserId) {
-      dispatch(
-        focusAction({
-          userId: focusedUserId,
-        })
-      );
-    }
-  }, [focusedUserId]);
-
-  useEffect(() => {
-    dispatch(
-      updateAction({
-        streamersMap: streamersMap,
-      })
-    );
-  }, [streamersMap]);
-
+  const { state, onFocus } = useStreamingReel({ peers, focusedUserId });
+  
   if (!state.ready) {
     return null;
   }
@@ -78,12 +54,7 @@ export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
           </div>
           <div className={cls.reelWrapper}>
             <div className={cls.reelScroller}>
-              <Reel
-                reel={state.reel}
-                onClick={(userId) => {
-                  dispatch(focusAction({ userId }));
-                }}
-              />
+              <Reel reel={state.reel} onClick={onFocus} />
             </div>
           </div>
         </div>
@@ -98,7 +69,6 @@ export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
 const useStyles = createUseStyles({
   container: {
     position: 'relative',
-
   },
   overlayedContainer: {
     position: 'absolute',
@@ -130,8 +100,8 @@ const useStyles = createUseStyles({
     overflow: 'auto',
 
     width: '22.2%',
-    paddingRight: spacers.get(.7),
-    paddingBottom: spacers.get(.7),
+    paddingRight: spacers.get(0.7),
+    paddingBottom: spacers.get(0.7),
   },
   reelScroller: {
     minHeight: '100%',
@@ -145,7 +115,7 @@ const useStyles = createUseStyles({
 
     '&:hover': {
       // overflowY: 'scroll',
-    }
+    },
   },
   reel: {},
   smallFacetimeWrapper: {

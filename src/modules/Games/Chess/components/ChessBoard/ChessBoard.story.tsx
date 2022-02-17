@@ -9,6 +9,7 @@ import { toISODateTime } from 'io-ts-isodatetime';
 import { Game } from 'src/modules/Games/types';
 import { action } from '@storybook/addon-actions';
 import { DialogContent } from 'src/components/Dialog';
+import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
 
 export default {
   component: ChessBoard,
@@ -87,26 +88,71 @@ export const withNotification = () =>
     const game = gameMocker.started();
 
     return (
-        <ChessBoard
-          type="play"
-          id={game.id}
-          pgn={game.pgn}
-          size={400}
-          playableColor="black"
-          onMove={({ fen }) => {}}
-          overlayComponent={(p) => (
-            <DialogContent
-              {...{
-                title: 'Waiting for opponent...',
-                content: (
-                  <>
-                    {/* <div className={cls.contentText}>Waiting for your opponent...</div> */}
-                    <AwesomeLoader size={p.size ? p.size / 4 : 50} />
-                  </>
-                ),
-              }}
-            />
-          )}
-        />
+      <ChessBoard
+        type="play"
+        id={game.id}
+        pgn={game.pgn}
+        size={400}
+        playableColor="black"
+        onMove={({ fen }) => {}}
+        overlayComponent={(p) => (
+          <DialogContent
+            {...{
+              title: 'Waiting for opponent...',
+              content: (
+                <>
+                  {/* <div className={cls.contentText}>Waiting for your opponent...</div> */}
+                  <AwesomeLoader size={p.size ? p.size / 4 : 50} />
+                </>
+              ),
+            }}
+          />
+        )}
+      />
     );
   });
+
+export const decentralizedChessboard = () =>
+  React.createElement(() => {
+    const [game, setGame] = useState<Game>(gameMocker.pending());
+    const [turn, setTurn] = useState<ChessGameColor>('white');
+    const cls = useStyles();
+
+    return (
+      <ChessBoard
+        className={cls.decentralizedChessboard}
+        type="play"
+        id={game.id}
+        pgn={game.pgn}
+        size={600}
+        orientation={'white'}
+        playableColor={turn}
+        playable
+        canInteract
+        onMove={(m) => {
+          if (game.state === 'pending' || game.state === 'started') {
+            setGame((prev) => ({
+              ...prev,
+              ...chessGameActions.move(game, { move: m.move, movedAt: toISODateTime(new Date()) }),
+            }));
+            setTurn((prev) => (prev === 'white' ? 'black' : 'white'));
+
+            action('on move')(m);
+          }
+        }}
+      />
+    );
+  });
+
+const useStyles = createUseStyles({
+  decentralizedChessboard: {
+    background: 'red',
+
+    ...({
+      '& cg-board square': {
+        backgroundColor: 'red !important',
+        // backgroundColor: colors.lastMove,
+      },
+    } as NestedCSSElement),
+  },
+});

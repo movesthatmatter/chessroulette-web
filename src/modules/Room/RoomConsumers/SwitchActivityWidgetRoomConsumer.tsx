@@ -20,8 +20,14 @@ type SwitchRoomNoActivityRequestPayload = Extract<
 >;
 
 type SwitchRoomRelayActivityRequestPayload = Extract<
-SwitchRoomActivityRequestPayload['content'], 
-{activityType : 'relay'}>
+  SwitchRoomActivityRequestPayload['content'],
+  { activityType: 'relay' }
+>;
+
+type SwitchRoomMeetupActivityRequestPayload = Extract<
+  SwitchRoomActivityRequestPayload['content'],
+  { activityType: 'meetup' }
+>;
 
 type RelaxedSwitchRoomPlayActivityRequestPayload = Partial<
   Omit<SwitchRoomPlayActivityRequestPayload, 'activityType'>
@@ -39,18 +45,29 @@ type RelaxedSwitchRoomNoActivityRequestPayload = Partial<
   Pick<SwitchRoomNoActivityRequestPayload, 'activityType'>;
 
 type RelaxedSwitchRoomRelayActivityRequestPayload = Partial<
-Omit<SwitchRoomRelayActivityRequestPayload, 'activityType' | 'relayId'>
-> & Pick<SwitchRoomRelayActivityRequestPayload, 'activityType'>;
+  Omit<SwitchRoomRelayActivityRequestPayload, 'activityType' | 'relayId'>
+> &
+  Pick<SwitchRoomRelayActivityRequestPayload, 'activityType'>;
+
+type RelaxedSwitchRoomMeetupActivityRequestPayload = Partial<
+  Omit<SwitchRoomMeetupActivityRequestPayload, 'activityType'>
+> &
+  Pick<SwitchRoomMeetupActivityRequestPayload, 'activityType'>;
 
 type State =
   | RelaxedSwitchRoomPlayActivityRequestPayload
   | RelaxedSwitchRoomAnalsysActivityRequestPayload
   | RelaxedSwitchRoomNoActivityRequestPayload
-  | RelaxedSwitchRoomRelayActivityRequestPayload;
+  | RelaxedSwitchRoomRelayActivityRequestPayload
+  | RelaxedSwitchRoomMeetupActivityRequestPayload;
 
 type Props = {
   render: (
-    p: { onSwitch: (s: State) => void, goLive: () => void } & NonNullable<RoomProviderContextState>
+    p: {
+      onSwitch: (s: State) => void;
+      goLive: () => void;
+      toggleInMeetup: (inMeetup: boolean) => void;
+    } & NonNullable<RoomProviderContextState>
   ) => React.ReactNode;
 };
 
@@ -90,15 +107,18 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
             } else {
               setState(s);
             }
-          } else if (s.activityType === 'none') {
-            context.roomActions.switchActivity({
-              activityType: 'none',
-            });
+          } else if (s.activityType === 'relay') {
+            // don't do anything if relay as goLive takes care of it!
+          } else {
+            context.roomActions.switchActivity(s);
           }
         },
-        goLive : () => {
+        goLive: () => {
           context.roomActions.goLive();
-        }
+        },
+        toggleInMeetup: (inMeetup: boolean) => {
+          context.roomActions.toggleInMeetup(inMeetup);
+        },
       })}
       {state?.activityType === 'play' && (
         <CreateChallengeDialog

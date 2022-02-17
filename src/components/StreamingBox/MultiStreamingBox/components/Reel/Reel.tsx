@@ -4,13 +4,15 @@ import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import cx from 'classnames';
 import { fonts, softBorderRadius } from 'src/theme';
 import { FaceTime, MyFaceTime } from 'src/components/FaceTime';
-import { Streamer } from '../../../types';
+import { Streamer } from '../../../hooks/useStreamingReel/types';
 import { getUserDisplayName } from 'src/modules/User';
 
 type Props = {
   reel: Streamer[];
-
   onClick: (userId: Streamer['user']['id']) => void;
+
+  containerClassName?: string;
+  itemClassName?: string;
 };
 
 const TRANSITION_TIME = 100;
@@ -19,7 +21,7 @@ export const Reel: React.FC<Props> = (props) => {
   const cls = useStyles();
 
   return (
-    <div className={cls.container}>
+    <div className={cx(cls.container, props.containerClassName)}>
       {props.reel.map((peer, i) => {
         return (
           <SwitchTransition mode="out-in" key={i}>
@@ -34,7 +36,7 @@ export const Reel: React.FC<Props> = (props) => {
               }}
             >
               <div
-                className={cx(cls.smallFacetimeWrapper, cls.faceTimeAsButton)}
+                className={cx(cls.smallFacetimeWrapper, cls.faceTimeAsButton, props.itemClassName)}
                 onClick={() => props.onClick(peer.user.id)}
               >
                 <FaceTime
@@ -50,11 +52,8 @@ export const Reel: React.FC<Props> = (props) => {
           </SwitchTransition>
         );
       })}
-      <div className={cls.smallFacetimeWrapper}>
-        <MyFaceTime
-          className={cls.smallFacetime}
-          aspectRatio={{ width: 4, height: 3 }}
-        />
+      <div className={cx(cls.smallFacetimeWrapper, props.itemClassName)}>
+        <MyFaceTime className={cls.smallFacetime} aspectRatio={{ width: 4, height: 3 }} />
         <div className={cls.smallFacetimeBorder} />
       </div>
     </div>

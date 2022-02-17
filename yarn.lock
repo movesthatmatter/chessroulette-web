@@ -6902,7 +6902,7 @@ dotenv@^6.2.0:
 
 "dstnd-io@https://github.com/dstnd/dstnd-io.git#add-room-resources":
   version "0.2.2"
-  resolved "https://github.com/dstnd/dstnd-io.git#1c4f1643aa529f018badab9287eb7165b19f8f9f"
+  resolved "https://github.com/dstnd/dstnd-io.git#63910e2bee4ab92961b34688c34e67aedaf42cb5"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"

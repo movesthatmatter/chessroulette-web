@@ -16,7 +16,7 @@ export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
   const cls = useStyles();
   const roomContext = useContext(RoomProviderContext);
 
-  if (!(roomContext && roomContext.room.p2pCommunicationType !== 'none')) {
+  if (!roomContext) {
     // Show Loader
     return null;
   }

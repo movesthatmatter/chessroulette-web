@@ -1,11 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useReducer, useState } from 'react';
-import { Streamer, StreamersMap } from 'src/components/StreamingBox/types';
+import { Streamer, StreamersMap } from 'src/components/StreamingBox/hooks/useStreamingReel/types';
 import { getRandomInt, range } from 'src/lib/util';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { Reel } from './Reel';
-import { reducer, initialState, initAction, focusAction, updateAction } from '../../reducer';
+import { reducer, initialState, initAction, focusAction, updateAction } from '../../../hooks/useStreamingReel/reducer';
 import { Button } from 'src/components/Button';
 
 export default {

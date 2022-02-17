@@ -50,11 +50,12 @@ import {
   ImportRelayedGameRequestPayload,
   AnalysisImportArchivedGameRequestPayload,
   AnalysisImportRelayedGameRequestPayload,
-  SwitchRoomActivityRequestPayload, 
+  SwitchRoomActivityRequestPayload,
   SwitchGameToRelayAndGoLivePayload,
   RelayAdjustGameTimersRequestPayload,
   RelayGameUndoMoveRequestPayload,
-  RelayEndGameRequestPayload
+  RelayEndGameRequestPayload,
+  ToggleRoomInMeetupRequestPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 
@@ -89,7 +90,8 @@ type SendableMessagesMap = {
   joinRoomRequest: JoinRoomRequestPayload;
   leaveRoomRequest: LeaveRoomRequestPayload;
   switchRoomActivityRequestPayload: SwitchRoomActivityRequestPayload;
-  switchToRelayAndGoLive : SwitchGameToRelayAndGoLivePayload;
+  switchToRelayAndGoLive: SwitchGameToRelayAndGoLivePayload;
+  toggleRoomInMeetupRequestPayload: ToggleRoomInMeetupRequestPayload;
 
   //Chat
   broadcastChatMessage: BroadcastChatMessagePayload;
@@ -97,7 +99,7 @@ type SendableMessagesMap = {
   // Game
   gameResignationRequestPayload: GameResignationRequestPayload;
   gameMoveRequestPayload: GameMoveRequestPayload;
-  gameMoveRelayInputPayload: GameMoveRelayInputRequestPayload,
+  gameMoveRelayInputPayload: GameMoveRelayInputRequestPayload;
   gameJoinRequestPayload: GameJoinRequestPayload;
   gameDrawOfferingRequestPayload: GameDrawOfferingRequestPayload;
   gameDrawAcceptRequestPayload: GameDrawAcceptRequestPayload;
@@ -115,7 +117,7 @@ type SendableMessagesMap = {
   relayAdjustTimersRequestPayload: RelayAdjustGameTimersRequestPayload;
   relayUndoMoveRequestPayload: RelayGameUndoMoveRequestPayload;
   relayEndGameRequestPayload: RelayEndGameRequestPayload;
-  
+
   gameChallengeOfferingRequestPayload: GameChallengeOfferingRequestPayload;
   gameChallengeAcceptRequestPayload: GameChallengeAcceptRequestPayload;
   gameChallengeDenyRequestPayload: GameChallengeDenyRequestPayload;
@@ -124,9 +126,9 @@ type SendableMessagesMap = {
   analysisMoveRequestPayload: AnalysisMoveRequestPayload;
   analysisRefocusRequestPayload: AnalysisRefocusRequestPayload;
   analysisDrawnShapesUpdatedRequestPayload: AnalysisDrawnShapesUpdatedRequestPayload;
-  analysisImportPgnRequestPayload: AnalysisImportPgnRequestPayload,
-  analysisImportArchivedGameRequestPayload: AnalysisImportArchivedGameRequestPayload,
-  analysisImportRelayedGameRequestPayload: AnalysisImportRelayedGameRequestPayload,
+  analysisImportPgnRequestPayload: AnalysisImportPgnRequestPayload;
+  analysisImportArchivedGameRequestPayload: AnalysisImportArchivedGameRequestPayload;
+  analysisImportRelayedGameRequestPayload: AnalysisImportRelayedGameRequestPayload;
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {

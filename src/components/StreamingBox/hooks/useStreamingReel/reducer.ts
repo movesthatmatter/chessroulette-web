@@ -1,5 +1,5 @@
 import { createAction, createReducer } from 'deox';
-import { Streamer, StreamersMap } from '../types';
+import { Streamer, StreamersMap } from './types';
 
 type State =
   | {
@@ -24,11 +24,7 @@ const getStreamerOrFallback = (
 
   return userId && userId in streamersMap
     ? streamersMap[userId]
-    : getStreamerOrFallback(
-      streamersMap,
-      fallbackUserId,
-      Object.keys(streamersMap)[0],
-    );
+    : getStreamerOrFallback(streamersMap, fallbackUserId, Object.keys(streamersMap)[0]);
 };
 
 export const initialState: State = {
@@ -37,10 +33,8 @@ export const initialState: State = {
 
 export const initAction = createAction(
   'Init',
-  (resolve) => (p: {
-    streamersMap: StreamersMap;
-    focusedUserId?: Streamer['user']['id'];
-  }) => resolve(p)
+  (resolve) => (p: { streamersMap: StreamersMap; focusedUserId?: Streamer['user']['id'] }) =>
+    resolve(p)
 );
 
 export const focusAction = createAction(
@@ -50,23 +44,28 @@ export const focusAction = createAction(
 
 export const updateAction = createAction(
   'Update',
-  (resolve) => (p: { 
-    streamersMap: StreamersMap,
-  }) => resolve(p),
+  (resolve) => (p: { streamersMap: StreamersMap }) => resolve(p)
 );
 
 export const reducer = createReducer(initialState as State, (handleAction) => [
   handleAction([initAction, updateAction], (state, action) => {
-    const nextFocusOn = action.type === 'Init'
-      ? action.payload.focusedUserId
-      : state.ready ? state.inFocus.user.id : undefined;
+    // Exit early if there are no streamers
+    if (Object.keys(action.payload.streamersMap).length === 0) {
+      return {
+        ready: false,
+      };
+    }
 
-    const inFocus = getStreamerOrFallback(
-      action.payload.streamersMap,
-      nextFocusOn,
-    );
+    const nextFocusOn =
+      action.type === 'Init'
+        ? action.payload.focusedUserId
+        : state.ready
+        ? state.inFocus.user.id
+        : undefined;
 
-    const { payload } = action; 
+    const inFocus = getStreamerOrFallback(action.payload.streamersMap, nextFocusOn);
+
+    const { payload } = action;
 
     const reel = Object.values(payload.streamersMap)
       .filter((p) => p.user.id !== inFocus.user.id)

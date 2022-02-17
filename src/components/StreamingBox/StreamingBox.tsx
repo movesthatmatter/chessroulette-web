@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { MyFaceTime } from '../FaceTime';
 import { Peer, Room } from 'src/providers/PeerProvider';
@@ -19,29 +19,16 @@ export type StreamingBoxProps = {
 
 export const StreamingBox: React.FC<StreamingBoxProps> = (props) => {
   const cls = useStyles();
-  const activeStreamers = Object.values(props.room.peers).reduce((prev, next) => {
-    if (!next.connection.channels.streaming.on) {
-      return prev;
-    }
 
-    return {
-      ...prev,
-      [next.id]: {
-        user: next.user,
-        streamingConfig: next.connection.channels.streaming,
-      },
-    };
-  }, {});
-  
   return (
     <div
       className={cx(cls.container, props.containerClassName)}
       style={{ width: props.width || '100%' }}
     >
-      {Object.keys(activeStreamers).length > 0 ? (
+      {Object.keys(props.room.peers).length > 0 ? (
         <MultiStreamingBox
           focusedUserId={props.focusedPeerId}
-          streamersMap={activeStreamers}
+          peers={props.room.peers}
           aspectRatio={props.aspectRatio}
           footerOverlay={props.footerOverlay}
           headerOverlay={props.headerOverlay}
