@@ -71,6 +71,7 @@ const useStyles = createUseStyles((theme) => ({
     top: '0',
     position: 'fixed',
     zIndex: 99,
+    backdropFilter: 'blur(5px)',
   },
   layerContainer: {
     position: 'fixed',

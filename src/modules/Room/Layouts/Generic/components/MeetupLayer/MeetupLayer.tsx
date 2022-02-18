@@ -75,8 +75,6 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'space-between',
-
-    backdropFilter: 'blur(5px)',
   },
   main: {
     width: '100%',
