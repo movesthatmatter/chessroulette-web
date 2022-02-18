@@ -1,8 +1,9 @@
-import { RoomChallengeRecord, UserInfoRecord } from 'dstnd-io';
+import { RoomChallengeRecord, RoomWithWarGameActivityRecord, UserInfoRecord } from 'dstnd-io';
 import { ISODateTime } from 'io-ts-isodatetime';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 
-export type OfferType = NonNullable<RoomWithPlayActivity['activity']['offer']>['type'];
+export type PlayOfferType = NonNullable<RoomWithPlayActivity['activity']['offer']>['type'];
+export type WarOfferType = NonNullable<RoomWithWarGameActivityRecord['activity']['type']>;
 export type DangerouslySetInnerHTML = { __html: string };
 
 type BaseNotification = {
@@ -12,7 +13,7 @@ type BaseNotification = {
 
 export type OfferNotification = BaseNotification & {
   type: 'offer';
-  offerType: OfferType;
+  offerType: PlayOfferType | WarOfferType;
   byUser: UserInfoRecord;
   toUser: UserInfoRecord;
   status: 'pending' | 'withdrawn' | 'accepted';

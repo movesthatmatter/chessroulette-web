@@ -1,19 +1,19 @@
 import {
   metadata,
   RoomChallengeRecord,
-  RoomWithPlayActivityRecord,
+  RoomWithWarGameActivityRecord,
 } from 'dstnd-io';
 import { toISODateTime } from 'io-ts-isodatetime';
-import { Game } from 'src/modules/Games';
 import HumanizeDuration from 'humanize-duration';
 import { getUserDisplayName } from 'src/modules/User';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { Notification, OfferNotification } from '../../types';
 import { getPlayerByColor } from 'src/modules/Games/Chess/lib';
+import { WarGame } from 'src/modules/Games';
 
 type NotificationState = {
-  game?: Game;
-  offer?: RoomWithPlayActivityRecord['activity']['offer'];
+  game?: WarGame;
+  offer?: RoomWithWarGameActivityRecord['activity']['offer'];
   pendingRoomChallenge?: RoomChallengeRecord;
 };
 
@@ -33,7 +33,7 @@ const formatTimeLimit = HumanizeDuration.humanizer({
   round: true,
 });
 
-export const playNotificationFactory = ({
+export const notificationFactoryWarGame = ({
   prev,
   current,
 }: {
@@ -107,25 +107,7 @@ export const playNotificationFactory = ({
         id: prev.offer.id,
         status: 'withdrawn',
       };
-    } else if (prev.offer.type === 'takeback') {
-      if (
-        current.game.history &&
-        prev.game &&
-        prev.game.history &&
-        current.game.history?.length < prev.game?.history?.length
-      ) {
-        return {
-          type: 'update',
-          id: prev.offer.id,
-          status: 'accepted',
-        };
-      }
-      return {
-        type: 'update',
-        id: prev.offer.id,
-        status: 'withdrawn',
-      };
-    }
+    } 
   } else if (current.offer) {
     switch (current.offer.type) {
       case 'draw':
@@ -137,19 +119,6 @@ export const playNotificationFactory = ({
             type: 'offer',
             status: 'pending',
             offerType: 'draw',
-            byUser: current.offer.content.byUser,
-            toUser: current.offer.content.toUser,
-          },
-        };
-      case 'takeback':
-        return {
-          type: 'add',
-          notification: {
-            id: current.offer.id,
-            timestamp: toISODateTime(now),
-            type: 'offer',
-            status: 'pending',
-            offerType: 'takeback',
             byUser: current.offer.content.byUser,
             toUser: current.offer.content.toUser,
           },

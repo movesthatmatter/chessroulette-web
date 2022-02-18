@@ -27,11 +27,7 @@ export const StatsContainer: React.FC<Props> = (props) => {
   return (
     <SocketConsumer
       onMessage={(msg) => {
-        if (msg.kind === 'peersStats') {
-          setPeers(msg.content);
-        } else if (msg.kind === 'roomsStats') {
-          setRooms(msg.content);
-        }
+        
       }}
       render={(p) => (
         <Stats rooms={rooms} peers={peers}/>

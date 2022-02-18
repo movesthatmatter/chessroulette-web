@@ -4,7 +4,6 @@ import {
   SocketPayload,
   socketPayload,
   io,
-  MyStatsPayload,
   ConnectionOpenedPayload,
   PeerJoinedRoomPayload,
   PingPayload,
@@ -61,6 +60,13 @@ import {
   WarGameChallengeDenyRequestPayload,
   WarGameMoveRequestPayload,
   WarGameChallengeOfferingRequestPayload,
+  WarGameDrawOfferingRequestPayload,
+  WarGameDrawOfferAcceptRequestPayload,
+  WarGameDrawOfferDenyRequestPayload,
+  WarGameRematchOfferingRequestPayload,
+  WarGameRematchAcceptRequestPayload,
+  WarGameRematchDenyRequestPayload,
+  WarGameResignationRequestPayload,
   JoinedWarGameUpdatedPayload,
   JoinedRoomAndWarGameUpdatedPayload,
 } from 'dstnd-io';
@@ -70,7 +76,6 @@ import { logsy } from 'src/lib/logsy';
 
 type ReceivableMessagesMap = {
   peerJoinedRoom: PeerJoinedRoomPayload;
-  myStats: MyStatsPayload;
   connectionOpened: ConnectionOpenedPayload;
 
   joinRoomSuccess: JoinRoomSuccessPayload;
@@ -139,7 +144,14 @@ type SendableMessagesMap = {
   warGameChallengeRequestPayload: WarGameChallengeOfferingRequestPayload;
   warGameUpdatePayload: JoinedWarGameUpdatedPayload;
   joinedRoomAndWarGameUpdatePayload: JoinedRoomAndWarGameUpdatedPayload;
-
+  warGameDrawOfferingRequestPayload: WarGameDrawOfferingRequestPayload;
+  warGameDrawOfferAcceptRequestPayload: WarGameDrawOfferAcceptRequestPayload;
+  warGameDrawOfferDenyRequestPayload: WarGameDrawOfferDenyRequestPayload;
+  warGameRematchOfferingRequestPayload: WarGameRematchOfferingRequestPayload;
+  warGameRematchAcceptRequestPayload: WarGameRematchAcceptRequestPayload;
+  warGameRematchDenyRequestPayload: WarGameRematchDenyRequestPayload;
+  warGameResignationRequestPayload: WarGameResignationRequestPayload;
+  
   // Analysis
   analysisMoveRequestPayload: AnalysisMoveRequestPayload;
   analysisRefocusRequestPayload: AnalysisRefocusRequestPayload;
@@ -174,38 +186,37 @@ export class SocketClient {
     });
 
     this.connection.addEventListener('message', ({ data }) => {
-      io.toResult(socketPayload.decode(JSON.parse(data))).map((msg) => {
-        // I don't like this at all but there's no way to map
-        //  the types to the message in a clean way in typescript
-        //  as it doesn't (yet) support mapping by tagged union kinds
-        // See: https://github.com/microsoft/TypeScript/issues/30581
-        switch (msg.kind) {
-          case 'connectionOpened':
-            this.pubsy.publish('connectionOpened', msg);
-            break;
-          case 'peerJoinedRoom':
-            this.pubsy.publish('peerJoinedRoom', msg);
-            break;
-          case 'joinedRoomUpdated':
-            this.pubsy.publish('joinedRoomUpdated', msg);
-            break;
-          case 'myStats':
-            this.pubsy.publish('myStats', msg);
-            break;
-          case 'joinRoomSuccess':
-            this.pubsy.publish('joinRoomSuccess', msg);
-            break;
-          case 'joinRoomFailure':
-            this.pubsy.publish('joinRoomFailure', msg);
-            break;
-          default:
-            break;
-        }
+      io.toResult(socketPayload.decode(JSON.parse(data)))
+        .map((msg) => {
+          // I don't like this at all but there's no way to map
+          //  the types to the message in a clean way in typescript
+          //  as it doesn't (yet) support mapping by tagged union kinds
+          // See: https://github.com/microsoft/TypeScript/issues/30581
+          switch (msg.kind) {
+            case 'connectionOpened':
+              this.pubsy.publish('connectionOpened', msg);
+              break;
+            case 'peerJoinedRoom':
+              this.pubsy.publish('peerJoinedRoom', msg);
+              break;
+            case 'joinedRoomUpdated':
+              this.pubsy.publish('joinedRoomUpdated', msg);
+              break;
+            case 'joinRoomSuccess':
+              this.pubsy.publish('joinRoomSuccess', msg);
+              break;
+            case 'joinRoomFailure':
+              this.pubsy.publish('joinRoomFailure', msg);
+              break;
+            default:
+              break;
+          }
 
-        this.pubsy.publish('onMessage', msg);
-      }).mapErr((e) => {
-        logsy.error('Socket Debug error', e)
-      });
+          this.pubsy.publish('onMessage', msg);
+        })
+        .mapErr((e) => {
+          logsy.error('Socket Debug error', e);
+        });
     });
   }
 

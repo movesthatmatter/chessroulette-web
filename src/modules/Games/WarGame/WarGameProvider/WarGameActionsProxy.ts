@@ -29,6 +29,34 @@ export const getWarGameActions = (request: SocketClient['send']) => ({
     request(warGameActionPayloads.denyChallenge());
   },
 
+  onOfferDraw: ()  => {
+    request(warGameActionPayloads.offerDraw());
+  },
+
+  onDrawAccepted: () => {
+    request(warGameActionPayloads.acceptDraw());
+  },
+
+  onDrawDenied: () => {
+    request(warGameActionPayloads.denyDraw());
+  },
+
+  onResign: () => {
+    request(warGameActionPayloads.resign())
+  },
+
+  onRematchOffer: (p: Parameters<typeof warGameActionPayloads.offerRematch>[0]) => {
+    request(warGameActionPayloads.offerRematch(p))
+  },
+
+  onRematchAccepted: () => {
+    request(warGameActionPayloads.acceptRematch())
+  },
+
+  onRematchDenied: () => {
+    request(warGameActionPayloads.denyRematch())
+  },
+
   onTimerFinished: () => request(warGameActionPayloads.statusCheck()),
 
   onGameStatusCheck: () => request(warGameActionPayloads.statusCheck()),

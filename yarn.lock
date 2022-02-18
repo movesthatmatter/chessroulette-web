@@ -7465,6 +7465,24 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
+"dstnd-io@https://github.com/dstnd/dstnd-io.git#07debb9":
+  version "0.2.2"
+  resolved "https://github.com/dstnd/dstnd-io.git#07debb96d91c0c745ba161dd5333bed09e35ddc5"
+  dependencies:
+    "@types/chess.js" "^0.10.1"
+    "@types/jest" "^26.0.13"
+    chess.js "^0.11.0"
+    fp-ts "^2.8.2"
+    io-ts "2.2.10"
+    io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.3"
+    io-ts-types "^0.5.16"
+    jest "^26.4.2"
+    ts-async-results "0.2.0-0"
+    ts-results "^3.0.0"
+    tslib "2.3.1"
+    typescript "4.0.2"
+    wargame-engine "https://github.com/andreitopli/wargame-engine.git#ab7d716"
+
 "dstnd-io@https://github.com/dstnd/dstnd-io.git#fbef48e":
   version "0.2.2"
   resolved "https://github.com/dstnd/dstnd-io.git#fbef48e66bc621ef100dfa67cf26ec77fc4d859f"
@@ -18746,6 +18764,16 @@ walker@^1.0.7, walker@~1.0.5:
 "wargame-engine@https://github.com/andreitopli/wargame-engine.git#802ad9e":
   version "0.1.1"
   resolved "https://github.com/andreitopli/wargame-engine.git#802ad9efe7320b9631c11bc301497287d94a7a90"
+  dependencies:
+    "@types/jest" "^27.4.0"
+    chess.js-wargame "https://github.com/andreitopli/chess.js-wargame.git"
+    jest "27.1"
+    tslib "^2.3.1"
+    typescript "4.0.2"
+
+"wargame-engine@https://github.com/andreitopli/wargame-engine.git#ab7d716":
+  version "0.1.1"
+  resolved "https://github.com/andreitopli/wargame-engine.git#ab7d71668d3f229addc6b1a6d52ee2f37818a93b"
   dependencies:
     "@types/jest" "^27.4.0"
     chess.js-wargame "https://github.com/andreitopli/chess.js-wargame.git"
