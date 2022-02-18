@@ -3,14 +3,14 @@ import React, { useState } from 'react';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
-import { StreamingBox, StreamingBoxProps } from './StreamingBox';
+import { MultiFaceTimeCompact, MultiFaceTimeCompactProps } from './MultiFaceTimeCompact';
 import { getRandomInt, range } from 'src/lib/util';
 import { useInterval } from 'src/lib/hooks';
 import { Peer, Room } from 'src/providers/PeerProvider';
 
 export default {
-  component: StreamingBox,
-  title: 'components/StreamingBox',
+  component: MultiFaceTimeCompact,
+  title: 'components/FaceTime/MultiFaceTimeCompact',
 };
 
 const peerMock = new PeerMocker();
@@ -48,28 +48,20 @@ const getRoomWithPeers = (stream: MediaStream, count: number) => {
   return getRoom(me, peers);
 };
 
-type Props = {
-  room: Room;
+type ComponentProps = {
   focusOnPeerId?: string;
-} & StreamingBoxProps;
-const Component: React.FC<Props> = ({ room, focusOnPeerId, ...streamingBoxProps }) => {
+} & MultiFaceTimeCompactProps;
+const Component: React.FC<ComponentProps> = ({ focusOnPeerId, ...streamingBoxProps }) => {
   return (
-      <div
-        style={{
-          padding: '30px',
-        }}
-      >
-        <StreamingBox
-          room={room}
-          // width={600}
-          // aspectRatio={}
-          {...(focusOnPeerId &&
-            room.peers[focusOnPeerId] && {
-              focusedPeerId: room.peers[focusOnPeerId].id,
-            })}
-          {...streamingBoxProps}
-        />
-      </div>
+    <div style={{ padding: '30px' }}>
+      <MultiFaceTimeCompact
+        {...(focusOnPeerId &&
+          streamingBoxProps.peersMap[focusOnPeerId] && {
+            focusedPeerId: streamingBoxProps.peersMap[focusOnPeerId].id,
+          })}
+        {...streamingBoxProps}
+      />
+    </div>
   );
 };
 
@@ -79,7 +71,7 @@ export const defaultStory = () => (
     render={(stream) => {
       const room = getRoomWithPeers(stream, 2);
 
-      return <Component room={room} />;
+      return <Component me={room.me} peersMap={room.peers} />;
     }}
   />
 );
@@ -90,7 +82,7 @@ export const justMe = () => (
     render={(stream) => {
       const room = getRoomWithPeers(stream, 0);
 
-      return <Component room={room} mainOverlay={() => <div>Yey</div>} />;
+      return <Component me={room.me} peersMap={room.peers} mainOverlay={() => <div>Yey</div>} />;
     }}
   />
 );
@@ -101,7 +93,7 @@ export const oneOnOne = () => (
     render={(stream) => {
       const room = getRoomWithPeers(stream, 1);
 
-      return <Component room={room} />;
+      return <Component me={room.me} peersMap={room.peers} />;
     }}
   />
 );
@@ -114,7 +106,8 @@ export const oneOnOneWithFooterAndHeader = () => (
 
       return (
         <Component
-          room={room}
+          me={room.me}
+          peersMap={room.peers}
           headerOverlay={({ inFocus }) => <div>Header: {inFocus.name}</div>}
           mainOverlay={() => <div>Main</div>}
           footerOverlay={({ inFocus }) => <div>Footer: {inFocus.name}</div>}
@@ -132,7 +125,8 @@ export const multipleStreamsWithFooterAndHeader = () => (
 
       return (
         <Component
-          room={room}
+          me={room.me}
+          peersMap={room.peers}
           headerOverlay={({ inFocus }) => <div>Header: {inFocus.name}</div>}
           footerOverlay={({ inFocus }) => <div>Footer: {inFocus.name}</div>}
         />
@@ -147,7 +141,7 @@ export const withFourStreams = () => (
     render={(stream) => {
       const room = getRoomWithPeers(stream, 4);
 
-      return <Component room={room} />;
+      return <Component me={room.me} peersMap={room.peers} />;
     }}
   />
 );
@@ -158,7 +152,7 @@ export const withSixStreams = () => (
     render={(stream) => {
       const room = getRoomWithPeers(stream, 6);
 
-      return <Component room={room} />;
+      return <Component me={room.me} peersMap={room.peers} />;
     }}
   />
 );
@@ -181,7 +175,7 @@ export const withRandomFocusChange = () => (
           setInterval(getRandomInt(1, 6));
         }, interval * 1000);
 
-        return <Component room={room} focusOnPeerId={focusOnId} />;
+        return <Component me={room.me} peersMap={room.peers} focusOnPeerId={focusOnId} />;
       });
     }}
   />
@@ -227,7 +221,7 @@ export const withRandomAddingOrRemovingStreamers = () => (
           setInterval(getRandomInt(1, 6));
         }, interval * 1000);
 
-        return <Component room={room} />;
+        return <Component me={room.me} peersMap={room.peers} />;
       });
     }}
   />
@@ -284,7 +278,7 @@ export const withRandomAddingOrRemovingStreamersAndFocusChange = () => (
           setInterval(getRandomInt(1, 6));
         }, interval * 700);
 
-        return <Component room={room} focusOnPeerId={focusOnId} />;
+        return <Component me={room.me} peersMap={room.peers} focusOnPeerId={focusOnId} />;
       });
     }}
   />

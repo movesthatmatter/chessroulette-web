@@ -1,15 +1,15 @@
 import React from 'react';
+import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
-import cx from 'classnames';
 import { fonts, softBorderRadius } from 'src/theme';
 import { FaceTime, MyFaceTime } from 'src/components/FaceTime';
-import { Streamer } from '../../../hooks/useStreamingReel/types';
 import { getUserDisplayName } from 'src/modules/User';
+import { StreamingPeer } from 'src/providers/PeerProvider';
 
 type Props = {
-  reel: Streamer[];
-  onClick: (userId: Streamer['user']['id']) => void;
+  streamingPeers: StreamingPeer[];
+  onClick: (userId: StreamingPeer['user']['id']) => void;
 
   containerClassName?: string;
   itemClassName?: string;
@@ -22,7 +22,7 @@ export const Reel: React.FC<Props> = (props) => {
 
   return (
     <div className={cx(cls.container, props.containerClassName)}>
-      {props.reel.map((peer, i) => {
+      {props.streamingPeers.map((peer, i) => {
         return (
           <SwitchTransition mode="out-in" key={i}>
             <CSSTransition
@@ -40,7 +40,7 @@ export const Reel: React.FC<Props> = (props) => {
                 onClick={() => props.onClick(peer.user.id)}
               >
                 <FaceTime
-                  streamConfig={peer.streamingConfig}
+                  streamConfig={peer.connection.channels.streaming}
                   className={cls.smallFacetime}
                   aspectRatio={{ width: 4, height: 3 }}
                   label={getUserDisplayName(peer.user)}

@@ -1,12 +1,14 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
-import { MyFaceTime } from '../FaceTime';
-import { Peer, Room } from 'src/providers/PeerProvider';
+import { MyFaceTime } from '../MyFaceTime';
+import { Peer, PeersMap } from 'src/providers/PeerProvider';
 import { MultiStreamingBox, MultiStreamingBoxProps } from './MultiStreamingBox';
 import cx from 'classnames';
 
-export type StreamingBoxProps = {
-  room: Room;
+export type MultiFaceTimeCompactProps = {
+  me: Peer;
+  peersMap: PeersMap;
+
   width?: number;
   focusedPeerId?: Peer['id'];
   aspectRatio?: MultiStreamingBoxProps['aspectRatio'];
@@ -17,7 +19,8 @@ export type StreamingBoxProps = {
   footerOverlay?: MultiStreamingBoxProps['footerOverlay'];
 };
 
-export const StreamingBox: React.FC<StreamingBoxProps> = (props) => {
+// TODO: Refactor the need to have a FAcetime Here - this is why hte transion from me to multiple looks weird now!
+export const MultiFaceTimeCompact: React.FC<MultiFaceTimeCompactProps> = (props) => {
   const cls = useStyles();
 
   return (
@@ -25,10 +28,10 @@ export const StreamingBox: React.FC<StreamingBoxProps> = (props) => {
       className={cx(cls.container, props.containerClassName)}
       style={{ width: props.width || '100%' }}
     >
-      {Object.keys(props.room.peers).length > 0 ? (
+      {Object.keys(props.peersMap).length > 0 ? (
         <MultiStreamingBox
           focusedUserId={props.focusedPeerId}
-          peers={props.room.peers}
+          peersMap={props.peersMap}
           aspectRatio={props.aspectRatio}
           footerOverlay={props.footerOverlay}
           headerOverlay={props.headerOverlay}
@@ -40,13 +43,11 @@ export const StreamingBox: React.FC<StreamingBoxProps> = (props) => {
         <MyFaceTime
           aspectRatio={props.aspectRatio}
           headerOverlay={
-            props.headerOverlay ? props.headerOverlay({ inFocus: props.room.me.user }) : null
+            props.headerOverlay ? props.headerOverlay({ inFocus: props.me.user }) : null
           }
-          mainOverlay={
-            props.mainOverlay ? props.mainOverlay({ inFocus: props.room.me.user }) : null
-          }
+          mainOverlay={props.mainOverlay ? props.mainOverlay({ inFocus: props.me.user }) : null}
           footerOverlay={
-            props.footerOverlay ? props.footerOverlay({ inFocus: props.room.me.user }) : null
+            props.footerOverlay ? props.footerOverlay({ inFocus: props.me.user }) : null
           }
         />
       )}

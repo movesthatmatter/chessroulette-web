@@ -1,5 +1,5 @@
 import { createAction, createReducer } from 'deox';
-import { Streamer, StreamersMap } from './types';
+import { StreamingPeer, StreamingPeersMap } from '../../types';
 
 type State =
   | {
@@ -7,17 +7,17 @@ type State =
     }
   | {
       ready: true;
-      streamersMap: StreamersMap;
-      inFocus: Streamer;
-      reel: Streamer[];
-      reelByUserId: Record<Streamer['user']['id'], number>;
+      streamersMap: StreamingPeersMap;
+      inFocus: StreamingPeer;
+      reel: StreamingPeer[];
+      reelByUserId: Record<StreamingPeer['user']['id'], number>;
     };
 
 const getStreamerOrFallback = (
-  streamersMap: StreamersMap,
+  streamersMap: StreamingPeersMap,
   userId?: string,
   fallbackUserId?: string
-): Streamer => {
+): StreamingPeer => {
   if (Object.keys(streamersMap).length === 0) {
     throw new Error('MultiStreamingBox Empty Peer Streaming Config Map Error');
   }
@@ -33,18 +33,20 @@ export const initialState: State = {
 
 export const initAction = createAction(
   'Init',
-  (resolve) => (p: { streamersMap: StreamersMap; focusedUserId?: Streamer['user']['id'] }) =>
-    resolve(p)
+  (resolve) => (p: {
+    streamersMap: StreamingPeersMap;
+    focusedUserId?: StreamingPeer['user']['id'];
+  }) => resolve(p)
 );
 
 export const focusAction = createAction(
   'Focus',
-  (resolve) => (p: { userId: Streamer['user']['id'] }) => resolve(p)
+  (resolve) => (p: { userId: StreamingPeer['user']['id'] }) => resolve(p)
 );
 
 export const updateAction = createAction(
   'Update',
-  (resolve) => (p: { streamersMap: StreamersMap }) => resolve(p)
+  (resolve) => (p: { streamersMap: StreamingPeersMap }) => resolve(p)
 );
 
 export const reducer = createReducer(initialState as State, (handleAction) => [
@@ -69,7 +71,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
 
     const reel = Object.values(payload.streamersMap)
       .filter((p) => p.user.id !== inFocus.user.id)
-      .reduce((prev, next) => [...prev, next], [] as Streamer[]);
+      .reduce((prev, next) => [...prev, next], [] as StreamingPeer[]);
 
     return {
       ...state,

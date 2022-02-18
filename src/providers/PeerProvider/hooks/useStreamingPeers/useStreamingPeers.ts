@@ -1,32 +1,28 @@
 import { UserRecord } from 'dstnd-io';
 import { useCallback, useEffect, useMemo, useReducer } from 'react';
-import { Room } from 'src/providers/PeerProvider';
+import { isStreamingPeer, PeersMap, StreamingPeer, StreamingPeersMap } from '../../types';
 import { reducer, initialState, initAction, focusAction, updateAction } from './reducer';
-import { Streamer } from './types';
 
 type Props = {
-  peers: Room['peers'];
-  focusedUserId?: Streamer['user']['id'];
+  peersMap: PeersMap;
+  focusedUserId?: StreamingPeer['id'];
 };
 
-export const useStreamingReel = ({ peers, focusedUserId }: Props) => {
+export const useStreamingPeers = ({ peersMap, focusedUserId }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const streamersMap = useMemo(() => {
-    return Object.values(peers).reduce((prev, next) => {
-      if (!next.connection.channels.streaming.on) {
+    return Object.values(peersMap).reduce((prev, next) => {
+      if (!isStreamingPeer(next)) {
         return prev;
       }
 
       return {
         ...prev,
-        [next.id]: {
-          user: next.user,
-          streamingConfig: next.connection.channels.streaming,
-        },
+        [next.id]: next,
       };
-    }, {});
-  }, [peers]);
+    }, {} as StreamingPeersMap);
+  }, [peersMap]);
 
   useEffect(() => {
     dispatch(

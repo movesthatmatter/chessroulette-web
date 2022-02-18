@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import useInstance from '@use-it/instance';
+import Loader from 'react-loaders';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import {
-  PeerStreamingConfig,
-  PeerStreamingConfigOff,
-  PeerStreamingConfigOn,
-} from 'src/services/peers';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { Text } from 'src/components/Text';
 import { FaceTime } from '../FaceTime';
 import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
-import { CustomTheme, softBorderRadius } from 'src/theme';
-import useInstance from '@use-it/instance';
+import { softBorderRadius } from 'src/theme';
 import { seconds } from 'src/lib/time';
-import Loader from 'react-loaders';
+import { PeerStreamingConfig } from 'src/providers/PeerProvider';
 
 type Props = {
   onUpdated: (p: { streamingConfig: PeerStreamingConfig; isLoading: boolean }) => void;

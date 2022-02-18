@@ -4,25 +4,22 @@ import { createUseStyles } from 'src/lib/jss';
 import { getUserDisplayName } from 'src/modules/User';
 import { fonts, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
-import { Streamer, StreamersMap } from '../hooks/useStreamingReel/types';
 import { Reel } from './components/Reel/Reel';
-import { useStreamingReel } from '../hooks/useStreamingReel';
-import { Room } from 'src/providers/PeerProvider';
+import { StreamingPeer, PeersMap } from 'src/providers/PeerProvider';
+import { useStreamingPeers } from 'src/providers/PeerProvider/hooks';
 
-type OverlayedNodeRender = (p: { inFocus: Streamer['user'] }) => React.ReactNode;
+type OverlayedNodeRender = (p: { inFocus: StreamingPeer['user'] }) => React.ReactNode;
 
 export type MultiStreamingBoxProps = {
-  // streamersMap: StreamersMap;
-  peers: Room['peers'];
-  focusedUserId?: Streamer['user']['id'];
+  peersMap: PeersMap;
+  focusedUserId?: StreamingPeer['id'];
   headerOverlay?: OverlayedNodeRender;
   footerOverlay?: OverlayedNodeRender;
   mainOverlay?: OverlayedNodeRender;
 } & Omit<FaceTimeProps, 'streamConfig' | 'footer' | 'header'>;
 
 export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
-  // streamersMap,
-  peers,
+  peersMap,
   focusedUserId,
   headerOverlay,
   mainOverlay,
@@ -30,16 +27,18 @@ export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
   ...faceTimeProps
 }) => {
   const cls = useStyles();
-  const { state, onFocus } = useStreamingReel({ peers, focusedUserId });
-  
+  const { state, onFocus } = useStreamingPeers({ peersMap, focusedUserId });
+
   if (!state.ready) {
     return null;
   }
 
+  console.log('state.inFocus', state.inFocus);
+
   return (
     <div className={cls.container}>
       <FaceTime
-        streamConfig={state.inFocus.streamingConfig}
+        streamConfig={state.inFocus.connection.channels.streaming}
         label={state.reel.length > 0 ? getUserDisplayName(state.inFocus.user) : ''}
         labelPosition="bottom-left"
         {...faceTimeProps}
@@ -54,7 +53,7 @@ export const MultiStreamingBox: React.FC<MultiStreamingBoxProps> = ({
           </div>
           <div className={cls.reelWrapper}>
             <div className={cls.reelScroller}>
-              <Reel reel={state.reel} onClick={onFocus} />
+              <Reel streamingPeers={state.reel} onClick={onFocus} />
             </div>
           </div>
         </div>
