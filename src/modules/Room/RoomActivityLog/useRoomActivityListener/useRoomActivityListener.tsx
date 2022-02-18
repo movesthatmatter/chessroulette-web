@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { notificationFactory } from './utils/notificationFactory';
+import { playNotificationFactory } from './utils/notificationFactory';
 import { useStateWithPrev } from 'src/lib/hooks/useStateWithPrev';
 import useDebouncedEffect from 'use-debounced-effect';
 import {
@@ -9,6 +9,7 @@ import {
   resolveOfferNotificationAction,
 } from '../redux/actions';
 import { JoinedRoom } from 'src/modules/Room/types';
+import { notificationFactoryWarGame } from './utils/notificationFactoryWarGame';
 
 // This could depend on the room ID as well
 export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
@@ -27,7 +28,7 @@ export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
     : undefined;
 
   const [playStateWithPrev, setPlayStateWithPrev] = useStateWithPrev({ game, offer, pendingPlayRoomChallenge });
-  const [warStateWithPrev, setWarStateWithPrev] = useStateWithPrev({ warGame, warOffer, pendingWarRoomChallenge });
+  const [warStateWithPrev, setWarStateWithPrev] = useStateWithPrev({ game: warGame, offer: warOffer, pendingWarRoomChallenge });
 
   useDebouncedEffect(
     () => {
@@ -42,7 +43,7 @@ export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
   useDebouncedEffect(
     () => {
       // if (game) {
-      setWarStateWithPrev({ warGame, warOffer, pendingWarRoomChallenge });
+      setWarStateWithPrev({ game: warGame, offer: warOffer,  pendingWarRoomChallenge });
       // }
     },
     150, // This should be enough time for the game & offer to reconcile
@@ -50,7 +51,7 @@ export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
   );
 
   useEffect(() => {
-    const nextNotification = notificationFactory(playStateWithPrev);
+    const nextNotification = playNotificationFactory(playStateWithPrev);
 
     if (!nextNotification) {
       return;
@@ -67,6 +68,25 @@ export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
       );
     }
   }, [playStateWithPrev]);
+
+  useEffect(() => {
+    const nextNotification = notificationFactoryWarGame(warStateWithPrev);
+
+    if (!nextNotification) {
+      return;
+    }
+
+    if (nextNotification.type === 'add') {
+      dispatch(addNotificationAction({ notification: nextNotification.notification }));
+    } else if (nextNotification.type === 'update' && nextNotification.status !== 'pending') {
+      dispatch(
+        resolveOfferNotificationAction({
+          notificationId: nextNotification.id,
+          status: nextNotification.status,
+        })
+      );
+    }
+  }, [warStateWithPrev]);
 
   //TODO - add warGame notification too
 

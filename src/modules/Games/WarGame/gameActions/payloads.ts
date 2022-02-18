@@ -1,6 +1,19 @@
 import {
   GameStatusCheckRequestPayload,
-  GameSpecsRecord, WarGameJoinRequestPayload, WarGameChallengeOfferingRequestPayload, WarGameChallengeAcceptRequestPayload, WarGameChallengeDenyRequestPayload, WarGameMove, WarGameMoveRequestPayload
+  GameSpecsRecord,
+  WarGameJoinRequestPayload,
+  WarGameChallengeOfferingRequestPayload,
+  WarGameChallengeAcceptRequestPayload,
+  WarGameChallengeDenyRequestPayload,
+  WarGameMove,
+  WarGameMoveRequestPayload,
+  WarGameDrawOfferingRequestPayload,
+  WarGameDrawOfferAcceptRequestPayload,
+  WarGameDrawOfferDenyRequestPayload,
+  WarGameRematchOfferingRequestPayload,
+  WarGameRematchAcceptRequestPayload,
+  WarGameResignationRequestPayload, 
+  WarGameRematchDenyRequestPayload
 } from 'dstnd-io';
 
 export type OfferRematchProps = {
@@ -22,8 +35,7 @@ export const warGameActionPayloads = {
     kind: 'warGameChallengeAcceptRequest',
     content: undefined,
   }),
-  denyChallenge: (
-  ): WarGameChallengeDenyRequestPayload => ({
+  denyChallenge: (): WarGameChallengeDenyRequestPayload => ({
     kind: 'warGameChallengeDenyRequest',
     content: undefined,
   }),
@@ -35,4 +47,33 @@ export const warGameActionPayloads = {
     kind: 'gameStatusCheckRequest',
     content: undefined,
   }),
+  offerDraw: () : WarGameDrawOfferingRequestPayload => ({
+    kind: 'warGameDrawOfferingRequest',
+    content: undefined
+  }),
+  acceptDraw: (): WarGameDrawOfferAcceptRequestPayload => ({
+    kind: 'warGameDrawOfferAcceptRequest',
+    content: undefined
+  }),
+  denyDraw: (): WarGameDrawOfferDenyRequestPayload => ({
+    kind: 'warGameDrawOfferDenyRequest',
+    content: undefined
+  }),
+  resign: () : WarGameResignationRequestPayload => ({
+    kind: 'warGameResignationRequest',
+    content: undefined
+  }),
+  offerRematch: ({gameSpecs}: OfferRematchProps): WarGameRematchOfferingRequestPayload => ({
+    kind: 'warGameRematchOfferingRequest',
+    content: gameSpecs ? {gameSpecs} : undefined
+  }),
+  acceptRematch: (): WarGameRematchAcceptRequestPayload => ({
+    kind: 'warGameRematchAcceptRequest',
+    content: undefined
+  }),
+  denyRematch: (): WarGameRematchDenyRequestPayload => ({
+    kind:'warGameRematchDenyRequest',
+    content: undefined
+  }),
+  
 };

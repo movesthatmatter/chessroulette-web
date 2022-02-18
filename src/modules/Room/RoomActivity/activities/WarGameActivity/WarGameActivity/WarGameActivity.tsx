@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useCallback } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
-import { WarGame } from 'src/modules/Games';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
 import { useGameActions } from 'src/modules/Games/WarGame/gameActions';
 import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
@@ -13,7 +12,8 @@ import { spacers } from 'src/theme/spacers';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { WarGameMove } from 'dstnd-io';
 import { WarGameBoard } from 'wargame-board';
-import { console } from 'window-or-global';
+import { WarGameSateWidget } from 'src/modules/Games/WarGame/components/WarGameStateWidget/WarGameStateWidget';
+import { WarGameActions } from 'src/modules/Games/WarGame/components/WarGameActions/WarGameActions';
 
 export type WarGameActivityProps = ActivityCommonProps & {
   activity: RoomWarGameActivityWithGame;
@@ -76,11 +76,22 @@ export const WarGameActivity: React.FC<WarGameActivityProps> = ({ activity, devi
                 className={cx(cls.floatingBoxContainerOffsets, cls.gameStateWidgetContainer)}
               >
                 <div className={cls.floatingBoxOffsets}>
-                GAME STATE WIDGET
+                  <WarGameSateWidget
+                    key={game.id}
+                    game={game}
+                    participants={participantsByColor}
+                    homeColor={homeColor}
+                    onTimerFinished={gameActions.onTimerFinished}
+                  />
                 </div>
               </div>
               <div className={cls.sideBottom}>
-                <div className={cx(cls.sideBottom, cls.floatingBoxOffsets)}/>
+                {activity.iamParticipating && (
+                  <WarGameActions
+                    activity={activity}
+                    className={cx(cls.sideBottom, cls.floatingBoxOffsets)}
+                  />
+                )}
               </div>
             </aside>
             <WarGameBoard

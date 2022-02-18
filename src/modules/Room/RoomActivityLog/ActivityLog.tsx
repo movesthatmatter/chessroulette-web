@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { selectMyPeer } from 'src/providers/PeerProvider';
 import { useGameActions } from 'src/modules/Games/GameActions';
+import {useGameActions as useWarGameActions} from 'src/modules/Games/WarGame/gameActions';
 import { InfoNotificationItem } from './components/InfoNotificationItem';
 import { OfferNotificationItem } from './components/OfferNotificationItem';
 import { selectCurrentRoomActivityLog } from './redux/selectors';
@@ -11,6 +12,7 @@ import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
 import * as resources from '../resources';
 import { CustomTheme } from 'src/theme';
+import { selectCurrentRoomActivity } from '../RoomActivity/redux/selectors';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -33,6 +35,8 @@ export const ActivityLog: React.FC<Props> = (props) => {
   const cls = useStyles();
   const myPeer = useSelector(selectMyPeer);
   const gameActions = useGameActions();
+  const warGameActions = useWarGameActions();
+  const roomActivity = useSelector(selectCurrentRoomActivity);
   const activityLog = useSelector(selectCurrentRoomActivityLog);
   const [log, setLog] = useState(processLog(activityLog));
   const dummy = useRef<HTMLDivElement>(null);
@@ -99,6 +103,7 @@ export const ActivityLog: React.FC<Props> = (props) => {
               notification={notification}
               me={myPeer.user}
               onAcceptOffer={({ offerType }) => {
+               if (roomActivity.type === 'play') {
                 if (offerType === 'draw') {
                   gameActions.onDrawAccepted();
                 } else if (offerType === 'rematch') {
@@ -108,8 +113,19 @@ export const ActivityLog: React.FC<Props> = (props) => {
                 } else if (offerType === 'takeback') {
                   gameActions.onTakebackAccepted();
                 }
+               }
+               if (roomActivity.type === 'warGame'){
+                if (offerType === 'draw') {
+                  warGameActions.onDrawAccepted();
+                } else if (offerType === 'rematch') {
+                  warGameActions.onRematchAccepted();
+                } else if (offerType === 'challenge') {
+                  warGameActions.onChallengeAccepted();
+                } 
+               }
               }}
               onDenyOffer={({ offerType }) => {
+               if (roomActivity.type === 'play'){
                 if (offerType === 'draw') {
                   gameActions.onDrawDenied();
                 } else if (offerType === 'rematch') {
@@ -119,8 +135,23 @@ export const ActivityLog: React.FC<Props> = (props) => {
                 } else if (offerType === 'takeback') {
                   gameActions.onTakebackDeny();
                 }
+               }
+               if (roomActivity.type === 'warGame'){
+                if (offerType === 'draw') {
+                  warGameActions.onDrawDenied();
+                } else if (offerType === 'rematch') {
+                  warGameActions.onRematchDenied();
+                } else if (offerType === 'challenge') {
+                  warGameActions.onChallengeDenied();
+                } 
+               }
               }}
-              onCancelOffer={gameActions.onOfferCanceled}
+              onCancelOffer={() => {
+                if (roomActivity.type === 'play'){
+                  gameActions.onOfferCanceled();
+                }
+                return;
+              }}
             />
           );
         })}
