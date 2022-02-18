@@ -9,10 +9,10 @@ import { colors } from 'src/theme/colors';
 import { PeerStreamingConfig } from 'src/providers/PeerProvider';
 
 export type FaceTimeProps = Omit<VideoBoxProps, 'stream'> & {
-  aspectRatio?: AspectRatioProps['aspectRatio'];
   streamConfig: PeerStreamingConfig;
   streamingOffFallback?: React.ReactNode;
 
+  aspectRatio?: AspectRatioProps['aspectRatio'];
   containerClassName?: string;
   label?: string;
   labelClassName?: string;

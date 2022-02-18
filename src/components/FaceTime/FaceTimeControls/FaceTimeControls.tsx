@@ -13,7 +13,7 @@ import { onlyDesktop, onlyMobile } from 'src/theme';
 
 type Props = {};
 
-export const AVStreamingControls: React.FC<Props> = () => {
+export const FaceTimeControls: React.FC<Props> = () => {
   const cls = useStyles();
   const avStreaming = useInstance<AVStreaming>(getAVStreaming);
   const mediaStatus = useMediaStatus();
