@@ -34,10 +34,8 @@ React.createElement(() => {
       playable={playable}
       canInteract={canInteract}
       onMove={(move, type) => {
-        console.log('prev state', game);
         if (game.state === 'pending' || game.state === 'started') {
           const newGameState = warGameActions.move(game, { move: {move, type}, moveAt: toISODateTime(new Date()) });
-          console.log('new game state', newGameState);
           setGame((prev) => ({
             ...prev,
             ...newGameState

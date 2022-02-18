@@ -65,7 +65,7 @@
     "deep-copy": "^1.4.2",
     "deep-object-diff": "^1.1.0",
     "deox": "^3.2.1",
-    "dstnd-io": "https://github.com/dstnd/dstnd-io.git#d04b65a",
+    "dstnd-io": "https://github.com/dstnd/dstnd-io.git#fbef48e",
     "env-cmd": "^10.1.0",
     "eslint-plugin-prettier": "3.1.3",
     "fp-ts": "^2.8.2",
@@ -119,7 +119,7 @@
     "use-debounce": "^7.0.0",
     "use-debounced-effect": "^1.2.0",
     "use-previous": "^1.1.0",
-    "wargame-board": "https://github.com/andreitopli/wargame-board.git",
+    "wargame-board": "https://github.com/andreitopli/wargame-board.git#21cc454",
     "webfontloader": "^1.6.28",
     "window-or-global": "^1.0.1"
   },

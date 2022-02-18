@@ -65,6 +65,8 @@ import {
   JoinedRoomAndWarGameUpdatedPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
+import { console } from 'window-or-global';
+import { logsy } from 'src/lib/logsy';
 
 type ReceivableMessagesMap = {
   peerJoinedRoom: PeerJoinedRoomPayload;
@@ -201,6 +203,8 @@ export class SocketClient {
         }
 
         this.pubsy.publish('onMessage', msg);
+      }).mapErr((e) => {
+        logsy.error('Socket Debug error', e)
       });
     });
   }
