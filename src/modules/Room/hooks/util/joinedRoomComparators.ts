@@ -1,4 +1,5 @@
 import { isDeepEqual } from 'src/lib/util';
+import { console } from 'window-or-global';
 import { BaseRoomActivity } from '../../RoomActivity/redux/types';
 
 export const hasRoomActivityChanged = (current?: BaseRoomActivity, prev?: BaseRoomActivity) => {

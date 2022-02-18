@@ -75,9 +75,13 @@ export const WarGameActivity: React.FC<WarGameActivityProps> = ({ activity, devi
                 style={{ height: '40%' }}
                 className={cx(cls.floatingBoxContainerOffsets, cls.gameStateWidgetContainer)}
               >
-                <div className={cls.floatingBoxOffsets}>{/* Game state widget here */}</div>
+                <div className={cls.floatingBoxOffsets}>
+                GAME STATE WIDGET
+                </div>
               </div>
-              <div className={cls.sideBottom}></div>
+              <div className={cls.sideBottom}>
+                <div className={cx(cls.sideBottom, cls.floatingBoxOffsets)}/>
+              </div>
             </aside>
             <WarGameBoard
               key={game.id}
