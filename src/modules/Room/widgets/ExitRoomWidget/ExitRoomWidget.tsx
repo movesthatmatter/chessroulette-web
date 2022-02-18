@@ -5,7 +5,6 @@ import { Emoji } from 'src/components/Emoji';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import { CustomTheme } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { useOnLeaveRoute } from './useOnLeaveRoute';
 

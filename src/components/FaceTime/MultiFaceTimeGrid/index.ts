@@ -1,1 +1,1 @@
-export * from './FaceTimeGrid';
+export * from './MultiFaceTimeGrid';

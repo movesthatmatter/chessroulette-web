@@ -91,6 +91,7 @@ const useStyles = createUseStyles<CustomTheme>((theme) => ({
 
     display: 'flex',
     flexDirection: 'column',
+    zIndex: 9,
   },
   mainWrapper: {
     flex: 1,

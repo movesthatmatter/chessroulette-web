@@ -1,12 +1,14 @@
-import React from 'react';
-import { Button } from 'src/components/Button';
-import { MyFaceTime } from 'src/components/FaceTime';
-import { useStreamingReel } from 'src/components/StreamingBox/hooks/useStreamingReel';
-import { Reel } from 'src/components/StreamingBox/MultiStreamingBox/components/Reel/Reel';
+import React, { useMemo } from 'react';
+import { MultiFaceTimeGrid } from 'src/components/FaceTime';
 import { createUseStyles } from 'src/lib/jss';
 import { SwitchActivityWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/SwitchActivityWidgetRoomConsumer';
 import { Room } from 'src/providers/PeerProvider';
 import { spacers } from 'src/theme/spacers';
+import { useStreamingPeers } from 'src/providers/PeerProvider/hooks';
+import { console } from 'window-or-global';
+import { Logo } from 'src/components/Logo';
+import { Close } from 'grommet-icons';
+import { colors } from 'src/theme/colors';
 
 type Props = {
   room: Room;
@@ -14,128 +16,114 @@ type Props = {
 
 export const MeetupLayer: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const { state: reelState, onFocus } = useStreamingReel({ peers: props.room.peers });
+  const { state: reelState } = useStreamingPeers({ peersMap: props.room.peers });
+
+  const allStreamingPeers = useMemo(() => {
+    if (!reelState.ready) {
+      return [];
+    }
+
+    return Object.values(reelState.streamersMap);
+  }, [reelState]);
 
   return (
-    <div className={cls.container}>
-      {/* <div className={cls.facetimeWrapper}>
-        <MyFaceTime
-          aspectRatio={4 / 3}
-          // headerOverlay={
-          //   props.headerOverlay ? props.headerOverlay({ inFocus: props.room.me.user }) : null
-          // }
-          // mainOverlay={props.mainOverlay ? props.mainOverlay({ inFocus: props.room.me.user }) : null}
-          // footerOverlay={
-          //   props.footerOverlay ? props.footerOverlay({ inFocus: props.room.me.user }) : null
-          // }
-        />
-      </div> */}
-      <div className={cls.reelWrapper}>
-        {reelState.ready ? (
-          <>
-            {reelState.reel.map((s) => s.user.id)}
-            <Reel
-              reel={[reelState.inFocus, ...reelState.reel]}
-              onClick={() => {}}
-              containerClassName={cls.reel}
-              itemClassName={cls.reelItem}
-            />
-          </>
-        ) : (
-          <div className={cls.reel}>
-            <div className={cls.reelItem}>
-              <MyFaceTime aspectRatio={{ width: 4, height: 3 }} />
-            </div>
-          </div>
-        )}
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          top: '1em',
-          right: '1em',
-        }}
-      >
+    <div
+      className={cls.container}
+      onClick={(e) => {
+        console.log('ue');
+        e.preventDefault();
+        e.stopPropagation();
+        e.bubbles = false;
+      }}
+    >
+      <div className={cls.header}>
+        <div className={cls.logoWrapper} style={{ flex: 1, marginRight: '10px' }}>
+          <Logo withBeta darkBG />
+        </div>
         <SwitchActivityWidgetRoomConsumer
           render={({ toggleInMeetup }) => (
-            <>
-              <Button
-                label="Close"
-                clear
-                onClick={() => toggleInMeetup(false)}
-                // style={{ marginBottom: '0px' }}
-              />
-            </>
+            <div onClick={() => toggleInMeetup(false)} className={cls.exitButton}>
+              <Close className={cls.exitIcon} />
+            </div>
           )}
         />
       </div>
-      {/* {props.room.pe.map((peer, i) => {
-        return (
-          <SwitchTransition mode="out-in" key={i}>
-            <CSSTransition
-              key={peer.user.id}
-              timeout={TRANSITION_TIME}
-              classNames={{
-                enter: cls.itemEnter,
-                enterActive: cls.itemEnterActive,
-                enterDone: cls.itemEnterDone,
-                exit: cls.itemExit,
-              }}
-            >
-              <div
-                className={cx(cls.smallFacetimeWrapper, cls.faceTimeAsButton)}
-                onClick={() => props.onClick(peer.user.id)}
-              >
-                <FaceTime
-                  streamConfig={peer.streamingConfig}
-                  className={cls.smallFacetime}
-                  aspectRatio={{ width: 4, height: 3 }}
-                  label={getUserDisplayName(peer.user)}
-                  labelClassName={cls.smallFacetimeLabel}
-                />
-                <div className={cls.smallFacetimeBorder} />
-              </div>
-            </CSSTransition>
-          </SwitchTransition>
-        );
-      })} */}
+      <div className={cls.main}>
+        <div className={cls.reelWrapper}>
+          <MultiFaceTimeGrid
+            me={props.room.me}
+            streamingPeers={allStreamingPeers}
+            containerClassName={cls.reel}
+            itemClassName={cls.reelItem}
+            onClick={(s) => {
+              console.log('yo', s);
+            }}
+          />
+        </div>
+      </div>
+      <div className={cls.footer} />
     </div>
   );
 };
 
 const useStyles = createUseStyles({
   container: {
-    // display: 'flex',
-    // flex: 1,
-    // backgroundColor: 'rgba(255, 0, 0, .1)',
     height: '100%',
+    width: '100%',
+    position: 'absolute',
+    zIndex: 99999,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'space-between',
+
+    backdropFilter: 'blur(5px)',
+  },
+  main: {
     width: '100%',
     display: 'flex',
     alignItems: 'center',
     flex: 1,
   },
+  header: {
+    flex: 1,
+    flexDirection: 'row',
+    display: 'flex',
+    paddingTop: spacers.default,
+    paddingBottom: spacers.larger,
+    paddingLeft: spacers.large,
+    paddingRight: spacers.large,
+  },
+  logoWrapper: {},
+  footer: {
+    width: '100%',
+    height: '180px',
+  },
+
   facetimeWrapper: {
     width: '50%',
   },
   reelWrapper: {
-    // display: 'flex',
-    // flex: 1,
     width: '100%',
-    padding: spacers.large,
-    // backgroundColor: 'red',
-    // height: '300px',
-    // overflow: 'auto',
+    padding: spacers.small,
   },
   reel: {
     display: 'flex',
     flexDirection: 'row',
-    // backgroundColor: 'violet',
+    justifyContent: 'center',
   },
   reelItem: {
-    // backgroundColor: 'violet',
     width: '100%',
-    marginLeft: '1em',
-    marginRight: '1em',
+    maxWidth: '50%',
+    marginLeft: spacers.default,
+    marginRight: spacers.default,
     marginTop: 0,
+  },
+  myReelItem: {},
+  exitButton: {
+    cursor: 'pointer',
+  },
+  exitIcon: {
+    fill: `${colors.universal.white} !important`,
+    stroke: `${colors.universal.white} !important`,
   },
 });

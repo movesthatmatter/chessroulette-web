@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
@@ -18,7 +18,6 @@ import { Button } from 'src/components/Button';
 import { useRoomConsumer } from './useRoomConsumer';
 import { Modal } from 'src/components/Modal/Modal';
 import { MeetupLayer } from '../Layouts/Generic/components/MeetupLayer';
-import { room } from 'dstnd-io/dist/records';
 
 type Props = {
   renderActivity: (d: {
@@ -43,7 +42,6 @@ const LAYOUT_RATIOS = {
 export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((props) => {
   const cls = useStyles();
   const roomConsumer = useRoomConsumer();
-  // const [isMeetupMode, setIsMeetupMode] = useState(false);
 
   return (
     <div className={cls.container}>
