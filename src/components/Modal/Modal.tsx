@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import cx from 'classnames';
-import { MouseEvent } from 'window-or-global';
+import { document, MouseEvent } from 'window-or-global';
 import { ModalDom } from './ModalDom';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
 import { spacers } from 'src/theme/spacers';
@@ -29,8 +29,22 @@ export const Modal: React.FC<Props> = (props) => {
       props.onClose && props.onClose();
       return;
     }
+
     document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+
+    const preventBodyClickHandler = (e: HTMLElementEventMap['click']) => {
+      e.preventDefault();
+    };
+
+    // Stop clicking through the layer
+    document.body.addEventListener('click', preventBodyClickHandler);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+
+      // Allow body clicking again!
+      document.body.removeEventListener('click', preventBodyClickHandler);
+    };
   }, [layerRef]);
 
   return (
