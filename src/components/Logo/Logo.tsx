@@ -35,7 +35,7 @@ export const Logo: React.FC<Props> = ({
   style,
 }) => {
   const cls = useStyles();
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
 
   const imgSrc = useMemo(() => {
     if (mini) {
@@ -45,18 +45,21 @@ export const Logo: React.FC<Props> = ({
 
       return darkBG ? logoLightSingle : logoDarkSingle;
     }
-    if (theme.name === 'lightDefault'){
+
+    if (darkBG || theme.name === 'darkDefault') {
+      if (withBeta) {
+        return logoLightWithBeta;
+      }
+      return logoLight;
+    }
+
+    if (theme.name === 'lightDefault') {
       if (withBeta) {
         return logoDarkWithBeta;
       }
       return logoDark;
     }
-    if (theme.name === 'darkDefault'){
-      if (withBeta){
-        return logoLightWithBeta
-      }
-      return logoLight
-    }
+
     return darkBG ? logoLight : logoDark;
   }, [mini, darkBG, withOutline, theme]);
 
