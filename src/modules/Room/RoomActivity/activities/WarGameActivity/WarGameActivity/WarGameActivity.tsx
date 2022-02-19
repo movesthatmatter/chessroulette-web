@@ -14,6 +14,7 @@ import { WarGameMove } from 'dstnd-io';
 import { WarGameBoard } from 'wargame-board';
 import { WarGameSateWidget } from 'src/modules/Games/WarGame/components/WarGameStateWidget/WarGameStateWidget';
 import { WarGameActions } from 'src/modules/Games/WarGame/components/WarGameActions/WarGameActions';
+import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 
 export type WarGameActivityProps = ActivityCommonProps & {
   activity: RoomWarGameActivityWithGame;
@@ -44,6 +45,7 @@ export const WarGameActivity: React.FC<WarGameActivityProps> = ({ activity, devi
   const cls = useStyles();
   const gameActions = useGameActions();
   const roomConsumer = useRoomConsumer();
+  const {theme} = useColorTheme();
   const homeColor = useMemo(
     () => getHomeColor(activity, roomConsumer?.boardOrientation === 'away'),
     [activity, roomConsumer?.boardOrientation]
@@ -105,6 +107,7 @@ export const WarGameActivity: React.FC<WarGameActivityProps> = ({ activity, devi
               playableColor={otherChessColor(game.lastMoveBy ? game.lastMoveBy : 'black')}
               className={cls.board}
               onMove={(move, type) => onMoved({ move, type })}
+              theme={theme.name === 'darkDefault' ? 'dark' : 'light'}
             />
           </div>
         </>
