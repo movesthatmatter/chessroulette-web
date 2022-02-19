@@ -17,11 +17,18 @@ type Props = {
   itemAspectRatio?: AspectRatioProps['aspectRatio'];
   containerClassName?: string;
   itemClassName?: string;
+
+  mirrorMyFaceTime?: boolean;
 };
 
 const TRANSITION_TIME = 100;
 
-export const MultiFaceTimeGrid: React.FC<Props> = ({ itemAspectRatio = 4 / 3, me, ...props }) => {
+export const MultiFaceTimeGrid: React.FC<Props> = ({
+  itemAspectRatio = 4 / 3,
+  me,
+  mirrorMyFaceTime,
+  ...props
+}) => {
   const cls = useStyles();
 
   return (
@@ -30,6 +37,7 @@ export const MultiFaceTimeGrid: React.FC<Props> = ({ itemAspectRatio = 4 / 3, me
         <MyFaceTime
           className={cls.smallFacetime}
           aspectRatio={itemAspectRatio}
+          mirrorImage={mirrorMyFaceTime}
           headerOverlay={
             <div className={cls.header}>
               <div style={{ flex: 1, ...hideOnDesktop }} />

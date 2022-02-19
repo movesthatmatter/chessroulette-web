@@ -55,9 +55,8 @@ export const MeetupLayer: React.FC<Props> = (props) => {
             streamingPeers={allStreamingPeers}
             containerClassName={cls.reel}
             itemClassName={cls.reelItem}
-            onClick={(s) => {
-              console.log('yo', s);
-            }}
+            mirrorMyFaceTime={false}
+            onClick={(s) => {}}
           />
         </div>
       </div>

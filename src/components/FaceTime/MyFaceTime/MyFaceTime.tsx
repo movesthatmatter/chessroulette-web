@@ -9,7 +9,10 @@ type Props = Omit<FaceTimeProps, 'streamConfig'> & {
 };
 
 // Automatically opens a local stream
-export const MyFaceTime: React.FC<Props> = (props) => {
+export const MyFaceTime: React.FC<Props> = ({
+  mirrorImage = true, // by defualt it's mirrored
+  ...props
+}) => {
   const AVStreaming = useInstance<AVStreaming>(getAVStreaming);
   const [myStreamConfig, setMyStreamConfig] = useState<PeerStreamingConfig>({ on: false });
 
@@ -35,5 +38,5 @@ export const MyFaceTime: React.FC<Props> = (props) => {
     };
   }, []);
 
-  return <FaceTime streamConfig={myStreamConfig} muted {...props} />;
+  return <FaceTime streamConfig={myStreamConfig} muted mirrorImage={mirrorImage} {...props} />;
 };
