@@ -5870,6 +5870,10 @@ chess.js@^0.11.0:
   resolved "https://registry.yarnpkg.com/chess.js/-/chess.js-0.11.0.tgz#e1802179b944eab5daf11b5d4bce08cdcadbeffa"
   integrity sha512-yTpi6XbRMkBtnjSvbt6wEp9Y7JzhJl1MC3GNn67q5ClyccXxCRf5cMPSUg4OblrUapg1kLHm7WzxxEVp20NK1Q==
 
+"chessground-wargame@https://gabrielctroia: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@github.com/movesthatmatter/chessground-wargame.git#v0.1.0":
+  version "0.1.0"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessground-wargame.git#9cbc1d1d0f72ed94f95f1afbc7e51f12a353e2cb"
+
 chessground@^7.6.12, chessground@^7.9.3:
   version "7.9.3"
   resolved "https://registry.yarnpkg.com/chessground/-/chessground-7.9.3.tgz#dec20a45afe439fe9ed961836a7e5a9157087141"
@@ -5970,6 +5974,11 @@ classnames@^2.2.3, classnames@^2.2.5, classnames@^2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
   integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
+
+classnames@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
+  integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
 
 clean-css@4.2.1:
   version "4.2.1"
@@ -7483,9 +7492,9 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#staging":
-  version "0.2.2"
-  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#e12e7ef33213d861d2a63e69fcbc843b98f6cf94"
+"dstnd-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#staging", "dstnd-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#v0.3.0-1":
+  version "0.3.0-1"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#e10597f50270c28f9d98beadfa544e254147815a"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"
@@ -7501,7 +7510,7 @@ dotenv@^6.2.0:
     ts-results "^3.0.0"
     tslib "2.3.1"
     typescript "4.0.2"
-    wargame-engine "https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git"
+    wargame-engine "https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git#v0.3.0"
 
 duplexer@^0.1.1:
   version "0.1.2"
@@ -10211,15 +10220,6 @@ invert-kv@^2.0.0:
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-2.0.0.tgz#7393f5afa59ec9ff5f67a27620d11c226e3eec02"
   integrity sha512-wPVv/y/QQ/Uiirj/vh3oP+1Ww+AWehmi1g5fFWGPF6IpCBCDVrhgHRMvrLfdYcwDh3QJbGXDW4JAuzxElLSqKA==
 
-"io-ts-isodatetime@https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.3":
-  version "0.0.3"
-  resolved "https://github.com/GabrielCTroia/io-ts-isodatetime.git#304b49d1c77589f79e482880a6cf882e2484829f"
-  dependencies:
-    date-fns "^2.13.0"
-    fp-ts "^2.8.2"
-    io-ts "^2.2.10"
-    io-ts-types "0.5.10"
-
 "io-ts-isodatetime@https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.5":
   version "0.0.5"
   resolved "https://github.com/GabrielCTroia/io-ts-isodatetime.git#d5fea75d00b9d47191726fcea3e3a1da0218558d"
@@ -10253,11 +10253,6 @@ io-ts@2.2.16:
   version "2.2.16"
   resolved "https://registry.yarnpkg.com/io-ts/-/io-ts-2.2.16.tgz#597dffa03db1913fc318c9c6df6931cb4ed808b2"
   integrity sha512-y5TTSa6VP6le0hhmIyN0dqEXkrZeJLeC5KApJq6VLci3UEKF80lZ+KuoUs02RhBxNWlrqSNxzfI7otLX1Euv8Q==
-
-io-ts@^2.2.10:
-  version "2.2.10"
-  resolved "https://registry.yarnpkg.com/io-ts/-/io-ts-2.2.10.tgz#447d02df51717464a90712b146ec8dbc21b4a74b"
-  integrity sha512-WHx5jJe7hPpc6JoSIVbD+Xn6tYqe3cRvNpX24d8Wi15/kxhRWa8apo0Gzag6Xg99sCNY9OHKylw/Vhv0JAbNPQ==
 
 ip-regex@^2.1.0:
   version "2.1.0"
@@ -15571,6 +15566,13 @@ react-app-polyfill@^1.0.6:
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
 
+"react-chessground-wargame@https://gabrielctroia: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@github.com/movesthatmatter/react-chessground-wargame.git#v0.3.0":
+  version "0.3.0"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/react-chessground-wargame.git#2f1c9cb34d2dd2383f579af6fd3de08f1caf6dcb"
+  dependencies:
+    chessground-wargame "https://gabrielctroia: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@github.com/movesthatmatter/chessground-wargame.git#v0.1.0"
+    react-scripts "^3.3.0"
+
 react-chessground@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/react-chessground/-/react-chessground-1.5.0.tgz#fdc03c100b7d87053dc23e7015002261a3369103"
@@ -18788,9 +18790,19 @@ walker@^1.0.7, walker@~1.0.5:
   dependencies:
     makeerror "1.0.x"
 
-"wargame-engine@https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git":
+"wargame-board@https://gabrielctroia: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@github.com/movesthatmatter/wargame-board.git#v0.2.1":
+  version "0.2.1"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/wargame-board.git#b9ef1944b34af482b8de105dad8161fed0abfc1c"
+  dependencies:
+    chessground-wargame "https://gabrielctroia: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@github.com/movesthatmatter/chessground-wargame.git#v0.1.0"
+    classnames "^2.3.1"
+    dstnd-io "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#v0.3.0-1"
+    react-chessground-wargame "https://gabrielctroia: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@github.com/movesthatmatter/react-chessground-wargame.git#v0.3.0"
+    wargame-engine "https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git#v0.3.0"
+
+"wargame-engine@https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git#v0.3.0":
   version "0.3.0"
-  resolved "https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git#9ca873da85f1524799e03a4e329a95037ee48e91"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git#9ca873da85f1524799e03a4e329a95037ee48e91"
   dependencies:
     "@types/jest" "^27.4.0"
     chess.js-wargame "https://github.com/movesthatmatter/chess.js-wargame.git#v0.13.0"

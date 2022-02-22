@@ -1,7 +1,7 @@
 import { RoomPlayActivityRecord } from 'dstnd-io';
 import { GameMocker } from 'src/mocks/records';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
-import { notificationFactory } from './notificationFactory';
+import { playNotificationFactory as notificationFactory } from './notificationFactory';
 
 const gameMocker = new GameMocker();
 const roomMocker = new RoomMocker();
