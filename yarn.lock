@@ -2252,6 +2252,11 @@
     "@react-hook/event" "^1.2.1"
     "@react-hook/throttle" "^2.2.0"
 
+"@scarf/scarf@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@scarf/scarf/-/scarf-1.1.1.tgz#d8b9f20037b3a37dbf8dcdc4b3b72f9285bfce35"
+  integrity sha512-VGbKDbk1RFIaSmdVb0cNjjWJoRWRI/Weo23AjRCC2nryO0iAS8pzsToJfPVPtVs74WHw4L1UTADNdIYRLkirZQ==
+
 "@sentry/browser@6.15.0":
   version "6.15.0"
   resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-6.15.0.tgz#7a1d316dd31cedee446e359a21774bf93d1e553d"
@@ -5828,6 +5833,10 @@ cheerio@1.0.0-rc.2:
   version "0.12.0"
   resolved "https://github.com/andreitopli/chess.js-wargame.git#0b001e34c982b2bb8b6e76015ab2bc9c8cc7ce27"
 
+"chess.js-wargame@https://github.com/movesthatmatter/chess.js-wargame.git#v0.13.0":
+  version "0.13.0"
+  resolved "https://github.com/movesthatmatter/chess.js-wargame.git#43f0a5287996002c7403f6ef55c555e13b81cddc"
+
 chess.js@^0.10.3:
   version "0.10.3"
   resolved "https://registry.yarnpkg.com/chess.js/-/chess.js-0.10.3.tgz#8c3b98e8411c2ff3ab4b1fc022ddebd1ae037120"
@@ -7465,23 +7474,25 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://github.com/dstnd/dstnd-io.git#07debb9":
+"dstnd-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#staging":
   version "0.2.2"
-  resolved "https://github.com/dstnd/dstnd-io.git#07debb96d91c0c745ba161dd5333bed09e35ddc5"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#e12e7ef33213d861d2a63e69fcbc843b98f6cf94"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"
     chess.js "^0.11.0"
     fp-ts "^2.8.2"
-    io-ts "2.2.10"
-    io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.3"
+    io-ts "2.2.16"
+    io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.5"
+    io-ts-reporters "^2.0.0"
     io-ts-types "^0.5.16"
     jest "^26.4.2"
+    resources-io "0.0.7"
     ts-async-results "0.2.0-0"
     ts-results "^3.0.0"
     tslib "2.3.1"
     typescript "4.0.2"
-    wargame-engine "https://github.com/andreitopli/wargame-engine.git#ab7d716"
+    wargame-engine "https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git"
 
 "dstnd-io@https://github.com/dstnd/dstnd-io.git#fbef48e":
   version "0.2.2"
@@ -9015,6 +9026,11 @@ forwarded@~0.1.2:
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
   integrity sha1-mMI9qxF1ZXuMBXPozszZGw/xjIQ=
 
+fp-ts@2.8.2:
+  version "2.8.2"
+  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.8.2.tgz#7948dea1ceef32e487d7f7f47bd2d3c4fcccfc0d"
+  integrity sha512-YKLBW75Rp+L9DuY1jr7QO6mZLTmJjy7tOqSAMcB2q2kBomqLjBMyV7dotpcnZmUYY6khMsfgYWtPbUDOFcNmkA==
+
 fp-ts@^2.8.2:
   version "2.8.3"
   resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.8.3.tgz#c09652bbf21e64d65a9f93587ad549ab0e03abe7"
@@ -10208,6 +10224,22 @@ invert-kv@^2.0.0:
     io-ts "^2.2.10"
     io-ts-types "0.5.10"
 
+"io-ts-isodatetime@https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.5":
+  version "0.0.5"
+  resolved "https://github.com/GabrielCTroia/io-ts-isodatetime.git#d5fea75d00b9d47191726fcea3e3a1da0218558d"
+  dependencies:
+    date-fns "^2.13.0"
+    fp-ts "2.8.2"
+    io-ts "2.2.16"
+    io-ts-types "0.5.10"
+
+io-ts-reporters@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/io-ts-reporters/-/io-ts-reporters-2.0.1.tgz#0154545aefd115f0f175a41743ed7327d19b1c34"
+  integrity sha512-RVpLstYBsmTGgCW9wJ5KVyN/eRnRUDp87Flt4D1O3aJ7oAnd8csq8aXuu7ZeNK8qEDKmjUl9oUuzfwikaNAMKQ==
+  dependencies:
+    "@scarf/scarf" "^1.1.1"
+
 io-ts-types@0.5.10:
   version "0.5.10"
   resolved "https://registry.yarnpkg.com/io-ts-types/-/io-ts-types-0.5.10.tgz#54d2400c81de2a1bc97151b07faabc9ddd3ebb07"
@@ -10227,6 +10259,11 @@ io-ts@2.2.10, io-ts@^2.2.10:
   version "2.2.10"
   resolved "https://registry.yarnpkg.com/io-ts/-/io-ts-2.2.10.tgz#447d02df51717464a90712b146ec8dbc21b4a74b"
   integrity sha512-WHx5jJe7hPpc6JoSIVbD+Xn6tYqe3cRvNpX24d8Wi15/kxhRWa8apo0Gzag6Xg99sCNY9OHKylw/Vhv0JAbNPQ==
+
+io-ts@2.2.16:
+  version "2.2.16"
+  resolved "https://registry.yarnpkg.com/io-ts/-/io-ts-2.2.16.tgz#597dffa03db1913fc318c9c6df6931cb4ed808b2"
+  integrity sha512-y5TTSa6VP6le0hhmIyN0dqEXkrZeJLeC5KApJq6VLci3UEKF80lZ+KuoUs02RhBxNWlrqSNxzfI7otLX1Euv8Q==
 
 ip-regex@^2.1.0:
   version "2.1.0"
@@ -16672,6 +16709,17 @@ resolve@^1.20.0:
     path-parse "^1.0.7"
     supports-preserve-symlinks-flag "^1.0.0"
 
+resources-io@0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/resources-io/-/resources-io-0.0.7.tgz#ed69649f217f47581b083cc17d0f0809988fd43f"
+  integrity sha512-sLjtz0yfAG6YI3yVg1ouERasCm/N9JOLnSl6lskS4P1o9OpZ7MbrzuAzlKjakXrtgG7sA9CU4EhRsI4/IzJ8RA==
+  dependencies:
+    fp-ts "^2.8.2"
+    io-ts "2.2.16"
+    io-ts-reporters "^2.0.0"
+    ts-async-results "^0.2.0-0"
+    ts-results "^3.0.0"
+
 restore-cursor@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/restore-cursor/-/restore-cursor-2.0.0.tgz#9f7ee287f82fd326d4fd162923d62129eee0dfaf"
@@ -18239,7 +18287,7 @@ tr46@~0.0.3:
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
   integrity sha1-gYT9NH2snNwYWZLzpmIuFLnZq2o=
 
-ts-async-results@0.2.0-0:
+ts-async-results@0.2.0-0, ts-async-results@^0.2.0-0:
   version "0.2.0-0"
   resolved "https://registry.yarnpkg.com/ts-async-results/-/ts-async-results-0.2.0-0.tgz#53f55d65ed9016c6d166f5705ea802871b5ddb9a"
   integrity sha512-rpErETjiPpiQ0gQI90rwIFrBlgJcD/OvSrOSuOwsaFIgGGMdmEG8utZQPrjKWM3sQbn2GTv4LJtzY8rtbyHjLQ==
@@ -18761,19 +18809,19 @@ walker@^1.0.7, walker@~1.0.5:
     react-chessground-wargame "https://github.com/andreitopli/react-chessground-wargame.git#f8c3f0f"
     wargame-engine "https://github.com/andreitopli/wargame-engine.git#802ad9e"
 
-"wargame-engine@https://github.com/andreitopli/wargame-engine.git#802ad9e":
-  version "0.1.1"
-  resolved "https://github.com/andreitopli/wargame-engine.git#802ad9efe7320b9631c11bc301497287d94a7a90"
+"wargame-engine@https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git":
+  version "0.3.0"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git#9ca873da85f1524799e03a4e329a95037ee48e91"
   dependencies:
     "@types/jest" "^27.4.0"
-    chess.js-wargame "https://github.com/andreitopli/chess.js-wargame.git"
+    chess.js-wargame "https://github.com/movesthatmatter/chess.js-wargame.git#v0.13.0"
     jest "27.1"
     tslib "^2.3.1"
     typescript "4.0.2"
 
-"wargame-engine@https://github.com/andreitopli/wargame-engine.git#ab7d716":
+"wargame-engine@https://github.com/andreitopli/wargame-engine.git#802ad9e":
   version "0.1.1"
-  resolved "https://github.com/andreitopli/wargame-engine.git#ab7d71668d3f229addc6b1a6d52ee2f37818a93b"
+  resolved "https://github.com/andreitopli/wargame-engine.git#802ad9efe7320b9631c11bc301497287d94a7a90"
   dependencies:
     "@types/jest" "^27.4.0"
     chess.js-wargame "https://github.com/andreitopli/chess.js-wargame.git"
