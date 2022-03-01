@@ -1,4 +1,4 @@
-import { UserInfoRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'chessroulette-io';
 import { RoomMember } from '../types';
 import { RoomAnalysisActivity } from './activities/AnalysisActivity/types';
 import { RoomNoActivity } from './activities/NoActivity/types';

@@ -1,4 +1,4 @@
-import { ChessPlayer, GameRecord, UserRecord } from 'dstnd-io';
+import { ChessPlayer, GameRecord, UserRecord } from 'chessroulette-io';
 import { objectKeys, toDictIndexedBy } from 'src/lib/util';
 import { Object } from 'window-or-global';
 import { CuratedEvent, CuratedEventRound } from '../types';

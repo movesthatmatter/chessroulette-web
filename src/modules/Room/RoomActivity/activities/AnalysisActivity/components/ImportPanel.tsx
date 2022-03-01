@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import cx from 'classnames';
-import { GameRecord, SimplePGN } from 'dstnd-io';
+import { GameRecord, SimplePGN } from 'chessroulette-io';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import { Button, IconButton } from 'src/components/Button';

@@ -1,5 +1,5 @@
 import Chance from 'chance';
-import { RoomStatsRecord } from 'dstnd-io';
+import { RoomStatsRecord } from 'chessroulette-io';
 import { RoomMocker } from './RoomMocker';
 import { Peer } from 'src/providers/PeerProvider';
 

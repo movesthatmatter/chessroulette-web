@@ -1,5 +1,5 @@
 import { createAction } from 'deox';
-import { PeerRecord, RoomRecord } from 'dstnd-io';
+import { PeerRecord, RoomRecord } from 'chessroulette-io';
 
 export const createMeAction = createAction(
   'Create Me',

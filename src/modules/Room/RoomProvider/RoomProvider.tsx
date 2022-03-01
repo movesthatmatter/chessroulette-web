@@ -3,7 +3,7 @@ import { RoomProviderContext, RoomProviderContextState } from './RoomProviderCon
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { useRoomActivityListener } from 'src/modules/Room/RoomActivityLog/useRoomActivityListener';
 import { JoinedRoom } from '../types';
-import { RoomActivityCreationRecord } from 'dstnd-io';
+import { RoomActivityCreationRecord } from 'chessroulette-io';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { Events } from 'src/services/Analytics';
 import { BoardOrientation } from 'src/modules/Games';

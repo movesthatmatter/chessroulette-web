@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
-import { ChatHistoryRecord, ChatMessageRecord, UserInfoRecord } from 'dstnd-io';
+import { ChatHistoryRecord, ChatMessageRecord, UserInfoRecord } from 'chessroulette-io';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { Chat } from './Chat';
 import { minutes, seconds } from 'src/lib/time';

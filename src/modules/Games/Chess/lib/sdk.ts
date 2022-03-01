@@ -1,5 +1,5 @@
 import ChessJS, { ChessInstance , Chess as ChessA} from 'chess.js';
-import { ChessGameStatePgn } from 'dstnd-io';
+import { ChessGameStatePgn } from 'chessroulette-io';
 import * as ChessB from 'chess.js';
 
 //This weirdness is due to the fact that node and browser js imports are working differently.

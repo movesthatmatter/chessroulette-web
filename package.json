@@ -57,6 +57,7 @@
     "chess.js": "^0.10.3",
     "chessground": "^7.9.3",
     "chessops": "0.7.1",
+    "chessroulette-io": "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#staging",
     "chunk": "^0.0.3",
     "classnames": "^2.2.6",
     "csstype": "^2.6.10",
@@ -122,7 +123,7 @@
     "use-debounce": "^7.0.0",
     "use-debounced-effect": "^1.2.0",
     "use-previous": "^1.1.0",
-    "wargame-board": "https://gabrielctroia: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@github.com/movesthatmatter/wargame-board.git#v0.2.1",
+    "wargame-board": "https://gabrielctroia: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@github.com/movesthatmatter/wargame-board.git#testing",
     "webfontloader": "^1.6.28",
     "window-or-global": "^1.0.1"
   },

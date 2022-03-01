@@ -1,5 +1,5 @@
 import capitalize from 'capitalize';
-import { RoomChallengeRecord, RoomRecord } from 'dstnd-io';
+import { RoomChallengeRecord, RoomRecord } from 'chessroulette-io';
 import ReactGA from 'react-ga';
 import { RoomActivity } from 'src/modules/Room/RoomActivity/types';
 import { Room } from 'src/providers/PeerProvider';

@@ -1,4 +1,4 @@
-import { RoomRecord } from 'dstnd-io';
+import { RoomRecord } from 'chessroulette-io';
 import { Peer } from 'src/providers/PeerProvider';
 import { RoomMember } from './types';
 import deepCopy from 'deep-copy';

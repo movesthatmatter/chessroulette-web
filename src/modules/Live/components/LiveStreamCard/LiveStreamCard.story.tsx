@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Resources } from 'dstnd-io';
+import { Resources } from 'chessroulette-io';
 import React from 'react';
 import { LiveStreamCard } from './LiveStreamCard';
 

@@ -70,7 +70,7 @@ import {
   WarGameResignationRequestPayload,
   JoinedWarGameUpdatedPayload,
   JoinedRoomAndWarGameUpdatedPayload,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
 import { console } from 'window-or-global';
 import { logsy } from 'src/lib/logsy';

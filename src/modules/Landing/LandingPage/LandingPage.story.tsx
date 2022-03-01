@@ -3,7 +3,7 @@ import React from 'react';
 import { StorybookReduxProvider } from 'src/storybook/StorybookReduxProvider';
 import { UserRecordMocker } from 'src/mocks/records';
 import { LandingPage } from './LandingPage';
-import { AuthenticationToken } from 'dstnd-io';
+import { AuthenticationToken } from 'chessroulette-io';
 
 export default {
   component: LandingPage,

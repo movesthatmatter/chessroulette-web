@@ -1,4 +1,4 @@
-import { RegisteredUserRecord } from 'dstnd-io';
+import { RegisteredUserRecord } from 'chessroulette-io';
 import React, { ReactNode } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAuthentication } from 'src/services/Authentication';

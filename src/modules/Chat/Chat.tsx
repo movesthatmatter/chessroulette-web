@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
-import { ChatHistoryRecord } from 'dstnd-io';
+import { ChatHistoryRecord } from 'chessroulette-io';
 import { Message } from './components';
 import { CustomTheme, onlySmallMobile } from 'src/theme';
 import { IconButton } from 'src/components/Button';

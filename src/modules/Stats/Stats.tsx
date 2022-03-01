@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import dateformat from 'dateformat';
 import { StatsTable } from './components';
-import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
+import { PeerRecord, RoomStatsRecord } from 'chessroulette-io';
 import { getUserDisplayName } from '../User';
 
 type Props = {

@@ -1,4 +1,4 @@
-import { PeerRecord } from 'dstnd-io';
+import { PeerRecord } from 'chessroulette-io';
 import { Pubsy } from 'src/lib/Pubsy';
 import { peerMessageEnvelope, PeerMessageEnvelope } from '../records';
 import PeerSDK from 'peerjs';

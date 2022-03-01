@@ -1,4 +1,4 @@
-import { ChallengeRecord, RoomRecord } from 'dstnd-io';
+import { ChallengeRecord, RoomRecord } from 'chessroulette-io';
 import React, { useEffect } from 'react';
 import { Page } from 'src/components/Page';
 import { Events } from 'src/services/Analytics';

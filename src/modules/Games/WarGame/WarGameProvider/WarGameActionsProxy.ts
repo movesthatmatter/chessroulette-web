@@ -1,4 +1,4 @@
-import { ChessGameColor, WarGameHistory, WarGameMove } from 'dstnd-io';
+import { ChessGameColor, WarGameHistory, WarGameMove } from 'chessroulette-io';
 import { Events } from 'src/services/Analytics';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { warGameActionPayloads } from '../gameActions/payloads';

@@ -5934,6 +5934,26 @@ chessops@0.7.1:
   dependencies:
     "@badrap/result" "^0.2.6"
 
+"chessroulette-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#staging":
+  version "0.3.0-1"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#57cfd750ee3d239011a50756f0151482e1dd2c34"
+  dependencies:
+    "@types/chess.js" "^0.10.1"
+    "@types/jest" "^26.0.13"
+    chess.js "^0.11.0"
+    fp-ts "^2.8.2"
+    io-ts "2.2.16"
+    io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.5"
+    io-ts-reporters "^2.0.0"
+    io-ts-types "^0.5.16"
+    jest "^26.4.2"
+    resources-io "0.0.7"
+    ts-async-results "0.2.0-0"
+    ts-results "^3.0.0"
+    tslib "2.3.1"
+    typescript "4.0.2"
+    wargame-engine "https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git#v0.3.0"
+
 chokidar@^2.0.4, chokidar@^2.1.8:
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-2.1.8.tgz#804b3a7b6a99358c3c5c61e71d8728f041cff917"
@@ -19292,9 +19312,9 @@ walker@^1.0.7, walker@~1.0.5:
   dependencies:
     makeerror "1.0.x"
 
-"wargame-board@https://gabrielctroia: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@github.com/movesthatmatter/wargame-board.git#v0.2.1":
+"wargame-board@https://gabrielctroia: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@github.com/movesthatmatter/wargame-board.git#testing":
   version "0.2.1"
-  resolved "https://gabrielctroia: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@github.com/movesthatmatter/wargame-board.git#b9ef1944b34af482b8de105dad8161fed0abfc1c"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/wargame-board.git#d1847650eae0aa4584cce91d0126fe327ed67f85"
   dependencies:
     chessground-wargame "https://gabrielctroia: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@github.com/movesthatmatter/chessground-wargame.git#v0.1.0"
     classnames "^2.3.1"

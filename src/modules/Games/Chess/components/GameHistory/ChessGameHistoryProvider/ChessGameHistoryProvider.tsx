@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect } from 'react';
 import useEventListener from '@use-it/event-listener';
-import { ChessHistory, ChessHistoryIndex, ChessHistoryMove, analysis } from 'dstnd-io';
+import { ChessHistory, ChessHistoryIndex, ChessHistoryMove, analysis } from 'chessroulette-io';
 import { keyInObject, noop } from 'src/lib/util';
 import { ChessGameHistoryContext, ChessGameHistoryContextProps } from './ChessGameHistoryContext';
 import { useDebouncedCallback } from 'use-debounce';
 import { useStateWithCallback } from 'src/lib/hooks/useStateWithCallback';
 import { historyToFen, pgnToFen } from '../../../lib';
-import { chessHistoryToSimplePgn } from 'dstnd-io/dist/chessGame/util/util';
+import { chessHistoryToSimplePgn } from 'chessroulette-io/dist/chessGame/util/util';
 
 export type ChessGameHistoryProviderProps = {
   history: ChessHistory;

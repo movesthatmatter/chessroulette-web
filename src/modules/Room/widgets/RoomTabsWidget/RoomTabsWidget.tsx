@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { faComment, faDiceD6 } from '@fortawesome/free-solid-svg-icons';
-import { UserInfoRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'chessroulette-io';
 import { useSelector } from 'react-redux';
 import { Tabs } from 'src/components/Tabs';
 import { ActivityLog } from 'src/modules/Room/RoomActivityLog';

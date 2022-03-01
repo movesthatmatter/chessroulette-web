@@ -3,7 +3,7 @@ import { createUseStyles, CSSProperties, NestedCSSElement } from 'src/lib/jss';
 import { GamesArchiveProvider } from 'src/modules/GamesArchive';
 import { spacers } from 'src/theme/spacers';
 import { floatingShadow, softBorderRadius } from 'src/theme';
-import { GameRecord } from 'dstnd-io';
+import { GameRecord } from 'chessroulette-io';
 import { Text } from 'src/components/Text';
 import { renderMatch } from 'src/lib/renderMatch';
 import Loader from 'react-loaders';

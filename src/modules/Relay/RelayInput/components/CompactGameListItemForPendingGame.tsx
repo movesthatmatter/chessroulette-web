@@ -4,7 +4,7 @@ import { hideOnMobile, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { Text } from 'src/components/Text';
-import { GameRecord } from 'dstnd-io';
+import { GameRecord } from 'chessroulette-io';
 import dateformat from 'dateformat';
 import { getUserDisplayNameClean } from 'src/modules/User';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';

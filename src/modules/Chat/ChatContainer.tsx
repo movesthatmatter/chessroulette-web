@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChatMessageRecord } from 'dstnd-io';
+import { ChatMessageRecord } from 'chessroulette-io';
 import { Chat, ChatProps } from './Chat';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { AwesomeError } from 'src/components/AwesomeError';

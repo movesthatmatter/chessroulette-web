@@ -1,7 +1,7 @@
-import { PiecesPositions, WarGameHistory, WarGamePlayer, WarGamePlayerBlack, WarGamePlayerWhite, WarGameState, WarGameStateFinished, WarGameStateNeverStarted, WarGameStatePending, WarGameStateStarted, WarGameStateStopped } from 'dstnd-io';
+import { PiecesPositions, WarGameHistory, WarGamePlayer, WarGamePlayerBlack, WarGamePlayerWhite, WarGameState, WarGameStateFinished, WarGameStateNeverStarted, WarGameStatePending, WarGameStateStarted, WarGameStateStopped } from 'chessroulette-io';
 import { UserRecordMocker } from './UserRecordMocker';
 import { toISODateTime } from 'io-ts-isodatetime';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 
 const userRecordMock = new UserRecordMocker();
 

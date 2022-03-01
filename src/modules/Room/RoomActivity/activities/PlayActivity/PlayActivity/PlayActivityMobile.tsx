@@ -1,5 +1,5 @@
-import { ChessGameColor, SimplePGN } from 'dstnd-io';
-import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { ChessGameColor, SimplePGN } from 'chessroulette-io';
+import { otherChessColor } from 'chessroulette-io/dist/chessGame/util/util';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { ChessGame } from 'src/modules/Games/Chess';

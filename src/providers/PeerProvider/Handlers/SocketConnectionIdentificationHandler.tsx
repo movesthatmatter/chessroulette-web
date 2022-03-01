@@ -1,4 +1,4 @@
-import { AccessToken, GuestUserRecord, JWTToken } from 'dstnd-io';
+import { AccessToken, GuestUserRecord, JWTToken } from 'chessroulette-io';
 import React from 'react';
 import { Component } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';

@@ -1,4 +1,4 @@
-import { RoomChallengeRecord, RoomWithWarGameActivityRecord, UserInfoRecord } from 'dstnd-io';
+import { RoomChallengeRecord, RoomWithWarGameActivityRecord, UserInfoRecord } from 'chessroulette-io';
 import { ISODateTime } from 'io-ts-isodatetime';
 import { RoomWithPlayActivity } from 'src/providers/PeerProvider';
 

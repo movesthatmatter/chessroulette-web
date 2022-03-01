@@ -1,4 +1,4 @@
-import { Country, CountryCode } from 'dstnd-io';
+import { Country, CountryCode } from 'chessroulette-io';
 import React from 'react';
 import { useCountries } from './useCountries';
 

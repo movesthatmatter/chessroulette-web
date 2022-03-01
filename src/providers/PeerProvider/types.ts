@@ -6,7 +6,7 @@ import {
   RoomWithAnalysisActivityRecord,
   UserRecord,
   ClassRoomRecord,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 
 export type PeerStreamingConfigOn = {
   on: true;

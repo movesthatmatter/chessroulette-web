@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChallengeRecord } from 'dstnd-io';
+import { ChallengeRecord } from 'chessroulette-io';
 import { Button, ButtonProps } from 'src/components/Button';
 import { useSelector } from 'react-redux';
 import { selectMyPeer } from 'src/providers/PeerProvider';

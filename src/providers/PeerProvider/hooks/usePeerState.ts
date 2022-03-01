@@ -1,4 +1,4 @@
-import { SocketPayload } from 'dstnd-io';
+import { SocketPayload } from 'chessroulette-io';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { noop } from 'src/lib/util';
 import { SocketReceivableMessage } from 'src/providers/SocketProvider/types';

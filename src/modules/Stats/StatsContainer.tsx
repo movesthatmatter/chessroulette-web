@@ -1,4 +1,4 @@
-import { PeerRecord, RoomStatsRecord } from 'dstnd-io';
+import { PeerRecord, RoomStatsRecord } from 'chessroulette-io';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SocketConsumer } from 'src/providers/SocketProvider';

@@ -1,4 +1,4 @@
-import { GameRecord } from 'dstnd-io';
+import { GameRecord } from 'chessroulette-io';
 import { DependencyList, useEffect, useState } from 'react';
 import { getPlayersTimeLeftByColor } from 'src/modules/Games/Chess/components/GameStateWidget/util';
 

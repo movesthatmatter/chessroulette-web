@@ -5,7 +5,7 @@ import {
   ChessHistory,
   ChessHistoryIndex,
   SimplePGN,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';

@@ -1,4 +1,4 @@
-import { RoomRecord } from 'dstnd-io';
+import { RoomRecord } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { FunWallpaper } from 'src/components/FunWallpaper';

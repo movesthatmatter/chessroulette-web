@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { RoomProviderContext, RoomProviderContextState } from '../RoomProvider';
-import { SwitchRoomActivityRequestPayload } from 'dstnd-io';
+import { SwitchRoomActivityRequestPayload } from 'chessroulette-io';
 import { CreateChallengeDialog } from '../RoomActivity/activities/components/CreateChallengeDialog';
 import { getRoomPendingChallenge } from '../util';
 

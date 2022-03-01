@@ -16,6 +16,8 @@ const PRERENDERING = !!(window as any).reactSnapshotRender;
 
 const DISCORD_SERVER_ID = process.env.REACT_APP_DISCORD_SERVER_ID as string;
 const DISCORD_CHANNEL_ID = process.env.REACT_APP_DISCORD_CHANNEL_ID as string;
+const CHALLONGE_API_KEY = process.env.REACT_APP_Challonge_API_KEY as string;
+const CHALLONGE_USERNAME = process.env.REACT_APP_Challonge_USERNAME as string;
 
 const config = {
   // Env
@@ -36,6 +38,8 @@ const config = {
   GOOGLE_ANALYTICS_TRACKING_ID,
   DISCORD_SERVER_ID,
   DISCORD_CHANNEL_ID,
+  CHALLONGE_API_KEY,
+  CHALLONGE_USERNAME
 };
 
 if (config.DEBUG) {

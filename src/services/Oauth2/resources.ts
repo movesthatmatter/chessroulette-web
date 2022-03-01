@@ -3,7 +3,7 @@ import {
   VendorsAuthenticationRedirectUrlPayload,
   vendorsAuthenticationRedirectUrlResponsePayload,
   ExternalVendor,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { http } from 'src/lib/http';
 import { AsyncResultWrapper } from 'ts-async-results';
 import { Err } from 'ts-results';

@@ -1,5 +1,5 @@
-import { ChessGameColor, GameRecord, GameRecordFinished, GameRecordStopped } from 'dstnd-io';
-import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { ChessGameColor, GameRecord, GameRecordFinished, GameRecordStopped } from 'chessroulette-io';
+import { otherChessColor } from 'chessroulette-io/dist/chessGame/util/util';
 import HumanizeDuration from 'humanize-duration';
 import { getPlayer, getPlayerByColor } from 'src/modules/Games/Chess/lib';
 

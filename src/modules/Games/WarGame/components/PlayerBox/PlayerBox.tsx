@@ -1,4 +1,4 @@
-import { WarGamePlayer, WarGameState } from 'dstnd-io';
+import { WarGamePlayer, WarGameState } from 'chessroulette-io';
 import React from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';

@@ -1,4 +1,4 @@
-import { ChessGameStateFen } from 'dstnd-io';
+import { ChessGameStateFen } from 'chessroulette-io';
 import React, { useCallback, useMemo } from 'react';
 import { http } from 'src/lib/http';
 import {

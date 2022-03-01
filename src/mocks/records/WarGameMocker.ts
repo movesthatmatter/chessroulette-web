@@ -1,7 +1,7 @@
 import {
   WarGameState
-} from 'dstnd-io';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+} from 'chessroulette-io';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 import { Game, GameFromGameState, WarGame } from 'src/modules/Games';
 import { WarGameRecordMocker } from './WarGameRecordMocker';
 

@@ -1,4 +1,4 @@
-import { RegisteredUserRecord } from 'dstnd-io';
+import { RegisteredUserRecord } from 'chessroulette-io';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Text } from 'src/components/Text';
