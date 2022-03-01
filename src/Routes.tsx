@@ -12,7 +12,8 @@ import { RelayInputRoute } from './modules/Relay/RelayInput';
 import { LiveRoute } from './modules/Live/LiveRoute';
 import { CuratedEventsConsoleRoute } from './modules/CuratedEvents/console/CuratedEventsConsoleRoute';
 import { CuratedEventsRoute, CuratedEventRoute } from './modules/CuratedEvents';
-
+import { TournamentsRoute } from './modules/Tournaments/TournamentsRoute';
+import { TournamentRoute } from './modules/Tournaments/TournamentRoute';
 type Props = {};
 
 export const Routes: React.FC<Props> = () => {
