@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import config from 'src/config';
 import { Page } from 'src/components/Page';
-import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { softBorderRadius, effects, hardBorderRadius } from 'src/theme';
 import {
-  CreateRoomButtonWidgetWithWizard,
   CreateRoomButtonWidgetFromSpecs,
+  CreateRoomButtonWidgetWithWizard,
 } from 'src/modules/Room/widgets/CreateRoomWidget';
 import { spacers } from 'src/theme/spacers';
 import { useBodyClass } from 'src/lib/hooks/useBodyClass';
@@ -22,27 +22,11 @@ import { Game } from 'src/modules/Games';
 import { ChessGameDisplay } from 'src/modules/Games/widgets/ChessGameDisplay';
 import { getGameOfDay, getTopPlayersByGamesCount } from './resources';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
-import { toDictIndexedBy, toRoomUrlPath } from 'src/lib/util';
+import { toDictIndexedBy } from 'src/lib/util';
 import { AnchorLink } from 'src/components/AnchorLink';
-import { getNextScheduledEvent, ScheduledEvent } from './schedule';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { InfoCard } from 'src/components/InfoCard';
-import { StreamsReel } from 'src/modules/Live/components/StreamsReel';
-import { StreamerGallery } from 'src/modules/Live/components/StreamerGallery/StreamerGallery';
-import { UserDisplay } from 'src/components/UserDisplay';
-import { Button } from 'src/components/Button';
-import { scheduleRoom } from 'src/modules/Room/resources';
-import { addDays, addMinutes, subDays } from 'date-fns';
-import { Date } from 'window-or-global';
-import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { useHistory } from 'react-router-dom';
-// import config from 'src/config';
-// import { getNextScheduledEvent, ScheduledEvent } from './schedule';
-// import { AspectRatio } from 'src/components/AspectRatio';
-// import { InfoCard } from 'src/components/InfoCard';
-import addSeconds from 'date-fns/addSeconds';
-import { now } from 'src/lib/date';
-import { EventPromo } from './components/EventPromo/EventPromo';
 import { LoaderPlaceholder } from 'src/components/LoaderPlaceholder/LoaderPlaceholder';
 import { StreamersCollection } from './components/StreamersCollection';
 import { TopPlayers } from './components/TopPlayers';
@@ -72,7 +56,6 @@ export const DesktopLandingPage: React.FC<Props> = () => {
       }
 
       const first4InOrder = items.slice(0, 4);
-      // .sort((a, b) => b.stream.viewerCount - a.stream.viewerCount);
 
       setStreamers({
         itemsById: toDictIndexedBy(first4InOrder, ({ id }) => id),
@@ -126,11 +109,11 @@ export const DesktopLandingPage: React.FC<Props> = () => {
     });
   }, []);
 
-  const [scheduledEvent, setScheduledEvent] = useState<ScheduledEvent | 'init'>();
+  // const [scheduledEvent, setScheduledEvent] = useState<ScheduledEvent | 'init'>();
 
-  useEffect(() => {
-    getNextScheduledEvent(new Date()).then(setScheduledEvent);
-  }, []);
+  // useEffect(() => {
+  //   getNextScheduledEvent(new Date()).then(setScheduledEvent);
+  // }, []);
 
   return (
     <Page
@@ -164,53 +147,17 @@ export const DesktopLandingPage: React.FC<Props> = () => {
                       activityType: 'play',
                     }}
                     full
-                    style={{
-                      marginBottom: spacers.small,
-                    }}
+                    style={{ marginBottom: spacers.small }}
                   />
                   <div style={{ width: spacers.default }} />
                   <CreateRoomButtonWidgetWithWizard
                     label="Analyze"
                     type="secondary"
-                    style={{
-                      marginBottom: 0,
-                    }}
+                    style={{ marginBottom: 0 }}
                     full
                     createRoomSpecs={{
                       isPrivate: true,
                       activityType: 'analysis',
-                    }}
-                  />
-                  <CreateRoomButtonWidgetWithWizard
-                    label="War Game"
-                    type="primary"
-                    withBadge={{
-                      side: 'right',
-                      text: 'BETA',
-                      color: 'negative',
-                    }}
-                    style={{
-                      marginBottom: 0,
-                    }}
-                    full
-                    createRoomSpecs={{
-                      isPrivate: true,
-                      activityType: 'warGame',
-                    }}
-                  />
-                  <Button
-                    label="Schedule Classroom"
-                    onClick={() => {
-                      scheduleRoom({
-                        hostUserId: user.id,
-
-                        activity: { activityType: 'analysis', source: 'empty' },
-                        scheduleAt: toISODateTime(addMinutes(new Date(), 1)),
-                        type: 'classroom',
-                        isPrivate: true,
-                      }).map((scheduledRoom) => {
-                        history.push(toRoomUrlPath(scheduledRoom));
-                      });
                     }}
                   />
                 </div>
@@ -218,22 +165,53 @@ export const DesktopLandingPage: React.FC<Props> = () => {
             />
           )}
           <div style={{ height: spacers.large }} />
-          <div>
-            <Text size="subtitle2" className={cls.title}>
-              Top Players
-            </Text>
-            {topPlayers ? (
+
+          {topPlayers ? (
+            <div>
+              <Text size="subtitle2" className={cls.title}>
+                Top Players
+              </Text>
               <TopPlayers players={topPlayers} />
-            ) : (
-              <LoaderPlaceholder aspectRatio={2} />
-            )}
-          </div>
-          <div style={{ height: spacers.large }} />
-          <Text size="subtitle2" className={cls.title}>
-            Game of the Day
-          </Text>
+            </div>
+          ) : (
+            <LoaderPlaceholder aspectRatio={2} />
+          )}
+
           {gameOfDay ? (
-            <ChessGameDisplay game={gameOfDay} className={cls.board} />
+            <>
+              <div style={{ height: spacers.large }} />
+              <Text size="subtitle2" className={cls.title}>
+                Game of the Day
+              </Text>
+              <ChessGameDisplay
+                game={gameOfDay}
+                className={cls.board}
+                hoveredComponent={
+                  <div
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 99,
+                    }}
+                  >
+                    <CreateRoomButtonWidgetFromSpecs
+                      label="Analyze"
+                      type="primary"
+                      createRoomSpecs={{
+                        activity: {
+                          activityType: 'analysis',
+                          source: 'archivedGame',
+                          gameId: gameOfDay.id,
+                        },
+                        isPrivate: true,
+                      }}
+                    />
+                  </div>
+                }
+              />
+            </>
           ) : (
             <LoaderPlaceholder aspectRatio={0.7} />
           )}
@@ -317,11 +295,11 @@ export const DesktopLandingPage: React.FC<Props> = () => {
               flex: 1,
             }}
           >
-            {/* <DiscordReactEmbed
+            <DiscordReactEmbed
               server={config.DISCORD_SERVER_ID}
               channel={config.DISCORD_CHANNEL_ID}
               className={cls.discordWidget}
-            /> */}
+            />
           </div>
           <div className={cls.verticalSpacer} />
         </aside>
@@ -369,7 +347,6 @@ const useStyles = createUseStyles((theme) => ({
     flexDirection: 'column',
   },
   main: {
-    // height: '100%',
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
@@ -394,6 +371,7 @@ const useStyles = createUseStyles((theme) => ({
 
   userProfileShowcase: {
     ...effects.hardBorderRadius,
+    flex: 0,
   },
 
   title: {
@@ -405,20 +383,6 @@ const useStyles = createUseStyles((theme) => ({
   streamerCollectionList: {
     display: 'flex',
     flexDirection: 'row',
-  },
-
-  textGradient: {
-    // backgroundImage: `linear-gradient(45deg, ${
-    //   theme.name === 'darkDefault' ? theme.colors.positiveLight : theme.colors.primary
-    // } 0, #fff 150%)`,
-    ...({
-      // '-webkit-background-clip': 'text',
-      // '-webkit-text-fill-color': 'transparent',
-    } as NestedCSSElement),
-
-    // '& span': {
-    //   display: 'block',
-    // }
   },
 
   discordWidget: {
