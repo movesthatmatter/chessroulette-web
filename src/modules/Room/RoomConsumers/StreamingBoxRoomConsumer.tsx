@@ -1,29 +1,42 @@
 import React, { useContext } from 'react';
 import { DarkModeSwitch } from 'src/components/DarkModeSwitch/DarkModeSwitch';
+import {
+  MultiFaceTimeCompact,
+  MultiFaceTimeCompactProps,
+} from 'src/components/FaceTime/MultiFaceTimeCompact';
 import { Logo } from 'src/components/Logo';
-import { StreamingBox, StreamingBoxProps } from 'src/components/StreamingBox';
 import { createUseStyles } from 'src/lib/jss';
-import { PeerInfo } from 'src/providers/PeerProvider';
-import { hideOnDesktop, onlyDesktop, onlyMobile } from 'src/theme';
+import { PeerInfo, Room } from 'src/providers/PeerProvider';
+import { useStreamingPeers } from 'src/providers/PeerProvider/hooks';
+import { hideOnDesktop, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { RoomProviderContext } from '../RoomProvider';
 
-type Props = Omit<StreamingBoxProps, 'room'> & {
+type Props = Omit<
+  MultiFaceTimeCompactProps,
+  'reelStreamingPeers' | 'myStreamingPeerId' | 'onFocus' | 'focusedStreamingPeer'
+> & {
   isMobile?: boolean;
 };
 
-export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
+const StreamingBoxRoomConsumerWithGivenRoom: React.FC<Props & { room: Room }> = ({
+  room,
+  ...props
+}) => {
   const cls = useStyles();
-  const roomContext = useContext(RoomProviderContext);
+  const { state, onFocus } = useStreamingPeers({ peersMap: room.peers });
 
-  if (!(roomContext && roomContext.room.p2pCommunicationType !== 'none')) {
+  if (!state.ready) {
     // Show Loader
     return null;
   }
 
   return (
-    <StreamingBox
-      room={roomContext.room}
+    <MultiFaceTimeCompact
+      reelStreamingPeers={state.reel}
+      myStreamingPeerId={room.me.userId}
+      focusedStreamingPeer={state.inFocus}
+      onFocus={onFocus}
       {...props}
       headerOverlay={({ inFocus }) => (
         <div className={cls.header}>
@@ -41,6 +54,17 @@ export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
       )}
     />
   );
+};
+
+export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
+  const roomContext = useContext(RoomProviderContext);
+
+  if (!roomContext) {
+    // Show Loader
+    return null;
+  }
+
+  return <StreamingBoxRoomConsumerWithGivenRoom room={roomContext.room} {...props} />;
 };
 
 const useStyles = createUseStyles({

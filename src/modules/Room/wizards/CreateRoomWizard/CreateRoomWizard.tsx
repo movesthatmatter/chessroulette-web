@@ -6,7 +6,7 @@ import { RoomDefaultPartialWizard } from '../RoomDefaultPartialWizard';
 import { useCreateRoom } from '../../widgets/CreateRoomWidget';
 
 export type CreateRoomWizardProps = {
-  createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'p2pCommunicationType'> &
+  createRoomSpecs: Pick<CreateRoomRequest, 'type' | 'p2pCommunicationType' | 'isPrivate'> &
     Pick<CreateRoomRequest['activity'], 'activityType'>;
 };
 
@@ -28,6 +28,18 @@ const getDefaultWizardState = ({
       gameSpecs: {
         timeLimit: 'rapid10',
         preferredColor: 'random',
+        gameType: 'chess',
+      },
+    };
+  }
+
+  if (activityType === 'warGame') {
+    return {
+      activityType: 'play',
+      gameSpecs: {
+        timeLimit: 'rapid10',
+        preferredColor: 'random',
+        gameType: 'warGame',
       },
     };
   }
@@ -58,8 +70,9 @@ export const CreateRoomWizard: React.FC<CreateRoomWizardProps> = ({ createRoomSp
 
   return (
     <Wizard>
-      {createRoomSpecs.activityType === 'play' && (
+      {wizardState.activityType === 'play' || wizardState.activityType === 'warGame' && (
         <CreatePlayChallengeStep
+          gameSpecs={wizardState.gameSpecs}
           onUpdated={(gameSpecs) =>
             setWizardState({
               activityType: 'play',

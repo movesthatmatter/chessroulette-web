@@ -33,7 +33,7 @@ const formatTimeLimit = HumanizeDuration.humanizer({
   round: true,
 });
 
-export const notificationFactory = ({
+export const playNotificationFactory = ({
   prev,
   current,
 }: {

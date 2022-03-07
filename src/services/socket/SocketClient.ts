@@ -4,7 +4,6 @@ import {
   SocketPayload,
   socketPayload,
   io,
-  MyStatsPayload,
   ConnectionOpenedPayload,
   PeerJoinedRoomPayload,
   PingPayload,
@@ -50,17 +49,34 @@ import {
   ImportRelayedGameRequestPayload,
   AnalysisImportArchivedGameRequestPayload,
   AnalysisImportRelayedGameRequestPayload,
-  SwitchRoomActivityRequestPayload, 
+  SwitchRoomActivityRequestPayload,
   SwitchGameToRelayAndGoLivePayload,
   RelayAdjustGameTimersRequestPayload,
   RelayGameUndoMoveRequestPayload,
-  RelayEndGameRequestPayload
+  RelayEndGameRequestPayload,
+  ToggleRoomInMeetupRequestPayload,
+  WarGameActionRequestPayload,
+  WarGameChallengeAcceptRequestPayload,
+  WarGameJoinRequestPayload,
+  WarGameChallengeDenyRequestPayload,
+  WarGameMoveRequestPayload,
+  WarGameChallengeOfferingRequestPayload,
+  WarGameDrawOfferingRequestPayload,
+  WarGameDrawOfferAcceptRequestPayload,
+  WarGameDrawOfferDenyRequestPayload,
+  WarGameRematchOfferingRequestPayload,
+  WarGameRematchAcceptRequestPayload,
+  WarGameRematchDenyRequestPayload,
+  WarGameResignationRequestPayload,
+  JoinedWarGameUpdatedPayload,
+  JoinedRoomAndWarGameUpdatedPayload,
 } from 'dstnd-io';
 import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
+import { console } from 'window-or-global';
+import { logsy } from 'src/lib/logsy';
 
 type ReceivableMessagesMap = {
   peerJoinedRoom: PeerJoinedRoomPayload;
-  myStats: MyStatsPayload;
   connectionOpened: ConnectionOpenedPayload;
 
   joinRoomSuccess: JoinRoomSuccessPayload;
@@ -89,7 +105,8 @@ type SendableMessagesMap = {
   joinRoomRequest: JoinRoomRequestPayload;
   leaveRoomRequest: LeaveRoomRequestPayload;
   switchRoomActivityRequestPayload: SwitchRoomActivityRequestPayload;
-  switchToRelayAndGoLive : SwitchGameToRelayAndGoLivePayload;
+  switchToRelayAndGoLive: SwitchGameToRelayAndGoLivePayload;
+  toggleRoomInMeetupRequestPayload: ToggleRoomInMeetupRequestPayload;
 
   //Chat
   broadcastChatMessage: BroadcastChatMessagePayload;
@@ -97,7 +114,7 @@ type SendableMessagesMap = {
   // Game
   gameResignationRequestPayload: GameResignationRequestPayload;
   gameMoveRequestPayload: GameMoveRequestPayload;
-  gameMoveRelayInputPayload: GameMoveRelayInputRequestPayload,
+  gameMoveRelayInputPayload: GameMoveRelayInputRequestPayload;
   gameJoinRequestPayload: GameJoinRequestPayload;
   gameDrawOfferingRequestPayload: GameDrawOfferingRequestPayload;
   gameDrawAcceptRequestPayload: GameDrawAcceptRequestPayload;
@@ -115,18 +132,35 @@ type SendableMessagesMap = {
   relayAdjustTimersRequestPayload: RelayAdjustGameTimersRequestPayload;
   relayUndoMoveRequestPayload: RelayGameUndoMoveRequestPayload;
   relayEndGameRequestPayload: RelayEndGameRequestPayload;
-  
+
   gameChallengeOfferingRequestPayload: GameChallengeOfferingRequestPayload;
   gameChallengeAcceptRequestPayload: GameChallengeAcceptRequestPayload;
   gameChallengeDenyRequestPayload: GameChallengeDenyRequestPayload;
 
+  //WarGame
+  warGameActionRequestPayload: WarGameActionRequestPayload;
+  warGameChallengeAcceptRequestPayload: WarGameChallengeAcceptRequestPayload;
+  warGameJoinRequestPayload: WarGameJoinRequestPayload;
+  warGameChallengeDenyRequestPayload: WarGameChallengeDenyRequestPayload;
+  warGameMoveRequestPayload: WarGameMoveRequestPayload;
+  warGameChallengeRequestPayload: WarGameChallengeOfferingRequestPayload;
+  warGameUpdatePayload: JoinedWarGameUpdatedPayload;
+  joinedRoomAndWarGameUpdatePayload: JoinedRoomAndWarGameUpdatedPayload;
+  warGameDrawOfferingRequestPayload: WarGameDrawOfferingRequestPayload;
+  warGameDrawOfferAcceptRequestPayload: WarGameDrawOfferAcceptRequestPayload;
+  warGameDrawOfferDenyRequestPayload: WarGameDrawOfferDenyRequestPayload;
+  warGameRematchOfferingRequestPayload: WarGameRematchOfferingRequestPayload;
+  warGameRematchAcceptRequestPayload: WarGameRematchAcceptRequestPayload;
+  warGameRematchDenyRequestPayload: WarGameRematchDenyRequestPayload;
+  warGameResignationRequestPayload: WarGameResignationRequestPayload;
+  
   // Analysis
   analysisMoveRequestPayload: AnalysisMoveRequestPayload;
   analysisRefocusRequestPayload: AnalysisRefocusRequestPayload;
   analysisDrawnShapesUpdatedRequestPayload: AnalysisDrawnShapesUpdatedRequestPayload;
-  analysisImportPgnRequestPayload: AnalysisImportPgnRequestPayload,
-  analysisImportArchivedGameRequestPayload: AnalysisImportArchivedGameRequestPayload,
-  analysisImportRelayedGameRequestPayload: AnalysisImportRelayedGameRequestPayload,
+  analysisImportPgnRequestPayload: AnalysisImportPgnRequestPayload;
+  analysisImportArchivedGameRequestPayload: AnalysisImportArchivedGameRequestPayload;
+  analysisImportRelayedGameRequestPayload: AnalysisImportRelayedGameRequestPayload;
 
   // This is the same as RTC Data, but over Socket for reliability
   peerMessage: {
@@ -154,36 +188,37 @@ export class SocketClient {
     });
 
     this.connection.addEventListener('message', ({ data }) => {
-      io.toResult(socketPayload.decode(JSON.parse(data))).map((msg) => {
-        // I don't like this at all but there's no way to map
-        //  the types to the message in a clean way in typescript
-        //  as it doesn't (yet) support mapping by tagged union kinds
-        // See: https://github.com/microsoft/TypeScript/issues/30581
-        switch (msg.kind) {
-          case 'connectionOpened':
-            this.pubsy.publish('connectionOpened', msg);
-            break;
-          case 'peerJoinedRoom':
-            this.pubsy.publish('peerJoinedRoom', msg);
-            break;
-          case 'joinedRoomUpdated':
-            this.pubsy.publish('joinedRoomUpdated', msg);
-            break;
-          case 'myStats':
-            this.pubsy.publish('myStats', msg);
-            break;
-          case 'joinRoomSuccess':
-            this.pubsy.publish('joinRoomSuccess', msg);
-            break;
-          case 'joinRoomFailure':
-            this.pubsy.publish('joinRoomFailure', msg);
-            break;
-          default:
-            break;
-        }
+      io.toResult(socketPayload.decode(JSON.parse(data)))
+        .map((msg) => {
+          // I don't like this at all but there's no way to map
+          //  the types to the message in a clean way in typescript
+          //  as it doesn't (yet) support mapping by tagged union kinds
+          // See: https://github.com/microsoft/TypeScript/issues/30581
+          switch (msg.kind) {
+            case 'connectionOpened':
+              this.pubsy.publish('connectionOpened', msg);
+              break;
+            case 'peerJoinedRoom':
+              this.pubsy.publish('peerJoinedRoom', msg);
+              break;
+            case 'joinedRoomUpdated':
+              this.pubsy.publish('joinedRoomUpdated', msg);
+              break;
+            case 'joinRoomSuccess':
+              this.pubsy.publish('joinRoomSuccess', msg);
+              break;
+            case 'joinRoomFailure':
+              this.pubsy.publish('joinRoomFailure', msg);
+              break;
+            default:
+              break;
+          }
 
-        this.pubsy.publish('onMessage', msg);
-      });
+          this.pubsy.publish('onMessage', msg);
+        })
+        .mapErr((e) => {
+          logsy.error('Socket Debug error', e);
+        });
     });
   }
 

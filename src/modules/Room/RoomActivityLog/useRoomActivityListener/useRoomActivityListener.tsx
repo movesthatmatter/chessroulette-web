@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { notificationFactory } from './utils/notificationFactory';
+import { playNotificationFactory } from './utils/notificationFactory';
 import { useStateWithPrev } from 'src/lib/hooks/useStateWithPrev';
 import useDebouncedEffect from 'use-debounced-effect';
 import {
@@ -9,30 +9,49 @@ import {
   resolveOfferNotificationAction,
 } from '../redux/actions';
 import { JoinedRoom } from 'src/modules/Room/types';
+import { notificationFactoryWarGame } from './utils/notificationFactoryWarGame';
 
 // This could depend on the room ID as well
 export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
   const dispatch = useDispatch();
 
   const game = room?.currentActivity.type === 'play' ? room?.currentActivity.game : undefined;
+  const warGame = room?.currentActivity.type === 'warGame' ? room.currentActivity.game : undefined;
   const offer = room?.currentActivity.type === 'play' ? room?.currentActivity.offer : undefined;
-  const pendingRoomChallenge = room?.pendingChallenges
+  const warOffer = room?.currentActivity.type === 'warGame' ? room.currentActivity.offer : undefined;
+  const pendingPlayRoomChallenge = (room?.activity.type === 'play' &&  room?.pendingChallenges)
     ? Object.values(room.pendingChallenges)[0]
     : undefined;
-  const [stateWithPrev, setStateWithPrev] = useStateWithPrev({ game, offer, pendingRoomChallenge });
+
+    const pendingWarRoomChallenge = (room?.activity.type === 'warGame' &&  room?.pendingChallenges)
+    ? Object.values(room.pendingChallenges)[0]
+    : undefined;
+
+  const [playStateWithPrev, setPlayStateWithPrev] = useStateWithPrev({ game, offer, pendingPlayRoomChallenge });
+  const [warStateWithPrev, setWarStateWithPrev] = useStateWithPrev({ game: warGame, offer: warOffer, pendingWarRoomChallenge });
 
   useDebouncedEffect(
     () => {
       // if (game) {
-      setStateWithPrev({ game, offer, pendingRoomChallenge });
+      setPlayStateWithPrev({ game, offer, pendingPlayRoomChallenge });
       // }
     },
     150, // This should be enough time for the game & offer to reconcile
-    [game, offer, pendingRoomChallenge]
+    [game, offer, pendingPlayRoomChallenge]
+  );
+
+  useDebouncedEffect(
+    () => {
+      // if (game) {
+      setWarStateWithPrev({ game: warGame, offer: warOffer,  pendingWarRoomChallenge });
+      // }
+    },
+    150, // This should be enough time for the game & offer to reconcile
+    [warGame, warOffer, pendingWarRoomChallenge]
   );
 
   useEffect(() => {
-    const nextNotification = notificationFactory(stateWithPrev);
+    const nextNotification = playNotificationFactory(playStateWithPrev);
 
     if (!nextNotification) {
       return;
@@ -48,7 +67,28 @@ export const useRoomActivityListener = (room: JoinedRoom | undefined) => {
         })
       );
     }
-  }, [stateWithPrev]);
+  }, [playStateWithPrev]);
+
+  useEffect(() => {
+    const nextNotification = notificationFactoryWarGame(warStateWithPrev);
+
+    if (!nextNotification) {
+      return;
+    }
+
+    if (nextNotification.type === 'add') {
+      dispatch(addNotificationAction({ notification: nextNotification.notification }));
+    } else if (nextNotification.type === 'update' && nextNotification.status !== 'pending') {
+      dispatch(
+        resolveOfferNotificationAction({
+          notificationId: nextNotification.id,
+          status: nextNotification.status,
+        })
+      );
+    }
+  }, [warStateWithPrev]);
+
+  //TODO - add warGame notification too
 
   useEffect(() => {
     return () => {

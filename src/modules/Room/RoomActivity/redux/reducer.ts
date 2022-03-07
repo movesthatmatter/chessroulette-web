@@ -9,6 +9,7 @@ import {
   switchRoomActivityAction,
   updateCurrentAnalysisAction,
   updateJoinedGameAction,
+  updateJoinedWarGameAction,
   updateRelayGameAction,
   updateRoomActivityAction,
 } from './actions';
@@ -36,6 +37,22 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       prev.type === 'play'
     ) {
       // But the Game Id has changed replace the old activity with the new
+      if (payload.room.activity.gameId !== prev.game?.id) {
+        return payload.room.activity;
+      }
+
+      // Update for the Offer and the Status
+      return {
+        ...payload.room.activity,
+        game: prev.game,
+      };
+    }
+
+    if (
+      //If the activity is "WarGame"
+      payload.room.activity.type === 'warGame' &&
+      prev.type === 'warGame'
+    ) {
       if (payload.room.activity.gameId !== prev.game?.id) {
         return payload.room.activity;
       }
@@ -90,6 +107,17 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
       ...prev,
       game: nextGame,
     };
+  }),
+
+  handleAction(updateJoinedWarGameAction, (prev, {payload: nextGame}) => {
+    if (prev.type !== 'warGame') {
+      return prev;
+    }
+
+    return {
+      ...prev,
+      game: nextGame
+    }
   }),
 
   handleAction(updateCurrentAnalysisAction, (prev, { payload: nextAnalysis }) => {

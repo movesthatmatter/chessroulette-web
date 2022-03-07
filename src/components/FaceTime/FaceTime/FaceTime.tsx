@@ -1,18 +1,18 @@
 import React, { ReactNode } from 'react';
-import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { PeerStreamingConfig } from 'src/services/peers';
+import { createUseStyles } from 'src/lib/jss';
 import { VideoBox, VideoBoxProps } from 'src/components/VideoBox';
 import { CustomTheme, fonts, onlyMobile } from 'src/theme';
 import { Text } from 'src/components/Text';
 import { AspectRatio, AspectRatioProps } from 'src/components/AspectRatio';
-import { console } from 'window-or-global';
+import { colors } from 'src/theme/colors';
+import { PeerStreamingConfig } from 'src/providers/PeerProvider';
 
 export type FaceTimeProps = Omit<VideoBoxProps, 'stream'> & {
-  aspectRatio?: AspectRatioProps['aspectRatio'];
   streamConfig: PeerStreamingConfig;
   streamingOffFallback?: React.ReactNode;
 
+  aspectRatio?: AspectRatioProps['aspectRatio'];
   containerClassName?: string;
   label?: string;
   labelClassName?: string;
@@ -42,12 +42,6 @@ export const FaceTime: React.FC<FaceTimeProps> = ({
 }) => {
   const cls = useStyles();
 
-  // useEffect(() => {
-  // }, [
-  //   streamConfig
-  // ]);
-  // console.log('FacetimeStreaming config updated', streamConfig);
-
   return (
     <div className={cx(cls.container, containerClassName)}>
       <AspectRatio aspectRatio={aspectRatio}>
@@ -63,9 +57,7 @@ export const FaceTime: React.FC<FaceTimeProps> = ({
         )}
         <div className={cls.overlayedContainer}>
           {headerOverlay && <div className={cls.headerWrapper}>{headerOverlay}</div>}
-          <div className={cls.mainWrapper}>
-            {mainOverlay}
-          </div>
+          <div className={cls.mainWrapper}>{mainOverlay}</div>
           <div className={cls.footerWrapper}>
             {label && (
               <div
@@ -86,7 +78,7 @@ export const FaceTime: React.FC<FaceTimeProps> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   container: {
     position: 'relative',
   },
@@ -99,6 +91,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
 
     display: 'flex',
     flexDirection: 'column',
+    zIndex: 9,
   },
   mainWrapper: {
     flex: 1,
@@ -113,6 +106,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   labelWrapper: {
     position: 'relative',
     textAlign: 'center',
+    zIndex: 99,
   },
   labelWrapperLeft: {
     textAlign: 'left',
@@ -121,7 +115,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     textAlign: 'right',
   },
   label: {
-    color: theme.colors.white,
+    color: colors.universal.white,
     ...fonts.subtitle1,
 
     paddingLeft: '12px',

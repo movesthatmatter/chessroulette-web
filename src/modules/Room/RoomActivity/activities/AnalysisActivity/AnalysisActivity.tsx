@@ -90,9 +90,6 @@ export const AnalysisActivity: React.FC<AnalysisActivityProps> = ({
               onImportedRelayedGame={onImportedRelayedGame}
               homeColor={homeColor}
               gameAndPlayers={gameAndPlayers}
-
-              // TODO: Take out for regular analysis!
-              useEngine={true}
             />
           </aside>
           <div className={cls.boardContainer} style={{ height: boardSize }}>

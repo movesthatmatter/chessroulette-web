@@ -97,7 +97,7 @@ export const EventSchedule: React.FC<Props> = ({ event, streamersByUsername }) =
                         source: 'archivedGame',
                         gameId: focusedGame.id,
                       },
-                      type: 'private',
+                      isPrivate: true,
                     }}
                   />
                 </div>

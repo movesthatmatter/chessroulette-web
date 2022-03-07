@@ -15,6 +15,7 @@ export const CreatePlayChallengeStep: React.FC<Props> = ({
   gameSpecs = {
     timeLimit: 'rapid10',
     preferredColor: 'random',
+    gameType: 'chess',
   },
 }) => {
   const wizardProps = useWizard();

@@ -1,4 +1,5 @@
 import { isDeepEqual } from 'src/lib/util';
+import { console } from 'window-or-global';
 import { BaseRoomActivity } from '../../RoomActivity/redux/types';
 
 export const hasRoomActivityChanged = (current?: BaseRoomActivity, prev?: BaseRoomActivity) => {
@@ -25,6 +26,34 @@ export const hasRoomActivityChanged = (current?: BaseRoomActivity, prev?: BaseRo
     }
 
     if (prev.game?.pgn !== current.game?.pgn) {
+      return true;
+    }
+
+    // Offer
+    if (current.offer?.id !== prev?.offer?.id) {
+      return true;
+    }
+  }
+
+  // WarGame
+  if (prev?.type === 'warGame' && current?.type === 'warGame') {
+    if (prev.game?.lastActivityAt !== current.game?.lastActivityAt) {
+      return true;
+    }
+
+    if (prev.game?.state !== current.game?.state) {
+      return true;
+    }
+
+    if (prev.game?.fen !== current.game?.fen) {
+      return true;
+    }
+
+    if (prev.game?.pieces.positions !== current.game?.pieces.positions) {
+      return true;
+    }
+
+    if (prev.game?.pieces.healths !== current.game?.pieces.healths) {
       return true;
     }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, useLocation } from 'react-router-dom';
+import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import { LichessAuthCallbackPage } from './vendors/lichess/LichessAuthCallbackPage';
 import { LandingPage } from './modules/Landing/LandingPage';
 import { FacebookAuthCallbackPage } from './vendors/facebook';
@@ -52,6 +52,7 @@ export const Routes: React.FC<Props> = () => {
         <PeerProviderContainer>
           <Route path="/relay-input" strict exact component={RelayInputRoute} />
           <Route exact strict path="/r/:slug" key={location.key} component={RoomRoute} />
+          <Route exact strict path="/classroom/:slug" key={location.key} component={RoomRoute} />
 
           {/* <Route path="/wcc" exact strict key={location.key} component={BroadcastPage} /> */}
           <Route
@@ -61,7 +62,6 @@ export const Routes: React.FC<Props> = () => {
             key={location.key}
             component={CuratedEventRoute}
           />
-          {/* <Route path="/events" exact strict key={location.key} component={CuratedEventsRoute} /> */}
           {/* console/admin routes */}
           <Route path="/e4e5f4Be7/console/relay-input" strict exact component={RelayInputRoute} />
           <Route

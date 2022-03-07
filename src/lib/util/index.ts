@@ -2,6 +2,7 @@ import { differenceInMilliseconds } from 'date-fns';
 import humanizeDuration, { Humanizer } from 'humanize-duration';
 import { RoomRecord } from 'dstnd-io';
 import { diff } from 'deep-object-diff';
+import { ScheduledRoomRecord } from 'dstnd-io/dist/resourceCollections/room/records/records';
 
 export const noop = () => {
   // do nothing
@@ -94,7 +95,7 @@ export const prettyCountdown = (
   }
 ) => format(ms, options);
 
-export const toRoomUrlPath = (room: RoomRecord) => `/r/${room.slug}`;
+export const toRoomUrlPath = (room: RoomRecord | ScheduledRoomRecord) => room.type && room.type === 'classroom' ? `/classroom/${room.slug}` : `/r/${room.slug}`;
 export const toChallengeUrlPath = (challenge: { slug: string }) => `r/${challenge.slug}`;
 
 export const hasOwnProperty = <X extends {}, Y extends PropertyKey>(

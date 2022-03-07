@@ -16,7 +16,8 @@ export const defaultStory = () => (
         source: 'archivedGame',
         gameId: '23',
       },
-      type: 'private',
+      type: 'room',
+      isPrivate: true,
     }}
   />
 );

@@ -5,6 +5,7 @@ import { BaseRoomActivity } from '../redux/types';
 import { RoomActivity, RoomActivityParticipant } from '../types';
 import { UserInfoRecord } from 'dstnd-io';
 import { toRoomRelayActivity } from '../activities/RelayActivity/utils';
+import { toRoomWarGameActivity } from '../activities/WarGameActivity/utils';
 
 export const toRoomActivity = (
   currentRoomActivity: BaseRoomActivity,
@@ -21,6 +22,10 @@ export const toRoomActivity = (
 
   if (currentRoomActivity.type === 'relay'){
     return toRoomRelayActivity(currentRoomActivity, members);
+  }
+
+  if (currentRoomActivity.type === 'warGame') {
+    return toRoomWarGameActivity(currentRoomActivity, members);
   }
 
   return {

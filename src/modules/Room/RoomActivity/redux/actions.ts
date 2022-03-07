@@ -1,7 +1,7 @@
 import { createAction } from 'deox';
 import { resolve } from 'dns';
 import { AnalysisRecord, GameRecord } from 'dstnd-io';
-import { Game } from 'src/modules/Games';
+import { Game, WarGame } from 'src/modules/Games';
 import { BaseRoomActivity } from './types';
 
 export const switchRoomActivityAction = createAction(
@@ -18,6 +18,11 @@ export const updateJoinedGameAction = createAction(
   'UpdateJoinedGame',
   (resolve) => (p: Game) => resolve(p),
 );
+
+export const updateJoinedWarGameAction = createAction(
+  'UpdateJoinedWarGame',
+  (resolve) => (p: WarGame) => resolve(p)
+)
 
 export const updateCurrentAnalysisAction = createAction(
   'UpdateCurrentAnalysisAction',

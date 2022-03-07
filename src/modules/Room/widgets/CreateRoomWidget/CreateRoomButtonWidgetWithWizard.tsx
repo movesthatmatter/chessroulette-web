@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { CreateRoomRequest } from 'dstnd-io';
 import { Button, ButtonProps } from 'src/components/Button';
 import { noop } from 'src/lib/util';
 import { usePeerState } from 'src/providers/PeerProvider';
