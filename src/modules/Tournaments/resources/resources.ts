@@ -1,47 +1,57 @@
 import { Resources } from 'chessroulette-io';
 import { http } from 'src/lib/http';
-import { promiseToAsyncResult } from 'src/lib/utils';
 
-const {resource : getAllTournamentsResource} = Resources.Collections.ChallongeTournaments.GetChallongeTournaments;
+const {
+  resource: getAllTournamentsResource,
+} = Resources.Collections.ChallongeTournaments.GetChallongeTournaments;
 
 export const getAllChallongeTournaments = (
   req: Resources.Util.RequestOf<typeof getAllTournamentsResource>
 ) => {
-  // return getAllTournamentsResource.request(req, (params) => http.get('api/tournaments/all', { params }))
-  return promiseToAsyncResult(http.get('api/tournaments/all', { params:req }))
-}
+  return getAllTournamentsResource.request(req, (params) => http.get('api/tournaments/all', { params }));
+};
 
-const {resource : getTournamentByID} = Resources.Collections.ChallongeTournaments.GetChallongeTournamentByID;
+const {
+  resource: getTournamentByID,
+} = Resources.Collections.ChallongeTournaments.GetChallongeTournamentByID;
 
 export const getTournament = (
   slug: string,
-  req?: Resources.Util.RequestOf<typeof getTournamentByID>
+  req: Resources.Util.RequestOf<typeof getTournamentByID>
 ) => {
-  // return getAllTournamentsResource.request(req, (params) => http.get('api/tournaments/all', { params }))
-  return promiseToAsyncResult(http.get(`api/tournaments/${slug}`))
-}
+  return getTournamentByID.request(req, (params) =>
+    http.get(`api/tournaments/show/${slug}`, { params })
+  );
+};
 
-const {resource: createParticipant} = Resources.Collections.ChallongeTournaments.CreateChallongeTournamentParticipant
+const {
+  resource: registerParticipant,
+} = Resources.Collections.ChallongeTournaments.CreateChallongeTournamentParticipant;
 
 export const createParticipantForTournament = (
-  req : Resources.Util.RequestOf<typeof createParticipant>
+  req: Resources.Util.RequestOf<typeof registerParticipant>
 ) => {
-  return promiseToAsyncResult(http.post(`api/tournaments/register`, {params: req}))
-}
+  return registerParticipant.request(req, (data) => http.post(`api/tournaments/register`, data));
+};
 
-const {resource: createTournamentResource} = Resources.Collections.ChallongeTournaments.CreateChallongeTournament;
+const {
+  resource: createTournamentResource,
+} = Resources.Collections.ChallongeTournaments.CreateChallongeTournament;
 
 export const createTournament = (
   req: Omit<Resources.Util.RequestOf<typeof createTournamentResource>, 'start_at'>
 ) => {
-  return promiseToAsyncResult(http.post(`api/tournaments/create`, {params: req}))
-}
+  return createTournamentResource.request(req, (data) => http.post(`api/tournaments/create`, data));
+};
 
-const {resource: checkUser } = Resources.Collections.ChallongeTournaments.CheckIfUserIsParticipant;
+const { resource: checkUser } = Resources.Collections.ChallongeTournaments.CheckIfUserIsParticipant;
 
-export const checkIfUserIsParticipant = (
-  req: Resources.Util.RequestOf<typeof checkUser>
-) => {
-  console.log('check user with req ==>', req)
-  return checkUser.request( req, (data) => http.post('api/tournaments/checkuser', data))
-}
+export const checkIfUserIsParticipant = (req: Resources.Util.RequestOf<typeof checkUser>) => {
+  return checkUser.request(req, (params) => http.get('api/tournaments/check-user', { params }));
+};
+
+const { resource: getMatches } = Resources.Collections.ChallongeTournaments.GetAllMatches;
+
+export const getAllMatches = (req: Resources.Util.RequestOf<typeof getMatches>) => {
+  return getMatches.request(req, (params) => http.get('api/tournaments/matches', { params }));
+};

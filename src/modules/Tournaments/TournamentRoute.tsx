@@ -1,4 +1,7 @@
-import { ChallongeTournamentRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
+import {
+  ChallongeMatchRecord,
+  ChallongeTournamentRecord,
+} from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from 'src/components/Button';
@@ -7,7 +10,13 @@ import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { useAuthenticatedUser } from 'src/services/Authentication';
 import { console } from 'window-or-global';
-import { checkIfUserIsParticipant, createParticipantForTournament, getTournament } from './resources';
+import { Match } from './components/Match/Match';
+import {
+  checkIfUserIsParticipant,
+  createParticipantForTournament,
+  getAllMatches,
+  getTournament,
+} from './resources';
 
 type Props = {};
 
@@ -17,26 +26,42 @@ export const TournamentRoute: React.FC<Props> = (props) => {
   const [tournament, setTournament] = useState<ChallongeTournamentRecord>();
   const [userAlreadyParticipant, setUserAlreadyParticipant] = useState(false);
   const user = useAuthenticatedUser();
+  const [matches, setMatches] = useState<ChallongeMatchRecord[]>();
+  const [userParticipantId, setUserParticipantId] = useState<string | null>(null);
 
   useEffect(() => {
-    getTournament(params.slug).map((result) => {
-      setTournament(result.data.tournament as ChallongeTournamentRecord)
+    getTournament(params.slug, { include_participants: 1 }).map(({ tournament }) => {
+      setTournament(tournament as ChallongeTournamentRecord);
+      if (tournament.participants && tournament.participants.length > 0) {
+        tournament.participants.forEach((participant) => {
+          if (participant.misc === user?.id) {
+            setUserParticipantId(participant.id.toString());
+          }
+        });
+      }
     });
   }, []);
 
   useEffect(() => {
     if (tournament && user) {
       checkIfUserIsParticipant({
-        userId : user.id,
-        tournamentId: tournament.id.toString()
-      })
-      .map(({result}) => setUserAlreadyParticipant(result))
+        userId: user.id,
+        tournamentId: tournament.id.toString(),
+      }).map(({ result }) => setUserAlreadyParticipant(result));
     }
-  },[tournament, user])
+  }, [tournament, user]);
+
+  useEffect(() => {
+    if (tournament) {
+      getAllMatches({ tournamentId: tournament.id.toString() }).map((matches) =>
+        setMatches(matches.map((m) => m.match))
+      );
+    }
+  }, [tournament]);
 
   function joinTournament() {
     if (!user) {
-      console.log('AUTHENTICATE!!')
+      console.log('AUTHENTICATE!!');
       return;
     }
     if (tournament?.url) {
@@ -47,12 +72,12 @@ export const TournamentRoute: React.FC<Props> = (props) => {
         misc: user.id,
         name: user.name,
       })
-      .map((result) => {
-        console.log('Successful Joined')
-      })
-      .mapErr((e) => {
-        console.log('eRROR joining tournament',e)
-      })
+        .map((result) => {
+          console.log('Successful Joined');
+        })
+        .mapErr((e) => {
+          console.log('eRROR joining tournament', e);
+        });
     }
   }
 
@@ -61,10 +86,22 @@ export const TournamentRoute: React.FC<Props> = (props) => {
       <div className={cls.container}>
         <Text>Current Tournament: {tournament?.name}</Text>
         <Text>Participants: {tournament?.participants_count}</Text>
-        <br/>
+        <br />
         {userAlreadyParticipant && <Text>You already participate!</Text>}
-        <Button type="primary" label="Join" onClick={() => joinTournament()} 
-        disabled={userAlreadyParticipant}/>
+        <Button
+          type="primary"
+          label="Join"
+          onClick={() => joinTournament()}
+          disabled={userAlreadyParticipant}
+        />
+        <br />
+        <Text>Matches :</Text>
+        <div className={cls.container}>
+          {matches &&
+            matches.map((match) => (
+              <Match match={match} participating={userParticipantId === match.id.toString()} />
+            ))}
+        </div>
       </div>
     </Page>
   );

@@ -31,7 +31,7 @@ export const TournamentsPage: React.FC<Props> = (props) => {
     })
       .map((result) => {
         setAllTournaments(() => {
-          return (result.data as GetAllChallongeTournamentResponsePayload[]).map(
+          return result.map(
             (tourney) => tourney.tournament
           );
         });
