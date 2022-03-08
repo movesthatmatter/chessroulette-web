@@ -1,6 +1,8 @@
 {
   "root": "build/",
   "routes": {
+    "watch": "watch.html",
+    "tos": "tos.html",
     "/**": "index.html"
   },
   "https_only": true
