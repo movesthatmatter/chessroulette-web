@@ -166,52 +166,50 @@ export const DesktopLandingPage: React.FC<Props> = () => {
           )}
           <div style={{ height: spacers.large }} />
 
-          {topPlayers ? (
-            <div>
-              <Text size="subtitle2" className={cls.title}>
-                Top Players
-              </Text>
+          <div>
+            <Text size="subtitle2" className={cls.title}>
+              Top Players
+            </Text>
+            {topPlayers ? (
               <TopPlayers players={topPlayers} />
-            </div>
-          ) : (
-            <LoaderPlaceholder aspectRatio={2} />
-          )}
+            ) : (
+              <LoaderPlaceholder aspectRatio={2} />
+            )}
+          </div>
 
+          <div style={{ height: spacers.large }} />
+          <Text size="subtitle2" className={cls.title}>
+            Game of the Day
+          </Text>
           {gameOfDay ? (
-            <>
-              <div style={{ height: spacers.large }} />
-              <Text size="subtitle2" className={cls.title}>
-                Game of the Day
-              </Text>
-              <ChessGameDisplay
-                game={gameOfDay}
-                className={cls.board}
-                hoveredComponent={
-                  <div
-                    style={{
-                      flex: 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      zIndex: 99,
+            <ChessGameDisplay
+              game={gameOfDay}
+              className={cls.board}
+              hoveredComponent={
+                <div
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 99,
+                  }}
+                >
+                  <CreateRoomButtonWidgetFromSpecs
+                    label="Analyze"
+                    type="primary"
+                    createRoomSpecs={{
+                      activity: {
+                        activityType: 'analysis',
+                        source: 'archivedGame',
+                        gameId: gameOfDay.id,
+                      },
+                      isPrivate: true,
                     }}
-                  >
-                    <CreateRoomButtonWidgetFromSpecs
-                      label="Analyze"
-                      type="primary"
-                      createRoomSpecs={{
-                        activity: {
-                          activityType: 'analysis',
-                          source: 'archivedGame',
-                          gameId: gameOfDay.id,
-                        },
-                        isPrivate: true,
-                      }}
-                    />
-                  </div>
-                }
-              />
-            </>
+                  />
+                </div>
+              }
+            />
           ) : (
             <LoaderPlaceholder aspectRatio={0.7} />
           )}
@@ -290,11 +288,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
             />
             <div className={cls.verticalSpacer} />
           </div>
-          <div
-            style={{
-              flex: 1,
-            }}
-          >
+          <div style={{ flex: 1 }}>
             <DiscordReactEmbed
               server={config.DISCORD_SERVER_ID}
               channel={config.DISCORD_CHANNEL_ID}

@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import { AuthenticationProvider } from './services/Authentication';
 import { Routes } from './Routes';
 import { JssProvider, ThemeProvider, createGenerateId } from 'react-jss';
-import config from './config';
 import { GA } from './services/Analytics';
 import { ScrollToTop } from './components/ScrollToTop';
 import { LichessProvider } from './modules/LichessPlay/LichessAPI/LichessProvider';
 import { FeedbackProvider } from './providers/FeedbackProvider/FeedbackProvider';
 import { useColorTheme } from './theme/hooks/useColorTheme';
 import { themes } from './theme';
+import { PeerConnectionProvider } from './providers/PeerConnectionProvider';
 
 const generateId = createGenerateId();
 
@@ -32,9 +32,13 @@ function App() {
           generateId={generateId}
           id={{ minify: true }}
         >
-          <ThemeProvider theme={theme.name === 'lightDefault' ? themes.lightDefault : themes.darkDefault}>
+          <ThemeProvider
+            theme={theme.name === 'lightDefault' ? themes.lightDefault : themes.darkDefault}
+          >
             <FeedbackProvider>
-              <Routes />
+              <PeerConnectionProvider>
+                <Routes />
+              </PeerConnectionProvider>
               <ScrollToTop />
             </FeedbackProvider>
           </ThemeProvider>

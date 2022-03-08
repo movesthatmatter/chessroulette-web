@@ -1,4 +1,3 @@
-export * from './PeerProvider';
 export * from './redux/selectors';
 export * from './hooks/usePeerState';
 export * from './records';
