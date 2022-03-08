@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import cx from 'classnames';
 import config from 'src/config';
 import { Page } from 'src/components/Page';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
@@ -32,9 +33,11 @@ import { StreamersCollection } from './components/StreamersCollection';
 import { TopPlayers } from './components/TopPlayers';
 import { LiveStreamCard } from 'src/modules/Live/components/LiveStreamCard/LiveStreamCard';
 
-type Props = {};
+type Props = {
+  pageClassName?: string;
+};
 
-export const DesktopLandingPage: React.FC<Props> = () => {
+export const DesktopLandingPage: React.FC<Props> = ({ pageClassName }) => {
   const cls = useStyles();
   useBodyClass([cls.indexBackground]);
   const user = useAnyUser();
@@ -119,7 +122,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
     <Page
       name="Home"
       contentClassName={cls.pageContent}
-      containerClassname={cls.pageContainer}
+      containerClassname={cx(cls.pageContainer, pageClassName)}
       stretched
     >
       <div className={cls.containerLanding}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
-import { onlyMobile } from 'src/theme';
+import { onlyDesktop, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { Text } from '../Text';
 import { Link } from 'react-router-dom';
@@ -115,7 +115,7 @@ export const Footer: React.FC<Props> = () => {
 const useStyles = createUseStyles((theme) => ({
   topContainer: {
     background: theme.colors.neutralLightest,
-    paddingBottom: '8px',
+    paddingBottom: spacers.small,
     ...theme.floatingShadow,
     position: 'relative',
   },
@@ -132,7 +132,7 @@ const useStyles = createUseStyles((theme) => ({
     margin: '0 auto',
   },
   content: {
-    padding: '16px 16px',
+    padding: spacers.default,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -142,6 +142,7 @@ const useStyles = createUseStyles((theme) => ({
       justifyContent: 'center',
       alignContent: 'center',
       alignItems: 'center',
+      padding: `${spacers.small} ${spacers.small} ${spacers.default}`,
 
       ...({
         '& $link': {
@@ -154,6 +155,8 @@ const useStyles = createUseStyles((theme) => ({
   link: {
     color: theme.colors.neutralLightest,
     textDecoration: 'none',
+    display: 'block',
+    textAlign: 'center',
 
     '&:hover': {
       borderBottom: `2px solid ${theme.colors.neutralDarkest}`,
@@ -181,7 +184,9 @@ const useStyles = createUseStyles((theme) => ({
     color: theme.text.baseColor,
   },
   linkContainerSpacer: {
-    paddingLeft: spacers.larger,
+    ...onlyDesktop({
+      paddingLeft: spacers.larger,
+    }),
   },
   row: {
     paddingTop: spacers.default,
