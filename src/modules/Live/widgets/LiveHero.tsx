@@ -28,7 +28,7 @@ export const LiveHero: React.FC<Props> = ({ featuredStreamer, muted = true, show
   return (
     <div className={cls.container}>
       <AspectRatio aspectRatio={aspectRatio}>
-        {isReady || <div className={cx(cls.videoFallback)} />}
+        {isReady || <div className={cls.videoFallback}/>}
         <ReactTwitchEmbedVideo
           key={featuredStreamer.id}
           onReady={() => setIsReady(true)}
@@ -126,7 +126,7 @@ const useStyles = createUseStyles((theme) => ({
     height: '100%',
     background: theme.depthBackground.backgroundColor,
     ...effects.hardBorderRadius,
-    overflow: 'hidden',
+   overflow: 'hidden',
     ...(theme.name === 'darkDefault' ? effects.softFloatingShadowDarkMode : effects.floatingShadow),
   },
   bottomContainer: {
