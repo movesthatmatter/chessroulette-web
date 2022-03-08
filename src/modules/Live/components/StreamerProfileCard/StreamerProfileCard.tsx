@@ -7,6 +7,8 @@ import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import { Streamer } from '../../types';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
+import { onlyDesktop, onlyMobile } from 'src/theme';
 
 type Props = {
   streamer: Streamer;
@@ -27,6 +29,9 @@ export const StreamerProfileCard: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
   const { theme } = useColorTheme();
+  const device = useDeviceSize();
+
+  const avatarSize = useMemo(() => (device.isDesktop ? 54 : 36), [device]);
 
   const description = useMemo(() => {
     return streamer.description.length > descriptionLength
@@ -39,7 +44,7 @@ export const StreamerProfileCard: React.FC<Props> = ({
       <div className={cx(cls.compactContainer, containerClassName)}>
         <AnchorLink href={`https://twitch.tv/${streamer.username}`} target="_blank">
           <div className={cls.compactMain}>
-            <Avatar imageUrl={streamer.profileImageUrl} size={60} />
+            <Avatar imageUrl={streamer.profileImageUrl} size={avatarSize} />
             <Text size="small1" className={cls.displayName}>
               {streamer.displayName}
             </Text>
@@ -57,7 +62,7 @@ export const StreamerProfileCard: React.FC<Props> = ({
         visitedColor={theme.colors.black}
         hoverColor={theme.colors.black}
       >
-        <Avatar imageUrl={streamer.profileImageUrl} size={60} />
+        <Avatar imageUrl={streamer.profileImageUrl} size={avatarSize} />
       </AnchorLink>
       <div className={cls.expandedInfo}>
         <AnchorLink href={`https://twitch.tv/${streamer.username}`} target="_blank">
@@ -86,9 +91,15 @@ const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
     overflow: 'hidden',
+
+    ...onlyMobile({
+      flexDirection: 'column',
+    }),
   },
   expandedInfo: {
-    paddingLeft: spacers.default,
+    ...onlyDesktop({
+      paddingLeft: spacers.default,
+    }),
   },
   compactContainer: {
     display: 'inline-block',
