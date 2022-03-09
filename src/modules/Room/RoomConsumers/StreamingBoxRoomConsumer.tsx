@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { DarkModeSwitch } from 'src/components/DarkModeSwitch/DarkModeSwitch';
 import {
   MultiFaceTimeCompact,
@@ -26,16 +26,19 @@ const StreamingBoxRoomConsumerWithGivenRoom: React.FC<Props & { room: Room }> = 
   const cls = useStyles();
   const { state, onFocus } = useStreamingPeers({ peersMap: room.peers });
 
-  if (!state.ready) {
-    // Show Loader
-    return null;
-  }
+  const reel = useMemo(() => {
+    return state.ready
+      ? {
+          streamingPeers: state.reel,
+          myStreamingPeerId: room.me.userId,
+          focusedStreamingPeer: state.inFocus,
+        }
+      : undefined;
+  }, [state]);
 
   return (
     <MultiFaceTimeCompact
-      reelStreamingPeers={state.reel}
-      myStreamingPeerId={room.me.userId}
-      focusedStreamingPeer={state.inFocus}
+      reel={reel}
       onFocus={onFocus}
       {...props}
       headerOverlay={({ inFocus }) => (
@@ -43,7 +46,7 @@ const StreamingBoxRoomConsumerWithGivenRoom: React.FC<Props & { room: Room }> = 
           <Logo withBeta={false} asLink={false} mini withOutline className={cls.logoStreamingBox} />
           <div style={{ flex: 1, ...hideOnDesktop }} />
           <div className={cls.peerInfoWrapper}>
-            <PeerInfo darkBG reversed peerUserInfo={inFocus} />
+            {inFocus && <PeerInfo darkBG reversed peerUserInfo={inFocus} />}
             {props.isMobile && (
               <div style={{ marginTop: '10px', alignSelf: 'flex-end' }}>
                 <DarkModeSwitch />

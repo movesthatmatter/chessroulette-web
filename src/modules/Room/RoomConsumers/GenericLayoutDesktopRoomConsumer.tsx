@@ -117,7 +117,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                               type="primary"
                               clear
                               onClick={() => toggleInMeetup(true)}
-                              // style={{ marginBottom: '0px' }}
+                              style={{ marginBottom: '0px' }}
                             />
                           </div>
                         )}

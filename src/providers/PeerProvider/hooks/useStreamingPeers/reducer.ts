@@ -1,17 +1,8 @@
 import { createAction, createReducer } from 'deox';
 import { StreamingPeer, StreamingPeersMap } from '../../types';
+import { StreamingPeersState } from './types';
 
-type State =
-  | {
-      ready: false;
-    }
-  | {
-      ready: true;
-      streamersMap: StreamingPeersMap;
-      inFocus: StreamingPeer;
-      reel: StreamingPeer[];
-      reelByUserId: Record<StreamingPeer['user']['id'], number>;
-    };
+type State = StreamingPeersState;
 
 const getStreamerOrFallback = (
   streamersMap: StreamingPeersMap,

@@ -66,9 +66,11 @@ const Component: React.FC<ComponentProps> = ({ focusOnPeerId, room, ...props }) 
   return (
     <div style={{ padding: '30px' }}>
       <MultiFaceTimeCompact
-        myStreamingPeerId={room.me.userId}
-        reelStreamingPeers={state.reel}
-        focusedStreamingPeer={state.inFocus}
+        reel={{
+          streamingPeers: state.reel,
+          focusedStreamingPeer: state.inFocus,
+          myStreamingPeerId: room.me.userId,
+        }}
         onFocus={onFocus}
         // {...(focusOnPeerId &&
         //   props.streamingPeersMap[focusOnPeerId] && {
@@ -120,9 +122,9 @@ export const oneOnOneWithFooterAndHeader = () => (
       return (
         <Component
           room={room}
-          headerOverlay={({ inFocus }) => <div>Header: {inFocus.name}</div>}
+          headerOverlay={({ inFocus }) => <div>Header: {inFocus?.name}</div>}
           mainOverlay={() => <div>Main</div>}
-          footerOverlay={({ inFocus }) => <div>Footer: {inFocus.name}</div>}
+          footerOverlay={({ inFocus }) => <div>Footer: {inFocus?.name}</div>}
         />
       );
     }}
@@ -138,8 +140,8 @@ export const multipleStreamsWithFooterAndHeader = () => (
       return (
         <Component
           room={room}
-          headerOverlay={({ inFocus }) => <div>Header: {inFocus.name}</div>}
-          footerOverlay={({ inFocus }) => <div>Footer: {inFocus.name}</div>}
+          headerOverlay={({ inFocus }) => <div>Header: {inFocus?.name}</div>}
+          footerOverlay={({ inFocus }) => <div>Footer: {inFocus?.name}</div>}
         />
       );
     }}
