@@ -7,13 +7,16 @@ import { FaceTime, FaceTimeProps } from '../FaceTime';
 import { getUserDisplayName } from 'src/modules/User';
 import { Reel } from './components/Reel';
 import { fonts, softBorderRadius } from 'src/theme';
+import { MyFaceTime } from '../MyFaceTime';
 
-type OverlayedNodeRender = (p: { inFocus: StreamingPeer['user'] }) => React.ReactNode;
+type OverlayedNodeRender = (p: { inFocus?: StreamingPeer['user'] }) => React.ReactNode;
 
 export type MultiFaceTimeCompactProps = {
-  reelStreamingPeers: StreamingPeer[];
-  myStreamingPeerId: StreamingPeer['userId'];
-  focusedStreamingPeer: StreamingPeer;
+  reel?: {
+    streamingPeers: StreamingPeer[];
+    myStreamingPeerId: StreamingPeer['userId'];
+    focusedStreamingPeer: StreamingPeer;
+  };
 
   onFocus: (userId: StreamingPeer['id']) => void;
 
@@ -26,9 +29,7 @@ export type MultiFaceTimeCompactProps = {
 } & Omit<FaceTimeProps, 'streamConfig' | 'footer' | 'header' | 'onFocus'>;
 
 export const MultiFaceTimeCompact: React.FC<MultiFaceTimeCompactProps> = ({
-  myStreamingPeerId,
-  reelStreamingPeers,
-  focusedStreamingPeer,
+  reel,
   onFocus,
 
   containerClassName,
@@ -41,25 +42,29 @@ export const MultiFaceTimeCompact: React.FC<MultiFaceTimeCompactProps> = ({
 }) => {
   const cls = useStyles();
   const containerStyles = useMemo(() => ({ width: width || '100%' }), [width]);
-  const label = useMemo(
-    () =>
-      focusedStreamingPeer.id === myStreamingPeerId
-        ? getUserDisplayName(focusedStreamingPeer.user)
-        : '',
-    [focusedStreamingPeer, myStreamingPeerId]
-  );
-  const inFocusUserOverlay = useMemo(() => ({ inFocus: focusedStreamingPeer.user }), [
-    focusedStreamingPeer,
-  ]);
+  const label = useMemo(() => {
+    if (!reel) {
+      return '';
+    }
+
+    return reel.focusedStreamingPeer.id === reel.myStreamingPeerId
+      ? getUserDisplayName(reel.focusedStreamingPeer.user)
+      : '';
+  }, [reel]);
+  const inFocusUserOverlay = useMemo(() => ({ inFocus: reel?.focusedStreamingPeer.user }), [reel]);
 
   return (
     <div className={cx(cls.container, containerClassName)} style={containerStyles}>
-      <FaceTime
-        streamConfig={focusedStreamingPeer.connection.channels.streaming}
-        label={label}
-        labelPosition="bottom-left"
-        {...faceTimeProps}
-      />
+      {reel ? (
+        <FaceTime
+          streamConfig={reel.focusedStreamingPeer.connection.channels.streaming}
+          label={label}
+          labelPosition="bottom-left"
+          {...faceTimeProps}
+        />
+      ) : (
+        <MyFaceTime {...faceTimeProps} label={label} labelPosition="bottom-left" />
+      )}
       <div className={cls.overlayedContainer}>
         <div className={cls.headerWrapper}>
           {headerOverlay ? headerOverlay(inFocusUserOverlay) : null}
@@ -68,11 +73,13 @@ export const MultiFaceTimeCompact: React.FC<MultiFaceTimeCompactProps> = ({
           <div className={cls.mainOverlayWrapper}>
             {mainOverlay ? mainOverlay(inFocusUserOverlay) : null}
           </div>
-          <div className={cls.reelWrapper}>
-            <div className={cls.reelScroller}>
-              <Reel streamingPeers={reelStreamingPeers} onClick={onFocus} />
+          {reel && (
+            <div className={cls.reelWrapper}>
+              <div className={cls.reelScroller}>
+                <Reel streamingPeers={reel.streamingPeers} onClick={onFocus} />
+              </div>
             </div>
-          </div>
+          )}
         </div>
         <div className={cls.footerWrapper}>
           {footerOverlay ? footerOverlay(inFocusUserOverlay) : null}

@@ -5,10 +5,10 @@ import { SwitchActivityWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers
 import { Room } from 'src/providers/PeerProvider';
 import { spacers } from 'src/theme/spacers';
 import { useStreamingPeers } from 'src/providers/PeerProvider/hooks';
-import { console } from 'window-or-global';
 import { Logo } from 'src/components/Logo';
 import { Close } from 'grommet-icons';
 import { colors } from 'src/theme/colors';
+import { noop } from 'src/lib/util';
 
 type Props = {
   room: Room;
@@ -27,15 +27,7 @@ export const MeetupLayer: React.FC<Props> = (props) => {
   }, [reelState]);
 
   return (
-    <div
-      className={cls.container}
-      onClick={(e) => {
-        console.log('ue');
-        e.preventDefault();
-        e.stopPropagation();
-        e.bubbles = false;
-      }}
-    >
+    <div className={cls.container}>
       <div className={cls.header}>
         <div className={cls.logoWrapper} style={{ flex: 1, marginRight: '10px' }}>
           <Logo withBeta darkBG />
@@ -56,7 +48,7 @@ export const MeetupLayer: React.FC<Props> = (props) => {
             containerClassName={cls.reel}
             itemClassName={cls.reelItem}
             mirrorMyFaceTime={false}
-            onClick={(s) => {}}
+            onClick={noop}
           />
         </div>
       </div>

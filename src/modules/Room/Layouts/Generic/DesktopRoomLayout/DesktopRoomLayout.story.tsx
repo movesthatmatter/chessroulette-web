@@ -234,9 +234,11 @@ export const withChessGame = () => (
                 >
                   {streamingPeersState.ready && (
                     <MultiFaceTimeCompact
-                      reelStreamingPeers={streamingPeersState.reel}
-                      myStreamingPeerId={publicRoom.me.userId}
-                      focusedStreamingPeer={streamingPeersState.inFocus}
+                      reel={{
+                        streamingPeers: streamingPeersState.reel,
+                        myStreamingPeerId: publicRoom.me.userId,
+                        focusedStreamingPeer: streamingPeersState.inFocus,
+                      }}
                       onFocus={onFocus}
                       width={container.width}
                     />

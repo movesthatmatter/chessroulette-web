@@ -30,6 +30,7 @@ export const usePeerStateClient = () => {
   // }, []);
 
   const defaultClient: Pick<SocketClient, 'send' | 'onMessage'> = useMemo(
+
     () => ({
       onMessage: (fn: (msg: SocketPayload) => unknown) => {
         // TODO: Here the essages could be relayed
