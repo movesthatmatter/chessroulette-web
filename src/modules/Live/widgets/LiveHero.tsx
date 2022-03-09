@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import ReactTwitchEmbedVideo from 'react-twitch-embed-video';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
@@ -10,6 +10,7 @@ import { spacers } from 'src/theme/spacers';
 import { effects } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { Badge } from 'src/components/Badge';
+import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 
 type Props = {
   featuredStreamer: ResourceRecords.Watch.LiveStreamerRecord;
@@ -24,6 +25,9 @@ export const LiveHero: React.FC<Props> = ({ featuredStreamer, muted = true, show
   const cls = useStyles();
   const [isReady, setIsReady] = useState(false);
   const { theme } = useColorTheme();
+  const device = useDeviceSize();
+
+  const avatarSize = useMemo(() => device.isDesktop ? 54 : 36, [device]);
 
   return (
     <div className={cls.container}>
@@ -46,14 +50,14 @@ export const LiveHero: React.FC<Props> = ({ featuredStreamer, muted = true, show
       <div className={cls.bottomContainer}>
         <div className={cls.infoTop}>
           {/* <div> */}
-          <Avatar imageUrl={featuredStreamer.profileImageUrl} size={64} />
+          <Avatar imageUrl={featuredStreamer.profileImageUrl} size={avatarSize} />
           <div className={cls.streamInfoWrapper}>
             <div className={cls.streamerTitleWrapper}>
               <Text size="subtitle1">{featuredStreamer.displayName}</Text>
               <div style={{ width: spacers.small }} />
               <Badge
                 color={theme.name === 'darkDefault' ? 'secondaryLight' : 'secondaryDark'}
-                text={`${featuredStreamer.stream.viewerCount} viwers`}
+                text={`${featuredStreamer.stream.viewerCount} viewers`}
               />
             </div>
             <Text size="subtitle2">{featuredStreamer.stream.title}</Text>

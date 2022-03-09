@@ -22,7 +22,7 @@ export const CreateRoomButtonWidgetWithWizard: React.FC<Props> = ({
     <>
       <Button
         {...buttonProps}
-        disabled={buttonProps.disabled || peerState.status !== 'open'}
+        disabled={buttonProps.disabled || !peerState.ready}
         onClick={() => {
           setShowWizard(true);
           onClick();

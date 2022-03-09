@@ -7,9 +7,11 @@ import { RoomCredentials } from './types';
 export type PeerContextState =
   | {
       status: 'init';
+      ready: false;
     }
   | ({
-      status: 'open'; // think about this as "ready"
+      ready: true;
+      status: 'open';
       client: SocketClient;
       me: Peer;
     } & (
@@ -28,10 +30,12 @@ export type PeerContextState =
         }
     ))
   | {
+      ready: false;
       status: 'closed';
       error?: PeerConnectionsErrors;
     };
 
 export const PeerContext = createContext<PeerContextState>({
   status: 'init',
+  ready: false,
 });

@@ -114,6 +114,7 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
     "storybook-react-router": "^1.0.8",
+    "sw-precache": "^5.2.1",
     "ts-async-results": "0.2.0-0",
     "ts-results": "^3.0.0",
     "tslib": "^2.3.1",

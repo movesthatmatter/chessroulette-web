@@ -1,9 +1,10 @@
 import React from 'react';
+import cx from 'classnames';
 import { Page } from 'src/components/Page';
 import chessBackground from './assets/chess_icons.png';
 import darkChessBackground from './assets/dark_splash.svg';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { minMediaQuery, maxMediaQuery, onlyMobile, onlySmallMobile } from 'src/theme';
+import { minMediaQuery, maxMediaQuery } from 'src/theme';
 import { fonts } from 'src/theme/fonts';
 import { Emoji } from 'src/components/Emoji';
 import { CreateRoomButtonWidgetWithWizard } from 'src/modules/Room/widgets/CreateRoomWidget';
@@ -11,9 +12,11 @@ import { spacers } from 'src/theme/spacers';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { Button } from 'src/components/Button';
 
-type Props = {};
+type Props = {
+  pageClassName?: string;
+};
 
-export const MobileLandingPage: React.FC<Props> = (props) => {
+export const MobileLandingPage: React.FC<Props> = ({ pageClassName }) => {
   const cls = useStyles();
   const { theme } = useColorTheme();
 
@@ -21,7 +24,7 @@ export const MobileLandingPage: React.FC<Props> = (props) => {
     <Page
       name="Home"
       contentClassName={cls.pageContent}
-      containerClassname={cls.pageContainer}
+      containerClassname={cx(cls.pageContainer, pageClassName)}
       stretched
     >
       <div className={cls.inner}>
@@ -78,7 +81,6 @@ export const MobileLandingPage: React.FC<Props> = (props) => {
                 window.open('https://discord.gg/XT7rvgsH66');
               }}
             />
-            {/* <LichessChallengeButton label="Lichess" size="small" type="secondary" /> */}
           </div>
         </div>
       </div>
@@ -116,50 +118,32 @@ const useStyles = createUseStyles((theme) => ({
   },
   headerText: {
     margin: 0,
-    fontSize: '110%',
+    fontSize: '250%',
     lineHeight: '140%',
     fontWeight: 800,
-
-    ...onlyMobile({
-      fontSize: '130%',
-    }),
   },
   subheaderText: {
     marginTop: 0,
-    fontSize: '60%',
-    lineHeight: '100%',
     fontWeight: 400,
-
-    ...onlyMobile({
-      fontSize: '70%',
-      marginBottom: '48px',
-    }),
+    fontSize: '135%',
+    marginBottom: '48px',
   },
   list: {},
   text: {
     ...fonts.body1,
     lineHeight: '1em',
     color: theme.colors.neutralDarkest,
-
-    ...onlySmallMobile({
-      fontSize: '12px',
-    }),
   },
   buttonWrapper: {
-    marginTop: '24px',
+    marginTop: spacers.large,
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
 
     ...minMediaQuery(tabletBreakPoint, {
       marginTop: '48px',
       justifyContent: 'flex-start',
-    }),
-
-    ...onlyMobile({
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
     }),
   },
   rightSide: {
@@ -175,12 +159,7 @@ const useStyles = createUseStyles((theme) => ({
     ...makeImportant({
       background: theme.colors.primary,
       color: 'white',
-    }),
-
-    ...onlyMobile({
-      ...makeImportant({
-        marginRight: 0,
-      }),
+      marginRight: 0,
     }),
   },
 }));

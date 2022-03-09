@@ -1,4 +1,3 @@
-import { ResourceRecords } from 'dstnd-io';
 import React, { useMemo } from 'react';
 import { AspectRatio, AspectRatioExplicit } from 'src/components/AspectRatio';
 import { Avatar } from 'src/components/Avatar';
@@ -13,6 +12,7 @@ import { noop } from 'src/lib/util';
 import { Button } from 'src/components/Button';
 import cx from 'classnames';
 import { LiveStreamer } from '../../types';
+import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 
 type Props = {
   streamer: LiveStreamer;
@@ -50,6 +50,9 @@ export const LiveStreamCard: React.FC<Props> = ({
 }) => {
   const cls = useStyles();
   const thumbUrl = useMemo(() => parseUrl(streamer.stream.thumbnailUrl, TWITCH_SIZES.w320), []);
+  const device = useDeviceSize();
+
+  const avatarSize = useMemo(() => device.isDesktop ? 54 : 36, [device]);
 
   return (
     <div className={cx(cls.container, containerClassName)}>
@@ -78,7 +81,7 @@ export const LiveStreamCard: React.FC<Props> = ({
               <div className={cls.infoUsername}>
                 <Text size="subtitle2">{streamer.displayName}</Text>
               </div>
-              <Avatar imageUrl={streamer.profileImageUrl || ''} size={54} className={cls.avatar} />
+              <Avatar imageUrl={streamer.profileImageUrl || ''} size={avatarSize} className={cls.avatar} />
             </div>
             <div className={cls.infoMain}>
               <Text size="small1">{shortenText(streamer.stream.title, 120)}</Text>

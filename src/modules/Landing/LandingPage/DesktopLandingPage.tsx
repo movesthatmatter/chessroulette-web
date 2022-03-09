@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import cx from 'classnames';
 import config from 'src/config';
 import { Page } from 'src/components/Page';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
@@ -32,9 +33,11 @@ import { StreamersCollection } from './components/StreamersCollection';
 import { TopPlayers } from './components/TopPlayers';
 import { LiveStreamCard } from 'src/modules/Live/components/LiveStreamCard/LiveStreamCard';
 
-type Props = {};
+type Props = {
+  pageClassName?: string;
+};
 
-export const DesktopLandingPage: React.FC<Props> = () => {
+export const DesktopLandingPage: React.FC<Props> = ({ pageClassName }) => {
   const cls = useStyles();
   useBodyClass([cls.indexBackground]);
   const user = useAnyUser();
@@ -119,7 +122,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
     <Page
       name="Home"
       contentClassName={cls.pageContent}
-      containerClassname={cls.pageContainer}
+      containerClassname={cx(cls.pageContainer, pageClassName)}
       stretched
     >
       <div className={cls.containerLanding}>
@@ -166,52 +169,50 @@ export const DesktopLandingPage: React.FC<Props> = () => {
           )}
           <div style={{ height: spacers.large }} />
 
-          {topPlayers ? (
-            <div>
-              <Text size="subtitle2" className={cls.title}>
-                Top Players
-              </Text>
+          <div>
+            <Text size="subtitle2" className={cls.title}>
+              Top Players
+            </Text>
+            {topPlayers ? (
               <TopPlayers players={topPlayers} />
-            </div>
-          ) : (
-            <LoaderPlaceholder aspectRatio={2} />
-          )}
+            ) : (
+              <LoaderPlaceholder aspectRatio={2} />
+            )}
+          </div>
 
+          <div style={{ height: spacers.large }} />
+          <Text size="subtitle2" className={cls.title}>
+            Game of the Day
+          </Text>
           {gameOfDay ? (
-            <>
-              <div style={{ height: spacers.large }} />
-              <Text size="subtitle2" className={cls.title}>
-                Game of the Day
-              </Text>
-              <ChessGameDisplay
-                game={gameOfDay}
-                className={cls.board}
-                hoveredComponent={
-                  <div
-                    style={{
-                      flex: 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      zIndex: 99,
+            <ChessGameDisplay
+              game={gameOfDay}
+              className={cls.board}
+              hoveredComponent={
+                <div
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 99,
+                  }}
+                >
+                  <CreateRoomButtonWidgetFromSpecs
+                    label="Analyze"
+                    type="primary"
+                    createRoomSpecs={{
+                      activity: {
+                        activityType: 'analysis',
+                        source: 'archivedGame',
+                        gameId: gameOfDay.id,
+                      },
+                      isPrivate: true,
                     }}
-                  >
-                    <CreateRoomButtonWidgetFromSpecs
-                      label="Analyze"
-                      type="primary"
-                      createRoomSpecs={{
-                        activity: {
-                          activityType: 'analysis',
-                          source: 'archivedGame',
-                          gameId: gameOfDay.id,
-                        },
-                        isPrivate: true,
-                      }}
-                    />
-                  </div>
-                }
-              />
-            </>
+                  />
+                </div>
+              }
+            />
           ) : (
             <LoaderPlaceholder aspectRatio={0.7} />
           )}
@@ -290,11 +291,7 @@ export const DesktopLandingPage: React.FC<Props> = () => {
             />
             <div className={cls.verticalSpacer} />
           </div>
-          <div
-            style={{
-              flex: 1,
-            }}
-          >
+          <div style={{ flex: 1 }}>
             <DiscordReactEmbed
               server={config.DISCORD_SERVER_ID}
               channel={config.DISCORD_CHANNEL_ID}

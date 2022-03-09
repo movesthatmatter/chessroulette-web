@@ -22,30 +22,32 @@ export const StreamsReel: React.FC<Props> = ({
   const cls = useStyles();
 
   return (
-    <div className={cx(cls.container, containerClassName)}>
-      {streamers.map((streamer) => (
-        <LiveStreamCard
-          key={streamer.id}
-          streamer={streamer}
-          containerClassName={cx(cls.card, itemClassName)}
-          onClick={() => onItemClick(streamer)}
-        />
-      ))}
+    <div className={cx(containerClassName)}>
+      <div className={cls.wrapper}>
+        {streamers.map((streamer) => (
+          <LiveStreamCard
+            key={streamer.id}
+            streamer={streamer}
+            containerClassName={cx(cls.card, itemClassName)}
+            onClick={() => onItemClick(streamer)}
+          />
+        ))}
+      </div>
     </div>
   );
 };
 
 const useStyles = createUseStyles({
-  container: {
+  wrapper: {
+    width: `calc(100% + ${spacers.large})`,
+    marginLeft: `-${spacers.large}`,
     display: 'flex',
     flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   card: {
-    flex: 1,
     display: 'flex',
     marginLeft: spacers.large,
-    '&:first-child': {
-      marginLeft: 0,
-    },
+    marginBottom: spacers.large,
   },
 });

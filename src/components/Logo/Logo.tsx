@@ -80,7 +80,7 @@ const useStyles = createUseStyles({
 
     ...onlyMobile({
       width: '100%',
-      maxWidth: '140px',
+      maxWidth: '170px',
       //minWidth: '100px',
     }),
   },

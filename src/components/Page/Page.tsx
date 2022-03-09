@@ -48,7 +48,10 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, stretched = false
     cls,
   ]);
 
-  const title = useMemo(() => `${props.title || props.name} | ${config.TITLE_SUFFIX}`, [props.title, props.name]);
+  const title = useMemo(() => `${props.title || props.name} | ${config.TITLE_SUFFIX}`, [
+    props.title,
+    props.name,
+  ]);
 
   return (
     <DocumentTitle title={title}>
@@ -58,7 +61,7 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, stretched = false
             {!props.hideNav && (
               <div className={cls.top}>
                 <div className={cx(cls.topMain, responsiveCls)}>
-                  <div style={{ width: '300px' }}>
+                  <div className={cls.logoContainer}>
                     <Logo asLink={logoAsLink} withBeta />
                   </div>
                   <div className={cls.navigationMenu}>
@@ -73,7 +76,6 @@ export const Page: React.FC<PageProps> = ({ logoAsLink = true, stretched = false
             </main>
             <div className={cls.preFooter}>
               <div className={cx(responsiveCls, cls.centralizeContent)}>
-                {/* <div className={cls.preFooterSide} /> */}
                 <div className={cls.centralContent}>
                   <Text size="body2" className={cls.text}>
                     Made with ❤️around the world!
@@ -120,20 +122,24 @@ const useStyles = createUseStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     alignContent: 'space-between',
+    padding: `${spacers.large}`,
+
+    ...onlyMobile({
+      padding: `${spacers.small} ${spacers.default}`,
+    }),
   },
   topMain: {
     flex: 1,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: `${spacers.large} ${spacers.larger}`,
   },
   topRight: {
     justifySelf: 'flex-end',
   },
   main: {
-    padding: spacers.larger,
-    width: `calc(100% - ${spacers.largerPx * 2}px) !important`,
+    padding: spacers.large,
+    width: `calc(100% - ${spacers.largePx * 2}px) !important`,
     flex: 1,
   },
   navigationMenu: {
@@ -144,6 +150,9 @@ const useStyles = createUseStyles((theme) => ({
   title: {
     color: theme.text.baseColor,
     ...fonts.title1,
+  },
+  logoContainer: {
+    width: '300px',
   },
 
   preFooter: {

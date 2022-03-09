@@ -1,13 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Page } from 'src/components/Page';
-import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
+import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
-import { effects, onlyDesktop } from 'src/theme';
+import { effects, hideOnMobile } from 'src/theme';
 import { getCollaboratorStreamers, getFeaturedStreamers } from './resources';
 import { ResourceRecords } from 'dstnd-io';
-import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
-import { AnchorLink } from 'src/components/AnchorLink';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { LiveHero } from './widgets/LiveHero';
 import { TwitchChatEmbed } from 'src/vendors/twitch/TwitchChatEmbed';
@@ -16,6 +14,7 @@ import { useHistory } from 'react-router-dom';
 import { StreamsReel } from './components/StreamsReel';
 import { StreamerGallery } from './components/StreamerGallery/StreamerGallery';
 import { Streamer } from './types';
+import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 
 type Props = {
   heroStreamer?: string;
@@ -55,6 +54,7 @@ export const LivePage: React.FC<Props> = (props) => {
   const { theme } = useColorTheme();
   const [streamersState, setStreamersState] = useState<LiveStreamerState>();
   const [collaboratorStreamers, setCollaboratorStreamers] = useState<Streamer[]>();
+  const device = useDeviceSize();
 
   const streamersToWatch = useMemo(() => {
     if (!streamersState) {
@@ -99,30 +99,26 @@ export const LivePage: React.FC<Props> = (props) => {
                 muted={false}
               />
               {streamersToWatch && (
-                <div>
-                  <div style={{ height: spacers.get(3) }} />
+                <div className={cls.section}>
                   <Text size="title2" className={cls.title}>
                     Watch Now
                   </Text>
                   <StreamsReel
                     streamers={streamersToWatch}
-                    itemClassName={cls.liveStream}
                     onItemClick={(s) => history.replace(`/watch/${s.username}`)}
                   />
                 </div>
               )}
-              <div
-                style={{
-                  height: spacers.large,
-                }}
-              />
               {collaboratorStreamers && (
-                <>
+                <div className={cls.section}>
                   <Text size="title2" className={cls.title}>
                     Streamers to Follow
                   </Text>
-                  <StreamerGallery streamers={collaboratorStreamers} itemsPerRow={4} />
-                </>
+                  <StreamerGallery
+                    streamers={collaboratorStreamers}
+                    itemsPerRow={device.isMobile ? 2 : 4}
+                  />
+                </div>
               )}
             </>
           )}
@@ -156,6 +152,10 @@ const useStyles = createUseStyles((theme) => ({
   side: {
     flex: 1,
   },
+  section: {
+    paddingTop: spacers.larger,
+  },
+
   videoContainer: {
     border: 0,
     backgroundColor: '#ededed',
@@ -179,6 +179,8 @@ const useStyles = createUseStyles((theme) => ({
     minWidth: '320px',
     display: 'flex',
     flexDirection: 'column',
+
+    ...hideOnMobile,
   },
 
   verticalSpacer: {
@@ -189,12 +191,5 @@ const useStyles = createUseStyles((theme) => ({
     color: theme.colors.primary,
     display: 'block',
     marginBottom: '1em',
-  },
-  liveStream: {
-    flex: 1,
-    '&:first-child': {
-      marginLeft: 0,
-    },
-    width: '33%',
   },
 }));
