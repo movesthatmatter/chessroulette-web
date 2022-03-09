@@ -20,5 +20,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PRIVATE_REPOS_ACCESS }}
       - name: Test
         uses: onichandame/node-test-action@master
