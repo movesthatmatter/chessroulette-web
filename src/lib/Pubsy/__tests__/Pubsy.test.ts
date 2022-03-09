@@ -1,7 +1,7 @@
 import { Pubsy } from '..';
 import { delay } from '../../time';
 
-type GenericChannelTypesMap = {[k: string]: any}
+type GenericChannelTypesMap = { [k: string]: any };
 let pubsy: Pubsy<GenericChannelTypesMap>;
 
 beforeEach(() => {
@@ -27,9 +27,9 @@ describe('PubSub', () => {
       val: 2,
       nested: {
         values: {
-          test: [1, 2, 3]
-        }
-      }
+          test: [1, 2, 3],
+        },
+      },
     };
 
     pubsy.publish('asd', payload);
@@ -47,21 +47,19 @@ describe('On Demand', () => {
     }>({
       myEvent: {
         onDemanded: (p) => {
-          console.log('on demanded called', p);
           setTimeout(() => {
-            console.log('going to publish');
             p.publish('myEvent', 2);
           }, 10);
 
-          return () => {}
-        }
-      }
+          return () => {};
+        },
+      },
     });
 
     pubsy.subscribe('myEvent', spy);
 
     await delay(20);
-    
+
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith(2);
   });
