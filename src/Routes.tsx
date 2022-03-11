@@ -12,6 +12,8 @@ import { RelayInputRoute } from './modules/Relay/RelayInput';
 import { LiveRoute } from './modules/Live/LiveRoute';
 import { CuratedEventsConsoleRoute } from './modules/CuratedEvents/console/CuratedEventsConsoleRoute';
 import { CuratedEventsRoute, CuratedEventRoute } from './modules/CuratedEvents';
+import { TournamentsRoute } from './modules/Tournaments/TournamentsRoute';
+import { TournamentRoute } from './modules/Tournaments/TournamentRoute';
 
 type Props = {};
 
@@ -60,6 +62,8 @@ export const Routes: React.FC<Props> = () => {
 
       <Route exact strict path="/r/:slug" key={location.key} component={RoomRoute} />
       <Route exact strict path="/classroom/:slug" key={location.key} component={RoomRoute} />
+      <Route exact strict path="/tournaments" key={location.key} component={TournamentsRoute}/>
+      <Route exact strict path="/tournaments/:slug" key={location.key} component={TournamentRoute}/>
       {/* <Route path="/wcc" exact strict key={location.key} component={BroadcastPage} /> */}
     </Switch>
   );

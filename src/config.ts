@@ -1,5 +1,7 @@
 const DEBUG = process.env.REACT_APP_DEBUG === 'true';
 const ENV = process.env.REACT_APP_ENV as 'dev' | 'production' | 'staging';
+const CHALLONGE_API_KEY = process.env.REACT_APP_Challonge_API_KEY as string;
+const CHALLONGE_USERNAME = process.env.REACT_APP_Challonge_USERNAME as string;
 
 const WSS_ENDPOINT = process.env.REACT_APP_WSS_ENDPOINT as string;
 const HTTP_ENDPOINT = process.env.REACT_APP_HTTP_ENDPOINT as string;
@@ -30,6 +32,10 @@ const config = {
   WSS_ENDPOINT,
   HTTP_ENDPOINT,
   SIGNALING_SERVER_CONFIG,
+
+  //Tournaments
+  CHALLONGE_API_KEY,
+  CHALLONGE_USERNAME,
 
   // Vendors
   SENTRY_DSN,
