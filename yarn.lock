@@ -5934,26 +5934,6 @@ chessops@0.7.1:
   dependencies:
     "@badrap/result" "^0.2.6"
 
-"chessroulette-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#add-tournaments", "dstnd-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#add-tournaments":
-  version "0.3.0-1"
-  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#290b0a45caff6e0607a6657b6e8196580f6cda3c"
-  dependencies:
-    "@types/chess.js" "^0.10.1"
-    "@types/jest" "^26.0.13"
-    chess.js "^0.11.0"
-    fp-ts "^2.8.2"
-    io-ts "2.2.16"
-    io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.5"
-    io-ts-reporters "^2.0.0"
-    io-ts-types "^0.5.16"
-    jest "^26.4.2"
-    resources-io "0.0.7"
-    ts-async-results "0.2.0-0"
-    ts-results "^3.0.0"
-    tslib "2.3.1"
-    typescript "4.0.2"
-    wargame-engine "https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git#v0.3.0"
-
 chokidar@^2.0.4, chokidar@^2.1.8:
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-2.1.8.tgz#804b3a7b6a99358c3c5c61e71d8728f041cff917"
@@ -7628,6 +7608,26 @@ dotenv@^6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
+
+"dstnd-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#2881fdc":
+  version "0.3.0-1"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#2881fdc4d7ce68758ca8ce2b6b2198289fa57c05"
+  dependencies:
+    "@types/chess.js" "^0.10.1"
+    "@types/jest" "^26.0.13"
+    chess.js "^0.11.0"
+    fp-ts "^2.8.2"
+    io-ts "2.2.16"
+    io-ts-isodatetime "https://github.com/GabrielCTroia/io-ts-isodatetime.git#v0.0.5"
+    io-ts-reporters "^2.0.0"
+    io-ts-types "^0.5.16"
+    jest "^26.4.2"
+    resources-io "0.0.7"
+    ts-async-results "0.2.0-0"
+    ts-results "^3.0.0"
+    tslib "2.3.1"
+    typescript "4.0.2"
+    wargame-engine "https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git#v0.3.0"
 
 "dstnd-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#v0.3.0-1":
   version "0.3.0-1"
