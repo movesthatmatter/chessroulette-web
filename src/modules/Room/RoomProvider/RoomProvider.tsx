@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RoomProviderContext, RoomProviderContextState } from './RoomProviderContext';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { useRoomActivityListener } from 'src/modules/Room/RoomActivityLog/useRoomActivityListener';
@@ -12,9 +12,21 @@ type Props = {
   joinedRoom: JoinedRoom;
 };
 
-export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
+export const RoomProvider: React.FC<Props> = ({
+  joinedRoom: tempJoinedRoomWithoutLayout,
+  ...props
+}) => {
   const deviceSize = useDeviceSize();
   const peerState = usePeerState();
+
+  // const joinedRoom = useMemo(
+  //   () => ({ ...tempJoinedRoomWithoutLayout, layout: 'battle' as const }),
+  //   [tempJoinedRoomWithoutLayout]
+  // );
+  const joinedRoom = useMemo(
+    () => ({ ...tempJoinedRoomWithoutLayout, layout: 'battle' as const }),
+    [tempJoinedRoomWithoutLayout]
+  );
 
   // TODO: Once we have Board Settings, this can be moved out of here
   const [boardOrientation, setBoardOrientation] = useState<BoardOrientation>('home');

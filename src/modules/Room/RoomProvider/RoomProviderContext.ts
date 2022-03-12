@@ -8,7 +8,9 @@ export type RoomProviderContextState =
   | undefined
   | {
       deviceSize: DeviceSize;
-      room: JoinedRoom;
+      room: JoinedRoom & {
+        layout?: 'battle' | 'meetup';
+      };
       roomActions: {
         switchActivity: (p: RoomActivityCreationRecord) => void;
         goLive: () => void; // TODO: Add ability to stop Live

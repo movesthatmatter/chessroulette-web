@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo, useCallback, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
 import { ChessGame } from 'src/modules/Games/Chess';
@@ -20,6 +20,8 @@ import { useFeedbackActions } from 'src/providers/FeedbackProvider/useFeedback';
 import { BoardSettingsWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/BoardSettingsWidgetRoomConsumer';
 import { spacers } from 'src/theme/spacers';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
+import { ProvidedRoom } from 'src/modules/Room/RoomConsumers/ProvidedRoom';
+import { BattleModeBox } from '../components/BattleModeBox';
 
 export type PlayActivityProps = ActivityCommonProps & {
   activity: RoomPlayActivityWithGame;
@@ -85,66 +87,75 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
   return (
     <GenericLayoutDesktopRoomConsumer
       renderActivity={({ boardSize, leftSide }) => (
-        <ChessGameHistoryProvider
-          key={game.id}
-          history={game.history || []}
-          // This could be moved up in a useCallback for optimization
-          onMoved={onMoved}
-        >
-          <div className={cls.container}>
-            <aside
-              className={cls.side}
-              style={{ height: boardSize, width: leftSide.width + leftSide.horizontalPadding }}
-            >
-              <div className={cls.sideTop} />
-              <div
-                style={{ height: '40%' }}
-                className={cx(cls.floatingBoxContainerOffsets, cls.gameStateWidgetContainer)}
+        <>
+          <ChessGameHistoryProvider
+            key={game.id}
+            history={game.history || []}
+            // This could be moved up in a useCallback for optimization
+            onMoved={onMoved}
+          >
+            <div className={cls.container}>
+              <aside
+                className={cls.side}
+                style={{ height: boardSize, width: leftSide.width + leftSide.horizontalPadding }}
               >
-                <div className={cls.floatingBoxOffsets}>
-                  <GameStateWidget
-                    // This is needed for the countdown to reset the interval !!
-                    key={game.id}
-                    game={game}
-                    playParticipants={participantsByColor}
-                    homeColor={homeColor}
-                    // TODO: This should probably be seperate from the GameStateWidget
-                    //  something like a hook so it can be used without a view component
-                    onTimerFinished={gameActions.onTimerFinished}
-                  />
-                </div>
-              </div>
-              <div className={cls.sideBottom}>
-                {activity.iamParticipating && (
-                  <GameActions
+                {/* <div className={cls.sideTop} /> */}
+                {/* <div
+                  style={{ height: '40%' }}
+                  className={cx(cls.floatingBoxContainerOffsets, cls.gameStateWidgetContainer)}
+                >
+                  <div className={cls.floatingBoxOffsets}>
+                    <GameStateWidget
+                      // This is needed for the countdown to reset the interval !!
+                      key={game.id}
+                      game={game}
+                      playParticipants={participantsByColor}
+                      homeColor={homeColor}
+                      // TODO: This should probably be seperate from the GameStateWidget
+                      //  something like a hook so it can be used without a view component
+                      onTimerFinished={gameActions.onTimerFinished}
+                    />
+                  </div>
+                </div> */}
+                {/* <div className={cls.sideBottom}>
+                  {activity.iamParticipating && (
+                    <GameActions
+                      activity={activity}
+                      className={cx(cls.sideBottom, cls.floatingBoxOffsets)}
+                    />
+                  )}
+                </div> */}
+                {roomConsumer?.room.layout === 'battle' && (
+                  <BattleModeBox
                     activity={activity}
-                    className={cx(cls.sideBottom, cls.floatingBoxOffsets)}
+                    homeColor={homeColor}
+                    containerDimensions={leftSide}
                   />
                 )}
-              </div>
-            </aside>
-            <ChessGameHistoryConsumer
-              render={(c) => (
-                <div>
-                  <ChessGame
-                    // Reset the State each time the game id changes
-                    key={game.id}
-                    game={game}
-                    size={boardSize}
-                    orientation={homeColor}
-                    canInteract={activity.iamParticipating}
-                    playable={activity.iamParticipating && activity.participants.me.canPlay}
-                    playableColor={playableColor}
-                    displayable={c.displayed}
-                    onAddMove={c.onAddMove}
-                    className={cls.board}
-                  />
-                  <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
-                </div>
-              )}
-            />
-          </div>
-        </ChessGameHistoryProvider>
+              </aside>
+              <ChessGameHistoryConsumer
+                render={(c) => (
+                  <div>
+                    <ChessGame
+                      // Reset the State each time the game id changes
+                      key={game.id}
+                      game={game}
+                      size={boardSize}
+                      orientation={homeColor}
+                      canInteract={activity.iamParticipating}
+                      playable={activity.iamParticipating && activity.participants.me.canPlay}
+                      playableColor={playableColor}
+                      displayable={c.displayed}
+                      onAddMove={c.onAddMove}
+                      className={cls.board}
+                    />
+                    <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
+                  </div>
+                )}
+              />
+            </div>
+          </ChessGameHistoryProvider>
+        </>
       )}
     />
   );

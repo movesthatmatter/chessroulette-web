@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
@@ -38,15 +38,29 @@ const LAYOUT_RATIOS = {
   rightSide: 2.1,
 };
 
+const BATTLE_LAYOUT_RATIOS = {
+  leftSide: 1.5,
+  mainArea: 3,
+  rightSide: 1.7,
+};
+
 // TODO: This isn't provided for now and don't think it needs to be but for now it sits here
 export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((props) => {
   const cls = useStyles();
   const roomConsumer = useRoomConsumer();
 
+  const layoutRatios = useMemo(() => {
+    if (roomConsumer?.room.layout === 'battle') {
+      return BATTLE_LAYOUT_RATIOS;
+    }
+
+    return LAYOUT_RATIOS;    
+  }, [roomConsumer?.room.layout]);
+
   return (
     <div className={cls.container}>
       <DesktopRoomLayout
-        ratios={LAYOUT_RATIOS}
+        ratios={layoutRatios}
         topHeight={TOP_HEIGHT}
         bottomHeight={BOTTOM_HEIGHT}
         minSpaceBetween={MIN_SPACE_BETWEEN}
