@@ -20,7 +20,7 @@ export const RoomControlMenuConsumer: React.FC<Props> = (props) => {
 
   return (
     <ClipboardCopyWidget
-      value={`${window.location.origin}/${toRoomUrlPath(roomConsumer.room)}`}
+      value={`${window.location.origin}${toRoomUrlPath(roomConsumer.room)}`}
       render={({ copied, copy }) => (
         <ExitRoomWidget
           render={({ leave }) => (
