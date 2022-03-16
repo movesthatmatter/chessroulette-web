@@ -42,4 +42,3 @@ export type RoomPlayActivityWithoutGame = Omit<RoomPlayActivityRecord, 'gameId'>
 };
 
 export type RoomPlayActivity = RoomPlayActivityWithGame | RoomPlayActivityWithoutGame;
-

@@ -8,8 +8,8 @@ import { useDispatch } from 'react-redux';
 import { updateCurrentAnalysisAction, updateRelayGameAction } from '../RoomActivity/redux/actions';
 import { RelayActivity } from '../RoomActivity/activities/RelayActivity';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
-import { console } from 'window-or-global';
 import { WarGameActivity } from '../RoomActivity/activities/WarGameActivity';
+import { MatchActivity } from '../RoomActivity/activities/MatchActivity';
 
 type Props = {};
 
@@ -64,6 +64,10 @@ export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
 
   if (currentActivity.type === 'relay') {
     return <RelayActivity activity={currentActivity} deviceSize={context.deviceSize} />;
+  }
+
+  if (currentActivity.type === 'match') {
+    return <MatchActivity activity={currentActivity} deviceSize={context.deviceSize} />;
   }
 
   return <NoActivity deviceSize={context.deviceSize} />;

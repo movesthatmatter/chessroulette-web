@@ -1,4 +1,3 @@
-
 import { ChallongeTournamentRecord } from 'dstnd-io/dist/resourceCollections/tournaments/records';
 import React, { useEffect, useState } from 'react';
 import { AnchorLink } from 'src/components/AnchorLink';
@@ -25,13 +24,11 @@ export const TournamentsPage: React.FC<Props> = (props) => {
   function getTournaments() {
     getAllChallongeTournaments({
       state: 'all',
-      type: 'swiss',
+      // type: 'swiss',
     })
       .map((result) => {
         setAllTournaments(() => {
-          return result.map(
-            (tourney) => tourney.tournament
-          );
+          return result.map((tourney) => tourney.tournament);
         });
       })
       .mapErr((e) => {

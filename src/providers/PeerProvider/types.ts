@@ -43,7 +43,8 @@ export type StreamingPeer = Peer & {
 };
 export type StreamingPeersMap = Record<StreamingPeer['user']['id'], StreamingPeer>;
 
-export const isStreamingPeer = (p: Peer): p is StreamingPeer => p.connection.channels.streaming.on === true;
+export const isStreamingPeer = (p: Peer): p is StreamingPeer =>
+  p.connection.channels.streaming.on === true;
 
 // TODO: Take this away from here into the RoomProvider or somewhere else
 // Room
