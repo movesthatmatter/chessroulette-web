@@ -22,10 +22,15 @@ export const MatchActivityContainer: React.FC<Props> = ({ activity, ...props }) 
   );
 
   useEffect(() => {
+    console.log('inside Match Activity Container');
     if (roomContext) {
       setRoomActivity(convertMatchActivityIntoPlayActivity(activity, roomContext.room));
     }
   }, [activity]);
+
+  useEffect(() => {
+    console.log('room activity  => ', roomActivity);
+  }, [roomActivity]);
 
   const onGameUpdated = useCallback(
     (nextGame: Game) => {

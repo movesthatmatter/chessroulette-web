@@ -33,6 +33,8 @@ export const Room: React.FC<Props> = ({ joinedRoom }) => {
   // Connect to the Room on Mount
   useEffect(connectToRoom, [connectToRoom]);
 
+  useEffect(() => console.log('joined room => ', joinedRoom), [joinedRoom]);
+
   // This is very important as the room needs to be updated with the
   useWillUnmount(leaveRoom, [leaveRoom]);
 

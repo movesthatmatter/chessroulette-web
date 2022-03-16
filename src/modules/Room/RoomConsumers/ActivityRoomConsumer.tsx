@@ -48,7 +48,7 @@ export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
 
   const { currentActivity } = context.room;
 
-  // console.log('ActvityRoomConsumer', currentActivity);
+  console.log('ActvityRoomConsumer =>', currentActivity);
 
   if (currentActivity.type === 'play') {
     return <PlayActivity activity={currentActivity} deviceSize={context.deviceSize} />;

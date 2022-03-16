@@ -175,6 +175,7 @@ export const convertMatchActivityIntoPlayActivity = (
   const { match, type, ...baseActivity } = activity;
   const members = Object.values(room.peersIncludingMe);
   const membersList = members.map(toRoomMember);
+  console.log('converting match to play activity', baseActivity);
 
   return {
     ...toRoomPlayActivity(

@@ -1,4 +1,7 @@
-import { ChallongeMatchRecord, ChallongeTournamentRecord } from 'dstnd-io/dist/resourceCollections/tournaments/records';
+import {
+  ChallongeMatchRecord,
+  ChallongeTournamentRecord,
+} from 'dstnd-io/dist/resourceCollections/tournaments/records';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from 'src/components/Button';
@@ -14,6 +17,7 @@ import {
   getAllMatches,
   getTournament,
 } from './resources';
+import { determineParticipatingColor } from './utils';
 
 type Props = {};
 
@@ -30,7 +34,7 @@ export const TournamentRoute: React.FC<Props> = (props) => {
     getTournament(params.slug, { include_participants: 1 }).map(({ tournament }) => {
       setTournament(tournament as ChallongeTournamentRecord);
       if (tournament.participants && tournament.participants.length > 0) {
-        tournament.participants.forEach(({participant}) => {
+        tournament.participants.forEach(({ participant }) => {
           if (participant.misc === user?.id) {
             setUserParticipantId(participant.id.toString());
           }
@@ -96,7 +100,10 @@ export const TournamentRoute: React.FC<Props> = (props) => {
         <div className={cls.container}>
           {matches &&
             matches.map((match) => (
-              <Match match={match} participating={userParticipantId === match.id.toString()} />
+              <Match
+                match={match}
+                participating={determineParticipatingColor(match, userParticipantId)}
+              />
             ))}
         </div>
       </div>

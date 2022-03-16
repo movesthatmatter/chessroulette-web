@@ -1,19 +1,19 @@
 import { Resources } from 'dstnd-io';
 import { http } from 'src/lib/http';
 
-const {
-  resource: getAllTournamentsResource,
-} = Resources.Collections.ChallongeTournaments.GetChallongeTournaments;
+const { resource: getAllTournamentsResource } =
+  Resources.Collections.ChallongeTournaments.GetChallongeTournaments;
 
 export const getAllChallongeTournaments = (
   req: Resources.Util.RequestOf<typeof getAllTournamentsResource>
 ) => {
-  return getAllTournamentsResource.request(req, (params) => http.get('api/tournaments/all', { params }));
+  return getAllTournamentsResource.request(req, (params) =>
+    http.get('api/tournaments/all', { params })
+  );
 };
 
-const {
-  resource: getTournamentByID,
-} = Resources.Collections.ChallongeTournaments.GetChallongeTournamentByID;
+const { resource: getTournamentByID } =
+  Resources.Collections.ChallongeTournaments.GetChallongeTournamentByID;
 
 export const getTournament = (
   slug: string,
@@ -24,9 +24,8 @@ export const getTournament = (
   );
 };
 
-const {
-  resource: registerParticipant,
-} = Resources.Collections.ChallongeTournaments.CreateChallongeTournamentParticipant;
+const { resource: registerParticipant } =
+  Resources.Collections.ChallongeTournaments.CreateChallongeTournamentParticipant;
 
 export const createParticipantForTournament = (
   req: Resources.Util.RequestOf<typeof registerParticipant>
@@ -34,9 +33,8 @@ export const createParticipantForTournament = (
   return registerParticipant.request(req, (data) => http.post(`api/tournaments/register`, data));
 };
 
-const {
-  resource: createTournamentResource,
-} = Resources.Collections.ChallongeTournaments.CreateChallongeTournament;
+const { resource: createTournamentResource } =
+  Resources.Collections.ChallongeTournaments.CreateChallongeTournament;
 
 export const createTournament = (
   req: Omit<Resources.Util.RequestOf<typeof createTournamentResource>, 'start_at'>
@@ -54,4 +52,10 @@ const { resource: getMatches } = Resources.Collections.ChallongeTournaments.GetA
 
 export const getAllMatches = (req: Resources.Util.RequestOf<typeof getMatches>) => {
   return getMatches.request(req, (params) => http.get('api/tournaments/matches', { params }));
+};
+
+const { resource: joinMatch } = Resources.Collections.ChallongeTournaments.JoinMatchAsPlayer;
+
+export const joinMatchAsPlayer = (req: Resources.Util.RequestOf<typeof joinMatch>) => {
+  return joinMatch.request(req, (data) => http.post('api/tournaments/join-player', data));
 };
