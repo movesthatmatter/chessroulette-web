@@ -77,7 +77,7 @@ const title1: CSSProperties = {
 const title2: CSSProperties = {
   fontSize: '24px',
   fontWeight: 700,
-  lineHeight: '1em',
+  lineHeight: '1.3em',
 
   ...onlyMobile({
     fontSize: '18px',

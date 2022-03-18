@@ -16,9 +16,11 @@ import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton } from 'src/services/Authentication/widgets';
 import { Link, useLocation } from 'react-router-dom';
 import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
-import { Home, Video, People } from 'react-iconly';
+import { Home, Video, People, Game } from 'react-iconly';
 import { Text } from '../Text';
 import { spacers } from 'src/theme/spacers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrophy } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   className?: string;
@@ -52,6 +54,15 @@ export const NavigationMenu: React.FC<Props> = (props) => {
           <People set="bold" />
           <Text size="small1">Collaborate</Text>
         </a>
+      </div>
+      <div className={cls.linkWrapper}>
+        <Link
+          to={'/tournaments'}
+          className={cx(cls.link, location.pathname.indexOf('/tournaments') > -1 && cls.activeLink)}
+        >
+          <FontAwesomeIcon icon={faTrophy} className={cls.tournamentsIcon} />
+          <Text size="small1">Tournaments</Text>
+        </Link>
       </div>
     </>
   );
@@ -209,13 +220,13 @@ const useStyles = createUseStyles((theme) => ({
   },
   linkWrapper: {
     textAlign: 'center',
-    paddingLeft: spacers.default,
-    paddingRight: spacers.default,
+    paddingLeft: spacers.large,
+    paddingRight: spacers.large,
     alignSelf: 'center',
     position: 'relative',
 
     ...onlyDesktop({
-      width: '60px',
+      // width: '60px',
     }),
   },
   linkBadge: {
@@ -323,5 +334,11 @@ const useStyles = createUseStyles((theme) => ({
     display: 'flex',
     alignContent: 'center',
     alignItems: 'center',
+  },
+
+  tournamentsIcon: {
+    fontSize: '16px',
+    marginTop: '5px',
+    marginBottom: '3px',
   },
 }));
