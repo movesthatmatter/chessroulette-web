@@ -18,7 +18,7 @@ export type TextInputProps = React.DetailedHTMLProps<
   label?: string;
   validationError?: string;
   readOnly?: boolean;
-  type?: 'text' | 'number' | 'datetime-local';
+  type?: 'text' | 'number' | 'datetime-local' | 'email';
 };
 
 export const TextInput: React.FC<TextInputProps> = ({
