@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import ReactTwitchEmbedVideo from 'react-twitch-embed-video';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
@@ -10,24 +10,29 @@ import { spacers } from 'src/theme/spacers';
 import { effects } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { Badge } from 'src/components/Badge';
+import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 
 type Props = {
   featuredStreamer: ResourceRecords.Watch.LiveStreamerRecord;
   showChat?: boolean;
   muted?: boolean;
+  autoplay?: boolean;
 };
 
 const aspectRatio = { width: 16, height: 9 };
 
-export const LiveHero: React.FC<Props> = ({ featuredStreamer, muted = true, showChat = false }) => {
+export const LiveHero: React.FC<Props> = ({ featuredStreamer, muted = true, showChat = false, autoplay = true }) => {
   const cls = useStyles();
   const [isReady, setIsReady] = useState(false);
   const { theme } = useColorTheme();
+  const device = useDeviceSize();
+
+  const avatarSize = useMemo(() => device.isDesktop ? 54 : 36, [device]);
 
   return (
     <div className={cls.container}>
       <AspectRatio aspectRatio={aspectRatio}>
-        {isReady || <div className={cx(cls.videoFallback)} />}
+        {isReady || <div className={cls.videoFallback}/>}
         <ReactTwitchEmbedVideo
           key={featuredStreamer.id}
           onReady={() => setIsReady(true)}
@@ -39,19 +44,20 @@ export const LiveHero: React.FC<Props> = ({ featuredStreamer, muted = true, show
           targetId={featuredStreamer.username}
           theme={theme.name === 'darkDefault' ? 'dark' : 'light'}
           muted={muted}
+          autoplay={autoplay}
         />
       </AspectRatio>
       <div className={cls.bottomContainer}>
         <div className={cls.infoTop}>
           {/* <div> */}
-          <Avatar imageUrl={featuredStreamer.profileImageUrl} size={64} />
+          <Avatar imageUrl={featuredStreamer.profileImageUrl} size={avatarSize} />
           <div className={cls.streamInfoWrapper}>
             <div className={cls.streamerTitleWrapper}>
               <Text size="subtitle1">{featuredStreamer.displayName}</Text>
               <div style={{ width: spacers.small }} />
               <Badge
                 color={theme.name === 'darkDefault' ? 'secondaryLight' : 'secondaryDark'}
-                text={`${featuredStreamer.stream.viewerCount} viwers`}
+                text={`${featuredStreamer.stream.viewerCount} viewers`}
               />
             </div>
             <Text size="subtitle2">{featuredStreamer.stream.title}</Text>
@@ -124,7 +130,7 @@ const useStyles = createUseStyles((theme) => ({
     height: '100%',
     background: theme.depthBackground.backgroundColor,
     ...effects.hardBorderRadius,
-    overflow: 'hidden',
+   overflow: 'hidden',
     ...(theme.name === 'darkDefault' ? effects.softFloatingShadowDarkMode : effects.floatingShadow),
   },
   bottomContainer: {

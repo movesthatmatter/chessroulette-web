@@ -2,6 +2,7 @@ import { differenceInMilliseconds } from 'date-fns';
 import humanizeDuration, { Humanizer } from 'humanize-duration';
 import { RoomRecord } from 'dstnd-io';
 import { diff } from 'deep-object-diff';
+import { ScheduledRoomRecord } from 'dstnd-io/dist/resourceCollections/room/records/records';
 
 export const noop = () => {
   // do nothing
@@ -94,7 +95,7 @@ export const prettyCountdown = (
   }
 ) => format(ms, options);
 
-export const toRoomUrlPath = (room: RoomRecord) => `r/${room.slug}`;
+export const toRoomUrlPath = (room: RoomRecord | ScheduledRoomRecord) => room.type && room.type === 'classroom' ? `/classroom/${room.slug}` : `/r/${room.slug}`;
 export const toChallengeUrlPath = (challenge: { slug: string }) => `r/${challenge.slug}`;
 
 export const hasOwnProperty = <X extends {}, Y extends PropertyKey>(
@@ -148,4 +149,10 @@ export const isObject = (m: unknown): m is object => m !== null && typeof m === 
 export const isDeepEqual = <A extends object, B extends object>(a?: A, b?: B) => {
   // This could change later on with a faster/different diff fn
   return Object.keys(diff(a || {}, b || {})).length === 0;
+};
+
+export const dedupeArray = <T extends string | number>(arr: T[]) => {
+  return Object.keys(
+    arr.reduce((prev, next) => ({ ...prev, [next]: undefined }), {} as Record<T, undefined>)
+  );
 };

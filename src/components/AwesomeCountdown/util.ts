@@ -1,6 +1,4 @@
 export const timeLeftToTimeUnits = (durationMs: number) => {
-  console.log('durationMs', durationMs);
-
   // const milliseconds = Math.floor((durationMs % 1000));
   const seconds = Math.floor((durationMs / 1000) % 60);
   const minutes = Math.floor((durationMs / (1000 * 60)) % 60);

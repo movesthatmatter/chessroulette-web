@@ -1,18 +1,21 @@
-import React, { ReactNode } from 'react';
-import { createUseStyles } from 'src/lib/jss';
+import React, { ReactNode, useState } from 'react';
 import cx from 'classnames';
-import { PeerStreamingConfig } from 'src/services/peers';
+import { createUseStyles } from 'src/lib/jss';
 import { VideoBox, VideoBoxProps } from 'src/components/VideoBox';
 import { CustomTheme, fonts, onlyMobile } from 'src/theme';
 import { Text } from 'src/components/Text';
 import { AspectRatio, AspectRatioProps } from 'src/components/AspectRatio';
-import { console } from 'window-or-global';
+import { colors } from 'src/theme/colors';
+import { PeerStreamingConfig } from 'src/providers/PeerProvider';
+import Loader from 'react-loaders';
+import 'loaders.css';
 
 export type FaceTimeProps = Omit<VideoBoxProps, 'stream'> & {
-  aspectRatio?: AspectRatioProps['aspectRatio'];
   streamConfig: PeerStreamingConfig;
-  streamingOffFallback?: React.ReactNode;
+  streamingOffFallback?: ReactNode;
+  loadingFallback?: ReactNode;
 
+  aspectRatio?: AspectRatioProps['aspectRatio'];
   containerClassName?: string;
   label?: string;
   labelClassName?: string;
@@ -38,34 +41,44 @@ export const FaceTime: React.FC<FaceTimeProps> = ({
     width: 4,
     height: 3,
   },
+  loadingFallback = null,
   ...avStreamProps
 }) => {
   const cls = useStyles();
+  const [loadingVideo, setLoadingVideo] = useState(true);
 
-  // useEffect(() => {
-  // }, [
-  //   streamConfig
-  // ]);
-  // console.log('FacetimeStreaming config updated', streamConfig);
+  const loader = (
+    <div className={cls.loadingWrapper}>
+      {loadingFallback || (
+        <div className={cls.loader}>
+          <Loader type="line-scale-pulse-out" active innerClassName={cls.loader} />
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className={cx(cls.container, containerClassName)}>
       <AspectRatio aspectRatio={aspectRatio}>
         {streamConfig.on ? (
-          <VideoBox
-            stream={streamConfig.stream}
-            autoPlay
-            className={cx(cls.video, className)}
-            {...avStreamProps}
-          />
+          <>
+            <VideoBox
+              stream={streamConfig.stream}
+              autoPlay
+              className={cx(cls.video, className)}
+              {...avStreamProps}
+              onCanPlay={() => {
+                setLoadingVideo(false);
+              }}
+            />
+            {loadingVideo && loader}
+          </>
         ) : (
-          streamingOffFallback
+          streamingOffFallback || loader
         )}
         <div className={cls.overlayedContainer}>
           {headerOverlay && <div className={cls.headerWrapper}>{headerOverlay}</div>}
-          <div className={cls.mainWrapper}>
-            {mainOverlay}
-          </div>
+          <div className={cls.mainWrapper}>{mainOverlay}</div>
           <div className={cls.footerWrapper}>
             {label && (
               <div
@@ -86,7 +99,7 @@ export const FaceTime: React.FC<FaceTimeProps> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>(theme => ({
+const useStyles = createUseStyles<CustomTheme>((theme) => ({
   container: {
     position: 'relative',
   },
@@ -99,6 +112,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
 
     display: 'flex',
     flexDirection: 'column',
+    zIndex: 9,
   },
   mainWrapper: {
     flex: 1,
@@ -113,6 +127,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
   labelWrapper: {
     position: 'relative',
     textAlign: 'center',
+    zIndex: 99,
   },
   labelWrapperLeft: {
     textAlign: 'left',
@@ -121,7 +136,7 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
     textAlign: 'right',
   },
   label: {
-    color: theme.colors.white,
+    color: colors.universal.white,
     ...fonts.subtitle1,
 
     paddingLeft: '12px',
@@ -132,5 +147,20 @@ const useStyles = createUseStyles<CustomTheme>(theme => ({
       paddingLeft: '8px',
       paddingBottom: '2px',
     }),
+  },
+  loadingWrapper: {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    position: 'absolute',
+    zIndex: 99,
+    display: 'flex',
+  },
+  loader: {
+    display: 'flex',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 }));

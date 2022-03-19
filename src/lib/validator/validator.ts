@@ -1,4 +1,4 @@
-import { validateEmail, validateName, validateDigits, username, notEmpty } from './rules';
+import { validateEmail, validateName, validateDigits, username, notEmpty, string } from './rules';
 
 const rules = {
   email: () => validateEmail,
@@ -6,6 +6,7 @@ const rules = {
   digits: (count: number) => (input: string) => validateDigits(count, input),
   username: () => username,
   notEmpty: () => notEmpty,
+  string: () => string,
 };
 
 const messages = {
@@ -15,6 +16,7 @@ const messages = {
   lastName: "The Last Name doesn't seem valid",
   username: "The Username isn't valid",
   notEmpty: "This can't be empty",
+  string: "This isn't a string",
 };
 
 export const validator = {

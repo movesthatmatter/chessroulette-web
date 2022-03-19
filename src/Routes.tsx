@@ -1,21 +1,18 @@
 import React from 'react';
-import { Switch, Route, useLocation } from 'react-router-dom';
+import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import { LichessAuthCallbackPage } from './vendors/lichess/LichessAuthCallbackPage';
 import { LandingPage } from './modules/Landing/LandingPage';
 import { FacebookAuthCallbackPage } from './vendors/facebook';
-import { SocketProvider } from './providers/SocketProvider';
 import { UserProfilePage } from './modules/User';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TOS } from './pages/TOS';
 import { TwitchCallbackPage } from './vendors/twitch/TwitchCallbackPage/TwitchCallBackPage';
-import { LivePage } from './modules/Live';
-import { PlayLichess } from './modules/LichessPlay/PlayLichess/PlayLichess';
 import { RoomRoute } from './modules/Room';
-import { PeerProviderContainer } from './providers/PeerProvider/PeerProviderContainer';
-import { BroadcastPage } from './modules/Relay/BroadcastPage/BroadcastPage';
-import { BroadcastExternal } from './modules/Relay/BroadcastPage/BroadcastExternal';
 import { RelayInputRoute } from './modules/Relay/RelayInput';
 import { LiveRoute } from './modules/Live/LiveRoute';
+import { CuratedEventsConsoleRoute } from './modules/CuratedEvents/console/CuratedEventsConsoleRoute';
+import { CuratedEventsRoute, CuratedEventRoute } from './modules/CuratedEvents';
+import { TournamentsRoute } from './modules/Tournaments';
 
 type Props = {};
 
@@ -48,14 +45,26 @@ export const Routes: React.FC<Props> = () => {
       {/* <Route exact strict path="/lichess" key={location.key} component={PlayLichess} /> */}
       <Route path="/watch/:streamer" key={location.key} component={LiveRoute} />
       <Route path="/watch" key={location.key} component={LiveRoute} />
+      <Route path="/events/:slug" exact strict key={location.key} component={CuratedEventRoute} />
+      {/* console/admin routes */}
+      <Route path="/e4e5f4Be7/console/relay-input" strict exact component={RelayInputRoute} />
+      <Route
+        path="/e4e5f4Be7/console/curated-events"
+        strict
+        exact
+        component={CuratedEventsConsoleRoute}
+      />
+      <Route path="/relay-input" strict exact component={RelayInputRoute} />
+      <Route exact strict path="/" component={LandingPage} />
 
-      <SocketProvider>
-        <PeerProviderContainer>
-          <Route path="/relay-input" strict exact component={RelayInputRoute} />
-          <Route exact strict path="/r/:slug" key={location.key} component={RoomRoute} />
-          <Route exact path="/" component={LandingPage} />
-        </PeerProviderContainer>
-      </SocketProvider>
+      {/* This is only for the Room - TODO: Rename to RoomProvider or something */}
+
+      <Route exact strict path="/r/:slug" key={location.key} component={RoomRoute} />
+      <Route exact strict path="/classroom/:slug" key={location.key} component={RoomRoute} />
+      {/* <Route path="/wcc" exact strict key={location.key} component={BroadcastPage} /> */}
+      <Route exact strict path="/classroom/:slug" key={location.key} component={RoomRoute} />
+      <Route exact strict path="/tournaments/:slug" key={location.key} component={TournamentsRoute} />
+      <Route exact strict path="/tournaments" key={location.key} component={TournamentsRoute} />
     </Switch>
   );
 };

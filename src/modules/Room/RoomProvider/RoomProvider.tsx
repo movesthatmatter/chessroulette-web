@@ -27,31 +27,46 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
 
       Events.trackSwitchedRoomActivity(content.activityType);
 
-      return peerState.client.send({
+      peerState.client.send({
         kind: 'switchJoinedRoomActivityRequest',
         content,
       });
     },
-    [joinedRoom]
+    [peerState.status, joinedRoom]
   );
 
   const goLive = useCallback(() => {
-    if (peerState.status !== 'open'){
+    if (peerState.status !== 'open') {
       return;
     }
 
-    return peerState.client.send({
+    peerState.client.send({
       kind: 'switchToRelayAndGoLive',
-      content: undefined
-    })
-  },[joinedRoom])
+      content: undefined,
+    });
+  }, [peerState.status, joinedRoom]);
+
+  const toggleInMeetup = useCallback(
+    (inMeetup: boolean) => {
+      if (peerState.status !== 'open') {
+        return;
+      }
+
+      return peerState.client.send({
+        kind: 'toggleRoomInMeetupModeRequest',
+        content: inMeetup,
+      });
+    },
+    [peerState.status, joinedRoom]
+  );
 
   const [contextState, setContextState] = useState<RoomProviderContextState>({
     deviceSize,
     room: joinedRoom,
     roomActions: {
       switchActivity,
-      goLive
+      goLive,
+      toggleInMeetup,
     },
     boardOrientation,
     setBoardOrientation,
@@ -65,7 +80,8 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
       deviceSize,
       roomActions: {
         switchActivity,
-        goLive
+        goLive,
+        toggleInMeetup,
       },
       boardOrientation,
       setBoardOrientation,
@@ -76,11 +92,9 @@ export const RoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
     Events.trackRoomJoined(joinedRoom);
   }, []);
 
-  console.log('RoomProvider', joinedRoom);
-
   return (
     <RoomProviderContext.Provider value={contextState}>
       {props.children}
     </RoomProviderContext.Provider>
   );
-};  
+};

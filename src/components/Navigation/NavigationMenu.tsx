@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import cx from 'classnames';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { hideOnDesktop, hideOnMobile, floatingShadow } from 'src/theme';
+import {
+  hideOnDesktop,
+  hideOnMobile,
+  floatingShadow,
+  onlyMobile,
+  onlyDesktop,
+  fonts,
+} from 'src/theme';
 import { Menu } from 'grommet-icons';
 import { FormClose } from 'grommet-icons';
 import { UserMenu } from './UserMenu';
@@ -9,9 +16,11 @@ import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationButton } from 'src/services/Authentication/widgets';
 import { Link, useLocation } from 'react-router-dom';
 import { DarkModeSwitch } from '../DarkModeSwitch/DarkModeSwitch';
-import { Home, Video, People, Play } from 'react-iconly';
+import { Home, Video, People, Game } from 'react-iconly';
 import { Text } from '../Text';
 import { spacers } from 'src/theme/spacers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrophy } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   className?: string;
@@ -28,129 +37,32 @@ export const NavigationMenu: React.FC<Props> = (props) => {
       <div className={cls.linkWrapper}>
         <Link to={'/'} className={cx(cls.link, location.pathname === '/' && cls.activeLink)}>
           <Home set="bold" />
-          <br />
           <Text size="small1">Home</Text>
         </Link>
-        {/* <Badge
-          color="negative"
-          text="New"
-          className={cls.linkBadge}
-          textClassName={cls.linkBadgeText}
-        /> */}
       </div>
-      {/* <div className={cls.linkWrapper}>
-        <Link
-          to={'/broadcasts'}
-          className={cx(cls.link, location.pathname === '/broadcasts' && cls.activeLink)}
-        >
-        <Play set='bold' />
-         <br/>
-         <Text size='small1'>Broadcasts</Text>
-        </Link>
-      </div> */}
-      {/* <div className={cls.linkWrapper}>
-        <Link
-          to={'/broadcasts-external'}
-          className={cx(cls.link, location.pathname === '/broadcasts-external' && cls.activeLink)}
-        >
-          External Broadcasts
-        </Link>
-      </div> */}
-      {/* <div className={cls.linkWrapper}>
-        <a
-          className={cls.link}
-          href="https://gabrielctroia.medium.com/meet-chessroulette-org-a-quarantine-project-e4108f05db39"
-          target="_blank"
-        >
-          About
-        </a>
-      </div>
-      <div className={cls.linkWrapper}>
-        <a
-          className={cls.link}
-          href="mailto:hi@chessroulette.org?subject=Hi from Chessroulette's Homepage"
-        >
-          Get In Touch
-        </a>
-      </div> */}
-      {/* <div className={cls.linkWrapper}>
-        <WithDialog
-          hasCloseButton
-          buttons={
-            [
-              // () => (
-            ]
-          }
-          title="Let's Play"
-          contentContainerClass={cls.playDialogContent}
-          graphic={
-            <div className={cls.mutunachiContainer}>
-              <Mutunachi mid="10" />
-            </div>
-          }
-          content={(r) => (
-            <>
-              <CreateRoomButtonWidget
-                label="Play"
-                type="primary"
-                createRoomSpecs={{
-                  type: 'private',
-                  activityType: 'play',
-                }}
-                full
-                style={{
-                  marginBottom: spacers.default,
-                }}
-                // onClick={r.onClose}
-              />
-              <CreateRoomButtonWidget
-                label="Analyze"
-                type="secondary"
-                style={{
-                  marginBottom: 0,
-                }}
-                full
-                createRoomSpecs={{
-                  type: 'private',
-                  activityType: 'analysis',
-                }}
-                // onClick={r.onClose}
-              />
-            </>
-          )}
-          render={(r) => (
-            <a
-              className={cls.link}
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-
-                r.onOpen();
-              }}
-            >
-              <Game set="bold" />
-              <br />
-              <Text size="small1">Play</Text>
-            </a>
-          )}
-        />
-      </div> */}
       <div className={cls.linkWrapper}>
         <Link
           to={'/watch'}
           className={cx(cls.link, location.pathname === '/watch' && cls.activeLink)}
         >
           <Video set="bold" />
-          <br />
           <Text size="small1">Watch</Text>
         </Link>
       </div>
       <div className={cls.linkWrapper}>
         <a className={cls.link} href="https://partner.chessroulette.live" target="_blank">
           <People set="bold" />
-          <br />
           <Text size="small1">Collaborate</Text>
         </a>
+      </div>
+      <div className={cls.linkWrapper}>
+        <Link
+          to={'/tournaments'}
+          className={cx(cls.link, location.pathname.indexOf('/tournaments') > -1 && cls.activeLink)}
+        >
+          <FontAwesomeIcon icon={faTrophy} className={cls.tournamentsIcon} />
+          <Text size="small1">Tournaments</Text>
+        </Link>
       </div>
     </>
   );
@@ -159,7 +71,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
     <div className={cx(cls.containerMenu, props.className)}>
       <div className={cls.desktopMenu}>
         <div className={cx(cls.linksContainer)}>{menuContent}</div>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div className={cls.darkModeSwitchDesktopContainer}>
           <DarkModeSwitch />
         </div>
         {auth.authenticationType !== 'none' && (
@@ -173,15 +85,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
         )}
       </div>
       <div className={cx(cls.onlyMobile)}>
-        <div
-          style={{
-            marginRight: '20px',
-            justifyContent: 'center',
-            display: 'flex',
-            alignContent: 'center',
-            alignItems: 'center',
-          }}
-        >
+        <div className={cls.darkModeSwitchMobileContainer}>
           <DarkModeSwitch />
         </div>
         <div className={cls.menuWrapper} onClick={() => setOpen((prev) => !prev)}>
@@ -312,18 +216,18 @@ const useStyles = createUseStyles((theme) => ({
 
   linksContainer: {
     display: 'flex',
-    // justifyContent: 'center',
     flex: 1,
-    // background: 'red'
   },
   linkWrapper: {
     textAlign: 'center',
-    paddingLeft: spacers.default,
-    paddingRight: spacers.default,
+    paddingLeft: spacers.large,
+    paddingRight: spacers.large,
     alignSelf: 'center',
     position: 'relative',
 
-    width: '60px',
+    ...onlyDesktop({
+      // width: '60px',
+    }),
   },
   linkBadge: {
     position: 'absolute',
@@ -345,15 +249,27 @@ const useStyles = createUseStyles((theme) => ({
     fontSize: '16px',
     textAlign: 'center',
 
+    display: 'flex',
+    flexDirection: 'column',
+    alignContent: 'center',
+    alignItems: 'center',
+
+    ...onlyMobile({
+      flexDirection: 'row-reverse',
+      ...({
+        '& > span': {
+          marginRight: spacers.small,
+          ...fonts.body1,
+        },
+      } as CSSProperties['nestedKey']),
+    }),
+
     '&:hover': {
       ...theme.links.hover,
     },
   },
   activeLink: {
-    // borderBottom: `3px solid ${theme.text.primaryColor}`,
-    // color: theme.text.primaryColor,
     ...theme.links.hover,
-    //borderBottom: `3px solid ${theme.text.primaryColor}`,
     color: theme.colors.primary,
   },
 
@@ -405,5 +321,24 @@ const useStyles = createUseStyles((theme) => ({
   },
   mutunachi: {
     height: '100%',
+  },
+
+  darkModeSwitchDesktopContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  darkModeSwitchMobileContainer: {
+    marginRight: spacers.default,
+    justifyContent: 'center',
+    display: 'flex',
+    alignContent: 'center',
+    alignItems: 'center',
+  },
+
+  tournamentsIcon: {
+    fontSize: '16px',
+    marginTop: '5px',
+    marginBottom: '3px',
   },
 }));

@@ -193,7 +193,7 @@ export const RelayActivity: React.FC<Props> = ({ activity, deviceSize, onSelecte
 const FLOATING_SHADOW_HORIZONTAL_OFFSET = spacers.large;
 const FLOATING_SHADOW_BOTTOM_OFFSET = `48px`;
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
     flex: 1,

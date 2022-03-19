@@ -3,7 +3,7 @@ export const validateEmail = (input: string) => {
   return r.test(String(input).toLowerCase());
 };
 
-export const validateName = (s: string) => /^[a-zA-Z ]{2,100}$/.test(s);
+export const validateName = (s: string) => string(s) && notEmpty(s) && /^[a-zA-Z ]{2,100}$/.test(s);
 
 export const validateDigits = (count: number, input: string) => {
   return new RegExp(`^[0-9]\{${count}\}$`, 'g').test(input);
@@ -12,3 +12,5 @@ export const validateDigits = (count: number, input: string) => {
 export const username = (s: string) => /^[a-zA-Z0-9_-]{3,24}$/.test(s);
 
 export const notEmpty = (s?: string) => !!(s && s.length > 0);
+
+export const string = (s?: unknown) => typeof s === 'string';

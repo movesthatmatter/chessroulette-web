@@ -1,8 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-
 import React, { useRef } from 'react';
-import { StreamingBox } from 'src/components/StreamingBox';
 import { WithLocalStream } from 'src/storybook/WithLocalStream';
 import { PeerMocker } from 'src/mocks/records/PeerMocker';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
@@ -16,6 +14,8 @@ import { AspectRatio, AspectRatioExplicit } from 'src/components/AspectRatio';
 import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
 import { GameMocker } from 'src/mocks/records';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
+import { MultiFaceTimeCompact } from 'src/components/FaceTime/MultiFaceTimeCompact';
+import { useStreamingPeers } from 'src/providers/PeerProvider/hooks';
 
 export default {
   component: DesktopRoomLayout,
@@ -169,10 +169,12 @@ export const withChessGame = () => (
             [opponent.id]: opponent,
           },
           name: 'Valencia',
-          type: 'public',
+          isPrivate: false,
         });
 
-        publicRoom;
+        const { state: streamingPeersState, onFocus } = useStreamingPeers({
+          peersMap: publicRoom.peers,
+        });
 
         return (
           <div style={{ width: '100%', height: '100%' }}>
@@ -230,8 +232,17 @@ export const withChessGame = () => (
                     height: '100%',
                   }}
                 >
-                  <StreamingBox room={publicRoom} width={container.width} />
-
+                  {streamingPeersState.ready && (
+                    <MultiFaceTimeCompact
+                      reel={{
+                        streamingPeers: streamingPeersState.reel,
+                        myStreamingPeerId: publicRoom.me.userId,
+                        focusedStreamingPeer: streamingPeersState.inFocus,
+                      }}
+                      onFocus={onFocus}
+                      width={container.width}
+                    />
+                  )}
                   <div
                     style={{
                       flex: 1,
@@ -414,7 +425,7 @@ const LayoutComponent: React.FC<{
 
 export const multipleResolutions = () => (
   <>
-    <div style={{display:'flex'}}>
+    <div style={{ display: 'flex' }}>
       <LayoutComponent
         containerWidth={400}
         top={80}

@@ -27,3 +27,6 @@ export type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K
 // Utils for ts-async-results
 export type AnyAsyncResult = AsyncResult<any, any>;
 export type UnknownAsyncResult = AsyncResult<unknown, unknown>;
+export type EmptyAsyncResult = AsyncResult<void, unknown>;
+
+export type AnyOkAsyncResult<TError> = AsyncResult<any, TError>;

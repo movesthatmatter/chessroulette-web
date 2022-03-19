@@ -33,3 +33,14 @@ export const getCollaboratorStreamers = (
     http.get('api/watch/collaborators', { params })
   );
 };
+
+export const getSpecifiedStreamers = (byUsernames: string[]) => {
+  return getStreamersResource.request(
+    {
+      pageIndex: 0,
+      pageSize: byUsernames.length,
+      query: byUsernames,
+    },
+    (params) => http.get('api/watch/collaborators', { params })
+  );
+};

@@ -1,20 +1,11 @@
 import { Resources } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Dialog } from 'src/components/Dialog';
 import { Page } from 'src/components/Page';
-import { createUseStyles } from 'src/lib/jss';
-import { noop, toRoomUrlPath } from 'src/lib/util';
+import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { usePeerState } from 'src/providers/PeerProvider';
-import { Events } from 'src/services/Analytics';
-import { CustomTheme, effects } from 'src/theme';
+import { SocketClient } from 'src/services/socket/SocketClient';
 import { spacers } from 'src/theme/spacers';
-import { AsyncOk } from 'ts-async-results';
-import { resources } from '../../Room';
-import { CreateRelayRoomWizard } from '../../Room/wizards/CreateRelayRoomWizard';
-import { NextBroadcasts } from './components/NextBroadcasts';
-import { NoGames } from './components/NoGames';
-import { RelayedGame } from './components/RelayedGame';
+import { WccCalendar } from './components/WccCalendar';
 import { getCurrentlyStreamingRelayedGames } from './resources';
 
 type Props = {};
@@ -25,9 +16,6 @@ export const BroadcastPage: React.FC<Props> = (props) => {
     []
   );
   const peerState = usePeerState();
-  const [showWizard, setShowWizard] = useState(false);
-  const [selectedRelayId, setSelectedRelayId] = useState<string>();
-  const history = useHistory();
 
   useEffect(() => {
     if (peerState.status === 'open') {
@@ -56,59 +44,33 @@ export const BroadcastPage: React.FC<Props> = (props) => {
   }
 
   return (
-    <Page title="Broadcasts" name="Broadcasts" stretched>
+    <Page name="Broadcasts" stretched containerClassname={cls.pageContainer}>
       <div className={cls.container}>
-        {relayGames.length === 0 && <NoGames />}
-        {relayGames.map((relayGame) => (
-          <RelayedGame
-            relayGame={relayGame}
-            showWizzard={() => setShowWizard(true)}
-            selectRelayId={(id) => setSelectedRelayId(id)}
-          />
-        ))}
-        <div className={cls.verticalSpacer}/>
-        <NextBroadcasts/>
+        <WccCalendar/>
       </div>
-      <Dialog
-        visible={showWizard}
-        content={
-          <>
-            {selectedRelayId && (
-              <CreateRelayRoomWizard
-                onFinished={() => {
-                  if (peerState.status !== 'open') {
-                    return AsyncOk.EMPTY;
-                  }
-                  return resources
-                    .createRoom({
-                      userId: peerState.me.id,
-                      type: 'private',
-                      activityType: 'relay',
-                      relayId: selectedRelayId,
-                    })
-                    .map((room) => {
-                      setShowWizard(false);
-                      Events.trackRoomCreated(room);
-                      history.push(toRoomUrlPath(room));
-                    });
-                }}
-              />
-            )}
-          </>
-        }
-        onClose={() => setShowWizard(false)}
-      />
     </Page>
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
+    justifyContent:'center',
+    margin: '0 auto'
   },
   verticalSpacer: {
     height: spacers.large
-  }
+  },
+  pageContainer: {
+    ...makeImportant({
+      ...(theme.name === 'lightDefault'
+        ? {
+            backgroundColor: theme.colors.background,
+          }
+        : {
+            backgroundColor: '#27104e',
+            backgroundImage: 'linear-gradient(19deg, #27104e 0%, #161a2b 25%)',
+          }),
+    }),
+  },
 }));

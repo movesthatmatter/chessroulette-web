@@ -212,7 +212,7 @@ export const DesktopRoomLayout: React.FC<Props> = ({
   );
 };
 
-const useStyles = createUseStyles<CustomTheme>((theme) => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     width: '100%',
     height: '100%',

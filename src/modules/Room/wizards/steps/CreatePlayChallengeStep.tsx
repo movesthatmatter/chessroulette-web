@@ -6,11 +6,18 @@ import { DialogWizardStep } from 'src/components/DialogWizard/DialogWizardStep';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 
 type Props = {
-  gameSpecs: GameSpecsRecord;
   onUpdated: (gameSpecs: GameSpecsRecord) => void;
+  gameSpecs?: GameSpecsRecord;
 };
 
-export const CreatePlayChallengeStep: React.FC<Props> = (props) => {
+export const CreatePlayChallengeStep: React.FC<Props> = ({
+  onUpdated,
+  gameSpecs = {
+    timeLimit: 'rapid10',
+    preferredColor: 'random',
+    gameType: 'chess',
+  },
+}) => {
   const wizardProps = useWizard();
 
   return (
@@ -25,7 +32,7 @@ export const CreatePlayChallengeStep: React.FC<Props> = (props) => {
         },
       ]}
     >
-      <CreateChallenge onUpdated={props.onUpdated} gameSpecs={props.gameSpecs} />
+      <CreateChallenge onUpdated={onUpdated} gameSpecs={gameSpecs} />
     </DialogWizardStep>
   );
 };

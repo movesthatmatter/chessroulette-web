@@ -13,11 +13,7 @@ import {
 import { LichessGameState, NDJsonReader, LichessChallenge, LichessChatLine } from '../types';
 import { Pubsy } from 'src/lib/Pubsy';
 import { makeUci, parseSquare } from 'chessops/util';
-import {
-  ChessGameColor,
-  ChessMove,
-  GameSpecsRecord,
-} from 'dstnd-io';
+import { ChessGameColor, ChessMove, GameSpecsRecord } from 'dstnd-io';
 import { NormalMove } from 'chessops/types';
 import { Game } from '../../Games';
 import { getHomeColor, lichessGameToChessRouletteGame, getPromoPieceFromMove } from '../utils';
@@ -27,56 +23,58 @@ import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authenti
 
 type LichessManagerEvents = {
   onStreamStart: undefined;
-  onNewGame : {game:Game, homeColor: ChessGameColor};
+  onNewGame: { game: Game; homeColor: ChessGameColor };
   onGameFinish: undefined;
-  onGameUpdate: {gameState: LichessGameState};
+  onGameUpdate: { gameState: LichessGameState };
   onChallenge: { challenge: LichessChallenge };
   onChallengeAccepted: undefined;
-  onNewChatLine: {chatLine: LichessChatLine};
+  onNewChatLine: { chatLine: LichessChatLine };
 };
 
-
 export class LichessManager {
-  auth : RequestInit = {};
-  challengeId?:string;
+  auth: RequestInit = {};
+  challengeId?: string;
   private pubsy = new Pubsy<LichessManagerEvents>();
 
   constructor(private user: RegisteredUserRecordWithLichessConnection) {
     this.auth = {
-      headers : { Authorization: `Bearer ` + user.externalAccounts.lichess.accessToken }
+      headers: { Authorization: `Bearer ` + user.externalAccounts.lichess.accessToken },
     };
   }
 
   startStreamAndChallenge = (specs: GameSpecsRecord) => {
     getLichessStreamEvent(this.auth)
-    .map((reader) => this.loopThroughNDJson(reader))
-    .flatMap(() => {
-      return sendAChallenge('tttcr', {
-        ...this.auth,
-        body: new URLSearchParams({
-          'color': specs.preferredColor, 
-          'clock.limit' : (chessGameTimeLimitMsMap[specs.timeLimit]/1000).toString(),
-          'clock.increment' : '0'
-        }),
+      .map((reader) => this.loopThroughNDJson(reader))
+      .flatMap(() => {
+        return sendAChallenge('tttcr', {
+          ...this.auth,
+          body: new URLSearchParams({
+            ...(!!specs.preferredColor && {
+              color: specs.preferredColor, // TODO: Changed on Dec 3rd. This might break now!
+            }),
+            'clock.limit': (chessGameTimeLimitMsMap[specs.timeLimit] / 1000).toString(),
+            'clock.increment': '0',
+          }),
+        });
       })
-    })
-    .mapErr(e => console.log('Error starting a stream', e.value));
+      .mapErr((e) => console.log('Error starting a stream', e.value));
   };
 
   private gameStart = (id: string) => {
     getBoardStreamById(id, this.auth)
-    .map(reader => this.loopThroughNDJson(reader))
-    .mapErr(e => console.log('Error starting the game', e.value));
+      .map((reader) => this.loopThroughNDJson(reader))
+      .mapErr((e) => console.log('Error starting the game', e.value));
   };
 
   makeMove = (move: ChessMove, id: string) => {
     const normalMove: NormalMove = {
       from: parseSquare(move.from),
       to: parseSquare(move.to),
-      ...(move.promotion && {promotion: getPromoPieceFromMove(move.promotion)})
+      ...(move.promotion && { promotion: getPromoPieceFromMove(move.promotion) }),
     };
-    sendAMove(makeUci(normalMove), id, this.auth)
-    .mapErr(e => console.log('move failed!', e.error))
+    sendAMove(makeUci(normalMove), id, this.auth).mapErr((e) =>
+      console.log('move failed!', e.error)
+    );
   };
 
   sendChatMessage = (text: string, gameId: string) => {
@@ -84,38 +82,39 @@ export class LichessManager {
       ...this.auth,
       body: new URLSearchParams({
         room: 'player',
-        text
-      })
+        text,
+      }),
     })
-    .mapErr(e => console.log('failed to send a message'))
-    .resolve()
-  }
+      .mapErr((e) => console.log('failed to send a message'))
+      .resolve();
+  };
 
   resignGame = (gameId: string) => {
-    resignGame(gameId, this.auth)
-    .mapErr(e => console.log('failed to resign game'))
-  }
+    resignGame(gameId, this.auth).mapErr((e) => console.log('failed to resign game'));
+  };
 
   acceptOrOfferDraw = (gameId: string) => {
     return acceptOrOfferDraw(gameId, this.auth)
-    .mapErr(e => console.log('failed to resign game'))
-    .resolve()
-  }
+      .mapErr((e) => console.log('failed to resign game'))
+      .resolve();
+  };
 
   declineDraw = (gameId: string) => {
     return declineDrawOffer(gameId, this.auth)
-    .mapErr(e => console.log('failed to decline draw'))
-    .resolve()
-  }
+      .mapErr((e) => console.log('failed to decline draw'))
+      .resolve();
+  };
 
   acceptChallenge = (challenge: LichessChallenge) => {
-    acceptChallenge(challenge.id, this.auth)
-    .mapErr(e => console.log('error accepting a challenge', e))
+    acceptChallenge(challenge.id, this.auth).mapErr((e) =>
+      console.log('error accepting a challenge', e)
+    );
   };
 
   declineChallenge = (challenge: LichessChallenge) => {
-    declineChallenge(challenge.id, this.auth)
-    .mapErr((e) => console.log('error declining a challenge', e));
+    declineChallenge(challenge.id, this.auth).mapErr((e) =>
+      console.log('error declining a challenge', e)
+    );
   };
 
   private async loopThroughNDJson(reader: NDJsonReader) {
@@ -138,23 +137,23 @@ export class LichessManager {
       }
 
       if (event.value.type === 'gameFull') {
-        this.pubsy.publish( 'onNewGame', {
-          homeColor: getHomeColor(event.value, this.user.externalAccounts.lichess.userId), 
-          game: lichessGameToChessRouletteGame(event.value, this.user)
-        })
+        this.pubsy.publish('onNewGame', {
+          homeColor: getHomeColor(event.value, this.user.externalAccounts.lichess.userId),
+          game: lichessGameToChessRouletteGame(event.value, this.user),
+        });
       }
 
       if (event.value.type === 'gameState') {
-       this.pubsy.publish('onGameUpdate', {
-         gameState: event.value as LichessGameState
-       })
+        this.pubsy.publish('onGameUpdate', {
+          gameState: event.value as LichessGameState,
+        });
         if (event.value.winner) {
           this.pubsy.publish('onGameFinish', undefined);
         }
       }
 
-      if (event.value.type === 'chatLine'){
-        this.pubsy.publish('onNewChatLine', {chatLine: event.value})
+      if (event.value.type === 'chatLine') {
+        this.pubsy.publish('onNewChatLine', { chatLine: event.value });
       }
 
       // if (event.value.type === 'gameFinish') {
@@ -163,17 +162,16 @@ export class LichessManager {
 
       if (event.value.type === 'challenge') {
         this.pubsy.publish('onChallenge', { challenge: event.value.challenge as LichessChallenge });
-        this.challengeId= event.value.challenge.id;
+        this.challengeId = event.value.challenge.id;
       }
 
       this.loopThroughNDJson(reader);
-
     } catch (e) {
       console.log('error parsing the current event', e);
     }
   }
 
-  onStreamStart(fn : () => void) {
+  onStreamStart(fn: () => void) {
     this.pubsy.subscribe('onStreamStart', fn);
   }
 
@@ -189,15 +187,15 @@ export class LichessManager {
     this.pubsy.subscribe('onGameFinish', fn);
   }
 
-  onNewGame(fn: (data: {game: Game, homeColor: ChessGameColor}) => void){
+  onNewGame(fn: (data: { game: Game; homeColor: ChessGameColor }) => void) {
     this.pubsy.subscribe('onNewGame', fn);
   }
 
-  onGameUpdate(fn: (data : {gameState : LichessGameState}) => void) {
+  onGameUpdate(fn: (data: { gameState: LichessGameState }) => void) {
     this.pubsy.subscribe('onGameUpdate', fn);
   }
 
-  onNewChatLine(fn: (data: {chatLine: LichessChatLine}) => void){
+  onNewChatLine(fn: (data: { chatLine: LichessChatLine }) => void) {
     this.pubsy.subscribe('onNewChatLine', fn);
   }
 }

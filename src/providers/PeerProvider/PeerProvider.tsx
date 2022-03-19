@@ -18,11 +18,11 @@ import { SocketClient } from 'src/services/socket/SocketClient';
 import { RoomCredentials } from './types';
 
 type Props = {
-  user: UserRecord;
-  iceServers: IceServerRecord[];
   dispatch: Dispatch;
-  roomAndMe: PeerProviderState;
+  iceServers: IceServerRecord[];
   socketClient: SocketClient;
+  user: UserRecord;
+  roomAndMe: PeerProviderState;
 };
 
 type State = {
@@ -38,7 +38,7 @@ export class PeerProvider extends React.Component<Props, State> {
 
     this.state = {
       peerConnectionsState: { status: 'init' },
-      contextState: { status: 'init' },
+      contextState: { status: 'init', ready: false },
     };
 
     this.joinRoom = this.joinRoom.bind(this);
@@ -87,6 +87,8 @@ export class PeerProvider extends React.Component<Props, State> {
       this.props.dispatch(updateRoomAction({ room: msg.content }));
     } else if (msg.kind === 'joinedRoomAndGameUpdated') {
       this.props.dispatch(updateRoomAction({ room: msg.content.room }));
+    } else if (msg.kind === 'joinedRoomAndWarGameUpdated') {
+      this.props.dispatch(updateRoomAction({ room: msg.content.room }));
     } else if (msg.kind === 'joinRoomSuccess') {
       this.props.dispatch(
         createRoomAction({
@@ -110,11 +112,12 @@ export class PeerProvider extends React.Component<Props, State> {
 
   private getNextContextState(prev: State['contextState']): PeerContextState {
     if (!this.props.roomAndMe.me) {
-      return { status: 'init' };
+      return { status: 'init', ready: false };
     }
 
     if (this.props.roomAndMe.room) {
       return {
+        ready: true,
         status: 'open',
         client: this.props.socketClient,
         me: this.props.roomAndMe.me,
@@ -133,6 +136,7 @@ export class PeerProvider extends React.Component<Props, State> {
     }
 
     return {
+      ready: true,
       status: 'open',
       client: this.props.socketClient,
       me: this.props.roomAndMe.me,
@@ -175,7 +179,7 @@ export class PeerProvider extends React.Component<Props, State> {
   render() {
     return (
       <>
-        {this.props.roomAndMe.room && (
+        {this.props.roomAndMe.room && this.props.roomAndMe.room.p2pCommunicationType !== 'none' && (
           <PeerConnectionsHandler
             // Reset this once the room changes
             key={this.props.roomAndMe.room.id}

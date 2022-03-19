@@ -71,8 +71,8 @@ export const CreateChallenge: React.FC<CreateChallengeProps> = ({ gameSpecs, onU
             value: k,
           }))}
           value={{
-            label: capitalize(gameSpecs.preferredColor),
-            value: gameSpecs.preferredColor,
+            label: capitalize(gameSpecs.preferredColor || ''),
+            value: gameSpecs.preferredColor || '',
           }}
           onSelect={({ value }) => {
             onUpdated({
@@ -89,11 +89,6 @@ export const CreateChallenge: React.FC<CreateChallengeProps> = ({ gameSpecs, onU
 const useStyles = createUseStyles({
   container: {},
   top: {
-    // marginBottom: spacers.small,
-    maxHeight:'80px'
-  },
-  label: {
-    // marginBottom: spacers.small,
-    maxHeight:'80px'
+    marginBottom: spacers.default,
   },
 });
