@@ -54,7 +54,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
       return BATTLE_LAYOUT_RATIOS;
     }
 
-    return LAYOUT_RATIOS;    
+    return LAYOUT_RATIOS;
   }, [roomConsumer?.room.layout]);
 
   return (
@@ -73,7 +73,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
               <div className={cls.userMenuWrapper}>
                 <div className={cls.linksContainer}>
                   <SwitchActivityWidgetRoomConsumer
-                    render={({ onSwitch, goLive, toggleInMeetup, room }) => (
+                    render={({ onSwitch, goLive, switchRoomLayout, room }) => (
                       <>
                         <NavigationLink
                           title="Activities"
@@ -117,7 +117,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                             </div>
                           )}
 
-                        {room.currentActivity.type !== 'play' && (
+                        {room.currentActivity.type !== 'play' ? (
                           <div
                             style={{
                               flex: 1,
@@ -130,9 +130,36 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
                               label="Meetup Mode"
                               type="primary"
                               clear
-                              onClick={() => toggleInMeetup(true)}
+                              onClick={() => switchRoomLayout('meetup')}
                               style={{ marginBottom: '0px' }}
                             />
+                          </div>
+                        ) : (
+                          <div
+                            style={{
+                              flex: 1,
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginLeft: spacers.default,
+                            }}
+                          >
+                            {room.layout === 'battle' ? (
+                              <Button
+                                label="Default Layout"
+                                type="primary"
+                                clear
+                                onClick={() => switchRoomLayout('default')}
+                                style={{ marginBottom: '0px' }}
+                              />
+                            ) : (
+                              <Button
+                                label="Battle Mode"
+                                type="primary"
+                                clear
+                                onClick={() => switchRoomLayout('battle')}
+                                style={{ marginBottom: '0px' }}
+                              />
+                            )}
                           </div>
                         )}
                       </>
@@ -164,11 +191,12 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
               </div>
             </div>
             <div className={cls.rightSideStretchedContainer}>
-              {!roomConsumer?.room.inMeetup && roomConsumer?.room.p2pCommunicationType !== 'none' && (
-                <div>
-                  <StreamingBoxRoomConsumer containerClassName={cls.streamingBox} />
-                </div>
-              )}
+              {(!roomConsumer?.room.layout || roomConsumer.room.layout === 'default') &&
+                roomConsumer?.room.p2pCommunicationType !== 'none' && (
+                  <div>
+                    <StreamingBoxRoomConsumer containerClassName={cls.streamingBox} />
+                  </div>
+                )}
               <RoomTabsWidgetRoomConsumer
                 bottomContainerHeight={BOTTOM_HEIGHT + container.verticalPadding - 1}
               />
@@ -189,7 +217,7 @@ export const GenericLayoutDesktopRoomConsumer: React.FC<Props> = React.memo((pro
           </div>
         )}
       />
-      {roomConsumer?.room.inMeetup && (
+      {roomConsumer?.room.layout === 'meetup' && (
         <Modal
           style={{
             height: '100%',
@@ -229,7 +257,7 @@ const useStyles = createUseStyles((theme) => ({
   userMenuWrapper: {
     display: 'flex',
     flex: 1,
-    justifyContent:'flex-start'
+    justifyContent: 'flex-start',
   },
   logoWrapper: {
     display: 'flex',

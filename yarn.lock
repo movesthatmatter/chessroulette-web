@@ -7609,9 +7609,9 @@ dotenv@^6.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
   integrity sha512-HygQCKUBSFl8wKQZBSemMywRWcEDNidvNbjGVyZu3nbZ8qq9ubiPoGLMdRDpfSrpkkm9BXYFkpKxxFX38o/76w==
 
-"dstnd-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#0.3.0":
+"dstnd-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#a142079":
   version "0.3.0"
-  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#7991d493497a859e24ccaee6b615198f03383a28"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#a142079ae5cb653afac7e9e8b0b3c6ea279f5660"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"

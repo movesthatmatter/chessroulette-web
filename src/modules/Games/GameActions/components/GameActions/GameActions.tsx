@@ -162,7 +162,8 @@ export const GameActions: React.FC<Props> = ({
 
   return (
     <div className={cx(cls.container, props.className)}>
-      <div className={cls.gameActionButtonsContainer}>{content()}</div>
+      {content()}
+      {/* <div className={cls.gameActionButtonsContainer}>{content()}</div> */}
     </div>
   );
 };
@@ -178,15 +179,20 @@ const useStyles = createUseStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     zIndex: 99,
+
+
   },
   gameActionButton: {
-    ...makeImportant({
-      color: theme.colors.black,
-    }),
-    ...({
-      '&:last-of-type': {
-        marginBottom: '0px !important',
-      },
-    } as CSSProperties),
+    marginRight: spacers.default,
+    marginBottom: 0,
+
+    // ...makeImportant({
+    //   color: theme.colors.black,
+    // }),
+    // ...({
+    //   '&:last-of-type': {
+    //     marginBottom: '0px !important',
+    //   },
+    // } as CSSProperties),
   },
 }));

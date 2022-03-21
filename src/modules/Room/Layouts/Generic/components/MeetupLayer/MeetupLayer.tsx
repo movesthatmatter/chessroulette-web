@@ -33,8 +33,8 @@ export const MeetupLayer: React.FC<Props> = (props) => {
           <Logo withBeta darkBG />
         </div>
         <SwitchActivityWidgetRoomConsumer
-          render={({ toggleInMeetup }) => (
-            <div onClick={() => toggleInMeetup(false)} className={cls.exitButton}>
+          render={({ switchRoomLayout }) => (
+            <div onClick={() => switchRoomLayout('default')} className={cls.exitButton}>
               <Close className={cls.exitIcon} />
             </div>
           )}

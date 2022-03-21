@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { RoomProviderContext, RoomProviderContextState } from '../RoomProvider';
-import { SwitchRoomActivityRequestPayload } from 'dstnd-io';
+import { RoomLayout, roomLayout, SwitchRoomActivityRequestPayload } from 'dstnd-io';
 import { CreateChallengeDialog } from '../RoomActivity/activities/components/CreateChallengeDialog';
 import { getRoomPendingChallenge } from '../util';
 
@@ -66,7 +66,7 @@ type Props = {
     p: {
       onSwitch: (s: State) => void;
       goLive: () => void;
-      toggleInMeetup: (inMeetup: boolean) => void;
+      switchRoomLayout: (layout?: RoomLayout) => void;
     } & NonNullable<RoomProviderContextState>
   ) => React.ReactNode;
 };
@@ -116,8 +116,8 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
         goLive: () => {
           context.roomActions.goLive();
         },
-        toggleInMeetup: (inMeetup: boolean) => {
-          context.roomActions.toggleInMeetup(inMeetup);
+        switchRoomLayout: (layout?: RoomLayout) => {
+          context.roomActions.switchLayout(layout);
         },
       })}
       {state?.activityType === 'play' && (

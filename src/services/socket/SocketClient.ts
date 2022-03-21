@@ -54,7 +54,7 @@ import {
   RelayAdjustGameTimersRequestPayload,
   RelayGameUndoMoveRequestPayload,
   RelayEndGameRequestPayload,
-  ToggleRoomInMeetupRequestPayload,
+  SwitchRoomLayoutRequestPayload,
   WarGameActionRequestPayload,
   WarGameChallengeAcceptRequestPayload,
   WarGameJoinRequestPayload,
@@ -106,7 +106,7 @@ type SendableMessagesMap = {
   leaveRoomRequest: LeaveRoomRequestPayload;
   switchRoomActivityRequestPayload: SwitchRoomActivityRequestPayload;
   switchToRelayAndGoLive: SwitchGameToRelayAndGoLivePayload;
-  toggleRoomInMeetupRequestPayload: ToggleRoomInMeetupRequestPayload;
+  switchRoomLayoutRequestPayload: SwitchRoomLayoutRequestPayload;
 
   //Chat
   broadcastChatMessage: BroadcastChatMessagePayload;

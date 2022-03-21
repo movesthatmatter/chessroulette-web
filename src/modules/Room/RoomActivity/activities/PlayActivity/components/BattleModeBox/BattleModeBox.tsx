@@ -1,6 +1,7 @@
+import React, { useMemo, useState } from 'react';
+import cx from 'classnames';
 import { ChessGameColor, ChessHistoryMove, GameRecord } from 'dstnd-io';
 import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
-import React, { useMemo, useState } from 'react';
 import { FaceTime, MyFaceTime } from 'src/components/FaceTime';
 import { createUseStyles } from 'src/lib/jss';
 import { Game } from 'src/modules/Games';
@@ -158,7 +159,7 @@ export const BattleModeBox: React.FC<Props> = ({ activity, homeColor, containerD
                   material={playersGameInfo.stats.home.materialScore}
                 />
               </div>
-              <div className={cls.playerBoxGradient} />
+              <div className={cx(cls.playerBoxGradient, cls.playerBoxGradientTop)} />
             </>
           }
         />
@@ -177,6 +178,7 @@ const useStyles = createUseStyles({
   },
   faceTime: {
     ...softBorderRadius,
+    overflow: 'hidden',
   },
   header: {
     display: 'flex',
@@ -197,18 +199,25 @@ const useStyles = createUseStyles({
   },
   playerInfoBox: {
     padding: spacers.small,
+    position: 'relative',
+    zIndex: 99,
+    overflow: 'hidden',
   },
   playerBoxGradient: {
-    // background: 'rgb(2,0,36)',
-    // background:
-    //   'linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)',
+    background: 'linear-gradient(0deg, rgba(0, 0, 0, .8) 0%, rgba(0, 0, 0, 0) 100%)',
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     width: '100%',
     height: '30%',
+    zIndex: 98,
+    ...softBorderRadius,
+  },
+  playerBoxGradientTop: {
+    background: 'linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .8) 100%)',
     // background: 'red',
-    zIndex: 99,
+    top: 0,
+    bottom: 'auto',
   },
 });

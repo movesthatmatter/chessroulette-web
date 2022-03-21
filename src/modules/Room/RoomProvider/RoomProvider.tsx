@@ -3,7 +3,7 @@ import { RoomProviderContext, RoomProviderContextState } from './RoomProviderCon
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { useRoomActivityListener } from 'src/modules/Room/RoomActivityLog/useRoomActivityListener';
 import { JoinedRoom } from '../types';
-import { RoomActivityCreationRecord } from 'dstnd-io';
+import { RoomActivityCreationRecord, RoomLayout, SwitchRoomLayoutRequestPayload } from 'dstnd-io';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { Events } from 'src/services/Analytics';
 import { BoardOrientation } from 'src/modules/Games';
@@ -18,13 +18,8 @@ export const RoomProvider: React.FC<Props> = ({
 }) => {
   const deviceSize = useDeviceSize();
   const peerState = usePeerState();
-
-  // const joinedRoom = useMemo(
-  //   () => ({ ...tempJoinedRoomWithoutLayout, layout: 'battle' as const }),
-  //   [tempJoinedRoomWithoutLayout]
-  // );
   const joinedRoom = useMemo(
-    () => ({ ...tempJoinedRoomWithoutLayout, layout: 'battle' as const }),
+    () => ({ ...tempJoinedRoomWithoutLayout }),
     [tempJoinedRoomWithoutLayout]
   );
 
@@ -58,15 +53,15 @@ export const RoomProvider: React.FC<Props> = ({
     });
   }, [peerState.status, joinedRoom]);
 
-  const toggleInMeetup = useCallback(
-    (inMeetup: boolean) => {
+  const switchLayout = useCallback(
+    (layout?: RoomLayout) => {
       if (peerState.status !== 'open') {
         return;
       }
 
       return peerState.client.send({
-        kind: 'toggleRoomInMeetupModeRequest',
-        content: inMeetup,
+        kind: 'switchRoomLayoutRequestPayload',
+        content: layout,
       });
     },
     [peerState.status, joinedRoom]
@@ -78,7 +73,7 @@ export const RoomProvider: React.FC<Props> = ({
     roomActions: {
       switchActivity,
       goLive,
-      toggleInMeetup,
+      switchLayout,
     },
     boardOrientation,
     setBoardOrientation,
@@ -93,7 +88,7 @@ export const RoomProvider: React.FC<Props> = ({
       roomActions: {
         switchActivity,
         goLive,
-        toggleInMeetup,
+        switchLayout,
       },
       boardOrientation,
       setBoardOrientation,

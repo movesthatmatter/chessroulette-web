@@ -99,38 +99,41 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
                 className={cls.side}
                 style={{ height: boardSize, width: leftSide.width + leftSide.horizontalPadding }}
               >
-                {/* <div className={cls.sideTop} /> */}
-                {/* <div
-                  style={{ height: '40%' }}
-                  className={cx(cls.floatingBoxContainerOffsets, cls.gameStateWidgetContainer)}
-                >
-                  <div className={cls.floatingBoxOffsets}>
-                    <GameStateWidget
-                      // This is needed for the countdown to reset the interval !!
-                      key={game.id}
-                      game={game}
-                      playParticipants={participantsByColor}
-                      homeColor={homeColor}
-                      // TODO: This should probably be seperate from the GameStateWidget
-                      //  something like a hook so it can be used without a view component
-                      onTimerFinished={gameActions.onTimerFinished}
-                    />
-                  </div>
-                </div> */}
-                {/* <div className={cls.sideBottom}>
-                  {activity.iamParticipating && (
-                    <GameActions
-                      activity={activity}
-                      className={cx(cls.sideBottom, cls.floatingBoxOffsets)}
-                    />
-                  )}
-                </div> */}
-                {roomConsumer?.room.layout === 'battle' && (
+                {roomConsumer?.room.layout === 'battle' ? (
                   <BattleModeBox
                     activity={activity}
                     homeColor={homeColor}
                     containerDimensions={leftSide}
                   />
+                ) : (
+                  <>
+                    <div className={cls.sideTop} />
+                    <div
+                      style={{ height: '40%' }}
+                      className={cx(cls.floatingBoxContainerOffsets, cls.gameStateWidgetContainer)}
+                    >
+                      <div className={cls.floatingBoxOffsets}>
+                        <GameStateWidget
+                          // This is needed for the countdown to reset the interval !!
+                          key={game.id}
+                          game={game}
+                          playParticipants={participantsByColor}
+                          homeColor={homeColor}
+                          // TODO: This should probably be seperate from the GameStateWidget
+                          //  something like a hook so it can be used without a view component
+                          onTimerFinished={gameActions.onTimerFinished}
+                        />
+                      </div>
+                    </div>
+                    <div className={cls.sideBottom}>
+                      {/* {activity.iamParticipating && (
+                        <GameActions
+                          activity={activity}
+                          className={cx(cls.sideBottom, cls.floatingBoxOffsets)}
+                        />
+                      )} */}
+                    </div>
+                  </>
                 )}
               </aside>
               <ChessGameHistoryConsumer
@@ -149,7 +152,12 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
                       onAddMove={c.onAddMove}
                       className={cls.board}
                     />
-                    <BoardSettingsWidgetRoomConsumer containerClassName={cls.settingsBar} />
+                    <div className={cls.underBoardBar}>
+                      {activity.iamParticipating && (
+                        <GameActions activity={activity} className={cls.gameActionsWidget} />
+                      )}
+                      <BoardSettingsWidgetRoomConsumer />
+                    </div>
                   </div>
                 )}
               />
@@ -202,9 +210,20 @@ const useStyles = createUseStyles({
     ...floatingBoxOffsets,
     flex: 1,
   },
-  settingsBar: {
-    paddingTop: spacers.default,
+
+  underBoardBar: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyItems: 'space-between',
+    justifyContent: 'space-between',
+    paddingTop: spacers.get(0.75),
   },
+  gameActionsWidget: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  // settingsBar: {
+  //   paddingTop: spacers.default,
+  //   display: 'flex',
+  //   justifyContent: 'flex-end',
+  // },
 });
