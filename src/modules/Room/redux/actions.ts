@@ -1,5 +1,5 @@
 import { createAction } from 'deox';
-import { RoomRecord } from 'dstnd-io';
+import { PeerRecord, RoomRecord } from 'dstnd-io';
 import { Peer } from 'src/providers/PeerProvider';
 
 export const createRoomAction = createAction(
@@ -10,6 +10,14 @@ export const createRoomAction = createAction(
 export const updateRoomAction = createAction(
   'Update Room',
   (resolve) => (p: { room: RoomRecord }) => resolve(p)
+);
+
+export const updateRoomPeerConnectionChannels = createAction(
+  'Update Room Peer Connection Channels',
+  (resolve) => (p: {
+    peerId: PeerRecord['id'];
+    channels: Partial<Peer['connection']['channels']>;
+  }) => resolve(p)
 );
 
 export const removeRoomAction = createAction('Remove Room');

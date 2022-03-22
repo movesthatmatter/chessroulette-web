@@ -2,7 +2,6 @@
 import React from 'react';
 import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityParticipant';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
-import { RoomProvider } from 'src/modules/Room/RoomProvider';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { Date } from 'window-or-global';

@@ -4,7 +4,6 @@ import { GameMocker } from 'src/mocks/records';
 import { PlayActivity } from './PlayActivity';
 import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityParticipant';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
-import { RoomProvider } from 'src/modules/Room/RoomProvider';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { Date } from 'window-or-global';

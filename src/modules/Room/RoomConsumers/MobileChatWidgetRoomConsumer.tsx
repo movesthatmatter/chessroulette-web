@@ -18,6 +18,7 @@ export const MobileChatWidgetRoomConsumer: React.FC<Props> = (props) => {
     <MobileChatWidget
       containerHeight={props.containerHeight}
       myUserId={roomContext.room.me.id}
+      room={roomContext.room}
     />
   );
 };

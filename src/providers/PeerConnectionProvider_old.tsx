@@ -39,7 +39,7 @@ export const PeerConnectionProvider: React.FC<Props> = (props) => {
     })();
   }, []);
 
-  const [initPeerContextState] = useState({ status: 'init', ready: false } as const);
+  const [initPeerContextState] = useState({ ready: false, status: 'init' } as const);
 
   if (!(iceServers && auth.authenticationType !== 'none')) {
     return (

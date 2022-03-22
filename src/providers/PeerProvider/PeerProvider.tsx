@@ -145,16 +145,21 @@ export class PeerProvider extends React.Component<Props, State> {
     };
   }
 
+  // Rename Connect to [Given] Peers
   private connectToRoom() {
     if (this.state.peerConnectionsState.status === 'ready' && this.props.roomAndMe.room?.peers) {
       this.state.peerConnectionsState.connect(this.props.roomAndMe.room.peers);
     }
   }
+
+  // Rename Disconnect to [Given] Peers
   private disconnectFromRoom() {
     if (this.state.peerConnectionsState.status === 'ready') {
       this.state.peerConnectionsState.disconnect();
     }
   }
+
+  // Move to RoomProvider
   private leaveRoom() {
     if (this.state.peerConnectionsState.status === 'ready') {
       this.state.peerConnectionsState.destroy();

@@ -1,10 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { GameMocker, pgnToChessHistory } from 'src/mocks/records';
+import { pgnToChessHistory } from 'src/mocks/records';
 import { RoomAnalysisActivityParticipant } from './types';
 import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityParticipant';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
-import { RoomProvider } from 'src/modules/Room/RoomProvider';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { second } from 'src/lib/time';
 import { AnalysisRecordMocker } from 'src/mocks/records/AnalysisRecordMocker';

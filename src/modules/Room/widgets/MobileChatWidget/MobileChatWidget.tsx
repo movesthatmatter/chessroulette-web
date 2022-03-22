@@ -5,23 +5,22 @@ import { Modal } from 'src/components/Modal/Modal';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ChatContainer } from 'src/modules/Chat';
 import { ChatIconWithBadge } from 'src/modules/Chat/components/ChatIconWithBadge';
-import { selectChatHistory } from 'src/providers/PeerProvider';
-import { CustomTheme, hardBorderRadius } from 'src/theme';
-import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { Room, selectChatHistory } from 'src/providers/PeerProvider';
+import { hardBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 
 type Props = {
   containerHeight: number;
   myUserId: UserRecord['id'];
+  room: Room;
 };
 
-export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight }) => {
+export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight, room }) => {
   const cls = useStyles();
   const chatHistory = useSelector(selectChatHistory);
   const [newMessageCounter, setNewMessageCounter] = useState(0);
   const [show, setShow] = useState(false);
   const [closedAt, setClosedAt] = useState(new Date());
-  const { theme } = useColorTheme();
 
   useEffect(() => {
     if (chatHistory && !show) {
@@ -64,7 +63,7 @@ export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight })
             setShow(false);
           }}
         >
-          <ChatContainer />
+          <ChatContainer room={room} />
         </Modal>
       )}
     </>

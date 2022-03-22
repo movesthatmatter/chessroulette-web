@@ -28,9 +28,9 @@ export const MatchActivityContainer: React.FC<Props> = ({ activity, ...props }) 
     }
   }, [activity]);
 
-  useEffect(() => {
-    console.log('room activity  => ', roomActivity);
-  }, [roomActivity]);
+  // useEffect(() => {
+  //   console.log('room activity  => ', roomActivity);
+  // }, [roomActivity]);
 
   const onGameUpdated = useCallback(
     (nextGame: Game) => {

@@ -1,12 +1,8 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { Game } from 'src/modules/Games';
+import React, { useCallback, useEffect } from 'react';
 import { ChessGameHistoryProvider } from 'src/modules/Games/Chess/components/GameHistory';
-import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
-import { GameProvider } from 'src/modules/Games/Providers/GameProvider/GameProvider';
-import { usePeerState } from 'src/providers/PeerProvider';
+import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { DeviceSize } from 'src/theme/hooks/useDeviceSize';
-import { console, Date } from 'window-or-global';
 import { RelayActivity } from '../RelayActivity/RelayActivity';
 import { RoomRelayActivity } from '../types';
 
@@ -16,29 +12,29 @@ type Props = {
 };
 
 export const RelayActivityContainer: React.FC<Props> = ({ activity, deviceSize }) => {
-  const peerState = usePeerState();
+  const pc = usePeerConnection();
 
   const request = useCallback<SocketClient['send']>(
     (payload) => {
-      if (peerState.status === 'open') {
-        peerState.client.send(payload);
+      if (pc.ready) {
+        pc.connection.send(payload);
       }
     },
-    [peerState.status]
+    [pc.ready]
   );
 
   useEffect(() => {
     if (!activity.game && activity.relayId) {
       onSelectRelay(activity.relayId);
     }
-  },[activity.relayId])
+  }, [activity.relayId]);
 
   // useEffect(() => {
   //   const unsubscribers: Function[] = [];
 
   //   if (peerState.status === 'open') {
   //     const usubscribe = peerState.client.onMessage((payload) => {
-       
+
   //     });
 
   //     unsubscribers.push(usubscribe);
@@ -49,14 +45,14 @@ export const RelayActivityContainer: React.FC<Props> = ({ activity, deviceSize }
   //   };
   // }, [peerState.status]);
 
-  const onSelectRelay = (id:string) => {
+  const onSelectRelay = (id: string) => {
     request({
       kind: 'importRelayedGameRequest',
       content: {
-        relayId: id
-      }
-    })
-  }
+        relayId: id,
+      },
+    });
+  };
 
   return (
     <>
@@ -64,8 +60,12 @@ export const RelayActivityContainer: React.FC<Props> = ({ activity, deviceSize }
         key={activity.game?.id || new Date().getTime().toString()}
         history={activity.game?.history || []}
       >
-          <RelayActivity activity={activity} deviceSize={deviceSize} onSelectedRelay={onSelectRelay}/>
+        <RelayActivity
+          activity={activity}
+          deviceSize={deviceSize}
+          onSelectedRelay={onSelectRelay}
+        />
       </ChessGameHistoryProvider>
-      </>
+    </>
   );
 };

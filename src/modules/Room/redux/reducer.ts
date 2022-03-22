@@ -5,7 +5,12 @@ import { Peer, Room } from 'src/providers/PeerProvider';
 import { GenericStateSlice } from 'src/redux/types';
 import { stateSliceByKey as activity } from '../RoomActivity/redux/reducer';
 import { stateSliceByKey as activityLog } from '../RoomActivityLog/redux/reducer';
-import { createRoomAction, removeRoomAction, updateRoomAction } from './actions';
+import {
+  createRoomAction,
+  removeRoomAction,
+  updateRoomAction,
+  updateRoomPeerConnectionChannels,
+} from './actions';
 
 type State = Room | null;
 
@@ -97,6 +102,36 @@ const reducer = createReducer(initialState as State, (handleAction) => [
   }),
 
   handleAction(removeRoomAction, () => null),
+  handleAction(updateRoomPeerConnectionChannels, (state, { payload }) => {
+    if (!state) {
+      return null;
+    }
+
+    const nextPeer: Peer = {
+      ...state.peers[payload.peerId],
+      connection: {
+        ...state.peers[payload.peerId].connection,
+        channels: {
+          ...state.peers[payload.peerId].connection.channels,
+          ...payload.channels,
+        },
+      },
+    };
+
+    return {
+      ...state,
+      peers: {
+        ...state.peers,
+        [payload.peerId]: nextPeer,
+      },
+
+      // TODO: Do we still need this?
+      peersIncludingMe: {
+        ...state.peersIncludingMe,
+        [payload.peerId]: nextPeer,
+      },
+    };
+  }),
 ]);
 
 const combinedReducer = combineReducers({

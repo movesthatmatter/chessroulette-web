@@ -11,7 +11,7 @@ export type RoomMembers = {
   [userId: string]: RoomMember;
 };
 
-// This is a type that sticks together - the activity here is tied to this room
+// This is a type that ties everything together - the activity here is tied to this room
 //  it gets created in redux most likely
 export type JoinedRoom = Room & {
   // it could have passed activities

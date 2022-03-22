@@ -30,6 +30,7 @@ const http = getHttpInstance({
   // transformResponse: [],
 });
 
+// TODO: Remove from here
 export const getIceURLS = async (): Promise<
   Result<IceServersResponse, ApiError>
 > => {

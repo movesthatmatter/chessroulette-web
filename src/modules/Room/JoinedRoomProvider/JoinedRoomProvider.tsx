@@ -1,12 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { JoinedRoomProviderContext, JoinedRoomProviderContextState } from './JoinedRoomProviderContext';
+import {
+  JoinedRoomProviderContext,
+  JoinedRoomProviderContextState,
+} from './JoinedRoomProviderContext';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { useRoomActivityListener } from 'src/modules/Room/RoomActivityLog/useRoomActivityListener';
 import { JoinedRoom } from '../types';
 import { RoomActivityCreationRecord } from 'dstnd-io';
-import { usePeerState } from 'src/providers/PeerProvider';
 import { Events } from 'src/services/Analytics';
 import { BoardOrientation } from 'src/modules/Games';
+import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
+import { RoomConnectProvider } from '../RoomConnectProvider';
 
 type Props = {
   joinedRoom: JoinedRoom;
@@ -14,50 +18,50 @@ type Props = {
 
 export const JoinedRoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) => {
   const deviceSize = useDeviceSize();
-  const peerState = usePeerState();
+  const pc = usePeerConnection();
 
   // TODO: Once we have Board Settings, this can be moved out of here
   const [boardOrientation, setBoardOrientation] = useState<BoardOrientation>('home');
 
   const switchActivity = useCallback(
     (content: RoomActivityCreationRecord) => {
-      if (peerState.status !== 'open') {
+      if (!pc.ready) {
         return;
       }
 
       Events.trackSwitchedRoomActivity(content.activityType);
 
-      peerState.client.send({
+      pc.connection.send({
         kind: 'switchJoinedRoomActivityRequest',
         content,
       });
     },
-    [peerState.status, joinedRoom]
+    [pc.ready, joinedRoom]
   );
 
   const goLive = useCallback(() => {
-    if (peerState.status !== 'open') {
+    if (!pc.ready) {
       return;
     }
 
-    peerState.client.send({
+    pc.connection.send({
       kind: 'switchToRelayAndGoLive',
       content: undefined,
     });
-  }, [peerState.status, joinedRoom]);
+  }, [pc.ready, joinedRoom]);
 
   const toggleInMeetup = useCallback(
     (inMeetup: boolean) => {
-      if (peerState.status !== 'open') {
+      if (!pc.ready) {
         return;
       }
 
-      return peerState.client.send({
+      return pc.connection.send({
         kind: 'toggleRoomInMeetupModeRequest',
         content: inMeetup,
       });
     },
-    [peerState.status, joinedRoom]
+    [pc.ready, joinedRoom]
   );
 
   const [contextState, setContextState] = useState<JoinedRoomProviderContextState>({
@@ -92,9 +96,16 @@ export const JoinedRoomProvider: React.FC<Props> = ({ joinedRoom, ...props }) =>
     Events.trackRoomJoined(joinedRoom);
   }, []);
 
+  // TODO: This could be done better so we don't have an extra check here!
+  if (!pc.ready) {
+    return null;
+  }
+
   return (
-    <JoinedRoomProviderContext.Provider value={contextState}>
-      {props.children}
-    </JoinedRoomProviderContext.Provider>
+    <RoomConnectProvider room={joinedRoom} peer={pc.peer}>
+      <JoinedRoomProviderContext.Provider value={contextState}>
+        {props.children}
+      </JoinedRoomProviderContext.Provider>
+    </RoomConnectProvider>
   );
 };
