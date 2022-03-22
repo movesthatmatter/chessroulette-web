@@ -4,7 +4,7 @@ import { BoardOrientation } from 'src/modules/Games';
 import { DeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { JoinedRoom } from '../types';
 
-export type RoomProviderContextState =
+export type JoinedRoomProviderContextState =
   | undefined
   | {
       deviceSize: DeviceSize;
@@ -22,4 +22,4 @@ export type RoomProviderContextState =
       ) => void;
     };
 
-export const RoomProviderContext = createContext<RoomProviderContextState>(undefined);
+export const JoinedRoomProviderContext = createContext<JoinedRoomProviderContextState>(undefined);

@@ -22,7 +22,7 @@ type Props = {};
  * Maybe it's ok that the PeerProvider deals with more than just the PeerJS,
  *  but with the whole Peer which is a connected User. Might need to come up
  * with different terminology in order to be more concise and accurate
- * but for now I believ it;s fine 
+ * but for now I believe it's fine 
  * 
  * @param props 
  */

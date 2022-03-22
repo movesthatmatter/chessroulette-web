@@ -8,29 +8,12 @@ import { PeerContext } from '../PeerContext';
 
 export const usePeerState = () => useContext(PeerContext);
 
+// TODO: Rename to usePeerConnection() - which states more clearly what happens
+// especially after refactoring to peer Provider handling just my connection to the server (and possibly other peers abstracted)
 export const usePeerStateClient = () => {
   const peerState = usePeerState();
 
-  const socketClientRef = useRef<SocketClient>();
-  const unsubscribeFromOnMessagefnRef = useRef<() => void>();
-
-  // const onMessageFn = useCallback((fn: (msg: SocketPayload) => unknown) => {
-  //   if (!socketClientRef.current) {
-  //     return () => {};
-  //   }
-
-  //   unsubscribeFromOnMessagefnRef.current = socketClientRef.current.onMessage(fn);
-  // }, []);
-  // const sendFn: SocketClient['send'] = useCallback((msg) => {
-  //   if (!socketClientRef.current) {
-  //     return;
-  //   }
-
-  //   return socketClientRef.current.send(msg);
-  // }, []);
-
   const defaultClient: Pick<SocketClient, 'send' | 'onMessage'> = useMemo(
-
     () => ({
       onMessage: (fn: (msg: SocketPayload) => unknown) => {
         // TODO: Here the essages could be relayed
@@ -60,3 +43,5 @@ export const usePeerStateClient = () => {
 
   return client;
 };
+
+export const usePeerConnection = usePeerStateClient;

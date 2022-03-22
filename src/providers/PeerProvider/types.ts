@@ -43,6 +43,9 @@ export type StreamingPeer = Peer & {
 };
 export type StreamingPeersMap = Record<StreamingPeer['user']['id'], StreamingPeer>;
 
+// TODO: Does it make sense to have the Peer = StreamingPeer | NonStreamingPeer ? hmm
+// Probably yeah because then a non StreamingPeer doesn't even need a connection
+
 export const isStreamingPeer = (p: Peer): p is StreamingPeer =>
   p.connection.channels.streaming.on === true;
 

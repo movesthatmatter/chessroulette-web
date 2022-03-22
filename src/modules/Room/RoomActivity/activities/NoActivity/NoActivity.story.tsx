@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { GameMocker } from 'src/mocks/records';
 import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityParticipant';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { RoomProvider } from 'src/modules/Room/RoomProvider';
@@ -8,6 +7,7 @@ import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { Date } from 'window-or-global';
 import { NoActivity } from './NoActivity';
+import { JoinedRoomProvider } from 'src/modules/Room/JoinedRoomProvider';
 
 export default {
   component: NoActivity,
@@ -63,7 +63,7 @@ export const defaultStory = () => (
       }),
     }}
   >
-    <RoomProvider
+    <JoinedRoomProvider
       joinedRoom={{
         ...room,
         currentActivity: {
@@ -80,7 +80,7 @@ export const defaultStory = () => (
           isSmallMobile: false,
         }}
       />
-    </RoomProvider>
+    </JoinedRoomProvider>
   </StorybookBaseProvider>
 );
 
@@ -96,7 +96,7 @@ export const withPendingChallenge = () => (
       }),
     }}
   >
-    <RoomProvider
+    <JoinedRoomProvider
       joinedRoom={{
         ...room,
         currentActivity: {
@@ -127,7 +127,7 @@ export const withPendingChallenge = () => (
           isSmallMobile: false,
         }}
       />
-    </RoomProvider>
+    </JoinedRoomProvider>
   </StorybookBaseProvider>
 );
 

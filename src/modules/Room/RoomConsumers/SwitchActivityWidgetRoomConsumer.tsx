@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { RoomProviderContext, RoomProviderContextState } from '../RoomProvider';
+import { JoinedRoomProviderContext, JoinedRoomProviderContextState } from '../JoinedRoomProvider';
 import { SwitchRoomActivityRequestPayload } from 'dstnd-io';
 import { CreateChallengeDialog } from '../RoomActivity/activities/components/CreateChallengeDialog';
 import { getRoomPendingChallenge } from '../util';
@@ -67,12 +67,12 @@ type Props = {
       onSwitch: (s: State) => void;
       goLive: () => void;
       toggleInMeetup: (inMeetup: boolean) => void;
-    } & NonNullable<RoomProviderContextState>
+    } & NonNullable<JoinedRoomProviderContextState>
   ) => React.ReactNode;
 };
 
 export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
-  const context = useContext(RoomProviderContext);
+  const context = useContext(JoinedRoomProviderContext);
   const [state, setState] = useState<State>();
 
   if (!context) {

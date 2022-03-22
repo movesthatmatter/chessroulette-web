@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useWillUnmount } from 'src/lib/hooks/useWillUnmount';
 import { usePeerState } from 'src/providers/PeerProvider';
+import { JoinedRoomProvider } from './JoinedRoomProvider/JoinedRoomProvider';
 import { ActivityRoomConsumer } from './RoomConsumers/ActivityRoomConsumer';
 import { RoomProvider } from './RoomProvider';
 import { JoinedRoom } from './types';
@@ -33,14 +34,14 @@ export const Room: React.FC<Props> = ({ joinedRoom }) => {
   // Connect to the Room on Mount
   useEffect(connectToRoom, [connectToRoom]);
 
-  useEffect(() => console.log('joined room => ', joinedRoom), [joinedRoom]);
-
   // This is very important as the room needs to be updated with the
   useWillUnmount(leaveRoom, [leaveRoom]);
 
+
+
   return (
-    <RoomProvider joinedRoom={joinedRoom}>
+    <JoinedRoomProvider joinedRoom={joinedRoom}>
       <ActivityRoomConsumer />
-    </RoomProvider>
+    </JoinedRoomProvider>
   );
 };

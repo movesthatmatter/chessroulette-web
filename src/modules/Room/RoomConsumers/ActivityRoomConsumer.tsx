@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { NoActivity } from '../RoomActivity/activities/NoActivity';
 import { PlayActivity } from '../RoomActivity/activities/PlayActivity';
 import { AnalysisActivity } from '../RoomActivity/activities/AnalysisActivity';
-import { RoomProviderContext } from '../RoomProvider';
+import { JoinedRoomProviderContext } from '../JoinedRoomProvider';
 import { usePeerState } from 'src/providers/PeerProvider';
 import { useDispatch } from 'react-redux';
 import { updateCurrentAnalysisAction, updateRelayGameAction } from '../RoomActivity/redux/actions';
@@ -14,7 +14,7 @@ import { MatchActivity } from '../RoomActivity/activities/MatchActivity';
 type Props = {};
 
 export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
-  const context = useContext(RoomProviderContext);
+  const context = useContext(JoinedRoomProviderContext);
   const peerState = usePeerState();
   const dispatch = useDispatch();
 
@@ -47,8 +47,6 @@ export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
   }
 
   const { currentActivity } = context.room;
-
-  console.log('ActvityRoomConsumer =>', currentActivity);
 
   if (currentActivity.type === 'play') {
     return <PlayActivity activity={currentActivity} deviceSize={context.deviceSize} />;

@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { RoomDetails } from '../Layouts';
-import { RoomProviderContext } from '../RoomProvider';
+import { JoinedRoomProviderContext } from '../JoinedRoomProvider';
 
 type Props = {};
 
 export const RoomDetailsConsumer: React.FC<Props> = (props) => {
-  const context = useContext(RoomProviderContext);
+  const context = useContext(JoinedRoomProviderContext);
 
   if (!context) {
     return null;

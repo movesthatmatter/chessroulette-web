@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { RoomProviderContext } from '../RoomProvider';
+import { JoinedRoomProviderContext } from '../JoinedRoomProvider';
 import { MobileChatWidget } from '../widgets/MobileChatWidget';
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 };
 
 export const MobileChatWidgetRoomConsumer: React.FC<Props> = (props) => {
-  const roomContext = useContext(RoomProviderContext);
+  const roomContext = useContext(JoinedRoomProviderContext);
 
   if (!roomContext) {
     // Show Loader

@@ -2,13 +2,13 @@
 import React from 'react';
 import { GameMocker } from 'src/mocks/records';
 import { PlayActivity } from './PlayActivity';
-import { RoomPlayActivityParticipant } from '../types';
 import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityParticipant';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { RoomProvider } from 'src/modules/Room/RoomProvider';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { Date } from 'window-or-global';
+import { JoinedRoomProvider } from 'src/modules/Room/JoinedRoomProvider';
 
 export default {
   component: PlayActivity,
@@ -68,7 +68,7 @@ export const defaultStory = () => (
       }),
     }}
   >
-    <RoomProvider
+    <JoinedRoomProvider
       joinedRoom={{
         ...room,
         currentActivity: {
@@ -108,7 +108,7 @@ export const defaultStory = () => (
           isSmallMobile: false,
         }}
       />
-    </RoomProvider>
+    </JoinedRoomProvider>
   </StorybookBaseProvider>
 );
 

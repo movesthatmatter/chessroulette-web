@@ -64,7 +64,7 @@ export const VerificationForm: React.FC<Props> = (props) => {
                 if (e.type === 'EmailCantSendError') {
                   return {
                     type: 'SubmissionGenericError',
-                    content: `Ooops – This one's on me! I couldn't send you email now but please try again in a few moments.`,
+                    content: `Ooops – This one's on me! I couldn't send your email now but please try again in a few moments.`,
                   };
                 }
 

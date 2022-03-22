@@ -3,6 +3,7 @@ import React from 'react';
 import { GameMocker } from 'src/mocks/records';
 import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityParticipant';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
+import { JoinedRoomProvider } from 'src/modules/Room/JoinedRoomProvider';
 import { RoomProvider } from 'src/modules/Room/RoomProvider';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { RoomPlayActivityParticipant } from '../types';
@@ -64,7 +65,7 @@ export const defaultStory = () => (
       }),
     }}
   >
-    <RoomProvider
+    <JoinedRoomProvider
       joinedRoom={{
         ...room,
         currentActivity: {
@@ -91,6 +92,6 @@ export const defaultStory = () => (
         }}
         // size={500}
       />
-    </RoomProvider>
+    </JoinedRoomProvider>
   </StorybookBaseProvider>
 );
