@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { RoomDetails } from '../Layouts';
-import { JoinedRoomProviderContext } from '../JoinedRoomProvider';
+import { JoinedRoomProviderContext } from '../Providers/JoinedRoomProvider';
 
 type Props = {};
 

@@ -10,7 +10,7 @@ import { PeerInfo, Room } from 'src/providers/PeerProvider';
 import { useStreamingPeers } from 'src/providers/PeerProvider/hooks';
 import { hideOnDesktop, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
-import { JoinedRoomProviderContext } from '../JoinedRoomProvider';
+import { JoinedRoomProviderContext } from '../Providers/JoinedRoomProvider';
 
 type Props = Omit<
   MultiFaceTimeCompactProps,

@@ -11,12 +11,13 @@ import { useJoinedRoom } from './hooks/useJoinedRoom';
 import { JoinRoomWizard } from './wizards/JoinRoomWizard';
 import * as roomResources from './resources';
 import { AsyncOk } from 'ts-async-results';
-import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
+import { ReadyPeerConnection } from 'src/providers/PeerConnectionProvider';
 import { useDispatch } from 'react-redux';
 import { createRoomAction, updateRoomAction } from './redux/actions';
 import { Peer } from 'src/providers/PeerProvider';
 
 type Props = {
+  readyPeerConnection: ReadyPeerConnection;
   slug: RoomRecord['slug'];
   render: (p: { room: JoinedRoom; peer: Peer }) => React.ReactNode;
 };
@@ -27,19 +28,14 @@ type SessionState = {
   };
 };
 
-export const JoinRoomBouncer: React.FC<Props> = (props) => {
+export const JoinRoomBouncer: React.FC<Props> = ({ readyPeerConnection: pc, ...props }) => {
   const cls = useStyles();
   const joinedRoom = useJoinedRoom();
   const [roomInfo, setRoomInfo] = useState<RoomRecord>();
   const [session, setSession] = useSession<SessionState>('roomBouncer');
-  const pc = usePeerConnection();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!pc.ready) {
-      return;
-    }
-
     const unsubscribe = pc.connection.onMessage((msg) => {
       if (msg.kind === 'joinRoomSuccess') {
         dispatch(createRoomAction({ room: msg.content.room, me: pc.peer }));
@@ -55,14 +51,10 @@ export const JoinRoomBouncer: React.FC<Props> = (props) => {
     });
 
     return unsubscribe;
-  }, [pc.ready]);
+  }, []);
 
   // Fetch the Room Info
   useEffect(() => {
-    if (!pc.ready) {
-      return;
-    }
-
     if (roomInfo) {
       // Don't reload the room info if it's already present
       return;
@@ -77,7 +69,7 @@ export const JoinRoomBouncer: React.FC<Props> = (props) => {
         },
       }));
     });
-  }, [props.slug, pc.ready, roomInfo, session]);
+  }, [props.slug, roomInfo, session]);
 
   // Join the Room once the canJoin is true
   useEffect(() => {
@@ -91,11 +83,6 @@ export const JoinRoomBouncer: React.FC<Props> = (props) => {
       });
     }
   }, [roomInfo, pc.ready, session]);
-
-  // If the PeerState is not open render an error
-  if (!pc.ready) {
-    return null;
-  }
 
   // Ensure the current joioned room is the same one
   if (joinedRoom?.slug === props.slug) {

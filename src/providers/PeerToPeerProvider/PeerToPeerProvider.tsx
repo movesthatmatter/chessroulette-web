@@ -128,7 +128,7 @@ export class PeerToPeerProvider extends React.Component<Props, State> {
 
     if (this.props.onPeerConnectionChannelsUpdated) {
       this.props.onPeerConnectionChannelsUpdated({
-        peerId: peerId,
+        peerId,
         channels: {
           data: { on: true }, // TODO: Should this be updated from here as well?
         },
@@ -137,8 +137,6 @@ export class PeerToPeerProvider extends React.Component<Props, State> {
   };
 
   private onPeerStream = (props: { peerId: string; stream: MediaStream }) => {
-    console.log('onPeerStream', props);
-
     if (this.props.onPeerStream) {
       this.props.onPeerStream(props);
     }
@@ -161,6 +159,16 @@ export class PeerToPeerProvider extends React.Component<Props, State> {
   private onPeerDisconnected = (peerId: PeerRecord['id']) => {
     if (this.props.onPeerDisconnected) {
       this.props.onPeerDisconnected(peerId);
+    }
+
+    if (this.props.onPeerConnectionChannelsUpdated) {
+      this.props.onPeerConnectionChannelsUpdated({
+        peerId,
+        channels: {
+          data: { on: false },
+          streaming: { on: false },
+        },
+      });
     }
   };
 

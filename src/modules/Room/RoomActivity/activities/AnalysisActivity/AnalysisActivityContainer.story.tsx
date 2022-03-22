@@ -9,7 +9,8 @@ import { second } from 'src/lib/time';
 import { AnalysisRecordMocker } from 'src/mocks/records/AnalysisRecordMocker';
 import { addMoveToChessHistory } from 'dstnd-io/dist/analysis/analysisActions';
 import { AnalysisActivityContainer } from './AnalysisActivityContainer';
-import { JoinedRoomProvider } from 'src/modules/Room/JoinedRoomProvider';
+import { JoinedRoomProvider } from 'src/modules/Room/Providers/JoinedRoomProvider';
+import { SocketClient } from 'src/services/socket/SocketClient';
 
 export default {
   component: AnalysisActivityContainer,
@@ -48,9 +49,7 @@ const room = roomMocker.record(
 const analysisMocker = new AnalysisRecordMocker();
 
 export const defaultStory = () => {
-  const analysis = analysisMocker.record(
-    '1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4'
-  );
+  const analysis = analysisMocker.record('1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4');
 
   return (
     <StorybookBaseProvider
@@ -65,7 +64,15 @@ export const defaultStory = () => {
       }}
     >
       <JoinedRoomProvider
-        joinedRoom={{
+        readyPeerConnection={{
+          ready: true,
+          peer: myParticipant.member.peer,
+          loading: false,
+          // TODO: Aded this on Mar 22, 2022 to not break the compiler, but it
+          //  fails at runtime as it needs to be mocked in order for the story to work
+          connection: {} as SocketClient,
+        }}
+        room={{
           ...room,
           currentActivity: {
             type: 'analysis',

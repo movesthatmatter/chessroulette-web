@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { useWillUnmount } from 'src/lib/hooks/useWillUnmount';
 import { Peer } from 'src/providers/PeerProvider';
 import { PeerToPeerProvider, usePeerToPeerConnections } from 'src/providers/PeerToPeerProvider';
-import { updateRoomPeerConnectionChannels } from '../redux/actions';
-import { JoinedRoom } from '../types';
+import { updateRoomPeerConnectionChannels } from '../../redux/actions';
+import { JoinedRoom } from '../../types';
 
 type RoomConnectHandlerProps = {
   room: JoinedRoom;
@@ -14,23 +14,23 @@ const RoomConnectHandler: React.FC<RoomConnectHandlerProps> = (props) => {
   const p2pConnections = usePeerToPeerConnections();
 
   // Once joined connect to all the peers in the room
-  const connectToRoom = useCallback(() => {
+  const connectToAllPeersInRoom = useCallback(() => {
     if (p2pConnections.ready) {
       p2pConnections.connectToPeers(props.room.peers);
     }
   }, [p2pConnections.ready, props.room.id]);
 
-  const leaveRoom = useCallback(() => {
+  const disconnectFromAllPeersInRoom = useCallback(() => {
     if (p2pConnections.ready) {
       p2pConnections.disconnectFromAllPeers();
     }
   }, [p2pConnections.ready]);
 
   // Connect to the Room on Mount
-  useEffect(connectToRoom, [connectToRoom]);
+  useEffect(connectToAllPeersInRoom, [connectToAllPeersInRoom]);
 
   // This is very important as the room needs to be updated with the
-  useWillUnmount(leaveRoom, [leaveRoom]);
+  useWillUnmount(disconnectFromAllPeersInRoom, [disconnectFromAllPeersInRoom]);
 
   return <>{props.children}</>;
 };

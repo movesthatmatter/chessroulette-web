@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { JoinedRoomProviderContext } from '../JoinedRoomProvider';
+import { JoinedRoomProviderContext } from '../Providers/JoinedRoomProvider';
 import { MobileChatWidget } from '../widgets/MobileChatWidget';
 
 type Props = {

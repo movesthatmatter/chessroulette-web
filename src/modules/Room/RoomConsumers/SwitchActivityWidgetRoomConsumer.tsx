@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { JoinedRoomProviderContext, JoinedRoomProviderContextState } from '../JoinedRoomProvider';
+import { JoinedRoomProviderContext, JoinedRoomProviderContextState } from '../Providers/JoinedRoomProvider';
 import { SwitchRoomActivityRequestPayload } from 'dstnd-io';
 import { CreateChallengeDialog } from '../RoomActivity/activities/components/CreateChallengeDialog';
 import { getRoomPendingChallenge } from '../util';

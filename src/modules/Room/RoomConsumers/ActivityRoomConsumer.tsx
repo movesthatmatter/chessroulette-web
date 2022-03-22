@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { NoActivity } from '../RoomActivity/activities/NoActivity';
 import { PlayActivity } from '../RoomActivity/activities/PlayActivity';
 import { AnalysisActivity } from '../RoomActivity/activities/AnalysisActivity';
-import { JoinedRoomProviderContext } from '../JoinedRoomProvider';
+import { JoinedRoomProviderContext } from '../Providers/JoinedRoomProvider';
 import { useDispatch } from 'react-redux';
 import { updateCurrentAnalysisAction, updateRelayGameAction } from '../RoomActivity/redux/actions';
 import { RelayActivity } from '../RoomActivity/activities/RelayActivity';

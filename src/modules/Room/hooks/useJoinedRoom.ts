@@ -26,8 +26,6 @@ const mergeSlicesIntoJoinedRoom = (slices: {
     return undefined;
   }
 
-  console.log('MERGED SLIECES INTO JOIN ROOM ACTIVITY => ', slices.currentRoomActivity);
-
   const peersList = Object.values(slices.room.peersIncludingMe);
   const membersList = peersList.map(toRoomMember);
   const members = toDictIndexedBy(membersList, (m) => m.peer.user.id);

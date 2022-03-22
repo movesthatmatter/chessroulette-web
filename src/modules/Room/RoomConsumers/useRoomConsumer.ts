@@ -1,4 +1,4 @@
 import { useContext } from 'react';
-import { JoinedRoomProviderContext } from '../JoinedRoomProvider';
+import { JoinedRoomProviderContext } from '../Providers/JoinedRoomProvider';
 
 export const useRoomConsumer = () => useContext(JoinedRoomProviderContext);

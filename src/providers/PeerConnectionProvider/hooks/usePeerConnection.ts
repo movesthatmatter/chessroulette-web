@@ -1,9 +1,16 @@
 import { useContext } from 'react';
-import { PeerConnectionProviderContext } from '../PeerConnectionProviderContext';
+import {
+  PeerConnectionProviderContext,
+  ReadyPeerConnectionProviderContextState,
+  UnreadyPeerConnectionProviderContextState,
+} from '../PeerConnectionProviderContext';
 
 export const usePeerConnection = () => useContext(PeerConnectionProviderContext);
 
-export const useRedyPeerConnection = () => {
+export type ReadyPeerConnection = ReadyPeerConnectionProviderContextState;
+export type UnreadyPeerConnection = UnreadyPeerConnectionProviderContextState;
+
+export const useReadyPeerConnection = (): ReadyPeerConnection | undefined => {
   const pc = usePeerConnection();
 
   if (!pc.ready) {

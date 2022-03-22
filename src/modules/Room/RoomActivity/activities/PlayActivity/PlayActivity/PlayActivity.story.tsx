@@ -7,7 +7,8 @@ import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { Date } from 'window-or-global';
-import { JoinedRoomProvider } from 'src/modules/Room/JoinedRoomProvider';
+import { JoinedRoomProvider } from 'src/modules/Room/Providers/JoinedRoomProvider';
+import { SocketClient } from 'src/services/socket/SocketClient';
 
 export default {
   component: PlayActivity,
@@ -68,7 +69,15 @@ export const defaultStory = () => (
     }}
   >
     <JoinedRoomProvider
-      joinedRoom={{
+      readyPeerConnection={{
+        ready: true,
+        peer: myParticipant.member.peer,
+        loading: false,
+        // TODO: Aded this on Mar 22, 2022 to not break the compiler, but it
+        //  fails at runtime as it needs to be mocked in order for the story to work
+        connection: {} as SocketClient, 
+      }}
+      room={{
         ...room,
         currentActivity: {
           type: 'none',

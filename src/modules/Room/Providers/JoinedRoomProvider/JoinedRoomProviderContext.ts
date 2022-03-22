@@ -2,7 +2,7 @@ import { RoomActivityCreationRecord } from 'dstnd-io';
 import { createContext } from 'react';
 import { BoardOrientation } from 'src/modules/Games';
 import { DeviceSize } from 'src/theme/hooks/useDeviceSize';
-import { JoinedRoom } from '../types';
+import { JoinedRoom } from '../../types';
 
 export type JoinedRoomProviderContextState =
   | undefined
