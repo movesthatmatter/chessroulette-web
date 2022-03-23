@@ -15,7 +15,7 @@ const RoomConnectHandler: React.FC<RoomConnectHandlerProps> = (props) => {
 
   // Once joined connect to all the peers in the room
   const connectToAllPeersInRoom = useCallback(() => {
-    if (p2pConnections.ready) {
+    if (p2pConnections.ready && props.room.p2pCommunicationType === 'audioVideo') {
       p2pConnections.connectToPeers(props.room.peers);
     }
   }, [p2pConnections.ready, props.room.id]);
