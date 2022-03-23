@@ -7,7 +7,6 @@ import { SocketConsumer, SocketConsumerProps } from 'src/providers/SocketProvide
 type Props = {
   onReady: (p: { socket: SocketClient }) => void;
   onPeerUpdate?: (p: { peer: PeerRecord }) => void;
-  onMessage?: NonNullable<SocketConsumerProps['onMessage']>;
   onClose?: NonNullable<SocketConsumerProps['onClose']>;
   render: SocketConsumerProps['render'];
 } & (
@@ -79,13 +78,7 @@ export class SocketConnectionIdentificationHandler extends Component<Props> {
 
           this.socketRef = socket;
         }}
-        onMessage={(...args) => {
-          if (this.props.onMessage) {
-            this.props.onMessage(...args);
-          }
-
-          const [msg] = args;
-
+        onMessage={(msg) => {
           if (msg.kind === 'iam') {
             this.onPeerUpdate(msg.content.peer);
           }
