@@ -1,11 +1,11 @@
-import { ChessPlayer, ChessPlayerBlack, ChessPlayerWhite, RoomRecord } from 'dstnd-io';
+import { ChessPlayer, ChessPlayerBlack, ChessPlayerWhite } from 'dstnd-io';
 import { toDictIndexedBy } from 'src/lib/util';
 import { Game } from 'src/modules/Games';
 import {
   getRelativeMaterialScore,
   RelativeMaterialScore,
 } from 'src/modules/Games/Chess/components/GameStateWidget/util';
-import { RoomMember } from 'src/modules/Room/types';
+import { Room, RoomMember } from 'src/modules/Room/types';
 import { BaseRoomMatchActivity } from '../../redux/types';
 import { RoomActivityParticipant } from '../../types';
 import {
@@ -13,14 +13,8 @@ import {
   toRoomActivityPresentParticipant,
 } from '../../util/participantsUtil';
 import { RoomMatchActivity, RoomMatchActivityParticipant } from './types';
-import {
-  RoomPlayActivity,
-  RoomPlayActivityWithGameAndParticipating,
-  RoomPlayActivityWithGameButNotParticipating,
-  toRoomPlayActivity,
-} from '../PlayActivity';
-import { Room } from '../../../../../providers/PeerProvider/types';
-import { toRoomMember } from '../../../util';
+import { RoomPlayActivity, toRoomPlayActivity } from '../PlayActivity';
+import { toRoomMember } from 'src/modules/Room/util';
 
 export const toRoomMatchActivity = (
   baseMatchActivity: BaseRoomMatchActivity,

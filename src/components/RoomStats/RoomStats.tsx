@@ -1,7 +1,7 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { Room } from 'src/providers/PeerProvider';
+import { Room } from 'src/modules/Room';
 
 type Props = {
   room: Room;

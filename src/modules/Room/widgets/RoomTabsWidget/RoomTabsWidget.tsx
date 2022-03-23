@@ -7,7 +7,7 @@ import { ActivityLog } from 'src/modules/Room/RoomActivityLog';
 import { selectCurrentRoomActivityLog } from 'src/modules/Room/RoomActivityLog/redux/selectors';
 import { ChatContainer } from 'src/modules/Chat';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
-import { Room } from 'src/providers/PeerProvider';
+import { Room } from '../../types';
 
 export type RoomTabsWidgetProps = {
   me: UserInfoRecord;

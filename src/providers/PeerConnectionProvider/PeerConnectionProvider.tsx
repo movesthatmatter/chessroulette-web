@@ -8,10 +8,10 @@ import {
 import { SocketProvider } from 'src/providers/SocketProvider';
 import { SocketConnectionStatusNonOpen } from '../SocketProvider/types';
 import { noop } from 'src/lib/util';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectMyPeer } from './redux/selectors';
+import { useDispatch } from 'react-redux';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { createPeerConnectionAction, updatePeerConnectionAction } from './redux/actions';
+import { useMyPeer } from './hooks';
 
 type Props = {
   renderFallback?: (p: SocketConnectionStatusNonOpen) => React.ReactNode;
@@ -19,7 +19,7 @@ type Props = {
 
 export const PeerConnectionProvider: React.FC<Props> = ({ renderFallback = noop, children }) => {
   const auth = useAuthentication();
-  const peer = useSelector(selectMyPeer);
+  const myPeer = useMyPeer();
   const dispatch = useDispatch();
   const [peerContextState, setPeerContext] = useState<PeerConnectionProviderContextState>({
     ready: false,
@@ -29,17 +29,17 @@ export const PeerConnectionProvider: React.FC<Props> = ({ renderFallback = noop,
 
   // Keep the Context in sync with the Redux State
   useEffect(() => {
-    if (peer && socket) {
+    if (myPeer && socket) {
       setPeerContext({
         ready: true,
         loading: false,
-        peer,
+        peer: myPeer,
         connection: socket,
       });
     } else {
       setPeerContext({ ready: false, loading: !!socket });
     }
-  }, [peer, socket]);
+  }, [myPeer, socket]);
 
   return (
     <SocketProvider>
@@ -62,9 +62,8 @@ export const PeerConnectionProvider: React.FC<Props> = ({ renderFallback = noop,
               setSocket(undefined);
             }}
             onPeerUpdate={({ peer: nextPeer }) => {
-              console.log('next peer', nextPeer);
               dispatch(
-                peer ? updatePeerConnectionAction(nextPeer) : createPeerConnectionAction(nextPeer)
+                myPeer ? updatePeerConnectionAction(nextPeer) : createPeerConnectionAction(nextPeer)
               );
             }}
             render={(p) => {

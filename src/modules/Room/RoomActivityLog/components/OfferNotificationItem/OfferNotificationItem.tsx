@@ -4,12 +4,12 @@ import Loader from 'react-loaders';
 import { UserRecord } from 'dstnd-io';
 import { IconButton } from 'src/components/Button';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { CustomTheme, fonts } from 'src/theme';
+import { fonts } from 'src/theme';
 import { getUserDisplayName } from 'src/modules/User';
 import { spacers } from 'src/theme/spacers';
 import { OfferNotification } from '../../types';
 import { Checkmark, Close } from 'grommet-icons';
-import { PeerAvatar } from 'src/providers/PeerProvider/components/PeerAvatar';
+import { PeerAvatar } from 'src/providers/PeerConnectionProvider';
 
 type Props = {
   notification: OfferNotification;

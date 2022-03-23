@@ -1,7 +1,8 @@
 import { createReducer } from 'deox';
 import { PeerRecord, RoomRecord } from 'dstnd-io';
+import { Room } from 'src/modules/Room';
 import { GenericStateSlice } from 'src/redux/types';
-import { Peer, Room } from '../types';
+import { Peer } from '../types';
 import {
   createRoomAction,
   addPeerStream,

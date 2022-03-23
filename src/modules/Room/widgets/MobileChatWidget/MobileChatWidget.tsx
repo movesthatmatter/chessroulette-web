@@ -5,9 +5,10 @@ import { Modal } from 'src/components/Modal/Modal';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ChatContainer } from 'src/modules/Chat';
 import { ChatIconWithBadge } from 'src/modules/Chat/components/ChatIconWithBadge';
-import { Room, selectChatHistory } from 'src/providers/PeerProvider';
+import { selectChatHistory } from 'src/providers/PeerProvider';
 import { hardBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
+import { Room } from '../../types';
 
 type Props = {
   containerHeight: number;

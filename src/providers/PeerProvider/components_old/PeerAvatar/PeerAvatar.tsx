@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
+import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { ConnectionStatusDot } from '../ConnectionStatusDot';
 import { Avatar } from 'src/components/Avatar';
 import { Peer } from '../../types';
-import { useSelector } from 'react-redux';
-import { selectPeerProviderState } from '../../redux/selectors';
 import { Text } from 'src/components/Text';
 import { spacers } from 'src/theme/spacers';
 import { getUserDisplayName } from 'src/modules/User';
-import cx from 'classnames';
-import { CustomTheme, onlyDesktop, onlyMobile } from 'src/theme';
+import { onlyDesktop, onlyMobile } from 'src/theme';
 import { colors } from 'src/theme/colors';
+import { useJoinedRoom } from 'src/modules/Room/hooks/useJoinedRoom';
 
 type Props = {
   size?: number;
@@ -50,8 +49,10 @@ const getStatusInfo = (peer?: Peer) => {
 
 export const PeerAvatar: React.FC<Props> = ({ size, hasUserInfo = false, reversed, ...props }) => {
   const cls = useStyles();
-  const room = useSelector(selectPeerProviderState).room;
-  const peer = props.peer || room?.peersIncludingMe[props.peerUserInfo.id];
+
+  // TODO: Find a better way This is not the best here!
+  const joinedRoom = useJoinedRoom();
+  const peer = props.peer || joinedRoom?.peersIncludingMe[props.peerUserInfo.id];
   const [showInfo, setShowInfo] = useState(false);
 
   return (

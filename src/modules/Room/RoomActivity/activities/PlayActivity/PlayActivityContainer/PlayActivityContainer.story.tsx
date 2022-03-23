@@ -4,6 +4,7 @@ import { GameMocker } from 'src/mocks/records';
 import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityParticipant';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { JoinedRoomProvider } from 'src/modules/Room/Providers/JoinedRoomProvider';
+import { Peer } from 'src/providers/PeerProvider';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { RoomPlayActivityParticipant } from '../types';
@@ -58,10 +59,11 @@ export const defaultStory = () => (
     withRedux
     initialState={{
       ...(myParticipant.isPresent && {
-        peerProvider: {
-          me: myParticipant.member.peer,
-          room: room,
-        },
+        peer: myParticipant.member.peer,
+        // peerProvider: {
+        //   me: ,
+        //   room: room,
+        // },
       }),
     }}
   >

@@ -2,8 +2,7 @@ import { Resources } from 'dstnd-io';
 import React, { useEffect, useState } from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { usePeerState } from 'src/providers/PeerProvider';
-import { SocketClient } from 'src/services/socket/SocketClient';
+import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
 import { spacers } from 'src/theme/spacers';
 import { WccCalendar } from './components/WccCalendar';
 import { getCurrentlyStreamingRelayedGames } from './resources';
@@ -15,12 +14,12 @@ export const BroadcastPage: React.FC<Props> = (props) => {
   const [relayGames, setRelayGames] = useState<Resources.AllRecords.Relay.RelayedGameRecord[]>(
     []
   );
-  const peerState = usePeerState();
+  const pc = usePeerConnection();
 
   useEffect(() => {
-    if (peerState.status === 'open') {
+    if (pc.ready) {
       const unsubscribers = [
-        peerState.client.onMessage((payload) => {
+        pc.connection.onMessage((payload) => {
           if (payload.kind === 'relayGameUpdateList') {
             fetchLiveGames();
           }
@@ -31,7 +30,7 @@ export const BroadcastPage: React.FC<Props> = (props) => {
         unsubscribers.forEach((unsubscribe) => unsubscribe());
       };
     }
-  }, [peerState.status]);
+  }, [pc.ready]);
 
   useEffect(() => {
     fetchLiveGames();

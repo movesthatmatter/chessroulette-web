@@ -1,4 +1,4 @@
 import { useSelector } from 'react-redux';
-import { selectMyPeer } from '../redux/selectors';
+// import { selectMyPeer } from '../redux/selectors';
 
-export const useMyPeer = () => useSelector(selectMyPeer);
+// export const useMyPeer = () => useSelector(selectMyPeer);

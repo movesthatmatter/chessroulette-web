@@ -61,10 +61,7 @@ export const defaultStory = () => (
     withRedux
     initialState={{
       ...(myParticipant.isPresent && {
-        peerProvider: {
-          me: myParticipant.member.peer,
-          room: room,
-        },
+        peer: myParticipant.member.peer,
       }),
     }}
   >
@@ -75,7 +72,7 @@ export const defaultStory = () => (
         loading: false,
         // TODO: Aded this on Mar 22, 2022 to not break the compiler, but it
         //  fails at runtime as it needs to be mocked in order for the story to work
-        connection: {} as SocketClient, 
+        connection: {} as SocketClient,
       }}
       room={{
         ...room,
@@ -125,10 +122,7 @@ export const withoutRoomProvider = () => (
     withRedux
     initialState={{
       ...(myParticipant.isPresent && {
-        peerProvider: {
-          me: myParticipant.member.peer,
-          room: room,
-        },
+        peer: myParticipant.member.peer,
       }),
     }}
   >

@@ -4,7 +4,7 @@ import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { Countdown } from 'src/modules/Games/Chess/components/Countdown';
 import { getUserDisplayName } from 'src/modules/User';
-import { PeerAvatar } from 'src/providers/PeerProvider';
+import { PeerAvatar } from 'src/providers/PeerConnectionProvider';
 import { floatingShadow, fonts, onlyDesktop } from 'src/theme';
 
 type Props = {

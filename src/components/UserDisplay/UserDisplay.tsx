@@ -2,7 +2,6 @@ import React from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
-import { PeerAvatar } from 'src/providers/PeerProvider';
 import { UserRecord } from 'dstnd-io';
 import { Text } from '../Text';
 import { getUserDisplayName } from 'src/modules/User';

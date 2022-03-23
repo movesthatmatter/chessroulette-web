@@ -6,14 +6,13 @@ import { AwesomeError } from 'src/components/AwesomeError';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { Events } from 'src/services/Analytics';
 import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
-import { Room } from 'src/providers/PeerProvider';
+import { Room } from '../Room';
 
 type Props = Omit<ChatProps, 'onSend' | 'messages' | 'myId' | 'history'> & {
   room: Room;
 };
 
 export const ChatContainer: React.FC<Props> = ({ room, ...chatProps }) => {
-  // const peerState = usePeerState();
   const pc = usePeerConnection();
 
   if (pc.loading) {

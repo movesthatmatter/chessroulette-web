@@ -1,8 +1,8 @@
 import { createContext } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
-import { Peer, Room } from './types';
+import { Peer } from './types';
 import { PeerConnectionsErrors } from './lib/PeerConnections';
-import { RoomCredentials } from './types';
+import { Room, RoomCredentials } from 'src/modules/Room';
 
 export type PeerContextState =
   | {

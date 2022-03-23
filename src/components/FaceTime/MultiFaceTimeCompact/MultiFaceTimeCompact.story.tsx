@@ -6,8 +6,9 @@ import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { MultiFaceTimeCompact, MultiFaceTimeCompactProps } from './MultiFaceTimeCompact';
 import { getRandomInt, range } from 'src/lib/util';
 import { useInterval } from 'src/lib/hooks';
-import { Peer, Room } from 'src/providers/PeerProvider';
+import { Peer } from 'src/providers/PeerProvider';
 import { useStreamingPeers } from 'src/providers/PeerProvider/hooks';
+import { Room } from 'src/modules/Room';
 
 export default {
   component: MultiFaceTimeCompact,

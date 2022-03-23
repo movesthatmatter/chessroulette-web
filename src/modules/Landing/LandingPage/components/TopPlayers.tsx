@@ -3,7 +3,7 @@ import React from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { getUserDisplayName } from 'src/modules/User';
-import { PeerAvatar } from 'src/providers/PeerProvider';
+import { PeerAvatar } from 'src/providers/PeerConnectionProvider';
 import { CustomTheme } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 

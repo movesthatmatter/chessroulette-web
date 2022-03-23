@@ -1,8 +1,9 @@
 import Chance from 'chance';
-import { ClassRoom, Peer, Room } from 'src/providers/PeerProvider';
+import { Peer } from 'src/providers/PeerProvider';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { range } from 'src/lib/util';
 import { PeerMocker } from './PeerMocker';
+import { ClassRoom, Room } from 'src/modules/Room';
 
 const chance = new Chance();
 const peerMocker = new PeerMocker();

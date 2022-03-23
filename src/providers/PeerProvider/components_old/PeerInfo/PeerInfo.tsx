@@ -2,7 +2,7 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { Peer } from 'src/providers/PeerProvider';
-import { CustomTheme, fonts } from 'src/theme';
+import { fonts } from 'src/theme';
 import { Text } from '../../../../components/Text';
 import { getUserDisplayName } from 'src/modules/User';
 import { PeerAvatar } from '../PeerAvatar';

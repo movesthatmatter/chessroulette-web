@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { ChallengeRecord } from 'dstnd-io';
 import { Button, ButtonProps } from 'src/components/Button';
-import { useSelector } from 'react-redux';
-import { selectMyPeer } from 'src/providers/PeerProvider';
 import { toRoomUrlPath } from 'src/lib/util';
 import { useHistory } from 'react-router-dom';
 import { ChallengeWidget } from 'src/modules/Challenges/Widgets/ChallengeWidget/ChallengeWidget';
+import { useMyPeer } from 'src/providers/PeerConnectionProvider';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   challengeType: ChallengeRecord['type'];
@@ -13,7 +12,7 @@ type Props = Omit<ButtonProps, 'onClick'> & {
 
 export const ChallengeButtonWidget: React.FC<Props> = ({ challengeType, ...buttonProps }) => {
   const [visiblePopup, setVisiblePopup] = useState<boolean>(false);
-  const myPeer = useSelector(selectMyPeer);
+  const myPeer = useMyPeer();
   const history = useHistory();
 
   return (

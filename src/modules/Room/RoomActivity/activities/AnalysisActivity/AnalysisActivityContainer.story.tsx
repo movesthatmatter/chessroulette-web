@@ -56,10 +56,7 @@ export const defaultStory = () => {
       withRedux
       initialState={{
         ...(myParticipant.isPresent && {
-          peerProvider: {
-            me: myParticipant.member.peer,
-            room: room,
-          },
+          peer: myParticipant.member.peer,
         }),
       }}
     >
@@ -113,10 +110,7 @@ export const withoutRoomProvider = () => {
       withRedux
       initialState={{
         ...(myParticipant.isPresent && {
-          peerProvider: {
-            me: myParticipant.member.peer,
-            room: room,
-          },
+          peer: myParticipant.member.peer,
         }),
       }}
     >
@@ -150,10 +144,7 @@ export const withShortPgn = () => {
       withRedux
       initialState={{
         ...(myParticipant.isPresent && {
-          peerProvider: {
-            me: myParticipant.member.peer,
-            room: room,
-          },
+          peer: myParticipant.member.peer,
         }),
       }}
     >
@@ -187,10 +178,7 @@ export const withLongPgn = () => {
       withRedux
       initialState={{
         ...(myParticipant.isPresent && {
-          peerProvider: {
-            me: myParticipant.member.peer,
-            room: room,
-          },
+          peer: myParticipant.member.peer,
         }),
       }}
     >
@@ -316,10 +304,7 @@ export const withNestedBranches = () => {
       withRedux
       initialState={{
         ...(myParticipant.isPresent && {
-          peerProvider: {
-            me: myParticipant.member.peer,
-            room: room,
-          },
+          peer: myParticipant.member.peer,
         }),
       }}
     >
@@ -370,10 +355,7 @@ export const withParallelBranches = () => {
       withRedux
       initialState={{
         ...(myParticipant.isPresent && {
-          peerProvider: {
-            me: myParticipant.member.peer,
-            room: room,
-          },
+          peer: myParticipant.member.peer,
         }),
       }}
     >
@@ -409,10 +391,7 @@ export const withoutHistory = () => {
       withRedux
       initialState={{
         ...(myParticipant.isPresent && {
-          peerProvider: {
-            me: myParticipant.member.peer,
-            room: room,
-          },
+          peer: myParticipant.member.peer,
         }),
       }}
     >

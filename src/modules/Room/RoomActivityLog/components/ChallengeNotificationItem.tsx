@@ -5,11 +5,11 @@ import Loader from 'react-loaders';
 import { UserRecord } from 'dstnd-io';
 import { Button, IconButton } from 'src/components/Button';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
-import { CustomTheme, fonts } from 'src/theme';
+import { fonts } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { ChallengeNotification } from '../types';
 import { Close } from 'grommet-icons';
-import { PeerAvatar } from 'src/providers/PeerProvider/components/PeerAvatar';
+import { PeerAvatar } from 'src/providers/PeerConnectionProvider';
 import { getUserDisplayName } from 'src/modules/User';
 import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { formatTimeLimit } from 'src/modules/GamesArchive/components/ArchivedGame/util';
@@ -19,7 +19,6 @@ import { ClipboardCopyWidget } from 'src/components/ClipboardCopy';
 import { toChallengeUrlPath } from 'src/lib/util';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type Props = {
   notification: ChallengeNotification;
