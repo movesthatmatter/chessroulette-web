@@ -1,5 +1,5 @@
 import capitalize from 'capitalize';
-import { ChessGameState, UserRecord } from 'dstnd-io';
+import { ChessGameState, UserRecord } from 'chessroulette-io';
 import { getPlayer } from '../Games/Chess/lib';
 
 export const getGameResult = (game: ChessGameState, userId: UserRecord['id']) => {

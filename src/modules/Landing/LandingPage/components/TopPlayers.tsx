@@ -1,4 +1,4 @@
-import { PlayerGamesCountStat } from 'dstnd-io/dist/resourceCollections/game/records';
+import { PlayerGamesCountStat } from 'chessroulette-io/dist/resourceCollections/game/records';
 import React from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';

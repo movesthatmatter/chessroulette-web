@@ -1,5 +1,5 @@
 import React from 'react';
-import { GuestUserRecord, JWTToken, PeerRecord } from 'dstnd-io';
+import { GuestUserRecord, JWTToken, PeerRecord } from 'chessroulette-io';
 import { Component } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { SocketConsumer, SocketConsumerProps } from 'src/providers/SocketProvider';

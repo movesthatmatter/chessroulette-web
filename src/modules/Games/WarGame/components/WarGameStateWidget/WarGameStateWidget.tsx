@@ -1,5 +1,5 @@
-import { ChessGameColor } from 'dstnd-io';
-import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { ChessGameColor } from 'chessroulette-io';
+import { otherChessColor } from 'chessroulette-io/dist/chessGame/util/util';
 import React, { useCallback, useMemo } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { noop } from 'src/lib/util';

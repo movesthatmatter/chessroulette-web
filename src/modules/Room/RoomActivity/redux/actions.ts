@@ -1,6 +1,6 @@
 import { createAction } from 'deox';
 import { resolve } from 'dns';
-import { AnalysisRecord, GameRecord } from 'dstnd-io';
+import { AnalysisRecord, GameRecord } from 'chessroulette-io';
 import { Game, WarGame } from 'src/modules/Games';
 import { BaseRoomActivity } from './types';
 

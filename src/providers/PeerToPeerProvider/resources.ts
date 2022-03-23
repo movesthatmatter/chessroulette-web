@@ -1,4 +1,4 @@
-import { iceServersResponse, IceServersResponse, io } from 'dstnd-io';
+import { iceServersResponse, IceServersResponse, io } from 'chessroulette-io';
 import { AsyncResultWrapper } from 'ts-async-results';
 import { Err } from 'ts-results';
 import { http } from 'src/lib/http';

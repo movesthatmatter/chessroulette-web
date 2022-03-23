@@ -1,4 +1,4 @@
-import { GameRecord, UserRecord } from 'dstnd-io';
+import { GameRecord, UserRecord } from 'chessroulette-io';
 import React from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles, NestedCSSElement } from 'src/lib/jss';

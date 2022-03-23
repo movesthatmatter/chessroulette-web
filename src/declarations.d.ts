@@ -45,7 +45,7 @@ declare module 'react-twitch-embed-video';
 
 declare module 'react-chessground-wargame' {
   import * as React from 'react'
-  import {MoveType} from 'dstnd-io'
+  import {MoveType} from 'chessroulette-io'
   import {Key, Piece} from 'chessground-wargame/types'
   import {Chessground as NativeChessground} from 'chessground-wargame'
 

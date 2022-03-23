@@ -1,4 +1,4 @@
-import { AuthenticationToken, RegisteredUserRecord } from 'dstnd-io';
+import { AuthenticationToken, RegisteredUserRecord } from 'chessroulette-io';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { UserRecordMocker } from 'src/mocks/records';

@@ -1,4 +1,4 @@
-import { ResourceRecords, RoomRelayActivityRecord } from 'dstnd-io';
+import { ResourceRecords, RoomRelayActivityRecord } from 'chessroulette-io';
 import { Game } from 'src/modules/Games';
 import { RoomActivitySpecifcParticipant, RoomRecordToRoomActivity } from '../../utilTypes';
 

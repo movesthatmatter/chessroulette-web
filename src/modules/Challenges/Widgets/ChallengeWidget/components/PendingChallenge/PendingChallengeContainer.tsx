@@ -1,4 +1,4 @@
-import { ChallengeRecord, RoomRecord, UserRecord } from 'dstnd-io';
+import { ChallengeRecord, RoomRecord, UserRecord } from 'chessroulette-io';
 import React from 'react';
 import { SocketConsumer } from 'src/providers/SocketProvider';
 import { PendingChallengeProps } from './PendingChallenge';

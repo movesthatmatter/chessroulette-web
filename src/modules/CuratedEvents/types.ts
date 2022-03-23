@@ -1,4 +1,4 @@
-import { ResourceRecords } from 'dstnd-io';
+import { ResourceRecords } from 'chessroulette-io';
 
 export type CuratedEvent = ResourceRecords.CuratedEvents.CuratedEventRecord;
 

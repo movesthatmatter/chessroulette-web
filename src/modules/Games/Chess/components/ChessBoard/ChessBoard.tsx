@@ -10,9 +10,9 @@ import {
   ChessMove,
   GameRecord,
   SimplePGN,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { StyledChessBoard, StyledChessBoardProps } from './StyledChessBoard';
-import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { otherChessColor } from 'chessroulette-io/dist/chessGame/util/util';
 import { ChessBoardConfig, ChessBoardType, ChessBoardGameState } from './types';
 
 export type ChessBoardProps = Omit<StyledChessBoardProps, 'onMove' | 'fen'> & {

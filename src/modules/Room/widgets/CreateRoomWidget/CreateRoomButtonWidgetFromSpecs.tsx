@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { CreateRoomRequest } from 'dstnd-io';
+import { CreateRoomRequest } from 'chessroulette-io';
 import { Button, ButtonProps } from 'src/components/Button';
 import { useCreateRoom } from './useCreateRoom';
 

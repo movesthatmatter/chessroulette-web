@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
 import Loader from 'react-loaders';
-import { UserRecord } from 'dstnd-io';
+import { UserRecord } from 'chessroulette-io';
 import { IconButton } from 'src/components/Button';
 import { createUseStyles, CSSProperties, makeImportant } from 'src/lib/jss';
 import { fonts } from 'src/theme';

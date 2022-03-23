@@ -1,4 +1,4 @@
-import { RoomRecord } from 'dstnd-io';
+import { RoomRecord } from 'chessroulette-io';
 import React from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
 import { resources } from 'src/resources';

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, ButtonProps } from 'src/components/Button';
 import ReactPopout from 'react-popout';
 import { WindowWithOnTokenReceived } from '../../types';
-import { ExternalVendor, JWTToken } from 'dstnd-io';
+import { ExternalVendor, JWTToken } from 'chessroulette-io';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   onSuccess: (token: JWTToken) => void;

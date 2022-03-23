@@ -4,7 +4,7 @@ import {
   RoomWithAnalysisActivityRecord,
   RoomWithNoActivityRecord,
   RoomWithPlayActivityRecord,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { Peer } from 'src/providers/PeerConnectionProvider';
 import { RoomActivity } from './RoomActivity/types';
 

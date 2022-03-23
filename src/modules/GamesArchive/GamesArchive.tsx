@@ -1,4 +1,4 @@
-import { RegisteredUserRecord, GameRecordFinished, GameRecordStopped } from 'dstnd-io';
+import { RegisteredUserRecord, GameRecordFinished, GameRecordStopped } from 'chessroulette-io';
 import React from 'react';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { gameRecordToGame } from '../Games/Chess/lib';

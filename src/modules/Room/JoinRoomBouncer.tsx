@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as roomResources from './resources';
-import { RoomRecord } from 'dstnd-io';
+import { RoomRecord } from 'chessroulette-io';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { FunWallpaper } from 'src/components/FunWallpaper';
 import { createUseStyles } from 'src/lib/jss';

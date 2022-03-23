@@ -8,14 +8,14 @@ import {
   ChessPlayerBlack,
   ChessPlayerWhite,
   GameRecord,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { FloatingBox } from 'src/components/FloatingBox';
 import { ChessGameHistoryProvided } from 'src/modules/Games/Chess/components/GameHistory';
 import { PlayerBox } from 'src/modules/Games/Chess/components/PlayerBox';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 import { toDictIndexedBy } from 'src/lib/util';
 import { gameRecordToGame, getPlayerStats } from 'src/modules/Games/Chess/lib';
-import { chessHistoryToSimplePgn, otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { chessHistoryToSimplePgn, otherChessColor } from 'chessroulette-io/dist/chessGame/util/util';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';

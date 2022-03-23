@@ -1,4 +1,4 @@
-import { GameSpecsRecord } from 'dstnd-io';
+import { GameSpecsRecord } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
 import { Text } from 'src/components/Text';
 import { spacers } from 'src/theme/spacers';

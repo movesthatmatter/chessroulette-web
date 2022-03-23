@@ -1,5 +1,5 @@
 import React from 'react';
-import { RoomRecord } from 'dstnd-io';
+import { RoomRecord } from 'chessroulette-io';
 import { UnknownAsyncResult } from 'src/lib/types';
 import { AVCheckStep } from './steps/AVCheckStep';
 import { EmptyLastStep } from './steps/EmptyLastStep';

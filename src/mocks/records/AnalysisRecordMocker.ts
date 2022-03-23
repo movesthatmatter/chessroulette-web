@@ -1,4 +1,4 @@
-import { AnalysisRecord } from 'dstnd-io';
+import { AnalysisRecord } from 'chessroulette-io';
 import { Chance } from 'chance';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { GameMocker } from './GameMocker';

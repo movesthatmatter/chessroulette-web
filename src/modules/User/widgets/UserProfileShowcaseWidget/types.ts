@@ -1,4 +1,4 @@
-import { GuestUserInfoRecord, RegisteredUserInfoRecord, Resources } from 'dstnd-io';
+import { GuestUserInfoRecord, RegisteredUserInfoRecord, Resources } from 'chessroulette-io';
 
 export type UserState =
   | {

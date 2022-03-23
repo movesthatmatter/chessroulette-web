@@ -1,4 +1,4 @@
-import { CreateRoomRequest, RoomActivityCreationRecord } from 'dstnd-io';
+import { CreateRoomRequest, RoomActivityCreationRecord } from 'chessroulette-io';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Wizard } from 'react-use-wizard';
 import { CreatePlayChallengeStep } from '../steps/CreatePlayChallengeStep';

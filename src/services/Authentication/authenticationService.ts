@@ -1,5 +1,5 @@
 import * as io from 'io-ts';
-import { guestUserRecord, jwtToken, toResult } from 'dstnd-io';
+import { guestUserRecord, jwtToken, toResult } from 'chessroulette-io';
 import { Pubsy } from 'src/lib/Pubsy';
 import { AsyncResult, AsyncResultWrapper } from 'ts-async-results';
 import { Err, Ok } from 'ts-results';

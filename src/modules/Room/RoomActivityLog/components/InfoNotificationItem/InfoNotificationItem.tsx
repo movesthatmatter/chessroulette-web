@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserRecord } from 'dstnd-io';
+import { UserRecord } from 'chessroulette-io';
 import { createUseStyles } from 'src/lib/jss';
 import { CustomTheme, fonts } from 'src/theme';
 import cx from 'classnames';

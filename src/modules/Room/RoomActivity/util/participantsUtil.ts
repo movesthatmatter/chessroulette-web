@@ -1,4 +1,4 @@
-import { UserInfoRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'chessroulette-io';
 import { RoomMember } from '../../types';
 import { RoomActivityParticipant } from '../types';
 import deepCopy from 'deep-copy';

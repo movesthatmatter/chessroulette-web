@@ -1,4 +1,4 @@
-import { PeerRecord, UserRecord } from 'dstnd-io';
+import { PeerRecord, UserRecord } from 'chessroulette-io';
 
 export type PeerStreamingConfigOn = {
   on: true;

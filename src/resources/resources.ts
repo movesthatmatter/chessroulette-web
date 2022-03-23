@@ -15,7 +15,7 @@ import {
   QuickPairingRequest,
   QuickPairingResponse,
   quickPairingResponse,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import config from 'src/config';
 import { Result, Err, Ok } from 'ts-results';
 import { AsyncResultWrapper } from 'ts-async-results';

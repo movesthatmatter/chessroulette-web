@@ -1,6 +1,6 @@
-import { ChessGameColor } from 'dstnd-io';
-import { JoinMatchAsPlayer } from 'dstnd-io/dist/resourceCollections/tournaments';
-import { ChallongeMatchRecord } from 'dstnd-io/dist/resourceCollections/tournaments/records';
+import { ChessGameColor } from 'chessroulette-io';
+import { JoinMatchAsPlayer } from 'chessroulette-io/dist/resourceCollections/tournaments';
+import { ChallongeMatchRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button } from 'src/components/Button';

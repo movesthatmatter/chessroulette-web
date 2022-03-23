@@ -5,7 +5,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { OAuthButton, getRedirectUrl } from 'src/services/Oauth2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitch } from '@fortawesome/free-brands-svg-icons';
-import { JWTToken } from 'dstnd-io';
+import { JWTToken } from 'chessroulette-io';
 
 type Props = Omit<ButtonProps, 'onClick' | 'label'> & {
   label?: ButtonProps['label'];

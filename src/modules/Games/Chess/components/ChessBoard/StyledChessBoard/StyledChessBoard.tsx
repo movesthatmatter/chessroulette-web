@@ -3,7 +3,7 @@ import cx from 'classnames';
 import blueBoard from 'src/modules/Games/Chess/components/ChessBoard/assets/board/blue.svg';
 import Chessground, { ChessgroundProps, ChessgroundApi } from 'react-chessground';
 import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
-import { ChessGameColor, ChessMove, PromotionalChessPieceType } from 'dstnd-io';
+import { ChessGameColor, ChessMove, PromotionalChessPieceType } from 'chessroulette-io';
 import { Square } from 'chess.js';
 import { noop } from 'src/lib/util';
 import 'react-chessground/dist/styles/chessground.css';

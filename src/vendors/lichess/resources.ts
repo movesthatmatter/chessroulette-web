@@ -5,7 +5,7 @@ import {
   VerifyUserRequestPayload,
   VerifyLichessUserResponsePayload, 
   verifyLichessUserResponsePayload, VerifyTwitchUserResponsePayload, verifyTwitchUserResponsePayload
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import config from 'src/config';
 import { getHttpInstance } from 'src/lib/http';
 import { AsyncResultWrapper } from 'ts-async-results';

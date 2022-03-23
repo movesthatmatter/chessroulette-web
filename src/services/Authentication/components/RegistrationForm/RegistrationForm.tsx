@@ -1,4 +1,4 @@
-import { CountryCode } from 'dstnd-io';
+import { CountryCode } from 'chessroulette-io';
 import React from 'react';
 import { Button } from 'src/components/Button';
 import { Form, FormError, SubmissionErrors } from 'src/components/Form';

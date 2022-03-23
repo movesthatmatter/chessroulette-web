@@ -1,5 +1,5 @@
 import { createReducer } from 'deox';
-import { PeerRecord, RoomRecord } from 'dstnd-io';
+import { PeerRecord, RoomRecord } from 'chessroulette-io';
 import { combineReducers } from 'redux';
 import { Peer } from 'src/providers/PeerConnectionProvider';
 import { GenericStateSlice } from 'src/redux/types';

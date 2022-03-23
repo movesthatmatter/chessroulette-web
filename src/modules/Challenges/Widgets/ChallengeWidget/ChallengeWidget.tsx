@@ -1,4 +1,4 @@
-import { ChallengeRecord, RoomRecord, UserRecord } from 'dstnd-io';
+import { ChallengeRecord, RoomRecord, UserRecord } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
 import { noop } from 'src/lib/util';
 import { useAnyUser, useAuthenticatedUser } from 'src/services/Authentication';

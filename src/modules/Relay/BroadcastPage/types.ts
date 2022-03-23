@@ -1,5 +1,5 @@
-import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
-import { StreamerRecord } from 'dstnd-io/dist/resourceCollections/watch/records';
+import { RelayedGameRecord } from 'chessroulette-io/dist/resourceCollections/relay/records';
+import { StreamerRecord } from 'chessroulette-io/dist/resourceCollections/watch/records';
 import { ISODateTime } from 'src/lib/date/ISODateTime';
 
 export type ApiError = {
