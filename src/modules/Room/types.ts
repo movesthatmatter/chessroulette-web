@@ -5,7 +5,7 @@ import {
   RoomWithNoActivityRecord,
   RoomWithPlayActivityRecord,
 } from 'dstnd-io';
-import { Peer } from 'src/providers/PeerProvider';
+import { Peer } from 'src/providers/PeerConnectionProvider';
 import { RoomActivity } from './RoomActivity/types';
 
 export type RoomCredentials = {

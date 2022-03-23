@@ -1,4 +1,4 @@
-import { Peer } from 'src/providers/PeerProvider';
+import { Peer } from '../../types';
 
 export const getPeerStatusInfo = (peer?: Peer) => {
   if (!peer) {

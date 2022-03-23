@@ -1,8 +1,8 @@
 import React from 'react';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { createUseStyles } from 'src/lib/jss';
-import { Peer } from 'src/providers/PeerProvider';
 import { themes } from 'src/theme';
+import { Peer } from '../../types';
 
 export type PeerConnectionStatusDotProps = {
   peer?: Peer;

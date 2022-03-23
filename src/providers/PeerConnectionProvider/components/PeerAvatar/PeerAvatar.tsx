@@ -9,7 +9,7 @@ import cx from 'classnames';
 import { onlyDesktop, onlyMobile } from 'src/theme';
 import { colors } from 'src/theme/colors';
 import { useJoinedRoom } from 'src/modules/Room/hooks/useJoinedRoom';
-import { Peer } from 'src/providers/PeerProvider';
+import { Peer } from '../../types';
 
 type Props = {
   size?: number;

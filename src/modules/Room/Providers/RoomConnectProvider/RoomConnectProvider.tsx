@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useWillUnmount } from 'src/lib/hooks/useWillUnmount';
-import { Peer } from 'src/providers/PeerProvider';
+import { Peer } from 'src/providers/PeerConnectionProvider';
 import { PeerToPeerProvider, usePeerToPeerConnections } from 'src/providers/PeerToPeerProvider';
 import { updateRoomPeerConnectionChannels } from '../../redux/actions';
 import { JoinedRoom } from '../../types';

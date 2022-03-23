@@ -1,7 +1,7 @@
 import { createReducer } from 'deox';
 import { PeerRecord, RoomRecord } from 'dstnd-io';
 import { combineReducers } from 'redux';
-import { Peer } from 'src/providers/PeerProvider';
+import { Peer } from 'src/providers/PeerConnectionProvider';
 import { GenericStateSlice } from 'src/redux/types';
 import { stateSliceByKey as activity } from '../RoomActivity/redux/reducer';
 import { stateSliceByKey as activityLog } from '../RoomActivityLog/redux/reducer';

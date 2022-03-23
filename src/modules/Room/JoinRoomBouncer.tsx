@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import * as roomResources from './resources';
 import { RoomRecord } from 'dstnd-io';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { FunWallpaper } from 'src/components/FunWallpaper';
@@ -9,12 +10,10 @@ import { useSession } from 'src/services/Session';
 import { JoinedRoom } from './types';
 import { useJoinedRoom } from './hooks/useJoinedRoom';
 import { JoinRoomWizard } from './wizards/JoinRoomWizard';
-import * as roomResources from './resources';
 import { AsyncOk } from 'ts-async-results';
-import { ReadyPeerConnection } from 'src/providers/PeerConnectionProvider';
+import { Peer, ReadyPeerConnection } from 'src/providers/PeerConnectionProvider';
 import { useDispatch } from 'react-redux';
 import { createRoomAction, updateRoomAction } from './redux/actions';
-import { Peer } from 'src/providers/PeerProvider';
 
 type Props = {
   readyPeerConnection: ReadyPeerConnection;

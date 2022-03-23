@@ -6,7 +6,6 @@ import { FaceTime, MyFaceTime } from 'src/components/FaceTime';
 import { createUseStyles } from 'src/lib/jss';
 import { Game } from 'src/modules/Games';
 import { PlayerBox } from 'src/modules/Games/Chess/components/PlayerBox';
-import { Peer } from 'src/providers/PeerProvider';
 import { onlyMobile, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { RoomPlayActivityWithGame } from '../../types';
@@ -14,6 +13,7 @@ import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
 import { toDictIndexedBy } from 'src/lib/util';
 import { gameRecordToGame, getPlayerStats } from 'src/modules/Games/Chess/lib';
 import { LayoutContainerDimensions } from 'src/modules/Room/Layouts';
+import { Peer } from 'src/providers/PeerConnectionProvider';
 
 type Props = {
   activity: RoomPlayActivityWithGame;

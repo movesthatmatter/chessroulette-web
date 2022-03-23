@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { PeersMap } from 'src/providers/PeerProvider';
+import { PeersMap } from '../PeerConnectionProvider';
 import { PeerConnections } from './PeerConnections';
 
 export type PeerConnectionsContextState =

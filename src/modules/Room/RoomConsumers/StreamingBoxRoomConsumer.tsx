@@ -6,8 +6,7 @@ import {
 } from 'src/components/FaceTime/MultiFaceTimeCompact';
 import { Logo } from 'src/components/Logo';
 import { createUseStyles } from 'src/lib/jss';
-import { PeerInfo } from 'src/providers/PeerConnectionProvider';
-import { useStreamingPeers } from 'src/providers/PeerProvider/hooks';
+import { PeerInfo, useStreamingPeers } from 'src/providers/PeerConnectionProvider';
 import { hideOnDesktop, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { JoinedRoomProviderContext } from '../Providers/JoinedRoomProvider';

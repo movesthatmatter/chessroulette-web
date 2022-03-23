@@ -1,6 +1,6 @@
 import { createAction } from 'deox';
 import { PeerRecord, RoomRecord } from 'dstnd-io';
-import { Peer } from 'src/providers/PeerProvider';
+import { Peer } from 'src/providers/PeerConnectionProvider';
 
 export const createRoomAction = createAction(
   'Create Room',

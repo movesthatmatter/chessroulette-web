@@ -1,7 +1,7 @@
 import { createReducer } from 'deox';
 import { PeerRecord } from 'dstnd-io';
-import { Peer } from 'src/providers/PeerProvider';
 import { GenericStateSlice } from 'src/redux/types';
+import { Peer } from '../types';
 import {
   createPeerConnectionAction,
   updatePeerConnectionAction,

@@ -1,9 +1,9 @@
 import Chance from 'chance';
-import { Peer } from 'src/providers/PeerProvider';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { range } from 'src/lib/util';
 import { PeerMocker } from './PeerMocker';
 import { ClassRoom, Room } from 'src/modules/Room';
+import { Peer } from 'src/providers/PeerConnectionProvider';
 
 const chance = new Chance();
 const peerMocker = new PeerMocker();
@@ -15,7 +15,6 @@ const getPeersMap = (count: number) =>
 
 export class RoomMocker {
   record(peersMapOrPeersCount: Record<string, Peer> | number = 4): Room {
-    // const roomStatsRecord = roomStatsMocker.record(peersMapOrPeersCount);
     const isPrivate = chance.bool();
     const me = peerMocker.record();
     const peers =

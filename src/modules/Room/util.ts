@@ -1,7 +1,7 @@
-import { RoomRecord } from 'dstnd-io';
-import { Peer } from 'src/providers/PeerProvider';
-import { RoomMember } from './types';
 import deepCopy from 'deep-copy';
+import { RoomRecord } from 'dstnd-io';
+import { RoomMember } from './types';
+import { Peer } from 'src/providers/PeerConnectionProvider';
 
 export const toRoomMember = (peer: Peer): RoomMember => ({
   isRoomMember: true,

@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import { SocketClient } from 'src/services/socket/SocketClient';
-import { Peer } from '../PeerProvider';
+import { Peer } from './types';
 
 export type ReadyPeerConnectionProviderContextState = {
   ready: true;

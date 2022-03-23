@@ -6,9 +6,9 @@ import {
   PeerConnectionsState,
   PeerConnectionsStateProps,
 } from './PeerConnectionsHandler';
-import { Peer, PeersMap } from '../PeerProvider';
 import { getIceURLS } from './resources';
 import { PeerConnectionsErrors } from './PeerConnections';
+import { Peer, PeersMap } from '../PeerConnectionProvider/types';
 
 type Props = {
   user: UserRecord;

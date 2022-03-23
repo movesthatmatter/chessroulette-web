@@ -15,7 +15,7 @@ import { useContainerDimensions } from 'src/components/ContainerWithDimensions';
 import { GameMocker } from 'src/mocks/records';
 import { ChessBoard } from 'src/modules/Games/Chess/components/ChessBoard';
 import { MultiFaceTimeCompact } from 'src/components/FaceTime/MultiFaceTimeCompact';
-import { useStreamingPeers } from 'src/providers/PeerProvider/hooks';
+import { useStreamingPeers } from 'src/providers/PeerConnectionProvider';
 
 export default {
   component: DesktopRoomLayout,

@@ -1,14 +1,14 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { Peer } from 'src/providers/PeerProvider';
 import { fonts } from 'src/theme';
-import { Text } from '../../../../components/Text';
+import { Text } from 'src/components/Text';
 import { getUserDisplayName } from 'src/modules/User';
 import { spacers } from 'src/theme/spacers';
 import { useJoinedRoom } from 'src/modules/Room/hooks/useJoinedRoom';
 import { PeerAvatar } from '../PeerAvatar';
 import { getPeerStatusInfo } from './util';
+import { Peer } from '../../types';
 
 type Props = {
   darkBG?: boolean;

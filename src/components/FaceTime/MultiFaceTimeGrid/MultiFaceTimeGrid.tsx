@@ -1,14 +1,13 @@
 import React from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
-import { Peer, StreamingPeer } from 'src/providers/PeerProvider';
 import { FaceTime } from '../FaceTime';
 import { hideOnDesktop, onlyMobile, softBorderRadius } from 'src/theme';
 import { MyFaceTime } from '../MyFaceTime';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { spacers } from 'src/theme/spacers';
 import { AspectRatioProps } from 'src/components/AspectRatio';
-import { PeerInfo } from 'src/providers/PeerConnectionProvider';
+import { Peer, PeerInfo, StreamingPeer } from 'src/providers/PeerConnectionProvider';
 
 type Props = {
   me: Peer;

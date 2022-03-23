@@ -1,7 +1,7 @@
 import Chance from 'chance';
 import { RoomStatsRecord } from 'dstnd-io';
+import { Peer } from 'src/providers/PeerConnectionProvider';
 import { RoomMocker } from './RoomMocker';
-import { Peer } from 'src/providers/PeerProvider';
 
 const chance = new Chance();
 const roomMocker = new RoomMocker();
