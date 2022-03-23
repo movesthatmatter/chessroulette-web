@@ -93,7 +93,6 @@ export class PeerConnections {
       apc.getMyStream().then((myStream) => {
         call.answer(myStream);
         call.on('stream', (stream) => {
-          console.log('onStreamHandler publish onPeerStream 2', peerId, stream);
           this.pubsy.publish('onPeerStream', {
             peerId,
             stream,
@@ -162,7 +161,6 @@ export class PeerConnections {
           const call = this.sdk.call(namespacedPeerId, stream);
 
           const onStreamHandler = (stream: MediaStream) => {
-            console.log('onStreamHandler publish onPeerStream', apc.peerId, stream);
             this.pubsy.publish('onPeerStream', {
               peerId: peer.id,
               stream,

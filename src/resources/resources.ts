@@ -5,8 +5,6 @@ import {
   CreateRoomResponse,
   CreateChallengeRequest,
   createChallengeResponse,
-  iceServersResponse,
-  IceServersResponse,
   RegisterPeerRequestPayload,
   RegisterPeerResponsePayload,
   registerPeerResponsePayload,
@@ -29,21 +27,6 @@ const http = getHttpInstance({
   // transformRequest: [],
   // transformResponse: [],
 });
-
-// TODO: Remove from here
-export const getIceURLS = async (): Promise<
-  Result<IceServersResponse, ApiError>
-> => {
-  try {
-    const { data } = await http.get('api/iceurls');
-
-    return io
-      .toResult(iceServersResponse.decode(data))
-      .mapErr(() => 'BadResponse');
-  } catch (e) {
-    return new Err('BadRequest');
-  }
-};
 
 export const createChallenge = (
   req: CreateChallengeRequest,
