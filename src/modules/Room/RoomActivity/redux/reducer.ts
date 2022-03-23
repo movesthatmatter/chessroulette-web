@@ -1,9 +1,4 @@
 import { createReducer } from 'deox';
-// import {
-//   createRoomAction,
-//   updateMeAction,
-//   updateRoomAction,
-// } from 'src/providers/PeerProvider/redux/actions';
 import { GenericStateSlice } from 'src/redux/types';
 import { createRoomAction, updateRoomAction } from '../../redux/actions';
 import { RoomPlayActivity } from '../activities/PlayActivity';
@@ -118,7 +113,7 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
   //  to combine all the room related reducers!
   // TODO: //  Removed this on Mar 22, 2022
   //    Wondering if it's really needed as the peer should be always on inside a room
-  //   or not present at all if not  
+  //   or not present at all if not
   // handleAction(updateMeAction, (prev, { payload }) => {
   //   if (!payload.me.hasJoinedRoom) {
   //     return {
