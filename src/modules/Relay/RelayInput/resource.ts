@@ -1,4 +1,4 @@
-import { Resources } from 'dstnd-io';
+import { Resources } from 'chessroulette-io';
 import { RequestOf } from 'resources-io';
 import { http } from 'src/lib/http';
 

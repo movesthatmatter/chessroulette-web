@@ -4,7 +4,7 @@ import { getBoxShadow } from 'src/theme/util';
 import hexToRgba from 'hex-to-rgba';
 import cx from 'classnames';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
-import { ChessGameColor } from 'dstnd-io';
+import { ChessGameColor } from 'chessroulette-io';
 import { ColorPalette } from 'src/theme/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChessKnight } from '@fortawesome/free-solid-svg-icons';

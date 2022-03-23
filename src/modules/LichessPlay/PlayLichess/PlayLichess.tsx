@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LichessAuthenticatedPage } from 'src/components/Page';
-import { ChatHistoryRecord, ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
+import { ChatHistoryRecord, ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'chessroulette-io';
 import { LichessChatLine, LichessGameState } from '../types';
 import { LichessGameStateDialogProvider } from './components/LichessGameStateDialogProvider';
 import { useAuthenticatedUser } from 'src/services/Authentication';

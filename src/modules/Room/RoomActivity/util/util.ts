@@ -3,7 +3,7 @@ import { toRoomPlayActivity } from '../activities/PlayActivity/util';
 import { toRoomAnalysisActivity } from '../activities/AnalysisActivity/util';
 import { BaseRoomActivity } from '../redux/types';
 import { RoomActivity, RoomActivityParticipant } from '../types';
-import { UserInfoRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'chessroulette-io';
 import { toRoomRelayActivity } from '../activities/RelayActivity/utils';
 import { toRoomWarGameActivity } from '../activities/WarGameActivity/utils';
 import { toRoomMatchActivity } from '../activities/MatchActivity/utils';

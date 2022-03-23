@@ -2,11 +2,11 @@ import {
   metadata,
   RoomChallengeRecord,
   RoomWithWarGameActivityRecord,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { toISODateTime } from 'io-ts-isodatetime';
 import HumanizeDuration from 'humanize-duration';
 import { getUserDisplayName } from 'src/modules/User';
-import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { otherChessColor } from 'chessroulette-io/dist/chessGame/util/util';
 import { Notification, OfferNotification } from '../../types';
 import { getPlayerByColor } from 'src/modules/Games/Chess/lib';
 import { WarGame } from 'src/modules/Games';

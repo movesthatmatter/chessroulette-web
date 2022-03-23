@@ -8,8 +8,8 @@ import { isPartialBlackMove, PairedMove } from '../../../lib';
 import { HistoryList } from './HistoryList';
 import { softBorderRadius } from 'src/theme';
 import { HTMLDivElement } from 'window-or-global';
-import { ChessHistoryIndex } from 'dstnd-io';
-import { isChessRecursiveHistoryIndex } from 'dstnd-io/dist/analysis/analysisActions';
+import { ChessHistoryIndex } from 'chessroulette-io';
+import { isChessRecursiveHistoryIndex } from 'chessroulette-io/dist/analysis/analysisActions';
 
 type Props = {
   pairedMove: PairedMove;

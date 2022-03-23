@@ -1,4 +1,4 @@
-import { Resources } from 'dstnd-io';
+import { Resources } from 'chessroulette-io';
 import React from 'react';
 import { Button } from 'src/components/Button';
 import { Form } from 'src/components/Form';

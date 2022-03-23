@@ -1,7 +1,7 @@
-import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
+import { RelayedGameRecord } from 'chessroulette-io/dist/resourceCollections/relay/records';
 import { Chance } from 'chance';
 import { ChessGameStateMocker } from './ChessGameStateMocker';
-import { GameRecord } from 'dstnd-io';
+import { GameRecord } from 'chessroulette-io';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { Date } from 'window-or-global';
 

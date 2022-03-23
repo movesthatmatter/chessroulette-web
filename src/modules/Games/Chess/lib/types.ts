@@ -1,4 +1,4 @@
-import { ChessRecursiveBlackMove, ChessRecursiveMove, ChessRecursiveWhiteMove } from 'dstnd-io';
+import { ChessRecursiveBlackMove, ChessRecursiveMove, ChessRecursiveWhiteMove } from 'chessroulette-io';
 
 // export type EmptyMove = undefined;
 export type PartialWhiteMove = [ChessRecursiveWhiteMove];

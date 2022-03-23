@@ -2,7 +2,7 @@ import React from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
-import { UserRecord } from 'dstnd-io';
+import { UserRecord } from 'chessroulette-io';
 import { Text } from '../Text';
 import { getUserDisplayName } from 'src/modules/User';
 import { Avatar } from '../Avatar';

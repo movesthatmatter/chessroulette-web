@@ -1,5 +1,5 @@
-import { ChessGameColor, ChessGameStateFinished, ChessMove, GameRecord, Resources } from 'dstnd-io';
-import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { ChessGameColor, ChessGameStateFinished, ChessMove, GameRecord, Resources } from 'chessroulette-io';
+import { otherChessColor } from 'chessroulette-io/dist/chessGame/util/util';
 import React, { useRef, useState } from 'react';
 import { Button, IconButton } from 'src/components/Button';
 import { ConfirmButton } from 'src/components/Button/ConfirmButton';

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import cx from 'classnames';
-import { ChessGameColor, ChessHistoryMove, GameRecord } from 'dstnd-io';
-import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { ChessGameColor, ChessHistoryMove, GameRecord } from 'chessroulette-io';
+import { otherChessColor } from 'chessroulette-io/dist/chessGame/util/util';
 import { FaceTime, MyFaceTime } from 'src/components/FaceTime';
 import { createUseStyles } from 'src/lib/jss';
 import { Game } from 'src/modules/Games';
@@ -9,7 +9,7 @@ import { PlayerBox } from 'src/modules/Games/Chess/components/PlayerBox';
 import { onlyMobile, softBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
 import { RoomPlayActivityWithGame } from '../../types';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 import { toDictIndexedBy } from 'src/lib/util';
 import { gameRecordToGame, getPlayerStats } from 'src/modules/Games/Chess/lib';
 import { LayoutContainerDimensions } from 'src/modules/Room/Layouts';

@@ -7,7 +7,7 @@ import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { DesktopRoomLayout } from './DesktopRoomLayout';
 import { Chat } from 'src/modules/Chat/Chat';
 import { action } from '@storybook/addon-actions';
-import { ChatHistoryRecord } from 'dstnd-io';
+import { ChatHistoryRecord } from 'chessroulette-io';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { minutes, seconds } from 'src/lib/time';
 import { AspectRatio, AspectRatioExplicit } from 'src/components/AspectRatio';

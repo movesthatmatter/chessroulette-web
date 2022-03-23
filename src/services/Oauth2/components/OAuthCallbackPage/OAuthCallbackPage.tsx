@@ -1,4 +1,4 @@
-import { ExternalVendor } from 'dstnd-io';
+import { ExternalVendor } from 'chessroulette-io';
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, { useEffect } from 'react';
 import { WindowWithOnTokenReceived } from '../../types';

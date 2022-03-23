@@ -1,4 +1,4 @@
-import { WarGameRecord } from 'dstnd-io';
+import { WarGameRecord } from 'chessroulette-io';
 import { WarGameParticipants } from '../types';
 
 export const getPlayersTimeLeft = (game: WarGameRecord, participants: WarGameParticipants) => {

@@ -5,7 +5,7 @@ import {
   ChessHistory,
   ChessHistoryIndex,
   SimplePGN,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import React, { useMemo } from 'react';
 import { Button } from 'src/components/Button';
 import { ConfirmButton } from 'src/components/Button/ConfirmButton';

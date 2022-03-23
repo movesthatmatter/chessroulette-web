@@ -1,4 +1,4 @@
-import { UserRecord } from 'dstnd-io';
+import { UserRecord } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'src/components/Modal/Modal';
 import { createUseStyles, makeImportant } from 'src/lib/jss';

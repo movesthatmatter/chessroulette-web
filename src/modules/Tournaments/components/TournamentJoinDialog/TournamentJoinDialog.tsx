@@ -1,4 +1,4 @@
-import { ChallongeTournamentRecord } from 'dstnd-io/dist/resourceCollections/tournaments/records';
+import { ChallongeTournamentRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import React from 'react';
 import { Button } from 'src/components/Button';
 import { Dialog } from 'src/components/Dialog';

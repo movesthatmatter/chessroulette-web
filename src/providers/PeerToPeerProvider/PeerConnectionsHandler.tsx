@@ -1,4 +1,4 @@
-import { IceServerRecord, UserRecord } from 'dstnd-io';
+import { IceServerRecord, UserRecord } from 'chessroulette-io';
 import { Component } from 'react';
 import { PeerConnections } from './PeerConnections';
 

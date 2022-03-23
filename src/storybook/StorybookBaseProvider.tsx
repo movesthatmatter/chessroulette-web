@@ -5,7 +5,7 @@ import { StorybookReduxProvider } from './StorybookReduxProvider';
 import { UserRecordMocker } from 'src/mocks/records';
 import { RootState } from 'src/redux/rootReducer';
 import { ThemeProvider } from 'react-jss';
-import { JWTToken } from 'dstnd-io';
+import { JWTToken } from 'chessroulette-io';
 
 type Props = {
   withAuthentication?: boolean;

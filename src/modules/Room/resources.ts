@@ -1,5 +1,5 @@
 import { getHttpInstance } from 'src/lib/http';
-import { io, publicRoomsResponsePayload, PublicRoomsResponsePayload, Resources } from 'dstnd-io';
+import { io, publicRoomsResponsePayload, PublicRoomsResponsePayload, Resources } from 'chessroulette-io';
 import config from 'src/config';
 import { Result, Err } from 'ts-results';
 

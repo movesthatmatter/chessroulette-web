@@ -1,7 +1,7 @@
 import React from 'react';
 import capitalize from 'capitalize';
-import { RoomChallengeRecord } from 'dstnd-io';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { RoomChallengeRecord } from 'chessroulette-io';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { DialogContent } from 'src/components/Dialog';
 import { Text } from 'src/components/Text';

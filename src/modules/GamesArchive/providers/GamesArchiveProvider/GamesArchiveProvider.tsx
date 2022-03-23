@@ -1,4 +1,4 @@
-import { GameRecordFinished, GameRecordStopped, UserRecord } from 'dstnd-io';
+import { GameRecordFinished, GameRecordStopped, UserRecord } from 'chessroulette-io';
 import React from 'react';
 import { WithPagination } from 'src/components/Pagination';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChessGameState, ChessPlayer } from 'dstnd-io';
+import { ChessGameState, ChessPlayer } from 'chessroulette-io';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, fonts, onlyDesktop } from 'src/theme';

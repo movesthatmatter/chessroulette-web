@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useCallback } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { floatingShadow, softBorderRadius } from 'src/theme';
-import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { otherChessColor } from 'chessroulette-io/dist/chessGame/util/util';
 import { useGameActions } from 'src/modules/Games/WarGame/gameActions';
 import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
 import { ActivityCommonProps } from '../../types';
@@ -10,7 +10,7 @@ import { floatingBoxContainerOffsets, floatingBoxOffsets } from '../../styles';
 import cx from 'classnames';
 import { spacers } from 'src/theme/spacers';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
-import { WarGameMove } from 'dstnd-io';
+import { WarGameMove } from 'chessroulette-io';
 import { WarGameBoard } from 'wargame-board';
 import { WarGameSateWidget } from 'src/modules/Games/WarGame/components/WarGameStateWidget/WarGameStateWidget';
 import { WarGameActions } from 'src/modules/Games/WarGame/components/WarGameActions/WarGameActions';

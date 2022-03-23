@@ -1,5 +1,5 @@
 import { Chance } from 'chance';
-import { LiveStreamerRecord, OfflineStreamerRecord, StreamerRecord } from 'dstnd-io/dist/resourceCollections/watch/records';
+import { LiveStreamerRecord, OfflineStreamerRecord, StreamerRecord } from 'chessroulette-io/dist/resourceCollections/watch/records';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { getRandomInt } from 'src/lib/util';
 import { Date } from 'window-or-global';

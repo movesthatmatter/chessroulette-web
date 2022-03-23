@@ -1,6 +1,6 @@
 import * as io from 'io-ts';
 import { isoDateTimeFromISOString } from 'src/lib/date';
-import { userRecord } from 'dstnd-io';
+import { userRecord } from 'chessroulette-io';
 
 export const peerMessageEnvelope = io.type({
   // This stays unknown at this level

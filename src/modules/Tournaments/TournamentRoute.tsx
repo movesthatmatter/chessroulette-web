@@ -1,7 +1,7 @@
 import {
   ChallongeMatchRecord,
   ChallongeTournamentRecord,
-} from 'dstnd-io/dist/resourceCollections/tournaments/records';
+} from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from 'src/components/Button';

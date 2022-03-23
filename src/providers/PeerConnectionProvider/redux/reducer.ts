@@ -1,5 +1,5 @@
 import { createReducer } from 'deox';
-import { PeerRecord } from 'dstnd-io';
+import { PeerRecord } from 'chessroulette-io';
 import { GenericStateSlice } from 'src/redux/types';
 import { Peer } from '../types';
 import {

@@ -1,4 +1,4 @@
-import { RoomRecord } from 'dstnd-io';
+import { RoomRecord } from 'chessroulette-io';
 import React from 'react';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';

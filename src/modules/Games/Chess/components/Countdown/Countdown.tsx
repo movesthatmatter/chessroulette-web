@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { noop } from 'src/lib/util';
 import { useInterval } from 'src/lib/hooks';
 import { lpad, timeLeftToInterval, timeLeftToTimeUnits } from './util';
-import { GameRecord } from 'dstnd-io';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { GameRecord } from 'chessroulette-io';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 import { CountdownDisplay } from './CountdownDisplay';
 
 type Props = {

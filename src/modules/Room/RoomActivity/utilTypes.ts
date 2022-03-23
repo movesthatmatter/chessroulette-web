@@ -1,4 +1,4 @@
-import { RoomActivityRecord } from 'dstnd-io';
+import { RoomActivityRecord } from 'chessroulette-io';
 import { RoomActivityParticipant } from './types';
 
 export type RoomActivitySpecifcParticipant<

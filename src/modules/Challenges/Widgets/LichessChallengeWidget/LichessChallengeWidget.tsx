@@ -1,4 +1,4 @@
-import { GameSpecsRecord } from 'dstnd-io';
+import { GameSpecsRecord } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
 import { Dialog } from 'src/components/Dialog/Dialog';
 import { CreateChallenge } from '../ChallengeWidget/components/CreateChallenge/CreateChallenge';

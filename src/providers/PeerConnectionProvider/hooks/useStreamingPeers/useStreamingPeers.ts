@@ -1,4 +1,4 @@
-import { UserRecord } from 'dstnd-io';
+import { UserRecord } from 'chessroulette-io';
 import { useCallback, useEffect, useMemo, useReducer } from 'react';
 import { isStreamingPeer, PeersMap, StreamingPeer, StreamingPeersMap } from '../../types';
 import { reducer, initialState, initAction, focusAction, updateAction } from './reducer';

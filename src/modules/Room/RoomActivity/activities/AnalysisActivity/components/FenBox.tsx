@@ -1,4 +1,4 @@
-import { ChessGameStateFen } from 'dstnd-io';
+import { ChessGameStateFen } from 'chessroulette-io';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Text } from 'src/components/Text';

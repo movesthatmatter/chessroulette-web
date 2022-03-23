@@ -1,7 +1,7 @@
 import React from 'react';
 import { useWizard } from 'react-use-wizard';
 import { CreateChallenge } from 'src/modules/Challenges/Widgets/ChallengeWidget/components/CreateChallenge/CreateChallenge';
-import { GameSpecsRecord } from 'dstnd-io';
+import { GameSpecsRecord } from 'chessroulette-io';
 import { DialogWizardStep } from 'src/components/DialogWizard/DialogWizardStep';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 

@@ -1,4 +1,4 @@
-import { RoomActivityCreationRecord } from 'dstnd-io';
+import { RoomActivityCreationRecord } from 'chessroulette-io';
 import { createContext } from 'react';
 import { BoardOrientation } from 'src/modules/Games';
 import { DeviceSize } from 'src/theme/hooks/useDeviceSize';

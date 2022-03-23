@@ -1,5 +1,5 @@
 import Chance from 'chance';
-import { UserRecord, GuestUserRecord, RegisteredUserRecord } from 'dstnd-io';
+import { UserRecord, GuestUserRecord, RegisteredUserRecord } from 'chessroulette-io';
 import { getRandomInt, objectKeys } from 'src/lib/util';
 import { countries } from 'countries-list';
 import camelcase from 'camelcase';

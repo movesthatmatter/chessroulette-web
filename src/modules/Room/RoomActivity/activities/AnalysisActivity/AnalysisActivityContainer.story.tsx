@@ -7,7 +7,7 @@ import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { second } from 'src/lib/time';
 import { AnalysisRecordMocker } from 'src/mocks/records/AnalysisRecordMocker';
-import { addMoveToChessHistory } from 'dstnd-io/dist/analysis/analysisActions';
+import { addMoveToChessHistory } from 'chessroulette-io/dist/analysis/analysisActions';
 import { AnalysisActivityContainer } from './AnalysisActivityContainer';
 import { JoinedRoomProvider } from 'src/modules/Room/Providers/JoinedRoomProvider';
 import { SocketClient } from 'src/services/socket/SocketClient';

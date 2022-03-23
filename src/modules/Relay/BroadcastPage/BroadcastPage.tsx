@@ -1,4 +1,4 @@
-import { Resources } from 'dstnd-io';
+import { Resources } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
 import { Page } from 'src/components/Page';
 import { createUseStyles, makeImportant } from 'src/lib/jss';

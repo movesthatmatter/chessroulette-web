@@ -3,7 +3,7 @@ import {
   GameRecord,
   WarGameRecord,
   WarGameState,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { WarGameStateMocker } from './WarGameStateMocker';
 import { Chance } from 'chance';
 import { toISODateTime } from 'src/lib/date/ISODateTime';

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChallengeRecord } from 'dstnd-io';
+import { ChallengeRecord } from 'chessroulette-io';
 import { Button, ButtonProps } from 'src/components/Button';
 import { toRoomUrlPath } from 'src/lib/util';
 import { useHistory } from 'react-router-dom';

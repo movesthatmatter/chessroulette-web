@@ -2,9 +2,9 @@
 //   id: '1',
 //   name: 'Broasca',
 // };
-// import { Chess } from 'dstnd-io';
+// import { Chess } from 'chessroulette-io';
 import Chance from 'chance';
-import { ChessPlayer } from 'dstnd-io';
+import { ChessPlayer } from 'chessroulette-io';
 import { UserInfoMocker } from './UserInfoMocker';
 // import { ChessPlayer } from 'src/modules/Games/Chess';
 

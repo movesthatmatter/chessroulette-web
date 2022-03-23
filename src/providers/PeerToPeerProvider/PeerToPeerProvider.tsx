@@ -1,5 +1,5 @@
 import React from 'react';
-import { IceServerRecord, PeerRecord, UserRecord } from 'dstnd-io';
+import { IceServerRecord, PeerRecord, UserRecord } from 'chessroulette-io';
 import { PeerConnectionsContext, PeerConnectionsContextState } from './PeerConnectionsContext';
 import {
   PeerConnectionsHandler,

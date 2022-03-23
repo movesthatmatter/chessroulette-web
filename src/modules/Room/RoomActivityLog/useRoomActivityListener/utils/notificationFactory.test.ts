@@ -1,4 +1,4 @@
-import { RoomPlayActivityRecord } from 'dstnd-io';
+import { RoomPlayActivityRecord } from 'chessroulette-io';
 import { GameMocker } from 'src/mocks/records';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { playNotificationFactory as notificationFactory } from './notificationFactory';

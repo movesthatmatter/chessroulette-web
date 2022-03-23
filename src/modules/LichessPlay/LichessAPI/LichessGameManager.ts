@@ -13,11 +13,11 @@ import {
 import { LichessGameState, NDJsonReader, LichessChallenge, LichessChatLine } from '../types';
 import { Pubsy } from 'src/lib/Pubsy';
 import { makeUci, parseSquare } from 'chessops/util';
-import { ChessGameColor, ChessMove, GameSpecsRecord } from 'dstnd-io';
+import { ChessGameColor, ChessMove, GameSpecsRecord } from 'chessroulette-io';
 import { NormalMove } from 'chessops/types';
 import { Game } from '../../Games';
 import { getHomeColor, lichessGameToChessRouletteGame, getPromoPieceFromMove } from '../utils';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 import { console } from 'window-or-global';
 import { RegisteredUserRecordWithLichessConnection } from 'src/services/Authentication';
 

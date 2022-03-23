@@ -1,4 +1,4 @@
-import { CollaboratorRecord, ResourceRecords } from 'dstnd-io';
+import { CollaboratorRecord, ResourceRecords } from 'chessroulette-io';
 
 export type CollaboratorAsStreamer = CollaboratorRecord & {
   isLive: boolean;

@@ -1,4 +1,4 @@
-import { IceServerRecord, PeerRecord } from 'dstnd-io';
+import { IceServerRecord, PeerRecord } from 'chessroulette-io';
 import PeerSDK from 'peerjs';
 import { logsy } from 'src/lib/logsy';
 import config from 'src/config';

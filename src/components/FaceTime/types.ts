@@ -1,4 +1,4 @@
-import { UserRecord } from 'dstnd-io';
+import { UserRecord } from 'chessroulette-io';
 import { PeerStreamingConfig } from 'src/providers/PeerConnectionProvider';
 
 export type StreamConfig = PeerStreamingConfig;

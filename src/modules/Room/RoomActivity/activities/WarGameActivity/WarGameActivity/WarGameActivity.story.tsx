@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {WarGameBoard} from 'wargame-board';
 import {WarGameMocker} from 'src/mocks/records/WarGameMocker';
 import { WarGame } from 'src/modules/Games';
-import { ChessGameColor, warGameActions } from 'dstnd-io';
+import { ChessGameColor, warGameActions } from 'chessroulette-io';
 import { action } from '@storybook/addon-actions';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { Button } from 'src/components/Button';

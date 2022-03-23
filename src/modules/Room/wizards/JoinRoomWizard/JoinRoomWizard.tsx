@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Wizard } from 'react-use-wizard';
-import { RoomChallengeRecord, RoomRecord, UserInfoRecord } from 'dstnd-io';
+import { RoomChallengeRecord, RoomRecord, UserInfoRecord } from 'chessroulette-io';
 import { getRoomPendingChallenge } from '../../util';
 import { AcceptRoomStep } from '../steps/AcceptRoomStep';
 import { resources } from '../..';
