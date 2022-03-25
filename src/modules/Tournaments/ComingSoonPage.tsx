@@ -44,7 +44,7 @@ export const ComingSoonPage: React.FC<Props> = () => {
         <br />
         <br />
         <div className={cls.tournamentItem}>
-          <AnchorLink href="https://partner.chessroulette.live" target="_blank">
+          <AnchorLink href="https://fundraising-ukraine.chessroulette.live" target="_blank">
             <img src={mtmUkraineFundraiserThumb} className={cls.tournamentThumbImg}></img>
           </AnchorLink>
           <div className={cls.tournamentItemInfo}>
@@ -71,7 +71,7 @@ export const ComingSoonPage: React.FC<Props> = () => {
 
             <br/>
             <br/>
-            <AnchorLink href="https://partner.chessroulette.live" target="_blank">
+            <AnchorLink href="https://fundraising-ukraine.chessroulette.live" target="_blank">
               Learn More
             </AnchorLink>
           </div>
