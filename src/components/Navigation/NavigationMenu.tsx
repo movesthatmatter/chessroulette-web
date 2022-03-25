@@ -55,7 +55,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
           <Text size="small1">Collaborate</Text>
         </a>
       </div>
-      {/* <div className={cls.linkWrapper}>
+      <div className={cls.linkWrapper}>
         <Link
           to={'/tournaments'}
           className={cx(cls.link, location.pathname.indexOf('/tournaments') > -1 && cls.activeLink)}
@@ -63,7 +63,7 @@ export const NavigationMenu: React.FC<Props> = (props) => {
           <FontAwesomeIcon icon={faTrophy} className={cls.tournamentsIcon} />
           <Text size="small1">Tournaments</Text>
         </Link>
-      </div> */}
+      </div>
     </>
   );
 
