@@ -122,7 +122,6 @@
     "use-debounce": "^7.0.0",
     "use-debounced-effect": "^1.2.0",
     "use-previous": "^1.1.0",
-    "wargame-board": "https://gabrielctroia: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@github.com/movesthatmatter/wargame-board.git#v0.2.1",
     "webfontloader": "^1.6.28",
     "window-or-global": "^1.0.1"
   },

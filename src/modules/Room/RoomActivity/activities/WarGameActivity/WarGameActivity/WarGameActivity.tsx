@@ -11,7 +11,6 @@ import cx from 'classnames';
 import { spacers } from 'src/theme/spacers';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
 import { WarGameMove } from 'chessroulette-io';
-import { WarGameBoard } from 'wargame-board';
 import { WarGameSateWidget } from 'src/modules/Games/WarGame/components/WarGameStateWidget/WarGameStateWidget';
 import { WarGameActions } from 'src/modules/Games/WarGame/components/WarGameActions/WarGameActions';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
@@ -45,7 +44,7 @@ export const WarGameActivity: React.FC<WarGameActivityProps> = ({ activity, devi
   const cls = useStyles();
   const gameActions = useGameActions();
   const roomConsumer = useRoomConsumer();
-  const {theme} = useColorTheme();
+  const { theme } = useColorTheme();
   const homeColor = useMemo(
     () => getHomeColor(activity, roomConsumer?.boardOrientation === 'away'),
     [activity, roomConsumer?.boardOrientation]
@@ -96,19 +95,6 @@ export const WarGameActivity: React.FC<WarGameActivityProps> = ({ activity, devi
                 )}
               </div>
             </aside>
-            <WarGameBoard
-              key={game.id}
-              game={game}
-              size={boardSize}
-              orientation={homeColor}
-              turnColor={otherChessColor(game.lastMoveBy ? game.lastMoveBy : 'black')}
-              canInteract={activity.iamParticipating}
-              playable={activity.iamParticipating && activity.participants.me.canPlay}
-              playableColor={otherChessColor(game.lastMoveBy ? game.lastMoveBy : 'black')}
-              className={cls.board}
-              onMove={(move, type) => onMoved({ move, type })}
-              theme={theme.name === 'darkDefault' ? 'dark' : 'light'}
-            />
           </div>
         </>
       )}
