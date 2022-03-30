@@ -5948,7 +5948,7 @@ chessops@0.7.1:
     ts-results "^3.0.0"
     tslib "2.3.1"
     typescript "4.0.2"
-    wargame-engine "https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git#v0.3.0"
+    wargame-engine "https://gabrielctroia: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@github.com/movesthatmatter/wargame-engine.git#v0.3.0"
 
 chokidar@^2.0.4, chokidar@^2.1.8:
   version "2.1.8"
