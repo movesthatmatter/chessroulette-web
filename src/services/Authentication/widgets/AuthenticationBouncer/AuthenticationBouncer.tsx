@@ -1,12 +1,12 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { noop } from 'src/lib/util';
-import { AuthenticationState } from '../../reducer';
+import { AuthenticationStateUser } from '../../reducer';
 import { useAuthentication } from '../../useAuthentication';
 import { AuthenticationDialog } from '../AuthenticationDialog';
 
 type Props = {
   render: (p: { check: () => void }) => React.ReactNode;
-  onAuthenticated?: (auth: AuthenticationState) => void;
+  onAuthenticated?: (auth: AuthenticationStateUser) => void;
 };
 
 export const AuthenticationBouncer: React.FC<Props> = ({ render, onAuthenticated = noop }) => {

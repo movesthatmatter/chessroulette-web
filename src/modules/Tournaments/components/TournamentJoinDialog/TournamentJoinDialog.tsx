@@ -1,13 +1,13 @@
-import { ChallongeTournamentRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import React from 'react';
 import { Button } from 'src/components/Button';
 import { Dialog } from 'src/components/Dialog';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
+import { TournamentRecord } from '../../types';
 
 type Props = {
-  tournament: ChallongeTournamentRecord;
+  tournament: TournamentRecord;
   onJoin: () => void;
 };
 

@@ -1,7 +1,6 @@
 import { createReducer } from 'deox';
 import { GenericStateSlice } from 'src/redux/types';
 import { createRoomAction, updateRoomAction } from '../../redux/actions';
-import { RoomPlayActivity } from '../activities/PlayActivity';
 import {
   switchRoomActivityAction,
   updateCurrentAnalysisAction,
@@ -22,24 +21,10 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
   handleAction(switchRoomActivityAction, (_, { payload }) => payload),
   handleAction(updateRoomActivityAction, (_, { payload }) => payload),
   handleAction(createRoomAction, (_, { payload }) => {
-    if (payload.room.activity.type === 'match') {
-      return {
-        type: 'play',
-        gameId: payload.room.activity.match.gameId,
-      } as RoomPlayActivity;
-    }
     return payload.room.activity;
   }),
   handleAction(updateRoomAction, (prev, { payload }) => {
     // If the Activity Type changed just return the new activity
-
-    if (payload.room.activity.type === 'match') {
-      return {
-        type: 'play',
-        gameId: payload.room.activity.match.gameId,
-      } as RoomPlayActivity;
-    }
-
     if (payload.room.activity.type !== prev.type) {
       return payload.room.activity;
     }

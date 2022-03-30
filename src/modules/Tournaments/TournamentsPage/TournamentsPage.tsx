@@ -1,4 +1,5 @@
-import { ChallongeTournamentRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
+import { Resources } from 'chessroulette-io';
+// import { ChallongeTournamentRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import React, { useEffect, useState } from 'react';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { Button } from 'src/components/Button';
@@ -8,36 +9,30 @@ import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { AsyncResult } from 'ts-async-results';
 import { CreateTournamentDialog } from '../components/CreateTournamentDialog/CreateTournamentDialog';
-import { createTournament, getAllChallongeTournaments } from '../resources';
+import { createTournament, getAllTournaments } from '../resources';
 
 type Props = {};
 
+type TournamentRecord = Resources.Collections.Tournaments.Records.TournamentRecord;
+
 export const TournamentsPage: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const [allTournaments, setAllTournaments] = useState<ChallongeTournamentRecord[]>([]);
+  const [allTournaments, setAllTournaments] = useState<TournamentRecord[]>([]);
 
   useEffect(() => {
     getTournaments();
   }, []);
 
   function getTournaments() {
-    getAllChallongeTournaments({
+    getAllTournaments({
       state: 'all',
       // type: 'swiss',
-    })
-      .map((result) => {
-        setAllTournaments(() => {
-          return result.map((tourney) => tourney.tournament);
-        });
-      })
-      .mapErr((e) => {
-        console.log('error request', e);
-      });
+    }).map(setAllTournaments);
   }
 
   return (
     <Page name="Tournaments" stretched containerClassname={cls.container}>
-      <WithDialog
+      {/* <WithDialog
         hasCloseButton
         content={(d) => (
           <CreateTournamentDialog
@@ -54,7 +49,7 @@ export const TournamentsPage: React.FC<Props> = (props) => {
         )}
         buttons={[]}
         render={(p) => <Button label="Create Tournament" onClick={p.onOpen} />}
-      />
+      /> */}
       <div className={cls.tournamentContainer}>
         <Text style={{ marginBottom: '20px' }}>Current Tournaments:</Text>
         {allTournaments.map((tournament) => (

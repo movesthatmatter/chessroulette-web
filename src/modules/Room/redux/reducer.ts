@@ -1,9 +1,8 @@
 import { createReducer } from 'deox';
-import { PeerRecord, room, RoomRecord } from 'dstnd-io';
+import { PeerRecord, RoomRecord } from 'dstnd-io';
 import { combineReducers } from 'redux';
 import { Peer } from 'src/providers/PeerConnectionProvider';
 import { GenericStateSlice } from 'src/redux/types';
-import { roomMatchActivityToPlayActivityRecord } from '../RoomActivity/activities/MatchActivity';
 import { stateSliceByKey as activity } from '../RoomActivity/redux/reducer';
 import { stateSliceByKey as activityLog } from '../RoomActivityLog/redux/reducer';
 import { Room } from '../types';
@@ -61,16 +60,8 @@ const getNewRoom = (me: Peer, room: RoomRecord): Room => {
   return nextRoom;
 };
 
-// TODO: This is only temporary, until the "match" activity is fully supported on the client
-const ensureMatchIsConvertedToPlayRoom = (room: Room): Room => ({
-  ...room,
-  ...(room.activity.type === 'match' && {
-    activity: roomMatchActivityToPlayActivityRecord(room.activity),
-  }),
-});
-
 const reducer = createReducer(initialState as State, (handleAction) => [
-  handleAction(createRoomAction, (_, { payload }) => ensureMatchIsConvertedToPlayRoom(getNewRoom(payload.me, payload.room))),
+  handleAction(createRoomAction, (_, { payload }) => getNewRoom(payload.me, payload.room)),
   handleAction(updateRoomAction, (state, { payload }) => {
     if (!state) {
       return state;
@@ -108,7 +99,7 @@ const reducer = createReducer(initialState as State, (handleAction) => [
       },
     };
 
-    return ensureMatchIsConvertedToPlayRoom(nextRoom);
+    return nextRoom;
   }),
 
   handleAction(removeRoomAction, () => null),
