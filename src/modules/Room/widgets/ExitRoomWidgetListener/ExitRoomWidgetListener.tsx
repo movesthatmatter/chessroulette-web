@@ -1,22 +1,17 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { Dialog } from 'src/components/Dialog';
 import { Emoji } from 'src/components/Emoji';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { Text } from 'src/components/Text';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { console } from 'window-or-global';
 import { useOnLeaveRoute } from './useOnLeaveRoute';
 
-type Props = {
-  render: (p: { leave: () => void }) => React.ReactNode;
-};
+type Props = {};
 
-export const ExitRoomWidget: React.FC<Props> = (props) => {
+export const ExitRoomWidgetListener: React.FC<Props> = () => {
   const cls = useStyles();
   const [showConfrmation, setShowConfirmation] = useState(false);
-  const history = useHistory();
-  const {theme} = useColorTheme();
 
   const unblockRouteTransition = useOnLeaveRoute(() => {
     setShowConfirmation(true);
@@ -26,11 +21,6 @@ export const ExitRoomWidget: React.FC<Props> = (props) => {
 
   return (
     <div className={cls.container}>
-      {props.render({
-        leave: () => {
-          history.push('/');
-        },
-      })}
       <Dialog
         visible={showConfrmation}
         onClose={() => setShowConfirmation(false)}
@@ -51,7 +41,7 @@ export const ExitRoomWidget: React.FC<Props> = (props) => {
         buttons={[
           {
             type: 'negative',
-           // clear: true,
+            // clear: true,
             label: 'Yes. Let me go!',
             onClick: () => unblockRouteTransition(),
           },
@@ -70,7 +60,7 @@ export const ExitRoomWidget: React.FC<Props> = (props) => {
   );
 };
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {},
   exitButton: {
     cursor: 'pointer',

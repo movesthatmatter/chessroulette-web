@@ -1,7 +1,6 @@
 import { UserInfoRecord } from 'chessroulette-io';
 import { RoomMember } from '../types';
 import { RoomAnalysisActivity } from './activities/AnalysisActivity/types';
-import { RoomMatchActivity } from './activities/MatchActivity/types';
 import { RoomNoActivity } from './activities/NoActivity/types';
 import { RoomPlayActivity } from './activities/PlayActivity';
 import { RoomRelayActivity } from './activities/RelayActivity/types';
@@ -36,5 +35,4 @@ export type RoomActivity =
   | RoomPlayActivity
   | RoomAnalysisActivity
   | RoomRelayActivity
-  | RoomWarGameActivity
-  | RoomMatchActivity;
+  | RoomWarGameActivity;

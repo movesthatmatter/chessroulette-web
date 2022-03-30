@@ -1,5 +1,5 @@
-import { RoomRecord } from 'chessroulette-io';
 import React from 'react';
+import { RoomRecord } from 'chessroulette-io';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
@@ -7,6 +7,7 @@ import { JoinedRoomProvider } from './Providers/JoinedRoomProvider';
 import { JoinRoomBouncer } from './JoinRoomBouncer';
 import { RoomConnectProvider } from './Providers/RoomConnectProvider';
 import { ActivityRoomConsumer } from './RoomConsumers/ActivityRoomConsumer';
+import { ExitRoomWidgetListener } from './widgets/ExitRoomWidgetListener';
 
 type Props = {
   slug: RoomRecord['slug'];
@@ -31,6 +32,7 @@ export const RoomPage: React.FC<Props> = (props) => {
           <RoomConnectProvider room={room} peer={peer}>
             <ActivityRoomConsumer />
           </RoomConnectProvider>
+          <ExitRoomWidgetListener />
         </JoinedRoomProvider>
       )}
     />

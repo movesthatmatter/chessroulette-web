@@ -25,6 +25,7 @@ const getDefaultWizardState = ({
   if (activityType === 'play') {
     return {
       activityType: 'play',
+      creationRecord: 'challenge',
       gameSpecs: {
         timeLimit: 'rapid10',
         preferredColor: 'random',
@@ -36,6 +37,7 @@ const getDefaultWizardState = ({
   if (activityType === 'warGame') {
     return {
       activityType: 'play',
+      creationRecord: 'challenge',
       gameSpecs: {
         timeLimit: 'rapid10',
         preferredColor: 'random',
@@ -76,6 +78,7 @@ export const CreateRoomWizard: React.FC<CreateRoomWizardProps> = ({ createRoomSp
           onUpdated={(gameSpecs) =>
             setWizardState({
               activityType: 'play',
+              creationRecord: 'challenge',
               gameSpecs,
             })
           }

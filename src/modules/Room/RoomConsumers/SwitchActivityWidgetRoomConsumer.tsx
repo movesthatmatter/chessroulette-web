@@ -123,7 +123,8 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
       {state?.activityType === 'play' && (
         <CreateChallengeDialog
           visible
-          initialGameSpecs={state.gameSpecs}
+          // TODO: Fix this issue before merging the Tournaments!!!
+          initialGameSpecs={state.creationRecord === 'challenge' && (state as any).gameSpecs}
           onCancel={() => setState(undefined)}
           onSuccess={() => setState(undefined)}
         />

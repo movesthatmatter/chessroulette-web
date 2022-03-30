@@ -1,14 +1,11 @@
-import { ChessGameColor } from 'chessroulette-io';
-import { JoinMatchAsPlayer } from 'chessroulette-io/dist/resourceCollections/tournaments';
-import { ChallongeMatchRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { ChessGameColor } from 'chessroulette-io';
+import { ChallongeMatchRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import { Button } from 'src/components/Button';
 import { createUseStyles } from 'src/lib/jss';
-import { toRoomUrlPath } from 'src/lib/util';
-import { useAuthenticatedUser } from 'src/services/Authentication';
+import { useEnterRoom } from 'src/modules/Room/hooks/useEnterRoom';
 import { spacers } from 'src/theme/spacers';
-import { joinMatchAsPlayer } from '../../resources';
+import { joinMatchAsPlayer, proxy } from '../../resources';
 
 type Props = {
   match: ChallongeMatchRecord;
@@ -17,8 +14,8 @@ type Props = {
 
 export const Match: React.FC<Props> = ({ match, participating }) => {
   const cls = useStyles();
-  const user = useAuthenticatedUser();
-  const history = useHistory();
+  const enterRoom = useEnterRoom();
+
   return (
     <div className={cls.container}>
       <div
@@ -26,13 +23,11 @@ export const Match: React.FC<Props> = ({ match, participating }) => {
           color: participating ? 'red' : 'white',
         }}
       >
-        {participating && match.underway_at && (
+        {participating && match.state === 'open' && match.underway_at && (
           <Button
-            label={match.id.toString()}
+            label={String(match.id)}
             onClick={() =>
-              joinMatchAsPlayer({ matchId: String(match.id) }).map(({ room }) =>
-                history.push(toRoomUrlPath(room))
-              )
+              joinMatchAsPlayer({ matchId: String(match.id) }).map(({ room }) => enterRoom(room))
             }
           />
         )}
@@ -40,6 +35,15 @@ export const Match: React.FC<Props> = ({ match, participating }) => {
         {!participating && <div>{match.id}</div>}
       </div>
       <div>Status: {match.state}</div>
+      {match.winner_id && (
+        <div>Winner: {match.winner_id}</div>
+      )}
+      {/* <Button 
+        label="Proxy"
+        onClick={() => {
+          proxy();
+        }}
+      /> */}
     </div>
   );
 };

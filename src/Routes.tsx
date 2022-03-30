@@ -62,8 +62,8 @@ export const Routes: React.FC<Props> = () => {
 
       <Route exact strict path="/r/:slug" key={location.key} component={RoomRoute} />
       <Route exact strict path="/classroom/:slug" key={location.key} component={RoomRoute} />
-      <Route exact strict path="/tournaments" key={location.key} component={TournamentsRoute}/>
       <Route exact strict path="/tournaments/:slug" key={location.key} component={TournamentRoute}/>
+      <Route exact path="/tournaments" key={location.key} component={TournamentsRoute}/>
       {/* <Route path="/wcc" exact strict key={location.key} component={BroadcastPage} /> */}
     </Switch>
   );

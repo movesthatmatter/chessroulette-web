@@ -5934,9 +5934,9 @@ chessops@0.7.1:
   dependencies:
     "@badrap/result" "^0.2.6"
 
-"chessroulette-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#add-tournaments":
+"chessroulette-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#add-tournaments":
   version "0.3.0-1"
-  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#07cbe4b8c60dab749706e315f48851349a262456"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#ee7bc3d16365abc7eb235127b86482cdd00505cc"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"
@@ -5947,7 +5947,7 @@ chessops@0.7.1:
     io-ts-reporters "^2.0.0"
     io-ts-types "^0.5.16"
     jest "^26.4.2"
-    resources-io "0.0.7"
+    resources-io "0.0.12"
     ts-async-results "0.2.0-0"
     ts-results "^3.0.0"
     tslib "2.3.1"
@@ -17085,6 +17085,17 @@ resolve@^1.20.0:
     is-core-module "^2.8.1"
     path-parse "^1.0.7"
     supports-preserve-symlinks-flag "^1.0.0"
+
+resources-io@0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/resources-io/-/resources-io-0.0.12.tgz#e6f0bb65674808f553d91918d5391b7e78bece7f"
+  integrity sha512-oK82CxbHlC1Ry3gDtuzj9R5/LyJRrl1DRdgqsdyn2e2Pt5iOypQYHhSsh6HHGDahxS2EW1mLmuNgpNngx/2F8w==
+  dependencies:
+    fp-ts "^2.8.2"
+    io-ts "2.2.16"
+    io-ts-reporters "^2.0.0"
+    ts-async-results "^0.2.0-0"
+    ts-results "^3.0.0"
 
 resources-io@0.0.7:
   version "0.0.7"

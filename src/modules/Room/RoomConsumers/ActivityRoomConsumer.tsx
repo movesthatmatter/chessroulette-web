@@ -8,7 +8,6 @@ import { updateCurrentAnalysisAction, updateRelayGameAction } from '../RoomActiv
 import { RelayActivity } from '../RoomActivity/activities/RelayActivity';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { WarGameActivity } from '../RoomActivity/activities/WarGameActivity';
-import { MatchActivity } from '../RoomActivity/activities/MatchActivity';
 import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
 
 type Props = {};
@@ -64,9 +63,9 @@ export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
     return <RelayActivity activity={currentActivity} deviceSize={context.deviceSize} />;
   }
 
-  if (currentActivity.type === 'match') {
-    return <MatchActivity activity={currentActivity} deviceSize={context.deviceSize} />;
-  }
+  // if (currentActivity.type === 'match') {
+  //   return <MatchActivity activity={currentActivity} deviceSize={context.deviceSize} />;
+  // }
 
   return <NoActivity deviceSize={context.deviceSize} />;
 });

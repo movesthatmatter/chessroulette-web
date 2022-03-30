@@ -7,7 +7,6 @@ import { Page } from 'src/components/Page';
 import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { AsyncResult } from 'ts-async-results';
-import { console } from 'window-or-global';
 import { CreateTournamentDialog } from '../components/CreateTournamentDialog/CreateTournamentDialog';
 import { createTournament, getAllChallongeTournaments } from '../resources';
 

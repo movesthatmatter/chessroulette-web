@@ -6,7 +6,6 @@ import { RoomActivity, RoomActivityParticipant } from '../types';
 import { UserInfoRecord } from 'chessroulette-io';
 import { toRoomRelayActivity } from '../activities/RelayActivity/utils';
 import { toRoomWarGameActivity } from '../activities/WarGameActivity/utils';
-import { toRoomMatchActivity } from '../activities/MatchActivity/utils';
 
 export const toRoomActivity = (
   currentRoomActivity: BaseRoomActivity,
@@ -26,10 +25,6 @@ export const toRoomActivity = (
 
   if (currentRoomActivity.type === 'warGame') {
     return toRoomWarGameActivity(currentRoomActivity, members);
-  }
-
-  if (currentRoomActivity.type === 'match') {
-    return toRoomMatchActivity(currentRoomActivity, members);
   }
 
   return {

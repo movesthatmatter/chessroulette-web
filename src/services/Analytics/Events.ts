@@ -124,7 +124,7 @@ export const Events = {
       )}`,
     }),
 
-  trackSwitchedRoomActivity: (type: RoomActivity['type']) =>
+  trackSwitchedRoomActivity: (type: RoomRecord['activity']['type']) =>
     trackEvent({
       category: EventCategory.Room,
       action: 'Room Activity Switched',

@@ -87,6 +87,7 @@ export const CreateChallengeDialog: React.FC<Props> = ({
           onClick: () => {
             roomConsumer.roomActions.switchActivity({
               activityType: 'play',
+              creationRecord: 'challenge',
               gameSpecs,
             });
           },

@@ -8,7 +8,9 @@ import { Button } from 'src/components/Button';
 import { Page } from 'src/components/Page';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
+import { logsy } from 'src/lib/logsy';
 import { useAuthenticatedUser } from 'src/services/Authentication';
+import { AuthenticationBouncer } from 'src/services/Authentication/widgets';
 import { console } from 'window-or-global';
 import { Match } from './components/Match/Match';
 import {
@@ -48,7 +50,7 @@ export const TournamentRoute: React.FC<Props> = (props) => {
       checkIfUserIsParticipant({
         userId: user.id,
         tournamentId: tournament.id.toString(),
-      }).map(({ result }) => setUserAlreadyParticipant(result));
+      }).map((isParticipant) => setUserAlreadyParticipant(isParticipant));
     }
   }, [tournament, user]);
 
@@ -60,11 +62,16 @@ export const TournamentRoute: React.FC<Props> = (props) => {
     }
   }, [tournament]);
 
-  function joinTournament() {
+  const joinTournament = () => {
+    console.log('join tournament?', user, tournament);
+
     if (!user) {
-      console.log('AUTHENTICATE!!');
+      logsy.error('Tournament Route: Guest Attemps to Join Tournament');
       return;
     }
+
+    console.log('join', tournament);
+
     if (tournament?.url) {
       createParticipantForTournament({
         tournamentURL: tournament.url,
@@ -72,15 +79,13 @@ export const TournamentRoute: React.FC<Props> = (props) => {
         userId: user.id,
         misc: user.id,
         name: user.name,
-      })
-        .map((result) => {
-          console.log('Successful Joined');
-        })
-        .mapErr((e) => {
-          console.log('eRROR joining tournament', e);
-        });
+      }).map((result) => {
+        if (result.participant.id) {
+          setUserAlreadyParticipant(true);
+        }
+      });
     }
-  }
+  };
 
   return (
     <Page name={`Tournament : ${tournament?.name}`} stretched>
@@ -89,12 +94,22 @@ export const TournamentRoute: React.FC<Props> = (props) => {
         <Text>Participants: {tournament?.participants_count}</Text>
         <br />
         {userAlreadyParticipant && <Text>You already participate!</Text>}
-        <Button
-          type="primary"
-          label="Join"
-          onClick={() => joinTournament()}
-          disabled={userAlreadyParticipant}
-        />
+        {tournament?.state === 'pending' && (
+          <AuthenticationBouncer
+            onAuthenticated={() => {
+              console.log('yep auth');
+              joinTournament();
+            }}
+            render={({ check }) => (
+              <Button
+                type="primary"
+                label="Join"
+                onClick={check}
+                disabled={userAlreadyParticipant}
+              />
+            )}
+          />
+        )}
         <br />
         <Text>Matches :</Text>
         <div className={cls.container}>
