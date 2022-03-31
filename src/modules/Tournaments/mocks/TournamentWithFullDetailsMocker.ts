@@ -12,7 +12,11 @@ const matchMocker = new TournamentMatchMocker();
 const participantMocker = new TournamentParticipantMocker();
 
 export class TournamentWithFullDetailsMocker {
-	record(state: State, participantsCount: number): TournamentWithFullDetailsRecord {
+	record(
+		state: State,
+		participantsCount: number,
+		withLive?: boolean
+	): TournamentWithFullDetailsRecord {
 		const id = String(chance.integer({ min: 1 }));
 		const now = new Date();
 		const yesterday = new Date(now.setDate(now.getDate() - 1));
@@ -26,9 +30,34 @@ export class TournamentWithFullDetailsMocker {
 
 		const rounds = Math.floor(participantsCount / 2);
 
+		let round = 1;
+		let matchesPerRound = -1;
+
 		const matches = new Array(rounds).fill(null).map((_, i) => {
-			console.log('i', i);
-			return matchMocker.record(i % 2 === 0 ? 'pending' : 'completed', id, {
+			matchesPerRound += 1;
+			if (matchesPerRound >= rounds) {
+				round += 1;
+				matchesPerRound = 0;
+			}
+			if (state === 'pending') {
+				return matchMocker.record('pending', round, id, {
+					white: participants[i].id,
+					black: participants[participants.length - 1 - i].id,
+				});
+			}
+			if (state === 'complete') {
+				return matchMocker.record('complete', round, id, {
+					white: participants[i].id,
+					black: participants[participants.length - 1 - i].id,
+				});
+			}
+			if (state === 'in_progress' && withLive && i === rounds - 1) {
+				return matchMocker.record('open', round, id, {
+					white: participants[i].id,
+					black: participants[participants.length - 1 - i].id,
+				});
+			}
+			return matchMocker.record(i % 2 === 1 ? 'pending' : 'complete', round, id, {
 				white: participants[i].id,
 				black: participants[participants.length - 1 - i].id,
 			});
@@ -89,5 +118,9 @@ export class TournamentWithFullDetailsMocker {
 
 	completed(participantsCount: number): TournamentWithFullDetailsRecord {
 		return this.record('complete', participantsCount);
+	}
+
+	withLiveGame(participantsCount: number): TournamentWithFullDetailsRecord {
+		return this.record('in_progress', participantsCount, true);
 	}
 }

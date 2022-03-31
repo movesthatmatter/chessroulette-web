@@ -7,6 +7,8 @@ export type TextProps = (JSX.IntrinsicElements['span'] & JSX.IntrinsicElements['
   size?:
     | 'small1'
     | 'small2'
+    | 'small3'
+    | 'smallItalic'
     | 'body1'
     | 'body2'
     | 'subtitle1'
