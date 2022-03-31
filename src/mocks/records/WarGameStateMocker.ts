@@ -1,4 +1,16 @@
-import { PiecesPositions, WarGameHistory, WarGamePlayer, WarGamePlayerBlack, WarGamePlayerWhite, WarGameState, WarGameStateFinished, WarGameStateNeverStarted, WarGameStatePending, WarGameStateStarted, WarGameStateStopped } from 'chessroulette-io';
+import {
+  PiecesPositions,
+  WarGameHistory,
+  WarGamePlayer,
+  WarGamePlayerBlack,
+  WarGamePlayerWhite,
+  WarGameState,
+  WarGameStateFinished,
+  WarGameStateNeverStarted,
+  WarGameStatePending,
+  WarGameStateStarted,
+  WarGameStateStopped,
+} from 'chessroulette-io';
 import { UserRecordMocker } from './UserRecordMocker';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
@@ -90,7 +102,7 @@ export class WarGameStateMocker {
       state: 'pending',
       pieces: {
         positions: defaultPiecesPositions,
-        healths: deafaultHealts
+        healths: deafaultHealts,
       },
       timeLimit: 'blitz5',
       timeLeft: {
@@ -98,7 +110,7 @@ export class WarGameStateMocker {
         black: chessGameTimeLimitMsMap.blitz3,
       },
       history: undefined,
-      fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
       players: [whitePlayer, blackPlayer],
       winner: undefined,
       lastMoveBy: undefined,
@@ -117,32 +129,23 @@ export class WarGameStateMocker {
       fen: startedfen,
       history: [
         {
-          move: {from: 'g2', to: 'g4'},
+          move: { from: 'g2', to: 'g4' },
           type: 'range',
-          rooksMoved: {
-            wR0: false, wR1: false, bR0: false, bR1: false
-          },
           clock: 5000,
-          color: 'white'
+          color: 'white',
         },
         {
-          move: {from: 'h7', to: 'h5'},
+          move: { from: 'h7', to: 'h5' },
           type: 'range',
-          rooksMoved: {
-            wR0: false, wR1: false, bR0: false, bR1: false
-          },
           clock: 49000,
-          color: 'black'
+          color: 'black',
         },
         {
-          move: {from: 'h2', to: 'h3'},
+          move: { from: 'h2', to: 'h3' },
           type: 'range',
-          rooksMoved: {
-            wR0: false, wR1: false, bR0: false, bR1: false
-          },
           clock: 4800,
-          color: 'white'
-        }
+          color: 'white',
+        },
       ],
       winner: undefined,
       lastMoveBy: 'white',
@@ -167,42 +170,30 @@ export class WarGameStateMocker {
         ...started,
         state: 'finished',
         fen: finishedFen,
-        history:[
+        history: [
           {
-            move: {from: 'g2', to: 'g4'},
+            move: { from: 'g2', to: 'g4' },
             type: 'range',
-            rooksMoved: {
-              wR0: false, wR1: false, bR0: false, bR1: false
-            },
             clock: 5000,
-            color: 'white'
+            color: 'white',
           },
           {
-            move: {from: 'h7', to: 'h5'},
+            move: { from: 'h7', to: 'h5' },
             type: 'range',
-            rooksMoved: {
-              wR0: false, wR1: false, bR0: false, bR1: false
-            },
             clock: 49000,
-            color: 'black'
+            color: 'black',
           },
           {
-            move: {from: 'h2', to: 'h3'},
+            move: { from: 'h2', to: 'h3' },
             type: 'range',
-            rooksMoved: {
-              wR0: false, wR1: false, bR0: false, bR1: false
-            },
             clock: 4800,
-            color: 'white'
+            color: 'white',
           },
           {
-            move: {from: 'h8', to: 'h7'},
+            move: { from: 'h8', to: 'h7' },
             type: 'range',
-            rooksMoved: {
-              wR0: false, wR1: false, bR0: false, bR1: true
-            },
             clock: 45000,
-            color: 'black'
+            color: 'black',
           },
         ],
         winner: 'white',

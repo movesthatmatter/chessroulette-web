@@ -4,4 +4,8 @@ export type TournamentRecord = Resources.Collections.Tournaments.Records.Tournam
 
 export type TournamentMatchRecord = Resources.Collections.Tournaments.Records.TournamentMatchRecord;
 
-export type TournamentParticipantRecord = Resources.Collections.Tournaments.Records.TournamentParticipantRecord;
+export type TournamentParticipantRecord =
+	Resources.Collections.Tournaments.Records.TournamentParticipantRecord;
+
+export type TournamentWithFullDetailsRecord =
+	Resources.Collections.Tournaments.Records.TournamentWithFullDetailsRecord;

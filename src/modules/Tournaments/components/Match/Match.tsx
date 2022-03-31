@@ -18,7 +18,7 @@ export const Match: React.FC<Props> = ({ match, participating }) => {
   return (
     <div className={cls.container}>
       <div style={{ color: participating ? 'red' : 'white' }}>
-        {participating && match.state === 'inProgress' && (
+        {participating && match.state === 'open' && (
           <Button
             label={String(match.id)}
             onClick={() =>
@@ -30,7 +30,7 @@ export const Match: React.FC<Props> = ({ match, participating }) => {
         {!participating && <div>{match.id}</div>}
       </div>
       <div>Status: {match.state}</div>
-      {match.state === 'completed' && <div>Winner: {match.winner}</div>}
+      {match.state === 'complete' && <div>Winner: {match.winner}</div>}
     </div>
   );
 };
