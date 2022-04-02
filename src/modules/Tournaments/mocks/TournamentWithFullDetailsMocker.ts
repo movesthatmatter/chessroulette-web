@@ -26,41 +26,45 @@ export class TournamentWithFullDetailsMocker {
 			.fill(null)
 			.map((_) => participantMocker.record(id));
 
-		console.log('participants :', participants);
+		console.log('participants', participants);
 
 		const rounds = Math.floor(participantsCount / 2);
 
-		let round = 1;
-		let matchesPerRound = -1;
+		const totalMatchesPerRound = Math.floor(participantsCount / 2);
 
-		const matches = new Array(rounds).fill(null).map((_, i) => {
-			matchesPerRound += 1;
-			if (matchesPerRound >= rounds) {
+		let round = 1;
+		let matchesThisRound = -1;
+
+		const matches = new Array(rounds * totalMatchesPerRound).fill(null).map((_, i) => {
+			matchesThisRound += 1;
+			if (matchesThisRound === totalMatchesPerRound) {
 				round += 1;
-				matchesPerRound = 0;
+				matchesThisRound = 0;
 			}
 			if (state === 'pending') {
-				return matchMocker.record('pending', round, id, {
-					white: participants[i].id,
-					black: participants[participants.length - 1 - i].id,
-				});
+				return matchMocker.record('pending', round, id, [
+					participants[matchesThisRound],
+					participants[participants.length - 1 - matchesThisRound],
+				]);
 			}
 			if (state === 'complete') {
-				return matchMocker.record('complete', round, id, {
-					white: participants[i].id,
-					black: participants[participants.length - 1 - i].id,
-				});
+				return matchMocker.record('complete', round, id, [
+					participants[matchesThisRound],
+					participants[participants.length - 1 - matchesThisRound],
+				]);
 			}
 			if (state === 'in_progress' && withLive && i === rounds - 1) {
-				return matchMocker.record('open', round, id, {
-					white: participants[i].id,
-					black: participants[participants.length - 1 - i].id,
-				});
+				return matchMocker.record('open', round, id, [
+					participants[matchesThisRound],
+					participants[participants.length - 1 - matchesThisRound],
+				]);
 			}
-			return matchMocker.record(i % 2 === 1 ? 'pending' : 'complete', round, id, {
-				white: participants[i].id,
-				black: participants[participants.length - 1 - i].id,
-			});
+			return matchMocker.record(
+				round > Math.floor(rounds / 2) ? 'pending' : 'complete',
+				round,
+				id,
+				[participants[matchesThisRound], participants[participants.length - 1 - matchesThisRound]]
+			);
 		});
 
 		console.log('matches :', matches);

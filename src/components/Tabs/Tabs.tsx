@@ -11,7 +11,7 @@ import cx from 'classnames';
 
 type TabProps = {
   title: string;
-  icon: IconProp;
+  icon?: IconProp;
   content: string | React.ReactNode;
 };
 
@@ -20,6 +20,7 @@ type TabsProps = {
   currentTabIndex: number;
   onTabChanged: (nextIndex: number) => void;
   renderTabRightEndComponent?: (p: { tabIndex: number }) => React.ReactNode;
+  selectedTabButtonClassName?: string;
   containerClassName?: string;
   headerClassName?: string;
   tabButtonClassName?: string;
@@ -30,6 +31,7 @@ export const Tabs: React.FC<TabsProps> = ({
   onTabChanged = noop,
   currentTabIndex = 0,
   renderTabRightEndComponent,
+  selectedTabButtonClassName,
   containerClassName,
   headerClassName,
   tabButtonClassName,
@@ -37,14 +39,16 @@ export const Tabs: React.FC<TabsProps> = ({
   const cls = useStyles();
   const { theme } = useColorTheme();
   const colors = theme.colors;
-
+  const selectedTabClass = selectedTabButtonClassName || '';
   return (
     <>
       <div className={cx(cls.tabBar, headerClassName)}>
         {tabs.map((tab, index) => (
           <div
             key={tab.title}
-            className={cx(cls.tabButton, tabButtonClassName)}
+            className={cx(cls.tabButton, tabButtonClassName, {
+              [selectedTabClass]: index === currentTabIndex,
+            })}
             onClick={() => {
               onTabChanged(index);
             }}

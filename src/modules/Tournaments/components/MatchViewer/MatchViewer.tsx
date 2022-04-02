@@ -135,8 +135,8 @@ const useStyles = createUseStyles((theme) => ({
 	container: {
 		display: 'flex',
 		flexDirection: 'column',
-		flex: 1,
-		maxWidth: '15rem',
+		maxWidth: '25rem',
+		minWidth: '15rem',
 		color: theme.text.subtle,
 		...fonts.small1,
 		...softBorderRadius,

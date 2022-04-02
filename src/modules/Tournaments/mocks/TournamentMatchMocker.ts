@@ -9,46 +9,54 @@ import {
 import { toISODate, toISODateTime } from 'io-ts-isodatetime';
 import { getRandomInt } from 'src/lib/util';
 import { UserRecordMocker } from 'src/mocks/records';
-import { TournamentMatchRecord } from '../types';
+import { TournamentMatchRecord, TournamentParticipantRecord } from '../types';
 
 const chance = new Chance();
 const userMocker = new UserRecordMocker();
 type State = TournamentMatchRecord['state'];
-type ParticipantsId = {
-	black: string;
-	white: string;
-};
 
 export class TournamentMatchMocker {
 	record(
 		state: State,
 		round: number,
 		tournamentId: string,
-		participantsId: ParticipantsId
+		participants: [TournamentParticipantRecord, TournamentParticipantRecord]
 	): TournamentMatchRecord;
 	record(state: State): TournamentMatchRecord;
 	record(
 		state: State,
 		round?: number,
 		tournamentId?: string,
-		participantsId?: ParticipantsId
+		participants?: [TournamentParticipantRecord, TournamentParticipantRecord]
 	): TournamentMatchRecord {
 		const id = String(chance.integer({ min: 1 }));
 		const now = new Date();
 		const yesterday = new Date(now.setDate(now.getDate() - 1));
 		const tomorrow = new Date(now.setDate(now.getDate() + 1));
 
-		const whitePlayer: TournamentMatchPlayerWhite = {
-			externalParticipantId: participantsId?.white || String(chance.integer({ min: 1 })),
-			color: 'white',
-			user: userMocker.record(),
-		};
+		const whitePlayer: TournamentMatchPlayerWhite = participants
+			? {
+					externalParticipantId: participants[0].id,
+					color: 'white',
+					user: participants[0].user,
+			  }
+			: {
+					externalParticipantId: String(chance.integer({ min: 1 })),
+					color: 'white',
+					user: userMocker.record(),
+			  };
 
-		const blackPlayer: TournamentMatchPlayerBlack = {
-			externalParticipantId: participantsId?.black || String(chance.integer({ min: 1 })),
-			color: 'black',
-			user: userMocker.record(),
-		};
+		const blackPlayer: TournamentMatchPlayerBlack = participants
+			? {
+					externalParticipantId: participants[1].id,
+					color: 'black',
+					user: participants[1].user,
+			  }
+			: {
+					externalParticipantId: String(chance.integer({ min: 1 })),
+					color: 'black',
+					user: userMocker.record(),
+			  };
 
 		const pending: TournamentPendingMatchRecord = {
 			id,
@@ -115,24 +123,24 @@ export class TournamentMatchMocker {
 	pendingWithTournamentAndParticipants(
 		round: number,
 		tournamentId: string,
-		participantsId: ParticipantsId
+		participants: [TournamentParticipantRecord, TournamentParticipantRecord]
 	): TournamentMatchRecord {
-		return this.record('pending', round, tournamentId, participantsId);
+		return this.record('pending', round, tournamentId, participants);
 	}
 
 	startedWithTournamentAndParticipants(
 		round: number,
 		tournamentId: string,
-		participantsId: ParticipantsId
+		participants: [TournamentParticipantRecord, TournamentParticipantRecord]
 	): TournamentMatchRecord {
-		return this.record('open', round, tournamentId, participantsId);
+		return this.record('open', round, tournamentId, participants);
 	}
 
 	completedWithTournamentAndParticipants(
 		round: number,
 		tournamentId: string,
-		participantsId: ParticipantsId
+		participants: [TournamentParticipantRecord, TournamentParticipantRecord]
 	): TournamentMatchRecord {
-		return this.record('complete', round, tournamentId, participantsId);
+		return this.record('complete', round, tournamentId, participants);
 	}
 }
