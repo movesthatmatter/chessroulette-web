@@ -4,9 +4,8 @@ import { http } from 'src/lib/http';
 export const getAllTournaments = (
   req: Resources.Util.RequestOf<typeof getAllTournamentsResource>
 ) => {
-  const {
-    resource: getAllTournamentsResource,
-  } = Resources.Collections.Tournaments.GetAllTournaments;
+  const { resource: getAllTournamentsResource } =
+    Resources.Collections.Tournaments.GetAllTournaments;
 
   return getAllTournamentsResource.request(req, (params) =>
     http.get('api/tournaments/all', { params })
@@ -32,9 +31,8 @@ export const getTournamentWithFullDetails = (req: Resources.Util.RequestOf<typeo
 export const createTournamentParticipant = (
   req: Resources.Util.RequestOf<typeof registerParticipant>
 ) => {
-  const {
-    resource: registerParticipant,
-  } = Resources.Collections.Tournaments.CreateTournamentParticipant;
+  const { resource: registerParticipant } =
+    Resources.Collections.Tournaments.CreateTournamentParticipant;
 
   return registerParticipant.request(req, (data) => http.post(`api/tournaments/register`, data));
 };
@@ -47,14 +45,6 @@ export const createTournament = (
   return createTournamentResource.request(req, (data) => http.post(`api/tournaments/create`, data));
 };
 
-export const checkIfUserIsParticipant = (req: Resources.Util.RequestOf<typeof checkUser>) => {
-  const {
-    resource: checkUser,
-  } = Resources.Collections.Tournaments.CheckIfUserIsTournamentParticipant;
-
-  return checkUser.request(req, (params) => http.get('api/tournaments/check-user', { params }));
-};
-
 export const getAllMatches = (req: Resources.Util.RequestOf<typeof getMatches>) => {
   const { resource: getMatches } = Resources.Collections.Tournaments.GetAllTournamentMatches;
 
@@ -63,8 +53,8 @@ export const getAllMatches = (req: Resources.Util.RequestOf<typeof getMatches>) 
   );
 };
 
-export const joinTournamentMatchAsPlayer = (req: Resources.Util.RequestOf<typeof resource>) => {
-  const { resource } = Resources.Collections.Tournaments.JoinTournamentMatch;
+export const playTournamentMatch = (req: Resources.Util.RequestOf<typeof resource>) => {
+  const { resource } = Resources.Collections.Tournaments.PlayTournamentMatch;
 
   return resource.request(req, (data) => http.post('api/tournaments/join-player', data));
 };

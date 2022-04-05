@@ -1,4 +1,5 @@
 import { Chance } from 'chance';
+import { UserInfoRecord } from 'chessroulette-io';
 import { UserRecordMocker } from 'src/mocks/records';
 import { TournamentParticipantRecord } from '../types';
 
@@ -13,6 +14,13 @@ export class TournamentParticipantMocker {
 			id: String(chance.integer({ min: 1 })),
 			tournamentId: tournamentId || String(chance.integer({ min: 1 })),
 			user: userRecordMock.record(),
+		};
+	}
+	withUserDetails(user: UserInfoRecord, tournamentId: string): TournamentParticipantRecord {
+		return {
+			id: String(chance.integer({ min: 1 })),
+			tournamentId: tournamentId,
+			user,
 		};
 	}
 }

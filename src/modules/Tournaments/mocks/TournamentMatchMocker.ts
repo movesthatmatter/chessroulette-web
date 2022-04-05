@@ -1,10 +1,12 @@
 import { Chance } from 'chance';
 import {
 	TournamentCompleteMatchRecord,
+	TournamentInProgressMatchRecord,
 	TournamentMatchPlayerBlack,
 	TournamentMatchPlayerWhite,
 	TournamentOpenMatchRecord,
 	TournamentPendingMatchRecord,
+	TournamentUnderwayMatchRecord,
 } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import { toISODate, toISODateTime } from 'io-ts-isodatetime';
 import { getRandomInt } from 'src/lib/util';
@@ -62,7 +64,6 @@ export class TournamentMatchMocker {
 			id,
 			slug: String(id),
 			state: 'pending',
-			externalMatchId: String(chance.integer({ min: 1 })),
 			tournamentId: tournamentId || String(chance.integer({ min: 1 })),
 			createdAt: toISODateTime(yesterday),
 			updatedAt: toISODateTime(now),
@@ -79,10 +80,22 @@ export class TournamentMatchMocker {
 		const open: TournamentOpenMatchRecord = {
 			...pending,
 			state: 'open',
-			gameId: String(chance.integer({ min: 1 })),
 			winner: undefined,
 			players: [whitePlayer, blackPlayer],
 			startedAt: toISODateTime(now),
+		};
+
+		const underway: TournamentUnderwayMatchRecord = {
+			...open,
+			state: 'underway',
+			underwayAt: toISODateTime(now),
+		};
+
+		const inProgress: TournamentInProgressMatchRecord = {
+			...open,
+			state: 'inProgress',
+			underwayAt: toISODateTime(now),
+			gameId: String(chance.integer({ min: 1 })),
 		};
 
 		const winner: TournamentCompleteMatchRecord['winner'][] = ['white', '1/2', 'black'];
@@ -103,8 +116,12 @@ export class TournamentMatchMocker {
 			return pending;
 		} else if (state === 'open') {
 			return open;
+		} else if (state === 'underway') {
+			return underway;
 		} else if (state === 'complete') {
 			return complete;
+		} else if (state === 'inProgress') {
+			return inProgress;
 		}
 
 		return pending;
@@ -113,8 +130,16 @@ export class TournamentMatchMocker {
 		return this.record('pending');
 	}
 
-	started(): TournamentMatchRecord {
+	open(): TournamentMatchRecord {
 		return this.record('open');
+	}
+
+	underway(): TournamentMatchRecord {
+		return this.record('underway');
+	}
+
+	inProgress(): TournamentMatchRecord {
+		return this.record('inProgress');
 	}
 
 	completed(): TournamentMatchRecord {
@@ -128,12 +153,28 @@ export class TournamentMatchMocker {
 		return this.record('pending', round, tournamentId, participants);
 	}
 
-	startedWithTournamentAndParticipants(
+	openWithTournamentAndParticipants(
 		round: number,
 		tournamentId: string,
 		participants: [TournamentParticipantRecord, TournamentParticipantRecord]
 	): TournamentMatchRecord {
 		return this.record('open', round, tournamentId, participants);
+	}
+
+	underWayWithTournamentAndParticipants(
+		round: number,
+		tournamentId: string,
+		participants: [TournamentParticipantRecord, TournamentParticipantRecord]
+	): TournamentMatchRecord {
+		return this.record('underway', round, tournamentId, participants);
+	}
+
+	inProgressWithTournamentAndParticipants(
+		round: number,
+		tournamentId: string,
+		participants: [TournamentParticipantRecord, TournamentParticipantRecord]
+	): TournamentMatchRecord {
+		return this.record('inProgress', round, tournamentId, participants);
 	}
 
 	completedWithTournamentAndParticipants(

@@ -3,7 +3,7 @@ import { Button } from 'src/components/Button';
 import { createUseStyles } from 'src/lib/jss';
 import { useEnterRoom } from 'src/modules/Room/hooks/useEnterRoom';
 import { spacers } from 'src/theme/spacers';
-import { joinTournamentMatchAsPlayer } from '../../resources';
+import { playTournamentMatch } from '../../resources';
 import { TournamentMatchRecord } from '../../types';
 
 type Props = {
@@ -22,7 +22,10 @@ export const Match: React.FC<Props> = ({ match, participating }) => {
           <Button
             label={String(match.id)}
             onClick={() =>
-              joinTournamentMatchAsPlayer({ matchId: String(match.id) }).map(enterRoom)
+              playTournamentMatch({
+                tournamentId: match.tournamentId,
+                matchId: String(match.id),
+              }).map(enterRoom)
             }
           />
         )}

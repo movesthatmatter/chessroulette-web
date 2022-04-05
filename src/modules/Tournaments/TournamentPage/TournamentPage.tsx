@@ -28,11 +28,11 @@ export const TournamentPage: React.FC<Props> = ({ tournament }) => {
 			selectedTabButtonClassName={cls.selectedTab}
 			tabs={[
 				{
-					title: 'Bracket',
+					title: 'Matches',
 					content: <Bracket tournament={tournament} />,
 				},
 				{
-					title: 'Players',
+					title: 'Players Standings',
 					content: <Players tournament={tournament} />,
 				},
 			]}

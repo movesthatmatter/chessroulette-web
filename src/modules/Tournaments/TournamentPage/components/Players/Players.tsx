@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { TournamentWithFullDetailsRecord } from 'src/modules/Tournaments/types';
@@ -49,11 +50,16 @@ export const Players: React.FC<Props> = ({ tournament }) => {
 							<div
 								className={cls.playerRow}
 								style={{
-									backgroundColor: i % 2 === 0 ? theme.colors.neutralDark : theme.colors.background,
+									backgroundColor:
+										i % 2 === 0
+											? theme.name === 'darkDefault'
+												? theme.colors.neutralDark
+												: theme.colors.primaryLightest
+											: theme.colors.background,
 								}}
 							>
 								<div className={cls.player}>
-									<PeerAvatar peerUserInfo={winsAndPointsPerPlayer[p].user} />
+									<Avatar mutunachiId={+winsAndPointsPerPlayer[p].user.avatarId} />
 									{winsAndPointsPerPlayer[p].user.name}
 								</div>
 								<div className={cls.wins}>

@@ -6,6 +6,7 @@ import { spacers } from 'src/theme/spacers';
 import { TournamentMatchRecord } from '../../types';
 import whitePiece from './assets/white_piece.svg';
 import blackPiece from './assets/black_piece.svg';
+import { JoinableMatch } from './JoinableMatch';
 
 type Props = {
 	match: TournamentMatchRecord;
@@ -16,6 +17,8 @@ export const MatchViewer: React.FC<Props> = ({ match }) => {
 	const theme = useColorTheme().theme;
 	const { colors } = theme;
 
+	if (match.state === 'underway') return <JoinableMatch match={match} />;
+
 	return (
 		<div
 			className={cls.container}
@@ -23,6 +26,7 @@ export const MatchViewer: React.FC<Props> = ({ match }) => {
 				backgroundColor: theme.colors.neutralDark,
 			}}
 		>
+			{match.state === 'inProgress' && <div className={cls.liveIcon} />}
 			<div
 				className={cls.playerContainer}
 				style={{
@@ -53,12 +57,12 @@ export const MatchViewer: React.FC<Props> = ({ match }) => {
 							(match.winner === 'white' || match.winner === '1/2') && {
 								color: theme.text.baseColor,
 							}),
-						...(match.state === 'open' && {
-							color: theme.text.baseColor,
+						...((match.state === 'open' || match.state === 'inProgress') && {
+							color: 'white',
 						}),
 						backgroundColor:
-							match.state === 'open'
-								? theme.colors.secondaryDark
+							match.state === 'inProgress'
+								? theme.colors.primary
 								: match.state === 'complete'
 								? theme.colors.neutralLight
 								: theme.colors.neutralDark,
@@ -70,6 +74,12 @@ export const MatchViewer: React.FC<Props> = ({ match }) => {
 					className={cls.scoreBox}
 					style={{
 						borderTopRightRadius: spacers.small,
+						backgroundColor:
+							match.state === 'inProgress'
+								? theme.colors.primary
+								: match.state === 'complete'
+								? theme.colors.neutralLight
+								: theme.colors.neutralDark,
 					}}
 				>
 					<img src={whitePiece} alt="white" />
@@ -105,12 +115,12 @@ export const MatchViewer: React.FC<Props> = ({ match }) => {
 							(match.winner === 'black' || match.winner === '1/2') && {
 								color: theme.text.baseColor,
 							}),
-						...(match.state === 'open' && {
-							color: theme.text.baseColor,
+						...((match.state === 'open' || match.state === 'inProgress') && {
+							color: 'white',
 						}),
 						backgroundColor:
-							match.state === 'open'
-								? theme.colors.secondaryDark
+							match.state === 'inProgress'
+								? theme.colors.primary
 								: match.state === 'complete'
 								? theme.colors.neutralLight
 								: theme.colors.neutralDark,
@@ -122,6 +132,12 @@ export const MatchViewer: React.FC<Props> = ({ match }) => {
 					className={cls.pieceBox}
 					style={{
 						borderBottomRightRadius: spacers.small,
+						backgroundColor:
+							match.state === 'inProgress'
+								? theme.colors.primary
+								: match.state === 'complete'
+								? theme.colors.neutralLight
+								: theme.colors.neutralDark,
 					}}
 				>
 					<img src={blackPiece} alt="black" />
@@ -135,11 +151,23 @@ const useStyles = createUseStyles((theme) => ({
 	container: {
 		display: 'flex',
 		flexDirection: 'column',
+		position: 'relative',
 		maxWidth: '25rem',
 		minWidth: '15rem',
 		color: theme.text.subtle,
 		...fonts.small1,
 		...softBorderRadius,
+	},
+	liveIcon: {
+		width: '11px',
+		height: '11px',
+		borderRadius: '50%',
+		backgroundColor: '#FF33A1',
+		border: `2px solid ${theme.colors.background}`,
+		position: 'absolute',
+		top: '-5px',
+		left: '-5px',
+		zIndex: 50,
 	},
 	playerContainer: {
 		display: 'flex',

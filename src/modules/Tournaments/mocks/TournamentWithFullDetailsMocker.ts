@@ -1,4 +1,6 @@
 import { Chance } from 'chance';
+import { UserInfoRecord } from 'chessroulette-io';
+import { isDate } from 'date-fns/fp';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { TournamentRecord, TournamentWithFullDetailsRecord } from '../types';
 import { TournamentMatchMocker } from './TournamentMatchMocker';
@@ -11,20 +13,34 @@ type State = Extract<TournamentRecord['state'], 'pending' | 'in_progress' | 'com
 const matchMocker = new TournamentMatchMocker();
 const participantMocker = new TournamentParticipantMocker();
 
+type Options =
+	| {
+			withLive: true;
+			withUnderway: false;
+	  }
+	| {
+			withLive: false;
+			withUnderway: true;
+	  };
+
 export class TournamentWithFullDetailsMocker {
 	record(
 		state: State,
 		participantsCount: number,
-		withLive?: boolean
+		options?: Options,
+		withAuthUser?: UserInfoRecord
 	): TournamentWithFullDetailsRecord {
 		const id = String(chance.integer({ min: 1 }));
 		const now = new Date();
 		const yesterday = new Date(now.setDate(now.getDate() - 1));
 		const tomorrow = new Date(now.setDate(now.getDate() + 1));
 
-		const participants = new Array(participantsCount)
-			.fill(null)
-			.map((_) => participantMocker.record(id));
+		const participants = new Array(participantsCount).fill(null).map((_, i) => {
+			if (withAuthUser && i === participantsCount - 1) {
+				return participantMocker.withUserDetails(withAuthUser, id);
+			}
+			return participantMocker.record(id);
+		});
 
 		console.log('participants', participants);
 
@@ -53,11 +69,19 @@ export class TournamentWithFullDetailsMocker {
 					participants[participants.length - 1 - matchesThisRound],
 				]);
 			}
-			if (state === 'in_progress' && withLive && i === rounds - 1) {
+			if (state === 'in_progress' && i === rounds - 1 && !options) {
 				return matchMocker.record('open', round, id, [
 					participants[matchesThisRound],
 					participants[participants.length - 1 - matchesThisRound],
 				]);
+			}
+			if (state === 'in_progress' && i === rounds - 1 && options) {
+				return matchMocker.record(
+					options.withLive ? 'inProgress' : options.withUnderway ? 'underway' : 'open',
+					round,
+					id,
+					[participants[participants.length - 1], participants[matchesThisRound]]
+				);
 			}
 			return matchMocker.record(
 				round > Math.floor(rounds / 2) ? 'pending' : 'complete',
@@ -125,6 +149,22 @@ export class TournamentWithFullDetailsMocker {
 	}
 
 	withLiveGame(participantsCount: number): TournamentWithFullDetailsRecord {
-		return this.record('in_progress', participantsCount, true);
+		return this.record('in_progress', participantsCount, { withLive: true, withUnderway: false });
+	}
+
+	withUnderwayGame(participantsCount: number): TournamentWithFullDetailsRecord {
+		return this.record('in_progress', participantsCount, { withLive: false, withUnderway: true });
+	}
+
+	withUnderwayGameAndAuthenticatedUser(
+		participantsCount: number,
+		user: UserInfoRecord
+	): TournamentWithFullDetailsRecord {
+		return this.record(
+			'in_progress',
+			participantsCount,
+			{ withLive: false, withUnderway: true },
+			user
+		);
 	}
 }

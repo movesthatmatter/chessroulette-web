@@ -4,48 +4,36 @@ import { Button } from 'src/components/Button';
 import { Page } from 'src/components/Page';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { useAuthenticatedUser } from 'src/services/Authentication';
+import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationBouncer } from 'src/services/Authentication/widgets';
 import { Match } from './components/Match/Match';
 import {
-  checkIfUserIsParticipant,
   createTournamentParticipant,
   getTournamentWithFullDetails,
   getAllMatches,
 } from './resources';
-import { TournamentMatchRecord, TournamentRecord } from './types';
+import { TournamentMatchRecord, TournamentWithFullDetailsRecord } from './types';
 
 type Props = {};
 
 export const TournamentRoute: React.FC<Props> = (props) => {
   const cls = useStyles();
   const params = useParams<{ slug: string }>();
-  const user = useAuthenticatedUser();
-  const [tournament, setTournament] = useState<TournamentRecord>();
+  const auth = useAuthentication();
+  const [tournament, setTournament] = useState<TournamentWithFullDetailsRecord>();
   const [matches, setMatches] = useState<TournamentMatchRecord[]>();
   const [iamParticipating, setIamParticipating] = useState<boolean>(false);
 
   useEffect(() => {
+    if (auth.authenticationType !== 'user') {
+      return;
+    }
+
     getTournamentWithFullDetails({ tournamentId: params.slug }).map((tournament) => {
       setTournament(tournament);
-      setIamParticipating(!!tournament.participants.find((p) => p.user.id === user?.id));
+      setIamParticipating(!!tournament.participants.find((p) => p.user.id === auth.user.id));
     });
-  }, [user?.id]);
-
-  useEffect(() => {
-    if (tournament && user) {
-      checkIfUserIsParticipant({
-        userId: user.id,
-        tournamentId: tournament.id,
-      }).map(setIamParticipating);
-    }
-  }, [tournament?.id, user?.id]);
-
-  useEffect(() => {
-    if (tournament) {
-      getAllMatches({ tournamentId: tournament.id }).map(setMatches);
-    }
-  }, [tournament?.id]);
+  }, [auth]);
 
   return (
     <Page name={`Tournament : ${tournament?.name}`} stretched>
@@ -59,7 +47,6 @@ export const TournamentRoute: React.FC<Props> = (props) => {
             onAuthenticated={({ user }) => {
               createTournamentParticipant({
                 tournamentId: tournament.id,
-                userId: user.id,
               }).map(() => setIamParticipating(true));
             }}
             render={({ check }) => (
@@ -70,8 +57,9 @@ export const TournamentRoute: React.FC<Props> = (props) => {
         <br />
         <Text>Matches :</Text>
         <div className={cls.container}>
-          {matches &&
-            matches.map((match) => <Match match={match} participating={iamParticipating} />)}
+          {tournament?.matches.map((match) => (
+            <Match match={match} participating={iamParticipating} />
+          ))}
         </div>
       </div>
     </Page>
