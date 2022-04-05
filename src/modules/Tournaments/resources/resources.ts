@@ -56,5 +56,7 @@ export const getAllMatches = (req: Resources.Util.RequestOf<typeof getMatches>) 
 export const playTournamentMatch = (req: Resources.Util.RequestOf<typeof resource>) => {
   const { resource } = Resources.Collections.Tournaments.PlayTournamentMatch;
 
-  return resource.request(req, (data) => http.post('api/tournaments/join-player', data));
+  return resource.request(req, (data) =>
+    http.post(`api/tournaments/${data.tournamentId}/matches/${data.matchId}/play`, data)
+  );
 };

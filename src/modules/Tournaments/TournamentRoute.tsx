@@ -6,7 +6,7 @@ import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { useAuthentication } from 'src/services/Authentication';
 import { AuthenticationBouncer } from 'src/services/Authentication/widgets';
-import { Match } from './components/Match/Match';
+import { TournamentWithFullDetailsMocker } from './mocks/TournamentWithFullDetailsMocker';
 import {
   createTournamentParticipant,
   getTournamentWithFullDetails,
@@ -23,17 +23,16 @@ export const TournamentRoute: React.FC<Props> = (props) => {
   const auth = useAuthentication();
   const [tournament, setTournament] = useState<TournamentWithFullDetailsRecord>();
   const [matches, setMatches] = useState<TournamentMatchRecord[]>();
-  const [iamParticipating, setIamParticipating] = useState<boolean>(false);
+  const tournamentMocker = new TournamentWithFullDetailsMocker();
 
   useEffect(() => {
     if (auth.authenticationType !== 'user') {
       return;
     }
-
-    getTournamentWithFullDetails({ tournamentId: params.slug }).map((tournament) => {
-      setTournament(tournament);
-      setIamParticipating(!!tournament.participants.find((p) => p.user.id === auth.user.id));
-    });
+    // getTournamentWithFullDetails({ tournamentId: params.slug }).map((tournament) => {
+    //   setTournament(tournament);
+    // });
+    setTournament(tournamentMocker.withUnderwayGameAndAuthenticatedUser(6, auth.user));
   }, [auth]);
 
   return <Page name="Tournament">{tournament && <TournamentPage tournament={tournament} />}</Page>;

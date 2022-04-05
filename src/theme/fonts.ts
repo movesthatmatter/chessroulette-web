@@ -91,6 +91,17 @@ const title2: CSSProperties = {
   }),
 };
 
+const titleItalic: CSSProperties = {
+  fontSize: '18px',
+  fontWeight: 700,
+  fontStyle: 'italic',
+
+  ...onlyMobile({
+    fontSize: '18px',
+    lineHeight: '14px',
+  }),
+};
+
 const subtitle1: CSSProperties = {
   fontSize: '16px',
   fontWeight: 700,
@@ -150,6 +161,7 @@ export const fonts = {
 
   title1,
   title2,
+  titleItalic,
 
   subtitle1,
   subtitle2,

@@ -5,6 +5,8 @@ import { Tabs } from 'src/components/Tabs';
 import { Bracket } from './components/Bracket/Bracket';
 import { Players } from './components/Players/Players';
 import { spacers } from 'src/theme/spacers';
+import { TournamentBanner } from '../components/TournamentBanner/TournamentBanner';
+import { useAuthentication } from 'src/services/Authentication';
 
 type Props = {
 	tournament: TournamentWithFullDetailsRecord;
@@ -12,7 +14,6 @@ type Props = {
 
 export const TournamentPage: React.FC<Props> = ({ tournament }) => {
 	const cls = useStyles();
-
 	const [tab, setTab] = useState(0);
 
 	useEffect(() => {
@@ -20,27 +21,35 @@ export const TournamentPage: React.FC<Props> = ({ tournament }) => {
 	}, [tournament]);
 
 	return (
-		<Tabs
-			currentTabIndex={tab}
-			onTabChanged={setTab}
-			headerClassName={cls.headerClass}
-			tabButtonClassName={cls.tabButton}
-			selectedTabButtonClassName={cls.selectedTab}
-			tabs={[
-				{
-					title: 'Matches',
-					content: <Bracket tournament={tournament} />,
-				},
-				{
-					title: 'Players Standings',
-					content: <Players tournament={tournament} />,
-				},
-			]}
-		/>
+		<div className={cls.container}>
+			<TournamentBanner tournament={tournament} />
+			<Tabs
+				currentTabIndex={tab}
+				onTabChanged={setTab}
+				headerClassName={cls.headerClass}
+				tabButtonClassName={cls.tabButton}
+				selectedTabButtonClassName={cls.selectedTab}
+				tabs={[
+					{
+						title: 'Matches',
+						content: <Bracket tournament={tournament} />,
+					},
+					{
+						title: 'Players Standings',
+						content: <Players tournament={tournament} />,
+					},
+				]}
+			/>
+		</div>
 	);
 };
 
 const useStyles = createUseStyles((theme) => ({
+	container: {
+		display: 'flex',
+		flexDirection: 'column',
+		gap: spacers.default,
+	},
 	headerClass: {
 		borderBottom: '0px',
 	},

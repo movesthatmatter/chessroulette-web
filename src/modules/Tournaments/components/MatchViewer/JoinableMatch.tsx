@@ -12,6 +12,8 @@ import {
 } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import { useAuthentication } from 'src/services/Authentication';
 import cx from 'classnames';
+import { useEnterRoom } from 'src/modules/Room/hooks/useEnterRoom';
+import { playTournamentMatch } from '../../resources';
 
 type Props = {
 	match: TournamentUnderwayMatchRecord;
@@ -22,9 +24,13 @@ export const JoinableMatch: React.FC<Props> = ({ match }) => {
 	const theme = useColorTheme().theme;
 	const { colors } = theme;
 	const auth = useAuthentication();
+	const enterRoom = useEnterRoom();
 
 	const joinMatch = () => {
-		console.log('JOIN match!!');
+		playTournamentMatch({
+			tournamentId: match.tournamentId,
+			matchId: match.id,
+		}).map(enterRoom);
 	};
 
 	const player1Class =
@@ -54,7 +60,11 @@ export const JoinableMatch: React.FC<Props> = ({ match }) => {
 					style={{
 						borderTopLeftRadius: spacers.small,
 					}}
-					onClick={() => joinMatch()}
+					onClick={() => {
+						if (auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id) {
+							joinMatch();
+						}
+					}}
 				>
 					{match.players[0].user.name}
 				</div>
@@ -75,7 +85,11 @@ export const JoinableMatch: React.FC<Props> = ({ match }) => {
 			>
 				<div
 					className={cx(cls.playerBox, player2Class)}
-					onClick={() => joinMatch()}
+					onClick={() => {
+						if (auth.authenticationType === 'user' && auth.user.id === match.players[1].user.id) {
+							joinMatch();
+						}
+					}}
 					style={{
 						borderBottomLeftRadius: spacers.small,
 					}}
