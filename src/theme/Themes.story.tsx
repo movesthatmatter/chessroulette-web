@@ -53,4 +53,4 @@ export default {
 	title: 'Theme Preview',
 };
 
-export const preview = () => <ColoredCircles />;
+export const PreviewCircles = () => <ColoredCircles />;

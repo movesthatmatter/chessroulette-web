@@ -24,7 +24,7 @@ export const getTournamentWithFullDetails = (req: Resources.Util.RequestOf<typeo
   const { resource } = Resources.Collections.Tournaments.GetTournamentWithFullDetails;
 
   return resource.request(req, (params) =>
-    http.get(`api/tournaments/show/${params.tournamentId}?full_details`, { params })
+    http.get(`api/tournaments/show/${params.tournamentId}/full-details`, { params })
   );
 };
 
