@@ -4,8 +4,9 @@ import { http } from 'src/lib/http';
 export const getAllTournaments = (
   req: Resources.Util.RequestOf<typeof getAllTournamentsResource>
 ) => {
-  const { resource: getAllTournamentsResource } =
-    Resources.Collections.Tournaments.GetAllTournaments;
+  const {
+    resource: getAllTournamentsResource,
+  } = Resources.Collections.Tournaments.GetAllTournaments;
 
   return getAllTournamentsResource.request(req, (params) =>
     http.get('api/tournaments/all', { params })
@@ -31,10 +32,13 @@ export const getTournamentWithFullDetails = (req: Resources.Util.RequestOf<typeo
 export const createTournamentParticipant = (
   req: Resources.Util.RequestOf<typeof registerParticipant>
 ) => {
-  const { resource: registerParticipant } =
-    Resources.Collections.Tournaments.CreateTournamentParticipant;
+  const {
+    resource: registerParticipant,
+  } = Resources.Collections.Tournaments.CreateTournamentParticipant;
 
-  return registerParticipant.request(req, (data) => http.post(`api/tournaments/register`, data));
+  return registerParticipant.request(req, (data) =>
+    http.post(`api/tournaments/${data.tournamentId}/participants`, data)
+  );
 };
 
 export const createTournament = (

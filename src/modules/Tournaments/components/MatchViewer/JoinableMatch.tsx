@@ -1,167 +1,167 @@
 import React from 'react';
-import { createUseStyles, CSSProperties } from 'src/lib/jss';
+import { createUseStyles } from 'src/lib/jss';
 import { fonts, softBorderRadius } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { spacers } from 'src/theme/spacers';
-import { TournamentMatchRecord } from '../../types';
 import whitePiece from './assets/white_piece.svg';
 import blackPiece from './assets/black_piece.svg';
 import {
-	TournamentOpenMatchRecord,
-	TournamentUnderwayMatchRecord,
+  TournamentUnderwayMatchRecord,
+  TournamentInProgressMatchRecord,
 } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import { useAuthentication } from 'src/services/Authentication';
 import cx from 'classnames';
 import { useEnterRoom } from 'src/modules/Room/hooks/useEnterRoom';
 import { playTournamentMatch } from '../../resources';
+import { getUserDisplayNameClean } from 'src/modules/User';
 
 type Props = {
-	match: TournamentUnderwayMatchRecord;
+  match: TournamentUnderwayMatchRecord | TournamentInProgressMatchRecord;
 };
 
 export const JoinableMatch: React.FC<Props> = ({ match }) => {
-	const cls = useStyles();
-	const theme = useColorTheme().theme;
-	const { colors } = theme;
-	const auth = useAuthentication();
-	const enterRoom = useEnterRoom();
+  const cls = useStyles();
+  const theme = useColorTheme().theme;
+  const { colors } = theme;
+  const auth = useAuthentication();
+  const enterRoom = useEnterRoom();
 
-	const joinMatch = () => {
-		playTournamentMatch({
-			tournamentId: match.tournamentId,
-			matchId: match.id,
-		}).map(enterRoom);
-	};
+  const joinMatch = () => {
+    playTournamentMatch({
+      tournamentId: match.tournamentId,
+      matchId: match.id,
+    }).map(enterRoom);
+  };
 
-	const player1Class =
-		auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id
-			? cls.playable
-			: cls.nonPlayable;
-	const player2Class =
-		auth.authenticationType === 'user' && auth.user.id === match.players[1].user.id
-			? cls.playable
-			: cls.nonPlayable;
+  const player1Class =
+    auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id
+      ? cls.playable
+      : cls.nonPlayable;
+  const player2Class =
+    auth.authenticationType === 'user' && auth.user.id === match.players[1].user.id
+      ? cls.playable
+      : cls.nonPlayable;
 
-	return (
-		<div
-			className={cls.container}
-			style={{
-				backgroundColor: theme.colors.neutralDark,
-			}}
-		>
-			<div
-				className={cls.playerContainer}
-				style={{
-					borderBottom: `1px solid ${colors.background}`,
-				}}
-			>
-				<div
-					className={cx(cls.playerBox, player1Class)}
-					style={{
-						borderTopLeftRadius: spacers.small,
-					}}
-					onClick={() => {
-						if (auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id) {
-							joinMatch();
-						}
-					}}
-				>
-					{match.players[0].user.name}
-				</div>
-				<div
-					className={cls.scoreBox}
-					style={{
-						borderTopRightRadius: spacers.small,
-					}}
-				>
-					<img src={whitePiece} alt="white" />
-				</div>
-			</div>
-			<div
-				className={cls.playerContainer}
-				style={{
-					borderTop: `1px solid ${colors.background}`,
-				}}
-			>
-				<div
-					className={cx(cls.playerBox, player2Class)}
-					onClick={() => {
-						if (auth.authenticationType === 'user' && auth.user.id === match.players[1].user.id) {
-							joinMatch();
-						}
-					}}
-					style={{
-						borderBottomLeftRadius: spacers.small,
-					}}
-				>
-					{match.players[1].user.name}
-				</div>
-				<div
-					className={cls.pieceBox}
-					style={{
-						borderBottomRightRadius: spacers.small,
-					}}
-				>
-					<img src={blackPiece} alt="black" />
-				</div>
-			</div>
-		</div>
-	);
+  return (
+    <div
+      className={cls.container}
+      style={{
+        backgroundColor: theme.colors.neutralDark,
+      }}
+    >
+      <div
+        className={cls.playerContainer}
+        style={{
+          borderBottom: `1px solid ${colors.background}`,
+        }}
+      >
+        <div
+          className={cx(cls.playerBox, player1Class)}
+          style={{
+            borderTopLeftRadius: spacers.small,
+          }}
+          onClick={() => {
+            if (auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id) {
+              joinMatch();
+            }
+          }}
+        >
+          {getUserDisplayNameClean(match.players[0].user)}
+        </div>
+        <div
+          className={cls.scoreBox}
+          style={{
+            borderTopRightRadius: spacers.small,
+          }}
+        >
+          <img src={whitePiece} alt="white" />
+        </div>
+      </div>
+      <div
+        className={cls.playerContainer}
+        style={{
+          borderTop: `1px solid ${colors.background}`,
+        }}
+      >
+        <div
+          className={cx(cls.playerBox, player2Class)}
+          onClick={() => {
+            if (auth.authenticationType === 'user' && auth.user.id === match.players[1].user.id) {
+              joinMatch();
+            }
+          }}
+          style={{
+            borderBottomLeftRadius: spacers.small,
+          }}
+        >
+          {getUserDisplayNameClean(match.players[1].user)}
+        </div>
+        <div
+          className={cls.pieceBox}
+          style={{
+            borderBottomRightRadius: spacers.small,
+          }}
+        >
+          <img src={blackPiece} alt="black" />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const useStyles = createUseStyles((theme) => ({
-	container: {
-		display: 'flex',
-		flexDirection: 'column',
-		position: 'relative',
-		maxWidth: '25rem',
-		minWidth: '15rem',
-		color: theme.text.subtle,
-		...fonts.small1,
-		...softBorderRadius,
-	},
-	playable: {
-		backgroundColor: theme.colors.positive,
-		'&:hover': {
-			backgroundColor: theme.colors.primary,
-			textDecoration: 'none',
-			cursor: 'pointer',
-		},
-	},
-	nonPlayable: {
-		backgroundColor: theme.colors.neutralDark,
-	},
-	playerContainer: {
-		display: 'flex',
-		position: 'relative',
-	},
-	playerBox: {
-		display: 'flex',
-		flex: 1,
-		textAlign: 'left',
-		justifyContent: 'flex-start',
-		padding: spacers.small,
-		zIndex: 10,
-		color: theme.text.baseColor,
-	},
-	pieceBox: {
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-		alignContent: 'center',
-		padding: spacers.small,
-		paddingLeft: spacers.small,
-		paddingRight: spacers.small,
-		borderLeft: `1px solid ${theme.colors.background}`,
-	},
-	scoreBox: {
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-		alignContent: 'center',
-		padding: spacers.small,
-		paddingLeft: spacers.small,
-		paddingRight: spacers.small,
-		borderLeft: `1px solid ${theme.colors.background}`,
-	},
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'relative',
+    maxWidth: '25rem',
+    minWidth: '15rem',
+    color: theme.text.subtle,
+    ...fonts.small1,
+    ...softBorderRadius,
+  },
+  playable: {
+    backgroundColor: theme.colors.positive,
+    '&:hover': {
+      backgroundColor: theme.colors.primary,
+      textDecoration: 'none',
+      cursor: 'pointer',
+    },
+  },
+  nonPlayable: {
+    backgroundColor: theme.colors.neutralDark,
+  },
+  playerContainer: {
+    display: 'flex',
+    position: 'relative',
+  },
+  playerBox: {
+    display: 'flex',
+    flex: 1,
+    textAlign: 'left',
+    justifyContent: 'flex-start',
+    padding: spacers.small,
+    zIndex: 10,
+    color: theme.text.baseColor,
+  },
+  pieceBox: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    padding: spacers.small,
+    paddingLeft: spacers.small,
+    paddingRight: spacers.small,
+    borderLeft: `1px solid ${theme.colors.background}`,
+  },
+  scoreBox: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    padding: spacers.small,
+    paddingLeft: spacers.small,
+    paddingRight: spacers.small,
+    borderLeft: `1px solid ${theme.colors.background}`,
+  },
 }));
