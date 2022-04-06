@@ -95,7 +95,7 @@ export class TournamentWithFullDetailsMocker {
 
 		const pending: TournamentWithFullDetailsRecord = {
 			id,
-			name: `MockedTournament-${id}`,
+			name: `Help the Children of Ukraine`,
 			description: `Pending tournament with ${participantsCount} participants`,
 			createdAt: toISODateTime(yesterday),
 			startedAt: null,

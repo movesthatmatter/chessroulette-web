@@ -92,8 +92,8 @@ const title2: CSSProperties = {
 };
 
 const titleItalic: CSSProperties = {
-  fontSize: '18px',
-  fontWeight: 700,
+  fontSize: '22px',
+  fontWeight: 900,
   fontStyle: 'italic',
 
   ...onlyMobile({
