@@ -1,36 +1,66 @@
 import { useCallback, useMemo, useState } from 'react';
 import { AsyncResult } from 'ts-async-results';
 
+type State<E> =
+  | {
+      isLoading: true;
+      hasFailed: false;
+      error?: undefined;
+    }
+  | {
+      isLoading: false;
+      hasFailed: true;
+      error: E;
+    }
+  | {
+      isLoading: false;
+      hasFailed: false;
+      error?: undefined;
+    };
+
 export const useResource = <T, E, P extends Parameters<any>, R extends AsyncResult<T, E>>(
   fn: (...p: P) => R
 ) => {
-  const [isLoading, setIsLoading] = useState(false);
-
   const request = useCallback(
     (...args: P) => {
-      setIsLoading(true);
+      setState({
+        isLoading: true,
+        hasFailed: false,
+      });
       return fn(...args)
         .map(
           AsyncResult.passThrough(() => {
-            setIsLoading(false);
+            setState({
+              isLoading: false,
+              hasFailed: false,
+            });
           })
         )
         .mapErr(
-          AsyncResult.passThrough(() => {
-            setIsLoading(false);
+          AsyncResult.passThrough((error) => {
+            setState({
+              isLoading: false,
+              hasFailed: true,
+              error,
+            });
           })
         ) as R; // need to recast!
     },
     [fn]
   );
 
-  const state = useMemo(
+  const [state, setState] = useState<State<E>>({
+    isLoading: false,
+    hasFailed: false,
+  });
+
+  const res = useMemo(
     () => ({
+      ...state,
       request,
-      isLoading,
     }),
-    [request, isLoading]
+    [request, state]
   );
 
-  return state;
+  return res;
 };
