@@ -22,8 +22,13 @@ export const MatchViewer: React.FC<Props> = ({ match }) => {
   const theme = useColorTheme().theme;
   const { colors } = theme;
 
-  if (match.state === 'underway' || match.state === 'inProgress')
-    return <JoinableMatch match={match} />;
+  if (match.state === 'underway' || match.state === 'inProgress') {
+    return (
+      <RelativeLink to={`/matches/${match.slug}`}>
+        <JoinableMatch match={match} />
+      </RelativeLink>
+    );
+  }
 
   const getBackgroundColorForPlayer = (player: ChessGameColor): string => {
     //Pending
@@ -45,100 +50,102 @@ export const MatchViewer: React.FC<Props> = ({ match }) => {
   };
 
   return (
-    <div className={cls.container}>
-      <div
-        className={cls.playerContainer}
-        style={{
-          borderBottom: `1px solid ${colors.background}`,
-        }}
-      >
-        {match.winner === '1/2' && (
+    <RelativeLink to={`/matches/${match.slug}`}>
+      <div className={cls.container}>
+        <div
+          className={cls.playerContainer}
+          style={{
+            borderBottom: `1px solid ${colors.background}`,
+          }}
+        >
+          {match.winner === '1/2' && (
+            <div
+              className={cls.drawBorder}
+              style={{
+                borderTopLeftRadius: spacers.small,
+              }}
+            />
+          )}
           <div
-            className={cls.drawBorder}
+            className={cls.playerBox}
             style={{
               borderTopLeftRadius: spacers.small,
-            }}
-          />
-        )}
-        <div
-          className={cls.playerBox}
-          style={{
-            borderTopLeftRadius: spacers.small,
-            ...(match.winner &&
-              match.winner === 'white' && {
+              ...(match.winner &&
+                match.winner === 'white' && {
+                  color: 'white',
+                  fontWeight: 'bold',
+                }),
+              ...(match.winner &&
+                match.winner === '1/2' && {
+                  color: theme.text.baseColor,
+                  fontWeight: 'bold',
+                }),
+              ...(match.state === 'open' && {
                 color: 'white',
-                fontWeight: 'bold',
               }),
-            ...(match.winner &&
-              match.winner === '1/2' && {
-                color: theme.text.baseColor,
-                fontWeight: 'bold',
-              }),
-            ...(match.state === 'open' && {
-              color: 'white',
-            }),
-            background: getBackgroundColorForPlayer('white'),
-          }}
-        >
-          {match.players ? getUserDisplayNameClean(match.players[0].user) : `TBD`}
+              background: getBackgroundColorForPlayer('white'),
+            }}
+          >
+            {match.players ? getUserDisplayNameClean(match.players[0].user) : `TBD`}
+          </div>
+          <div
+            className={cls.scoreBox}
+            style={{
+              borderTopRightRadius: spacers.small,
+              background: getBackgroundColorForPlayer('white'),
+            }}
+          >
+            <img src={whitePiece} alt="white" />
+          </div>
         </div>
         <div
-          className={cls.scoreBox}
+          className={cls.playerContainer}
           style={{
-            borderTopRightRadius: spacers.small,
-            background: getBackgroundColorForPlayer('white'),
+            borderTop: `1px solid ${colors.background}`,
           }}
         >
-          <img src={whitePiece} alt="white" />
-        </div>
-      </div>
-      <div
-        className={cls.playerContainer}
-        style={{
-          borderTop: `1px solid ${colors.background}`,
-        }}
-      >
-        {match.winner === '1/2' && (
+          {match.winner === '1/2' && (
+            <div
+              className={cls.drawBorder}
+              style={{
+                borderBottomLeftRadius: spacers.small,
+              }}
+            />
+          )}
           <div
-            className={cls.drawBorder}
+            className={cls.playerBox}
             style={{
               borderBottomLeftRadius: spacers.small,
-            }}
-          />
-        )}
-        <div
-          className={cls.playerBox}
-          style={{
-            borderBottomLeftRadius: spacers.small,
-            ...(match.winner &&
-              match.winner === 'black' && {
+              ...(match.winner &&
+                match.winner === 'black' && {
+                  color: 'white',
+                  fontWeight: 'bold',
+                }),
+              ...(match.winner &&
+                match.winner === '1/2' && {
+                  color: theme.text.baseColor,
+                  fontWeight: 'bold',
+                }),
+              ...(match.state === 'open' && {
                 color: 'white',
-                fontWeight: 'bold',
               }),
-            ...(match.winner &&
-              match.winner === '1/2' && {
-                color: theme.text.baseColor,
-                fontWeight: 'bold',
-              }),
-            ...(match.state === 'open' && {
-              color: 'white',
-            }),
-            background: getBackgroundColorForPlayer('black'),
-          }}
-        >
-          {match.players ? getUserDisplayNameClean(match.players[1].user) : `TBD`}
-        </div>
-        <div
-          className={cls.pieceBox}
-          style={{
-            borderBottomRightRadius: spacers.small,
-            background: getBackgroundColorForPlayer('black'),
-          }}
-        >
-          <img src={blackPiece} alt="black" />
+              background: getBackgroundColorForPlayer('black'),
+            }}
+          >
+            {match.players ? getUserDisplayNameClean(match.players[1].user) : `TBD`}
+          </div>
+          <div
+            className={cls.pieceBox}
+            style={{
+              borderBottomRightRadius: spacers.small,
+              background: getBackgroundColorForPlayer('black'),
+            }}
+          >
+            <img src={blackPiece} alt="black" />
+          </div>
         </div>
       </div>
-    </div>
+    </RelativeLink>
   );
 };
 

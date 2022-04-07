@@ -55,7 +55,8 @@ const useStyles = createUseStyles({
 		display: 'flex',
 		flexDirection: 'column',
 		gap: spacers.default,
-		padding: spacers.default,
+		paddingTop: spacers.default,
+		paddingBottom: spacers.default,
 	},
 	roundContainer: {
 		display: 'flex',

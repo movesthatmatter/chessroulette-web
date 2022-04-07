@@ -133,7 +133,8 @@ const useStyles = createUseStyles((theme) => ({
 	playerRow: {
 		display: 'flex',
 		justifyContent: 'space-between',
-		padding: spacers.small,
+		paddingTop: spacers.small,
+		paddingBottom: spacers.small,
 		width: '100%',
 	},
 	playersContainerContent: {
