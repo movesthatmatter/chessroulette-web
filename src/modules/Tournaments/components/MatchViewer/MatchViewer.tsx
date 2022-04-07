@@ -4,8 +4,8 @@ import { floatingShadow, fonts, hardFloatingShadow, softBorderRadius } from 'src
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { spacers } from 'src/theme/spacers';
 import { TournamentMatchRecord } from '../../types';
-import whitePiece from './assets/white_piece.svg';
-import blackPiece from './assets/black_piece.svg';
+import whitePiece from '../../assets/white_piece.svg';
+import blackPiece from '../../assets/black_piece.svg';
 import { JoinableMatch } from './JoinableMatch';
 import { getUserDisplayNameClean } from 'src/modules/User';
 import { ChessGameColor } from 'chessroulette-io';

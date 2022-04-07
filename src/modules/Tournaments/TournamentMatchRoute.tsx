@@ -22,6 +22,8 @@ export const TournamentMatchRoute: React.FC<Props> = (props) => {
     return null;
   }
 
+  console.log('TOURNAMENT ==> ', props.tournament);
+
   const matchesBySlug = toDictIndexedBy(props.tournament.matches, (m) => m.slug);
 
   if (!keyInObject(matchesBySlug, params.matchSlug)) {

@@ -8,7 +8,7 @@ const light: Theme = {
   colors: colors.light,
   text: {
     primaryColor: '#001B36',
-    baseColor: '#25282B',
+    baseColor: '#303030',
     disabledColor: '#A4A8B5',
     subtle: '#A4A8B5',
     family: 'Lato, Open Sans, sans-serif',
