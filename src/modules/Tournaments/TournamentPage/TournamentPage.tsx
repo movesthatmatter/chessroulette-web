@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { TournamentWithFullDetailsRecord } from '../types';
 import { Tabs } from 'src/components/Tabs';
@@ -6,17 +6,15 @@ import { Bracket } from './components/Bracket/Bracket';
 import { Players } from './components/Players/Players';
 import { spacers } from 'src/theme/spacers';
 import { TournamentBanner } from '../components/TournamentBanner/TournamentBanner';
-import { useAuthentication } from 'src/services/Authentication';
-import { faChess, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { Game, Filter } from 'react-iconly';
 
 type Props = {
-	tournament: TournamentWithFullDetailsRecord;
+  tournament: TournamentWithFullDetailsRecord;
 };
 
 export const TournamentPage: React.FC<Props> = ({ tournament }) => {
-	const cls = useStyles();
-	const [tab, setTab] = useState(0);
+  const cls = useStyles();
+  const [tab, setTab] = useState(0);
 
 	useEffect(() => {
 		console.log('tournament in page : ', tournament);

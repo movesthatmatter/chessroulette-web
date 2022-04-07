@@ -1,10 +1,12 @@
 import { Resources } from 'chessroulette-io';
 // import { ChallongeTournamentRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { Button } from 'src/components/Button';
 import { WithDialog } from 'src/components/Dialog';
 import { Page } from 'src/components/Page';
+import { RelativeLink } from 'src/components/RelativeLink';
 import { Text } from 'src/components/Text';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { AsyncResult } from 'ts-async-results';
@@ -25,37 +27,19 @@ export const TournamentsPage: React.FC<Props> = (props) => {
 
   function getTournaments() {
     getAllTournaments({
-      state: 'all',
-      // type: 'swiss',
+      // state: 'all',
+      type: 'swiss',
     }).map(setAllTournaments);
   }
 
   return (
     <Page name="Tournaments" stretched containerClassname={cls.container}>
-      {/* <WithDialog
-        hasCloseButton
-        content={(d) => (
-          <CreateTournamentDialog
-            onSubmit={(r) => {
-              return createTournament(r)
-                .map((result) => {
-                  console.log('tourney created successfull', result);
-                  getTournaments();
-                })
-                .map(AsyncResult.passThrough(d.onClose))
-                .mapErr(AsyncResult.passThrough(d.onClose));
-            }}
-          />
-        )}
-        buttons={[]}
-        render={(p) => <Button label="Create Tournament" onClick={p.onOpen} />}
-      /> */}
       <div className={cls.tournamentContainer}>
         <Text style={{ marginBottom: '20px' }}>Current Tournaments:</Text>
         {allTournaments.map((tournament) => (
-          <AnchorLink href={`/tournaments/${tournament.id}`} key={tournament.id}>
-            {tournament.name}
-          </AnchorLink>
+          <RelativeLink to={tournament.id} key={tournament.id}>
+            <Text>{tournament.name}</Text>
+          </RelativeLink>
         ))}
       </div>
     </Page>

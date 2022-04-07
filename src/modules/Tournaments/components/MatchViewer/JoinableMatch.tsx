@@ -18,6 +18,8 @@ import { colors } from 'src/theme/colors';
 import { ChessGameColor } from 'chessroulette-io';
 import { Text } from 'src/components/Text';
 import { Play } from 'react-iconly';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import { console } from 'window-or-global';
 
 type Props = {
 	match: TournamentUnderwayMatchRecord | TournamentInProgressMatchRecord;
@@ -30,12 +32,21 @@ export const JoinableMatch: React.FC<Props> = ({ match }) => {
 	const auth = useAuthentication();
 	const enterRoom = useEnterRoom();
 
-	const joinMatch = () => {
-		playTournamentMatch({
-			tournamentId: match.tournamentId,
-			matchId: match.id,
-		}).map(enterRoom);
-	};
+
+  const history = useHistory();
+  const { path, url } = useRouteMatch();
+
+  const playMatch = () => {
+    playTournamentMatch({
+      tournamentId: match.tournamentId,
+      matchId: match.id,
+    })
+    .map((m) => {
+      console.log('path', url);
+      history.push(`${url}/matches/${m.slug}`)
+    })
+    // .map(enterRoom);
+  };
 
 	function getBackgroundForPlayer(player: ChessGameColor): string {
 		return match.state === 'inProgress'
@@ -88,7 +99,7 @@ export const JoinableMatch: React.FC<Props> = ({ match }) => {
 				}}
 				onClick={() => {
 					if (auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id) {
-						joinMatch();
+						playMatch();
 					}
 				}}
 			>
@@ -107,7 +118,7 @@ export const JoinableMatch: React.FC<Props> = ({ match }) => {
 				}}
 				onClick={() => {
 					if (auth.authenticationType === 'user' && auth.user.id === match.players[1].user.id) {
-						joinMatch();
+						playMatch();
 					}
 				}}
 			>
