@@ -8,6 +8,7 @@ import { useResource } from 'src/lib/hooks/useResource';
 import { TournamentInProgressMatchPage } from '../TournamentInProgressMatchPage';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { isDateInThePast } from 'src/modules/Room/util';
+import { setInterval } from 'window-or-global';
 
 type Props = {
   match: TournamentMatchRecord;
@@ -17,6 +18,7 @@ type Props = {
 export const TournamentMatchPage: React.FC<Props> = ({ match: givenMatch, user }) => {
   const [match, setMatch] = useState(givenMatch);
   const playTournamentMatchResource = useResource(playTournamentMatch);
+  const [countDown, setCountdown] = useState(10);
 
   useEffect(() => {
     setMatch(givenMatch);
@@ -37,9 +39,20 @@ export const TournamentMatchPage: React.FC<Props> = ({ match: givenMatch, user }
 
   useEffect(() => {
     if (match.state === 'underway' && isDateInThePast(match.underwayAt)) {
-      playMatch();
+
+
+      setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000 * 1)
+      // playMatch();
     }
   }, [match.state]);
+
+  useEffect(() => {
+    if (countDown < 1) {
+      playMatch();
+    };
+  }, [countDown])
 
   if (match.state === 'inProgress') {
     return <TournamentInProgressMatchPage match={match} />;
@@ -50,7 +63,7 @@ export const TournamentMatchPage: React.FC<Props> = ({ match: givenMatch, user }
       <pre>{JSON.stringify(match, null, 2)}</pre>
       {/* {match.state == 'underway' && <Button label="Play" onClick={playMatch} />} */}
       {match.state == 'complete' && <RelativeLink to="/analysis">Analyze</RelativeLink>}
-
+      <pre>{countDown} to play</pre>
       {playTournamentMatchResource.isLoading && <AwesomeLoader />}
     </Page>
   );

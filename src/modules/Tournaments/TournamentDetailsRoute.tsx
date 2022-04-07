@@ -7,6 +7,9 @@ import { TournamentPage } from './TournamentPage';
 import { TournamentMatchRoute } from './TournamentMatchRoute';
 import { PeerToServerConsumer } from 'src/providers/PeerConnectionProvider';
 import { TournamentWithFullDetailsMocker } from './mocks/TournamentWithFullDetailsMocker';
+import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
+import { useResource } from 'src/lib/hooks/useResource';
+import { AwesomeErrorPage } from 'src/components/AwesomeError';
 
 type Props = {};
 
@@ -19,31 +22,34 @@ export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
 
   const [tournament, setTournament] = useState<TournamentWithFullDetailsRecord>();
 
+  const getTournamentWithFullDetailsResource = useResource(getTournamentWithFullDetails);
+
   useEffect(() => {
     if (tournament) {
       return;
     }
 
-    getTournamentWithFullDetails({ tournamentId: params.slug }).map((tournament) => {
-      setTournament(tournament);
-    });
+    getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
 
     // setTournament(tournamentMocker.withLiveGame(6));
-
   }, [params.slug]);
 
-  if (!tournament) {
-    return null;
+  if (getTournamentWithFullDetailsResource.hasFailed) {
+    return <AwesomeErrorPage />;
   }
 
-  return (
-    <Switch location={location}>
-      <Route exact path={path} key={location.key}>
-        <TournamentPage tournament={tournament} />
-      </Route>
-      <Route path={`${path}/matches/:matchSlug`} key={location.key}>
-        <TournamentMatchRoute tournament={tournament} />
-      </Route>
-    </Switch>
-  );
+  if (tournament) {
+    return (
+      <Switch location={location}>
+        <Route exact path={path} key={location.key}>
+          <TournamentPage tournament={tournament} />
+        </Route>
+        <Route path={`${path}/matches/:matchSlug`} key={location.key}>
+          <TournamentMatchRoute tournament={tournament} />
+        </Route>
+      </Switch>
+    );
+  }
+
+  return <AwesomeLoaderPage />;
 });

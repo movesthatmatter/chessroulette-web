@@ -46,7 +46,7 @@ const getHomeColor = (activity: RoomPlayActivityWithGame, orientationInverted: b
 export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize }) => {
   const cls = useStyles();
   const gameActions = useGameActions();
-  const feedbackActions = useFeedbackActions();
+  // const feedbackActions = useFeedbackActions();
   const roomConsumer = useRoomConsumer();
   const homeColor = useMemo(
     () => getHomeColor(activity, roomConsumer?.boardOrientation === 'away'),
@@ -57,11 +57,12 @@ export const PlayActivity: React.FC<PlayActivityProps> = ({ activity, deviceSize
 
   const { game } = activity;
 
-  useEffect(() => {
-    if (activity.iamParticipating && game.winner === activity.participants.me.color) {
-      feedbackActions.attemptToShowIfPossible();
-    }
-  }, [activity.iamParticipating, game]);
+  // This was removed on April 7th 2022 b/c was too annoying!
+  // useEffect(() => {
+  //   if (activity.iamParticipating && game.winner === activity.participants.me.color) {
+  //     feedbackActions.attemptToShowIfPossible();
+  //   }
+  // }, [activity.iamParticipating, game]);
 
   const onMoved = useCallback<NonNullable<ChessGameHistoryProviderProps['onMoved']>>(
     (m) => {

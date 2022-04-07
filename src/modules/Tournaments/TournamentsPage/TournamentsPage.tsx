@@ -1,17 +1,12 @@
 import { Resources } from 'chessroulette-io';
-// import { ChallongeTournamentRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AnchorLink } from 'src/components/AnchorLink';
-import { Button } from 'src/components/Button';
-import { WithDialog } from 'src/components/Dialog';
+import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { Page } from 'src/components/Page';
 import { RelativeLink } from 'src/components/RelativeLink';
 import { Text } from 'src/components/Text';
+import { useResource } from 'src/lib/hooks/useResource';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { AsyncResult } from 'ts-async-results';
-import { CreateTournamentDialog } from '../components/CreateTournamentDialog/CreateTournamentDialog';
-import { createTournament, getAllTournaments } from '../resources';
+import { getAllTournaments } from '../resources';
 
 type Props = {};
 
@@ -21,19 +16,18 @@ export const TournamentsPage: React.FC<Props> = (props) => {
   const cls = useStyles();
   const [allTournaments, setAllTournaments] = useState<TournamentRecord[]>([]);
 
+  const getTournamentResource = useResource(getAllTournaments);
+
   useEffect(() => {
-    getTournaments();
+    getTournamentResource.request().map(setAllTournaments);
   }, []);
 
-  function getTournaments() {
-    getAllTournaments({
-      // state: 'all',
-      type: 'swiss',
-    }).map(setAllTournaments);
+  if (getTournamentResource.isLoading) {
+    return <AwesomeLoaderPage />;
   }
 
   return (
-    <Page name="Tournaments" stretched containerClassname={cls.container}>
+    <Page name="Tournaments" containerClassname={cls.container}>
       <div className={cls.tournamentContainer}>
         <Text style={{ marginBottom: '20px' }}>Current Tournaments:</Text>
         {allTournaments.map((tournament) => (
