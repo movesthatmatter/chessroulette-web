@@ -17,7 +17,7 @@ type Props = {
   renderFallback?: (p: SocketConnectionStatusNonOpen) => React.ReactNode;
 };
 
-export const PeerConnectionProvider: React.FC<Props> = ({ renderFallback = noop, children }) => {
+export const PeerToServerProvider: React.FC<Props> = ({ renderFallback = noop, children }) => {
   const auth = useAuthentication();
   const myPeer = useMyPeer();
   const dispatch = useDispatch();

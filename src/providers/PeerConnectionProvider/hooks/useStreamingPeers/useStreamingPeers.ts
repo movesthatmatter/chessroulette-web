@@ -8,6 +8,7 @@ type Props = {
   focusedUserId?: StreamingPeer['id'];
 };
 
+// TODO: This shouldn't be here!
 // TODO: This might not actually need the Focus logic!
 export const useStreamingPeers = ({ peersMap, focusedUserId }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
