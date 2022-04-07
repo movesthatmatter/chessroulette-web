@@ -2,7 +2,8 @@ import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { Mutunachi } from '../Mutunachi/Mutunachi';
 import { AspectRatio, AspectRatioProps } from '../AspectRatio';
-import { CustomTheme, minMediaQuery } from 'src/theme';
+import { Text } from '../Text';
+import { spacers } from 'src/theme/spacers';
 
 const errorsMap = {
   resourceNotFound: {
@@ -35,26 +36,22 @@ export const AwesomeError: React.FC<AwesomeErrorProps> = ({
         <Mutunachi mid={errorsMap[errorType].mid} className={cls.mutunachi} />
       </AspectRatio>
       {minimal || (
-        <div className={cls.textContainer}>
-          <h4 className={cls.title}>{errorsMap[errorType].title}</h4>
-          <h6 className={cls.description}>{errorsMap[errorType].description}</h6>
+        <div className={cls.description}>
+          <Text size="subtitle1">{errorsMap[errorType].title}</Text>
+          <br />
+          <Text size="small1" className={cls.description}>
+            {errorsMap[errorType].description}
+          </Text>
         </div>
       )}
     </div>
   );
 };
 
-
-
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles((theme) => ({
   container: {
     width: '100%',
     textAlign: 'center',
-    fontSize: '24px',
-
-    ...minMediaQuery(600, {
-      fontSize: '48px',
-    }),
   },
   mutunachiContainer: {
     width: '40%',
@@ -78,16 +75,17 @@ const useStyles = createUseStyles(theme => ({
       opacity: 0.3,
     },
   },
-  textContainer: {
-    padding: '16px',
-  },
-  title: {
-    marginBottom: 0,
-    color: theme.colors.neutralDarker,
-  },
+  // textContainer: {
+  //   padding: '16px',
+  // },
+  // title: {
+  //   marginBottom: 0,
+  //   color: theme.colors.neutralDarker,
+  // },
   description: {
-    fontSize: '50%',
+    marginTop: spacers.default,
+    // fontSize: '50%',
     color: theme.colors.neutralDarker,
     fontWeight: 400,
-  }
+  },
 }));
