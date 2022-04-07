@@ -67,6 +67,6 @@ const useStyles = createUseStyles({
 		display: 'flex',
 		flexWrap: 'wrap',
 		width: '100%',
-		gap: spacers.large,
+		gap: spacers.largest,
 	},
 });

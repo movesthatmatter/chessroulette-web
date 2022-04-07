@@ -53,6 +53,7 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
               />
             </div>
           ),
+          iconType: 'fontAwesome',
           icon: faDiceD6,
         },
         {
@@ -71,6 +72,7 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
               />
             </div>
           ),
+          iconType: 'fontAwesome',
           icon: faComment,
         },
       ]}

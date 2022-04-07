@@ -36,9 +36,9 @@ const small2: CSSProperties = {
 };
 
 const small3: CSSProperties = {
-  fontSize: '10px',
+  fontSize: '11px',
   fontWeight: 'bold',
-  lineHeight: '12px',
+  lineHeight: '14px',
 };
 
 const smallItalic: CSSProperties = {
@@ -92,8 +92,8 @@ const title2: CSSProperties = {
 };
 
 const titleItalic: CSSProperties = {
-  fontSize: '18px',
-  fontWeight: 700,
+  fontSize: '22px',
+  fontWeight: 900,
   fontStyle: 'italic',
 
   ...onlyMobile({

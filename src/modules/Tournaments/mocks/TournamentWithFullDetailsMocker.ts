@@ -2,6 +2,7 @@ import { Chance } from 'chance';
 import { UserInfoRecord } from 'chessroulette-io';
 import { isDate } from 'date-fns/fp';
 import { toISODateTime } from 'io-ts-isodatetime';
+import { range } from 'src/lib/util';
 import { TournamentRecord, TournamentWithFullDetailsRecord } from '../types';
 import { TournamentMatchMocker } from './TournamentMatchMocker';
 import { TournamentParticipantMocker } from './TournamentParticipantMocker';
@@ -69,13 +70,23 @@ export class TournamentWithFullDetailsMocker {
 					participants[participants.length - 1 - matchesThisRound],
 				]);
 			}
-			if (state === 'in_progress' && i === rounds - 1 && !options) {
+			if (
+				state === 'in_progress' &&
+				round === rounds - 1 &&
+				matchesThisRound === totalMatchesPerRound - 1 &&
+				!options
+			) {
 				return matchMocker.record('open', round, id, [
 					participants[matchesThisRound],
 					participants[participants.length - 1 - matchesThisRound],
 				]);
 			}
-			if (state === 'in_progress' && i === rounds - 1 && options) {
+			if (
+				state === 'in_progress' &&
+				round === rounds - 1 &&
+				matchesThisRound === totalMatchesPerRound - 1 &&
+				options
+			) {
 				return matchMocker.record(
 					options.withLive ? 'inProgress' : options.withUnderway ? 'underway' : 'open',
 					round,
@@ -83,19 +94,17 @@ export class TournamentWithFullDetailsMocker {
 					[participants[participants.length - 1], participants[matchesThisRound]]
 				);
 			}
-			return matchMocker.record(
-				round > Math.floor(rounds / 2) ? 'pending' : 'complete',
-				round,
-				id,
-				[participants[matchesThisRound], participants[participants.length - 1 - matchesThisRound]]
-			);
+			return matchMocker.record(round < rounds ? 'complete' : 'pending', round, id, [
+				participants[matchesThisRound],
+				participants[participants.length - 1 - matchesThisRound],
+			]);
 		});
 
 		console.log('matches :', matches);
 
 		const pending: TournamentWithFullDetailsRecord = {
 			id,
-			name: `MockedTournament-${id}`,
+			name: `Help the Children of Ukraine`,
 			description: `Pending tournament with ${participantsCount} participants`,
 			createdAt: toISODateTime(yesterday),
 			startedAt: null,

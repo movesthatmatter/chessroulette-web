@@ -5,9 +5,12 @@ import { createUseStyles } from 'src/lib/jss';
 import { TournamentWithFullDetailsRecord } from 'src/modules/Tournaments/types';
 import { determineNoWinsAndPointsPerParticipant } from 'src/modules/Tournaments/utils';
 import { PeerAvatar } from 'src/providers/PeerConnectionProvider';
+import { useAuthenticatedUser } from 'src/services/Authentication';
 import { fonts } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { spacers } from 'src/theme/spacers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCrown } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
 	tournament: TournamentWithFullDetailsRecord;
@@ -16,6 +19,7 @@ type Props = {
 export const Players: React.FC<Props> = ({ tournament }) => {
 	const cls = useStyles();
 	const theme = useColorTheme().theme;
+	const auth = useAuthenticatedUser();
 
 	const [winsAndPointsPerPlayer, setWinsAndPointsPerPlayer] = useState(
 		determineNoWinsAndPointsPerParticipant(tournament.matches)
@@ -35,7 +39,7 @@ export const Players: React.FC<Props> = ({ tournament }) => {
 		<div className={cls.container}>
 			<div className={cls.playersContainer}>
 				<div className={cls.playersContainerTitle}>
-					<div className={cls.playersTitle}>Players</div>
+					<div className={cls.playersTitle} />
 					<div className={cls.playersTitle} style={{ width: '5rem' }}>
 						Wins
 					</div>
@@ -50,23 +54,43 @@ export const Players: React.FC<Props> = ({ tournament }) => {
 							<div
 								className={cls.playerRow}
 								style={{
-									backgroundColor:
+									background:
 										i % 2 === 0
 											? theme.name === 'darkDefault'
-												? theme.colors.neutralDark
-												: theme.colors.primaryLightest
+												? `linear-gradient(270.03deg, ${theme.colors.neutralDark} 0.35%, rgba(231, 223, 255, 0) 100.9%)`
+												: `linear-gradient(270.03deg, ${theme.colors.primaryLightest} 0.35%, rgba(231, 223, 255, 0) 100.9%)`
 											: theme.colors.background,
 								}}
 							>
-								<div className={cls.player}>
+								<div
+									className={cls.player}
+									style={{
+										...(auth &&
+											auth.id === winsAndPointsPerPlayer[p].user.id && {
+												fontWeight: 'bold',
+												color: theme.colors.primary,
+											}),
+									}}
+								>
 									<Avatar mutunachiId={+winsAndPointsPerPlayer[p].user.avatarId} />
 									{winsAndPointsPerPlayer[p].user.name}
+									{i === 0 && (
+										<FontAwesomeIcon
+											icon={faCrown}
+											size="lg"
+											color={theme.name === 'darkDefault' ? '#FDE615' : '#25282b'}
+										/>
+									)}
 								</div>
 								<div className={cls.wins}>
-									<Text>{winsAndPointsPerPlayer[p] && winsAndPointsPerPlayer[p].wins}</Text>
+									<Text size="body2" style={{ fontWeight: 'bold' }}>
+										{winsAndPointsPerPlayer[p] && winsAndPointsPerPlayer[p].wins}
+									</Text>
 								</div>
 								<div className={cls.wins}>
-									<Text>{winsAndPointsPerPlayer[p] && winsAndPointsPerPlayer[p].points}</Text>
+									<Text size="body2" style={{ fontWeight: 'bold' }}>
+										{winsAndPointsPerPlayer[p] && winsAndPointsPerPlayer[p].points}
+									</Text>
 								</div>
 							</div>
 						))}
@@ -91,6 +115,8 @@ const useStyles = createUseStyles((theme) => ({
 	},
 	playersTitle: {
 		color: theme.colors.primary,
+		...fonts.small1,
+		fontWeight: 'bold',
 		'&:last-child': {
 			display: 'flex',
 			justifyContent: 'flex-end',
@@ -133,5 +159,8 @@ const useStyles = createUseStyles((theme) => ({
 			textAlign: 'center',
 			paddingRight: spacers.default,
 		},
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
 	},
 }));
