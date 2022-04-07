@@ -11,7 +11,7 @@ import {
 	TournamentRecord,
 	TournamentWithFullDetailsRecord,
 } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
-import { onlyMobile, softBorderRadius } from 'src/theme';
+import { floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
 import { People } from 'react-iconly';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { colors } from 'src/theme/colors';
@@ -93,7 +93,7 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 											: 'Registration Closed'
 									}
 									disabled={iAmParticipating || tournament.state !== 'pending'}
-									type="primary"
+									type="positive"
 									style={{ marginBottom: '0px' }}
 									onClick={check}
 								/>
@@ -130,9 +130,11 @@ const useStyles = createUseStyles((theme) => ({
 		display: 'flex',
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		minWidth: '50%',
-		maxWidth: '90%',
-		backgroundColor: theme.colors.neutralLight,
+		minWidth: '30rem',
+		maxWidth: '60rem',
+		background: theme.name === 'darkDefault' ? theme.colors.neutralLight : '#423182',
+		color: colors.universal.white,
+		...(theme.name === 'lightDefault' && { ...softBorderRadius, ...floatingShadow }),
 	},
 	leftSide: {
 		display: 'flex',
@@ -161,7 +163,7 @@ const useStyles = createUseStyles((theme) => ({
 		paddingLeft: spacers.default,
 	},
 	status: {
-		color: theme.colors.primary,
+		color: theme.colors.attention,
 		fontWeight: 'bold',
 		alignSelf: 'center',
 	},
@@ -171,9 +173,9 @@ const useStyles = createUseStyles((theme) => ({
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignContent: 'center',
-		backgroundColor: theme.name === 'lightDefault' ? theme.colors.primary : colors.universal.white,
+		backgroundColor: colors.universal.white,
 		...softBorderRadius,
-		color: theme.name === 'lightDefault' ? colors.universal.white : colors.universal.black,
+		color: colors.universal.black,
 		padding: spacers.smallest,
 		width: '2em',
 		height: '2em',

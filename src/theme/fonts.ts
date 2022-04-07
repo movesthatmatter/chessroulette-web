@@ -36,9 +36,9 @@ const small2: CSSProperties = {
 };
 
 const small3: CSSProperties = {
-  fontSize: '10px',
+  fontSize: '11px',
   fontWeight: 'bold',
-  lineHeight: '12px',
+  lineHeight: '14px',
 };
 
 const smallItalic: CSSProperties = {

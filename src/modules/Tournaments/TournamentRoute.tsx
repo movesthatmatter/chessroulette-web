@@ -23,7 +23,7 @@ export const TournamentRoute: React.FC<Props> = (props) => {
     // getTournamentWithFullDetails({ tournamentId: params.slug }).map((tournament) => {
     //   setTournament(tournament);
     // });
-    setTournament(tournamentMocker.withUnderwayGameAndAuthenticatedUser(6, auth.user));
+    setTournament(tournamentMocker.withLiveGame(6));
   }, [params.slug, auth]);
 
   return (
