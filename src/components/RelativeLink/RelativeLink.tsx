@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link, LinkProps, useRouteMatch } from 'react-router-dom';
 
 type Props = LinkProps;
 
-export const RelativeLink: React.FC<Props> = ({ to, ...props }) => {
-  const { path } = useRouteMatch();
+const cleanUrl = (s: string) => s.replace(/([^:])(\/\/+)/g, '$1/');
 
-  return <Link to={`${path}/${to}`} {...props} />;
+export const RelativeLink: React.FC<Props> = ({ to, ...props }) => {
+  const { url } = useRouteMatch();
+
+  const sanitizedPath = useMemo(() => cleanUrl(`${url}/${to}`), [url, to]);
+
+  return <Link to={sanitizedPath} {...props} />;
 };
