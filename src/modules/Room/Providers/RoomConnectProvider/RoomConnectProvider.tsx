@@ -49,7 +49,6 @@ export const RoomConnectProvider: React.FC<Props> = (props) => {
       user={props.peer.user}
       uniqId={props.room.id}
       onPeerConnectionChannelsUpdated={(p) => {
-        console.log('updateRoomPeerConnectionChannels updated', p);
         dispatch(updateRoomPeerConnectionChannels(p));
       }}
     >

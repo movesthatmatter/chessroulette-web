@@ -27,9 +27,9 @@ export const RoomPage: React.FC<Props> = (props) => {
     <JoinRoomBouncer
       readyPeerConnection={pc}
       slug={props.slug}
-      render={({ room, peer }) => (
+      render={({ room }) => (
         <JoinedRoomProvider readyPeerConnection={pc} room={room}>
-          <RoomConnectProvider room={room} peer={peer}>
+          <RoomConnectProvider room={room} peer={pc.peer}>
             <ActivityRoomConsumer />
           </RoomConnectProvider>
           <ExitRoomWidgetListener />

@@ -18,7 +18,7 @@ import { createRoomAction, updateRoomAction } from './redux/actions';
 type Props = {
   readyPeerConnection: ReadyPeerConnection;
   slug: RoomRecord['slug'];
-  render: (p: { room: JoinedRoom; peer: Peer }) => React.ReactNode;
+  render: (p: { room: JoinedRoom }) => React.ReactNode;
 };
 
 type SessionState = {
@@ -85,7 +85,7 @@ export const JoinRoomBouncer: React.FC<Props> = ({ readyPeerConnection: pc, ...p
 
   // Ensure the current joioned room is the same one
   if (joinedRoom?.slug === props.slug) {
-    return <>{props.render({ room: joinedRoom, peer: pc.peer })}</>;
+    return <>{props.render({ room: joinedRoom })}</>;
   }
 
   const sessionState = session ? session[props.slug] : undefined;
