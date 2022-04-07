@@ -1,16 +1,15 @@
+import React, { useMemo } from 'react';
 import { TournamentInProgressMatchRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
-import React, { useEffect, useState } from 'react';
-import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
+import { AwesomeErrorPage } from 'src/components/AwesomeError';
 import { Page } from 'src/components/Page';
-import { useResource } from 'src/lib/hooks/useResource';
 import { JoinedRoomProvider } from 'src/modules/Room/Providers/JoinedRoomProvider';
 import { RoomConnectProvider } from 'src/modules/Room/Providers/RoomConnectProvider';
-import { canJoinRoom } from 'src/modules/Room/resources';
 import { ActivityRoomConsumer } from 'src/modules/Room/RoomConsumers/ActivityRoomConsumer';
 import { PeerToServerConsumer } from 'src/providers/PeerConnectionProvider';
 import { useAnyUser } from 'src/services/Authentication';
 import { GetRoomOrCreate } from '../room/GetRoomOrCreate';
 import { RoomBouncer } from '../room/RoomBouncer';
+import { isUserAMatchParticipant } from '../utils';
 
 type Props = {
   match: TournamentInProgressMatchRecord;
@@ -18,31 +17,18 @@ type Props = {
 
 export const TournamentInProgressMatchPage: React.FC<Props> = ({ match }) => {
   const user = useAnyUser();
-  const [canJoinRoomState, setCanJoinRoomState] = useState(false);
-
-  const canJoinRoomResource = useResource(canJoinRoom);
-
-  useEffect(() => {
-    canJoinRoomResource.request({ slug: match.slug }).map(({ canJoin }) => {
-      setCanJoinRoomState(canJoin);
-    });
-  }, []);
+  const iamParticipant = useMemo(() => isUserAMatchParticipant(match, user?.id || ''), [match]);
 
   if (!user) {
-    return null;
+    return <AwesomeErrorPage />;
   }
 
-  if (canJoinRoomResource.isLoading) {
-    // TODO: This should be better
-    return <AwesomeLoaderPage />;
-  }
-
-  if (canJoinRoomState) {
+  if (iamParticipant) {
     return (
       <GetRoomOrCreate
         slug={match.slug}
         newRoomSpecs={{
-          // TODO: This should be created by the tournament organizer suer id I believe!
+          // TODO: This should be created by the tournament organizer user id I believe!
           userId: user.id,
           slug: match.slug,
           activity: {
@@ -60,13 +46,11 @@ export const TournamentInProgressMatchPage: React.FC<Props> = ({ match }) => {
               <RoomBouncer
                 pc={pc}
                 room={room}
-                // render={(room) => <pre>{JSON.stringify(room, null, 2)}</pre>}
                 render={(room) => (
                   <JoinedRoomProvider readyPeerConnection={pc} room={room}>
                     <RoomConnectProvider room={room} peer={pc.peer}>
                       <ActivityRoomConsumer />
                     </RoomConnectProvider>
-                    {/* <ExitRoomWidgetListener /> */}
                   </JoinedRoomProvider>
                 )}
               />

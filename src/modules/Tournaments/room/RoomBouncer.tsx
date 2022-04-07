@@ -1,7 +1,7 @@
 import { Resources, RoomRecord } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { AwesomeLoader } from 'src/components/AwesomeLoader';
+import { AwesomeLoader, AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { useResource } from 'src/lib/hooks/useResource';
 import { JoinedRoom } from 'src/modules/Room';
 import { useJoinedRoom } from 'src/modules/Room/hooks/useJoinedRoom';
@@ -96,5 +96,5 @@ export const RoomBouncer: React.FC<Props> = ({ pc, room, extraCondition, ...prop
   }
 
   // should this beshown??
-  return <AwesomeLoader />;
+  return <AwesomeLoaderPage />;
 };
