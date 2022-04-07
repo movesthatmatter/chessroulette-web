@@ -1,7 +1,9 @@
-import { RoomRecord } from 'dstnd-io';
-import { Peer } from 'src/providers/PeerProvider';
-import { RoomMember } from './types';
 import deepCopy from 'deep-copy';
+import { RoomRecord } from 'chessroulette-io';
+import { RoomMember } from './types';
+import { Peer } from 'src/providers/PeerConnectionProvider';
+import { ISODateTime } from 'src/lib/date/ISODateTime';
+import { isAfter, isBefore } from 'date-fns';
 
 export const toRoomMember = (peer: Peer): RoomMember => ({
   isRoomMember: true,
@@ -18,3 +20,13 @@ export const getRoomPendingChallenge = (room: RoomRecord) => {
 // export const isRoomMember = (peer: object): peer is RoomMember => {
 //   return keyInObject(peer, 'isRoomMember') && peer.isRoomMember === true;
 // };
+
+export const isDateInTheFuture = (d: Date | ISODateTime) => {
+  const now = new Date();
+  return isAfter(new Date(d), now);
+};
+
+export const isDateInThePast = (d: Date | ISODateTime) => {
+  const now = new Date();
+  return isBefore(new Date(d), now);
+};

@@ -1,4 +1,4 @@
-import { GameSpecsRecord } from 'dstnd-io';
+import { GameSpecsRecord } from 'chessroulette-io';
 import React, { useState } from 'react';
 import { Button, ButtonProps } from 'src/components/Button';
 import { Dialog } from 'src/components/Dialog';

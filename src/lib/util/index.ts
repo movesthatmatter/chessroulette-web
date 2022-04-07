@@ -1,8 +1,8 @@
 import { differenceInMilliseconds } from 'date-fns';
 import humanizeDuration, { Humanizer } from 'humanize-duration';
-import { RoomRecord } from 'dstnd-io';
+import { RoomRecord } from 'chessroulette-io';
 import { diff } from 'deep-object-diff';
-import { ScheduledRoomRecord } from 'dstnd-io/dist/resourceCollections/room/records/records';
+import { ScheduledRoomRecord } from 'chessroulette-io/dist/resourceCollections/room/records/records';
 
 export const noop = () => {
   // do nothing

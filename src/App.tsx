@@ -8,7 +8,7 @@ import { LichessProvider } from './modules/LichessPlay/LichessAPI/LichessProvide
 import { FeedbackProvider } from './providers/FeedbackProvider/FeedbackProvider';
 import { useColorTheme } from './theme/hooks/useColorTheme';
 import { themes } from './theme';
-import { PeerConnectionProvider } from './providers/PeerConnectionProvider';
+import { PeerToServerProvider } from './providers/PeerConnectionProvider';
 
 const generateId = createGenerateId();
 
@@ -36,9 +36,9 @@ function App() {
             theme={theme.name === 'lightDefault' ? themes.lightDefault : themes.darkDefault}
           >
             <FeedbackProvider>
-              <PeerConnectionProvider>
+              <PeerToServerProvider>
                 <Routes />
-              </PeerConnectionProvider>
+              </PeerToServerProvider>
               <ScrollToTop />
             </FeedbackProvider>
           </ThemeProvider>

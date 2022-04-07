@@ -1,4 +1,4 @@
-import { ChallengeRecord } from 'dstnd-io';
+import { ChallengeRecord } from 'chessroulette-io';
 import { Text } from 'src/components/Text';
 import React, { useState } from 'react';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';

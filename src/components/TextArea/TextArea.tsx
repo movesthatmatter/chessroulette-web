@@ -16,10 +16,17 @@ type Props = React.DetailedHTMLProps<
   hasValidationError?: boolean;
 };
 
-export const TextArea: React.FC<Props> = ({ className, label, value, ...props }) => {
+export const TextArea: React.FC<Props> = ({
+  className,
+  label,
+  value,
+  hasValidationError,
+  validationError,
+  ...props
+}) => {
   const cls = useStyles();
   const [isFocused, setIsFocused] = useState(false);
-  const isInvalid = props.hasValidationError || props.validationError;
+  const isInvalid = hasValidationError || validationError;
 
   return (
     <div className={cx(cls.container, className)}>
@@ -48,9 +55,9 @@ export const TextArea: React.FC<Props> = ({ className, label, value, ...props })
         </div>
         <div className={cx(cls.bottomPadding)} />
       </div>
-      {props.validationError && (
+      {validationError && (
         <div className={cls.errorMessageWrapper}>
-          <Text size="small1">{props.validationError}</Text>
+          <Text size="small1">{validationError}</Text>
         </div>
       )}
     </div>

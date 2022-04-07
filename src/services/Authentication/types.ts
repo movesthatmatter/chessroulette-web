@@ -1,4 +1,4 @@
-import { AccessToken, JWTToken } from 'dstnd-io';
+import { AccessToken, JWTToken } from 'chessroulette-io';
 
 // TODO: This is actually exactly UserCheckResponsePayload
 export type UserAccountInfo = {

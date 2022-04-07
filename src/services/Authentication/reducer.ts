@@ -1,4 +1,4 @@
-import { GuestUserRecord, JWTToken, RegisteredUserRecord } from 'dstnd-io';
+import { GuestUserRecord, JWTToken, RegisteredUserRecord } from 'chessroulette-io';
 import { createReducer } from 'deox';
 import { GenericStateSlice } from 'src/redux/types';
 import { setGuestUserAction, setUserAction, unsetUserAction, updateUserAction } from './actions';

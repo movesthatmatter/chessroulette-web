@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { noop } from 'src/lib/util';
-import { usePeerState } from 'src/providers/PeerProvider';
+import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { gameRecordToGame } from '../../Chess/lib';
 import { Game } from '../../types';
@@ -14,7 +14,7 @@ type Props = {
 };
 
 export const GameProvider: React.FC<Props> = ({ onGameUpdated = noop, children }) => {
-  const peerState = usePeerState();
+  const pc = usePeerConnection();
 
   const request = useCallback<SocketClient['send']>(
     (payload) => {
@@ -22,11 +22,11 @@ export const GameProvider: React.FC<Props> = ({ onGameUpdated = noop, children }
       // THE ui should actually change and not allow interactions, but ideally
       //  the room still shows!
       // TODO: That should actually be somewhere global maybe!
-      if (peerState.status === 'open') {
-        peerState.client.send(payload);
+      if (pc.ready) {
+        pc.connection.send(payload);
       }
     },
-    [peerState.status]
+    [pc.ready]
   );
 
   const [contextState, setContextState] = useState({
@@ -43,8 +43,8 @@ export const GameProvider: React.FC<Props> = ({ onGameUpdated = noop, children }
   useEffect(() => {
     const unsubscribers: Function[] = [];
 
-    if (peerState.status === 'open') {
-      const usubscribe = peerState.client.onMessage((payload) => {
+    if (pc.ready) {
+      const usubscribe = pc.connection.onMessage((payload) => {
         if (payload.kind === 'joinedGameUpdated') {
           onGameUpdated(gameRecordToGame(payload.content));
         } else if (payload.kind === 'joinedRoomAndGameUpdated') {
@@ -58,7 +58,7 @@ export const GameProvider: React.FC<Props> = ({ onGameUpdated = noop, children }
     return () => {
       unsubscribers.forEach((unsubscribe) => unsubscribe());
     };
-  }, [peerState.status]);
+  }, [pc.ready]);
 
   // Join the Game
   useEffect(() => {

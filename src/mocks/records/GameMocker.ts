@@ -7,8 +7,8 @@ import {
   ChessGameStateStarted,
   ChessGameStatePending,
   ChessHistory,
-} from 'dstnd-io';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+} from 'chessroulette-io';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 import { Game, GameFromGameState } from 'src/modules/Games';
 import { historyToPgn } from 'src/modules/Games/Chess/lib';
 import { pgnToChessHistory } from './ChessGameStateMocker';

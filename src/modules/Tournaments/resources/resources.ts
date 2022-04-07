@@ -1,61 +1,66 @@
-import { Resources } from 'dstnd-io';
+import { Resources } from 'chessroulette-io';
 import { http } from 'src/lib/http';
 
-const { resource: getAllTournamentsResource } =
-  Resources.Collections.ChallongeTournaments.GetChallongeTournaments;
-
-export const getAllChallongeTournaments = (
+export const getAllTournaments = (
   req: Resources.Util.RequestOf<typeof getAllTournamentsResource>
 ) => {
+  const {
+    resource: getAllTournamentsResource,
+  } = Resources.Collections.Tournaments.GetAllTournaments;
+
   return getAllTournamentsResource.request(req, (params) =>
     http.get('api/tournaments/all', { params })
   );
 };
 
-const { resource: getTournamentByID } =
-  Resources.Collections.ChallongeTournaments.GetChallongeTournamentByID;
+export const getTournament = (req: Resources.Util.RequestOf<typeof resource>) => {
+  const { resource } = Resources.Collections.Tournaments.GetTournament;
 
-export const getTournament = (
-  slug: string,
-  req: Resources.Util.RequestOf<typeof getTournamentByID>
-) => {
-  return getTournamentByID.request(req, (params) =>
-    http.get(`api/tournaments/show/${slug}`, { params })
+  return resource.request(req, (params) =>
+    http.get(`api/tournaments/show/${params.tournamentId}`, { params })
   );
 };
 
-const { resource: registerParticipant } =
-  Resources.Collections.ChallongeTournaments.CreateChallongeTournamentParticipant;
+export const getTournamentWithFullDetails = (req: Resources.Util.RequestOf<typeof resource>) => {
+  const { resource } = Resources.Collections.Tournaments.GetTournamentWithFullDetails;
 
-export const createParticipantForTournament = (
-  req: Resources.Util.RequestOf<typeof registerParticipant>
-) => {
-  return registerParticipant.request(req, (data) => http.post(`api/tournaments/register`, data));
+  return resource.request(req, (params) =>
+    http.get(`api/tournaments/show/${params.tournamentId}/full-details`, { params })
+  );
 };
 
-const { resource: createTournamentResource } =
-  Resources.Collections.ChallongeTournaments.CreateChallongeTournament;
+export const createTournamentParticipant = (
+  req: Resources.Util.RequestOf<typeof registerParticipant>
+) => {
+  const {
+    resource: registerParticipant,
+  } = Resources.Collections.Tournaments.CreateTournamentParticipant;
+
+  return registerParticipant.request(req, (data) =>
+    http.post(`api/tournaments/${data.tournamentId}/participants`, data)
+  );
+};
 
 export const createTournament = (
   req: Omit<Resources.Util.RequestOf<typeof createTournamentResource>, 'start_at'>
 ) => {
+  const { resource: createTournamentResource } = Resources.Collections.Tournaments.CreateTournament;
+
   return createTournamentResource.request(req, (data) => http.post(`api/tournaments/create`, data));
 };
 
-const { resource: checkUser } = Resources.Collections.ChallongeTournaments.CheckIfUserIsParticipant;
-
-export const checkIfUserIsParticipant = (req: Resources.Util.RequestOf<typeof checkUser>) => {
-  return checkUser.request(req, (params) => http.get('api/tournaments/check-user', { params }));
-};
-
-const { resource: getMatches } = Resources.Collections.ChallongeTournaments.GetAllMatches;
-
 export const getAllMatches = (req: Resources.Util.RequestOf<typeof getMatches>) => {
-  return getMatches.request(req, (params) => http.get('api/tournaments/matches', { params }));
+  const { resource: getMatches } = Resources.Collections.Tournaments.GetAllTournamentMatches;
+
+  return getMatches.request(req, (params) =>
+    http.get(`api/tournaments/${params.tournamentId}/matches`)
+  );
 };
 
-const { resource: joinMatch } = Resources.Collections.ChallongeTournaments.JoinMatchAsPlayer;
+export const playTournamentMatch = (req: Resources.Util.RequestOf<typeof resource>) => {
+  const { resource } = Resources.Collections.Tournaments.PlayTournamentMatch;
 
-export const joinMatchAsPlayer = (req: Resources.Util.RequestOf<typeof joinMatch>) => {
-  return joinMatch.request(req, (data) => http.post('api/tournaments/join-player', data));
+  return resource.request(req, (data) =>
+    http.post(`api/tournaments/${data.tournamentId}/matches/${data.matchId}/play`, data)
+  );
 };

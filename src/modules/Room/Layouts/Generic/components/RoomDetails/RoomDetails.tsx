@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from 'src/components/Text';
+import { Room } from 'src/modules/Room/types';
 import { getUserDisplayName } from 'src/modules/User';
-import { Room } from 'src/providers/PeerProvider';
 
 type Props = {
   room: Room;

@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { action } from '@storybook/addon-actions';
-import { ChessHistoryIndex } from 'dstnd-io';
-import { addMoveToChessHistory } from 'dstnd-io/dist/analysis/analysisActions';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { ChessHistoryIndex } from 'chessroulette-io';
+import { addMoveToChessHistory } from 'chessroulette-io/dist/analysis/analysisActions';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 import React, { useState } from 'react';
 import { second } from 'src/lib/time';
 import { pgnToChessHistory } from 'src/mocks/records';

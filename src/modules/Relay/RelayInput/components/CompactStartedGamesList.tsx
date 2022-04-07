@@ -1,4 +1,4 @@
-import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
+import { RelayedGameRecord } from 'chessroulette-io/dist/resourceCollections/relay/records';
 import React from 'react';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';

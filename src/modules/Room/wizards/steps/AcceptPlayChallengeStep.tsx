@@ -1,7 +1,7 @@
 import React from 'react';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { useWizard } from 'react-use-wizard';
-import { ChallengeRecord, RoomRecord } from 'dstnd-io';
+import { ChallengeRecord, RoomRecord } from 'chessroulette-io';
 import { DialogWizardStep } from 'src/components/DialogWizard/DialogWizardStep';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
 import { spacers } from 'src/theme/spacers';

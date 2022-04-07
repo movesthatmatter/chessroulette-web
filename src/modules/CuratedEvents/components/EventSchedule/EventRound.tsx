@@ -8,7 +8,7 @@ import { CuratedEventRound } from '../../types';
 import { colors } from 'src/theme/colors';
 import { Text } from 'src/components/Text';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
-import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
+import { RelayedGameRecord } from 'chessroulette-io/dist/resourceCollections/relay/records';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { getRoundStatus } from './util';
 import { GamePlayersHeadsOn } from 'src/modules/GamesArchive/components/GamePlayersHeadsOn';

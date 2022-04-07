@@ -1,5 +1,5 @@
 import Chance from 'chance';
-import { UserInfoRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'chessroulette-io';
 import { getRandomInt } from 'src/lib/util';
 import { getAllCountries } from 'src/services/Location/resources';
 

@@ -1,11 +1,6 @@
 import { createReducer } from 'deox';
-import {
-  createRoomAction,
-  updateMeAction,
-  updateRoomAction,
-} from 'src/providers/PeerProvider/redux/actions';
 import { GenericStateSlice } from 'src/redux/types';
-import { RoomPlayActivity } from '../activities/PlayActivity';
+import { createRoomAction, updateRoomAction } from '../../redux/actions';
 import {
   switchRoomActivityAction,
   updateCurrentAnalysisAction,
@@ -26,24 +21,10 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
   handleAction(switchRoomActivityAction, (_, { payload }) => payload),
   handleAction(updateRoomActivityAction, (_, { payload }) => payload),
   handleAction(createRoomAction, (_, { payload }) => {
-    if (payload.room.activity.type === 'match') {
-      return {
-        type: 'play',
-        gameId: payload.room.activity.match.gameId,
-      } as RoomPlayActivity;
-    }
     return payload.room.activity;
   }),
   handleAction(updateRoomAction, (prev, { payload }) => {
     // If the Activity Type changed just return the new activity
-
-    if (payload.room.activity.type === 'match') {
-      return {
-        type: 'play',
-        gameId: payload.room.activity.match.gameId,
-      } as RoomPlayActivity;
-    }
-
     if (payload.room.activity.type !== prev.type) {
       return payload.room.activity;
     }
@@ -115,15 +96,18 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
 
   // TODO: This should probably not be here. Need to think of a way
   //  to combine all the room related reducers!
-  handleAction(updateMeAction, (prev, { payload }) => {
-    if (!payload.me.hasJoinedRoom) {
-      return {
-        type: 'none',
-      };
-    }
+  // TODO: //  Removed this on Mar 22, 2022
+  //    Wondering if it's really needed as the peer should be always on inside a room
+  //   or not present at all if not
+  // handleAction(updateMeAction, (prev, { payload }) => {
+  //   if (!payload.me.hasJoinedRoom) {
+  //     return {
+  //       type: 'none',
+  //     };
+  //   }
 
-    return prev;
-  }),
+  //   return prev;
+  // }),
   handleAction(updateJoinedGameAction, (prev, { payload: nextGame }) => {
     if (prev.type !== 'play') {
       return prev;

@@ -1,4 +1,4 @@
-import { ChessPlayer, RoomPlayActivityRecord } from 'dstnd-io';
+import { ChessPlayer, RoomPlayActivityRecord } from 'chessroulette-io';
 import { Game } from 'src/modules/Games';
 import { RoomActivitySpecifcParticipant } from '../../utilTypes';
 

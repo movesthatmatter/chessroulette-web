@@ -1,6 +1,6 @@
 import { Key } from 'chessground/types';
 import { ChessInstance, Move, Piece } from 'chess.js';
-import { ChessGameColor, ChessGameStateFen, ChessHistory, ChessMove, SimplePGN } from 'dstnd-io';
+import { ChessGameColor, ChessGameStateFen, ChessHistory, ChessMove, SimplePGN } from 'chessroulette-io';
 import { keyInObject } from 'src/lib/util';
 import { toChessColor } from '../../lib';
 import { ChessgroundProps } from 'react-chessground';

@@ -3,7 +3,8 @@ import React from 'react';
 import { GameMocker } from 'src/mocks/records';
 import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityParticipant';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
-import { RoomProvider } from 'src/modules/Room/RoomProvider';
+import { JoinedRoomProvider } from 'src/modules/Room/Providers/JoinedRoomProvider';
+import { SocketClient } from 'src/services/socket/SocketClient';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
 import { RoomPlayActivityParticipant } from '../types';
 import { PlayActivityContainer } from './PlayActivityContainer';
@@ -57,15 +58,24 @@ export const defaultStory = () => (
     withRedux
     initialState={{
       ...(myParticipant.isPresent && {
-        peerProvider: {
-          me: myParticipant.member.peer,
-          room: room,
-        },
+        peer: myParticipant.member.peer,
+        // peerProvider: {
+        //   me: ,
+        //   room: room,
+        // },
       }),
     }}
   >
-    <RoomProvider
-      joinedRoom={{
+    <JoinedRoomProvider
+      readyPeerConnection={{
+        ready: true,
+        peer: myParticipant.member.peer,
+        loading: false,
+        // TODO: Aded this on Mar 22, 2022 to not break the compiler, but it
+        //  fails at runtime as it needs to be mocked in order for the story to work
+        connection: {} as SocketClient, 
+      }}
+      room={{
         ...room,
         currentActivity: {
           type: 'none',
@@ -91,6 +101,6 @@ export const defaultStory = () => (
         }}
         // size={500}
       />
-    </RoomProvider>
+    </JoinedRoomProvider>
   </StorybookBaseProvider>
 );

@@ -1,37 +1,34 @@
-import { UserRecord } from 'dstnd-io';
+import { UserRecord } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Modal } from 'src/components/Modal/Modal';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { ChatContainer } from 'src/modules/Chat';
 import { ChatIconWithBadge } from 'src/modules/Chat/components/ChatIconWithBadge';
-import { selectChatHistory } from 'src/providers/PeerProvider';
-import { CustomTheme, hardBorderRadius } from 'src/theme';
-import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { hardBorderRadius } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
+import { Room } from '../../types';
 
 type Props = {
   containerHeight: number;
   myUserId: UserRecord['id'];
+  room: Room;
 };
 
-export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight }) => {
+export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight, room }) => {
   const cls = useStyles();
-  const chatHistory = useSelector(selectChatHistory);
   const [newMessageCounter, setNewMessageCounter] = useState(0);
   const [show, setShow] = useState(false);
   const [closedAt, setClosedAt] = useState(new Date());
-  const { theme } = useColorTheme();
 
   useEffect(() => {
-    if (chatHistory && !show) {
-      const unreadMessages = chatHistory.messages.filter(
+    if (room.chatHistory && !show) {
+      const unreadMessages = room.chatHistory.messages.filter(
         (m) => myUserId !== m.fromUserId && new Date(m.sentAt).getTime() > closedAt.getTime()
       );
 
       setNewMessageCounter(unreadMessages.length);
     }
-  }, [chatHistory?.messages, closedAt]);
+  }, [room.chatHistory?.messages, closedAt]);
 
   useEffect(() => {
     if (show === false) {
@@ -64,7 +61,7 @@ export const MobileChatWidget: React.FC<Props> = ({ myUserId, containerHeight })
             setShow(false);
           }}
         >
-          <ChatContainer />
+          <ChatContainer room={room} />
         </Modal>
       )}
     </>

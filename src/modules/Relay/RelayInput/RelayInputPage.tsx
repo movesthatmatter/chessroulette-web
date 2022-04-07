@@ -1,15 +1,14 @@
-import { ChessGameStateFinished, ChessMove } from 'dstnd-io';
+import { ChessGameStateFinished, ChessMove } from 'chessroulette-io';
 import React, { useCallback, useEffect, useState } from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import { noop, toDictIndexedBy } from 'src/lib/util';
-import { usePeerStateClient } from 'src/providers/PeerProvider';
 import { getCurrentlyStreamingRelayedGames } from '../BroadcastPage/resources';
 import { createRelay } from './resource';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import { ControlPanel } from './components/ControlPanel';
 import { CompactGamesList } from './components/CompactGamesList';
 import { CompactStartedGamesList } from './components/CompactStartedGamesList';
-import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
+import { RelayedGameRecord } from 'chessroulette-io/dist/resourceCollections/relay/records';
 import { Page } from 'src/components/Page';
 import { spacers } from 'src/theme/spacers';
 import { Button } from 'src/components/Button';
@@ -22,13 +21,13 @@ import { FormModel, NewRelayDialog } from './components/NewRelayDialog';
 import { Countdown } from 'src/modules/Games/Chess/components/Countdown';
 import { getUserDisplayName } from 'src/modules/User';
 import { timeLeftToInterval } from 'src/modules/Games/Chess/components/Countdown/util';
-import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { otherChessColor } from 'chessroulette-io/dist/chessGame/util/util';
 import { useInterval } from 'src/lib/hooks';
 import { MoveTimesDialog } from './components/MoveTimesDialog';
-import { CustomTheme, softBorderRadius } from 'src/theme';
+import { softBorderRadius } from 'src/theme';
 import { CuratedEvent } from 'src/modules/CuratedEvents/types';
 import { getAllCuratedEvents } from 'src/modules/CuratedEvents/resources';
-import { Game } from 'src/modules/Games';
+import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
 
 type Props = {};
 
@@ -38,7 +37,7 @@ type RelayedGames = {
 
 export const RelayInputPage: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const peerClient = usePeerStateClient();
+  const pc = usePeerConnection();
   const gameActions = useGameActions();
   const [relayGames, setRelayGames] = useState<RelayedGames>({});
   const [allEvents, setAllEvents] = useState<CuratedEvent[]>([]);
@@ -155,13 +154,19 @@ export const RelayInputPage: React.FC<Props> = (props) => {
 
   const request = useCallback<SocketClient['send']>(
     (payload) => {
-      peerClient.send(payload);
+      if (pc.ready) {
+        pc.connection.send(payload);
+      }
     },
-    [peerClient]
+    [pc.ready]
   );
 
   useEffect(() => {
-    const unsubscribe = peerClient.onMessage((msg) => {
+    if (!pc.ready) {
+      return;
+    }
+
+    const unsubscribe = pc.connection.onMessage((msg) => {
       //TODO - need to update this as this will only apply to peers inside a room!!
       if (msg.kind === 'relayGameUpdateList') {
         fetchLiveGames();
@@ -182,7 +187,7 @@ export const RelayInputPage: React.FC<Props> = (props) => {
     return () => {
       unsubscribe();
     };
-  }, [peerClient]);
+  }, [pc.ready]);
 
   useEffect(() => {
     if (selectedRelayId && relayGames[selectedRelayId].game.state === 'started') {

@@ -3,7 +3,7 @@ import { RoomNoActivity } from '../activities/NoActivity/types';
 import { RoomPlayActivity } from '../activities/PlayActivity/types';
 import { RoomRelayActivity } from '../activities/RelayActivity/types';
 import { RoomWarGameActivity } from '../activities/WarGameActivity/types';
-import { RoomMatchActivity } from '../activities/MatchActivity/types';
+// import { RoomMatchActivity } from '../activities/MatchActivity/types';
 
 type WithoutParticipants<T> = Omit<T, 'participants'>;
 
@@ -12,7 +12,7 @@ export type BaseRoomPlayActivity = WithoutParticipants<RoomPlayActivity>;
 export type BaseRoomAnalysisActivity = WithoutParticipants<RoomAnalysisActivity>;
 export type BaseRoomRelayActivity = WithoutParticipants<RoomRelayActivity>;
 export type BaseRoomWarGameActivity = WithoutParticipants<RoomWarGameActivity>;
-export type BaseRoomMatchActivity = WithoutParticipants<RoomMatchActivity>;
+// export type BaseRoomMatchActivity = WithoutParticipants<RoomMatchActivity>;
 
 export type BaseRoomActivity =
 	| BaseRoomNoActivity
@@ -20,4 +20,4 @@ export type BaseRoomActivity =
 	| BaseRoomAnalysisActivity
 	| BaseRoomRelayActivity
 	| BaseRoomWarGameActivity
-	| BaseRoomMatchActivity;
+	// | BaseRoomMatchActivity;

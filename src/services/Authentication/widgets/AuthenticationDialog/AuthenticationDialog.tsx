@@ -12,7 +12,7 @@ import {
   JWTToken,
   Oauth2AccessToken,
   RegisteredUserRecord,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { CodeVerificationForm } from '../../components/CodeVerificationForm';
 import { UserAccountInfo } from '../../types';
 import { onlyMobile } from 'src/theme';

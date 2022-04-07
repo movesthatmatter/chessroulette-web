@@ -1,11 +1,8 @@
-import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
+import { RelayedGameRecord } from 'chessroulette-io/dist/resourceCollections/relay/records';
 import React, { useEffect, useState } from 'react';
 import { Text } from 'src/components/Text';
-import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { createUseStyles } from 'src/lib/jss';
 import { TournamentRoundMocker } from 'src/mocks/records/TournamentRoundMocker';
-import { usePeerStateClient } from 'src/providers/PeerProvider';
-import { SocketClient } from 'src/services/socket/SocketClient';
 import { spacers } from 'src/theme/spacers';
 import { console, Date } from 'window-or-global';
 import { TournamentRound } from '../types';
@@ -37,12 +34,6 @@ export const WccCalendar: React.FC<Props> = (props) => {
         return 1;
       })
   );
-
-  const peerState = usePeerStateClient();
-
-  const request: SocketClient['send'] = (payload) => {
-    peerState.send(payload);
-  };
 
   const onLoadGame = (r: RelayedGameRecord) => {};
 

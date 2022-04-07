@@ -1,5 +1,10 @@
 import { getHttpInstance } from 'src/lib/http';
-import { io, publicRoomsResponsePayload, PublicRoomsResponsePayload, Resources } from 'dstnd-io';
+import {
+  io,
+  publicRoomsResponsePayload,
+  PublicRoomsResponsePayload,
+  Resources,
+} from 'chessroulette-io';
 import config from 'src/config';
 import { Result, Err } from 'ts-results';
 
@@ -19,53 +24,52 @@ export const getPublicRooms = async (): Promise<Result<PublicRoomsResponsePayloa
   }
 };
 
-const { resource: getRoomResource } = Resources.Collections.Room.GetRoom;
+export const getRoom = (req: Resources.Util.RequestOf<typeof resource>) => {
+  const { resource } = Resources.Collections.Room.GetRoom;
 
-export const getRoom = (req: Resources.Util.RequestOf<typeof getRoomResource>) =>
-  getRoomResource.request(req, (params) => http.get('api/rooms', { params }));
+  return resource.request(req, (params) => http.get('api/rooms', { params }));
+};
 
-const { resource: createRoomResource } = Resources.Collections.Room.CreateRoom;
+export const createRoom = (req: Resources.Util.RequestOf<typeof resource>) => {
+  const { resource } = Resources.Collections.Room.CreateRoom;
 
-export const createRoom = (req: Resources.Util.RequestOf<typeof createRoomResource>) =>
-  createRoomResource.request(req, (body) => http.post('api/rooms', body));
+  return resource.request(req, (body) => http.post('api/rooms', body));
+};
 
-const { resource: scheduleRoomResource } = Resources.Collections.Room.ScheduleRoom;
+export const scheduleRoom = (req: Resources.Util.RequestOf<typeof resource>) => {
+  const { resource } = Resources.Collections.Room.ScheduleRoom;
 
-export const scheduleRoom = (req: Resources.Util.RequestOf<typeof scheduleRoomResource>) =>
-  scheduleRoomResource.request(req, (body) => http.post('api/rooms/schedule', body));
+  return resource.request(req, (body) => http.post('api/rooms/schedule', body));
+};
 
+export const canJoinRoom = (req: Resources.Util.RequestOf<typeof resource>) => {
+  const { resource } = Resources.Collections.Room.CanJoinRoom;
+
+  return resource.request(req, (params) => http.get(`/api/rooms/${req.slug}/can-join`, { params }));
+};
 
 // Room Challenge
 
-const {
-  resource: createRoomChallengeResource,
-} = Resources.Collections.Room.RoomChallenge.CreateRoomChallenge;
+export const createRoomChallenge = (req: Resources.Util.RequestOf<typeof resource>) => {
+  const { resource } = Resources.Collections.Room.RoomChallenge.CreateRoomChallenge;
 
-export const createRoomChallenge = (
-  req: Resources.Util.RequestOf<typeof createRoomChallengeResource>
-) =>
-  createRoomChallengeResource.request(req, (params) =>
+  return resource.request(req, (params) =>
     http.post(`api/rooms/${params.roomId}/challenges`, params)
   );
+};
 
-const {
-  resource: acceptRoomChallengeResource,
-} = Resources.Collections.Room.RoomChallenge.AcceptRoomChallenge;
+export const acceptRoomChallenge = (req: Resources.Util.RequestOf<typeof resource>) => {
+  const { resource } = Resources.Collections.Room.RoomChallenge.AcceptRoomChallenge;
 
-export const acceptRoomChallenge = (
-  req: Resources.Util.RequestOf<typeof acceptRoomChallengeResource>
-) =>
-  acceptRoomChallengeResource.request(req, (params) =>
+  return resource.request(req, (params) =>
     http.post(`api/rooms/${params.roomId}/challenges/accept`, params)
   );
+};
 
-const {
-  resource: removeRoomChallengeResource,
-} = Resources.Collections.Room.RoomChallenge.RemoveRoomChallenge;
+export const deleteRoomChallenge = (req: Resources.Util.RequestOf<typeof resource>) => {
+  const { resource } = Resources.Collections.Room.RoomChallenge.RemoveRoomChallenge;
 
-export const deleteRoomChallenge = (
-  req: Resources.Util.RequestOf<typeof removeRoomChallengeResource>
-) =>
-  removeRoomChallengeResource.request(req, (params) =>
+  return resource.request(req, (params) =>
     http.delete(`api/rooms/${params.roomId}/challenges/${params.challengeId}`)
   );
+};

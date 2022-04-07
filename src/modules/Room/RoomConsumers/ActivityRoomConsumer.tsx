@@ -2,27 +2,26 @@ import React, { useContext, useEffect } from 'react';
 import { NoActivity } from '../RoomActivity/activities/NoActivity';
 import { PlayActivity } from '../RoomActivity/activities/PlayActivity';
 import { AnalysisActivity } from '../RoomActivity/activities/AnalysisActivity';
-import { RoomProviderContext } from '../RoomProvider';
-import { usePeerState } from 'src/providers/PeerProvider';
+import { JoinedRoomProviderContext } from '../Providers/JoinedRoomProvider';
 import { useDispatch } from 'react-redux';
 import { updateCurrentAnalysisAction, updateRelayGameAction } from '../RoomActivity/redux/actions';
 import { RelayActivity } from '../RoomActivity/activities/RelayActivity';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { WarGameActivity } from '../RoomActivity/activities/WarGameActivity';
-import { MatchActivity } from '../RoomActivity/activities/MatchActivity';
+import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
 
 type Props = {};
 
 export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
-  const context = useContext(RoomProviderContext);
-  const peerState = usePeerState();
   const dispatch = useDispatch();
+  const context = useContext(JoinedRoomProviderContext);
+  const pc = usePeerConnection();
 
   useEffect(() => {
-    if (peerState.status === 'open') {
+    if (pc.ready) {
       const unsubscribers = [
         // Analysis Activity Listener
-        peerState.client.onMessage((payload) => {
+        pc.connection.onMessage((payload) => {
           // These are the room activity messages
           // TODO: They could be unified into something like: roomActivityUpdated
           if (payload.kind === 'analysisUpdatedResponse') {
@@ -39,7 +38,7 @@ export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
         unsubscribers.forEach((unsubscribe) => unsubscribe());
       };
     }
-  }, [peerState.status]);
+  }, [pc.ready]);
 
   if (!context) {
     // Loader
@@ -47,8 +46,6 @@ export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
   }
 
   const { currentActivity } = context.room;
-
-  console.log('ActvityRoomConsumer =>', currentActivity);
 
   if (currentActivity.type === 'play') {
     return <PlayActivity activity={currentActivity} deviceSize={context.deviceSize} />;
@@ -66,9 +63,9 @@ export const ActivityRoomConsumer: React.FC<Props> = React.memo(() => {
     return <RelayActivity activity={currentActivity} deviceSize={context.deviceSize} />;
   }
 
-  if (currentActivity.type === 'match') {
-    return <MatchActivity activity={currentActivity} deviceSize={context.deviceSize} />;
-  }
+  // if (currentActivity.type === 'match') {
+  //   return <MatchActivity activity={currentActivity} deviceSize={context.deviceSize} />;
+  // }
 
   return <NoActivity deviceSize={context.deviceSize} />;
 });

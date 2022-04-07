@@ -8,10 +8,10 @@ import {
   ChessHistory,
   ChessPlayerBlack,
   ChessPlayerWhite,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { UserRecordMocker } from './UserRecordMocker';
 import { toISODateTime } from 'io-ts-isodatetime';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 import { getNewChessGame } from 'src/modules/Games/Chess/lib';
 import { getRandomInt } from 'src/lib/util';
 

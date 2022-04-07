@@ -22,7 +22,7 @@ import {
   EngineAnalysisRecord,
   EngineDepthLine,
 } from 'src/modules/Games/Chess/components/EngineAnalysis/types';
-import { ChessGameColor, SimplePGN } from 'dstnd-io';
+import { ChessGameColor, SimplePGN } from 'chessroulette-io';
 import { IconButton } from 'src/components/Button';
 import { colors } from 'src/theme/colors';
 import { Swap } from 'react-iconly';

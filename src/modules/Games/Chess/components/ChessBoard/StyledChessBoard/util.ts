@@ -1,4 +1,4 @@
-import { ChessGameColor, ChessMove } from 'dstnd-io';
+import { ChessGameColor, ChessMove } from 'chessroulette-io';
 
 export const promotionalSquareToPercentage = (move: ChessMove, orientation: ChessGameColor) => {
   const files = {

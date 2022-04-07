@@ -6,7 +6,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { validator } from 'src/lib/validator';
 import { updateUser } from 'src/services/Authentication/resources';
 import { updateUserAction } from 'src/services/Authentication/actions';
-import { CountryCode, RegisteredUserRecord } from 'dstnd-io';
+import { CountryCode, RegisteredUserRecord } from 'chessroulette-io';
 import { useDispatch } from 'react-redux';
 import { Avatar } from 'src/components/Avatar';
 import { GetCountries } from 'src/services/Location';

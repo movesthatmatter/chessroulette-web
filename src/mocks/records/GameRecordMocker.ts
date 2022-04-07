@@ -1,7 +1,7 @@
 import {
   ChessGameState,
   GameRecord,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { ChessGameStateMocker } from './ChessGameStateMocker';
 import { Chance } from 'chance';
 import { toISODateTime } from 'src/lib/date/ISODateTime';

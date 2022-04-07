@@ -5,7 +5,7 @@ import {
   PeerRecord,
   RoomStatsRecord,
   RoomRecord,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import {
   SocketConsumer,
   SocketConsumerProps,

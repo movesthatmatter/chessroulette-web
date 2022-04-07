@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import cx from 'classnames';
-import { GameRecord, SimplePGN } from 'dstnd-io';
+import { GameRecord, SimplePGN } from 'chessroulette-io';
 import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import { Button, IconButton } from 'src/components/Button';
@@ -110,6 +110,7 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
         tabs={[
           {
             title: 'My Archive',
+            iconType: 'fontAwesome',
             icon: faFolderOpen,
             content: (
               <div className={cls.scroller}>
@@ -129,6 +130,7 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
           },
           {
             title: 'Live Games',
+            iconType: 'fontAwesome',
             icon: faWifi,
             content: (
               <div className={cls.scroller}>
@@ -188,7 +190,7 @@ export const ImportPanel: React.FC<ImportPanelProps> = (props) => {
             if (state?.type === 'selectedArchivedGame') {
               props.onImportedArchivedGame(state.game);
             } else if (state.type === 'selectedRelayedGame') {
-              console.log('import relay!!', state.relayedGame)
+              console.log('import relay!!', state.relayedGame);
               props.onImportedRelayedGame(state.relayedGame);
             } else if (state.pgnFromInput.status === 'valid') {
               props.onImportedPgn(state.pgnFromInput.input);

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
-import { RoomProviderContext, RoomProviderContextState } from '../RoomProvider';
-import { SwitchRoomActivityRequestPayload } from 'dstnd-io';
+import { JoinedRoomProviderContext, JoinedRoomProviderContextState } from '../Providers/JoinedRoomProvider';
+import { SwitchRoomActivityRequestPayload } from 'chessroulette-io';
 import { CreateChallengeDialog } from '../RoomActivity/activities/components/CreateChallengeDialog';
 import { getRoomPendingChallenge } from '../util';
 
@@ -67,12 +67,12 @@ type Props = {
       onSwitch: (s: State) => void;
       goLive: () => void;
       toggleInMeetup: (inMeetup: boolean) => void;
-    } & NonNullable<RoomProviderContextState>
+    } & NonNullable<JoinedRoomProviderContextState>
   ) => React.ReactNode;
 };
 
 export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
-  const context = useContext(RoomProviderContext);
+  const context = useContext(JoinedRoomProviderContext);
   const [state, setState] = useState<State>();
 
   if (!context) {
@@ -123,7 +123,8 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
       {state?.activityType === 'play' && (
         <CreateChallengeDialog
           visible
-          initialGameSpecs={state.gameSpecs}
+          // TODO: Fix this issue before merging the Tournaments!!!
+          initialGameSpecs={state.creationRecord === 'challenge' && (state as any).gameSpecs}
           onCancel={() => setState(undefined)}
           onSuccess={() => setState(undefined)}
         />
