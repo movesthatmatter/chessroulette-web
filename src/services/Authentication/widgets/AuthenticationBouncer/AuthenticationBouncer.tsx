@@ -4,15 +4,19 @@ import { AuthenticationStateUser } from '../../reducer';
 import { useAuthentication } from '../../useAuthentication';
 import { AuthenticationDialog } from '../AuthenticationDialog';
 
+type State =
+  | { isAuthenticated: true; auth: AuthenticationStateUser }
+  | { isAuthenticated: false; check: () => void };
+
 type Props = {
   onAuthenticated?: (auth: AuthenticationStateUser) => void;
-  render?: (auth: AuthenticationStateUser) => React.ReactNode;
-  renderFallback?: (p: { check: () => void }) => React.ReactNode;
+  render?: (s: State) => React.ReactNode;
+  // renderFallback?: (p: { check: () => void }) => React.ReactNode;
 };
 
 export const AuthenticationBouncer: React.FC<Props> = ({
   render = () => null,
-  renderFallback = () => null,
+  // renderFallback = () => null,
   onAuthenticated = noop,
 }) => {
   const auth = useAuthentication();
@@ -31,17 +35,28 @@ export const AuthenticationBouncer: React.FC<Props> = ({
     setShowDialog(true);
   }, [auth.authenticationType, onAuthenticated]);
 
+  const [state, setState] = useState<State>(
+    auth.authenticationType === 'user'
+      ? {
+          isAuthenticated: true,
+          auth,
+        }
+      : {
+          isAuthenticated: false,
+          check,
+        }
+  );
+
   useEffect(() => {
     if (checkCalled && auth.authenticationType === 'user') {
       onAuthenticated(auth);
       setCheckCalled(false);
       setShowDialog(false);
+      setState({ isAuthenticated: true, auth });
+    } else {
+      setState({ isAuthenticated: false, check });
     }
-  }, [checkCalled, auth.authenticationType]);
-
-  if (auth.authenticationType === 'user') {
-    return <>{render(auth)}</>;
-  }
+  }, [check, checkCalled, auth.authenticationType]);
 
   return (
     <>
@@ -50,7 +65,7 @@ export const AuthenticationBouncer: React.FC<Props> = ({
         visible={showDialog}
         onClose={() => setShowDialog(false)}
       />
-      {renderFallback({ check })}
+      {render(state)}
     </>
   );
 };
