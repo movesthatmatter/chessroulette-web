@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   JoinedRoomProviderContext,
   JoinedRoomProviderContextState,
+  RoomOptions,
 } from './JoinedRoomProviderContext';
 import { useDeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { useRoomActivityListener } from 'src/modules/Room/RoomActivityLog/useRoomActivityListener';
@@ -15,11 +16,18 @@ import { useWillUnmount } from 'src/lib/hooks/useWillUnmount';
 type Props = {
   room: JoinedRoom;
   readyPeerConnection: ReadyPeerConnection;
+
+  roomOptions?: RoomOptions;
 };
+
+const defaultRoomOptions: RoomOptions = {
+  showActions: true,
+}
 
 export const JoinedRoomProvider: React.FC<Props> = ({
   room,
   readyPeerConnection: pc,
+  roomOptions = defaultRoomOptions,
   ...props
 }) => {
   const deviceSize = useDeviceSize();
@@ -58,6 +66,7 @@ export const JoinedRoomProvider: React.FC<Props> = ({
       goLive,
       toggleInMeetup,
     },
+    roomOptions,
     boardOrientation,
     setBoardOrientation,
   });
@@ -65,7 +74,8 @@ export const JoinedRoomProvider: React.FC<Props> = ({
   useRoomActivityListener(room);
 
   useEffect(() => {
-    setContextState({
+    setContextState((prev) => ({
+      roomOptions: prev?.roomOptions || roomOptions,
       room,
       deviceSize,
       roomActions: {
@@ -75,8 +85,8 @@ export const JoinedRoomProvider: React.FC<Props> = ({
       },
       boardOrientation,
       setBoardOrientation,
-    });
-  }, [room, deviceSize, switchActivity, boardOrientation, setBoardOrientation]);
+    }));
+  }, [room, deviceSize, switchActivity, boardOrientation, setBoardOrientation, roomOptions]);
 
   useEffect(() => {
     Events.trackRoomJoined(room);

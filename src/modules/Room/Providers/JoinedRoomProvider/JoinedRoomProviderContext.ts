@@ -4,6 +4,10 @@ import { BoardOrientation } from 'src/modules/Games';
 import { DeviceSize } from 'src/theme/hooks/useDeviceSize';
 import { JoinedRoom } from '../../types';
 
+export type RoomOptions = {
+  showActions?: boolean;
+};
+
 export type JoinedRoomProviderContextState =
   | undefined
   | {
@@ -14,6 +18,9 @@ export type JoinedRoomProviderContextState =
         goLive: () => void; // TODO: Add ability to stop Live
         toggleInMeetup: (state: boolean) => void;
       };
+
+      // Edit: This was added b/c of the tournaments but this should be part of configuring a room!
+      roomOptions: RoomOptions;
 
       // This could be part of a BoardSettings when we have more than one configurable setting
       boardOrientation: BoardOrientation;

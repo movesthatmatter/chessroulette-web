@@ -85,6 +85,10 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
     return null;
   }
 
+  if (!context.roomOptions.showActions) {
+    return null;
+  }
+
   return (
     <>
       {props.render({

@@ -40,7 +40,13 @@ export const QuickAnalysisRoomPage: React.FC<Props> = ({ slug, analysisActivityS
               room={room}
               // render={(room) => <pre>{JSON.stringify(room, null, 2)}</pre>}
               render={(room) => (
-                <JoinedRoomProvider readyPeerConnection={pc} room={room}>
+                <JoinedRoomProvider
+                  readyPeerConnection={pc}
+                  room={room}
+                  roomOptions={{
+                    showActions: false,
+                  }}
+                >
                   <RoomConnectProvider room={room} peer={pc.peer}>
                     <ActivityRoomConsumer />
                   </RoomConnectProvider>

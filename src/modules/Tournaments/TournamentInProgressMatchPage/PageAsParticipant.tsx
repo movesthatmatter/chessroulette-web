@@ -13,10 +13,7 @@ type Props = {
   meAsParticipant: UserRecord;
 };
 
-export const PageAsParticipant: React.FC<Props> = ({
-  match,
-  meAsParticipant,
-}) => {
+export const PageAsParticipant: React.FC<Props> = ({ match, meAsParticipant }) => {
   return (
     <GetRoomOrCreate
       slug={match.slug}
@@ -40,7 +37,13 @@ export const PageAsParticipant: React.FC<Props> = ({
               pc={pc}
               room={room}
               render={(room) => (
-                <JoinedRoomProvider readyPeerConnection={pc} room={room}>
+                <JoinedRoomProvider
+                  readyPeerConnection={pc}
+                  room={room}
+                  roomOptions={{
+                    showActions: false,
+                  }}
+                >
                   <RoomConnectProvider room={room} peer={pc.peer}>
                     <ActivityRoomConsumer />
                   </RoomConnectProvider>
