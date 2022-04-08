@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { AsyncResult } from 'ts-async-results';
+import { AsyncOk, AsyncResult } from 'ts-async-results';
 
 type State<E> =
   | {
@@ -18,22 +18,39 @@ type State<E> =
       error?: undefined;
     };
 
+type Opts = {
+  withCache?: boolean;
+  // Add expiry?
+};
+
 export const useResource = <T, E, P extends Parameters<any>, R extends AsyncResult<T, E>>(
-  fn: (...p: P) => R
+  fn: (...p: P) => R,
+  { withCache = true }: Opts = {}
 ) => {
+  const [cache, setCache] = useState<T>();
+
   const request = useCallback(
     (...args: P) => {
       setState({
         isLoading: true,
         hasFailed: false,
       });
+
+      // if (cache) {
+      //   return new AsyncOk(cache);
+      // }
+
       return fn(...args)
         .map(
-          AsyncResult.passThrough(() => {
+          AsyncResult.passThrough((data) => {
             setState({
               isLoading: false,
               hasFailed: false,
             });
+
+            if (withCache) {
+              setCache(data);
+            }
           })
         )
         .mapErr(
@@ -49,6 +66,20 @@ export const useResource = <T, E, P extends Parameters<any>, R extends AsyncResu
     [fn]
   );
 
+  const clearCache = useCallback(() => {
+    setCache(undefined);
+  }, []);
+
+  // This simply clears the cache before requesting again
+  const forceRequest = useCallback(
+    (...args: P) => {
+      clearCache();
+
+      return request(...args);
+    },
+    [clearCache, request]
+  );
+
   const [state, setState] = useState<State<E>>({
     isLoading: false,
     hasFailed: false,
@@ -58,6 +89,8 @@ export const useResource = <T, E, P extends Parameters<any>, R extends AsyncResu
     () => ({
       ...state,
       request,
+      clearCache,
+      forceRequest,
     }),
     [request, state]
   );
