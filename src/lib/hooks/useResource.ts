@@ -1,5 +1,11 @@
+import { addMilliseconds } from 'date-fns';
+import { ISODateTime, toISODateTime } from 'io-ts-isodatetime';
 import { useCallback, useMemo, useState } from 'react';
+import { isDateInTheFuture } from 'src/modules/Room/util';
+import { useSession } from 'src/services/Session';
 import { AsyncOk, AsyncResult } from 'ts-async-results';
+import { Date } from 'window-or-global';
+import { hashCyrb53 } from '../util';
 
 type State<E> =
   | {
@@ -20,25 +26,37 @@ type State<E> =
 
 type Opts = {
   withCache?: boolean;
-  // Add expiry?
+  cacheSource?: 'session' | 'memory';
+  cacheTTL?: number;
+};
+
+const defaultCacheTTL = 3 * 1000 * 60; // 3 mins
+
+type CachedRecord<T> = {
+  expireAt: ISODateTime;
+  data: T;
 };
 
 export const useResource = <T, E, P extends Parameters<any>, R extends AsyncResult<T, E>>(
   fn: (...p: P) => R,
-  { withCache = true }: Opts = {}
+  { withCache = false, cacheSource = 'memory', cacheTTL = defaultCacheTTL }: Opts = {}
 ) => {
-  const [cache, setCache] = useState<T>();
+  const cacheName = useMemo(() => `resource-cache:${hashCyrb53(fn.toString())}`, [fn]);
+  const [cache, setCache] = useSession<CachedRecord<T> | undefined>(cacheName);
 
   const request = useCallback(
     (...args: P) => {
+      const now = new Date();
+
+      // If there is unexpired cache use that
+      if (withCache && cache && isDateInTheFuture(cache.expireAt)) {
+        return (new AsyncOk(cache.data) as unknown) as R;
+      }
+
       setState({
         isLoading: true,
         hasFailed: false,
       });
-
-      // if (cache) {
-      //   return new AsyncOk(cache);
-      // }
 
       return fn(...args)
         .map(
@@ -49,7 +67,10 @@ export const useResource = <T, E, P extends Parameters<any>, R extends AsyncResu
             });
 
             if (withCache) {
-              setCache(data);
+              setCache({
+                expireAt: toISODateTime(addMilliseconds(now, cacheTTL)),
+                data,
+              });
             }
           })
         )
@@ -97,3 +118,8 @@ export const useResource = <T, E, P extends Parameters<any>, R extends AsyncResu
 
   return res;
 };
+
+export const useCachedResource = <T, E, P extends Parameters<any>, R extends AsyncResult<T, E>>(
+  fn: (...p: P) => R,
+  { cacheSource = 'memory', cacheTTL = defaultCacheTTL }: Opts = {}
+) => useResource(fn, { withCache: true, cacheSource, cacheTTL });
