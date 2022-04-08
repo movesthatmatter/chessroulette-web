@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { UserRecord } from 'chessroulette-io';
 import { Page } from 'src/components/Page';
 import { RelativeLink } from 'src/components/RelativeLink';
@@ -21,6 +21,8 @@ import whitePiece from '../assets/white_piece.svg';
 import blackPiece from '../assets/black_piece.svg';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { colors } from 'src/theme/colors';
+import { Countdown } from 'src/modules/Games/Chess/components/Countdown';
+import { isUserAMatchParticipant } from '../utils';
 
 type Props = {
   match: TournamentMatchRecord;
@@ -53,21 +55,6 @@ export const TournamentMatchPage: React.FC<Props> = ({
       })
       .map(setMatch);
   }, [match, playTournamentMatchResource.isLoading]);
-
-  useEffect(() => {
-    if (match.state === 'underway' && isDateInThePast(match.underwayAt)) {
-      setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000 * 1);
-      // playMatch();
-    }
-  }, [match.state]);
-
-  useEffect(() => {
-    if (countDown < 1) {
-      playMatch();
-    }
-  }, [countDown]);
 
   if (match.state === 'inProgress') {
     return (
@@ -253,7 +240,11 @@ export const TournamentMatchPage: React.FC<Props> = ({
       {/* {match.state == 'underway' && <Button label="Play" onClick={playMatch} />} */}
       {/* {match.state == 'complete' && <RelativeLink to="/analysis">Analyze</RelativeLink>}
       {match.state === 'underway' && <pre>{countDown} to play</pre>}*/}
+      {match.state == 'complete' && <RelativeLink to="/analysis">Analyze</RelativeLink>}
       {playTournamentMatchResource.isLoading && <AwesomeLoader />}
+      {match.state === 'underway' && isDateInThePast(match.underwayAt) && (
+        <Countdown timeLeft={10 * 1000} onFinished={playMatch} active gameTimeClass="blitz2" />
+      )}
     </Page>
   );
 };

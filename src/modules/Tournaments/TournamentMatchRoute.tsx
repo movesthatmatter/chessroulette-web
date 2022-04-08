@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
+import config from 'src/config';
 import { Route, Switch, useLocation, useParams, useRouteMatch } from 'react-router-dom';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
-import config from 'src/config';
 import { toDictIndexedBy } from 'src/lib/util';
 import { WithAuthenticatedPage } from 'src/services/Authentication/widgets/WithAuthenticatedPage';
 import { TournamentMatchAnalysisPage } from './TournamentMatchAnalysisPage';
@@ -15,7 +15,7 @@ type Props = {
 export const TournamentMatchRoute: React.FC<Props> = (props) => {
   const params = useParams<{ matchSlug: string }>();
   const location = useLocation();
-  let { path } = useRouteMatch();
+  const { path } = useRouteMatch();
 
   const tournamentOrganizerUserId = config.TOURNAMENT_ORGANIZER_ID;
 

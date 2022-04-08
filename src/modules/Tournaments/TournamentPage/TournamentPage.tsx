@@ -24,52 +24,57 @@ export const TournamentPage: React.FC<Props> = ({ tournament }) => {
     <Page name="Tournament" stretched>
       <div className={cls.container}>
         <TournamentBanner tournament={tournament} />
-        <div className={cls.tournamentDetails}>
-          <div>
-            <Tabs
-              currentTabIndex={tab}
-              onTabChanged={setTab}
-              headerClassName={cls.headerClass}
-              tabButtonClassName={cls.tabButton}
-              selectedTabButtonClassName={cls.selectedTab}
-              selectedColor="#FF32A1"
-              tabs={[
-                {
-                  title: 'Matches',
-                  content: <Bracket tournament={tournament} />,
-                  iconType: 'iconly',
-                  icon: Game,
-                  iconSize: 'default',
-                },
-                {
-                  title: 'Players Standings',
-                  content: <Players tournament={tournament} />,
-                  iconType: 'iconly',
-                  icon: Filter,
-                  iconSize: 'default',
-                },
-              ]}
-            />
-          </div>
-          <div style={{ display: 'flex', minWidth: '20rem' }}>
-            <div
-              style={{
-                minHeight: '30rem',
-                maxHeight: '40rem',
-                width: '100%',
-              }}
-            >
-              <DiscordReactEmbed
-                server={config.DISCORD_SERVER_ID}
-                channel={config.DISCORD_CHANNEL_ID_TOURNAMENTS}
-                className={cls.discordWidget}
-                style={{
-                  background: '!white',
-                }}
+        {
+          <div className={cls.tournamentDetails}>
+            <div>
+              <Tabs
+                currentTabIndex={tab}
+                onTabChanged={setTab}
+                headerClassName={cls.headerClass}
+                tabButtonClassName={cls.tabButton}
+                selectedTabButtonClassName={cls.selectedTab}
+                selectedColor="#FF32A1"
+                tabs={[
+                  {
+                    title: 'Matches',
+                    content: <Bracket tournament={tournament} />,
+                    iconType: 'iconly',
+                    icon: Game,
+                    iconSize: 'default',
+                  },
+                  {
+                    title: 'Players Standings',
+                    content: <Players tournament={tournament} />,
+                    iconType: 'iconly',
+                    icon: Filter,
+                    iconSize: 'default',
+                  },
+                ]}
               />
             </div>
+            {tournament.state === 'underway' ||
+              (tournament.state === 'in_progress' && (
+                <div style={{ display: 'flex', minWidth: '20rem' }}>
+                  <div
+                    style={{
+                      minHeight: '30rem',
+                      maxHeight: '40rem',
+                      width: '100%',
+                    }}
+                  >
+                    <DiscordReactEmbed
+                      server={config.DISCORD_SERVER_ID}
+                      channel={config.DISCORD_CHANNEL_ID_TOURNAMENTS}
+                      className={cls.discordWidget}
+                      style={{
+                        background: '!white',
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
           </div>
-        </div>
+        }
       </div>
     </Page>
   );

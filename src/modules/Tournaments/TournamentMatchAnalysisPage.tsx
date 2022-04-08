@@ -1,9 +1,9 @@
+import React, { useEffect, useState } from 'react';
 import { UserRecord } from 'chessroulette-io';
 import {
   TournamentCompleteMatchRecord,
   TournamentInProgressMatchRecord,
 } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
-import React, { useEffect, useState } from 'react';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
 import { useResource } from 'src/lib/hooks/useResource';
 import { gameRecordToGame } from '../Games/Chess/lib';

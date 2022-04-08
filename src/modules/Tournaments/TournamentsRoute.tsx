@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Route, Switch, useLocation, useRouteMatch } from 'react-router-dom';
 import { TournamentDetailsRoute } from './TournamentDetailsRoute';
 import { TournamentsPage } from './TournamentsPage/TournamentsPage';

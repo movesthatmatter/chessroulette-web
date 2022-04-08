@@ -19,7 +19,7 @@ export const PageAsParticipant: React.FC<Props> = ({ match, tournamentOrganizerU
       slug={match.slug}
       newRoomSpecs={{
         userId: tournamentOrganizerUserId,
-        slug: match.slug,
+        slug: `${match.slug}-${match.gameId}`,
         activity: {
           activityType: 'play',
           creationRecord: 'game',
