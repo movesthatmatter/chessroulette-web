@@ -5,7 +5,9 @@ import { isDateInTheFuture } from 'src/modules/Room/util';
 import { useSession } from 'src/services/Session';
 import { AsyncOk, AsyncResult } from 'ts-async-results';
 import { Date } from 'window-or-global';
+import { delay } from '../time';
 import { hashCyrb53 } from '../util';
+import { promiseToAsyncResult } from '../utils';
 
 type State<E> =
   | {
@@ -84,21 +86,22 @@ export const useResource = <T, E, P extends Parameters<any>, R extends AsyncResu
           })
         ) as R; // need to recast!
     },
-    [fn]
+    [fn, cache]
   );
 
   const clearCache = useCallback(() => {
     setCache(undefined);
-  }, []);
+  }, [setCache]);
 
   // This simply clears the cache before requesting again
   const forceRequest = useCallback(
     (...args: P) => {
       clearCache();
 
-      return request(...args);
+      // TODO: Fix this. for some reason the cache doesn't invalidate!!!
+      return promiseToAsyncResult(delay(1000)).flatMap(() => request(...args)) as R;
     },
-    [clearCache, request]
+    [clearCache, request, cache]
   );
 
   const [state, setState] = useState<State<E>>({
