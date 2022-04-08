@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Route, Switch, useLocation, useParams, useRouteMatch } from 'react-router-dom';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
-import { keyInObject, toDictIndexedBy } from 'src/lib/util';
+import { toDictIndexedBy } from 'src/lib/util';
 import { useAuthenticatedUser } from 'src/services/Authentication';
+import { TournamentMatchAnalysisPage } from './TournamentMatchAnalysisPage';
 import { TournamentMatchPage } from './TournamentMatchPage';
 import { TournamentWithFullDetailsRecord } from './types';
-import { TournamentMatchGameAnalysisPage } from './TournamentMatchGameAnalysisPage';
 
 type Props = {
   tournament: TournamentWithFullDetailsRecord;
@@ -17,30 +17,30 @@ export const TournamentMatchRoute: React.FC<Props> = (props) => {
   const location = useLocation();
   let { path } = useRouteMatch();
 
+  const matchesBySlug = useMemo(() => toDictIndexedBy(props.tournament.matches, (m) => m.slug), [
+    props.tournament.matches,
+  ]);
+
+  const match = matchesBySlug[params.matchSlug];
+
   if (!user) {
     // Show error
     return null;
   }
 
-  console.log('TOURNAMENT ==> ', props.tournament);
-
-  const matchesBySlug = toDictIndexedBy(props.tournament.matches, (m) => m.slug);
-
-  if (!keyInObject(matchesBySlug, params.matchSlug)) {
+  if (!match) {
     // Make it a specific 404 for the match
     return <AwesomeErrorPage errorType="resourceNotFound" />;
   }
-
-  const match = matchesBySlug[params.matchSlug];
 
   return (
     <Switch location={location}>
       <Route exact path={path} key={location.key}>
         <TournamentMatchPage match={matchesBySlug[params.matchSlug]} user={user} />
       </Route>
-      {match.state === 'complete' && (
+      {(match.state === 'complete' || match.state === 'inProgress') && (
         <Route path={`${path}/analysis`} key={location.key}>
-          <TournamentMatchGameAnalysisPage match={match} />
+          <TournamentMatchAnalysisPage match={match} myUser={user} />
         </Route>
       )}
     </Switch>

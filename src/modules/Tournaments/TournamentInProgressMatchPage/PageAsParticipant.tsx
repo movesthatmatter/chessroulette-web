@@ -1,35 +1,36 @@
-import { TournamentCompleteMatchRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import React from 'react';
+import { TournamentInProgressMatchRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import { JoinedRoomProvider } from 'src/modules/Room/Providers/JoinedRoomProvider';
 import { RoomConnectProvider } from 'src/modules/Room/Providers/RoomConnectProvider';
 import { ActivityRoomConsumer } from 'src/modules/Room/RoomConsumers/ActivityRoomConsumer';
 import { PeerToServerConsumer } from 'src/providers/PeerConnectionProvider';
-import { useAnyUser } from 'src/services/Authentication';
 import { GetRoomOrCreate } from '../room/GetRoomOrCreate';
 import { RoomBouncer } from '../room/RoomBouncer';
+import { UserRecord } from 'chessroulette-io';
 
 type Props = {
-  match: TournamentCompleteMatchRecord;
+  match: TournamentInProgressMatchRecord;
+  meAsParticipant: UserRecord;
 };
 
-export const TournamentMatchGameAnalysisPage: React.FC<Props> = ({ match }) => {
-  const user = useAnyUser();
-
-  if (!user) {
-    return null;
-  }
-
+export const PageAsParticipant: React.FC<Props> = ({
+  match,
+  meAsParticipant,
+}) => {
   return (
     <GetRoomOrCreate
-      slug={`${match.slug}-${user.id}-analysis`}
+      slug={match.slug}
       newRoomSpecs={{
-        userId: user.id,
-        slug: `${match.slug}-${user.id}-analysis`,
+        // TODO: This should be created by the tournament organizer user id I believe!
+        userId: meAsParticipant.id,
+        slug: match.slug,
         activity: {
-          activityType: 'analysis',
-          source: 'archivedGame',
+          activityType: 'play',
+          creationRecord: 'game',
           gameId: match.gameId,
         },
+
+        // Just for now
         p2pCommunicationType: 'none',
       }}
       render={(room) => (
@@ -38,18 +39,13 @@ export const TournamentMatchGameAnalysisPage: React.FC<Props> = ({ match }) => {
             <RoomBouncer
               pc={pc}
               room={room}
-              // render={(room) => <pre>{JSON.stringify(room, null, 2)}</pre>}
               render={(room) => (
                 <JoinedRoomProvider readyPeerConnection={pc} room={room}>
                   <RoomConnectProvider room={room} peer={pc.peer}>
                     <ActivityRoomConsumer />
                   </RoomConnectProvider>
-                  {/* <ExitRoomWidgetListener /> */}
                 </JoinedRoomProvider>
               )}
-              renderFallback={() => {
-                return <div>cant join</div>;
-              }}
             />
           )}
         />
