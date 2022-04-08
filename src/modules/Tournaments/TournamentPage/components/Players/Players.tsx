@@ -11,6 +11,8 @@ import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { spacers } from 'src/theme/spacers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
+import { getUserDisplayName } from 'src/modules/User';
+import { GradientText } from 'src/components/GradientText';
 
 type Props = {
 	tournament: TournamentWithFullDetailsRecord;
@@ -25,15 +27,66 @@ export const Players: React.FC<Props> = ({ tournament }) => {
 		determineNoWinsAndPointsPerParticipant(tournament.matches)
 	);
 
-	console.log('wins per player', winsAndPointsPerPlayer);
-
-	useEffect(() => {
-		console.log('tournament in players : ', tournament);
-	}, [tournament]);
-
 	useEffect(() => {
 		setWinsAndPointsPerPlayer(determineNoWinsAndPointsPerParticipant(tournament.matches));
 	}, [tournament]);
+
+	if (tournament.matches.length === 0) {
+		return (
+			<div className={cls.container}>
+				<div className={cls.playersContainer}>
+					<div className={cls.playersContainerTitle}>
+						<div className={cls.playersTitle} />
+						<div className={cls.playersTitle} style={{ width: '5rem' }}>
+							Wins
+						</div>
+						<div className={cls.playersTitle} style={{ width: '5rem' }}>
+							Points
+						</div>
+					</div>
+					<div className={cls.playersContainerContent}>
+						{tournament.participants.map((p, i) => (
+							<div
+								className={cls.playerRow}
+								style={{
+									background:
+										i % 2 === 0
+											? theme.name === 'darkDefault'
+												? `linear-gradient(270.03deg, ${theme.colors.neutralDark} 0.35%, rgba(231, 223, 255, 0) 100.9%)`
+												: `linear-gradient(270.03deg, ${theme.colors.primaryLightest} 0.35%, rgba(231, 223, 255, 0) 100.9%)`
+											: theme.colors.background,
+								}}
+							>
+								<div
+									className={cls.player}
+									style={{
+										...(auth &&
+											auth.id === p.user.id && {
+												fontWeight: 'bold',
+												color: theme.colors.primary,
+											}),
+									}}
+								>
+									<Avatar mutunachiId={+p.user.avatarId} />
+									{getUserDisplayName(p.user)}
+								</div>
+								<div className={cls.wins}>
+									<Text size="body2" style={{ fontWeight: 'bold' }}>
+										0
+									</Text>
+								</div>
+								<div className={cls.wins}>
+									<Text size="body2" style={{ fontWeight: 'bold' }}>
+										0
+									</Text>
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className={cls.container}>
@@ -41,10 +94,14 @@ export const Players: React.FC<Props> = ({ tournament }) => {
 				<div className={cls.playersContainerTitle}>
 					<div className={cls.playersTitle} />
 					<div className={cls.playersTitle} style={{ width: '5rem' }}>
-						Wins
+						<GradientText gradientCSSProp="linear-gradient(102.34deg, #FF32A1 22.52%, #D833D1 85.01%)">
+							Wins
+						</GradientText>
 					</div>
 					<div className={cls.playersTitle} style={{ width: '5rem' }}>
-						Points
+						<GradientText gradientCSSProp="linear-gradient(102.34deg, #FF32A1 22.52%, #D833D1 85.01%)">
+							Points
+						</GradientText>
 					</div>
 				</div>
 				<div className={cls.playersContainerContent}>
@@ -73,7 +130,7 @@ export const Players: React.FC<Props> = ({ tournament }) => {
 									}}
 								>
 									<Avatar mutunachiId={+winsAndPointsPerPlayer[p].user.avatarId} />
-									{winsAndPointsPerPlayer[p].user.name}
+									{getUserDisplayName(winsAndPointsPerPlayer[p].user)}
 									{i === 0 && (
 										<FontAwesomeIcon
 											icon={faCrown}
@@ -101,12 +158,15 @@ export const Players: React.FC<Props> = ({ tournament }) => {
 };
 
 const useStyles = createUseStyles((theme) => ({
-	container: {},
+	container: {
+		display: 'flex',
+		paddingTop: spacers.large,
+	},
 	playersContainer: {
 		display: 'flex',
 		flexDirection: 'column',
-		gap: spacers.default,
-		maxWidth: '30rem',
+		gap: spacers.large,
+		minWidth: '30rem',
 	},
 	playersContainerTitle: {
 		display: 'flex',
@@ -115,7 +175,7 @@ const useStyles = createUseStyles((theme) => ({
 	},
 	playersTitle: {
 		color: theme.colors.primary,
-		...fonts.small1,
+		...fonts.body1,
 		fontWeight: 'bold',
 		'&:last-child': {
 			display: 'flex',

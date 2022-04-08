@@ -84,11 +84,16 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 				</div>
 				<div className={cls.bottomRow}>
 					<div className={cls.status}>
-						<Text size="subtitle1">{getTournamentStatus(tournament.state)}</Text>
+						<Text size="body1">{getTournamentStatus(tournament.state)}</Text>
+					</div>
+					<div className={cls.info}>
+						<Text size="body1">{`${
+							tournament.tournamentType.charAt(0).toUpperCase() + tournament.tournamentType.slice(1)
+						} - ${tournament.state !== 'pending' ? tournament.swissRounds + ' Rounds' : ''}`}</Text>
 					</div>
 					<div className={cls.participants}>
 						<People set="bold" />
-						<Text size="small1">{`Participants: ${tournament.participantsCount}`}</Text>
+						<Text size="body1">{`Participants: ${tournament.participantsCount}`}</Text>
 					</div>
 					<div>
 						<AuthenticationBouncer
@@ -97,7 +102,7 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 									tournamentId: tournament.id,
 								}).map(() => setIAmParticipating(true));
 							}}
-							renderFallback={({ check }) => (
+							render={(state) => (
 								<Button
 									label={
 										iAmParticipating
@@ -106,10 +111,21 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 											? 'Join'
 											: 'Registration Closed'
 									}
-									disabled={iAmParticipating || tournament.state !== 'pending'}
+									// disabled={
+									// 	!state.isAuthenticated || iAmParticipating || tournament.state !== 'pending'
+									// }
 									type="positive"
-									style={{ marginBottom: '0px' }}
-									onClick={check}
+									style={{
+										marginBottom: '0px',
+										paddingLeft: '10px',
+										paddingRight: '10px',
+										fontWeight: 'normal',
+									}}
+									onClick={() => {
+										if (!state.isAuthenticated) {
+											state.check();
+										}
+									}}
 								/>
 							)}
 						/>
@@ -169,6 +185,7 @@ const useStyles = createUseStyles((theme) => ({
 		fontWeight: 'bold',
 		alignSelf: 'center',
 	},
+	info: {},
 	date: {
 		alignSelf: 'center',
 		display: 'flex',
@@ -178,7 +195,7 @@ const useStyles = createUseStyles((theme) => ({
 		backgroundColor: colors.universal.white,
 		...softBorderRadius,
 		color: colors.universal.black,
-		padding: spacers.smallest,
+		padding: spacers.small,
 		width: '2em',
 		height: '2em',
 	},

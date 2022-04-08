@@ -37,7 +37,9 @@ export const Bracket: React.FC<Props> = ({ tournament }) => {
 			{rounds.map((_, i) => (
 				<div key={`round-${i}`} className={cls.roundContainer}>
 					<div>
-						<Text size="smallItalic">{`Round ${i + 1}`}</Text>
+						<Text size="body1" style={{ fontStyle: 'italic', fontWeight: 'bold' }}>{`Round ${
+							i + 1
+						}`}</Text>
 					</div>
 					<div className={cls.round}>
 						{matchesByRound[i + 1] &&
@@ -54,8 +56,8 @@ const useStyles = createUseStyles({
 	container: {
 		display: 'flex',
 		flexDirection: 'column',
-		gap: spacers.default,
-		paddingTop: spacers.default,
+		gap: spacers.largest,
+		paddingTop: spacers.largest,
 		paddingBottom: spacers.default,
 	},
 	roundContainer: {

@@ -18,7 +18,7 @@ type Props = {
 
 export const TournamentPage: React.FC<Props> = ({ tournament }) => {
   const cls = useStyles();
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState(tournament.state === 'pending' ? 1 : 0);
 
   return (
     <Page name="Tournament" stretched>
@@ -94,6 +94,7 @@ const useStyles = createUseStyles((theme) => ({
   tournamentDetails: {
     display: 'flex',
     gap: spacers.largest,
+    justifyContent: 'space-between',
   },
   discordWidget: {
     width: '100%',
