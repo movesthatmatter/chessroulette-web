@@ -97,7 +97,7 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 									tournamentId: tournament.id,
 								}).map(() => setIAmParticipating(true));
 							}}
-							render={({ check }) => (
+							renderFallback={({ check }) => (
 								<Button
 									label={
 										iAmParticipating

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { RegisteredUserRecord } from 'chessroulette-io';
+import { UserRecord } from 'chessroulette-io';
 import { Page } from 'src/components/Page';
 import { RelativeLink } from 'src/components/RelativeLink';
 import { playTournamentMatch } from '../resources';
@@ -24,10 +24,13 @@ import { colors } from 'src/theme/colors';
 
 type Props = {
   match: TournamentMatchRecord;
-  user: RegisteredUserRecord;
+  tournamentOrganizerUserId: UserRecord['id'];
 };
 
-export const TournamentMatchPage: React.FC<Props> = ({ match: givenMatch, user }) => {
+export const TournamentMatchPage: React.FC<Props> = ({
+  match: givenMatch,
+  tournamentOrganizerUserId,
+}) => {
   const [match, setMatch] = useState(givenMatch);
   const playTournamentMatchResource = useResource(playTournamentMatch);
   const [countDown, setCountdown] = useState(10);
@@ -67,7 +70,12 @@ export const TournamentMatchPage: React.FC<Props> = ({ match: givenMatch, user }
   }, [countDown]);
 
   if (match.state === 'inProgress') {
-    return <TournamentInProgressMatchPage match={match} />;
+    return (
+      <TournamentInProgressMatchPage
+        match={match}
+        tournamentOrganizerUserId={tournamentOrganizerUserId}
+      />
+    );
   }
 
   function getDisplayDate(): string {

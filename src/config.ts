@@ -20,6 +20,9 @@ const DISCORD_SERVER_ID = process.env.REACT_APP_DISCORD_SERVER_ID as string;
 const DISCORD_CHANNEL_ID = process.env.REACT_APP_DISCORD_CHANNEL_ID as string;
 const DISCORD_CHANNEL_ID_TOURNAMENTS = process.env
   .REACT_APP_DISCORD_CHANNEL_ID_TOURNAMENTS as string;
+
+const TOURNAMENT_ORGANIZER_ID = process.env.REACT_APP_TOURNAMENT_ORGANIZER_ID as string;
+
 const config = {
   // Env
   DEBUG,
@@ -44,6 +47,9 @@ const config = {
   DISCORD_SERVER_ID,
   DISCORD_CHANNEL_ID,
   DISCORD_CHANNEL_ID_TOURNAMENTS,
+
+  // Temporary
+  TOURNAMENT_ORGANIZER_ID,
 };
 
 if (config.DEBUG) {

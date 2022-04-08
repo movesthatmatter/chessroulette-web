@@ -10,16 +10,15 @@ import { UserRecord } from 'chessroulette-io';
 
 type Props = {
   match: TournamentInProgressMatchRecord;
-  meAsParticipant: UserRecord;
+  tournamentOrganizerUserId: UserRecord['id'];
 };
 
-export const PageAsParticipant: React.FC<Props> = ({ match, meAsParticipant }) => {
+export const PageAsParticipant: React.FC<Props> = ({ match, tournamentOrganizerUserId }) => {
   return (
     <GetRoomOrCreate
       slug={match.slug}
       newRoomSpecs={{
-        // TODO: This should be created by the tournament organizer user id I believe!
-        userId: meAsParticipant.id,
+        userId: tournamentOrganizerUserId,
         slug: match.slug,
         activity: {
           activityType: 'play',
