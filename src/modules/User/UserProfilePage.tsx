@@ -1,15 +1,15 @@
 import React from 'react';
+import cx from 'classnames';
 import { useParams } from 'react-router-dom';
-import { AuthenticatedPage } from 'src/components/Page';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { CustomTheme, hideOnMobile, onlyDesktop } from 'src/theme';
+import { hideOnMobile, onlyDesktop } from 'src/theme';
 import { GamesArchive } from '../GamesArchive';
 import { Menu } from './components/Menu';
 import { UserDetails } from './sections/UserDetails';
-import cx from 'classnames';
 import { UserConnections } from './sections/UserConnections';
 import { spacers } from 'src/theme/spacers';
 import { keyInObject } from 'src/lib/util';
+import { AuthenticatedPage } from 'src/services/Authentication/pages/AuthenticatedPage';
 
 type Props = {};
 

@@ -5,11 +5,16 @@ import { useAuthentication } from '../../useAuthentication';
 import { AuthenticationDialog } from '../AuthenticationDialog';
 
 type Props = {
-  render: (p: { check: () => void }) => React.ReactNode;
   onAuthenticated?: (auth: AuthenticationStateUser) => void;
+  render?: (auth: AuthenticationStateUser) => React.ReactNode;
+  renderFallback?: (p: { check: () => void }) => React.ReactNode;
 };
 
-export const AuthenticationBouncer: React.FC<Props> = ({ render, onAuthenticated = noop }) => {
+export const AuthenticationBouncer: React.FC<Props> = ({
+  render = () => null,
+  renderFallback = () => null,
+  onAuthenticated = noop,
+}) => {
   const auth = useAuthentication();
   const [showDialog, setShowDialog] = useState(false);
   const [dialogUniqKey, setDialogUniqKey] = useState(String(Math.random()));
@@ -34,6 +39,10 @@ export const AuthenticationBouncer: React.FC<Props> = ({ render, onAuthenticated
     }
   }, [checkCalled, auth.authenticationType]);
 
+  if (auth.authenticationType === 'user') {
+    return <>{render(auth)}</>;
+  }
+
   return (
     <>
       <AuthenticationDialog
@@ -41,7 +50,7 @@ export const AuthenticationBouncer: React.FC<Props> = ({ render, onAuthenticated
         visible={showDialog}
         onClose={() => setShowDialog(false)}
       />
-      {render({ check })}
+      {renderFallback({ check })}
     </>
   );
 };
