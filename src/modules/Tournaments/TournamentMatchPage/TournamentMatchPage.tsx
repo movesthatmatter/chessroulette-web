@@ -110,7 +110,7 @@ export const TournamentMatchPage: React.FC<Props> = ({ match: givenMatch, user }
               <div
                 className={cls.avatar}
                 style={{
-                  left: '0px',
+                  left: '-10px',
                 }}
               >
                 {match.players && (
@@ -231,7 +231,7 @@ export const TournamentMatchPage: React.FC<Props> = ({ match: givenMatch, user }
               <div
                 className={cls.avatar}
                 style={{
-                  right: '0px',
+                  right: '-10px',
                 }}
               >
                 {match.players && (

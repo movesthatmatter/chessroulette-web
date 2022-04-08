@@ -56,10 +56,10 @@ export const openWithLiveGame = () =>
 	React.createElement(() => {
 		const [numberParticipants, setNumberParticipants] = useState(0);
 		const [tournament, setTournament] = useState<TournamentWithFullDetailsRecord>(
-			tournamentMocker.withLiveGame(6)
+			tournamentMocker.started(6, { withLive: true })
 		);
 		const reconfigureTournament = () => {
-			setTournament(tournamentMocker.withLiveGame(numberParticipants));
+			setTournament(tournamentMocker.started(numberParticipants, { withLive: true }));
 		};
 
 		return (
@@ -98,10 +98,10 @@ export const openWithUnderwayGame = () => (
 			const auth = useAuthentication();
 			const [numberParticipants, setNumberParticipants] = useState(0);
 			const [tournament, setTournament] = useState<TournamentWithFullDetailsRecord>(
-				tournamentMocker.withUnderwayGame(6)
+				tournamentMocker.started(6, { withUnderway: true })
 			);
 			const reconfigureTournament = () => {
-				setTournament(tournamentMocker.withUnderwayGame(numberParticipants));
+				setTournament(tournamentMocker.started(numberParticipants, { withUnderway: true }));
 			};
 
 			console.log('auth', auth);
@@ -136,12 +136,10 @@ export const openWithUnderwayGameAndAuthenticatedUser = () => (
 			const auth = useAuthentication();
 			const [numberParticipants, setNumberParticipants] = useState(0);
 			const [tournament, setTournament] = useState<TournamentWithFullDetailsRecord>(
-				tournamentMocker.withUnderwayGameAndAuthenticatedUser(6, myUser)
+				tournamentMocker.started(6, { withUnderway: true }, myUser)
 			);
 			const reconfigureTournament = () => {
-				setTournament(
-					tournamentMocker.withUnderwayGameAndAuthenticatedUser(numberParticipants, myUser)
-				);
+				setTournament(tournamentMocker.started(numberParticipants, { withUnderway: true }, myUser));
 			};
 
 			console.log('auth', auth);

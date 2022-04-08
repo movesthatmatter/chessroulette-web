@@ -5,7 +5,6 @@ import { TournamentWithFullDetailsRecord } from './types';
 import { Route, Switch, useLocation, useRouteMatch } from 'react-router-dom';
 import { TournamentPage } from './TournamentPage';
 import { TournamentMatchRoute } from './TournamentMatchRoute';
-import { PeerToServerConsumer } from 'src/providers/PeerConnectionProvider';
 import { TournamentWithFullDetailsMocker } from './mocks/TournamentWithFullDetailsMocker';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { useResource } from 'src/lib/hooks/useResource';
@@ -13,7 +12,10 @@ import { AwesomeErrorPage } from 'src/components/AwesomeError';
 
 type Props = {};
 
-const mockedTournament = new TournamentWithFullDetailsMocker().withLiveGame(6);
+const mockedTournament = new TournamentWithFullDetailsMocker().started(8, {
+  withLive: true,
+  withUnderway: true,
+});
 
 export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
   const params = useParams<{ slug: string }>();

@@ -6,7 +6,7 @@ export const floatingShadow: CSSProperties = {
 };
 
 export const hardFloatingShadow: CSSProperties = {
-  boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.07)',
+  boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.15)',
 };
 
 export const floatingShadowDarkMode: CSSProperties = {

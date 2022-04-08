@@ -3,8 +3,8 @@ import { createUseStyles } from 'src/lib/jss';
 import { fonts, hardFloatingShadow, softBorderRadius } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { spacers } from 'src/theme/spacers';
-import whitePiece from './assets/white_piece.svg';
-import blackPiece from './assets/black_piece.svg';
+import whitePiece from '../../assets/white_piece.svg';
+import blackPiece from '../../assets/black_piece.svg';
 import {
 	TournamentUnderwayMatchRecord,
 	TournamentInProgressMatchRecord,
@@ -32,21 +32,19 @@ export const JoinableMatch: React.FC<Props> = ({ match }) => {
 	const auth = useAuthentication();
 	const enterRoom = useEnterRoom();
 
+	const history = useHistory();
+	const { path, url } = useRouteMatch();
 
-  const history = useHistory();
-  const { path, url } = useRouteMatch();
-
-  const playMatch = () => {
-    playTournamentMatch({
-      tournamentId: match.tournamentId,
-      matchId: match.id,
-    })
-    .map((m) => {
-      console.log('path', url);
-      history.push(`${url}/matches/${m.slug}`)
-    })
-    // .map(enterRoom);
-  };
+	const playMatch = () => {
+		playTournamentMatch({
+			tournamentId: match.tournamentId,
+			matchId: match.id,
+		}).map((m) => {
+			console.log('path', url);
+			history.push(`${url}/matches/${m.slug}`);
+		});
+		// .map(enterRoom);
+	};
 
 	function getBackgroundForPlayer(player: ChessGameColor): string {
 		return match.state === 'inProgress'

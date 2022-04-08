@@ -28,7 +28,10 @@ export class TournamentWithFullDetailsMocker {
 	record(
 		state: State,
 		participantsCount: number,
-		options?: Options,
+		props?: {
+			withLive?: boolean;
+			withUnderway?: boolean;
+		},
 		withAuthUser?: UserInfoRecord
 	): TournamentWithFullDetailsRecord {
 		const id = String(chance.integer({ min: 1 }));
@@ -52,7 +55,7 @@ export class TournamentWithFullDetailsMocker {
 		let round = 1;
 		let matchesThisRound = -1;
 
-		const matches = new Array(rounds * totalMatchesPerRound).fill(null).map((_, i) => {
+		const matches = range(rounds * totalMatchesPerRound).map((_, i) => {
 			matchesThisRound += 1;
 			if (matchesThisRound === totalMatchesPerRound) {
 				round += 1;
@@ -70,35 +73,93 @@ export class TournamentWithFullDetailsMocker {
 					participants[participants.length - 1 - matchesThisRound],
 				]);
 			}
-			if (
-				state === 'in_progress' &&
-				round === rounds - 1 &&
-				matchesThisRound === totalMatchesPerRound - 1 &&
-				!options
-			) {
-				return matchMocker.record('open', round, id, [
-					participants[matchesThisRound],
-					participants[participants.length - 1 - matchesThisRound],
-				]);
+			// inprogress
+
+			if (!props) {
+				if (round === rounds - 1) {
+					return matchMocker.record('open', round, id, [
+						participants[participants.length - 1],
+						participants[matchesThisRound],
+					]);
+				}
+			} else if (props) {
+				if (round === rounds - 1) {
+					return matchMocker.record(
+						i % 2 === 0
+							? props.withUnderway
+								? 'underway'
+								: 'open'
+							: props.withLive
+							? 'inProgress'
+							: 'open',
+						round,
+						id,
+						[participants[participants.length - 1], participants[matchesThisRound]]
+					);
+				}
 			}
-			if (
-				state === 'in_progress' &&
-				round === rounds - 1 &&
-				matchesThisRound === totalMatchesPerRound - 1 &&
-				options
-			) {
-				return matchMocker.record(
-					options.withLive ? 'inProgress' : options.withUnderway ? 'underway' : 'open',
-					round,
-					id,
-					[participants[participants.length - 1], participants[matchesThisRound]]
-				);
-			}
-			return matchMocker.record(round < rounds ? 'complete' : 'pending', round, id, [
-				participants[matchesThisRound],
-				participants[participants.length - 1 - matchesThisRound],
-			]);
+
+			//default
+
+			return matchMocker.record(
+				round < rounds
+					? 'complete'
+					: matchesThisRound > totalMatchesPerRound / 2
+					? 'pending'
+					: 'open',
+				round,
+				id,
+				[participants[matchesThisRound], participants[participants.length - 1 - matchesThisRound]]
+			);
 		});
+
+		// const matches = new Array(rounds * totalMatchesPerRound).fill(null).map((_, i) => {
+		// 	matchesThisRound += 1;
+		// 	if (matchesThisRound === totalMatchesPerRound) {
+		// 		round += 1;
+		// 		matchesThisRound = 0;
+		// 	}
+		// 	if (state === 'pending') {
+		// 		return matchMocker.record('pending', round, id, [
+		// 			participants[matchesThisRound],
+		// 			participants[participants.length - 1 - matchesThisRound],
+		// 		]);
+		// 	}
+		// 	if (state === 'complete') {
+		// 		return matchMocker.record('complete', round, id, [
+		// 			participants[matchesThisRound],
+		// 			participants[participants.length - 1 - matchesThisRound],
+		// 		]);
+		// 	}
+		// 	if (
+		// 		state === 'in_progress' &&
+		// 		round === rounds - 1 &&
+		// 		matchesThisRound === totalMatchesPerRound - 1 &&
+		// 		!props
+		// 	) {
+		// 		return matchMocker.record('open', round, id, [
+		// 			participants[matchesThisRound],
+		// 			participants[participants.length - 1 - matchesThisRound],
+		// 		]);
+		// 	}
+		// 	if (
+		// 		state === 'in_progress' &&
+		// 		round === rounds - 1 &&
+		// 		matchesThisRound === totalMatchesPerRound - 1 &&
+		// 		props
+		// 	) {
+		// 		return matchMocker.record(
+		// 			props.withLive ? 'inProgress' : props.withUnderway ? 'underway' : 'open',
+		// 			round,
+		// 			id,
+		// 			[participants[participants.length - 1], participants[matchesThisRound]]
+		// 		);
+		// 	}
+		// 	return matchMocker.record(round < rounds ? 'complete' : 'pending', round, id, [
+		// 		participants[matchesThisRound],
+		// 		participants[participants.length - 1 - matchesThisRound],
+		// 	]);
+		// });
 
 		console.log('matches :', matches);
 
@@ -149,31 +210,38 @@ export class TournamentWithFullDetailsMocker {
 		return this.record('pending', participantsCount);
 	}
 
-	started(participantsCount: number): TournamentWithFullDetailsRecord {
-		return this.record('in_progress', participantsCount);
+	started(
+		participantsCount: number,
+		props?: {
+			withLive?: boolean;
+			withUnderway?: boolean;
+		},
+		withAuth?: UserInfoRecord
+	): TournamentWithFullDetailsRecord {
+		return this.record('in_progress', participantsCount, props, withAuth);
 	}
 
 	completed(participantsCount: number): TournamentWithFullDetailsRecord {
 		return this.record('complete', participantsCount);
 	}
 
-	withLiveGame(participantsCount: number): TournamentWithFullDetailsRecord {
-		return this.record('in_progress', participantsCount, { withLive: true, withUnderway: false });
-	}
+	// withLiveGame(participantsCount: number): TournamentWithFullDetailsRecord {
+	// 	return this.record('in_progress', participantsCount, { withLive: true, withUnderway: false });
+	// }
 
-	withUnderwayGame(participantsCount: number): TournamentWithFullDetailsRecord {
-		return this.record('in_progress', participantsCount, { withLive: false, withUnderway: true });
-	}
+	// withUnderwayGame(participantsCount: number): TournamentWithFullDetailsRecord {
+	// 	return this.record('in_progress', participantsCount, { withLive: false, withUnderway: true });
+	// }
 
-	withUnderwayGameAndAuthenticatedUser(
-		participantsCount: number,
-		user: UserInfoRecord
-	): TournamentWithFullDetailsRecord {
-		return this.record(
-			'in_progress',
-			participantsCount,
-			{ withLive: false, withUnderway: true },
-			user
-		);
-	}
+	// withUnderwayGameAndAuthenticatedUser(
+	// 	participantsCount: number,
+	// 	user: UserInfoRecord
+	// ): TournamentWithFullDetailsRecord {
+	// 	return this.record(
+	// 		'in_progress',
+	// 		participantsCount,
+	// 		{ withLive: false, withUnderway: true },
+	// 		user
+	// 	);
+	// }
 }

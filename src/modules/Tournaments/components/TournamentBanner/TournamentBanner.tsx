@@ -46,7 +46,21 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 
 	return (
 		<div className={cls.container}>
-			<div className={cls.leftSide}>
+			<div className={cls.logo}>
+				<img
+					src="https://innatepi.sirv.com/events/tournaments/mtm_ukraine/tournament_logo.svg"
+					alt="Tournament Logo"
+					style={{
+						width: '190px',
+						height: '124px',
+						...onlyMobile({
+							width: '100px',
+							height: '65px',
+						}),
+					}}
+				/>
+			</div>
+			<div className={cls.details}>
 				<div className={cls.topRow}>
 					<div
 						className={cx(
@@ -107,20 +121,6 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 					</div>*/}
 				</div>
 			</div>
-			<div className={cls.rightSide}>
-				<img
-					src="https://innatepi.sirv.com/events/tournaments/mtm_ukraine/tournament_logo.svg"
-					alt="Tournament Logo"
-					style={{
-						width: '190px',
-						height: '124px',
-						...onlyMobile({
-							width: '100px',
-							height: '65px',
-						}),
-					}}
-				/>
-			</div>
 		</div>
 	);
 };
@@ -138,15 +138,15 @@ const useStyles = createUseStyles((theme) => ({
 		paddingTop: spacers.default,
 		paddingBottom: spacers.small,
 	},
-	leftSide: {
+	details: {
 		display: 'flex',
 		flexDirection: 'column',
 		gap: spacers.default,
 		justifyContent: 'space-between',
 		flex: 1,
-		paddingRight: spacers.large,
+		paddingLeft: spacers.large,
 	},
-	rightSide: {},
+	logo: {},
 	topRow: {
 		display: 'flex',
 		justifyContent: 'flex-start',
