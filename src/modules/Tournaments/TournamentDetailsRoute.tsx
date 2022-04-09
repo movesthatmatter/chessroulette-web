@@ -14,16 +14,14 @@ import { usePeerToServerConnection } from 'src/providers/PeerConnectionProvider'
 
 type Props = {};
 
-const mockedTournament = new TournamentWithFullDetailsMocker().started(8, {
-  withLive: true,
-  withUnderway: true,
-});
+const mockedTournament = new TournamentWithFullDetailsMocker();
 
 export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
   const params = useParams<{ slug: string }>();
   const location = useLocation();
   let { path } = useRouteMatch();
   const pc = usePeerToServerConnection();
+  const auth = useAuthentication();
 
   const [tournament, setTournament] = useState<TournamentWithFullDetailsRecord>();
 
@@ -31,8 +29,17 @@ export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
   const getTournamentWithFullDetailsResource = useResource(getTournamentWithFullDetails);
 
   useEffect(() => {
-    //getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
-    setTournament(mockedTournament);
+    getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
+    // setTournament(
+    //   mockedTournament.started(
+    //     8,
+    //     {
+    //       withLive: true,
+    //       withUnderway: true,
+    //     },
+    //     auth.authenticationType === 'user' ? auth.user : undefined
+    //   )
+    // );
   }, [params.slug]);
 
   useEffect(() => {
