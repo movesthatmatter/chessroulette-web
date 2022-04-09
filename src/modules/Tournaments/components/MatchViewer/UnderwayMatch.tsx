@@ -19,6 +19,7 @@ import dateformat from 'dateformat';
 import cx from 'classnames';
 import { Avatar } from 'src/components/Avatar';
 import { colors } from 'src/theme/colors';
+import { isUserAMatchParticipant } from '../../utils';
 
 type Props = {
 	match: TournamentUnderwayMatchRecord;
@@ -41,6 +42,16 @@ export const UnderwayMatch: React.FC<Props> = ({ match }) => {
 			history.push(`${url}/matches/${m.slug}`);
 		});
 	};
+
+	const getOverlayStatus = useMemo(() => {
+		if (auth.authenticationType !== 'user') {
+			return 'Go To Game';
+		}
+		if (isUserAMatchParticipant(match, auth.user.id)) {
+			return 'Play Game';
+		}
+		return 'Go To Game';
+	}, [match, auth]);
 
 	const player1Class =
 		auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id
@@ -132,7 +143,7 @@ export const UnderwayMatch: React.FC<Props> = ({ match }) => {
 					<div className={cls.hoveredBkg}>
 						<div className={cls.hoveredContent} onClick={() => {}}>
 							<Text size="title2" className={cls.hoveredText}>
-								Watch Game
+								{getOverlayStatus}
 							</Text>
 						</div>
 					</div>

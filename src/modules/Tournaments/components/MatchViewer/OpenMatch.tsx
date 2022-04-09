@@ -120,7 +120,7 @@ export const OpenMatch: React.FC<Props> = ({ match }) => {
 					<div className={cls.hoveredBkg}>
 						<div className={cls.hoveredContent} onClick={() => {}}>
 							<Text size="title2" className={cls.hoveredText}>
-								Watch Game
+								View Details
 							</Text>
 						</div>
 					</div>
