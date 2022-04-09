@@ -1,7 +1,6 @@
 import React from 'react';
-import { AnchorLink } from 'src/components/AnchorLink';
 import { Button } from 'src/components/Button';
-import { RelativeLink } from 'src/components/RelativeLink';
+import { Link } from 'src/components/RelativeLink/Link';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { TournamentRecord } from 'src/modules/Tournaments/types';
@@ -18,14 +17,14 @@ export const TournamentListItem: React.FC<Props> = ({ tournament, thumb }) => {
 
   return (
     <div className={cls.tournamentItem}>
-      <AnchorLink href="https://fundraising-ukraine.chessroulette.live" target="_blank">
+      <Link to={`/tournaments/${tournament.id}`}>
         <img src={thumb} className={cls.tournamentThumbImg} />
-      </AnchorLink>
+      </Link>
       <div className={cls.tournamentItemInfo}>
         <Text size="title2">{tournament.name}</Text>
         <br />
         <br />
-        <Text size="subtitle1">TBD in April 2022</Text>
+        <Text size="subtitle1">April 9th 2022, 2pm EST</Text>
         <br />
         <br />
         <Text size="body2">
@@ -43,9 +42,9 @@ export const TournamentListItem: React.FC<Props> = ({ tournament, thumb }) => {
 
         <br />
         <br />
-        <RelativeLink to={`/${tournament.id}`}>
-          <Button label="Register or Learn More" onClick={() => {}} />
-        </RelativeLink>
+        <Link to={`/tournaments/${tournament.id}`}>
+          <Button label="View" onClick={() => {}} />
+        </Link>
       </div>
     </div>
   );
