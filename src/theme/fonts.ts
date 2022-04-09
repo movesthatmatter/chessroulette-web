@@ -70,7 +70,7 @@ const body2: CSSProperties = {
 };
 
 const title1: CSSProperties = {
-  fontSize: '36px',
+  fontSize: '30px',
   fontWeight: 700,
   lineHeight: '1em',
 

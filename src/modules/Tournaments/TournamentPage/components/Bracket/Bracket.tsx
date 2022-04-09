@@ -1,11 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { TournamentWithFullDetailsRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
+import {
+	TournamentMatchRecord,
+	TournamentWithFullDetailsRecord,
+} from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { range } from 'src/lib/util';
 import { MatchViewer } from 'src/modules/Tournaments/components/MatchViewer/MatchViewer';
 import { indexMatchesByRound } from 'src/modules/Tournaments/utils';
 import { spacers } from 'src/theme/spacers';
+import { useAuthentication } from 'src/services/Authentication';
+import { UserInfoRecord } from 'chessroulette-io';
 
 type Props = {
 	tournament: TournamentWithFullDetailsRecord;
@@ -15,10 +20,26 @@ export const Bracket: React.FC<Props> = ({ tournament }) => {
 	const [matchesByRound, setMatchesByRound] = useState(
 		indexMatchesByRound(tournament.matches, tournament.swissRounds)
 	);
+	const auth = useAuthentication();
+	const [myNextGame, setMyNextGame] = useState<TournamentMatchRecord | undefined>(undefined);
 
 	useEffect(() => {
 		setMatchesByRound(indexMatchesByRound(tournament.matches, tournament.swissRounds));
 	}, [tournament]);
+
+	useEffect(() => {
+		if (auth.authenticationType !== 'user') {
+			return;
+		}
+
+		setMyNextGame(findMyGame(auth.user));
+	}, [tournament]);
+
+	function findMyGame(user: UserInfoRecord) {
+		return tournament.matches.find(
+			(m) => m.players && (m.players[0].user.id === user.id || m.players[1].user.id === user.id)
+		);
+	}
 
 	const cls = useStyles();
 
@@ -34,6 +55,21 @@ export const Bracket: React.FC<Props> = ({ tournament }) => {
 
 	return (
 		<div className={cls.container}>
+			{typeof myNextGame !== 'undefined' && (
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						gap: spacers.large,
+						paddingBottom: spacers.default,
+					}}
+				>
+					<Text size="body1" style={{ fontStyle: 'italic', fontWeight: 'bold' }}>
+						Your next match :
+					</Text>
+					<MatchViewer key={myNextGame.id} match={myNextGame} />
+				</div>
+			)}
 			{rounds.map((_, i) => (
 				<div key={`round-${i}`} className={cls.roundContainer}>
 					<div>
@@ -44,7 +80,11 @@ export const Bracket: React.FC<Props> = ({ tournament }) => {
 					<div className={cls.round}>
 						{matchesByRound[i + 1] &&
 							matchesByRound[i + 1].length > 0 &&
-							matchesByRound[i + 1].map((match) => <MatchViewer key={match.id} match={match} />)}
+							matchesByRound[i + 1].map((match) => {
+								if (match.id !== myNextGame?.id)
+									return <MatchViewer key={match.id} match={match} />;
+								return null;
+							})}
 					</div>
 				</div>
 			))}

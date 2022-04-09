@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { createUseStyles } from 'src/lib/jss';
-import { fonts, hardFloatingShadow, softBorderRadius } from 'src/theme';
+import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
+import { fonts, hardFloatingShadow, softBorderRadius, textShadowDarkMode } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { spacers } from 'src/theme/spacers';
 import whitePiece from '../../assets/white_piece.svg';
@@ -18,12 +18,10 @@ import { Text } from 'src/components/Text';
 import dateformat from 'dateformat';
 import cx from 'classnames';
 import { Avatar } from 'src/components/Avatar';
+import { colors } from 'src/theme/colors';
 
 type Props = {
-	match:
-		| TournamentOpenMatchRecord
-		| TournamentUnderwayMatchRecord
-		| TournamentInProgressMatchRecord;
+	match: TournamentInProgressMatchRecord;
 };
 
 export const ProgressMatch: React.FC<Props> = ({ match }) => {
@@ -33,7 +31,6 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 	const { colors } = theme;
 	const history = useHistory();
 	const { path, url } = useRouteMatch();
-	const [mouseOver, setMouseOver] = useState(false);
 
 	const playMatch = () => {
 		playTournamentMatch({
@@ -44,21 +41,6 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 			history.push(`${url}/matches/${m.slug}`);
 		});
 	};
-
-	const edgeColor = useMemo(() => {
-		return match.state === 'open'
-			? //Open
-			  theme.name === 'darkDefault'
-				? theme.colors.secondary
-				: theme.colors.primary
-			: //Underway
-			match.state === 'underway'
-			? theme.name === 'darkDefault'
-				? theme.colors.positiveLight
-				: theme.colors.positive
-			: //In Progress
-			  '#FF32A1';
-	}, [match]);
 
 	const player1Class =
 		auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id
@@ -72,7 +54,7 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 	return (
 		<div className={cls.match}>
 			<div className={cls.container}>
-				{match.state === 'inProgress' && <div className={cls.liveIcon} />}
+				<div className={cls.liveIcon} />
 				<div
 					className={cls.playerContainer}
 					style={{
@@ -83,16 +65,12 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 							playMatch();
 						}
 					}}
-					onMouseOver={() => setMouseOver(true)}
-					onMouseOut={() => setMouseOver(false)}
-					onFocus={() => setMouseOver(true)}
-					onBlur={() => setMouseOver(false)}
 				>
 					<div
 						className={cls.border}
 						style={{
 							borderTopLeftRadius: spacers.small,
-							background: edgeColor,
+							background: '#FF32A1',
 						}}
 					/>
 					<div
@@ -103,9 +81,6 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 								color: theme.text.baseColor,
 								fontWeight: 'bold',
 							}),
-							...(mouseOver && {
-								background: edgeColor,
-							}),
 						}}
 					>
 						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
@@ -115,9 +90,6 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 						className={cls.pieceBox}
 						style={{
 							borderTopRightRadius: spacers.small,
-							...(mouseOver && {
-								background: edgeColor,
-							}),
 						}}
 					>
 						<img src={whitePiece} alt="white" />
@@ -133,16 +105,12 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 							playMatch();
 						}
 					}}
-					onMouseOver={() => setMouseOver(true)}
-					onMouseOut={() => setMouseOver(false)}
-					onFocus={() => setMouseOver(true)}
-					onBlur={() => setMouseOver(false)}
 				>
 					<div
 						className={cls.border}
 						style={{
 							borderBottomLeftRadius: spacers.small,
-							background: edgeColor,
+							background: '#FF32A1',
 						}}
 					/>
 					<div
@@ -153,9 +121,6 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 								color: theme.text.baseColor,
 								fontWeight: 'bold',
 							}),
-							...(mouseOver && {
-								background: edgeColor,
-							}),
 						}}
 					>
 						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
@@ -165,32 +130,27 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 						className={cls.pieceBox}
 						style={{
 							borderBottomRightRadius: spacers.small,
-							...(mouseOver && {
-								background: edgeColor,
-							}),
 						}}
 					>
 						<img src={blackPiece} alt="black" />
 					</div>
 				</div>
+				<div className={cls.hovered}>
+					<div className={cls.hoveredBkg}>
+						<div className={cls.hoveredContent} onClick={() => {}}>
+							<Text size="title2" className={cls.hoveredText}>
+								Watch Game
+							</Text>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div className={cls.status}>
-				<Text size="tiny1" style={{ fontWeight: 'bold', fontStyle: 'italic', color: edgeColor }}>
-					{match.state === 'underway'
-						? 'Waiting To Start'
-						: match.state === 'inProgress'
-						? 'In Progress'
-						: 'Scheduled'}
+				<Text size="tiny1" style={{ fontWeight: 'bold', fontStyle: 'italic', color: '#FF32A1' }}>
+					'In Progress'
 				</Text>
 				<Text size="tiny2" style={{ color: theme.text.baseColor }}>
-					{dateformat(
-						match.state === 'underway'
-							? match.underwayAt
-							: match.state === 'inProgress'
-							? match.startedAt
-							: match.scheduledAt,
-						'dd mmmm h:MM TT'
-					)}
+					{dateformat(match.startedAt, 'dd mmmm h:MM TT')}
 				</Text>
 			</div>
 		</div>
@@ -206,12 +166,63 @@ const useStyles = createUseStyles((theme) => ({
 		display: 'flex',
 		flexDirection: 'column',
 		position: 'relative',
-		maxWidth: '25rem',
-		minWidth: '15rem',
+		width: '15rem',
 		...fonts.small1,
 		...softBorderRadius,
 		...hardFloatingShadow,
 		color: theme.text.baseColor,
+		...({
+			'&:hover > $hovered': {
+				display: 'block !important',
+			},
+		} as NestedCSSElement),
+		...({
+			'&:hover > $playerContainer >$playerBox': {
+				background: '#FF32A1 !important',
+			},
+		} as NestedCSSElement),
+		...({
+			'&:hover > $playerContainer >$pieceBox': {
+				background: '#FF32A1 !important',
+			},
+		} as NestedCSSElement),
+	},
+	hovered: {
+		position: 'absolute',
+		zIndex: 90,
+		left: 0,
+		top: 0,
+		right: 0,
+		bottom: 0,
+		display: 'none',
+	},
+	hoveredBkg: {
+		cursor: 'pointer',
+		position: 'absolute',
+		left: '-6px',
+		top: 0,
+		right: 0,
+		bottom: 0,
+		background: '#ff32a1b5',
+		zIndex: 98,
+		...softBorderRadius,
+	},
+	hoveredContent: {
+		cursor: 'pointer',
+		display: 'flex',
+		justifyContent: 'center',
+		alignContent: 'center',
+		alignItems: 'center',
+		position: 'absolute',
+		left: 0,
+		top: 0,
+		right: 0,
+		bottom: 0,
+		zIndex: 99,
+		color: colors.universal.white,
+	},
+	hoveredText: {
+		...textShadowDarkMode,
 	},
 	liveIcon: {
 		width: '15px',

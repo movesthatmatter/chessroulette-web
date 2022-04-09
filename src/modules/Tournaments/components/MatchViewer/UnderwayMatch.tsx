@@ -1,46 +1,55 @@
-import React, { useState } from 'react';
-import { createUseStyles, NestedCSSElement } from 'src/lib/jss';
-import {
-	CustomTheme,
-	fonts,
-	hardFloatingShadow,
-	softBorderRadius,
-	textShadowDarkMode,
-} from 'src/theme';
+import React, { useMemo, useState } from 'react';
+import { createUseStyles, makeImportant, NestedCSSElement } from 'src/lib/jss';
+import { fonts, hardFloatingShadow, softBorderRadius, textShadowDarkMode } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { spacers } from 'src/theme/spacers';
 import whitePiece from '../../assets/white_piece.svg';
 import blackPiece from '../../assets/black_piece.svg';
-import { TournamentCompleteMatchRecord } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
-import { ChessGameColor } from 'chessroulette-io';
+import {
+	TournamentInProgressMatchRecord,
+	TournamentOpenMatchRecord,
+	TournamentUnderwayMatchRecord,
+} from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import { getUserDisplayName } from 'src/modules/User';
+import { useAuthentication } from 'src/services/Authentication';
+import { playTournamentMatch } from '../../resources';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Text } from 'src/components/Text';
 import dateformat from 'dateformat';
+import cx from 'classnames';
 import { Avatar } from 'src/components/Avatar';
 import { colors } from 'src/theme/colors';
 
 type Props = {
-	match: TournamentCompleteMatchRecord;
+	match: TournamentUnderwayMatchRecord;
 };
 
-function determineBackgroundColor(
-	match: TournamentCompleteMatchRecord,
-	theme: CustomTheme,
-	player: ChessGameColor
-) {
-	return match.winner === player
-		? theme.name === 'darkDefault'
-			? 'linear-gradient(180deg, #BC3F95 0%, #7346B9 100%)'
-			: 'linear-gradient(180deg, #5FD8F9 0%, #BE6ED9 128.12%)'
-		: theme.name === 'darkDefault'
-		? '#3A446A'
-		: theme.colors.primaryLightest;
-}
-
-export const CompletedMatch: React.FC<Props> = ({ match }) => {
+export const UnderwayMatch: React.FC<Props> = ({ match }) => {
 	const cls = useStyles();
+	const auth = useAuthentication();
 	const theme = useColorTheme().theme;
 	const { colors } = theme;
+	const history = useHistory();
+	const { path, url } = useRouteMatch();
+
+	const playMatch = () => {
+		playTournamentMatch({
+			tournamentId: match.tournamentId,
+			matchId: match.id,
+		}).map((m) => {
+			console.log('path', url);
+			history.push(`${url}/matches/${m.slug}`);
+		});
+	};
+
+	const player1Class =
+		auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id
+			? cls.playable
+			: cls.nonPlayable;
+	const player2Class =
+		auth.authenticationType === 'user' && auth.user.id === match.players[1].user.id
+			? cls.playable
+			: cls.nonPlayable;
 
 	return (
 		<div className={cls.match}>
@@ -50,22 +59,24 @@ export const CompletedMatch: React.FC<Props> = ({ match }) => {
 					style={{
 						borderBottom: `1px solid ${colors.background}`,
 					}}
+					onClick={() => {
+						if (auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id) {
+							playMatch();
+						}
+					}}
 				>
 					<div
 						className={cls.border}
 						style={{
 							borderTopLeftRadius: spacers.small,
+							background:
+								theme.name === 'darkDefault' ? theme.colors.positiveLight : theme.colors.positive,
 						}}
 					/>
 					<div
 						className={cls.playerBox}
 						style={{
 							borderTopLeftRadius: spacers.small,
-							...((match.winner === 'white' || match.winner === '1/2') && {
-								color: theme.text.baseColor,
-								fontWeight: 'bold',
-							}),
-							background: determineBackgroundColor(match, theme, 'white'),
 						}}
 					>
 						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
@@ -75,8 +86,6 @@ export const CompletedMatch: React.FC<Props> = ({ match }) => {
 						className={cls.pieceBox}
 						style={{
 							borderTopRightRadius: spacers.small,
-
-							background: determineBackgroundColor(match, theme, 'white'),
 						}}
 					>
 						<img src={whitePiece} alt="white" />
@@ -84,34 +93,36 @@ export const CompletedMatch: React.FC<Props> = ({ match }) => {
 				</div>
 				<div
 					className={cls.playerContainer}
-					style={{ borderTop: `1px solid ${colors.background}` }}
+					style={{
+						borderTop: `1px solid ${colors.background}`,
+					}}
+					onClick={() => {
+						if (auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id) {
+							playMatch();
+						}
+					}}
 				>
 					<div
 						className={cls.border}
 						style={{
 							borderBottomLeftRadius: spacers.small,
+							background:
+								theme.name === 'darkDefault' ? theme.colors.positiveLight : theme.colors.positive,
 						}}
 					/>
 					<div
 						className={cls.playerBox}
 						style={{
 							borderBottomLeftRadius: spacers.small,
-							...((match.winner === 'black' || match.winner === '1/2') && {
-								color: theme.text.baseColor,
-								fontWeight: 'bold',
-							}),
-							background: determineBackgroundColor(match, theme, 'black'),
 						}}
 					>
-						<Avatar mutunachiId={+match.players[1].user.avatarId} size={20} />
+						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
 						<div>{getUserDisplayName(match.players[1].user)}</div>
 					</div>
 					<div
 						className={cls.pieceBox}
 						style={{
 							borderBottomRightRadius: spacers.small,
-
-							background: determineBackgroundColor(match, theme, 'black'),
 						}}
 					>
 						<img src={blackPiece} alt="black" />
@@ -120,18 +131,28 @@ export const CompletedMatch: React.FC<Props> = ({ match }) => {
 				<div className={cls.hovered}>
 					<div className={cls.hoveredBkg}>
 						<div className={cls.hoveredContent} onClick={() => {}}>
-							<Text size="title2" className={cls.analyse}>
-								Analyse Game
+							<Text size="title2" className={cls.hoveredText}>
+								Watch Game
 							</Text>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div className={cls.status}>
-				<Text size="tiny1" style={{ fontStyle: 'italic' }}>
-					Completed
+				<Text
+					size="tiny1"
+					style={{
+						fontWeight: 'bold',
+						fontStyle: 'italic',
+						color:
+							theme.name === 'darkDefault' ? theme.colors.positiveLight : theme.colors.positive,
+					}}
+				>
+					'Waiting To Start'
 				</Text>
-				<Text size="tiny2">{dateformat(match.completedAt, 'dd mmmm h:MM TT')}</Text>
+				<Text size="tiny2" style={{ color: theme.text.baseColor }}>
+					{dateformat(match.underwayAt, 'dd mmmm h:MM TT')}
+				</Text>
 			</div>
 		</div>
 	);
@@ -141,18 +162,16 @@ const useStyles = createUseStyles((theme) => ({
 	match: {
 		display: 'flex',
 		flexDirection: 'column',
-		// paddingLeft: spacers.default,
-		// paddingRight: spacers.default,
 	},
 	container: {
 		display: 'flex',
 		flexDirection: 'column',
 		position: 'relative',
 		width: '15rem',
-		color: theme.text.baseColor,
 		...fonts.small1,
 		...softBorderRadius,
 		...hardFloatingShadow,
+		color: theme.text.baseColor,
 		...({
 			'&:hover > $hovered': {
 				display: 'block !important',
@@ -160,12 +179,18 @@ const useStyles = createUseStyles((theme) => ({
 		} as NestedCSSElement),
 		...({
 			'&:hover > $playerContainer >$playerBox': {
-				background: theme.name === 'darkDefault' ? '#D833D1 !important' : '#88ABEC !important',
+				...makeImportant({
+					background:
+						theme.name === 'darkDefault' ? theme.colors.positiveLight : theme.colors.positive,
+				}),
 			},
 		} as NestedCSSElement),
 		...({
 			'&:hover > $playerContainer >$pieceBox': {
-				background: theme.name === 'darkDefault' ? '#D833D1 !important' : '#88ABEC !important',
+				...makeImportant({
+					background:
+						theme.name === 'darkDefault' ? theme.colors.positiveLight : theme.colors.positive,
+				}),
 			},
 		} as NestedCSSElement),
 	},
@@ -185,7 +210,8 @@ const useStyles = createUseStyles((theme) => ({
 		top: 0,
 		right: 0,
 		bottom: 0,
-		background: theme.name === 'darkDefault' ? '#c53bceb3' : '#88abecb5',
+		background: theme.name === 'darkDefault' ? '#3fcee1b5' : '#16d090b5',
+		// opacity: 0.7,
 		zIndex: 98,
 		...softBorderRadius,
 	},
@@ -203,8 +229,19 @@ const useStyles = createUseStyles((theme) => ({
 		zIndex: 99,
 		color: colors.universal.white,
 	},
-	analyse: {
+	hoveredText: {
 		...textShadowDarkMode,
+	},
+	liveIcon: {
+		width: '15px',
+		height: '15px',
+		borderRadius: '50%',
+		backgroundColor: '#FF33A1',
+		border: `4px solid ${theme.colors.background}`,
+		position: 'absolute',
+		top: '-10px',
+		right: '-10px',
+		zIndex: 50,
 	},
 	border: {
 		position: 'absolute',
@@ -212,7 +249,6 @@ const useStyles = createUseStyles((theme) => ({
 		width: '1rem',
 		left: '-6px',
 		zIndex: 1,
-		background: theme.name === 'darkDefault' ? '#D833D1' : '#88ABEC',
 	},
 	playerContainer: {
 		display: 'flex',
@@ -224,10 +260,10 @@ const useStyles = createUseStyles((theme) => ({
 		textAlign: 'left',
 		justifyContent: 'flex-start',
 		padding: spacers.small,
-		alignItems: 'center',
-		gap: spacers.small,
 		zIndex: 10,
-		// background: theme.name === 'darkDefault' ? '#3A446A' : 'grey',
+		background: theme.colors.neutralLight,
+		gap: spacers.small,
+		alignItems: 'center',
 	},
 	pieceBox: {
 		display: 'flex',
@@ -237,11 +273,13 @@ const useStyles = createUseStyles((theme) => ({
 		padding: spacers.small,
 		paddingLeft: spacers.small,
 		paddingRight: spacers.small,
+		background: theme.colors.neutralLight,
 	},
+	playable: {},
+	nonPlayable: {},
 	status: {
 		marginTop: spacers.smaller,
 		display: 'flex',
 		gap: spacers.default,
-		color: theme.text.baseColor,
 	},
 }));

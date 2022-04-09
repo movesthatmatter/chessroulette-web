@@ -70,15 +70,12 @@ export const TournamentPage: React.FC<Props> = ({ tournament }) => {
               width: '100%',
             }}
           > */}
-            <DiscordReactEmbed
-              server={config.DISCORD_SERVER_ID}
-              channel={config.DISCORD_CHANNEL_ID_TOURNAMENTS}
-              className={cls.discordWidget}
-              style={{
-                background: '!white',
-              }}
-            />
-          </div>
+          <DiscordReactEmbed
+            server={config.DISCORD_SERVER_ID}
+            channel={config.DISCORD_CHANNEL_ID_TOURNAMENTS}
+            className={cls.discordWidget}
+          />
+        </div>
         {/* </div> */}
       </div>
     </Page>
@@ -124,7 +121,7 @@ const useStyles = createUseStyles((theme) => ({
   },
   side: {
     display: 'flex',
-    minWidth: '25rem',
+    maxWidth: '30rem',
     // width: '20%',
     height: 'calc(100vh - 140px)',
     // position: 'fixed',

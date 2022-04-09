@@ -9,18 +9,22 @@ import { TournamentWithFullDetailsMocker } from './mocks/TournamentWithFullDetai
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { useCachedResource, useResource } from 'src/lib/hooks/useResource';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
+import { useAuthentication } from 'src/services/Authentication';
 
 type Props = {};
 
-const mockedTournament = new TournamentWithFullDetailsMocker().started(8);
+const mockedTournament = new TournamentWithFullDetailsMocker().started(8, {
+  withLive: true,
+  withUnderway: true,
+});
 
 export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
   const params = useParams<{ slug: string }>();
   const location = useLocation();
   let { path } = useRouteMatch();
+  const auth = useAuthentication();
 
   const [tournament, setTournament] = useState<TournamentWithFullDetailsRecord>();
-
 
   // TODO: Don't leave it as cached resource!
   const getTournamentWithFullDetailsResource = useCachedResource(getTournamentWithFullDetails);

@@ -18,7 +18,7 @@ export const softFloatingShadowDarkMode: CSSProperties = {
 };
 
 export const textShadowDarkMode: CSSProperties = {
-  textShadow: '0 0 14px black',
+  textShadow: '0 0 8px black',
 };
 
 export const softBorderRadius: CSSProperties = {
