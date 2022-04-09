@@ -18,7 +18,13 @@ type Props = {
 
 export const TournamentPage: React.FC<Props> = ({ tournament }) => {
   const cls = useStyles();
-  const [tab, setTab] = useState(tournament.state === 'pending' ? 1 : 0);
+  const [tab, setTab] = useState(
+    tournament.state === 'pending' ||
+      tournament.state === 'complete' ||
+      tournament.state === 'ended'
+      ? 1
+      : 0
+  );
 
   return (
     <Page name="Tournament" stretched>
@@ -52,27 +58,24 @@ export const TournamentPage: React.FC<Props> = ({ tournament }) => {
                 ]}
               />
             </div>
-            {tournament.state === 'underway' ||
-              (tournament.state === 'in_progress' && (
-                <div style={{ display: 'flex', minWidth: '20rem' }}>
-                  <div
-                    style={{
-                      minHeight: '30rem',
-                      maxHeight: '40rem',
-                      width: '100%',
-                    }}
-                  >
-                    <DiscordReactEmbed
-                      server={config.DISCORD_SERVER_ID}
-                      channel={config.DISCORD_CHANNEL_ID_TOURNAMENTS}
-                      className={cls.discordWidget}
-                      style={{
-                        background: '!white',
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
+            <div style={{ display: 'flex', minWidth: '20rem' }}>
+              <div
+                style={{
+                  minHeight: '30rem',
+                  maxHeight: '40rem',
+                  width: '100%',
+                }}
+              >
+                <DiscordReactEmbed
+                  server={config.DISCORD_SERVER_ID}
+                  channel={config.DISCORD_CHANNEL_ID_TOURNAMENTS}
+                  className={cls.discordWidget}
+                  style={{
+                    background: '!white',
+                  }}
+                />
+              </div>
+            </div>
           </div>
         }
       </div>
