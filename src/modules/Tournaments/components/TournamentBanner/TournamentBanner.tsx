@@ -28,7 +28,7 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 			return;
 		}
 
-		setIAmParticipating(!!tournament.participants.find((p) => p.user.id === auth.user.id));
+		setIAmParticipating(!!Object.values(tournament.participants).find((p) => p.user.id === auth.user.id));
 	}, [auth.authenticationType]);
 
 	function getTournamentStatus(state: TournamentWithFullDetailsRecord['state']): Status {

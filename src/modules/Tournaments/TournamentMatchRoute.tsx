@@ -19,7 +19,7 @@ export const TournamentMatchRoute: React.FC<Props> = (props) => {
 
   const tournamentOrganizerUserId = config.TOURNAMENT_ORGANIZER_ID;
 
-  const matchesBySlug = useMemo(() => toDictIndexedBy(props.tournament.matches, (m) => m.slug), [
+  const matchesBySlug = useMemo(() => toDictIndexedBy(Object.values(props.tournament.matches), (m) => m.slug), [
     props.tournament.matches,
   ]);
 

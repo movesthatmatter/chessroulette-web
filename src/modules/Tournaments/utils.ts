@@ -23,7 +23,7 @@ export const indexMatchesByRound = (
   matches: TournamentWithFullDetailsRecord['matches'],
   rounds: number
 ): Record<number, TournamentMatchRecord[]> => {
-  return matches.reduce((accum, item) => {
+  return Object.values(matches).reduce((accum, item) => {
     return {
       ...accum,
       [item.round]: [...(accum[item.round] ? accum[item.round] : []), item],
@@ -34,7 +34,7 @@ export const indexMatchesByRound = (
 export const determineNoWinsAndPointsPerParticipant = (
   matches: TournamentWithFullDetailsRecord['matches']
 ): Record<string, { wins: number; points: number; user: UserInfoRecord }> => {
-  return matches.reduce((accum, match) => {
+  return Object.values(matches).reduce((accum, match) => {
     if (!match.players) return accum;
     const blackId = match.players[1].user.id;
     const whiteId = match.players[0].user.id;

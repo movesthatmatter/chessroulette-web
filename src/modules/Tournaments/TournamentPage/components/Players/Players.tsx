@@ -50,7 +50,7 @@ export const Players: React.FC<Props> = ({ tournament }) => {
     }
   }, [tournament]);
 
-  if (tournament.matches.length === 0) {
+  if (Object.keys(tournament.matches).length === 0) {
     return (
       <div className={cls.container}>
         <div className={cls.playersContainer}>
@@ -64,7 +64,7 @@ export const Players: React.FC<Props> = ({ tournament }) => {
             </div>
           </div>
           <div className={cls.playersContainerContent}>
-            {tournament.participants.map((p, i) => (
+            {Object.values(tournament.participants).map((p, i) => (
               <div
                 className={cls.playerRow}
                 style={{

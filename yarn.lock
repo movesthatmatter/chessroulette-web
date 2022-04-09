@@ -5937,7 +5937,7 @@ chessops@0.7.1:
 
 "chessroulette-io@https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#add-tournaments":
   version "0.3.0-1"
-  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#3c57cd041b73ba3dbbfe5a804dcb808768bc0c2e"
+  resolved "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#843e254adbb9d5c29f461e71d9ee53bae47f79a5"
   dependencies:
     "@types/chess.js" "^0.10.1"
     "@types/jest" "^26.0.13"

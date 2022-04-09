@@ -36,7 +36,7 @@ export const Bracket: React.FC<Props> = ({ tournament }) => {
 	}, [tournament]);
 
 	function findMyGame(user: UserInfoRecord) {
-		return tournament.matches.find(
+		return Object.values(tournament.matches).find(
 			(m) => m.players && (m.players[0].user.id === user.id || m.players[1].user.id === user.id)
 		);
 	}
@@ -46,7 +46,7 @@ export const Bracket: React.FC<Props> = ({ tournament }) => {
 	const rounds = useMemo(
 		() =>
 			range(
-				tournament.matches
+				Object.values(tournament.matches)
 					.map((p) => p.round)
 					.reduce((prev, next) => (next > prev ? next : prev), 0)
 			),

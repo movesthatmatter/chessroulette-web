@@ -7,9 +7,10 @@ import { TournamentPage } from './TournamentPage';
 import { TournamentMatchRoute } from './TournamentMatchRoute';
 import { TournamentWithFullDetailsMocker } from './mocks/TournamentWithFullDetailsMocker';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
-import { useCachedResource, useResource } from 'src/lib/hooks/useResource';
+import { useResource } from 'src/lib/hooks/useResource';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
 import { useAuthentication } from 'src/services/Authentication';
+import { usePeerToServerConnection } from 'src/providers/PeerConnectionProvider';
 
 type Props = {};
 
@@ -22,20 +23,88 @@ export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
   const params = useParams<{ slug: string }>();
   const location = useLocation();
   let { path } = useRouteMatch();
-  const auth = useAuthentication();
+  const pc = usePeerToServerConnection();
 
   const [tournament, setTournament] = useState<TournamentWithFullDetailsRecord>();
 
   // TODO: Don't leave it as cached resource!
-  const getTournamentWithFullDetailsResource = useCachedResource(getTournamentWithFullDetails);
+  const getTournamentWithFullDetailsResource = useResource(getTournamentWithFullDetails);
 
   useEffect(() => {
-    if (tournament) {
+    getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
+    // setTournament(mockedTournament);
+  }, [params.slug]);
+
+  useEffect(() => {
+    if (!(pc.ready && tournament?.id)) {
       return;
     }
-    setTournament(mockedTournament);
-    // getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
-  }, [params.slug]);
+
+    pc.connection.send({
+      kind: 'subscribeToResource',
+      content: {
+        resourceType: 'tournament',
+        resourceId: tournament.id,
+      },
+    });
+
+    const unsubscibers = [
+      pc.connection.onMessage((msg) => {
+        if (
+          msg.kind === 'subscribedResourceUpdated' &&
+          msg.content.resourceType === 'tournament' &&
+          msg.content.resourceId === tournament?.id
+        ) {
+          setTournament((prev) => {
+            if (!prev) {
+              return prev;
+            }
+
+            if (msg.content.field === 'partialMatches') {
+              return {
+                ...prev,
+                matches: {
+                  ...prev.matches,
+                  ...msg.content.next,
+                },
+              };
+            }
+
+            if (msg.content.field === 'partialParticipants') {
+              return {
+                ...prev,
+                participants: {
+                  ...prev.participants,
+                  ...msg.content.next,
+                },
+              };
+            }
+
+            if (msg.content.field === 'root') {
+              return {
+                ...prev,
+                ...msg.content.next,
+              };
+            }
+
+            return prev;
+          });
+        }
+      }),
+    ];
+
+    return () => {
+      pc.connection.send({
+        kind: 'unsubscribeFromResource',
+        content: {
+          resourceId: tournament.id,
+          resourceType: 'tournament',
+        },
+      });
+
+      unsubscibers.forEach((unsubscribe) => unsubscribe());
+    };
+  }, [pc.ready, tournament?.id]);
 
   if (getTournamentWithFullDetailsResource.hasFailed) {
     return <AwesomeErrorPage />;
