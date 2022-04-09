@@ -51,7 +51,7 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 			return 'Play Game';
 		}
 		return 'Watch Game';
-	}, [match, auth]);
+	}, [match, auth.authenticationType]);
 
 	const player1Class =
 		auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id
@@ -150,7 +150,7 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 					<div className={cls.hoveredBkg}>
 						<div className={cls.hoveredContent} onClick={() => {}}>
 							<Text size="title2" className={cls.hoveredText}>
-								Watch Game
+								{getOverlayStatus}
 							</Text>
 						</div>
 					</div>
@@ -158,7 +158,7 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 			</div>
 			<div className={cls.status}>
 				<Text size="tiny1" style={{ fontWeight: 'bold', fontStyle: 'italic', color: '#FF32A1' }}>
-					{getOverlayStatus}
+					'In Progress'
 				</Text>
 				<Text size="tiny2" style={{ color: theme.text.baseColor }}>
 					{dateformat(match.startedAt, 'dd mmmm h:MM TT')}
