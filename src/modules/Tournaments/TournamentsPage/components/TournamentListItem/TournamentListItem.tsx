@@ -22,9 +22,7 @@ export const TournamentListItem: React.FC<Props> = ({ tournament, thumb }) => {
         <img src={thumb} className={cls.tournamentThumbImg} />
       </AnchorLink>
       <div className={cls.tournamentItemInfo}>
-        <Text size="title2">
-          Moves That Matter Fundraising – Help The Children Of Ukraine Tournament
-        </Text>
+        <Text size="title2">{tournament.name}</Text>
         <br />
         <br />
         <Text size="subtitle1">TBD in April 2022</Text>

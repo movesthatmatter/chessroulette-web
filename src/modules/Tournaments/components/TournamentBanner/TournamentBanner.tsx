@@ -116,9 +116,7 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
                 return (
                   <Button
                     label={label}
-                    disabled={
-                      !state.isAuthenticated || iAmParticipating || tournament.state !== 'pending'
-                    }
+                    disabled={iAmParticipating || tournament.state !== 'pending'}
                     type="positive"
                     style={{
                       marginBottom: '0px',
