@@ -4,7 +4,6 @@ import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
 import { TournamentWithFullDetailsRecord } from 'src/modules/Tournaments/types';
 import { determineNoWinsAndPointsPerParticipant } from 'src/modules/Tournaments/utils';
-import { PeerAvatar } from 'src/providers/PeerConnectionProvider';
 import { useAuthenticatedUser } from 'src/services/Authentication';
 import { fonts } from 'src/theme';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
@@ -22,6 +21,9 @@ export const Players: React.FC<Props> = ({ tournament }) => {
 	const cls = useStyles();
 	const theme = useColorTheme().theme;
 	const auth = useAuthenticatedUser();
+	const [winnerAndRunnerUp, setWinnerAndRunnerUp] = useState<
+		{ '1': string; '2': string } | undefined
+	>(undefined);
 
 	const [winsAndPointsPerPlayer, setWinsAndPointsPerPlayer] = useState(
 		determineNoWinsAndPointsPerParticipant(tournament.matches)
@@ -29,6 +31,23 @@ export const Players: React.FC<Props> = ({ tournament }) => {
 
 	useEffect(() => {
 		setWinsAndPointsPerPlayer(determineNoWinsAndPointsPerParticipant(tournament.matches));
+	}, [tournament]);
+
+	useEffect(() => {
+		if (
+			(tournament.state === 'complete' || tournament.state === 'ended') &&
+			typeof winnerAndRunnerUp === 'undefined'
+		) {
+			setWinnerAndRunnerUp(() => {
+				const ordered = Object.keys(winsAndPointsPerPlayer).sort(
+					(a, b) => winsAndPointsPerPlayer[b].points - winsAndPointsPerPlayer[a].points
+				);
+				return {
+					1: ordered[0],
+					2: ordered[1],
+				};
+			});
+		}
 	}, [tournament]);
 
 	if (tournament.matches.length === 0) {
@@ -90,6 +109,37 @@ export const Players: React.FC<Props> = ({ tournament }) => {
 
 	return (
 		<div className={cls.container}>
+			{(tournament.state === 'ended' || tournament.state === 'complete') && winnerAndRunnerUp && (
+				<div className={cls.completeContainer}>
+					<Text size="subtitle1">Congratulations to our winner and runner-up :</Text>
+					<div className={cls.podiumContainer}>
+						<div className={cls.podiumPlace}>
+							<div className={cls.firstPlaceContariner} />
+							<div className={cls.playerContainer}>
+								<Avatar
+									mutunachiId={+winsAndPointsPerPlayer[winnerAndRunnerUp[1]].user.avatarId}
+									size={50}
+								/>
+								<Text size="body1" style={{ fontWeight: 'bold' }}>
+									{getUserDisplayName(winsAndPointsPerPlayer[winnerAndRunnerUp[1]].user)}
+								</Text>
+							</div>
+						</div>
+						<div className={cls.podiumPlace}>
+							<div className={cls.secondPlaceContainer} />
+							<div className={cls.playerContainer}>
+								<Avatar
+									mutunachiId={+winsAndPointsPerPlayer[winnerAndRunnerUp[2]].user.avatarId}
+									size={50}
+								/>
+								<Text size="body1">
+									{getUserDisplayName(winsAndPointsPerPlayer[winnerAndRunnerUp[2]].user)}
+								</Text>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 			<div className={cls.playersContainer}>
 				<div className={cls.playersContainerTitle}>
 					<div className={cls.playersTitle} />
@@ -160,7 +210,39 @@ export const Players: React.FC<Props> = ({ tournament }) => {
 const useStyles = createUseStyles((theme) => ({
 	container: {
 		display: 'flex',
+		flexDirection: 'column',
 		paddingTop: spacers.large,
+	},
+	completeContainer: {
+		display: 'flex',
+		flexDirection: 'column',
+		gap: spacers.largest,
+		marginTop: spacers.large,
+		marginBottom: spacers.largest,
+	},
+	podiumContainer: {
+		display: 'flex',
+	},
+	podiumPlace: {
+		display: 'flex',
+		flexDirection: 'column-reverse',
+	},
+	firstPlaceContariner: {
+		background: '#8B63FE',
+		width: '300px',
+		height: '180px',
+	},
+	secondPlaceContainer: {
+		background: '#A88BFF',
+		width: '270px',
+		height: '100px',
+	},
+	playerContainer: {
+		display: 'flex',
+		gap: spacers.default,
+		paddingLeft: spacers.small,
+		paddingBottom: spacers.small,
+		alignItems: 'center',
 	},
 	playersContainer: {
 		display: 'flex',

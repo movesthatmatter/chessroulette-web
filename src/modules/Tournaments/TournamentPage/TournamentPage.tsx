@@ -18,7 +18,13 @@ type Props = {
 
 export const TournamentPage: React.FC<Props> = ({ tournament }) => {
   const cls = useStyles();
-  const [tab, setTab] = useState(tournament.state === 'pending' ? 1 : 0);
+  const [tab, setTab] = useState(
+    tournament.state === 'pending' ||
+      tournament.state === 'complete' ||
+      tournament.state === 'ended'
+      ? 1
+      : 0
+  );
 
   return (
     <Page name="Tournament" stretched>

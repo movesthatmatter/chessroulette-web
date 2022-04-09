@@ -12,10 +12,7 @@ import { AwesomeErrorPage } from 'src/components/AwesomeError';
 
 type Props = {};
 
-const mockedTournament = new TournamentWithFullDetailsMocker().started(8, {
-  withLive: true,
-  withUnderway: true,
-});
+const mockedTournament = new TournamentWithFullDetailsMocker().completed(8);
 
 export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
   const params = useParams<{ slug: string }>();
