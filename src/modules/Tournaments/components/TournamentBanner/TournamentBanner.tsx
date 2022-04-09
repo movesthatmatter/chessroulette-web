@@ -16,7 +16,7 @@ type Props = {
 	tournament: TournamentWithFullDetailsRecord;
 };
 
-type Status = 'Pending' | 'In Progress' | 'Completed';
+type Status = 'Pending' | 'In Progress' | 'Completed' | 'In Review';
 
 export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 	const cls = useStyles();
@@ -38,6 +38,8 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 			? 'Pending'
 			: state === 'complete' || state === 'ended'
 			? 'Completed'
+			: state === 'awaiting_review'
+			? 'In Review'
 			: 'In Progress';
 	}
 
@@ -177,7 +179,7 @@ const useStyles = createUseStyles((theme) => ({
 		paddingLeft: spacers.default,
 	},
 	status: {
-		color: theme.colors.attention,
+		color: theme.name === 'darkDefault' ? theme.colors.primary : theme.colors.attention,
 		fontWeight: 'bold',
 		alignSelf: 'center',
 	},
