@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import ReactTwitchEmbedVideo from 'react-twitch-embed-video';
 import { AspectRatio } from 'src/components/AspectRatio';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
-import { ResourceRecords } from 'dstnd-io';
+import { ResourceRecords } from 'chessroulette-io';
 import cx from 'classnames';
 import { Text } from 'src/components/Text';
 import { Avatar } from 'src/components/Avatar';

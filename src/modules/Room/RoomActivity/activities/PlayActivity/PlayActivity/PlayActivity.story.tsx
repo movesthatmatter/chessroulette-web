@@ -2,13 +2,13 @@
 import React from 'react';
 import { GameMocker } from 'src/mocks/records';
 import { PlayActivity } from './PlayActivity';
-import { RoomPlayActivityParticipant } from '../types';
 import { RoomActivityParticipantMocker } from 'src/mocks/records/RoomActivityParticipant';
 import { StorybookBaseProvider } from 'src/storybook/StorybookBaseProvider';
-import { RoomProvider } from 'src/modules/Room/RoomProvider';
 import { RoomMocker } from 'src/mocks/records/RoomMocker';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { Date } from 'window-or-global';
+import { JoinedRoomProvider } from 'src/modules/Room/Providers/JoinedRoomProvider';
+import { SocketClient } from 'src/services/socket/SocketClient';
 
 export default {
   component: PlayActivity,
@@ -61,15 +61,20 @@ export const defaultStory = () => (
     withRedux
     initialState={{
       ...(myParticipant.isPresent && {
-        peerProvider: {
-          me: myParticipant.member.peer,
-          room: room,
-        },
+        peer: myParticipant.member.peer,
       }),
     }}
   >
-    <RoomProvider
-      joinedRoom={{
+    <JoinedRoomProvider
+      readyPeerConnection={{
+        ready: true,
+        peer: myParticipant.member.peer,
+        loading: false,
+        // TODO: Aded this on Mar 22, 2022 to not break the compiler, but it
+        //  fails at runtime as it needs to be mocked in order for the story to work
+        connection: {} as SocketClient,
+      }}
+      room={{
         ...room,
         currentActivity: {
           type: 'none',
@@ -108,7 +113,7 @@ export const defaultStory = () => (
           isSmallMobile: false,
         }}
       />
-    </RoomProvider>
+    </JoinedRoomProvider>
   </StorybookBaseProvider>
 );
 
@@ -117,10 +122,7 @@ export const withoutRoomProvider = () => (
     withRedux
     initialState={{
       ...(myParticipant.isPresent && {
-        peerProvider: {
-          me: myParticipant.member.peer,
-          room: room,
-        },
+        peer: myParticipant.member.peer,
       }),
     }}
   >

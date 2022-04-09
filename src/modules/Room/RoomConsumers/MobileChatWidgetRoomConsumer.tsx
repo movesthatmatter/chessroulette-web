@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { RoomProviderContext } from '../RoomProvider';
+import { JoinedRoomProviderContext } from '../Providers/JoinedRoomProvider';
 import { MobileChatWidget } from '../widgets/MobileChatWidget';
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 };
 
 export const MobileChatWidgetRoomConsumer: React.FC<Props> = (props) => {
-  const roomContext = useContext(RoomProviderContext);
+  const roomContext = useContext(JoinedRoomProviderContext);
 
   if (!roomContext) {
     // Show Loader
@@ -18,6 +18,7 @@ export const MobileChatWidgetRoomConsumer: React.FC<Props> = (props) => {
     <MobileChatWidget
       containerHeight={props.containerHeight}
       myUserId={roomContext.room.me.id}
+      room={roomContext.room}
     />
   );
 };

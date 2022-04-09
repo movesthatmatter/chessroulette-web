@@ -70,10 +70,9 @@ import {
   WarGameResignationRequestPayload,
   JoinedWarGameUpdatedPayload,
   JoinedRoomAndWarGameUpdatedPayload,
-} from 'dstnd-io';
-import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
-import { console } from 'window-or-global';
+} from 'chessroulette-io';
 import { logsy } from 'src/lib/logsy';
+import { PeerMessageEnvelope } from 'src/providers/PeerToPeerProvider/records';
 
 type ReceivableMessagesMap = {
   peerJoinedRoom: PeerJoinedRoomPayload;

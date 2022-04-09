@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { getCurrentlyStreamingRelayedGames } from 'src/modules/Relay/BroadcastPage/resources';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
-import { usePeerState } from 'src/providers/PeerProvider';
 import { RelayedGame } from '../types';
+import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
 
 type Props = {
   pageSize: number;
@@ -19,12 +19,12 @@ type Props = {
 export const RelayedGameProvider: React.FC<Props> = (props) => {
   const [relayedGames, setRelayedGames] = useState<RelayedGame[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const peerState = usePeerState();
+  const pc = usePeerConnection();
 
   useEffect(() => {
-    if (peerState.status === 'open') {
+    if (pc.ready) {
       const unsubscribers = [
-        peerState.client.onMessage((payload) => {
+        pc.connection.onMessage((payload) => {
           if (payload.kind === 'relayGameUpdateList') {
             fetchLiveGames();
           }
@@ -35,7 +35,7 @@ export const RelayedGameProvider: React.FC<Props> = (props) => {
         unsubscribers.forEach((unsubscribe) => unsubscribe());
       };
     }
-  }, [peerState.status]);
+  }, [pc.ready]);
 
   useEffect(() => {
     fetchLiveGames();

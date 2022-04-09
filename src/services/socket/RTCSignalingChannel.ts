@@ -6,7 +6,7 @@ import {
   WebrtcInvitationPayload,
   WebrtcRefusalPayload,
   io,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { Pubsy } from 'src/lib/Pubsy';
 
 export type SignalingMessageWithDescription = {

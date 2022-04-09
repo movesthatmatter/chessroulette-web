@@ -11,7 +11,7 @@ import { getUserDisplayName } from 'src/modules/User';
 import { DialogContent } from 'src/components/Dialog';
 import { createUseStyles, makeImportant } from 'src/lib/jss';
 import { CustomTheme, floatingShadow, onlyMobile, softBorderRadius } from 'src/theme';
-import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { otherChessColor } from 'chessroulette-io/dist/chessGame/util/util';
 import { DialogNotificationTypes } from '../type';
 import { RoomPlayActivityWithGame } from 'src/modules/Room/RoomActivity/activities/PlayActivity';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';

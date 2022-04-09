@@ -1,14 +1,14 @@
 import React, { ReactNode, useState } from 'react';
 import cx from 'classnames';
+import 'loaders.css';
 import { createUseStyles } from 'src/lib/jss';
 import { VideoBox, VideoBoxProps } from 'src/components/VideoBox';
 import { CustomTheme, fonts, onlyMobile } from 'src/theme';
 import { Text } from 'src/components/Text';
 import { AspectRatio, AspectRatioProps } from 'src/components/AspectRatio';
 import { colors } from 'src/theme/colors';
-import { PeerStreamingConfig } from 'src/providers/PeerProvider';
 import Loader from 'react-loaders';
-import 'loaders.css';
+import { PeerStreamingConfig } from 'src/providers/PeerConnectionProvider';
 
 export type FaceTimeProps = Omit<VideoBoxProps, 'stream'> & {
   streamConfig: PeerStreamingConfig;

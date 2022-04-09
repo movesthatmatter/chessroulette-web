@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
+import { Switch, Route, useLocation } from 'react-router-dom';
 import { LichessAuthCallbackPage } from './vendors/lichess/LichessAuthCallbackPage';
 import { LandingPage } from './modules/Landing/LandingPage';
 import { FacebookAuthCallbackPage } from './vendors/facebook';
@@ -11,8 +11,8 @@ import { RoomRoute } from './modules/Room';
 import { RelayInputRoute } from './modules/Relay/RelayInput';
 import { LiveRoute } from './modules/Live/LiveRoute';
 import { CuratedEventsConsoleRoute } from './modules/CuratedEvents/console/CuratedEventsConsoleRoute';
-import { CuratedEventsRoute, CuratedEventRoute } from './modules/CuratedEvents';
 import { TournamentsRoute } from './modules/Tournaments';
+import { CuratedEventRoute } from './modules/CuratedEvents';
 
 type Props = {};
 
@@ -20,7 +20,7 @@ export const Routes: React.FC<Props> = () => {
   const location = useLocation();
 
   return (
-    <Switch location={location}>
+    <Switch>
       <Route
         path="/vendors/lichess/auth/callback"
         key={location.key}
@@ -61,6 +61,7 @@ export const Routes: React.FC<Props> = () => {
 
       <Route exact strict path="/r/:slug" key={location.key} component={RoomRoute} />
       <Route exact strict path="/classroom/:slug" key={location.key} component={RoomRoute} />
+      <Route path="/tournaments" key={location.key} component={TournamentsRoute}/>
       {/* <Route path="/wcc" exact strict key={location.key} component={BroadcastPage} /> */}
       <Route exact strict path="/classroom/:slug" key={location.key} component={RoomRoute} />
       <Route exact strict path="/tournaments/:slug" key={location.key} component={TournamentsRoute} />

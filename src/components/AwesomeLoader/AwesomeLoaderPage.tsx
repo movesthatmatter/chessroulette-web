@@ -1,29 +1,31 @@
 import React from 'react';
-import DocumentTitle from 'react-document-title';
 import config from 'src/config';
 import { createUseStyles } from 'src/lib/jss';
+import { Page, PageProps } from '../Page';
 import { AwesomeLoader } from './AwesomeLoader';
 
-type Props = {};
+type Props = {
+  stretched?: PageProps['stretched'];
+};
 
-export const AwesomeLoaderPage: React.FC<Props> = () => {
+export const AwesomeLoaderPage: React.FC<Props> = ({ ...pageProps }) => {
   const cls = useStyles();
 
   return (
-    <DocumentTitle title={config.TITLE_SUFFIX}>
+    <Page name={config.TITLE_SUFFIX} {...pageProps}>
       <div className={cls.container}>
         <div style={{ width: '300px' }}>
           <AwesomeLoader />
         </div>
       </div>
-    </DocumentTitle>
+    </Page>
   );
 };
 
 const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
-    height: '100vh',
+    height: '100%',
     justifyContent: 'center',
     alignContent: 'center',
     alignItems: 'center',

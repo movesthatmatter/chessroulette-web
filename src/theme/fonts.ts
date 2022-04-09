@@ -4,14 +4,14 @@ import { onlyMobile } from './mediaQueries';
 const tiny1: CSSProperties = {
   fontSize: '10px',
   fontWeight: 'normal',
-  lineHeight:'10px',
-}
+  lineHeight: '10px',
+};
 
 const tiny2: CSSProperties = {
   fontSize: '10px',
   fontWeight: 'bold',
-  lineHeight: '10px'
-}
+  lineHeight: '10px',
+};
 
 const small1: CSSProperties = {
   fontSize: '13px',
@@ -36,8 +36,14 @@ const small2: CSSProperties = {
 };
 
 const small3: CSSProperties = {
-  fontSize: '10px',
+  fontSize: '11px',
   fontWeight: 'bold',
+  lineHeight: '14px',
+};
+
+const smallItalic: CSSProperties = {
+  fontSize: '13px',
+  fontStyle: 'italic',
   lineHeight: '12px',
 };
 
@@ -78,6 +84,17 @@ const title2: CSSProperties = {
   fontSize: '24px',
   fontWeight: 700,
   lineHeight: '1.3em',
+
+  ...onlyMobile({
+    fontSize: '18px',
+    lineHeight: '14px',
+  }),
+};
+
+const titleItalic: CSSProperties = {
+  fontSize: '22px',
+  fontWeight: 900,
+  fontStyle: 'italic',
 
   ...onlyMobile({
     fontSize: '18px',
@@ -137,12 +154,14 @@ export const fonts = {
   small1,
   small2,
   small3,
+  smallItalic,
 
   body1,
   body2,
 
   title1,
   title2,
+  titleItalic,
 
   subtitle1,
   subtitle2,

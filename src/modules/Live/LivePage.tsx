@@ -4,7 +4,7 @@ import { createUseStyles } from 'src/lib/jss';
 import { spacers } from 'src/theme/spacers';
 import { effects, hideOnMobile } from 'src/theme';
 import { getCollaboratorStreamers, getFeaturedStreamers } from './resources';
-import { ResourceRecords } from 'dstnd-io';
+import { ResourceRecords } from 'chessroulette-io';
 import { Text } from 'src/components/Text';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
 import { LiveHero } from './widgets/LiveHero';

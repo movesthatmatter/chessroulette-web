@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { selectAuthentication } from './selectors';
-import { RegisteredUserRecord } from 'dstnd-io';
+import { RegisteredUserRecord } from 'chessroulette-io';
 import { AuthenticationContext } from './AuthenticationContext';
 
 export const useAuthenticationService = () => useContext(AuthenticationContext);

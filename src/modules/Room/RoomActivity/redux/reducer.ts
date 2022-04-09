@@ -1,10 +1,6 @@
 import { createReducer } from 'deox';
-import {
-  createRoomAction,
-  updateMeAction,
-  updateRoomAction,
-} from 'src/providers/PeerProvider/redux/actions';
 import { GenericStateSlice } from 'src/redux/types';
+import { createRoomAction, updateRoomAction } from '../../redux/actions';
 import {
   switchRoomActivityAction,
   updateCurrentAnalysisAction,
@@ -24,7 +20,9 @@ export const initialState: State = {
 export const reducer = createReducer(initialState as State, (handleAction) => [
   handleAction(switchRoomActivityAction, (_, { payload }) => payload),
   handleAction(updateRoomActivityAction, (_, { payload }) => payload),
-  handleAction(createRoomAction, (_, { payload }) => payload.room.activity),
+  handleAction(createRoomAction, (_, { payload }) => {
+    return payload.room.activity;
+  }),
   handleAction(updateRoomAction, (prev, { payload }) => {
     // If the Activity Type changed just return the new activity
     if (payload.room.activity.type !== prev.type) {
@@ -72,32 +70,44 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
     ) {
       return payload.room.activity;
     }
-    
+
     if (
       //and the activity is "Relay"
-      payload.room.activity.type === 'relay' && 
-      prev.type === 'relay' && 
+      payload.room.activity.type === 'relay' &&
+      prev.type === 'relay' &&
       payload.room.activity.relayId !== prev.relayId
     ) {
       return payload.room.activity;
     }
 
+    // if (
+    //   //and the activity is 'Match'
+    //   payload.room.activity.type === 'match' &&
+    //   prev.type === 'match' &&
+    //   payload.room.activity.match.matchId !== prev.match.matchId &&
+    //   payload.room.activity.match.gameId !== prev.game.id
+    // ) {
+    //   return payload.room.activity;
+    // }
+
     // Otherwise no need to create updates!
     return prev;
-
   }),
 
   // TODO: This should probably not be here. Need to think of a way
   //  to combine all the room related reducers!
-  handleAction(updateMeAction, (prev, { payload }) => {
-    if (!payload.me.hasJoinedRoom) {
-      return {
-        type: 'none',
-      };
-    }
+  // TODO: //  Removed this on Mar 22, 2022
+  //    Wondering if it's really needed as the peer should be always on inside a room
+  //   or not present at all if not
+  // handleAction(updateMeAction, (prev, { payload }) => {
+  //   if (!payload.me.hasJoinedRoom) {
+  //     return {
+  //       type: 'none',
+  //     };
+  //   }
 
-    return prev;
-  }),
+  //   return prev;
+  // }),
   handleAction(updateJoinedGameAction, (prev, { payload: nextGame }) => {
     if (prev.type !== 'play') {
       return prev;
@@ -109,15 +119,15 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
     };
   }),
 
-  handleAction(updateJoinedWarGameAction, (prev, {payload: nextGame}) => {
+  handleAction(updateJoinedWarGameAction, (prev, { payload: nextGame }) => {
     if (prev.type !== 'warGame') {
       return prev;
     }
 
     return {
       ...prev,
-      game: nextGame
-    }
+      game: nextGame,
+    };
   }),
 
   handleAction(updateCurrentAnalysisAction, (prev, { payload: nextAnalysis }) => {
@@ -131,16 +141,16 @@ export const reducer = createReducer(initialState as State, (handleAction) => [
     };
   }),
 
-  handleAction(updateRelayGameAction, (prev, { payload: nextGame}) => {
+  handleAction(updateRelayGameAction, (prev, { payload: nextGame }) => {
     if (prev.type !== 'relay') {
       return prev;
     }
 
     return {
       ...prev,
-      game: nextGame
-    }
-  })
+      game: nextGame,
+    };
+  }),
 ]);
 
 export const stateSliceByKey = {

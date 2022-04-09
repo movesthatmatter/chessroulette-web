@@ -15,8 +15,8 @@ import { spacers } from 'src/theme/spacers';
 import { CreateChallengeButton } from '../components/CreateChallengeButton';
 import { SwitchActivityWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/SwitchActivityWidgetRoomConsumer';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
-import { Room } from 'src/providers/PeerProvider';
 import { noop } from 'src/lib/util';
+import { Room } from 'src/modules/Room/types';
 
 type Props = ActivityCommonProps & {
   deviceSize: DeviceSize;

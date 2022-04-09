@@ -1,16 +1,16 @@
 import React, { useContext } from 'react';
-import { RoomProviderContext } from '../RoomProvider';
+import { JoinedRoomProviderContext } from '../Providers/JoinedRoomProvider';
 import { RoomTabsWidget, RoomTabsWidgetProps } from '../widgets/RoomTabsWidget';
 
-type Props = Omit<RoomTabsWidgetProps, 'me'>;
+type Props = Omit<RoomTabsWidgetProps, 'me' | 'room'>;
 
 export const RoomTabsWidgetRoomConsumer: React.FC<Props> = (props) => {
-  const roomContext = useContext(RoomProviderContext);
+  const roomContext = useContext(JoinedRoomProviderContext);
 
   if (!roomContext) {
     // Add Loader
     return null;
   }
 
-  return <RoomTabsWidget me={roomContext.room.me.user} {...props} />;
+  return <RoomTabsWidget me={roomContext.room.me.user} {...props} room={roomContext.room} />;
 };

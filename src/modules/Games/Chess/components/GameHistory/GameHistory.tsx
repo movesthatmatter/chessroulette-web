@@ -3,7 +3,7 @@ import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
 import { spacers } from 'src/theme/spacers';
 import { HistoryList, HistoryListProps } from './components/HistoryList';
-import { ChessRecursiveHistory } from 'dstnd-io';
+import { ChessRecursiveHistory } from 'chessroulette-io';
 import { Text } from 'src/components/Text';
 
 export type GameHistoryProps = {

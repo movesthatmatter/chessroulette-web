@@ -1,12 +1,10 @@
-import { ChessGameStateFen } from 'dstnd-io';
 import React, { useCallback, useMemo } from 'react';
-import { http } from 'src/lib/http';
 import {
   ChessGameHistoryProvider,
   ChessGameHistoryProviderProps,
 } from 'src/modules/Games/Chess/components/GameHistory';
 import { GenericLayoutDesktopRoomConsumer } from 'src/modules/Room/RoomConsumers/GenericLayoutDesktopRoomConsumer';
-import { usePeerState } from 'src/providers/PeerProvider';
+import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
 import { SocketClient } from 'src/services/socket/SocketClient';
 import { AnalysisActivity, AnalysisActivityProps } from './AnalysisActivity';
 import { RoomAnalysisActivity } from './types';
@@ -16,7 +14,7 @@ type Props = Pick<AnalysisActivityProps, 'deviceSize'> & {
 };
 
 export const AnalysisActivityContainer: React.FC<Props> = (props) => {
-  const peerState = usePeerState();
+  const pc = usePeerConnection();
 
   // These are the analysis actions!
   const actions = useMemo(() => {
@@ -25,8 +23,8 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
       // THE ui should actually change and not allow interactions, but ideally
       //  the room still shows!
       // TODO: That should actually be somewhere global maybe!
-      if (peerState.status === 'open') {
-        peerState.client.send(payload);
+      if (pc.ready) {
+        pc.connection.send(payload);
       }
     };
 
@@ -49,7 +47,6 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
         },
       });
     };
-
 
     const onImportPgn: AnalysisActivityProps['onImportedPgn'] = (pgn) => {
       request({
@@ -89,7 +86,7 @@ export const AnalysisActivityContainer: React.FC<Props> = (props) => {
       onRefocused,
       onMoved,
     };
-  }, [props.activity.analysisId, peerState.status]);
+  }, [props.activity.analysisId, pc.ready]);
 
   const renderActivity = useCallback(
     ({ boardSize, leftSide }) => (

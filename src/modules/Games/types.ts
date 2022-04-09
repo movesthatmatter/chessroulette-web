@@ -4,7 +4,7 @@ import {
   GameRecord,
   WarGameRecord,
   GameRecordFromGameState,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { RoomPlayActivityParticipant } from '../Room/RoomActivity/activities/PlayActivity';
 import { RoomWarGameActivityParticipant } from '../Room/RoomActivity/activities/WarGameActivity/types';
 

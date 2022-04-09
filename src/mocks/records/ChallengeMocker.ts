@@ -1,5 +1,5 @@
 import Chance from 'chance';
-import { ChallengeRecord } from 'dstnd-io';
+import { ChallengeRecord } from 'chessroulette-io';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { UserInfoMocker } from './UserInfoMocker';
 

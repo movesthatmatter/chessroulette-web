@@ -1,26 +1,27 @@
 import React from 'react';
-import { ChatMessageRecord } from 'dstnd-io';
+import { ChatMessageRecord } from 'chessroulette-io';
 import { Chat, ChatProps } from './Chat';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { AwesomeError } from 'src/components/AwesomeError';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { Events } from 'src/services/Analytics';
-import { usePeerState } from 'src/providers/PeerProvider';
+import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
+import { Room } from '../Room';
 
-type Props = Omit<ChatProps, 'onSend' | 'messages' | 'myId' | 'history'>;
+type Props = Omit<ChatProps, 'onSend' | 'messages' | 'myId' | 'history'> & {
+  room: Room;
+};
 
-export const ChatContainer: React.FC<Props> = (chatProps) => {
-  const peerState = usePeerState();
+export const ChatContainer: React.FC<Props> = ({ room, ...chatProps }) => {
+  const pc = usePeerConnection();
 
-  if (peerState.status === 'closed') {
-    return <AwesomeError />;
-  }
-
-  if (peerState.status === 'init' || !peerState.hasJoinedRoom) {
+  if (pc.loading) {
     return <AwesomeLoader />;
   }
 
-  const { room, client } = peerState;
+  if (!pc.ready) {
+    return <AwesomeError />;
+  }
 
   return (
     // TODO: Maybe it's better for this to be taken from redux!
@@ -34,7 +35,7 @@ export const ChatContainer: React.FC<Props> = (chatProps) => {
           fromUserId: room.me.user.id,
           sentAt: toISODateTime(new Date()),
         };
-        client.send({
+        pc.connection.send({
           kind: 'broadcastChatMessage',
           content: payload,
         });

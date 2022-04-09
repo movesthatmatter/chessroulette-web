@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { noop } from 'src/lib/util';
-import { usePeerState } from 'src/providers/PeerProvider';
+import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
 import { SocketClient } from 'src/services/socket/SocketClient';
-import { console } from 'window-or-global';
 import { WarGame } from '../../types';
 import { getWarGameActions } from './WarGameActionsProxy';
 import { WarGameProviderContext } from './WarGameProviderContext';
@@ -14,7 +13,7 @@ type Props = {
 };
 
 export const WarGameProvider: React.FC<Props> = ({ onGameUpdated = noop, children }) => {
-  const peerState = usePeerState();
+  const pc = usePeerConnection();
 
   const request = useCallback<SocketClient['send']>(
     (payload) => {
@@ -22,11 +21,11 @@ export const WarGameProvider: React.FC<Props> = ({ onGameUpdated = noop, childre
       // THE ui should actually change and not allow interactions, but ideally
       //  the room still shows!
       // TODO: That should actually be somewhere global maybe!
-      if (peerState.status === 'open') {
-        peerState.client.send(payload);
+      if (pc.ready) {
+        pc.connection.send(payload);
       }
     },
-    [peerState.status]
+    [pc.ready]
   );
 
   const [contextState, setContextState] = useState({
@@ -42,8 +41,8 @@ export const WarGameProvider: React.FC<Props> = ({ onGameUpdated = noop, childre
   // Subscribe to Game Updates
   useEffect(() => {
     const unsubscribers: Function[] = [];
-    if (peerState.status === 'open') {
-      const usubscribe = peerState.client.onMessage((payload) => {
+    if (pc.ready) {
+      const usubscribe = pc.connection.onMessage((payload) => {
         if (payload.kind === 'joinedWarGameUpdated') {
           onGameUpdated(payload.content);
         } else if (payload.kind === 'joinedRoomAndWarGameUpdated') {
@@ -57,7 +56,7 @@ export const WarGameProvider: React.FC<Props> = ({ onGameUpdated = noop, childre
     return () => {
       unsubscribers.forEach((unsubscribe) => unsubscribe());
     };
-  }, [peerState.status]);
+  }, [pc.ready]);
 
   // Join the Game
   useEffect(() => {

@@ -5,7 +5,7 @@ import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { fonts, softBorderRadius } from 'src/theme';
 import { FaceTime, MyFaceTime } from 'src/components/FaceTime';
 import { getUserDisplayName } from 'src/modules/User';
-import { StreamingPeer } from 'src/providers/PeerProvider';
+import { StreamingPeer } from 'src/providers/PeerConnectionProvider';
 
 type Props = {
   streamingPeers: StreamingPeer[];

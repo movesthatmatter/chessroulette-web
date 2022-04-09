@@ -1,4 +1,4 @@
-import { GuestUserInfoRecord, RegisteredUserRecord } from 'dstnd-io';
+import { GuestUserInfoRecord, RegisteredUserRecord } from 'chessroulette-io';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { Button } from 'src/components/Button';

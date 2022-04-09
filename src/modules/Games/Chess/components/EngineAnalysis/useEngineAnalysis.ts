@@ -1,4 +1,4 @@
-import { ChessGameStateFen, ChessMove, GameRecord, toResult } from 'dstnd-io';
+import { ChessGameStateFen, ChessMove, GameRecord, toResult } from 'chessroulette-io';
 import { http } from 'src/lib/http';
 import { AsyncResult, AsyncResultWrapper } from 'ts-async-results';
 import * as io from 'io-ts';

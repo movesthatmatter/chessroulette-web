@@ -1,7 +1,7 @@
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';
-import { ChatMessageRecord, UserInfoRecord, UserRecord } from 'dstnd-io';
+import { ChatMessageRecord, UserInfoRecord, UserRecord } from 'chessroulette-io';
 import { CustomTheme, fonts } from 'src/theme';
 import { Text } from 'src/components/Text';
 import Linkify from 'react-linkify';

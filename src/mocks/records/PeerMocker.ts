@@ -1,9 +1,9 @@
 import Chance from 'chance';
-import { Peer } from 'src/providers/PeerProvider';
-import { UserRecord } from 'dstnd-io';
+import { UserRecord } from 'chessroulette-io';
 import { UserRecordMocker } from './UserRecordMocker';
 import { PeerRecordMock } from './PeerRecordMock';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
+import { Peer } from 'src/providers/PeerConnectionProvider';
 
 const chance = new Chance();
 

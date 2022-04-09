@@ -1,5 +1,5 @@
 import React from 'react';
-import { JWTToken } from 'dstnd-io';
+import { JWTToken } from 'chessroulette-io';
 import { ButtonProps } from 'src/components/Button';
 import { OAuthButton, getRedirectUrl } from 'src/services/Oauth2';
 

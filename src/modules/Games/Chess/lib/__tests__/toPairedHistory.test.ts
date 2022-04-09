@@ -1,5 +1,5 @@
-import { ChessRecursiveHistory } from 'dstnd-io';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { ChessRecursiveHistory } from 'chessroulette-io';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 import { pgnToChessHistory } from 'src/mocks/records';
 import { toPairedHistory } from '../util';
 

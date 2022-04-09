@@ -1,5 +1,7 @@
 const DEBUG = process.env.REACT_APP_DEBUG === 'true';
 const ENV = process.env.REACT_APP_ENV as 'dev' | 'production' | 'staging';
+const CHALLONGE_API_KEY = process.env.REACT_APP_Challonge_API_KEY as string;
+const CHALLONGE_USERNAME = process.env.REACT_APP_Challonge_USERNAME as string;
 
 const WSS_ENDPOINT = process.env.REACT_APP_WSS_ENDPOINT as string;
 const HTTP_ENDPOINT = process.env.REACT_APP_HTTP_ENDPOINT as string;
@@ -16,6 +18,10 @@ const PRERENDERING = !!(window as any).reactSnapshotRender;
 
 const DISCORD_SERVER_ID = process.env.REACT_APP_DISCORD_SERVER_ID as string;
 const DISCORD_CHANNEL_ID = process.env.REACT_APP_DISCORD_CHANNEL_ID as string;
+const DISCORD_CHANNEL_ID_TOURNAMENTS = process.env
+  .REACT_APP_DISCORD_CHANNEL_ID_TOURNAMENTS as string;
+
+const TOURNAMENT_ORGANIZER_ID = process.env.REACT_APP_TOURNAMENT_ORGANIZER_ID as string;
 
 const config = {
   // Env
@@ -31,11 +37,19 @@ const config = {
   HTTP_ENDPOINT,
   SIGNALING_SERVER_CONFIG,
 
+  //Tournaments
+  CHALLONGE_API_KEY,
+  CHALLONGE_USERNAME,
+
   // Vendors
   SENTRY_DSN,
   GOOGLE_ANALYTICS_TRACKING_ID,
   DISCORD_SERVER_ID,
   DISCORD_CHANNEL_ID,
+  DISCORD_CHANNEL_ID_TOURNAMENTS,
+
+  // Temporary
+  TOURNAMENT_ORGANIZER_ID,
 };
 
 if (config.DEBUG) {

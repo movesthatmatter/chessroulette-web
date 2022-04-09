@@ -1,4 +1,4 @@
-import { ChallengeRecord, GameSpecsRecord, RoomRecord, UserRecord } from 'dstnd-io';
+import { ChallengeRecord, GameSpecsRecord, RoomRecord, UserRecord } from 'chessroulette-io';
 import React, { useState } from 'react';
 import { Dialog, DialogProps } from 'src/components/Dialog/Dialog';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';

@@ -1,4 +1,4 @@
-import { RoomNoActivityRecord } from 'dstnd-io';
+import { RoomNoActivityRecord } from 'chessroulette-io';
 import { RoomActivitySpecifcParticipant } from '../../utilTypes';
 
 export type RoomNoActivityParticipantStats = undefined;

@@ -1,4 +1,4 @@
-import { WarGamePlayer, WarGamePlayerBlack, warGamePlayerBlack, WarGamePlayerWhite } from 'dstnd-io';
+import { WarGamePlayer, WarGamePlayerBlack, warGamePlayerBlack, WarGamePlayerWhite } from 'chessroulette-io';
 import { toDictIndexedBy } from 'src/lib/util';
 import { WarGame } from 'src/modules/Games';
 import {

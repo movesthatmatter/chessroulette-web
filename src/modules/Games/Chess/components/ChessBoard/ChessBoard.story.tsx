@@ -4,7 +4,7 @@ import { ChessBoard } from './ChessBoard';
 //import 'src/modules/Games/Chess/components/ChessBoard/node_modules/react-chessground/dist/styles/chessground.css';
 import { GameMocker } from 'src/mocks/records/GameMocker';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
-import { chessGameActions, ChessGameColor } from 'dstnd-io';
+import { chessGameActions, ChessGameColor } from 'chessroulette-io';
 import { toISODateTime } from 'io-ts-isodatetime';
 import { Game } from 'src/modules/Games/types';
 import { action } from '@storybook/addon-actions';

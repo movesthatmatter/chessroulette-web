@@ -1,5 +1,5 @@
 import { createAction } from 'deox';
-import { GuestUserRecord, JWTToken, RegisteredUserRecord } from 'dstnd-io';
+import { GuestUserRecord, JWTToken, RegisteredUserRecord } from 'chessroulette-io';
 
 export const setUserAction = createAction(
   'setUserAction',

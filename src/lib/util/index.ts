@@ -1,8 +1,8 @@
 import { differenceInMilliseconds } from 'date-fns';
 import humanizeDuration, { Humanizer } from 'humanize-duration';
-import { RoomRecord } from 'dstnd-io';
+import { RoomRecord } from 'chessroulette-io';
 import { diff } from 'deep-object-diff';
-import { ScheduledRoomRecord } from 'dstnd-io/dist/resourceCollections/room/records/records';
+import { ScheduledRoomRecord } from 'chessroulette-io/dist/resourceCollections/room/records/records';
 
 export const noop = () => {
   // do nothing
@@ -95,7 +95,8 @@ export const prettyCountdown = (
   }
 ) => format(ms, options);
 
-export const toRoomUrlPath = (room: RoomRecord | ScheduledRoomRecord) => room.type && room.type === 'classroom' ? `/classroom/${room.slug}` : `/r/${room.slug}`;
+export const toRoomUrlPath = (room: RoomRecord | ScheduledRoomRecord) =>
+  room.type && room.type === 'classroom' ? `/classroom/${room.slug}` : `/r/${room.slug}`;
 export const toChallengeUrlPath = (challenge: { slug: string }) => `r/${challenge.slug}`;
 
 export const hasOwnProperty = <X extends {}, Y extends PropertyKey>(
@@ -155,4 +156,33 @@ export const dedupeArray = <T extends string | number>(arr: T[]) => {
   return Object.keys(
     arr.reduce((prev, next) => ({ ...prev, [next]: undefined }), {} as Record<T, undefined>)
   );
+};
+
+
+// Stolen from https://stackoverflow.com/a/7616484
+export const hash32 = (s: string) => {
+  var hash = 0,
+    i,
+    chr;
+  if (s.length === 0) return hash;
+  for (i = 0; i < s.length; i++) {
+    chr = s.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+
+// Stolen from https://stackoverflow.com/a/52171480
+export const hashCyrb53 = function (str: string, seed = 0) {
+  let h1 = 0xdeadbeef ^ seed,
+    h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0, ch; i < str.length; i++) {
+    ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 };

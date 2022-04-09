@@ -14,7 +14,7 @@ import {
   WarGameRematchAcceptRequestPayload,
   WarGameResignationRequestPayload, 
   WarGameRematchDenyRequestPayload
-} from 'dstnd-io';
+} from 'chessroulette-io';
 
 export type OfferRematchProps = {
   gameSpecs?: GameSpecsRecord;

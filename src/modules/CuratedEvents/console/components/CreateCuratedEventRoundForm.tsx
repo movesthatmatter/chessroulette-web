@@ -1,5 +1,5 @@
 import capitalize from 'capitalize';
-import { ChessGameTimeLimit, metadata, Resources } from 'dstnd-io';
+import { ChessGameTimeLimit, metadata, Resources } from 'chessroulette-io';
 import { toISODateTime } from 'io-ts-isodatetime';
 import React, { useEffect, useState } from 'react';
 import { Button } from 'src/components/Button';

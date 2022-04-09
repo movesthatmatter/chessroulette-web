@@ -1,4 +1,4 @@
-import { GameSpecsRecord } from 'dstnd-io';
+import { GameSpecsRecord } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
 import { Dialog } from 'src/components/Dialog';
 import { Mutunachi } from 'src/components/Mutunachi/Mutunachi';
@@ -7,8 +7,8 @@ import { createUseStyles } from 'src/lib/jss';
 import { noop } from 'src/lib/util';
 import { CreateChallenge } from 'src/modules/Challenges/Widgets/ChallengeWidget/components/CreateChallenge/CreateChallenge';
 import { useRoomConsumer } from 'src/modules/Room/RoomConsumers/useRoomConsumer';
+import { Room } from 'src/modules/Room/types';
 import { getRoomPendingChallenge } from 'src/modules/Room/util';
-import { Room } from 'src/providers/PeerProvider';
 
 type Props = {
   visible: boolean;
@@ -87,6 +87,7 @@ export const CreateChallengeDialog: React.FC<Props> = ({
           onClick: () => {
             roomConsumer.roomActions.switchActivity({
               activityType: 'play',
+              creationRecord: 'challenge',
               gameSpecs,
             });
           },
