@@ -55,6 +55,9 @@ export const Bracket: React.FC<Props> = ({ tournament }) => {
 
 	return (
 		<div className={cls.container}>
+			{Object.keys(tournament.matches).length === 0 && (
+				<Text size="subtitle1">Waiting for tournament to start.</Text>
+			)}
 			{typeof myNextGame !== 'undefined' && (
 				<div
 					style={{
@@ -97,6 +100,7 @@ const useStyles = createUseStyles({
 		display: 'flex',
 		flexDirection: 'column',
 		gap: spacers.largest,
+		paddingLeft: spacers.large,
 		paddingTop: spacers.largest,
 		paddingBottom: spacers.default,
 	},

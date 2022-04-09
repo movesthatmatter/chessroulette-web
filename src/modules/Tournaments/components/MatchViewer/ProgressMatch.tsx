@@ -84,7 +84,7 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 						}}
 					>
 						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
-						<div>{getUserDisplayName(match.players[0].user)}</div>
+						<div style={{ maxWidth: '7rem' }}>{getUserDisplayName(match.players[0].user)}</div>
 					</div>
 					<div
 						className={cls.pieceBox}
@@ -124,7 +124,7 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 						}}
 					>
 						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
-						<div>{getUserDisplayName(match.players[1].user)}</div>
+						<div style={{ maxWidth: '7rem' }}>{getUserDisplayName(match.players[1].user)}</div>
 					</div>
 					<div
 						className={cls.pieceBox}

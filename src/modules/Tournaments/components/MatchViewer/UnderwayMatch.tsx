@@ -80,7 +80,7 @@ export const UnderwayMatch: React.FC<Props> = ({ match }) => {
 						}}
 					>
 						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
-						<div>{getUserDisplayName(match.players[0].user)}</div>
+						<div style={{ maxWidth: '7rem' }}>{getUserDisplayName(match.players[0].user)}</div>
 					</div>
 					<div
 						className={cls.pieceBox}
@@ -117,7 +117,7 @@ export const UnderwayMatch: React.FC<Props> = ({ match }) => {
 						}}
 					>
 						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
-						<div>{getUserDisplayName(match.players[1].user)}</div>
+						<div style={{ maxWidth: '7rem' }}>{getUserDisplayName(match.players[1].user)}</div>
 					</div>
 					<div
 						className={cls.pieceBox}
@@ -148,7 +148,7 @@ export const UnderwayMatch: React.FC<Props> = ({ match }) => {
 							theme.name === 'darkDefault' ? theme.colors.positiveLight : theme.colors.positive,
 					}}
 				>
-					'Waiting To Start'
+					'About to Start'
 				</Text>
 				<Text size="tiny2" style={{ color: theme.text.baseColor }}>
 					{dateformat(match.underwayAt, 'dd mmmm h:MM TT')}
