@@ -29,55 +29,57 @@ export const TournamentPage: React.FC<Props> = ({ tournament }) => {
   return (
     <Page name="Tournament" stretched>
       <div className={cls.container}>
-        <TournamentBanner tournament={tournament} />
-        {
-          <div className={cls.tournamentDetails}>
-            <div>
-              <Tabs
-                currentTabIndex={tab}
-                onTabChanged={setTab}
-                headerClassName={cls.headerClass}
-                tabButtonClassName={cls.tabButton}
-                selectedTabButtonClassName={cls.selectedTab}
-                selectedColor="#FF32A1"
-                tabs={[
-                  {
-                    title: 'Matches',
-                    content: <Bracket tournament={tournament} />,
-                    iconType: 'iconly',
-                    icon: Game,
-                    iconSize: 'default',
-                  },
-                  {
-                    title: 'Players Standings',
-                    content: <Players tournament={tournament} />,
-                    iconType: 'iconly',
-                    icon: Filter,
-                    iconSize: 'default',
-                  },
-                ]}
-              />
-            </div>
-            <div style={{ display: 'flex', minWidth: '20rem' }}>
-              <div
-                style={{
-                  minHeight: '30rem',
-                  maxHeight: '40rem',
-                  width: '100%',
-                }}
-              >
-                <DiscordReactEmbed
-                  server={config.DISCORD_SERVER_ID}
-                  channel={config.DISCORD_CHANNEL_ID_TOURNAMENTS}
-                  className={cls.discordWidget}
-                  style={{
-                    background: '!white',
-                  }}
+        <div className={cls.main}>
+          <TournamentBanner tournament={tournament} />
+          {
+            <div className={cls.tournamentDetails}>
+              <div>
+                <Tabs
+                  currentTabIndex={tab}
+                  onTabChanged={setTab}
+                  headerClassName={cls.headerClass}
+                  tabButtonClassName={cls.tabButton}
+                  selectedTabButtonClassName={cls.selectedTab}
+                  selectedColor="#FF32A1"
+                  tabs={[
+                    {
+                      title: 'Matches',
+                      content: <Bracket tournament={tournament} />,
+                      iconType: 'iconly',
+                      icon: Game,
+                      iconSize: 'default',
+                    },
+                    {
+                      title: 'Players Standings',
+                      content: <Players tournament={tournament} />,
+                      iconType: 'iconly',
+                      icon: Filter,
+                      iconSize: 'default',
+                    },
+                  ]}
                 />
               </div>
             </div>
+          }
+        </div>
+        <div className={cls.side}>
+          {/* <div
+            style={{
+              minHeight: '30rem',
+              maxHeight: '40rem',
+              width: '100%',
+            }}
+          > */}
+            <DiscordReactEmbed
+              server={config.DISCORD_SERVER_ID}
+              channel={config.DISCORD_CHANNEL_ID_TOURNAMENTS}
+              className={cls.discordWidget}
+              style={{
+                background: '!white',
+              }}
+            />
           </div>
-        }
+        {/* </div> */}
       </div>
     </Page>
   );
@@ -86,8 +88,10 @@ export const TournamentPage: React.FC<Props> = ({ tournament }) => {
 const useStyles = createUseStyles((theme) => ({
   container: {
     display: 'flex',
-    flexDirection: 'column',
-    gap: spacers.default,
+    // flexDirection: 'column',
+    gap: spacers.large,
+    // background: 'red',
+    height: '100%',
   },
   headerClass: {
     borderBottom: '0px',
@@ -102,9 +106,10 @@ const useStyles = createUseStyles((theme) => ({
   tournamentDetails: {
     display: 'flex',
     gap: spacers.largest,
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
   },
   discordWidget: {
+    flex: 1,
     width: '100%',
     height: '100%',
     ...makeImportant({
@@ -112,5 +117,18 @@ const useStyles = createUseStyles((theme) => ({
       ...hardBorderRadius,
       overflow: 'hidden',
     }),
+  },
+
+  main: {
+    flex: 1,
+  },
+  side: {
+    display: 'flex',
+    minWidth: '25rem',
+    // width: '20%',
+    height: 'calc(100vh - 140px)',
+    // position: 'fixed',
+    right: 0,
+    // background: 'red',
   },
 }));

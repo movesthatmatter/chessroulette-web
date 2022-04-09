@@ -7,12 +7,12 @@ import { TournamentPage } from './TournamentPage';
 import { TournamentMatchRoute } from './TournamentMatchRoute';
 import { TournamentWithFullDetailsMocker } from './mocks/TournamentWithFullDetailsMocker';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
-import { useResource } from 'src/lib/hooks/useResource';
+import { useCachedResource, useResource } from 'src/lib/hooks/useResource';
 import { AwesomeErrorPage } from 'src/components/AwesomeError';
 
 type Props = {};
 
-// const mockedTournament = new TournamentWithFullDetailsMocker().completed(8);
+const mockedTournament = new TournamentWithFullDetailsMocker().started(8);
 
 export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
   const params = useParams<{ slug: string }>();
@@ -21,14 +21,16 @@ export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
 
   const [tournament, setTournament] = useState<TournamentWithFullDetailsRecord>();
 
-  const getTournamentWithFullDetailsResource = useResource(getTournamentWithFullDetails);
+
+  // TODO: Don't leave it as cached resource!
+  const getTournamentWithFullDetailsResource = useCachedResource(getTournamentWithFullDetails);
 
   useEffect(() => {
     if (tournament) {
       return;
     }
-    // setTournament(mockedTournament);
-    getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
+    setTournament(mockedTournament);
+    // getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
   }, [params.slug]);
 
   if (getTournamentWithFullDetailsResource.hasFailed) {
