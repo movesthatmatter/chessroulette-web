@@ -12,7 +12,7 @@ import { AwesomeErrorPage } from 'src/components/AwesomeError';
 
 type Props = {};
 
-const mockedTournament = new TournamentWithFullDetailsMocker().completed(8);
+// const mockedTournament = new TournamentWithFullDetailsMocker().completed(8);
 
 export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
   const params = useParams<{ slug: string }>();
@@ -27,8 +27,8 @@ export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
     if (tournament) {
       return;
     }
-    setTournament(mockedTournament);
-    // getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
+    // setTournament(mockedTournament);
+    getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
   }, [params.slug]);
 
   if (getTournamentWithFullDetailsResource.hasFailed) {
