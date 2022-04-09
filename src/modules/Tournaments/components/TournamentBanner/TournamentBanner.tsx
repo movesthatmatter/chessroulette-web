@@ -83,7 +83,9 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 					<div className={cls.info}>
 						<Text size="body1">{`${
 							tournament.tournamentType.charAt(0).toUpperCase() + tournament.tournamentType.slice(1)
-						} - ${tournament.state !== 'pending' ? tournament.swissRounds + ' Rounds' : ''}`}</Text>
+						}  ${
+							tournament.state !== 'pending' ? ' - ' + tournament.swissRounds + ' Rounds' : ''
+						}`}</Text>
 					</div>
 					<div className={cls.participants}>
 						<People set="bold" />
@@ -177,7 +179,9 @@ const useStyles = createUseStyles((theme) => ({
 		fontWeight: 'bold',
 		alignSelf: 'center',
 	},
-	info: {},
+	info: {
+		alignSelf: 'center',
+	},
 	date: {
 		alignSelf: 'center',
 		display: 'flex',

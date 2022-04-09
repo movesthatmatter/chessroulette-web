@@ -27,8 +27,8 @@ export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
     if (tournament) {
       return;
     }
-
-    getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
+    setTournament(mockedTournament);
+    // getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
   }, [params.slug]);
 
   if (getTournamentWithFullDetailsResource.hasFailed) {
