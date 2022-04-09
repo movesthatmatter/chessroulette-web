@@ -14,12 +14,14 @@ type Props = {
 };
 
 export const PageAsParticipant: React.FC<Props> = ({ match, tournamentOrganizerUserId }) => {
+  const slug = `${match.slug}-${match.gameId}`;
+
   return (
     <GetRoomOrCreate
-      slug={match.slug}
+      slug={slug}
       newRoomSpecs={{
         userId: tournamentOrganizerUserId,
-        slug: `${match.slug}-${match.gameId}`,
+        slug,
         activity: {
           activityType: 'play',
           creationRecord: 'game',
