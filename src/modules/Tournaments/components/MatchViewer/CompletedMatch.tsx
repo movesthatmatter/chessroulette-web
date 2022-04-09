@@ -56,7 +56,13 @@ export const CompletedMatch: React.FC<Props> = ({ match }) => {
 						style={{
 							borderTopLeftRadius: spacers.small,
 						}}
-					/>
+					>
+						<div className={cls.scoreContainer}>
+							<Text size="subtitle1" style={{ fontWeight: 'bold', paddingRight: '5px' }}>
+								{match.winner === 'white' || match.winner === '1/2' ? '1' : '0'}
+							</Text>
+						</div>
+					</div>
 					<div
 						className={cls.playerBox}
 						style={{
@@ -69,7 +75,7 @@ export const CompletedMatch: React.FC<Props> = ({ match }) => {
 						}}
 					>
 						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
-						<div>{getUserDisplayName(match.players[0].user)}</div>
+						<div style={{ maxWidth: '7rem' }}>{getUserDisplayName(match.players[0].user)}</div>
 					</div>
 					<div
 						className={cls.pieceBox}
@@ -91,7 +97,13 @@ export const CompletedMatch: React.FC<Props> = ({ match }) => {
 						style={{
 							borderBottomLeftRadius: spacers.small,
 						}}
-					/>
+					>
+						<div className={cls.scoreContainer}>
+							<Text size="subtitle1" style={{ fontWeight: 'bold', paddingRight: '5px' }}>
+								{match.winner === 'black' || match.winner === '1/2' ? '1' : '0'}
+							</Text>
+						</div>
+					</div>
 					<div
 						className={cls.playerBox}
 						style={{
@@ -104,7 +116,7 @@ export const CompletedMatch: React.FC<Props> = ({ match }) => {
 						}}
 					>
 						<Avatar mutunachiId={+match.players[1].user.avatarId} size={20} />
-						<div>{getUserDisplayName(match.players[1].user)}</div>
+						<div style={{ maxWidth: '7rem' }}>{getUserDisplayName(match.players[1].user)}</div>
 					</div>
 					<div
 						className={cls.pieceBox}
@@ -141,8 +153,7 @@ const useStyles = createUseStyles((theme) => ({
 	match: {
 		display: 'flex',
 		flexDirection: 'column',
-		// paddingLeft: spacers.default,
-		// paddingRight: spacers.default,
+		paddingRight: spacers.default,
 	},
 	container: {
 		display: 'flex',
@@ -181,7 +192,7 @@ const useStyles = createUseStyles((theme) => ({
 	hoveredBkg: {
 		cursor: 'pointer',
 		position: 'absolute',
-		left: '-6px',
+		left: '0px',
 		top: 0,
 		right: 0,
 		bottom: 0,
@@ -209,10 +220,21 @@ const useStyles = createUseStyles((theme) => ({
 	border: {
 		position: 'absolute',
 		height: '100%',
-		width: '1rem',
-		left: '-6px',
+		width: '37px',
+		left: '-28px',
 		zIndex: 1,
-		background: theme.name === 'darkDefault' ? '#D833D1' : '#88ABEC',
+		background:
+			theme.name === 'darkDefault'
+				? '#ff33a0'
+				: 'linear-gradient(94.87deg, #5FD8F9 -22.01%, #BE6ED9 108.47%)',
+	},
+	scoreContainer: {
+		display: 'flex',
+		justifyContent: 'center',
+		alignContent: 'center',
+		height: '100%',
+		width: '100%',
+		alignItems: 'center',
 	},
 	playerContainer: {
 		display: 'flex',

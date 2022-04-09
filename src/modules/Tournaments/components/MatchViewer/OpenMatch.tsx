@@ -69,7 +69,7 @@ export const OpenMatch: React.FC<Props> = ({ match }) => {
 						}}
 					>
 						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
-						<div>{getUserDisplayName(match.players[0].user)}</div>
+						<div style={{ maxWidth: '7rem' }}>{getUserDisplayName(match.players[0].user)}</div>
 					</div>
 					<div
 						className={cls.pieceBox}
@@ -105,7 +105,7 @@ export const OpenMatch: React.FC<Props> = ({ match }) => {
 						}}
 					>
 						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
-						<div>{getUserDisplayName(match.players[1].user)}</div>
+						<div style={{ maxWidth: '7rem' }}>{getUserDisplayName(match.players[1].user)}</div>
 					</div>
 					<div
 						className={cls.pieceBox}
@@ -120,7 +120,7 @@ export const OpenMatch: React.FC<Props> = ({ match }) => {
 					<div className={cls.hoveredBkg}>
 						<div className={cls.hoveredContent} onClick={() => {}}>
 							<Text size="title2" className={cls.hoveredText}>
-								Watch Game
+								View Details
 							</Text>
 						</div>
 					</div>

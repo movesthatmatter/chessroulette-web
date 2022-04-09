@@ -31,8 +31,8 @@ export const TournamentDetailsRoute: React.FC<Props> = React.memo(() => {
   const getTournamentWithFullDetailsResource = useResource(getTournamentWithFullDetails);
 
   useEffect(() => {
-    getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
-    // setTournament(mockedTournament);
+    //getTournamentWithFullDetailsResource.request({ tournamentId: params.slug }).map(setTournament);
+    setTournament(mockedTournament);
   }, [params.slug]);
 
   useEffect(() => {

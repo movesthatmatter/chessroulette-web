@@ -16,7 +16,7 @@ type Props = {
 	tournament: TournamentWithFullDetailsRecord;
 };
 
-type Status = 'Pending' | 'In Progress' | 'Completed';
+type Status = 'Pending' | 'In Progress' | 'Completed' | 'In Review';
 
 export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 	const cls = useStyles();
@@ -28,7 +28,9 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 			return;
 		}
 
-		setIAmParticipating(!!Object.values(tournament.participants).find((p) => p.user.id === auth.user.id));
+		setIAmParticipating(
+			!!Object.values(tournament.participants).find((p) => p.user.id === auth.user.id)
+		);
 	}, [auth.authenticationType]);
 
 	function getTournamentStatus(state: TournamentWithFullDetailsRecord['state']): Status {
@@ -36,6 +38,8 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 			? 'Pending'
 			: state === 'complete' || state === 'ended'
 			? 'Completed'
+			: state === 'awaiting_review'
+			? 'In Review'
 			: 'In Progress';
 	}
 
@@ -89,30 +93,38 @@ export const TournamentBanner: React.FC<Props> = ({ tournament }) => {
 									tournamentId: tournament.id,
 								}).map(() => setIAmParticipating(true));
 							}}
-							render={(state) => (
-								<Button
-									label={
-										iAmParticipating
-											? 'You are Participanting'
-											: tournament.state === 'pending'
-											? 'Join'
-											: 'Registration Closed'
+							render={(state) => {
+								const label = (() => {
+									if (iAmParticipating) {
+										return 'You Are Participanting';
 									}
-									disabled={iAmParticipating || tournament.state !== 'pending'}
-									type="positive"
-									style={{
-										marginBottom: '0px',
-										paddingLeft: '10px',
-										paddingRight: '10px',
-										fontWeight: 'normal',
-									}}
-									onClick={() => {
-										if (!state.isAuthenticated) {
-											state.check();
-										}
-									}}
-								/>
-							)}
+
+									if (tournament.state === 'pending') {
+										return 'Join';
+									}
+
+									return 'Registration Closed';
+								})();
+
+								return (
+									<Button
+										label={label}
+										disabled={iAmParticipating || tournament.state !== 'pending'}
+										type="positive"
+										style={{
+											marginBottom: '0px',
+											paddingLeft: '10px',
+											paddingRight: '10px',
+											fontWeight: 'normal',
+										}}
+										onClick={() => {
+											if (!state.isAuthenticated) {
+												state.check();
+											}
+										}}
+									/>
+								);
+							}}
 						/>
 					</div>
 					{/*<div className={cls.date}>
@@ -167,7 +179,7 @@ const useStyles = createUseStyles((theme) => ({
 		paddingLeft: spacers.default,
 	},
 	status: {
-		color: theme.colors.attention,
+		color: theme.name === 'darkDefault' ? theme.colors.primary : theme.colors.attention,
 		fontWeight: 'bold',
 		alignSelf: 'center',
 	},

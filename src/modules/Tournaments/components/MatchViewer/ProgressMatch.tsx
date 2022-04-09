@@ -19,6 +19,7 @@ import dateformat from 'dateformat';
 import cx from 'classnames';
 import { Avatar } from 'src/components/Avatar';
 import { colors } from 'src/theme/colors';
+import { isUserAMatchParticipant } from '../../utils';
 
 type Props = {
 	match: TournamentInProgressMatchRecord;
@@ -41,6 +42,16 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 			history.push(`${url}/matches/${m.slug}`);
 		});
 	};
+
+	const getOverlayStatus = useMemo(() => {
+		if (auth.authenticationType !== 'user') {
+			return 'Watch Game';
+		}
+		if (isUserAMatchParticipant(match, auth.user.id)) {
+			return 'Play Game';
+		}
+		return 'Watch Game';
+	}, [match, auth]);
 
 	const player1Class =
 		auth.authenticationType === 'user' && auth.user.id === match.players[0].user.id
@@ -84,7 +95,7 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 						}}
 					>
 						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
-						<div>{getUserDisplayName(match.players[0].user)}</div>
+						<div style={{ maxWidth: '7rem' }}>{getUserDisplayName(match.players[0].user)}</div>
 					</div>
 					<div
 						className={cls.pieceBox}
@@ -124,7 +135,7 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 						}}
 					>
 						<Avatar mutunachiId={+match.players[0].user.avatarId} size={20} />
-						<div>{getUserDisplayName(match.players[1].user)}</div>
+						<div style={{ maxWidth: '7rem' }}>{getUserDisplayName(match.players[1].user)}</div>
 					</div>
 					<div
 						className={cls.pieceBox}
@@ -147,7 +158,7 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 			</div>
 			<div className={cls.status}>
 				<Text size="tiny1" style={{ fontWeight: 'bold', fontStyle: 'italic', color: '#FF32A1' }}>
-					'In Progress'
+					{getOverlayStatus}
 				</Text>
 				<Text size="tiny2" style={{ color: theme.text.baseColor }}>
 					{dateformat(match.startedAt, 'dd mmmm h:MM TT')}

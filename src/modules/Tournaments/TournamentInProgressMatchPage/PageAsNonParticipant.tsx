@@ -7,6 +7,10 @@ import { ChessGameDisplay } from 'src/modules/Games/widgets/ChessGameDisplay';
 import { RelayedGame } from 'src/modules/Room/RoomActivity/activities/RelayActivity/types';
 import { gameRecordToGame } from 'src/modules/Games/Chess/lib';
 import { RelativeLink } from 'src/components/RelativeLink';
+import { MatchPageMatchViewer } from '../components/MatchPageMatchViewer/MatchPageMatchViewer';
+import { Button } from 'src/components/Button';
+import { noop } from 'src/lib/util';
+import { spacers } from 'src/theme/spacers';
 
 type Props = {
   match: TournamentInProgressMatchRecord;
@@ -28,13 +32,29 @@ export const PageAsNonParticipant: React.FC<Props> = ({ match }) => {
 
   return (
     <Page name="Tournament Match">
-      <pre>{JSON.stringify(match, null, 2)}</pre>
-      <div style={{ width: '320px' }}>
-        {relayedGame && (
-          <RelativeLink to="/analysis">
-            <ChessGameDisplay game={relayedGame.game} hoveredText="Watch Live" onClick={() => {}} />
-          </RelativeLink>
-        )}
+      <MatchPageMatchViewer match={match} />
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          paddingTop: spacers.large,
+        }}
+      >
+        <RelativeLink to="/analysis">
+          {relayedGame ? (
+            <div style={{ width: '320px' }}>
+              <ChessGameDisplay
+                game={relayedGame.game}
+                hoveredText="Watch Live"
+                onClick={() => {}}
+              />
+            </div>
+          ) : (
+            <Button label="Watch NOW" onClick={noop} type="positive" />
+          )}
+        </RelativeLink>
       </div>
     </Page>
   );
