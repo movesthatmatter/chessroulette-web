@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CreateAnalysisRecord, RoomRecord } from 'chessroulette-io';
 import { JoinedRoomProvider } from 'src/modules/Room/Providers/JoinedRoomProvider';
 import { RoomConnectProvider } from 'src/modules/Room/Providers/RoomConnectProvider';
