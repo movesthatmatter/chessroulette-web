@@ -33,9 +33,7 @@ export const ComingSoonPage: React.FC<Props> = () => {
           </GradientText>
 
           <div className={cls.subtitleWrapper}>
-            <Text size="body1">
-              We're currently building the tournaments feature. Stay tuned!
-            </Text>
+            <Text size="body1">We're currently building the tournaments feature. Stay tuned!</Text>
           </div>
         </div>
         <div className={cls.section}>
@@ -44,7 +42,7 @@ export const ComingSoonPage: React.FC<Props> = () => {
         <br />
         <br />
         <div className={cls.tournamentItem}>
-          <AnchorLink href="https://partner.chessroulette.live" target="_blank">
+          <AnchorLink href="https://fundraising-ukraine.chessroulette.live" target="_blank">
             <img src={mtmUkraineFundraiserThumb} className={cls.tournamentThumbImg}></img>
           </AnchorLink>
           <div className={cls.tournamentItemInfo}>
@@ -69,9 +67,9 @@ export const ComingSoonPage: React.FC<Props> = () => {
             <br />
             <Text size="body2">Every participant receives a Collectible NFT after the event.</Text>
 
-            <br/>
-            <br/>
-            <AnchorLink href="https://partner.chessroulette.live" target="_blank">
+            <br />
+            <br />
+            <AnchorLink href="https://fundraising-ukraine.chessroulette.live" target="_blank">
               Learn More
             </AnchorLink>
           </div>

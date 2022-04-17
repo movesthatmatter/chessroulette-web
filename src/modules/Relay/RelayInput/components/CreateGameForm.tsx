@@ -1,6 +1,6 @@
 import capitalize from 'capitalize';
-import { ChessGameTimeLimit, metadata, Resources } from 'dstnd-io';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { ChessGameTimeLimit, metadata, Resources } from 'chessroulette-io';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 import { boolean } from 'io-ts';
 import React, { useState } from 'react';
 import { Button, ButtonProps } from 'src/components/Button';

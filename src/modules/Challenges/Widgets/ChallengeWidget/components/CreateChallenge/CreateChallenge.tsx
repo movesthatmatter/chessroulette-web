@@ -6,10 +6,10 @@ import {
   GameSpecsRecord,
   ChallengeRecord,
   ChessGameColor,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import capitalize from 'capitalize';
 import { SelectInput } from 'src/components/Input/SelectInput';
-import { chessGameTimeLimitMsMap } from 'dstnd-io/dist/metadata/game';
+import { chessGameTimeLimitMsMap } from 'chessroulette-io/dist/metadata/game';
 import humanizeDuration from 'humanize-duration';
 import { spacers } from 'src/theme/spacers';
 

@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { ChessGameColor } from 'dstnd-io';
+import { ChessGameColor } from 'chessroulette-io';
 import { createUseStyles } from 'src/lib/jss';
 import { fonts } from 'src/theme';
 import { PlayerBox } from '../PlayerBox/PlayerBox';
@@ -14,7 +14,7 @@ import { useGameTimesLeftByColor } from './useGameState';
 import { ChessGameHistoryProvided } from '../GameHistory/ChessGameHistoryProvider/ChessGameHistoryProvided';
 import { FloatingBox } from 'src/components/FloatingBox';
 import { spacers } from 'src/theme/spacers';
-import { otherChessColor } from 'dstnd-io/dist/chessGame/util/util';
+import { otherChessColor } from 'chessroulette-io/dist/chessGame/util/util';
 import { getPlayerByColor } from '../../lib';
 import { getRelativeMaterialScore } from './util';
 

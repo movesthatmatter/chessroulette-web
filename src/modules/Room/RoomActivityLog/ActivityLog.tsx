@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
-import { selectMyPeer } from 'src/providers/PeerProvider';
 import { useGameActions } from 'src/modules/Games/GameActions';
 import {useGameActions as useWarGameActions} from 'src/modules/Games/WarGame/gameActions';
 import { InfoNotificationItem } from './components/InfoNotificationItem';
@@ -11,8 +10,8 @@ import { ChallengeNotificationItem } from './components/ChallengeNotificationIte
 import { spacers } from 'src/theme/spacers';
 import { Text } from 'src/components/Text';
 import * as resources from '../resources';
-import { CustomTheme } from 'src/theme';
 import { selectCurrentRoomActivity } from '../RoomActivity/redux/selectors';
+import { useMyPeer } from 'src/providers/PeerConnectionProvider';
 
 type Props = {
   bottomContainerStyle: CSSProperties | undefined;
@@ -33,7 +32,7 @@ const processLog = (log: ReturnType<typeof selectCurrentRoomActivityLog>) => {
 
 export const ActivityLog: React.FC<Props> = (props) => {
   const cls = useStyles();
-  const myPeer = useSelector(selectMyPeer);
+  const myPeer = useMyPeer();
   const gameActions = useGameActions();
   const warGameActions = useWarGameActions();
   const roomActivity = useSelector(selectCurrentRoomActivity);

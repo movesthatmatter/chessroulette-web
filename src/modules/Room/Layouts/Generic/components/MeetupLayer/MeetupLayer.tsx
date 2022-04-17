@@ -2,13 +2,13 @@ import React, { useMemo } from 'react';
 import { MultiFaceTimeGrid } from 'src/components/FaceTime';
 import { createUseStyles } from 'src/lib/jss';
 import { SwitchActivityWidgetRoomConsumer } from 'src/modules/Room/RoomConsumers/SwitchActivityWidgetRoomConsumer';
-import { Room } from 'src/providers/PeerProvider';
 import { spacers } from 'src/theme/spacers';
-import { useStreamingPeers } from 'src/providers/PeerProvider/hooks';
 import { Logo } from 'src/components/Logo';
 import { Close } from 'grommet-icons';
 import { colors } from 'src/theme/colors';
 import { noop } from 'src/lib/util';
+import { Room } from 'src/modules/Room/types';
+import { useStreamingPeers } from 'src/providers/PeerConnectionProvider';
 
 type Props = {
   room: Room;

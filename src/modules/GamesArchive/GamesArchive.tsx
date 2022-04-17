@@ -1,8 +1,8 @@
-import { RegisteredUserRecord, GameRecordFinished, GameRecordStopped } from 'dstnd-io';
+import { RegisteredUserRecord, GameRecordFinished, GameRecordStopped } from 'chessroulette-io';
 import React from 'react';
 import { createUseStyles, CSSProperties } from 'src/lib/jss';
 import { gameRecordToGame } from '../Games/Chess/lib';
-import { getUserGames } from './resources';
+import { getUserGameArchive } from './resources';
 import { AwesomeLoader } from 'src/components/AwesomeLoader';
 import { WithPagination } from 'src/components/Pagination';
 import { ArchivedGame } from './components/ArchivedGame';
@@ -22,7 +22,7 @@ export const GamesArchive: React.FC<Props> = ({ userId, pageSize = 10 }) => {
     <WithPagination<GameRecordFinished | GameRecordStopped>
       initialPageSize={pageSize}
       getItems={(p) =>
-        getUserGames({
+        getUserGameArchive({
           userId,
           pageSize: p.pageSize,
           currentIndex: p.pageIndex,

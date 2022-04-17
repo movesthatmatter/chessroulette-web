@@ -70,10 +70,11 @@ import {
   WarGameResignationRequestPayload,
   JoinedWarGameUpdatedPayload,
   JoinedRoomAndWarGameUpdatedPayload,
-} from 'dstnd-io';
-import { PeerMessageEnvelope } from 'src/providers/PeerProvider/records';
-import { console } from 'window-or-global';
+  SubscribeToResourcePayload,
+  UnsubscribeFromResourcePayload,
+} from 'chessroulette-io';
 import { logsy } from 'src/lib/logsy';
+import { PeerMessageEnvelope } from 'src/providers/PeerToPeerProvider/records';
 
 type ReceivableMessagesMap = {
   peerJoinedRoom: PeerJoinedRoomPayload;
@@ -100,6 +101,8 @@ type SendableMessagesMap = {
   statsReaderIdentification: StatsReaderIdentificationPayload;
   ping: PingPayload;
   whoami: WhoamiRequestPayload;
+  subscribeToResource: SubscribeToResourcePayload;
+  unsubscribeFromResourcePayload: UnsubscribeFromResourcePayload;
 
   // Room
   joinRoomRequest: JoinRoomRequestPayload;
@@ -153,7 +156,7 @@ type SendableMessagesMap = {
   warGameRematchAcceptRequestPayload: WarGameRematchAcceptRequestPayload;
   warGameRematchDenyRequestPayload: WarGameRematchDenyRequestPayload;
   warGameResignationRequestPayload: WarGameResignationRequestPayload;
-  
+
   // Analysis
   analysisMoveRequestPayload: AnalysisMoveRequestPayload;
   analysisRefocusRequestPayload: AnalysisRefocusRequestPayload;

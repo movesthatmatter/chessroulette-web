@@ -1,4 +1,4 @@
-import { ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
+import { ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'chessroulette-io';
 import React from 'react';
 import { Game } from 'src/modules/Games/types';
 import { LichessGameStateDialogConsumer } from 'src/modules/LichessPlay/PlayLichess/components/LichessGameStateDialogConsumer';

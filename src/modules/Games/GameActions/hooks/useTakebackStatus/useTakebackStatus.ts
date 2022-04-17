@@ -1,4 +1,4 @@
-import { ChessGameState, ChessPlayer, RoomWithPlayActivityRecord } from 'dstnd-io';
+import { ChessGameState, ChessPlayer, RoomWithPlayActivityRecord } from 'chessroulette-io';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useStateWithPrev } from 'src/lib/hooks/useStateWithPrev';

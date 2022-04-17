@@ -6,11 +6,11 @@ import {
 } from 'src/components/FaceTime/MultiFaceTimeCompact';
 import { Logo } from 'src/components/Logo';
 import { createUseStyles } from 'src/lib/jss';
-import { PeerInfo, Room } from 'src/providers/PeerProvider';
-import { useStreamingPeers } from 'src/providers/PeerProvider/hooks';
+import { PeerInfo, useStreamingPeers } from 'src/providers/PeerConnectionProvider';
 import { hideOnDesktop, onlyMobile } from 'src/theme';
 import { spacers } from 'src/theme/spacers';
-import { RoomProviderContext } from '../RoomProvider';
+import { JoinedRoomProviderContext } from '../Providers/JoinedRoomProvider';
+import { Room } from '../types';
 
 type Props = Omit<
   MultiFaceTimeCompactProps,
@@ -60,7 +60,7 @@ const StreamingBoxRoomConsumerWithGivenRoom: React.FC<Props & { room: Room }> = 
 };
 
 export const StreamingBoxRoomConsumer: React.FC<Props> = (props) => {
-  const roomContext = useContext(RoomProviderContext);
+  const roomContext = useContext(JoinedRoomProviderContext);
 
   if (!roomContext) {
     // Show Loader

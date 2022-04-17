@@ -1,4 +1,4 @@
-import { ChessGameColor, ChessMove, GameSpecsRecord } from 'dstnd-io';
+import { ChessGameColor, ChessMove, GameSpecsRecord } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
 import { Game } from 'src/modules/Games';
 import { useAuthenticatedUserWithLichessAccount } from 'src/services/Authentication';

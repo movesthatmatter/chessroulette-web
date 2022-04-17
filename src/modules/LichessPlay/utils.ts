@@ -10,7 +10,7 @@ import {
   GameRecord,
   GuestUserRecord,
   RegisteredUserRecord,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { ISODateTimeBrand } from 'io-ts-isodatetime/dist/lib/ISODateTime';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { getRandomInt } from 'src/lib/util';

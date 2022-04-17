@@ -1,5 +1,5 @@
 import { Move } from 'chess.js';
-import { ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'dstnd-io';
+import { ChessGameColor, ChessGameStateFen, ChessGameStatePgn, ChessMove } from 'chessroulette-io';
 import { ChessgroundProps } from 'react-chessground';
 
 export type ChessBoardType = 'free' | 'play' | 'analysis' | 'relay';

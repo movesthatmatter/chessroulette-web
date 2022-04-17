@@ -17,7 +17,7 @@ import {
   GameChallengeDenyRequestPayload,
   GameChallengeAcceptRequestPayload,
   GameSpecsRecord, GameTakebackOfferingRequestPayload, GameTakebackOfferingAcceptRequestPayload, GameTakebackOfferingDenyRequestPayload
-} from 'dstnd-io';
+} from 'chessroulette-io';
 
 export type OfferRematchProps = {
   gameSpecs?: GameSpecsRecord;

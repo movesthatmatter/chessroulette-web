@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getAVStreaming, AVStreamingConstraints, AVStreaming } from 'src/services/AVStreaming';
 import { FaceTime, FaceTimeProps } from '../FaceTime/FaceTime';
 import useInstance from '@use-it/instance';
-import { PeerStreamingConfig } from 'src/providers/PeerProvider';
+import { PeerStreamingConfig } from 'src/providers/PeerConnectionProvider';
 
 type Props = Omit<FaceTimeProps, 'streamConfig'> & {
   constraints?: AVStreamingConstraints;

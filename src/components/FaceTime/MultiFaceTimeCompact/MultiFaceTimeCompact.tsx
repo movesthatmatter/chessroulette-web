@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import cx from 'classnames';
 import { createUseStyles } from 'src/lib/jss';
-import { StreamingPeer } from 'src/providers/PeerProvider';
 import { spacers } from 'src/theme/spacers';
 import { FaceTime, FaceTimeProps } from '../FaceTime';
 import { getUserDisplayName } from 'src/modules/User';
 import { Reel } from './components/Reel';
 import { fonts, softBorderRadius } from 'src/theme';
 import { MyFaceTime } from '../MyFaceTime';
+import { StreamingPeer } from 'src/providers/PeerConnectionProvider';
 
 type OverlayedNodeRender = (p: { inFocus?: StreamingPeer['user'] }) => React.ReactNode;
 

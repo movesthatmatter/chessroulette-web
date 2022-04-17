@@ -5,7 +5,7 @@ import { TextInput } from 'src/components/TextInput';
 import { createUseStyles } from 'src/lib/jss';
 import { validator } from 'src/lib/validator';
 import { AsyncResult } from 'ts-async-results';
-import { Resources } from 'dstnd-io';
+import { Resources } from 'chessroulette-io';
 
 type Props = {
   onSubmit: (f: FormModel) => AsyncResult<any, any>;

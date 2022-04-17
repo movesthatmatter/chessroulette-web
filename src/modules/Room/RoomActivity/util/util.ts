@@ -3,7 +3,7 @@ import { toRoomPlayActivity } from '../activities/PlayActivity/util';
 import { toRoomAnalysisActivity } from '../activities/AnalysisActivity/util';
 import { BaseRoomActivity } from '../redux/types';
 import { RoomActivity, RoomActivityParticipant } from '../types';
-import { UserInfoRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'chessroulette-io';
 import { toRoomRelayActivity } from '../activities/RelayActivity/utils';
 import { toRoomWarGameActivity } from '../activities/WarGameActivity/utils';
 
@@ -11,7 +11,6 @@ export const toRoomActivity = (
   currentRoomActivity: BaseRoomActivity,
   members: RoomMember[]
 ): RoomActivity => {
-
   if (currentRoomActivity.type === 'play') {
     return toRoomPlayActivity(currentRoomActivity, members);
   }
@@ -20,7 +19,7 @@ export const toRoomActivity = (
     return toRoomAnalysisActivity(currentRoomActivity, members);
   }
 
-  if (currentRoomActivity.type === 'relay'){
+  if (currentRoomActivity.type === 'relay') {
     return toRoomRelayActivity(currentRoomActivity, members);
   }
 

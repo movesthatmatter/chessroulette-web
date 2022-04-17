@@ -1,4 +1,4 @@
-import { PeerRecord } from 'dstnd-io';
+import { PeerRecord } from 'chessroulette-io';
 import Chance from 'chance';
 import { UserRecordMocker } from './UserRecordMocker';
 import { toISODateTime } from 'io-ts-isodatetime';

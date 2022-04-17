@@ -1,4 +1,4 @@
-import { ChessGameStateFinished, GameRecordFromGameState } from 'dstnd-io';
+import { ChessGameStateFinished, GameRecordFromGameState } from 'chessroulette-io';
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { GameMocker } from 'src/mocks/records';

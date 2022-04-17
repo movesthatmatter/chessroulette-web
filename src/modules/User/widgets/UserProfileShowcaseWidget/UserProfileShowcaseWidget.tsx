@@ -1,4 +1,4 @@
-import { GuestUserRecord, RegisteredUserRecord, Resources } from 'dstnd-io';
+import { GuestUserRecord, RegisteredUserRecord, Resources } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
 import { useAnyUser } from 'src/services/Authentication';
 import { UserProfileShowcase } from './components/UserProfileShowcase';

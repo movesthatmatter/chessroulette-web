@@ -5,7 +5,7 @@ import {
   ChessHistoryIndex,
   ChessHistoryMove,
   SimplePGN,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import { createContext } from 'react';
 import { noop } from 'src/lib/util';
 

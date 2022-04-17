@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { CreateRoomRequest } from 'dstnd-io';
+import { CreateRoomRequest } from 'chessroulette-io';
 import { useAnyUser } from 'src/services/Authentication';
 import { useHistory } from 'react-router-dom';
 import { toRoomUrlPath } from 'src/lib/util';

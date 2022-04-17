@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Button, ButtonProps } from 'src/components/Button';
 import { noop } from 'src/lib/util';
-import { usePeerState } from 'src/providers/PeerProvider';
 import { Dialog } from 'src/components/Dialog';
 import { CreateRoomWizard, CreateRoomWizardProps } from '../../wizards/CreateRoomWizard/CreateRoomWizard';
+import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
 
 type Props = Omit<ButtonProps, 'onClick'> & {
   createRoomSpecs: CreateRoomWizardProps['createRoomSpecs'];
@@ -15,14 +15,14 @@ export const CreateRoomButtonWidgetWithWizard: React.FC<Props> = ({
   onClick = noop,
   ...buttonProps
 }) => {
-  const peerState = usePeerState();
   const [showWizard, setShowWizard] = useState(false);
+  const pc = usePeerConnection();
 
   return (
     <>
       <Button
         {...buttonProps}
-        disabled={buttonProps.disabled || !peerState.ready}
+        disabled={buttonProps.disabled || !pc.ready}
         onClick={() => {
           setShowWizard(true);
           onClick();

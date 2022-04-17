@@ -6,7 +6,7 @@ import { Text } from 'src/components/Text';
 import { getUserDisplayName } from 'src/modules/User';
 import { spacers } from 'src/theme/spacers';
 import { Avatar } from 'src/components/Avatar';
-import { UserInfoRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'chessroulette-io';
 
 type Props = {
   darkBG?: boolean;

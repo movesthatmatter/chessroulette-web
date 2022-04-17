@@ -5,7 +5,7 @@ import { spacers } from 'src/theme/spacers';
 import cx from 'classnames';
 import { Avatar } from 'src/components/Avatar';
 import { Text } from 'src/components/Text';
-import { GameRecord, RegisteredUserRecord } from 'dstnd-io';
+import { GameRecord, RegisteredUserRecord } from 'chessroulette-io';
 import { Emoji } from 'src/components/Emoji';
 import dateformat from 'dateformat';
 import capitalize from 'capitalize';

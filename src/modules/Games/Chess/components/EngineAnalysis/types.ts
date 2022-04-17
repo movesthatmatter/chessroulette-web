@@ -1,4 +1,4 @@
-import { ChessMove } from 'dstnd-io';
+import { ChessMove } from 'chessroulette-io';
 
 export type EngineCPScore = {
   unit: 'cp';

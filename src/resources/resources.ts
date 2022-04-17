@@ -5,8 +5,6 @@ import {
   CreateRoomResponse,
   CreateChallengeRequest,
   createChallengeResponse,
-  iceServersResponse,
-  IceServersResponse,
   RegisterPeerRequestPayload,
   RegisterPeerResponsePayload,
   registerPeerResponsePayload,
@@ -17,7 +15,7 @@ import {
   QuickPairingRequest,
   QuickPairingResponse,
   quickPairingResponse,
-} from 'dstnd-io';
+} from 'chessroulette-io';
 import config from 'src/config';
 import { Result, Err, Ok } from 'ts-results';
 import { AsyncResultWrapper } from 'ts-async-results';
@@ -29,20 +27,6 @@ const http = getHttpInstance({
   // transformRequest: [],
   // transformResponse: [],
 });
-
-export const getIceURLS = async (): Promise<
-  Result<IceServersResponse, ApiError>
-> => {
-  try {
-    const { data } = await http.get('api/iceurls');
-
-    return io
-      .toResult(iceServersResponse.decode(data))
-      .mapErr(() => 'BadResponse');
-  } catch (e) {
-    return new Err('BadRequest');
-  }
-};
 
 export const createChallenge = (
   req: CreateChallengeRequest,

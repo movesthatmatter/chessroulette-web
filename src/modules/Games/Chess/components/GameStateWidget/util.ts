@@ -1,4 +1,4 @@
-import { ActivePiecesRecord, GameRecord } from 'dstnd-io';
+import { ActivePiecesRecord, GameRecord } from 'chessroulette-io';
 import { objectKeys } from 'src/lib/util';
 import { PlayParticipants } from 'src/modules/Games';
 import { Game } from 'src/modules/Games/types';

@@ -8,7 +8,7 @@ if (false && process.env.NODE_ENV === 'development') {
   } = require('./modules/Games/Chess/components/ChessBoard/StyledChessBoard');
   const { ChessBoard } = require('./modules/Games/Chess/components/ChessBoard');
   const { NoActivity } = require('./modules/Room/RoomActivity/activities/NoActivity');
-  const { Room } = require('./modules/Room/Room');
+  const { Room } = require('./modules/Room/RoomPage');
   const { JoinRoomBouncer } = require('./modules/Room/JoinRoomBouncer');
   const { RoomRoute } = require('./modules/Room/RoomRoute');
   const {

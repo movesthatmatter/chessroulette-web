@@ -1,8 +1,7 @@
-import { ChallengeRecord, RoomRecord } from 'dstnd-io';
+import { ChallengeRecord, RoomRecord } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
-import { usePeerState } from 'src/providers/PeerProvider';
 import { useSelector } from 'react-redux';
 import { selectAuthentication } from 'src/services/Authentication';
 import { ChallengePage } from './ChallengePage';
@@ -10,6 +9,7 @@ import { AwesomeErrorWithAction } from 'src/components/AwesomeErrorWithAction/Aw
 import { RoomRoute, resources as roomResources } from 'src/modules/Room';
 import { resources } from 'src/resources';
 import { AsyncResult } from 'ts-async-results';
+import { usePeerConnection } from 'src/providers/PeerConnectionProvider';
 
 type Props = {};
 
@@ -20,7 +20,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
   const [resourceState, setResourceState] = useState(
     'none' as 'none' | 'loading' | 'error' | 'success'
   );
-  const peerState = usePeerState();
+  const pc = usePeerConnection();
   const auth = useSelector(selectAuthentication);
   const history = useHistory();
 
@@ -42,7 +42,7 @@ export const ChallengeOrRoomPage: React.FC<Props> = () => {
           setResourceState('error');
         });
     }
-  }, [challenge, roomInfo, peerState]);
+  }, [challenge, roomInfo, pc.ready]);
 
   if (auth.authenticationType === 'none') {
     // Show something more

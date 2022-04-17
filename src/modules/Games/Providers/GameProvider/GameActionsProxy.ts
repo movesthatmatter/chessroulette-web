@@ -1,4 +1,4 @@
-import { ChessGameColor, ChessHistory, ChessMove } from 'dstnd-io';
+import { ChessGameColor, ChessHistory, ChessMove } from 'chessroulette-io';
 import { ISODateTime } from 'src/lib/date/ISODateTime';
 import { Events } from 'src/services/Analytics';
 import { SocketClient } from 'src/services/socket/SocketClient';

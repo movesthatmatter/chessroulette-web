@@ -1,4 +1,4 @@
-import { SimplePGN } from 'dstnd-io';
+import { SimplePGN } from 'chessroulette-io';
 import React from 'react';
 import { createUseStyles } from 'src/lib/jss';
 import cx from 'classnames';

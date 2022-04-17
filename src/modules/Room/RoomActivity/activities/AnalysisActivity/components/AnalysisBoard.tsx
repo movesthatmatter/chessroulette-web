@@ -1,4 +1,4 @@
-import { ChessHistoryIndex, SimplePGN } from 'dstnd-io';
+import { ChessHistoryIndex, SimplePGN } from 'chessroulette-io';
 import React, { useCallback } from 'react';
 import { ChessBoard, ChessBoardProps } from 'src/modules/Games/Chess/components/ChessBoard';
 import { ChessGameHistoryContextProps } from 'src/modules/Games/Chess/components/GameHistory';

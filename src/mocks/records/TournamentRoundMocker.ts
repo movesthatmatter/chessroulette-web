@@ -1,5 +1,5 @@
 import { Chance } from 'chance';
-import { RelayedGameRecord } from 'dstnd-io/dist/resourceCollections/relay/records';
+import { RelayedGameRecord } from 'chessroulette-io/dist/resourceCollections/relay/records';
 import { toISODateTime } from 'src/lib/date/ISODateTime';
 import { TournamentRound } from 'src/modules/Relay/BroadcastPage/types';
 import { Array, Date } from 'window-or-global';

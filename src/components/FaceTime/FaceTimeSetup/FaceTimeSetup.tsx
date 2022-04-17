@@ -8,7 +8,7 @@ import { FaceTime } from '../FaceTime';
 import { AVStreaming, getAVStreaming } from 'src/services/AVStreaming';
 import { softBorderRadius } from 'src/theme';
 import { seconds } from 'src/lib/time';
-import { PeerStreamingConfig } from 'src/providers/PeerProvider';
+import { PeerStreamingConfig } from 'src/providers/PeerConnectionProvider';
 
 type Props = {
   onUpdated: (p: { streamingConfig: PeerStreamingConfig; isLoading: boolean }) => void;

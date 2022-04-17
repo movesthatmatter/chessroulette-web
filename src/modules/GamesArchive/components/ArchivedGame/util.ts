@@ -1,4 +1,4 @@
-import { GameRecordFinished, GameRecordStopped } from 'dstnd-io';
+import { GameRecordFinished, GameRecordStopped } from 'chessroulette-io';
 import HumanizeDuration from 'humanize-duration';
 import { getPlayer } from 'src/modules/Games/Chess/lib';
 

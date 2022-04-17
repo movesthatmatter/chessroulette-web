@@ -1,4 +1,4 @@
-import { StreamerRecord } from 'dstnd-io/dist/resourceCollections/watch/records';
+import { StreamerRecord } from 'chessroulette-io/dist/resourceCollections/watch/records';
 import React from 'react';
 import { AnchorLink } from 'src/components/AnchorLink';
 import { Avatar } from 'src/components/Avatar';

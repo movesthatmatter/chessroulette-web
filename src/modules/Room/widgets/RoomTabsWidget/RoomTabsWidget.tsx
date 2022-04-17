@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { faComment, faDiceD6 } from '@fortawesome/free-solid-svg-icons';
-import { UserInfoRecord } from 'dstnd-io';
+import { UserInfoRecord } from 'chessroulette-io';
 import { useSelector } from 'react-redux';
 import { Tabs } from 'src/components/Tabs';
 import { ActivityLog } from 'src/modules/Room/RoomActivityLog';
 import { selectCurrentRoomActivityLog } from 'src/modules/Room/RoomActivityLog/redux/selectors';
 import { ChatContainer } from 'src/modules/Chat';
 import { useColorTheme } from 'src/theme/hooks/useColorTheme';
+import { Room } from '../../types';
 
 export type RoomTabsWidgetProps = {
   me: UserInfoRecord;
   bottomContainerHeight: number;
+  room: Room;
 };
 
 export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
@@ -39,8 +41,7 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
           content: (
             <div
               style={{
-                borderColor:
-                  theme.colors.neutral,
+                borderColor: theme.colors.neutral,
                 overflow: 'hidden',
                 flex: 1,
               }}
@@ -52,6 +53,7 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
               />
             </div>
           ),
+          iconType: 'fontAwesome',
           icon: faDiceD6,
         },
         {
@@ -59,15 +61,18 @@ export const RoomTabsWidget: React.FC<RoomTabsWidgetProps> = (props) => {
           content: (
             <div
               style={{
-                borderColor:
-                  theme.colors.neutral,
+                borderColor: theme.colors.neutral,
                 overflow: 'hidden',
                 flex: 1,
               }}
             >
-              <ChatContainer inputContainerStyle={{ height: `${props.bottomContainerHeight}px` }} />
+              <ChatContainer
+                inputContainerStyle={{ height: `${props.bottomContainerHeight}px` }}
+                room={props.room}
+              />
             </div>
           ),
+          iconType: 'fontAwesome',
           icon: faComment,
         },
       ]}
