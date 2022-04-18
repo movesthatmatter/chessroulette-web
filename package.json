@@ -51,7 +51,6 @@
     "@widgetbot/react-embed": "^1.4.0",
     "axios": "^0.19.2",
     "can-ndjson-stream": "^1.0.2",
-    "caniuse-lite": "^1.0.30001282",
     "capitalize": "^2.0.3",
     "chance": "^1.1.5",
     "chess.js": "^0.10.3",
