@@ -31,6 +31,7 @@ export const getRoom = (req: Resources.Util.RequestOf<typeof resource>) => {
 };
 
 export const createRoom = (req: Resources.Util.RequestOf<typeof resource>) => {
+  console.log('room create req', req);
   const { resource } = Resources.Collections.Room.CreateRoom;
 
   return resource.request(req, (body) => http.post('api/rooms', body));

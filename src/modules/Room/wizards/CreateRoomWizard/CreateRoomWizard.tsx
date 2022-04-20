@@ -22,32 +22,15 @@ const getDefaultWizardState = ({
     };
   }
 
-  if (activityType === 'play') {
-    return {
-      activityType: 'play',
-      creationRecord: 'challenge',
+  return {
+    activityType: 'none',
+    challenge: {
       gameSpecs: {
         timeLimit: 'rapid10',
         preferredColor: 'random',
         gameType: 'chess',
       },
-    };
-  }
-
-  if (activityType === 'warGame') {
-    return {
-      activityType: 'play',
-      creationRecord: 'challenge',
-      gameSpecs: {
-        timeLimit: 'rapid10',
-        preferredColor: 'random',
-        gameType: 'warGame',
-      },
-    };
-  }
-
-  return {
-    activityType: 'none',
+    },
   };
 };
 
@@ -72,14 +55,15 @@ export const CreateRoomWizard: React.FC<CreateRoomWizardProps> = ({ createRoomSp
 
   return (
     <Wizard>
-      {wizardState.activityType === 'play' || wizardState.activityType === 'warGame' && (
+      {wizardState.activityType === 'none' && wizardState.challenge && (
         <CreatePlayChallengeStep
-          gameSpecs={wizardState.gameSpecs}
+          gameSpecs={wizardState.challenge.gameSpecs}
           onUpdated={(gameSpecs) =>
             setWizardState({
-              activityType: 'play',
-              creationRecord: 'challenge',
-              gameSpecs,
+              activityType: 'none',
+              challenge: {
+                gameSpecs,
+              },
             })
           }
         />

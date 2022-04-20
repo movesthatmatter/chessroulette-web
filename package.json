@@ -56,7 +56,7 @@
     "chess.js": "^0.10.3",
     "chessground": "^7.9.3",
     "chessops": "0.7.1",
-    "chessroulette-io": "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#add-tournaments",
+    "chessroulette-io": "https://gabrielctroia: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@github.com/movesthatmatter/chessroulette-io.git#tournament-fixes",
     "chunk": "^0.0.3",
     "classnames": "^2.2.6",
     "csstype": "^2.6.10",

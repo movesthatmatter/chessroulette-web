@@ -1,5 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { JoinedRoomProviderContext, JoinedRoomProviderContextState } from '../Providers/JoinedRoomProvider';
+import {
+  JoinedRoomProviderContext,
+  JoinedRoomProviderContextState,
+} from '../Providers/JoinedRoomProvider';
 import { SwitchRoomActivityRequestPayload } from 'chessroulette-io';
 import { CreateChallengeDialog } from '../RoomActivity/activities/components/CreateChallengeDialog';
 import { getRoomPendingChallenge } from '../util';
@@ -103,18 +106,27 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
               // ...s,
               // history: s.history || [],
             });
-          } else if (s.activityType === 'play') {
-            if (getRoomPendingChallenge(context.room)) {
-              context.roomActions.switchActivity({
-                activityType: 'none',
-              });
-            } else {
-              setState(s);
-            }
-          } else if (s.activityType === 'relay') {
-            // don't do anything if relay as goLive takes care of it!
-          } else {
-            context.roomActions.switchActivity(s);
+          }
+          // else if (s.activityType === 'play') {
+          //   if (getRoomPendingChallenge(context.room)) {
+          //     context.roomActions.switchActivity({
+          //       activityType: 'play',
+          //       gameId: s.gameId,
+          //     });
+          //   } else {
+          //     setState(s);
+          //   }
+          // }
+          // else if (s.activityType === 'relay') {
+          //   // don't do anything if relay as goLive takes care of it!
+          // }
+          else if (s.activityType === 'none' && s.challenge) {
+            context.roomActions.switchActivity({
+              activityType: 'none',
+              challenge: {
+                gameSpecs: s.challenge.gameSpecs,
+              },
+            });
           }
         },
         goLive: () => {
@@ -124,11 +136,10 @@ export const SwitchActivityWidgetRoomConsumer: React.FC<Props> = (props) => {
           context.roomActions.toggleInMeetup(inMeetup);
         },
       })}
-      {state?.activityType === 'play' && (
+      {state?.activityType === 'none' && state.challenge && (
         <CreateChallengeDialog
           visible
-          // TODO: Fix this issue before merging the Tournaments!!!
-          initialGameSpecs={state.creationRecord === 'challenge' && (state as any).gameSpecs}
+          initialGameSpecs={state.challenge.gameSpecs}
           onCancel={() => setState(undefined)}
           onSuccess={() => setState(undefined)}
         />
