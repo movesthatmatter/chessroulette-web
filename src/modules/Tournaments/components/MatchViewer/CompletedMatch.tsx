@@ -239,6 +239,7 @@ const useStyles = createUseStyles((theme) => ({
 	playerContainer: {
 		display: 'flex',
 		position: 'relative',
+		marginLeft: '28px',
 	},
 	playerBox: {
 		display: 'flex',

@@ -5,12 +5,13 @@ import {
 } from 'chessroulette-io/dist/resourceCollections/tournaments/records';
 import { Text } from 'src/components/Text';
 import { createUseStyles } from 'src/lib/jss';
-import { range } from 'src/lib/util';
+import { objectKeys, range } from 'src/lib/util';
 import { MatchViewer } from 'src/modules/Tournaments/components/MatchViewer/MatchViewer';
 import { indexMatchesByRound } from 'src/modules/Tournaments/utils';
 import { spacers } from 'src/theme/spacers';
 import { useAuthentication } from 'src/services/Authentication';
 import { UserInfoRecord } from 'chessroulette-io';
+import { String } from 'window-or-global';
 
 type Props = {
   tournament: TournamentWithFullDetailsRecord;
@@ -26,15 +27,11 @@ function findMyGame(user: UserInfoRecord, matches: TournamentWithFullDetailsReco
 
 export const Bracket: React.FC<Props> = ({ tournament }) => {
   const cls = useStyles();
-  const [matchesByRound, setMatchesByRound] = useState(
-    indexMatchesByRound(tournament.matches, tournament.swissRounds)
-  );
   const auth = useAuthentication();
   const [myNextGame, setMyNextGame] = useState<TournamentMatchRecord | undefined>(undefined);
-
-  useEffect(() => {
-    setMatchesByRound(indexMatchesByRound(tournament.matches, tournament.swissRounds));
-  }, [tournament]);
+  const matchesByRound = useMemo(() => indexMatchesByRound(tournament.matches), [
+    tournament.matches.length,
+  ]);
 
   useEffect(() => {
     if (auth.authenticationType !== 'user') {
@@ -44,15 +41,21 @@ export const Bracket: React.FC<Props> = ({ tournament }) => {
     setMyNextGame(findMyGame(auth.user, tournament.matches));
   }, [tournament.matches]);
 
-  const rounds = useMemo(
-    () =>
-      range(
-        Object.values(tournament.matches)
-          .map((p) => p.round)
-          .reduce((prev, next) => (next > prev ? next : prev), 0)
-      ),
-    [tournament.matches.length]
-  );
+  const { totalRoundsCount, nonPendingRounds } = useMemo(() => {
+    const totalRoundsCount = Object.values(tournament.matches)
+      .map((p) => p.round)
+      .reduce((prev, next) => (next > prev ? next : prev), 0);
+
+    const nonPendingRounds = Object.values(tournament.matches)
+      .filter((p) => p.state !== 'pending')
+      .map((p) => p.round)
+      .reduce((prev, next) => (next > prev ? next : prev), 0);
+
+    return {
+      totalRoundsCount,
+      nonPendingRounds: range(nonPendingRounds).map((_, i) => String(i + 1)),
+    };
+  }, [tournament.matches.length]);
 
   return (
     <div className={cls.container}>
@@ -74,21 +77,19 @@ export const Bracket: React.FC<Props> = ({ tournament }) => {
           <MatchViewer key={myNextGame.id} match={myNextGame} />
         </div>
       )}
-      {rounds.map((_, i) => (
-        <div key={`round-${i}`} className={cls.roundContainer}>
+      {objectKeys(matchesByRound).map((roundNo) => (
+        <div key={`round-${roundNo}`} className={cls.roundContainer}>
           <div>
-            <Text size="body1" style={{ fontStyle: 'italic', fontWeight: 'bold' }}>{`Round ${
-              i + 1
-            }`}</Text>
+            <Text
+              size="body1"
+              style={{ fontStyle: 'italic', fontWeight: 'bold' }}
+            >{`Round ${roundNo} of ${totalRoundsCount}`}</Text>
           </div>
           <div className={cls.round}>
-            {matchesByRound[i + 1] &&
-              matchesByRound[i + 1].length > 0 &&
-              matchesByRound[i + 1].map((match) => {
-                if (match.id !== myNextGame?.id)
-                  return <MatchViewer key={match.id} match={match} />;
-                return null;
-              })}
+            {matchesByRound[roundNo].map((match) => {
+              if (match.id !== myNextGame?.id) return <MatchViewer key={match.id} match={match} />;
+              return null;
+            })}
           </div>
         </div>
       ))}
@@ -101,7 +102,7 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     gap: spacers.largest,
-    paddingLeft: spacers.large,
+    // paddingLeft: spacers.large,
     paddingTop: spacers.largest,
     paddingBottom: spacers.default,
   },

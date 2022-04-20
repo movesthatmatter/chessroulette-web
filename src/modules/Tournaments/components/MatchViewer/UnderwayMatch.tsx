@@ -217,7 +217,7 @@ const useStyles = createUseStyles((theme) => ({
 	hoveredBkg: {
 		cursor: 'pointer',
 		position: 'absolute',
-		left: '-6px',
+		left: 0,
 		top: 0,
 		right: 0,
 		bottom: 0,
@@ -258,7 +258,7 @@ const useStyles = createUseStyles((theme) => ({
 		position: 'absolute',
 		height: '100%',
 		width: '1rem',
-		left: '-6px',
+		// left: '-6px',
 		zIndex: 1,
 	},
 	playerContainer: {
@@ -275,6 +275,7 @@ const useStyles = createUseStyles((theme) => ({
 		background: theme.colors.neutralLight,
 		gap: spacers.small,
 		alignItems: 'center',
+		marginLeft: '6px',
 	},
 	pieceBox: {
 		display: 'flex',

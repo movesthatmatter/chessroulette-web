@@ -21,7 +21,6 @@ import { TournamentMatchRecord } from './types';
 
 export const indexMatchesByRound = (
   matches: TournamentWithFullDetailsRecord['matches'],
-  rounds: number
 ): Record<number, TournamentMatchRecord[]> => {
   return Object.values(matches).reduce((accum, item) => {
     return {
