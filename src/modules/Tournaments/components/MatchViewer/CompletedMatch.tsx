@@ -132,7 +132,7 @@ export const CompletedMatch: React.FC<Props> = ({ match }) => {
 				<div className={cls.hovered}>
 					<div className={cls.hoveredBkg}>
 						<div className={cls.hoveredContent} onClick={() => {}}>
-							<Text size="title2" className={cls.analyse}>
+							<Text size="subtitle1" className={cls.analyse}>
 								Analyse Game
 							</Text>
 						</div>

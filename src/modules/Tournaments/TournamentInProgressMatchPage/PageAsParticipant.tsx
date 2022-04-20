@@ -24,10 +24,8 @@ export const PageAsParticipant: React.FC<Props> = ({ match, tournamentOrganizerU
         slug,
         activity: {
           activityType: 'play',
-          creationRecord: 'game',
           gameId: match.gameId,
         },
-
         // Just for now
         p2pCommunicationType: 'none',
       }}

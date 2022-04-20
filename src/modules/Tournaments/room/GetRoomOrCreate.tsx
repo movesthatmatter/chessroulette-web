@@ -1,5 +1,5 @@
-import { CreateRoomRequest, room, RoomRecord } from 'chessroulette-io';
 import React, { useEffect, useState } from 'react';
+import { CreateRoomRequest, RoomRecord } from 'chessroulette-io';
 import { AwesomeError } from 'src/components/AwesomeError';
 import { AwesomeLoaderPage } from 'src/components/AwesomeLoader';
 import { useResource } from 'src/lib/hooks/useResource';

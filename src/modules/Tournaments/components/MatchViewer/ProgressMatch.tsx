@@ -149,7 +149,7 @@ export const ProgressMatch: React.FC<Props> = ({ match }) => {
 				<div className={cls.hovered}>
 					<div className={cls.hoveredBkg}>
 						<div className={cls.hoveredContent} onClick={() => {}}>
-							<Text size="title2" className={cls.hoveredText}>
+							<Text size="subtitle1" className={cls.hoveredText}>
 								{getOverlayStatus}
 							</Text>
 						</div>
